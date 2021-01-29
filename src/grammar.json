@@ -1,0 +1,34 @@
+{
+    "name": "yg",
+    "word": "Id",
+    "rules": {
+        "program": {
+            "type": "STRING",
+            "value": "program"
+        },
+        "FRAGMENT": {
+            "type": "STRING",
+            "value": "fragment"
+        },
+        "GRAMMAR": {
+            "type": "STRING",
+            "value": "grammar"
+        },
+        "Id": {
+            "type": "PATTERN",
+            "value": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*"
+        }
+    },
+    "extras": [
+        {
+            "type": "PATTERN",
+            "value": "\\s"
+        }
+    ],
+    "conflicts": [],
+    "precedences": [],
+    "externals": [],
+    "inline": [],
+    "supertypes": []
+}
+

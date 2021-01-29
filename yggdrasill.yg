@@ -1,0 +1,41 @@
+grammar yg {"*.yg", "*.grammar"}
+
+
+
+// Identifier
+Id = ("_" | XID_START) XID_CONTINUE
+
+
+//? 
+//* grammar tsg
+//* grammar tsg {"*.tsg", }
+GrammarStatement   = GRAMMAR Id grammarExtensions? EOS?
+grammarExtensions _= "{" ~ interleave(String, ",", trailing = true)? ~ "}"
+GRAMMAR           @= "grammar"
+
+
+//? `fragment` means that this file cannot build grammar, it can only be imported.
+//? `id` represents the default name when importing, which can be changed by `as`.
+//* fragment ascii
+GrammarStatement  = FRAGMENT (id <- Id)
+FRAGMENT         @= "fragment"
+
+//?
+//*
+IgnoresStatement = 
+    | IGNORES any 
+    | IGNORES "[" interleave(String, ",")? "]"
+IGNORES         @= "ignores"
+
+
+
+value _= String | Regex |
+
+
+
+
+InlineAssignment =  
+
+KeywordAssignment = Id
+
+EOS = ";"

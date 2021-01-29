@@ -1,0 +1,27 @@
+# IDE
+*.idea
+*.vscode
+*.vs
+
+# Cargo
+build
+examples
+!examples/ast.rs
+/target/
+Cargo.lock
+
+# Node
+node_modules
+*.log
+*.test.js
+package-lock.json
+
+# Antlr
+*.antlr
+*.ps1
+*.m
+*.nb
+
+
+
+
