@@ -5,7 +5,19 @@
         "fields": {}
     },
     {
+        "type": ",",
+        "named": false
+    },
+    {
+        "type": "Eos",
+        "named": true
+    },
+    {
         "type": "Fragment",
+        "named": true
+    },
+    {
+        "type": "Grammar",
         "named": true
     },
     {
@@ -13,7 +25,19 @@
         "named": true
     },
     {
+        "type": "String",
+        "named": true
+    },
+    {
         "type": "program",
+        "named": false
+    },
+    {
+        "type": "{",
+        "named": false
+    },
+    {
+        "type": "}",
         "named": false
     }
 ]

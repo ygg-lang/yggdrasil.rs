@@ -6,9 +6,108 @@
             "type": "STRING",
             "value": "program"
         },
+        "GrammarStatement": {
+            "type": "SEQ",
+            "members": [
+                {
+                    "type": "SYMBOL",
+                    "name": "Grammar"
+                },
+                {
+                    "type": "FIELD",
+                    "name": "id",
+                    "content": {
+                        "type": "SYMBOL",
+                        "name": "Id"
+                    }
+                },
+                {
+                    "type": "CHOICE",
+                    "members": [
+                        {
+                            "type": "SYMBOL",
+                            "name": "_grammar_exts"
+                        },
+                        {
+                            "type": "BLANK"
+                        }
+                    ]
+                },
+                {
+                    "type": "CHOICE",
+                    "members": [
+                        {
+                            "type": "SYMBOL",
+                            "name": "Eos"
+                        },
+                        {
+                            "type": "BLANK"
+                        }
+                    ]
+                }
+            ]
+        },
+        "_grammar_exts": {
+            "type": "SEQ",
+            "members": [
+                {
+                    "type": "STRING",
+                    "value": "{"
+                },
+                {
+                    "type": "CHOICE",
+                    "members": [
+                        {
+                            "type": "SEQ",
+                            "members": [
+                                {
+                                    "type": "SYMBOL",
+                                    "name": "String"
+                                },
+                                {
+                                    "type": "REPEAT",
+                                    "content": {
+                                        "type": "SEQ",
+                                        "members": [
+                                            {
+                                                "type": "STRING",
+                                                "value": ","
+                                            },
+                                            {
+                                                "type": "SYMBOL",
+                                                "name": "String"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "type": "CHOICE",
+                                    "members": [
+                                        {
+                                            "type": "STRING",
+                                            "value": ","
+                                        },
+                                        {
+                                            "type": "BLANK"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "BLANK"
+                        }
+                    ]
+                },
+                {
+                    "type": "STRING",
+                    "value": "}"
+                }
+            ]
+        },
         "Grammar": {
             "type": "STRING",
-            "value": "grammar"
+            "value": "grammar!"
         },
         "FragmentStatement": {
             "type": "SEQ",
@@ -24,16 +123,36 @@
                         "type": "SYMBOL",
                         "name": "Id"
                     }
+                },
+                {
+                    "type": "CHOICE",
+                    "members": [
+                        {
+                            "type": "SYMBOL",
+                            "name": "Eos"
+                        },
+                        {
+                            "type": "BLANK"
+                        }
+                    ]
                 }
             ]
         },
         "Fragment": {
             "type": "STRING",
-            "value": "fragment"
+            "value": "fragment!"
+        },
+        "String": {
+            "type": "STRING",
+            "value": "String"
         },
         "Id": {
             "type": "PATTERN",
             "value": "[_\\p{XID_Start}][_\\p{XID_Continue}]*"
+        },
+        "Eos": {
+            "type": "STRING",
+            "value": ";"
         }
     },
     "extras": [
@@ -45,7 +164,9 @@
     "conflicts": [],
     "precedences": [],
     "externals": [],
-    "inline": [],
+    "inline": [
+        "_grammar_exts"
+    ],
     "supertypes": []
 }
 

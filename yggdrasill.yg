@@ -7,7 +7,7 @@ grammar! yg {"*.yg", "*.grammar"}
 //? 
 //* grammar tsg
 //* grammar tsg {"*.tsg", }
-GrammarStatement = _grammar Id grammarExtensions? EOS?
+GrammarStatement = Grammar (id <- Id) _grammar_exts? Eos?
 _grammar_exts   _= "{" ~ interleave(String, ",", trailing = true)? ~ "}"
 Grammar          = "grammar!"
 
@@ -16,7 +16,7 @@ Grammar          = "grammar!"
 //? `id` represents the default name when importing, which can be changed by `as`.
 //* fragment ascii
 FragmentStatement = _fragment (id <- Id)
-Fragment          = "fragment"
+Fragment          = "fragment!"
 
 //?
 //* ignores /\/
