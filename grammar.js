@@ -16,6 +16,7 @@ module.exports = grammar({
     rules: {
         program: $ => "program",
 
+
         // GrammarStatement
         GrammarStatement: $ => seq(
             $.Grammar,
@@ -30,6 +31,7 @@ module.exports = grammar({
         ),
         Grammar: $ => "grammar!",
 
+
         // FragmentStatement
         FragmentStatement: $ => seq(
             $.Fragment,
@@ -38,9 +40,29 @@ module.exports = grammar({
         ),
         Fragment: $ => "fragment!",
 
+
+        // IgnoresStatement
+        Ignore: $ => "ignore",
+
+
+        // Atomic
+        Id: $ => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
+        Integer: $ => choice(
+            optional($._sign),
+            $.Unsigned
+        ),
+        Unsigned: $=> /0|[1-9][0-9]*/,
+        _sign: $ => /[+-]/,
+
         String: $ => "String",
 
-        Id: $ => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
+
+        Regex: $ => "/",
+
+
+
+
+
         Eos: $ => ";"
     }
 });

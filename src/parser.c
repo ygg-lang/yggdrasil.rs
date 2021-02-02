@@ -8,9 +8,9 @@
 #define LANGUAGE_VERSION 13
 #define STATE_COUNT 4
 #define LARGE_STATE_COUNT 2
-#define SYMBOL_COUNT 11
+#define SYMBOL_COUNT 15
 #define ALIAS_COUNT 0
-#define TOKEN_COUNT 10
+#define TOKEN_COUNT 14
 #define EXTERNAL_TOKEN_COUNT 0
 #define FIELD_COUNT 0
 #define MAX_ALIAS_SEQUENCE_LENGTH 1
@@ -24,9 +24,13 @@ enum {
   anon_sym_RBRACE = 5,
   sym_Grammar = 6,
   sym_Fragment = 7,
-  sym_String = 8,
-  sym_Eos = 9,
-  sym_program = 10,
+  sym_Ignore = 8,
+  sym_Unsigned = 9,
+  sym__sign = 10,
+  sym_String = 11,
+  sym_Regex = 12,
+  sym_Eos = 13,
+  sym_program = 14,
 };
 
 static const char * const ts_symbol_names[] = {
@@ -38,7 +42,11 @@ static const char * const ts_symbol_names[] = {
   [anon_sym_RBRACE] = "}",
   [sym_Grammar] = "Grammar",
   [sym_Fragment] = "Fragment",
+  [sym_Ignore] = "Ignore",
+  [sym_Unsigned] = "Unsigned",
+  [sym__sign] = "_sign",
   [sym_String] = "String",
+  [sym_Regex] = "Regex",
   [sym_Eos] = "Eos",
   [sym_program] = "program",
 };
@@ -52,7 +60,11 @@ static const TSSymbol ts_symbol_map[] = {
   [anon_sym_RBRACE] = anon_sym_RBRACE,
   [sym_Grammar] = sym_Grammar,
   [sym_Fragment] = sym_Fragment,
+  [sym_Ignore] = sym_Ignore,
+  [sym_Unsigned] = sym_Unsigned,
+  [sym__sign] = sym__sign,
   [sym_String] = sym_String,
+  [sym_Regex] = sym_Regex,
   [sym_Eos] = sym_Eos,
   [sym_program] = sym_program,
 };
@@ -90,7 +102,23 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = true,
     .named = true,
   },
+  [sym_Ignore] = {
+    .visible = true,
+    .named = true,
+  },
+  [sym_Unsigned] = {
+    .visible = true,
+    .named = true,
+  },
+  [sym__sign] = {
+    .visible = false,
+    .named = true,
+  },
   [sym_String] = {
+    .visible = true,
+    .named = true,
+  },
+  [sym_Regex] = {
     .visible = true,
     .named = true,
   },
@@ -2803,15 +2831,19 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
     case 0:
       if (eof) ADVANCE(2);
       if (lookahead == ',') ADVANCE(4);
-      if (lookahead == ';') ADVANCE(24);
+      if (lookahead == '/') ADVANCE(27);
+      if (lookahead == '0') ADVANCE(24);
+      if (lookahead == ';') ADVANCE(28);
       if (lookahead == 'f') ADVANCE(19);
       if (lookahead == 'g') ADVANCE(21);
       if (lookahead == '{') ADVANCE(3);
       if (lookahead == '}') ADVANCE(5);
+      if (('+' <= lookahead && lookahead <= '-')) ADVANCE(26);
       if (lookahead == '\t' ||
           lookahead == '\n' ||
           lookahead == '\r' ||
           lookahead == ' ') SKIP(0)
+      if (('1' <= lookahead && lookahead <= '9')) ADVANCE(25);
       if (sym_Id_character_set_1(lookahead)) ADVANCE(23);
       END_STATE();
     case 1:
@@ -2919,6 +2951,19 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       if (sym_Id_character_set_2(lookahead)) ADVANCE(23);
       END_STATE();
     case 24:
+      ACCEPT_TOKEN(sym_Unsigned);
+      END_STATE();
+    case 25:
+      ACCEPT_TOKEN(sym_Unsigned);
+      if (('0' <= lookahead && lookahead <= '9')) ADVANCE(25);
+      END_STATE();
+    case 26:
+      ACCEPT_TOKEN(sym__sign);
+      END_STATE();
+    case 27:
+      ACCEPT_TOKEN(sym_Regex);
+      END_STATE();
+    case 28:
       ACCEPT_TOKEN(sym_Eos);
       END_STATE();
     default:
@@ -2932,49 +2977,68 @@ static bool ts_lex_keywords(TSLexer *lexer, TSStateId state) {
   switch (state) {
     case 0:
       if (lookahead == 'S') ADVANCE(1);
-      if (lookahead == 'p') ADVANCE(2);
+      if (lookahead == 'i') ADVANCE(2);
+      if (lookahead == 'p') ADVANCE(3);
       if (lookahead == '\t' ||
           lookahead == '\n' ||
           lookahead == '\r' ||
           lookahead == ' ') SKIP(0)
       END_STATE();
     case 1:
-      if (lookahead == 't') ADVANCE(3);
+      if (lookahead == 't') ADVANCE(4);
       END_STATE();
     case 2:
-      if (lookahead == 'r') ADVANCE(4);
+      if (lookahead == 'g') ADVANCE(5);
       END_STATE();
     case 3:
-      if (lookahead == 'r') ADVANCE(5);
+      if (lookahead == 'r') ADVANCE(6);
       END_STATE();
     case 4:
-      if (lookahead == 'o') ADVANCE(6);
+      if (lookahead == 'r') ADVANCE(7);
       END_STATE();
     case 5:
-      if (lookahead == 'i') ADVANCE(7);
+      if (lookahead == 'n') ADVANCE(8);
       END_STATE();
     case 6:
-      if (lookahead == 'g') ADVANCE(8);
+      if (lookahead == 'o') ADVANCE(9);
       END_STATE();
     case 7:
-      if (lookahead == 'n') ADVANCE(9);
+      if (lookahead == 'i') ADVANCE(10);
       END_STATE();
     case 8:
-      if (lookahead == 'r') ADVANCE(10);
+      if (lookahead == 'o') ADVANCE(11);
       END_STATE();
     case 9:
-      if (lookahead == 'g') ADVANCE(11);
+      if (lookahead == 'g') ADVANCE(12);
       END_STATE();
     case 10:
-      if (lookahead == 'a') ADVANCE(12);
+      if (lookahead == 'n') ADVANCE(13);
       END_STATE();
     case 11:
-      ACCEPT_TOKEN(sym_String);
+      if (lookahead == 'r') ADVANCE(14);
       END_STATE();
     case 12:
-      if (lookahead == 'm') ADVANCE(13);
+      if (lookahead == 'r') ADVANCE(15);
       END_STATE();
     case 13:
+      if (lookahead == 'g') ADVANCE(16);
+      END_STATE();
+    case 14:
+      if (lookahead == 'e') ADVANCE(17);
+      END_STATE();
+    case 15:
+      if (lookahead == 'a') ADVANCE(18);
+      END_STATE();
+    case 16:
+      ACCEPT_TOKEN(sym_String);
+      END_STATE();
+    case 17:
+      ACCEPT_TOKEN(sym_Ignore);
+      END_STATE();
+    case 18:
+      if (lookahead == 'm') ADVANCE(19);
+      END_STATE();
+    case 19:
       ACCEPT_TOKEN(anon_sym_program);
       END_STATE();
     default:
@@ -2999,7 +3063,11 @@ static const uint16_t ts_parse_table[LARGE_STATE_COUNT][SYMBOL_COUNT] = {
     [anon_sym_RBRACE] = ACTIONS(1),
     [sym_Grammar] = ACTIONS(1),
     [sym_Fragment] = ACTIONS(1),
+    [sym_Ignore] = ACTIONS(1),
+    [sym_Unsigned] = ACTIONS(1),
+    [sym__sign] = ACTIONS(1),
     [sym_String] = ACTIONS(1),
+    [sym_Regex] = ACTIONS(1),
     [sym_Eos] = ACTIONS(1),
   },
   [1] = {

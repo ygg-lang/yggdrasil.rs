@@ -33,18 +33,18 @@
 use tree_sitter::Language;
 
 extern "C" {
-    fn tree_sitter_rust() -> Language;
+    fn tree_sitter_yg() -> Language;
 }
 
 /// Returns the tree-sitter [Language][] for this grammar.
 ///
 /// [Language]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Language.html
 pub fn language() -> Language {
-    unsafe { tree_sitter_rust() }
+    unsafe { tree_sitter_yg() }
 }
 
 /// The source of the Rust tree-sitter grammar description.
-pub const GRAMMAR: &str = include_str!("../../grammar.js");
+pub const GRAMMAR: &str = include_str!("../../yggdrasil.yg");
 
 /// The syntax highlighting query for this language.
 pub const HIGHLIGHT_QUERY: &str = include_str!("../../queries/highlights.scm");

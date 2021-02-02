@@ -1,8 +1,11 @@
 grammar! yg {"*.yg", "*.grammar"}
 
 
-
-
+_top_level _=
+    | GrammarStatement
+    | FragmentStatement
+    | ImportStatement 
+    | IgnoresStatement
 
 //? 
 //* grammar tsg
@@ -18,22 +21,42 @@ Grammar          = "grammar!"
 FragmentStatement = _fragment (id <- Id)
 Fragment          = "fragment!"
 
+
+//?
+//*
+ImportStatement =
+Import         = "import!"
+
+
 //?
 //* ignores /\/
 //* ignores [comment, commentInline]
 IgnoresStatement = 
     | _ignores any 
     | _ignores "[" interleave(String, ",")? "]"
-Ignores         = "ignores"
+Ignore         = "ignore!"
 
 
+
+
+value _= String | Regex |
 
 
 // Identifier
 Id = ("_" | XID_START) XID_CONTINUE
 
 
-value _= String | Regex |
+
+Integer = _sign? Unsigned
+// The bare 0 will be considered as the string "0"
+Unsigned = 0 | [1-9] [0-9]*
+_sign = [+-]
+
+
+
+Regex = "/" 
+
+RegexRange = "["  "]"
 
 
 

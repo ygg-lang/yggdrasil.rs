@@ -142,13 +142,50 @@
             "type": "STRING",
             "value": "fragment!"
         },
-        "String": {
+        "Ignore": {
             "type": "STRING",
-            "value": "String"
+            "value": "ignore"
         },
         "Id": {
             "type": "PATTERN",
             "value": "[_\\p{XID_Start}][_\\p{XID_Continue}]*"
+        },
+        "Integer": {
+            "type": "CHOICE",
+            "members": [
+                {
+                    "type": "CHOICE",
+                    "members": [
+                        {
+                            "type": "SYMBOL",
+                            "name": "_sign"
+                        },
+                        {
+                            "type": "BLANK"
+                        }
+                    ]
+                },
+                {
+                    "type": "SYMBOL",
+                    "name": "Unsigned"
+                }
+            ]
+        },
+        "Unsigned": {
+            "type": "PATTERN",
+            "value": "0|[1-9][0-9]*"
+        },
+        "_sign": {
+            "type": "PATTERN",
+            "value": "[+-]"
+        },
+        "String": {
+            "type": "STRING",
+            "value": "String"
+        },
+        "Regex": {
+            "type": "STRING",
+            "value": "/"
         },
         "Eos": {
             "type": "STRING",

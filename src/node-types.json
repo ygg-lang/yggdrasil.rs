@@ -29,6 +29,10 @@
         "named": true
     },
     {
+        "type": "Unsigned",
+        "named": true
+    },
+    {
         "type": "program",
         "named": false
     },

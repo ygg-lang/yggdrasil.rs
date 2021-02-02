@@ -1,7 +1,7 @@
 {
-    "name": "tree-sitter-yggdrasill",
-    "version": "0.19.1",
-    "description": "Rust grammar for tree-sitter",
+    "name": "tree-sitter-yggdrasil",
+    "version": "0.1.0",
+    "description": "Yggdrasil grammar for tree-sitter",
     "main": "bindings/node",
     "keywords": [
         "parser",
@@ -9,10 +9,10 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/tree-sitter/tree-sitter-rust.git"
+        "url": "https://github.com/nyar-vm/Yggdrasil-Grammar"
     },
-    "author": "Maxim Sokolov <maxim0xff@gmail.com> (https://github.com/MaximSokolov)",
-    "license": "MIT",
+    "author": "Aster <192608617@qq.com> (https://github.com/oovm)",
+    "license": "MPL2.0",
     "dependencies": {
         "nan": "^2.14.0"
     },
