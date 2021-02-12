@@ -1,9 +1,3 @@
-// -*- coding: utf-8 -*-
-// ------------------------------------------------------------------------------------------------
-// Copyright © 2021, tree-sitter-rust authors.
-// See the License.md file in this repo for license details.
-// ------------------------------------------------------------------------------------------------
-
 //! This crate provides a Rust grammar for the [tree-sitter][] parsing library.
 //!
 //! Typically, you will use the [language][language func] function to add this grammar to a
@@ -30,6 +24,8 @@
 //! [Parser]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Parser.html
 //! [tree-sitter]: https://tree-sitter.github.io/
 
+mod parser;
+
 use tree_sitter::Language;
 
 extern "C" {
@@ -39,7 +35,7 @@ extern "C" {
 /// Returns the tree-sitter [Language][] for this grammar.
 ///
 /// [Language]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Language.html
-pub fn language() -> Language {
+pub fn yggdrasil() -> Language {
     unsafe { tree_sitter_yg() }
 }
 
@@ -60,7 +56,7 @@ mod tests {
     fn can_load_grammar() {
         let mut parser = tree_sitter::Parser::new();
         parser
-            .set_language(super::language())
+            .set_language(super::yggdrasil())
             .expect("Error loading Rust grammar");
     }
 }

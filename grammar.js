@@ -9,12 +9,16 @@ module.exports = grammar({
 
     ],
     inline: $ => [
-        $._grammar_exts
+        $._grammar_exts,
+        $._sign
     ],
     word: $ => $.Id,
 
     rules: {
-        program: $ => "program",
+        program: $ => choice(
+            $.GrammarStatement,
+            $.FragmentStatement
+        ),
 
 
         // GrammarStatement
@@ -26,7 +30,7 @@ module.exports = grammar({
         ),
         _grammar_exts: $ => seq(
             "{",
-            optional(interleave($.String, ",", true)),
+            optional(interleave($.String, ",", 1)),
             "}"
         ),
         Grammar: $ => "grammar!",
@@ -47,9 +51,10 @@ module.exports = grammar({
 
         // Atomic
         Id: $ => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
-        Integer: $ => choice(
+        
+        Integer: $ => seq(
             optional($._sign),
-            $.Unsigned
+            $.Unsigned,
         ),
         Unsigned: $=> /0|[1-9][0-9]*/,
         _sign: $ => /[+-]/,
@@ -68,10 +73,16 @@ module.exports = grammar({
 });
 
 function interleave(rule, sep, trailing) {
-    if (trailing) {
-        return seq(rule, repeat(seq(sep, rule)), optional(sep))
+    if (trailing > 0) {
+        // must add trailing separator
+        return seq(rule, repeat(seq(sep, rule)), sep)
+    }
+    else if (trailing<0) {
+        // disallow add trailing separator
+        return seq(rule, repeat(seq(sep, rule)))
     }
     else {
-        return seq(rule, repeat(seq(sep, rule)))
+        // trailing separator is optional
+        return seq(rule, repeat(seq(sep, rule)), optional(sep))
     }
 }

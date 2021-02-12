@@ -1,10 +1,10 @@
 [package]
-name = "tree-sitter-rust"
-description = "Rust grammar for the tree-sitter parsing library"
-version = "0.19.1"
+name = "tree-sitter-yg"
+description = "Yggdrasil grammar for the tree-sitter parsing library"
+version = "0.1.0"
 authors = ["Max Brunsfeld <maxbrunsfeld@gmail.com>"]
 license = "MIT"
-readme = "bindings/rust/README.md"
+readme = "bindings/rust/readme.md"
 keywords = ["incremental", "parsing", "rust"]
 categories = ["parsing", "text-editors"]
 repository = "https://github.com/tree-sitter/tree-sitter-rust"
@@ -21,6 +21,10 @@ autoexamples = false
 
 [lib]
 path = "bindings/rust/lib.rs"
+
+[[bin]]
+name = "yggdrasil"
+path = "bindings/bootstript/main.rs"
 
 [dependencies]
 tree-sitter = "0.19"
