@@ -19,8 +19,8 @@
 enum {
   sym_Id = 1,
   anon_sym_program = 2,
-  sym_FRAGMENT = 3,
-  sym_GRAMMAR = 4,
+  sym_Grammar = 3,
+  sym_Fragment = 4,
   sym_program = 5,
 };
 
@@ -28,8 +28,8 @@ static const char * const ts_symbol_names[] = {
   [ts_builtin_sym_end] = "end",
   [sym_Id] = "Id",
   [anon_sym_program] = "program",
-  [sym_FRAGMENT] = "FRAGMENT",
-  [sym_GRAMMAR] = "GRAMMAR",
+  [sym_Grammar] = "Grammar",
+  [sym_Fragment] = "Fragment",
   [sym_program] = "program",
 };
 
@@ -37,8 +37,8 @@ static const TSSymbol ts_symbol_map[] = {
   [ts_builtin_sym_end] = ts_builtin_sym_end,
   [sym_Id] = sym_Id,
   [anon_sym_program] = anon_sym_program,
-  [sym_FRAGMENT] = sym_FRAGMENT,
-  [sym_GRAMMAR] = sym_GRAMMAR,
+  [sym_Grammar] = sym_Grammar,
+  [sym_Fragment] = sym_Fragment,
   [sym_program] = sym_program,
 };
 
@@ -55,11 +55,11 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = true,
     .named = false,
   },
-  [sym_FRAGMENT] = {
+  [sym_Grammar] = {
     .visible = true,
     .named = true,
   },
-  [sym_GRAMMAR] = {
+  [sym_Fragment] = {
     .visible = true,
     .named = true,
   },
@@ -1800,28 +1800,19 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
   eof = lexer->eof(lexer);
   switch (state) {
     case 0:
-      if (eof) ADVANCE(2);
-      if (lookahead == 'r') ADVANCE(3);
+      if (eof) ADVANCE(1);
       if (lookahead == '\t' ||
           lookahead == '\n' ||
           lookahead == '\r' ||
           lookahead == ' ') SKIP(0)
-      if (sym_Id_character_set_1(lookahead)) ADVANCE(4);
+      if (sym_Id_character_set_1(lookahead)) ADVANCE(2);
       END_STATE();
     case 1:
-      if (sym_Id_character_set_1(lookahead)) ADVANCE(4);
-      END_STATE();
-    case 2:
       ACCEPT_TOKEN(ts_builtin_sym_end);
       END_STATE();
-    case 3:
+    case 2:
       ACCEPT_TOKEN(sym_Id);
-      if (lookahead == '#') ADVANCE(1);
-      if (sym_Id_character_set_2(lookahead)) ADVANCE(4);
-      END_STATE();
-    case 4:
-      ACCEPT_TOKEN(sym_Id);
-      if (sym_Id_character_set_2(lookahead)) ADVANCE(4);
+      if (sym_Id_character_set_2(lookahead)) ADVANCE(2);
       END_STATE();
     default:
       return false;
@@ -1899,13 +1890,13 @@ static bool ts_lex_keywords(TSLexer *lexer, TSStateId state) {
       if (lookahead == 't') ADVANCE(22);
       END_STATE();
     case 20:
-      ACCEPT_TOKEN(sym_GRAMMAR);
+      ACCEPT_TOKEN(sym_Grammar);
       END_STATE();
     case 21:
       ACCEPT_TOKEN(anon_sym_program);
       END_STATE();
     case 22:
-      ACCEPT_TOKEN(sym_FRAGMENT);
+      ACCEPT_TOKEN(sym_Fragment);
       END_STATE();
     default:
       return false;
@@ -1924,8 +1915,8 @@ static const uint16_t ts_parse_table[LARGE_STATE_COUNT][SYMBOL_COUNT] = {
     [ts_builtin_sym_end] = ACTIONS(1),
     [sym_Id] = ACTIONS(1),
     [anon_sym_program] = ACTIONS(1),
-    [sym_FRAGMENT] = ACTIONS(1),
-    [sym_GRAMMAR] = ACTIONS(1),
+    [sym_Grammar] = ACTIONS(1),
+    [sym_Fragment] = ACTIONS(1),
   },
   [1] = {
     [sym_program] = STATE(3),

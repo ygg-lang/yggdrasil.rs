@@ -6,17 +6,34 @@
             "type": "STRING",
             "value": "program"
         },
-        "FRAGMENT": {
-            "type": "STRING",
-            "value": "fragment"
-        },
-        "GRAMMAR": {
+        "Grammar": {
             "type": "STRING",
             "value": "grammar"
         },
+        "FragmentStatement": {
+            "type": "SEQ",
+            "members": [
+                {
+                    "type": "SYMBOL",
+                    "name": "Fragment"
+                },
+                {
+                    "type": "FIELD",
+                    "name": "id",
+                    "content": {
+                        "type": "SYMBOL",
+                        "name": "Id"
+                    }
+                }
+            ]
+        },
+        "Fragment": {
+            "type": "STRING",
+            "value": "fragment"
+        },
         "Id": {
             "type": "PATTERN",
-            "value": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*"
+            "value": "[_\\p{XID_Start}][_\\p{XID_Continue}]*"
         }
     },
     "extras": [

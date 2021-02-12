@@ -13,10 +13,18 @@ module.exports = grammar({
     rules: {
         program: $ => "program",
 
-        FRAGMENT: $ => "fragment",
+        // GrammarStatement
+        Grammar: $ => "grammar!",
 
-        GRAMMAR: $ => "grammar",
+        // FragmentStatement
+        FragmentStatement : $ => seq(
+            $.Fragment,
+            field("id", $.Id)
+        ),
+        Fragment: $ => "fragment!",
 
-        Id: $ => /(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*/,
+
+
+        Id: $ => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
     }
 });

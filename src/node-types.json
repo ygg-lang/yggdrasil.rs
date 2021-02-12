@@ -5,6 +5,14 @@
         "fields": {}
     },
     {
+        "type": "Fragment",
+        "named": true
+    },
+    {
+        "type": "Id",
+        "named": true
+    },
+    {
         "type": "program",
         "named": false
     }

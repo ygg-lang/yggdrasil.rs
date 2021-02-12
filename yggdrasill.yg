@@ -1,32 +1,36 @@
-grammar yg {"*.yg", "*.grammar"}
+grammar! yg {"*.yg", "*.grammar"}
 
 
 
-// Identifier
-Id = ("_" | XID_START) XID_CONTINUE
 
 
 //? 
 //* grammar tsg
 //* grammar tsg {"*.tsg", }
-GrammarStatement   = GRAMMAR Id grammarExtensions? EOS?
-grammarExtensions _= "{" ~ interleave(String, ",", trailing = true)? ~ "}"
-GRAMMAR           @= "grammar"
+GrammarStatement = _grammar Id grammarExtensions? EOS?
+_grammar_exts   _= "{" ~ interleave(String, ",", trailing = true)? ~ "}"
+Grammar          = "grammar!"
 
 
 //? `fragment` means that this file cannot build grammar, it can only be imported.
 //? `id` represents the default name when importing, which can be changed by `as`.
 //* fragment ascii
-GrammarStatement  = FRAGMENT (id <- Id)
-FRAGMENT         @= "fragment"
+FragmentStatement = _fragment (id <- Id)
+Fragment          = "fragment"
 
 //?
-//*
+//* ignores /\/
+//* ignores [comment, commentInline]
 IgnoresStatement = 
-    | IGNORES any 
-    | IGNORES "[" interleave(String, ",")? "]"
-IGNORES         @= "ignores"
+    | _ignores any 
+    | _ignores "[" interleave(String, ",")? "]"
+Ignores         = "ignores"
 
+
+
+
+// Identifier
+Id = ("_" | XID_START) XID_CONTINUE
 
 
 value _= String | Regex |
@@ -38,4 +42,15 @@ InlineAssignment =
 
 KeywordAssignment = Id
 
-EOS = ";"
+Eos = ";"
+
+
+
+fn! interleave(rule: rule, sep, trailing = false) {
+    seq(rule, repeat(seq(",", rule)))
+}
+
+
+
+Boolean = "true" | "false"
+
