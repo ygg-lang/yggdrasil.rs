@@ -1,0 +1,32 @@
+==================
+Header statements `grammar!`
+==================
+
+grammar! basic;
+
+grammar! basic {}
+
+---
+
+(program
+  (GrammarStatement
+    (Grammar)
+    (Id)
+    (Eos))
+  (GrammarStatement
+    (Grammar)
+    (Id)))
+
+
+==================
+Header statements `fragment!`
+==================
+
+fragment! basic;
+
+---
+(program
+  (FragmentStatement
+    (Fragment)
+    id: (Id)
+    (Eos)))
