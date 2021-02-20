@@ -24,8 +24,6 @@
 //! [Parser]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Parser.html
 //! [tree-sitter]: https://tree-sitter.github.io/
 
-mod parser;
-
 use tree_sitter::Language;
 
 extern "C" {
@@ -49,14 +47,3 @@ pub const HIGHLIGHT_QUERY: &str = include_str!("../../queries/highlights.scm");
 ///
 /// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types
 pub const NODE_TYPES: &str = include_str!("../../src/node-types.json");
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn can_load_grammar() {
-        let mut parser = tree_sitter::Parser::new();
-        parser
-            .set_language(super::yggdrasil())
-            .expect("Error loading Rust grammar");
-    }
-}
