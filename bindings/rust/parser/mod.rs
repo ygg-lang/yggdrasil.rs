@@ -3,7 +3,13 @@ use tree_sitter::Parser;
 
 
 const TEST:&str = r#"
-fragment! yg;
+grammar! basic;
+
+grammar! basic {}
+
+fragment! basic;
+
+
 "#;
 
 

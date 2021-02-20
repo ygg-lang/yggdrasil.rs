@@ -21,7 +21,7 @@
     },
     "scripts": {
         "test": "tree-sitter test && script/parse-examples",
-        "test-windows": "tree-sitter test",
+        "t": "wee g && tree-sitter test",
         "g": "tree-sitter generate"
     },
     "tree-sitter": [
