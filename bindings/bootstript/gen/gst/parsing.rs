@@ -1,9 +1,6 @@
-use tree_sitter::{Parser, Tree};
-
+use super::*;
+use tree_sitter::{Tree, Parser};
 use tree_sitter_yg::yggdrasil;
-
-mod lst;
-mod gen;
 
 pub fn traverse(tree: &Tree) {
     let cursor = &mut tree.walk();
@@ -28,6 +25,7 @@ pub fn traverse(tree: &Tree) {
     }
 }
 
+
 const TEST:&str = r#"
 grammar! basic;
 
@@ -36,22 +34,20 @@ grammar! basic {}
 fragment! basic;
 "#;
 
+pub struct State {
+    parser: Parser,
+}
 
+impl State {
+    pub fn new() {
 
+    }
+}
+
+#[test]
 fn main() {
     let mut parser = Parser::new();
     parser.set_language(yggdrasil()).expect("Fail to load language");
     let parsed = parser.parse(TEST, None).unwrap();
-    // let mut ptr  = parsed.walk();
-    //
-    // let this = ptr.node().descendant_for_byte_range();
-    // match this.kind() {
-    //     "Program" => {
-    //         print!("{}", this.kind_id());
-    //     },
-    //     _ => unreachable!()
-    // }
     traverse(&parsed)
-
-
 }
