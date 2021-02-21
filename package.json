@@ -5,7 +5,8 @@
     "main": "bindings/node",
     "keywords": [
         "parser",
-        "rust"
+        "rust",
+        "yggdrasil"
     ],
     "repository": {
         "type": "git",
@@ -20,7 +21,6 @@
         "tree-sitter-cli": "^0.19.1"
     },
     "scripts": {
-        "test": "tree-sitter test && script/parse-examples",
         "t": "wee g && tree-sitter test",
         "g": "tree-sitter generate"
     },

@@ -1,7 +1,10 @@
 mod lst;
+mod errors;
 
 use tree_sitter::{Parser, Tree};
 use tree_sitter_yg::yggdrasil;
+
+pub use errors::{Error,Result};
 
 
 pub fn traverse(tree: &Tree) {

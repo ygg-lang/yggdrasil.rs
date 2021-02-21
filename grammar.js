@@ -2,21 +2,23 @@ module.exports = grammar({
     name: 'yg',
 
     extras: $ => [
-        /\s/
+        $.whitespace
     ],
 
     supertypes: $ => [
 
     ],
     inline: $ => [
-        $._grammar_exts, //   $._sign
+
+       $._grammar_exts, //   $._sign
     ],
     word: $ => $.Id,
 
     rules: {
-        program: $ => repeat(choice(
+        Program: $ => repeat(choice(
             $.GrammarStatement,
-            $.FragmentStatement
+            $.FragmentStatement,
+            $.AssignStatement
         )),
 
         // TODO: Appears at the top, each at most once, can be disordered
@@ -30,7 +32,7 @@ module.exports = grammar({
             $.Grammar,
             field("id", $.Id),
             optional($._grammar_exts),
-            optional($.Eos)
+            field("eos", optional($.eos))
         ),
         _grammar_exts: $ => seq(
             "{",
@@ -38,6 +40,8 @@ module.exports = grammar({
             "}"
         ),
         Grammar: $ => "grammar!",
+
+        whitespace: $=> /\s/,
 
 
         // FragmentStatement
@@ -52,25 +56,39 @@ module.exports = grammar({
         // IgnoresStatement
         Ignore: $ => "ignore",
 
+
+        AssignStatement: $ => seq(
+            field("id", $.Id),
+            "=",
+            $._expression,
+            optional($.Eos)
+        ),
+
         _expression: $ => choice(
             $.Id,
-            $.unary_expression,
-            $.binary_expression,
+            $.String,
+            $.UnaryExpression,
+            $.BinaryExpression,
             // ...
         ),
 
-        unary_expression: $ => prec(2, choice(
-            seq('-', $._expression),
+        UnaryExpression: $ => prec(2, choice(
+            seq('^', $._expression),
             seq('!', $._expression),
             // ...
         )),
 
-        binary_expression: $ => choice(
+        BinaryExpression: $ => choice(
+            // 空格连接禁止换行, 否则有可能会把下面几行的函数给吃进去
+            // prec.left(90, token.immediate(seq($._expression, repeat1("\w"), $._expression))),
             // name <- a ~ b | name ~ c
-            // ((name <- a) ~ b) | (name ~ c)
-            prec.left(30, seq($._expression, '<-', $._expression)),
-            prec.left(20, seq($._expression, '~', $._expression)),
-            prec.left(10, seq($._expression, '|', $._expression)),
+            // <- 是长程符号
+            // ~ 等于空格, 是短程符号
+            // 因此上式等价于:
+            // name <- ((a ~ b) | (name ~ c))
+            prec.left(30, seq(field("lhs", $._expression), '~', field("rhs", $._expression))),
+            prec.left(20, seq(field("lhs", $._expression), '|', field("rhs", $._expression))),
+            prec.left(10, seq(field("lhs", $._expression), '<-', field("rhs", $._expression))),
         ),
 
 
@@ -79,19 +97,31 @@ module.exports = grammar({
         // Atomic
         Id: $ => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
 
-        Integer: $ => seq(
-            optional($._sign),
-            $.Unsigned,
-        ),
-        Unsigned: $ => /0|[1-9][0-9]*/,
+        Integer: $ =>
+            seq(
+                optional($._sign),
+                $.Unsigned,
+            ),
+        Unsigned: $ => token(/0|[1-9][0-9]*/),
         _sign: $ => /[+-]/,
 
-        String: $ => "String",
+        String: $ => choice(
+            seq(
+                "'",
+                /[a-zA-Z]*/,
+                "'",
+            ),
+            seq(
+                '"',
+                /[a-zA-Z]*/,
+                '"',
+            )
+        ),
 
 
         Regex: $ => "/",
 
-        Eos: $ => ";"
+        eos: $ => ";"
     }
 });
 

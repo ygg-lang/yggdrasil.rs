@@ -1,0 +1,48 @@
+==================
+Header statements `grammar!`
+==================
+
+test1 = name <- a ~ b | name ~ "c"
+
+---
+
+(Program
+  (AssignStatement
+    id: (Id)
+    (BinaryExpression
+      lhs: (Id)
+      rhs: (BinaryExpression
+        lhs: (BinaryExpression
+          lhs: (Id)
+          rhs: (Id))
+        rhs: (BinaryExpression
+          lhs: (Id)
+          rhs: (Id))))))
+
+
+
+
+==================
+Header statements `fragment!`
+==================
+
+test2 = name <- a ~ "b" | name <- c | "d" ~ e;
+
+---
+
+(Program
+  (AssignStatement
+    (Id)
+    (BinaryExpression
+      (BinaryExpression
+        (Id)
+        (BinaryExpression
+          (BinaryExpression
+            (Id)
+            (String))
+          (Id)))
+      (BinaryExpression
+        (Id)
+        (BinaryExpression
+          (String)
+          (Id))))))

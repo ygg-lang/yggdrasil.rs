@@ -29,5 +29,9 @@ path = "bindings/bootstript/main.rs"
 [dependencies]
 tree-sitter = "0.19"
 
+[dev-dependencies]
+rowan = "0.14"
+lsp-types = "0.90"
+
 [build-dependencies]
 cc = "1.0"
