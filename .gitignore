@@ -9,10 +9,7 @@ examples
 !examples/ast.rs
 /target/
 Cargo.lock
-parser.exp
-parser.lib
-parser.obj
-scanner.obj
+
 
 # Node
 node_modules
@@ -21,11 +18,16 @@ node_modules
 package-lock.json
 
 # Antlr
+
 *.antlr
 *.ps1
 *.m
 *.nb
-
+projects/tree-sitter-yg/src/**/*
+parser.exp
+parser.lib
+parser.obj
+scanner.obj
 
 
 
