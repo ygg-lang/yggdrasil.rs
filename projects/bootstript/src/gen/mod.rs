@@ -1,13 +1,13 @@
 pub mod ast;
+pub mod atomic;
 pub mod gst;
 
 mod errors;
 
-pub use errors::{Result, MyError};
+pub use errors::{MyError, Result};
 
+use std::mem::transmute;
 use tree_sitter::Node;
-
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(non_camel_case_types)]
@@ -44,4 +44,10 @@ pub enum SyntaxKind {
     sym_String = 29,
     aux_sym_Program_repeat1 = 30,
     aux_sym__grammar_exts_repeat1 = 31,
+}
+
+impl SyntaxKind {
+    pub fn node_kind(node: &Node) -> Self {
+        unsafe { transmute::<u16, Self>(node.kind_id()) }
+    }
 }
