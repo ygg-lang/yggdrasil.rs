@@ -10,12 +10,12 @@ module.exports = grammar({
     ],
     inline: $ => [
 
-       $._grammar_exts, //   $._sign
+        $._grammar_exts, //   $._sign
     ],
     word: $ => $.Id,
 
     rules: {
-        Program: $ => repeat(choice(
+        program: $ => repeat(choice(
             $.GrammarStatement,
             $.FragmentStatement,
             $.AssignStatement
@@ -28,7 +28,7 @@ module.exports = grammar({
         ),
 
         // GrammarStatement
-        GrammarStatement: $ => seq(
+        grammar_statement: $ => seq(
             $.Grammar,
             field("id", $.Id),
             optional($._grammar_exts),
@@ -39,25 +39,25 @@ module.exports = grammar({
             optional(interleave($.String, ",", 1)),
             "}"
         ),
-        Grammar: $ => "grammar!",
+        grammar: $ => "grammar!",
 
-        whitespace: $=> /\s/,
+
 
 
         // FragmentStatement
-        FragmentStatement: $ => seq(
+        fragment_statement: $ => seq(
             $.Fragment,
             field("id", $.Id),
             optional($.Eos)
         ),
-        Fragment: $ => "fragment!",
+        fragment: $ => "fragment!",
 
 
         // IgnoresStatement
-        Ignore: $ => "ignore",
+        ignore: $ => "ignore",
 
 
-        AssignStatement: $ => seq(
+        assign_statement: $ => seq(
             field("id", $.Id),
             "=",
             $._expression,
@@ -72,13 +72,13 @@ module.exports = grammar({
             // ...
         ),
 
-        UnaryExpression: $ => prec(2, choice(
+        unary_expression: $ => prec(2, choice(
             seq('^', $._expression),
             seq('!', $._expression),
             // ...
         )),
 
-        BinaryExpression: $ => choice(
+        binary_expression: $ => choice(
             // 空格连接禁止换行, 否则有可能会把下面几行的函数给吃进去
             // prec.left(90, token.immediate(seq($._expression, repeat1("\w"), $._expression))),
             // name <- a ~ b | name ~ c
@@ -95,14 +95,13 @@ module.exports = grammar({
 
 
         // Atomic
-        Id: $ => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
+        id: $ => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
 
-        Integer: $ =>
-            seq(
-                optional($._sign),
-                $.Unsigned,
-            ),
-        Unsigned: $ => token(/0|[1-9][0-9]*/),
+        integer: $ => seq(
+            optional($._sign),
+            $.Unsigned,
+        ),
+        unsigned: $ => token(/0|[1-9][0-9]*/),
         _sign: $ => /[+-]/,
 
         String: $ => choice(
@@ -118,10 +117,11 @@ module.exports = grammar({
             )
         ),
 
-
         Regex: $ => "/",
 
-        eos: $ => ";"
+        eos: $ => ";",
+
+        whitespace: $ => /\s/,
     }
 });
 

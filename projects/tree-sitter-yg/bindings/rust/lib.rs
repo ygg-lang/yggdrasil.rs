@@ -33,7 +33,7 @@ extern "C" {
 /// Returns the tree-sitter [Language][] for this grammar.
 ///
 /// [Language]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Language.html
-pub fn yggdrasil() -> Language {
+pub fn language() -> Language {
     unsafe { tree_sitter_yg() }
 }
 

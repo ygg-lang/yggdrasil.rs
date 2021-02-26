@@ -12,8 +12,10 @@ pub struct MyVisitor {
 
 impl GSTVisitor for MyVisitor {
     type MetaData = ExtraData;
+    // may can be const
 
-    fn visit_program(&mut self, node: &Node) -> Result<Program<Self::MetaData>> {
+
+    fn visit_program(&mut self, node: &[&Node]) -> Result<Program<Self::MetaData>> {
         todo!()
     }
 
@@ -52,27 +54,19 @@ impl<M> GSTBuilder<M> {
         }
         Ok(())
     }
-    fn traverse(&self) -> Result<()> {
+    fn traverse2(&mut self) -> Result<()> {
+        use SyntaxKind::*;
         let cursor = &mut self.tree.walk();
-        self.visitor.enter_node(&cursor.node())?;
-        let mut recurse = true;
-        loop {
-            if recurse && cursor.goto_first_child() {
-                recurse = self.visitor.enter_node(&cursor.node())?;
+        let kind = SyntaxKind::node_kind(&cursor.node());
+        match kind {
+            sym_Program => {
+                let data = self.visitor.visit_program(&cursor.node())?;
             }
-            else {
-                self.visitor.leave_node(&cursor.node())?;
-                if cursor.goto_next_sibling() {
-                    recurse = self.visitor.enter_node(&cursor.node())?;
-                }
-                else if cursor.goto_parent() {
-                    recurse = false;
-                }
-                else {
-                    break;
-                }
-            }
+            _ => panic!("{:?}", kind)
         }
+        Ok(())
+    }
+    fn traverse_program(&mut self) -> Result<()> {
         Ok(())
     }
 }
@@ -90,5 +84,5 @@ fn main() -> Result<()> {
     let visitor = MyVisitor { warns: vec![] };
     let mut parser = GSTBuilder::new(visitor)?;
     parser.update_by_text(TEST)?;
-    parser.traverse()
+    parser.traverse2()
 }
