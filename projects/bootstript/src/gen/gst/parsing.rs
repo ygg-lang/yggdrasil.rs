@@ -1,5 +1,5 @@
 use super::*;
-use tree_sitter::{Parser, Tree};
+use tree_sitter::{Parser, Tree, TreeCursor};
 use tree_sitter_yg::language;
 
 use lsp_types::Diagnostic;
@@ -10,21 +10,23 @@ pub struct MyVisitor {
     warns: Vec<Diagnostic>,
 }
 
+impl HiddenFilter for MyVisitor {}
+
 impl GSTVisitor for MyVisitor {
     type MetaData = ExtraData;
     // may can be const
 
 
-    fn visit_program(&mut self, node: &[&Node]) -> Result<Program<Self::MetaData>> {
-        todo!()
+    fn visit_program(&mut self, node: &Node) -> Option<Self::MetaData> {
+        None
     }
 
-    fn visit_grammar_statement(&mut self, node: &Node) -> Result<GrammarStatement<Self::MetaData>> {
-        todo!()
+    fn visit_grammar_statement(&mut self, node: &Node) -> Option<Self::MetaData> {
+        None
     }
 
-    fn visit_eos(&mut self, node: &Node) -> Result<Eos> {
-        todo!()
+    fn visit_eos(&mut self, node: &Node) -> Option<Self::MetaData> {
+        None
     }
 }
 
@@ -54,22 +56,56 @@ impl<M> GSTBuilder<M> {
         }
         Ok(())
     }
-    fn traverse2(&mut self) -> Result<()> {
-        use SyntaxKind::*;
-        let cursor = &mut self.tree.walk();
-        let kind = SyntaxKind::node_kind(&cursor.node());
-        match kind {
-            sym_Program => {
-                let data = self.visitor.visit_program(&cursor.node())?;
-            }
-            _ => panic!("{:?}", kind)
-        }
-        Ok(())
+}
+
+use SyntaxKind::*;
+
+impl<M> GSTBuilder<M> {
+    /// BFS traverse
+    pub fn traverse(&mut self) -> Result<GSTNode<Program<M>,M>> {
+        Program::traverse(&mut self.visitor, &mut self.tree.walk())
     }
-    fn traverse_program(&mut self) -> Result<()> {
-        Ok(())
+
+}
+
+impl<M> Program<M> {
+    pub fn traverse(visitor: &mut Box<dyn GSTVisitor<MetaData = M>>, cursor: &mut TreeCursor) -> Result<GSTNode<Program<M>,M>> {
+        let meta = visitor.visit_program(&cursor.node());
+        let out = GSTNode::<Program<M>,M> {
+            data: Program::visit(cursor)?,
+            meta,
+        };
+        Ok(out)
+    }
+    pub fn visit(cursor: &mut TreeCursor) -> Result<Self> {
+        let mut v = vec![];
+        if !cursor.goto_first_child() {
+            panic!("no child")
+        }
+        let node = cursor.node();
+        v.push(node);
+        unimplemented!()
     }
 }
+
+impl<M> AuxNode1<M> {
+    pub fn visit(cursor: &mut TreeCursor) -> Result<Self>{
+        let mut v = vec![];
+        if !cursor.goto_first_child() {
+            panic!("no child")
+        }
+        let node = cursor.node();
+        v.push(node);
+        let kind = SyntaxKind::node_kind(&cursor.node());
+        let out = match kind {
+            sym_program => Self::GrammarStatement(unimplemented!()),
+            _ => unimplemented!("{:?}", kind)
+        };
+        Ok(out)
+    }
+}
+
+
 
 const TEST: &str = r#"
 grammar! basic;
@@ -84,5 +120,6 @@ fn main() -> Result<()> {
     let visitor = MyVisitor { warns: vec![] };
     let mut parser = GSTBuilder::new(visitor)?;
     parser.update_by_text(TEST)?;
-    parser.traverse2()
+    parser.traverse();
+    Ok(())
 }

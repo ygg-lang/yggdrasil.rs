@@ -12,43 +12,41 @@ module.exports = grammar({
 
         $._grammar_exts, //   $._sign
     ],
-    word: $ => $.Id,
+    word: $ => $.id,
 
     rules: {
         program: $ => repeat(choice(
-            $.GrammarStatement,
-            $.FragmentStatement,
-            $.AssignStatement
+            $.grammar_statement,
+            $.fragment_statement,
+            $.assign_statement
         )),
 
         // TODO: Appears at the top, each at most once, can be disordered
         _top_level: $ => choice(
-            $.GrammarStatement,
-            $.FragmentStatement
+            $.grammar_statement,
+            $.fragment_statement
         ),
 
         // GrammarStatement
         grammar_statement: $ => seq(
-            $.Grammar,
-            field("id", $.Id),
+            $.grammar,
+            field("id", $.id),
             optional($._grammar_exts),
-            field("eos", optional($.eos))
+            optional($.eos)
         ),
         _grammar_exts: $ => seq(
             "{",
-            optional(interleave($.String, ",", 1)),
+            optional(interleave($.string, ",", 1)),
             "}"
         ),
         grammar: $ => "grammar!",
 
 
-
-
         // FragmentStatement
         fragment_statement: $ => seq(
-            $.Fragment,
-            field("id", $.Id),
-            optional($.Eos)
+            $.fragment,
+            field("id", $.id),
+            optional($.eos)
         ),
         fragment: $ => "fragment!",
 
@@ -58,17 +56,22 @@ module.exports = grammar({
 
 
         assign_statement: $ => seq(
-            field("id", $.Id),
-            "=",
+            field("id", $.id),
+            field("eq", $.id),
             $._expression,
-            optional($.Eos)
+            optional($.eos)
+        ),
+
+        eq: $ => choice(
+            "=",
+            "_="
         ),
 
         _expression: $ => choice(
-            $.Id,
-            $.String,
-            $.UnaryExpression,
-            $.BinaryExpression,
+            $.id,
+            $.string,
+            $.unary_expression,
+            $.binary_expression,
             // ...
         ),
 
@@ -99,12 +102,12 @@ module.exports = grammar({
 
         integer: $ => seq(
             optional($._sign),
-            $.Unsigned,
+            $.unsigned,
         ),
         unsigned: $ => token(/0|[1-9][0-9]*/),
         _sign: $ => /[+-]/,
 
-        String: $ => choice(
+        string: $ => choice(
             seq(
                 "'",
                 /[a-zA-Z]*/,

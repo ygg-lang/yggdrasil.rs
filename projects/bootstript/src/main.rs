@@ -1,9 +1,11 @@
+#![feature(once_cell)]
+
 use tree_sitter::{Parser, Tree};
 
 use tree_sitter_yg::language;
 
 mod gen;
-mod lst;
+mod debug;
 
 pub fn traverse(tree: &Tree) {
     let cursor = &mut tree.walk();
