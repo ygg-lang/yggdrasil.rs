@@ -8,14 +8,27 @@ grammar! basic {}
 
 ---
 
-(Program
-  (GrammarStatement
-    (Grammar)
-    (Id)
-    (Eos))
-  (GrammarStatement
-    (Grammar)
-    (Id)))
+(program
+  (whitespace)
+  (whitespace)
+  (grammar_statement
+    (grammar)
+    (whitespace)
+    (id)
+    (eos))
+  (whitespace)
+  (whitespace)
+  (whitespace)
+  (whitespace)
+  (grammar_statement
+    (grammar)
+    (whitespace)
+    (id)
+    (whitespace))
+  (whitespace)
+  (whitespace))
+
+
 
 
 ==================
@@ -25,8 +38,14 @@ Header statements `fragment!`
 fragment! basic;
 
 ---
-(Program
-  (FragmentStatement
-    (Fragment)
-    id: (Id)
-    (Eos)))
+
+(program
+  (whitespace)
+  (whitespace)
+  (fragment_statement
+    (fragment)
+    (whitespace)
+    (id)
+    (eos))
+  (whitespace)
+  (whitespace))

@@ -1,7 +1,8 @@
-use std::lazy::SyncLazy;
-use std::collections::HashMap;
-use std::fmt::{self,Debug, Formatter};
-
+use std::{
+    collections::HashMap,
+    fmt::{self, Formatter},
+    lazy::SyncLazy,
+};
 
 pub const PREDEFINED_FUNCTION_MAP: SyncLazy<HashMap<&str, String>> = SyncLazy::new(|| {
     let mut map = HashMap::default();
@@ -34,8 +35,8 @@ pub trait DebugJS {
 
 impl DebugJS for T {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        writeln!(f,"module.exports = grammar({{")?;
-        writeln!(f,"module.exports = grammar({{")?;
+        writeln!(f, "module.exports = grammar({{")?;
+        writeln!(f, "module.exports = grammar({{")?;
         Ok(())
     }
 }

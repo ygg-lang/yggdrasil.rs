@@ -1,29 +1,32 @@
 [package]
-name = "bootstript-yg"
-publish = false
+name = "tree-sitter-cli"
 description = "Yggdrasil grammar for the tree-sitter parsing library"
 version = "0.1.0"
 authors = ["Max Brunsfeld <maxbrunsfeld@gmail.com>"]
-license = "MPL2.0"
+license = "MIT"
 readme = "bindings/rust/readme.md"
 keywords = ["incremental", "parsing", "rust"]
 categories = ["parsing", "text-editors"]
 repository = "https://github.com/tree-sitter/tree-sitter-rust"
 edition = "2018"
 
+build = "bindings/rust/build.rs"
 include = [
+    "bindings/rust/*",
+    "grammar.js",
+    "queries/*",
     "src/*",
 ]
+autoexamples = false
+
+[lib]
+path = "bindings/rust/lib.rs"
 
 [dependencies]
-lsp-types = "0.90"
-
 tree-sitter = "0.20"
-tree-sitter-cli = "0.20"
-tree-sitter-yg = {version="0.1", path = "../tree-sitter-yg"}
-
 
 [dev-dependencies]
 
 
 [build-dependencies]
+cc = "1.0"

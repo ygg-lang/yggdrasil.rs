@@ -6,18 +6,32 @@ test1 = name <- a ~ b | name ~ "c"
 
 ---
 
-(Program
-  (AssignStatement
-    id: (Id)
-    (BinaryExpression
-      lhs: (Id)
-      rhs: (BinaryExpression
-        lhs: (BinaryExpression
-          lhs: (Id)
-          rhs: (Id))
-        rhs: (BinaryExpression
-          lhs: (Id)
-          rhs: (Id))))))
+(program
+  (whitespace)
+  (whitespace)
+  (assign_statement
+    id: (id)
+    (whitespace)
+    (whitespace)
+    (binary_expression
+      lhs: (id)
+      (whitespace)
+      (whitespace)
+      rhs: (binary_expression
+        lhs: (binary_expression
+          lhs: (id)
+          (whitespace)
+          (whitespace)
+          rhs: (id))
+        (whitespace)
+        (whitespace)
+        rhs: (binary_expression
+          lhs: (id)
+          (whitespace)
+          (whitespace)
+          rhs: (string)))))
+  (whitespace)
+  (whitespace))
 
 
 
@@ -30,19 +44,38 @@ test2 = name <- a ~ "b" | name <- c | "d" ~ e;
 
 ---
 
-(Program
-  (AssignStatement
-    (Id)
-    (BinaryExpression
-      (BinaryExpression
-        (Id)
-        (BinaryExpression
-          (BinaryExpression
-            (Id)
-            (String))
-          (Id)))
-      (BinaryExpression
-        (Id)
-        (BinaryExpression
-          (String)
-          (Id))))))
+(program
+  (whitespace)
+  (whitespace)
+  (assign_statement
+    (id)
+    (whitespace)
+    (whitespace)
+    (binary_expression
+      (binary_expression
+        (id)
+        (whitespace)
+        (whitespace)
+        (binary_expression
+          (binary_expression
+            (id)
+            (whitespace)
+            (whitespace)
+            (string))
+          (whitespace)
+          (whitespace)
+          (id)))
+      (whitespace)
+      (whitespace)
+      (binary_expression
+        (id)
+        (whitespace)
+        (whitespace)
+        (binary_expression
+          (string)
+          (whitespace)
+          (whitespace)
+          (id))))
+    (eos))
+  (whitespace)
+  (whitespace))

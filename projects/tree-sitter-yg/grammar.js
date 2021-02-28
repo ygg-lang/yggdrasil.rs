@@ -89,11 +89,11 @@ module.exports = grammar({
             // ~ 等于空格, 是短程符号
             // 因此上式等价于:
             // name <- ((a ~ b) | (name ~ c))
-            prec.left(30, seq(field("lhs", $._expression), '~', field("rhs", $._expression))),
-            prec.left(20, seq(field("lhs", $._expression), '|', field("rhs", $._expression))),
-            prec.left(10, seq(field("lhs", $._expression), '<-', field("rhs", $._expression))),
+            binary_left(40, $._expression, token.immediate(/ +/), $._expression),
+            binary_left(30, $._expression, "~", $._expression),
+            binary_left(20, $._expression, "|", $._expression),
+            binary_left(10, $._expression, "<-", $._expression),
         ),
-
 
 
 
@@ -142,3 +142,29 @@ function interleave(rule, sep, trailing) {
         return seq(rule, repeat(seq(sep, rule)), optional(sep))
     }
 }
+
+function binary_left(p, lhs, op, rhs) {
+    return prec.left(
+        p, 
+        seq(
+            field("lhs", lhs), 
+            field("op", op), 
+            field("rhs", rhs)
+        )
+    )
+}
+
+function unary_prefix(p, lhs, op, rhs) {
+    return seq(
+        $._expression,
+        field("op", '^'), 
+    )
+}
+
+function unary_suffix(op, expr) {
+    return seq(
+        field("op", op), 
+        field("expr", expr)
+    )
+}
+

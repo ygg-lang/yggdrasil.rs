@@ -3,7 +3,6 @@ mod parsing;
 
 use super::{atomic::*, *};
 
-
 pub struct GSTNode<Type, Meta = ()> {
     pub data: Type,
     pub meta: Option<Meta>,
@@ -20,25 +19,26 @@ pub trait GSTListener {
 
     /// Function called after all child nodes have been visited
     fn leave_node(&self, node: &Node) -> Result<()> {
-        let kind = SyntaxKind::node_kind(node);
+        let kind = SyntaxKind::from(node);
         println!("Leave: {:#?}", kind);
         Ok(())
     }
 }
 
 
-pub trait HiddenFilter {
+pub trait MetaVisitor {
+    type MetaData;
     /// ture = hide
     /// false = dont hide
     fn hide_item_filter(&self, node: &Node) -> bool {
         use SyntaxKind::*;
-        match SyntaxKind::node_kind(node) {
-            OP_LBRACE if self.hide_unnamed_operators() => {true}
-            OP_COMMA if self.hide_unnamed_operators() => {true}
-            OP_RBRACE if self.hide_unnamed_operators() => {true}
-            OP_EQ if self.hide_unnamed_operators() => {true}
-            LineComment if self.hide_ignores() || self.hide_comment() => {true}
-            _ => true
+        match SyntaxKind::from(node) {
+            anon_sym_LBRACE if self.hide_unnamed_operators() => true,
+            anon_sym_COMMA if self.hide_unnamed_operators() => true,
+            anon_sym_RBRACE if self.hide_unnamed_operators() => true,
+            anon_sym_EQ if self.hide_unnamed_operators() => true,
+            anon_sym_CARET if self.hide_ignores() || self.hide_comment() => true,
+            _ => false
         }
     }
     fn hide_ignores(&self) -> bool {
@@ -50,12 +50,11 @@ pub trait HiddenFilter {
     fn hide_unnamed_operators(&self) -> bool {
         true
     }
-}
 
-pub trait GSTVisitor: HiddenFilter {
-    type MetaData;
+    fn visit_meta(&mut self, node: &Node) -> Option<Self::MetaData>;
+    fn visit_program(&mut self, cursor: &mut TreeCursor) -> Result<GSTNode<Program<Self::MetaData>, Self::MetaData>>;
+    fn visit_aux_node1(&mut self, cursor: &mut TreeCursor) -> Result<GSTNode<AuxNode1<Self::MetaData>, Self::MetaData>>;
 
-    fn visit_program(&mut self, node: &Node) -> Option<Self::MetaData>;
     fn visit_grammar_statement(&mut self, node: &Node) -> Option<Self::MetaData>;
     fn visit_eos(&mut self, node: &Node) -> Option<Self::MetaData>;
 }
