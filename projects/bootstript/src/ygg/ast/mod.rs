@@ -1,8 +1,7 @@
-mod nodes;
 mod display;
+mod nodes;
 mod parsing;
 
-use super::{*};
-use tree_sitter::Range;
 use self::nodes::*;
-
+use super::*;
+use tree_sitter::Range;

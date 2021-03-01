@@ -23,7 +23,7 @@ pub struct GrammarStatement {
 #[derive(Clone, Debug)]
 pub struct FragmentStatement {
     pub id: Identifier,
-    pub range: Range
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
@@ -34,27 +34,21 @@ pub struct AssignStatement {
 
 #[derive(Clone, Debug)]
 pub struct Identifier {
-   pub data: String,
-   pub range: Range
+    pub data: String,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
 pub struct Eos {
-   pub data: bool,
-   pub range: Range
+    pub data: bool,
+    pub range: Range,
 }
-
 
 impl Default for Identifier {
     fn default() -> Self {
         Self {
             data: "".to_string(),
-            range: Range {
-                start_byte: 0,
-                end_byte: 0,
-                start_point: Default::default(),
-                end_point: Default::default()
-            }
+            range: Range { start_byte: 0, end_byte: 0, start_point: Default::default(), end_point: Default::default() },
         }
     }
 }

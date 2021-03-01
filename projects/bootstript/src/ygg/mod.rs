@@ -5,9 +5,8 @@ pub mod ast;
 mod errors;
 
 pub use errors::{MyError, Result};
-use tree_sitter::TreeCursor;
 use std::mem::transmute;
-use tree_sitter::Node;
+use tree_sitter::{Node, TreeCursor};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(non_camel_case_types)]
@@ -50,11 +49,11 @@ pub enum SyntaxKind {
 
 macro_rules! from_node {
     ($t:ty, $n:ident, $e: expr) => {
-    impl<'a> From<$t> for SyntaxKind {
-        fn from($n: $t) -> Self {
-            unsafe { transmute::<u16, Self>($e) }
+        impl<'a> From<$t> for SyntaxKind {
+            fn from($n: $t) -> Self {
+                unsafe { transmute::<u16, Self>($e) }
+            }
         }
-    }
     };
 }
 

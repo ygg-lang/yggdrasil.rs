@@ -13,7 +13,7 @@ pub enum MyError {
 
 impl Display for MyError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f,"")
+        write!(f, "")
     }
 }
 
