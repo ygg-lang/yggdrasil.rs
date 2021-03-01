@@ -1,6 +1,6 @@
 pub mod ast;
-pub mod atomic;
-pub mod gst;
+// pub mod atomic;
+// pub mod gst;
 
 mod errors;
 
@@ -12,7 +12,7 @@ use tree_sitter::Node;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(non_camel_case_types)]
 #[repr(u16)]
-enum SyntaxKind {
+pub enum SyntaxKind {
     sym_id = 1,
     anon_sym_LBRACE = 2,
     anon_sym_COMMA = 3,

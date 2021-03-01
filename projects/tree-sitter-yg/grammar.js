@@ -21,12 +21,6 @@ module.exports = grammar({
             $.assign_statement
         )),
 
-        // TODO: Appears at the top, each at most once, can be disordered
-        _top_level: $ => choice(
-            $.grammar_statement,
-            $.fragment_statement
-        ),
-
         // GrammarStatement
         grammar_statement: $ => seq(
             $.grammar,
@@ -36,7 +30,7 @@ module.exports = grammar({
         ),
         _grammar_exts: $ => seq(
             "{",
-            optional(interleave($.string, ",", 1)),
+            optional(interleave(field("exts", $.string), ",", 1)),
             "}"
         ),
         grammar: $ => "grammar!",
