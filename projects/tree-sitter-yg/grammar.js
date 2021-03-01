@@ -15,11 +15,13 @@ module.exports = grammar({
     word: $ => $.id,
 
     rules: {
-        program: $ => repeat(choice(
+        program: $ => repeat($.statement),
+
+        statement: $ => choice(
             $.grammar_statement,
             $.fragment_statement,
             $.assign_statement
-        )),
+        ),
 
         // GrammarStatement
         grammar_statement: $ => seq(
@@ -30,7 +32,7 @@ module.exports = grammar({
         ),
         _grammar_exts: $ => seq(
             "{",
-            optional(interleave(field("exts", $.string), ",", 1)),
+            optional(interleave(field("ext", $.string), ",", 1)),
             "}"
         ),
         grammar: $ => "grammar!",
@@ -83,7 +85,7 @@ module.exports = grammar({
             // ~ 等于空格, 是短程符号
             // 因此上式等价于:
             // name <- ((a ~ b) | (name ~ c))
-            binary_left(40, $._expression, token.immediate(/ +/), $._expression),
+            // binary_left(40, $._expression, token.immediate(/ +/), $._expression),
             binary_left(30, $._expression, "~", $._expression),
             binary_left(20, $._expression, "|", $._expression),
             binary_left(10, $._expression, "<-", $._expression),
@@ -139,10 +141,10 @@ function interleave(rule, sep, trailing) {
 
 function binary_left(p, lhs, op, rhs) {
     return prec.left(
-        p, 
+        p,
         seq(
-            field("lhs", lhs), 
-            field("op", op), 
+            field("lhs", lhs),
+            field("op", op),
             field("rhs", rhs)
         )
     )
@@ -151,13 +153,13 @@ function binary_left(p, lhs, op, rhs) {
 function unary_prefix(p, lhs, op, rhs) {
     return seq(
         $._expression,
-        field("op", '^'), 
+        field("op", '^'),
     )
 }
 
 function unary_suffix(op, expr) {
     return seq(
-        field("op", op), 
+        field("op", op),
         field("expr", expr)
     )
 }

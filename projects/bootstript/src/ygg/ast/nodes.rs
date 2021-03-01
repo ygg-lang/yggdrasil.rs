@@ -16,17 +16,8 @@ pub enum Statement {
 #[derive(Clone, Debug)]
 pub struct GrammarStatement {
     pub id: Identifier,
-    pub eos: Eos,
+    pub ext: Vec<String>,
     pub range: Range,
-    pub children: Vec<AuxNode2>,
-}
-
-#[derive(Clone, Debug)]
-pub enum AuxNode2 {
-    GrammarStatement(String),
-    OPCOMMA,
-    OpLeft,
-    OpRight,
 }
 
 #[derive(Clone, Debug)]
@@ -39,7 +30,6 @@ pub struct FragmentStatement {
 pub struct AssignStatement {
     pub id: Identifier,
     pub eos: Eos,
-    pub children: Vec<AuxNode2>,
 }
 
 #[derive(Clone, Debug)]
@@ -52,4 +42,19 @@ pub struct Identifier {
 pub struct Eos {
    pub data: bool,
    pub range: Range
+}
+
+
+impl Default for Identifier {
+    fn default() -> Self {
+        Self {
+            data: "".to_string(),
+            range: Range {
+                start_byte: 0,
+                end_byte: 0,
+                start_point: Default::default(),
+                end_point: Default::default()
+            }
+        }
+    }
 }
