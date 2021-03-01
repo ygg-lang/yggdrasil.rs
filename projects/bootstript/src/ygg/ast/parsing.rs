@@ -4,61 +4,18 @@ use tree_sitter_yg::language;
 
 use lsp_types::Diagnostic;
 
-pub type DynMetaVisitor<M> = Box<dyn MetaVisitor<MetaData = M>>;
-
-pub struct ExtraData {}
-
 pub struct MyVisitor {
     warns: Vec<Diagnostic>,
 }
 
-impl MetaVisitor for MyVisitor {
-    type MetaData = ExtraData;
-    // may can be const
-
-    fn visit_meta(&mut self, _: &Node) -> Option<Self::MetaData> {
-        None
-    }
-
-    fn visit_program(&mut self, cursor: &mut TreeCursor) -> Result<GSTNode<Program<Self::MetaData>, Self::MetaData>> {
-        let mut v = vec![];
-        let node = cursor.node();
-        let meta = self.visit_meta(&node);
-        cursor.goto_first_child();
-        for _ in 0..node.child_count() {
-            let result = self.visit_aux_node1(cursor);
-            cursor.goto_next_sibling();
-            v.push(result);
-        }
-        unimplemented!()
-        // let data = Program {
-        //     children: v
-        // };
-        // let out = GSTNode::<Self, M> { data: T::traverse(cursor)?, meta };
-        // Ok(out)
-    }
-
-    fn visit_aux_node1(&mut self, cursor: &mut TreeCursor) -> Result<GSTNode<AuxNode1<Self::MetaData>, Self::MetaData>> {
-        unimplemented!()
-    }
-
-    fn visit_grammar_statement(&mut self, _: &Node) -> Option<Self::MetaData> {
-        None
-    }
-
-    fn visit_eos(&mut self, _: &Node) -> Option<Self::MetaData> {
-        None
-    }
-}
-
-pub struct GSTBuilder<M = ()> {
+pub struct GSTBuilder {
     parser: Parser,
-    visitor: DynMetaVisitor<M>,
     tree: Tree,
 }
 
-impl<M> GSTBuilder<M> {
-    pub fn new(visitor: impl MetaVisitor<MetaData = M> + 'static) -> Result<Self> {
+impl GSTBuilder {
+    // visitor: impl MetaVisitor<MetaData = M> + 'static
+    pub fn new() -> Result<Self> {
         let mut parser = Parser::new();
         parser.set_language(language())?;
         // test if parser can work
@@ -68,55 +25,78 @@ impl<M> GSTBuilder<M> {
             }
             Some(s) => s,
         };
-        Ok(Self { parser, visitor: Box::new(visitor), tree })
+        Ok(Self { parser, tree })
     }
     fn update_by_text(&mut self, text: impl AsRef<[u8]>) -> Result<()> {
         //let tree = self.parser.parse(text, Some(&self.tree));
         match self.parser.parse(text, None) {
             Some(s) => self.tree = s,
-            None => {panic!("fail to update")}
+            None => { panic!("fail to update") }
         }
         Ok(())
     }
 }
 
-use SyntaxKind::*;
 
-impl<M> GSTBuilder<M> {
+impl GSTBuilder {
     /// BFS traverse
-    pub fn traverse(&mut self) -> Result<GSTNode<Program<M>, M>> {
+    pub fn traverse(&mut self) -> Result<Program> {
         let cursor = &mut self.tree.walk();
-        self.visitor.visit_program(cursor)
+        Ok(Program::parse(cursor).unwrap().unwrap())
     }
-
 }
 
-impl<M> Program<M> {
-    pub fn parse(visitor: &mut DynMetaVisitor<M>, cursor: &mut TreeCursor) -> Result<GSTNode<Self, M>> {
-        let meta = visitor.visit_meta(&cursor.node());
-        let out = GSTNode::<Self, M> { data: Self::traverse(cursor)?, meta };
+impl Program {
+    pub fn parse(cursor: &mut TreeCursor) -> Result<Option<Self>> {
+        let mut children = vec![];
+        let this = cursor.node();
+        let range = this.range();
+        // visit all children
+        cursor.goto_first_child();
+        Statement::parse(cursor)?.map(|e|children.push(e));
+        for _ in 0..this.child_count() {
+            cursor.goto_next_sibling();
+            Statement::parse(cursor)?.map(|e|children.push(e));
+        }
+        // build data
+        Ok(Some(Self { children, range }))
+    }
+}
+
+impl Statement {
+    pub fn parse(cursor: &mut TreeCursor) -> Result<Option<Self>> {
+        let node = cursor.node();
+        let kind = SyntaxKind::from(node);
+        let out = match kind {
+            SyntaxKind::sym_program => {None}
+            SyntaxKind::sym_whitespace => {None}
+            SyntaxKind::sym_fragment_statement => {
+                FragmentStatement::parse(cursor)?.map(|e|Statement::FragmentStatement(Box::new(e)))
+            }
+            _ => unimplemented!("{:#?}", kind)
+        };
         Ok(out)
     }
-    pub fn traverse( cursor: &mut TreeCursor) -> Result<Self> {
+}
 
-        unimplemented!()
+impl FragmentStatement {
+    pub fn parse(cursor: &mut TreeCursor) -> Result<Option<Self>> {
+        let this = cursor.node();
+
+        let id = this.child_by_field_name("id").unwrap();
+        let out = Self {
+            id: Identifier::parse(id)?,
+            range: this.range()
+        };
+        Ok(Some(out))
     }
 }
 
-#[allow(unreachable_code)]
-impl<M> AuxNode1<M> {
-    pub fn parse(cursor: &mut TreeCursor) -> Result<Self> {
-        let mut v = vec![];
-
-        if !cursor.goto_first_child() {
-            panic!("no child AuxNode1")
-        }
-        let node = cursor.node();
-        v.push(node);
-        let kind = SyntaxKind::from(cursor.node());
-        let out = match kind {
-            sym_program => Self::GrammarStatement(unimplemented!()),
-            _ => unimplemented!("{:?}", kind),
+impl Identifier {
+    pub fn parse(node: Node) -> Result<Self> {
+        let out = Self {
+            data: "".to_string(),
+            range: node.range()
         };
         Ok(out)
     }
@@ -132,8 +112,7 @@ fragment! basic;
 
 #[test]
 fn main() -> Result<()> {
-    let visitor = MyVisitor { warns: vec![] };
-    let mut parser = GSTBuilder::new(visitor)?;
+    let mut parser = GSTBuilder::new()?;
     parser.update_by_text(TEST)?;
     parser.traverse()?;
     Ok(())
