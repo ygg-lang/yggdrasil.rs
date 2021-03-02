@@ -2,16 +2,14 @@ module.exports = grammar({
     name: 'yg',
 
     extras: $ => [
-        $.whitespace
+        $.NEWLINE,
+        $.WHITESPACE,
     ],
 
     supertypes: $ => [
 
     ],
-    inline: $ => [
-
-        $._grammar_exts, //   $._sign
-    ],
+    inline: $ => [ ],
     word: $ => $.id,
 
     rules: {
@@ -60,26 +58,32 @@ module.exports = grammar({
 
         eq: $ => choice(
             "=",
-            "_="
+            "_=",
+            "@="
         ),
 
         _expression: $ => choice(
             $.id,
             $.string,
+            $.regex_long,
+            $.regex_range,
+            $.regex_set,
             $.unary_expression,
             $.binary_expression,
             // ...
         ),
 
         unary_expression: $ => prec(2, choice(
-            seq('^', $._expression),
-            seq('!', $._expression),
+            seq($._expression, field("suffix", "?")),
+            seq($._expression, field("suffix", "*")),
+            seq($._expression, field("suffix", "+")),
+            //seq(field("prefix", '^'), $._expression),
+            //seq(field("prefix", '!'), $._expression),
             // ...
         )),
 
         binary_expression: $ => choice(
             // 空格连接禁止换行, 否则有可能会把下面几行的函数给吃进去
-            // prec.left(90, token.immediate(seq($._expression, repeat1("\w"), $._expression))),
             // name <- a ~ b | name ~ c
             // <- 是长程符号
             // ~ 等于空格, 是短程符号
@@ -91,10 +95,12 @@ module.exports = grammar({
             binary_left(10, $._expression, "<-", $._expression),
         ),
 
+        variant_tag: $ => seq('#', $.id, field("is_empty", "!")),
+
 
 
         // Atomic
-        id: $ => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
+        id: $ => /[_\p{XID_Start}][\p{XID_Continue}]*/,
 
         integer: $ => seq(
             optional($._sign),
@@ -116,11 +122,30 @@ module.exports = grammar({
             )
         ),
 
-        Regex: $ => "/",
+        regex_long: $ => seq(
+            "/",
+            "/",
+            optional(/i|g/)
+        ),
+
+        regex_range: $ => seq(
+            "[",
+                
+            "]"
+        ),
+
+
+        regex_set: $ => seq(
+            "\\p",
+            "{",
+            /[_\p{}]/,
+            "}"
+        ),
 
         eos: $ => ";",
 
-        whitespace: $ => /\s/,
+        NEWLINE: $ => /\r|\r|\n\r/,
+        WHITESPACE: $ => /\s/,
     }
 });
 

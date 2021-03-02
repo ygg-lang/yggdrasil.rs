@@ -1,5 +1,5 @@
 ==================
-Header statements `grammar!`
+Header-1 `grammar!`
 ==================
 
 grammar! basic;
@@ -11,20 +11,22 @@ grammar! basic {}
 (program
   (whitespace)
   (whitespace)
-  (grammar_statement
-    (grammar)
-    (whitespace)
-    (id)
-    (eos))
+  (statement
+    (grammar_statement
+      (grammar)
+      (whitespace)
+      (id)
+      (eos)))
   (whitespace)
   (whitespace)
   (whitespace)
   (whitespace)
-  (grammar_statement
-    (grammar)
-    (whitespace)
-    (id)
-    (whitespace))
+  (statement
+    (grammar_statement
+      (grammar)
+      (whitespace)
+      (id)
+      (whitespace)))
   (whitespace)
   (whitespace))
 
@@ -32,7 +34,7 @@ grammar! basic {}
 
 
 ==================
-Header statements `fragment!`
+Header-2 `fragment!`
 ==================
 
 fragment! basic;
@@ -42,10 +44,11 @@ fragment! basic;
 (program
   (whitespace)
   (whitespace)
-  (fragment_statement
-    (fragment)
-    (whitespace)
-    (id)
-    (eos))
+  (statement
+    (fragment_statement
+      (fragment)
+      (whitespace)
+      (id)
+      (eos)))
   (whitespace)
   (whitespace))

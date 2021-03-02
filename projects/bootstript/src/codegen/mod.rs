@@ -1,35 +1,22 @@
-use tree_sitter_cli::{
-    generate::grammars::{InputGrammar, Variable, PrecedenceEntry, VariableType},
-    generate::rules::{Rule, MetadataParams, Associativity, Alias, Symbol, SymbolType},
-    generate::generate_parser_in_directory,
-    generate::prepare_grammar::prepare_grammar,
-    generate::{GeneratedParser, generate_parser_for_grammar_with_opts},
+use tree_sitter_cli::generate::{
+    generate_parser_for_grammar_with_opts, generate_parser_in_directory,
+    grammars::{InputGrammar, PrecedenceEntry, Variable, VariableType},
+    prepare_grammar::prepare_grammar,
+    rules::{Alias, Associativity, MetadataParams, Rule, Symbol, SymbolType},
+    GeneratedParser,
 };
 
 ///
 use tree_sitter_cli::generate::parse_grammar::parse_grammar;
 
 pub fn test_input_grammar() -> InputGrammar {
-    let r1 = Rule::Choice(
-        vec![
-            Rule::NamedSymbol(
-                String::from("grammar_statement"),
-            ),
-            Rule::NamedSymbol(
-                String::from("fragment_statement"),
-            ),
-            Rule::NamedSymbol(
-                String::from("assign_statement"),
-            ),
-        ],
-    );
+    let r1 = Rule::Choice(vec![
+        Rule::NamedSymbol(String::from("grammar_statement")),
+        Rule::NamedSymbol(String::from("fragment_statement")),
+        Rule::NamedSymbol(String::from("assign_statement")),
+    ]);
 
-    let v1 = Variable {
-        name: "".to_string(),
-        kind: VariableType::Hidden,
-        rule: r1,
-    };
-
+    let v1 = Variable { name: "".to_string(), kind: VariableType::Hidden, rule: r1 };
 
     InputGrammar {
         name: "yg".to_string(),
@@ -52,10 +39,7 @@ fn test() {
     let language_name = input_grammar.name;
 
     // Generate the parser and related files.
-    let GeneratedParser {
-        c_code: _,
-        node_types_json,
-    } = generate_parser_for_grammar_with_opts(
+    let GeneratedParser { c_code: _, node_types_json } = generate_parser_for_grammar_with_opts(
         &language_name,
         syntax_grammar,
         lexical_grammar,
@@ -63,7 +47,8 @@ fn test() {
         simple_aliases,
         true,
         None,
-    ).unwrap();
+    )
+    .unwrap();
     // println!("{}", c_code);
     println!("{}", node_types_json);
 }

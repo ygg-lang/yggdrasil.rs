@@ -1,5 +1,5 @@
 ==================
-Header statements `grammar!`
+Expression-1
 ==================
 
 test1 = name <- a ~ b | name ~ "c"
@@ -7,37 +7,48 @@ test1 = name <- a ~ b | name ~ "c"
 ---
 
 (program
-  (whitespace)
-  (whitespace)
-  (assign_statement
-    id: (id)
-    (whitespace)
-    (whitespace)
-    (binary_expression
-      lhs: (id)
-      (whitespace)
-      (whitespace)
-      rhs: (binary_expression
-        lhs: (binary_expression
-          lhs: (id)
-          (whitespace)
-          (whitespace)
-          rhs: (id))
-        (whitespace)
-        (whitespace)
-        rhs: (binary_expression
-          lhs: (id)
-          (whitespace)
-          (whitespace)
-          rhs: (string)))))
-  (whitespace)
-  (whitespace))
+  (NEWLINE)
+  (WHITESPACE)
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (ERROR)
+      (WHITESPACE)
+      (id)
+      (WHITESPACE)
+      (ERROR)
+      (WHITESPACE)
+      (binary_expression
+        (binary_expression
+          (binary_expression
+            (id)
+            (WHITESPACE)
+            (WHITESPACE)
+            (string))
+          (WHITESPACE)
+          (WHITESPACE)
+          (id))
+        (WHITESPACE)
+        (WHITESPACE)
+        (binary_expression
+          (id)
+          (WHITESPACE)
+          (WHITESPACE)
+          (binary_expression
+            (string)
+            (WHITESPACE)
+            (WHITESPACE)
+            (id))))
+      (eos)))
+  (NEWLINE)
+  (WHITESPACE))
 
 
 
 
 ==================
-Header statements `fragment!`
+Expression-2
 ==================
 
 test2 = name <- a ~ "b" | name <- c | "d" ~ e;
@@ -45,37 +56,39 @@ test2 = name <- a ~ "b" | name <- c | "d" ~ e;
 ---
 
 (program
-  (whitespace)
-  (whitespace)
-  (assign_statement
-    (id)
-    (whitespace)
-    (whitespace)
-    (binary_expression
+  (NEWLINE)
+  (WHITESPACE)
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (ERROR)
+      (WHITESPACE)
+      (id)
+      (WHITESPACE)
+      (ERROR)
+      (WHITESPACE)
       (binary_expression
-        (id)
-        (whitespace)
-        (whitespace)
         (binary_expression
           (binary_expression
             (id)
-            (whitespace)
-            (whitespace)
+            (WHITESPACE)
+            (WHITESPACE)
             (string))
-          (whitespace)
-          (whitespace)
-          (id)))
-      (whitespace)
-      (whitespace)
-      (binary_expression
-        (id)
-        (whitespace)
-        (whitespace)
+          (WHITESPACE)
+          (WHITESPACE)
+          (id))
+        (WHITESPACE)
+        (WHITESPACE)
         (binary_expression
-          (string)
-          (whitespace)
-          (whitespace)
-          (id))))
-    (eos))
-  (whitespace)
-  (whitespace))
+          (id)
+          (WHITESPACE)
+          (WHITESPACE)
+          (binary_expression
+            (string)
+            (WHITESPACE)
+            (WHITESPACE)
+            (id))))
+      (eos)))
+  (NEWLINE)
+  (WHITESPACE))
