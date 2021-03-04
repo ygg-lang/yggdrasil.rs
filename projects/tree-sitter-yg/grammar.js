@@ -51,8 +51,8 @@ module.exports = grammar({
 
         assign_statement: $ => seq(
             field("id", $.id),
-            field("eq", $.id),
-            $._expression,
+            field("eq", $.eq),
+            $.expression,
             optional($.eos)
         ),
 
@@ -62,9 +62,10 @@ module.exports = grammar({
             "@="
         ),
 
-        _expression: $ => choice(
+        expression: $ => choice(
             $.id,
             $.string,
+            $.unsigned,
             $.regex_long,
             $.regex_range,
             $.regex_set,
@@ -74,9 +75,9 @@ module.exports = grammar({
         ),
 
         unary_expression: $ => prec(2, choice(
-            seq($._expression, field("suffix", "?")),
-            seq($._expression, field("suffix", "*")),
-            seq($._expression, field("suffix", "+")),
+            seq($.expression, field("suffix", "?")),
+            seq($.expression, field("suffix", "*")),
+            seq($.expression, field("suffix", "+")),
             //seq(field("prefix", '^'), $._expression),
             //seq(field("prefix", '!'), $._expression),
             // ...
@@ -90,9 +91,9 @@ module.exports = grammar({
             // 因此上式等价于:
             // name <- ((a ~ b) | (name ~ c))
             // binary_left(40, $._expression, token.immediate(/ +/), $._expression),
-            binary_left(30, $._expression, "~", $._expression),
-            binary_left(20, $._expression, "|", $._expression),
-            binary_left(10, $._expression, "<-", $._expression),
+            binary_left(30, $.expression, "~", $.expression),
+            binary_left(20, $.expression, "|", $.expression),
+            binary_left(10, $.expression, "<-", $.expression),
         ),
 
         variant_tag: $ => seq('#', $.id, field("is_empty", "!")),
@@ -177,7 +178,7 @@ function binary_left(p, lhs, op, rhs) {
 
 function unary_prefix(p, lhs, op, rhs) {
     return seq(
-        $._expression,
+        $.expression,
         field("op", '^'),
     )
 }

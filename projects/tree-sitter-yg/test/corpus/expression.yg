@@ -21,11 +21,7 @@ test1 = name <- a ~ b | name ~ "c"
       (WHITESPACE)
       (binary_expression
         (binary_expression
-          (binary_expression
-            (id)
-            (WHITESPACE)
-            (WHITESPACE)
-            (string))
+          (id)
           (WHITESPACE)
           (WHITESPACE)
           (id))
@@ -35,12 +31,7 @@ test1 = name <- a ~ b | name ~ "c"
           (id)
           (WHITESPACE)
           (WHITESPACE)
-          (binary_expression
-            (string)
-            (WHITESPACE)
-            (WHITESPACE)
-            (id))))
-      (eos)))
+          (string)))))
   (NEWLINE)
   (WHITESPACE))
 

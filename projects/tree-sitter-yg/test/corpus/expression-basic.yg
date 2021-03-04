@@ -1,0 +1,60 @@
+==================
+Expression-1 `*`
+==================
+
+test = name*
+
+---
+
+(program
+  (NEWLINE)
+  (WHITESPACE)
+  (ERROR
+    (id)
+    (WHITESPACE)
+    (ERROR)
+    (WHITESPACE)
+    (id))
+  (NEWLINE)
+  (WHITESPACE))
+
+==================
+Expression-2 `+`
+==================
+
+test = name+
+
+---
+
+(program
+  (NEWLINE)
+  (WHITESPACE)
+  (ERROR
+    (id)
+    (WHITESPACE)
+    (ERROR)
+    (WHITESPACE)
+    (id))
+  (NEWLINE)
+  (WHITESPACE))
+
+==================
+Expression-3 `?`
+==================
+
+test = name?
+
+---
+
+(program
+  (NEWLINE)
+  (WHITESPACE)
+  (ERROR
+    (id)
+    (WHITESPACE)
+    (ERROR)
+    (WHITESPACE)
+    (id))
+  (NEWLINE)
+  (WHITESPACE))
+
