@@ -74,7 +74,7 @@ module.exports = grammar({
             // ...
         ),
 
-        unary_expression: $ => prec(2, choice(
+        unary_expression: $ => prec(100, choice(
             seq($.expression, field("suffix", "?")),
             seq($.expression, field("suffix", "*")),
             seq($.expression, field("suffix", "+")),
@@ -90,7 +90,7 @@ module.exports = grammar({
             // ~ 等于空格, 是短程符号
             // 因此上式等价于:
             // name <- ((a ~ b) | (name ~ c))
-            // binary_left(40, $._expression, token.immediate(/ +/), $._expression),
+            //binary_left(40, $.expression, token.immediate(/\s+/), $.expression),
             binary_left(30, $.expression, "~", $.expression),
             binary_left(20, $.expression, "|", $.expression),
             binary_left(10, $.expression, "<-", $.expression),
@@ -113,12 +113,12 @@ module.exports = grammar({
         string: $ => choice(
             seq(
                 "'",
-                /[a-zA-Z]*/,
+                /[^'\\]*(\\.[^'\\]*)*/,
                 "'",
             ),
             seq(
                 '"',
-                /[a-zA-Z]*/,
+                /[^"\\]*(\\.[^"\\]*)*/,
                 '"',
             )
         ),
@@ -146,7 +146,7 @@ module.exports = grammar({
         eos: $ => ";",
 
         NEWLINE: $ => /\r|\r|\n\r/,
-        WHITESPACE: $ => /\s+/,
+        WHITESPACE: $ => /\s/,
     }
 });
 

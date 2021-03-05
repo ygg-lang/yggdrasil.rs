@@ -2,7 +2,7 @@
 Expression-1
 ==================
 test1 = name <- a ~ b | name ~ "c"
----
+------------------
 
 (program
   (statement
@@ -42,7 +42,7 @@ test1 = name <- a ~ b | name ~ "c"
 Expression-2
 ==================
 test2 = name <- a ~ "b" | name <- c | "d" ~ e;
----
+------------------
 
 (program
   (statement
@@ -90,4 +90,3 @@ test2 = name <- a ~ "b" | name <- c | "d" ~ e;
                   (expression
                     (id))))))))
       (eos))))
-

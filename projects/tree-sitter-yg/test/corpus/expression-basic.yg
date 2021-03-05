@@ -1,14 +1,10 @@
 ==================
 Expression-1 `*`
 ==================
-
 test = name*
-
----
+------------------
 
 (program
-  (NEWLINE)
-  (WHITESPACE)
   (statement
     (assign_statement
       (id)
@@ -18,21 +14,15 @@ test = name*
       (expression
         (unary_expression
           (expression
-            (id))))))
-  (NEWLINE)
-  (WHITESPACE))
+            (id)))))))
 
 ==================
 Expression-2 `+`
 ==================
-
 test = name+
-
----
+------------------
 
 (program
-  (NEWLINE)
-  (WHITESPACE)
   (statement
     (assign_statement
       (id)
@@ -42,21 +32,15 @@ test = name+
       (expression
         (unary_expression
           (expression
-            (id))))))
-  (NEWLINE)
-  (WHITESPACE))
+            (id)))))))
 
 ==================
 Expression-3 `?`
 ==================
-
 test = name?
-
----
+------------------
 
 (program
-  (NEWLINE)
-  (WHITESPACE)
   (statement
     (assign_statement
       (id)
@@ -66,7 +50,69 @@ test = name?
       (expression
         (unary_expression
           (expression
-            (id))))))
-  (NEWLINE)
-  (WHITESPACE))
+            (id)))))))
 
+==================
+Expression-4 `~`
+==================
+test = a ~ b
+------------------
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (binary_expression
+          (expression
+            (id))
+          (WHITESPACE)
+          (WHITESPACE)
+          (expression
+            (id)))))))
+
+==================
+Expression-5 ` `
+==================
+test = a b
+------------------
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (binary_expression
+          (expression
+            (id))
+          (expression
+            (id)))))))
+
+
+==================
+Expression-6 `|`
+==================
+test = a | b
+------------------
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (binary_expression
+          (expression
+            (id))
+          (WHITESPACE)
+          (WHITESPACE)
+          (expression
+            (id)))))))
