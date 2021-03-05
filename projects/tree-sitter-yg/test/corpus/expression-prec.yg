@@ -1,0 +1,93 @@
+==================
+Expression-1
+==================
+test1 = name <- a ~ b | name ~ "c"
+---
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (binary_expression
+          (expression
+            (id))
+          (WHITESPACE)
+          (WHITESPACE)
+          (expression
+            (binary_expression
+              (expression
+                (binary_expression
+                  (expression
+                    (id))
+                  (WHITESPACE)
+                  (WHITESPACE)
+                  (expression
+                    (id))))
+              (WHITESPACE)
+              (WHITESPACE)
+              (expression
+                (binary_expression
+                  (expression
+                    (id))
+                  (WHITESPACE)
+                  (WHITESPACE)
+                  (expression
+                    (string)))))))))))
+
+==================
+Expression-2
+==================
+test2 = name <- a ~ "b" | name <- c | "d" ~ e;
+---
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (binary_expression
+          (expression
+            (binary_expression
+              (expression
+                (id))
+              (WHITESPACE)
+              (WHITESPACE)
+              (expression
+                (binary_expression
+                  (expression
+                    (binary_expression
+                      (expression
+                        (id))
+                      (WHITESPACE)
+                      (WHITESPACE)
+                      (expression
+                        (string))))
+                  (WHITESPACE)
+                  (WHITESPACE)
+                  (expression
+                    (id))))))
+          (WHITESPACE)
+          (WHITESPACE)
+          (expression
+            (binary_expression
+              (expression
+                (id))
+              (WHITESPACE)
+              (WHITESPACE)
+              (expression
+                (binary_expression
+                  (expression
+                    (string))
+                  (WHITESPACE)
+                  (WHITESPACE)
+                  (expression
+                    (id))))))))
+      (eos))))
+

@@ -9,12 +9,16 @@ test = name*
 (program
   (NEWLINE)
   (WHITESPACE)
-  (ERROR
-    (id)
-    (WHITESPACE)
-    (ERROR)
-    (WHITESPACE)
-    (id))
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (unary_expression
+          (expression
+            (id))))))
   (NEWLINE)
   (WHITESPACE))
 
@@ -29,12 +33,16 @@ test = name+
 (program
   (NEWLINE)
   (WHITESPACE)
-  (ERROR
-    (id)
-    (WHITESPACE)
-    (ERROR)
-    (WHITESPACE)
-    (id))
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (unary_expression
+          (expression
+            (id))))))
   (NEWLINE)
   (WHITESPACE))
 
@@ -49,12 +57,16 @@ test = name?
 (program
   (NEWLINE)
   (WHITESPACE)
-  (ERROR
-    (id)
-    (WHITESPACE)
-    (ERROR)
-    (WHITESPACE)
-    (id))
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (unary_expression
+          (expression
+            (id))))))
   (NEWLINE)
   (WHITESPACE))
 

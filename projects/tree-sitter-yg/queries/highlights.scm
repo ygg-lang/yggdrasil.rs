@@ -1,4 +1,4 @@
 ; Keywords
 
-(Fragment) @keyword
-(Grammar) @keyword
+(fragment) @keyword
+(grammar) @keyword

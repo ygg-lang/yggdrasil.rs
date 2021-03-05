@@ -139,14 +139,14 @@ module.exports = grammar({
         regex_set: $ => seq(
             "\\p",
             "{",
-            /[_\p{}]/,
+            /[_0-9a-zA-Z]+/,
             "}"
         ),
 
         eos: $ => ";",
 
         NEWLINE: $ => /\r|\r|\n\r/,
-        WHITESPACE: $ => /\s/,
+        WHITESPACE: $ => /\s+/,
     }
 });
 
