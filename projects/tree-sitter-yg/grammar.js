@@ -50,6 +50,7 @@ module.exports = grammar({
 
 
         assign_statement: $ => seq(
+            optional("|"),
             field("id", $.id),
             field("eq", $.eq),
             $.expression,
@@ -63,25 +64,34 @@ module.exports = grammar({
         ),
 
         expression: $ => choice(
+            seq("(", $.expression, ")"),
             $.id,
             $.string,
             $.unsigned,
+            $.macro_call,
             $.regex_long,
             $.regex_range,
             $.regex_set,
-            $.unary_expression,
+            $.unary_suffix,
+            $.unary_prefix,
             $.binary_expression,
             // ...
         ),
 
-        unary_expression: $ => prec(100, choice(
-            seq($.expression, field("suffix", "?")),
-            seq($.expression, field("suffix", "*")),
-            seq($.expression, field("suffix", "+")),
-            //seq(field("prefix", '^'), $._expression),
-            //seq(field("prefix", '!'), $._expression),
-            // ...
+        unary_prefix: $ => prec.left(200, choice(
+            seq(field("prefix", $._prefix_op), field("expr", $.expression)),
+            // seq(field("prefix", "!"), field("expr", $.expression)),
         )),
+        unary_suffix: $ => prec.right(210,
+            seq(field("expr", $.expression), field("suffix", $._suffix_op))
+        ),
+
+        _prefix_op: $ => choice(
+            "^"
+        ),
+        _suffix_op: $ => choice(
+            "?", "*", "+"
+        ),
 
         binary_expression: $ => choice(
             // 空格连接禁止换行, 否则有可能会把下面几行的函数给吃进去
@@ -90,19 +100,35 @@ module.exports = grammar({
             // ~ 等于空格, 是短程符号
             // 因此上式等价于:
             // name <- ((a ~ b) | (name ~ c))
-            binary_left(40, $.expression, token.immediate(/\s+/), $.expression),
-            binary_left(30, $.expression, "~", $.expression),
+            //binary_left(100, $.expression, token.immediate(/[ ]/), $.expression),
+            binary_left(40, $.expression, "~", $.expression),
+            binary_left(30, $.expression, "#", $.variant_tag),
             binary_left(20, $.expression, "|", $.expression),
             binary_left(10, $.expression, "<-", $.expression),
         ),
 
-        variant_tag: $ => seq('#', $.id, field("is_empty", "!")),
+        tagged_expression: $ => seq(
+            field("expr", $.expression),
+            field("tag", optional($.variant_tag))
+        ),
+        variant_tag: $ => seq(
+            field("name", $.id),
+            optional(field("is_empty", "!"))
+        ),
 
-
+        macro_call: $ => seq(
+            "@",
+            field("name", $.id),
+            optional(seq(".", field("dot", $.id))),
+            "(",
+            interleave($.expr, ",", 1),
+            ")"
+        ),
 
         // Atomic
         id: $ => /[_\p{XID_Start}][\p{XID_Continue}]*/,
 
+        integer: $ => seq(optional($._sign), $.unsigned),
         unsigned: $ => token(/0|[1-9][0-9]*/),
         _sign: $ => /[+-]/,
 
@@ -125,29 +151,22 @@ module.exports = grammar({
             optional(/i|g/)
         ),
 
-        regex_range_neg: $ => seq(
-            "[^",
-            repeat(choice(
-                $.regex_set,
-                "-",
-                /[^\]]/
-            )),
-            "]"
-        ),
-
         regex_range: $ => seq(
-            "[",
-            repeat(choice(
-                $.regex_set,
-            )),
+            field("is_neg", choice("[^", "[")),
+            repeat($.regex_range_item),
             "]"
         ),
-
+        regex_range_item: $ => choice(
+            $.regex_set,
+            $.regex_range_item_group,
+            /[^\]]/
+        ),
+        regex_range_item_group: $ => binary_left(10, $.regex_range_item, "-", $.regex_range_item),
 
         regex_set: $ => seq(
             "\\p",
             "{",
-            field("set",/[_0-9a-zA-Z]+/),
+            field("set", /[_0-9a-zA-Z]+/),
             "}"
         ),
 
@@ -184,17 +203,17 @@ function binary_left(p, lhs, op, rhs) {
     )
 }
 
-function unary_prefix(p, lhs, op, rhs) {
-    return seq(
-        $.expression,
-        field("op", '^'),
-    )
+function unary_prefix(p, op, base) {
+    return prec.right(p, seq(
+        field("prefix", op),
+        field("expr", base),
+    ))
 }
 
-function unary_suffix(op, expr) {
-    return seq(
-        field("op", op),
-        field("expr", expr)
-    )
+function unary_suffix(p, expr, op) {
+    return prec.right(p, seq(
+        field("expr", base),
+        field("suffix", op)
+    ))
 }
 

@@ -84,7 +84,16 @@ Expression-4.1 `range`
 test = [0]
 ------------------
 
-(program)
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (regex_range
+          (regex_range_item))))))
 
 ==================
 Expression-4.2 `range`
@@ -92,7 +101,19 @@ Expression-4.2 `range`
 test = [0-1]
 ------------------
 
-(program)
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (regex_range
+          (regex_range_item
+            (regex_range_item_group
+              (regex_range_item)
+              (regex_range_item))))))))
 
 ==================
 Expression-4.3 `range`
@@ -100,7 +121,20 @@ Expression-4.3 `range`
 test = [0-1]
 ------------------
 
-(program)
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (regex_range
+          (regex_range_item
+            (regex_range_item_group
+              (regex_range_item)
+              (regex_range_item))))))))
+
 
 ==================
 Expression-4.4 `range`
@@ -108,7 +142,46 @@ Expression-4.4 `range`
 test = [_0-9a-zA-Z]
 ------------------
 
-(program)
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (regex_range
+          (regex_range_item)
+          (regex_range_item
+            (regex_range_item_group
+              (regex_range_item)
+              (regex_range_item)))
+          (regex_range_item
+            (regex_range_item_group
+              (regex_range_item)
+              (regex_range_item)))
+          (regex_range_item
+            (regex_range_item_group
+              (regex_range_item)
+              (regex_range_item))))))))
+
+==================
+Expression-4.5 `range`
+==================
+test = [^ _]
+------------------
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (regex_range
+          (regex_range_item)
+          (regex_range_item))))))
 
 ==================
 Expression-5.1 `regex`
@@ -116,4 +189,17 @@ Expression-5.1 `regex`
 test = /i/i
 ------------------
 
-(program)
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (regex_long
+          (ERROR
+            (id))))))
+  (ERROR
+    (id)))
+

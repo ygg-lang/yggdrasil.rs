@@ -1,7 +1,7 @@
 ==================
-Expression-1
+Expression-1.1
 ==================
-test1 = name <- a ~ b | name ~ "c"
+test1 = name <- a ~ b | name ~ c
 ------------------
 
 (program
@@ -36,7 +36,50 @@ test1 = name <- a ~ b | name ~ "c"
                   (WHITESPACE)
                   (WHITESPACE)
                   (expression
-                    (string)))))))))))
+                    (id)))))))))))
+
+==================
+Expression-1.2
+==================
+test1 = name <- ((a ~ b) | (name ~ c))
+------------------
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (binary_expression
+          (expression
+            (id))
+          (WHITESPACE)
+          (WHITESPACE)
+          (expression
+            (expression
+              (binary_expression
+                (expression
+                  (expression
+                    (binary_expression
+                      (expression
+                        (id))
+                      (WHITESPACE)
+                      (WHITESPACE)
+                      (expression
+                        (id)))))
+                (WHITESPACE)
+                (WHITESPACE)
+                (expression
+                  (expression
+                    (binary_expression
+                      (expression
+                        (id))
+                      (WHITESPACE)
+                      (WHITESPACE)
+                      (expression
+                        (id)))))))))))))
 
 ==================
 Expression-2

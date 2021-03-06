@@ -1,41 +1,5 @@
 ==================
-Expression-1 `*`
-==================
-test = name*
-------------------
-
-(program
-  (statement
-    (assign_statement
-      (id)
-      (WHITESPACE)
-      (eq)
-      (WHITESPACE)
-      (expression
-        (unary_expression
-          (expression
-            (id)))))))
-
-==================
-Expression-2 `+`
-==================
-test = name+
-------------------
-
-(program
-  (statement
-    (assign_statement
-      (id)
-      (WHITESPACE)
-      (eq)
-      (WHITESPACE)
-      (expression
-        (unary_expression
-          (expression
-            (id)))))))
-
-==================
-Expression-3 `?`
+Expression-1.1 `?`
 ==================
 test = name?
 ------------------
@@ -48,12 +12,66 @@ test = name?
       (eq)
       (WHITESPACE)
       (expression
-        (unary_expression
+        (unary_suffix
           (expression
             (id)))))))
 
 ==================
-Expression-4 `~`
+Expression-1.2 `+`
+==================
+test = name+
+------------------
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (unary_suffix
+          (expression
+            (id)))))))
+
+==================
+Expression-1.3 `*`
+==================
+test = name*
+------------------
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (unary_suffix
+          (expression
+            (id)))))))
+
+==================
+Expression-2.1 `^`
+==================
+test = ^name
+------------------
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (unary_prefix
+          (expression
+            (id)))))))
+
+==================
+Expression-4.1 `~`
 ==================
 test = a ~ b
 ------------------
@@ -75,9 +93,9 @@ test = a ~ b
             (id)))))))
 
 ==================
-Expression-5 ` `
+Expression-4.2 ` `
 ==================
-test = a b
+test = a  b
 ------------------
 
 (program
@@ -96,7 +114,7 @@ test = a b
 
 
 ==================
-Expression-6 `|`
+Expression-4.3 `|`
 ==================
 test = a | b
 ------------------
@@ -116,3 +134,35 @@ test = a | b
           (WHITESPACE)
           (expression
             (id)))))))
+
+==================
+Expression-4.4 `|`
+==================
+test = a #A | b #B
+------------------
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (binary_expression
+          (expression
+            (binary_expression
+              (expression
+                (id))
+              (WHITESPACE)
+              (variant_tag
+                (id))))
+          (WHITESPACE)
+          (WHITESPACE)
+          (expression
+            (binary_expression
+              (expression
+                (id))
+              (WHITESPACE)
+              (variant_tag
+                (id)))))))))
