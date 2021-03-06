@@ -4,7 +4,15 @@ Expression-1.1 `number`
 test = 0
 ------------------
 
-(program)
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (unsigned)))))
 
 ==================
 Expression-1.1 `number`
@@ -12,7 +20,15 @@ Expression-1.1 `number`
 test = 10
 ------------------
 
-(program)
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (unsigned)))))
 
 ==================
 Expression-2.1 `string`
@@ -20,7 +36,15 @@ Expression-2.1 `string`
 test = "s"
 ------------------
 
-(program)
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (string)))))
 
 ==================
 Expression-2.2 `string`
@@ -28,10 +52,34 @@ Expression-2.2 `string`
 test = "\s"
 ------------------
 
-(program)
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (string)))))
 
 ==================
-Expression-3.1 `range`
+Expression-3.1 `set`
+==================
+test = \p{XID_Start}
+------------------
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (regex_set)))))
+
+==================
+Expression-4.1 `range`
 ==================
 test = [0]
 ------------------
@@ -39,7 +87,7 @@ test = [0]
 (program)
 
 ==================
-Expression-3.2 `range`
+Expression-4.2 `range`
 ==================
 test = [0-1]
 ------------------
@@ -47,7 +95,23 @@ test = [0-1]
 (program)
 
 ==================
-Expression-4.1 `regex`
+Expression-4.3 `range`
+==================
+test = [0-1]
+------------------
+
+(program)
+
+==================
+Expression-4.4 `range`
+==================
+test = [_0-9a-zA-Z]
+------------------
+
+(program)
+
+==================
+Expression-5.1 `regex`
 ==================
 test = /i/i
 ------------------

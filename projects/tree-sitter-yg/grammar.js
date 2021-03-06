@@ -9,7 +9,7 @@ module.exports = grammar({
     supertypes: $ => [
 
     ],
-    inline: $ => [ ],
+    inline: $ => [],
     word: $ => $.id,
 
     rules: {
@@ -90,7 +90,7 @@ module.exports = grammar({
             // ~ 等于空格, 是短程符号
             // 因此上式等价于:
             // name <- ((a ~ b) | (name ~ c))
-            //binary_left(40, $.expression, token.immediate(/\s+/), $.expression),
+            binary_left(40, $.expression, token.immediate(/\s+/), $.expression),
             binary_left(30, $.expression, "~", $.expression),
             binary_left(20, $.expression, "|", $.expression),
             binary_left(10, $.expression, "<-", $.expression),
@@ -103,10 +103,6 @@ module.exports = grammar({
         // Atomic
         id: $ => /[_\p{XID_Start}][\p{XID_Continue}]*/,
 
-        integer: $ => seq(
-            optional($._sign),
-            $.unsigned,
-        ),
         unsigned: $ => token(/0|[1-9][0-9]*/),
         _sign: $ => /[+-]/,
 
@@ -129,9 +125,21 @@ module.exports = grammar({
             optional(/i|g/)
         ),
 
+        regex_range_neg: $ => seq(
+            "[^",
+            repeat(choice(
+                $.regex_set,
+                "-",
+                /[^\]]/
+            )),
+            "]"
+        ),
+
         regex_range: $ => seq(
             "[",
-                
+            repeat(choice(
+                $.regex_set,
+            )),
             "]"
         ),
 
@@ -139,7 +147,7 @@ module.exports = grammar({
         regex_set: $ => seq(
             "\\p",
             "{",
-            /[_0-9a-zA-Z]+/,
+            field("set",/[_0-9a-zA-Z]+/),
             "}"
         ),
 
