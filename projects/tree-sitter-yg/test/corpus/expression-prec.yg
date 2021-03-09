@@ -12,31 +12,28 @@ test1 = name <- a ~ b | name ~ c
       (eq)
       (WHITESPACE)
       (expression
-        (binary_expression
-          (expression
-            (id))
-          (WHITESPACE)
-          (WHITESPACE)
-          (expression
-            (binary_expression
+        (expression
+          (id))
+        (WHITESPACE)
+        (WHITESPACE)
+        (expression
+          (or
+            (expression
               (expression
-                (binary_expression
-                  (expression
-                    (id))
-                  (WHITESPACE)
-                  (WHITESPACE)
-                  (expression
-                    (id))))
+                (id))
               (WHITESPACE)
               (WHITESPACE)
               (expression
-                (binary_expression
-                  (expression
-                    (id))
-                  (WHITESPACE)
-                  (WHITESPACE)
-                  (expression
-                    (id)))))))))))
+                (id)))
+            (WHITESPACE)
+            (WHITESPACE)
+            (expression
+              (expression
+                (id))
+              (WHITESPACE)
+              (WHITESPACE)
+              (expression
+                (id)))))))))
 
 ==================
 Expression-1.2
@@ -52,34 +49,31 @@ test1 = name <- ((a ~ b) | (name ~ c))
       (eq)
       (WHITESPACE)
       (expression
-        (binary_expression
+        (expression
+          (id))
+        (WHITESPACE)
+        (WHITESPACE)
+        (expression
           (expression
-            (id))
-          (WHITESPACE)
-          (WHITESPACE)
-          (expression
-            (expression
-              (binary_expression
+            (or
+              (expression
                 (expression
                   (expression
-                    (binary_expression
-                      (expression
-                        (id))
-                      (WHITESPACE)
-                      (WHITESPACE)
-                      (expression
-                        (id)))))
-                (WHITESPACE)
-                (WHITESPACE)
+                    (id))
+                  (WHITESPACE)
+                  (WHITESPACE)
+                  (expression
+                    (id))))
+              (WHITESPACE)
+              (WHITESPACE)
+              (expression
                 (expression
                   (expression
-                    (binary_expression
-                      (expression
-                        (id))
-                      (WHITESPACE)
-                      (WHITESPACE)
-                      (expression
-                        (id)))))))))))))
+                    (id))
+                  (WHITESPACE)
+                  (WHITESPACE)
+                  (expression
+                    (id)))))))))))
 
 ==================
 Expression-2
@@ -95,41 +89,37 @@ test2 = name <- a ~ "b" | name <- c | "d" ~ e;
       (eq)
       (WHITESPACE)
       (expression
-        (binary_expression
+        (expression
           (expression
-            (binary_expression
-              (expression
-                (id))
-              (WHITESPACE)
-              (WHITESPACE)
-              (expression
-                (binary_expression
-                  (expression
-                    (binary_expression
-                      (expression
-                        (id))
-                      (WHITESPACE)
-                      (WHITESPACE)
-                      (expression
-                        (string))))
-                  (WHITESPACE)
-                  (WHITESPACE)
-                  (expression
-                    (id))))))
+            (id))
           (WHITESPACE)
           (WHITESPACE)
           (expression
-            (binary_expression
+            (or
               (expression
-                (id))
+                (expression
+                  (id))
+                (WHITESPACE)
+                (WHITESPACE)
+                (expression
+                  (string)))
               (WHITESPACE)
               (WHITESPACE)
               (expression
-                (binary_expression
-                  (expression
-                    (string))
-                  (WHITESPACE)
-                  (WHITESPACE)
-                  (expression
-                    (id))))))))
+                (id)))))
+        (WHITESPACE)
+        (WHITESPACE)
+        (expression
+          (or
+            (expression
+              (id))
+            (WHITESPACE)
+            (WHITESPACE)
+            (expression
+              (expression
+                (string))
+              (WHITESPACE)
+              (WHITESPACE)
+              (expression
+                (id))))))
       (eos))))

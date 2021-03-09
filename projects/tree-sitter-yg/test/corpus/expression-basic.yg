@@ -71,7 +71,7 @@ test = ^name
             (id)))))))
 
 ==================
-Expression-4.1 `~`
+Expression-3.1 `~`
 ==================
 test = a ~ b
 ------------------
@@ -84,16 +84,15 @@ test = a ~ b
       (eq)
       (WHITESPACE)
       (expression
-        (binary_expression
-          (expression
-            (id))
-          (WHITESPACE)
-          (WHITESPACE)
-          (expression
-            (id)))))))
+        (expression
+          (id))
+        (WHITESPACE)
+        (WHITESPACE)
+        (expression
+          (id))))))
 
 ==================
-Expression-4.2 ` `
+Expression-3.2 ` `
 ==================
 test = a  b
 ------------------
@@ -106,16 +105,14 @@ test = a  b
       (eq)
       (WHITESPACE)
       (expression
-        (binary_expression
-          (expression
-            (id))
-          (WHITESPACE)
-          (expression
-            (id)))))))
-
+        (id))))
+  (WHITESPACE)
+  (WHITESPACE)
+  (ERROR
+    (id)))
 
 ==================
-Expression-4.3 `|`
+Expression-4.1 `|`
 ==================
 test = a | b
 ------------------
@@ -128,7 +125,7 @@ test = a | b
       (eq)
       (WHITESPACE)
       (expression
-        (binary_expression
+        (or
           (expression
             (id))
           (WHITESPACE)
@@ -137,9 +134,9 @@ test = a | b
             (id)))))))
 
 ==================
-Expression-4.4 `#`
+Expression-4.2 `#`
 ==================
-test = a #A | b #B
+test = a #A
 ------------------
 
 (program
@@ -150,20 +147,32 @@ test = a #A | b #B
       (eq)
       (WHITESPACE)
       (expression
-        (binary_expression
+        (id))))
+  (WHITESPACE)
+  (ERROR
+    (id)))
+
+==================
+Expression-4.3 `#`
+==================
+test = a | b #A
+------------------
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (or
           (expression
-            (binary_expression
-              (expression
-                (id))
-              (WHITESPACE)
-              (variant_tag
-                (id))))
+            (id))
           (WHITESPACE)
           (WHITESPACE)
           (expression
-            (binary_expression
-              (expression
-                (id))
-              (WHITESPACE)
-              (variant_tag
-                (id)))))))))
+            (id))
+          (WHITESPACE)
+          (variant_tag
+            (id)))))))

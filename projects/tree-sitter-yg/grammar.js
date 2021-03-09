@@ -9,7 +9,10 @@ module.exports = grammar({
     supertypes: $ => [
 
     ],
-    inline: $ => [],
+    inline: $ => [
+        $._binary_expression,
+        $._grammar_exts
+    ],
     word: $ => $.id,
 
     rules: {
@@ -50,9 +53,9 @@ module.exports = grammar({
 
 
         assign_statement: $ => seq(
-            optional("|"),
             field("id", $.id),
             field("eq", $.eq),
+            optional("|"),
             $.expression,
             optional($.eos)
         ),
@@ -74,7 +77,7 @@ module.exports = grammar({
             $.regex_set,
             $.unary_suffix,
             $.unary_prefix,
-            $.binary_expression,
+            $._binary_expression,
             // ...
         ),
 
@@ -93,7 +96,7 @@ module.exports = grammar({
             "?", "*", "+"
         ),
 
-        binary_expression: $ => choice(
+        _binary_expression: $ => choice(
             // 空格连接禁止换行, 否则有可能会把下面几行的函数给吃进去
             // name <- a ~ b | name ~ c
             // <- 是长程符号
@@ -102,22 +105,23 @@ module.exports = grammar({
             // name <- ((a ~ b) | (name ~ c))
             // binary_left(100, $.expression, token.immediate(" "), $.expression),
             binary_left(30, $.expression, "~", $.expression),
-            ternary_left(20, $.expression, "|", $.expression, "#", $.variant_tag),
+            binary_left(20, $.variant_tag, "|", $.variant_tag),
             binary_left(10, $.expression, "<-", $.expression),
         ),
 
-        or: $ => prec.left(
-            field("lhs", $.expression),
+        or: $ => prec.left(20, seq(
+            field("lhs", $.variant_tag),
             "|",
-            field("rhs", $.expression),
-            "#",
-            field("tag", $.variant_tag),
-        ),
-        
-        variant_tag: $ => seq(
-            field("name", $.id),
-            optional(field("is_empty", "!"))
-        ),
+            field("rhs", $.variant_tag),
+        )),
+
+        variant_tag: $ => prec.left(20,seq(
+            field("expression", $.expression),
+            optional(seq(
+                field("op", /[!_]?\#/),
+                field("name", $.id),
+            ))
+        )),
 
         macro_call: $ => seq(
             "@",
