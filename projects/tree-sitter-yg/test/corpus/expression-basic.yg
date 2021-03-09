@@ -109,6 +109,7 @@ test = a  b
         (binary_expression
           (expression
             (id))
+          (WHITESPACE)
           (expression
             (id)))))))
 
@@ -136,7 +137,7 @@ test = a | b
             (id)))))))
 
 ==================
-Expression-4.4 `|`
+Expression-4.4 `#`
 ==================
 test = a #A | b #B
 ------------------

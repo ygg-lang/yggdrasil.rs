@@ -29,5 +29,6 @@ parser.lib
 parser.obj
 scanner.obj
 
-
-
+# Ignore
+projects/tree-sitter-calc/**/*
+projects/tree-sitter-cli/**/*

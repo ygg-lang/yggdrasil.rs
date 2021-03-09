@@ -11,6 +11,8 @@ pub enum Statement {
     GrammarStatement(Box<GrammarStatement>),
     FragmentStatement(Box<FragmentStatement>),
     AssignStatement(Box<AssignStatement>),
+    IgnoreStatement(Box<IgnoreStatement>),
+    EmptyStatement(Box<Eos>)
 }
 
 #[derive(Clone, Debug)]
@@ -30,6 +32,12 @@ pub struct FragmentStatement {
 pub struct AssignStatement {
     pub id: Identifier,
     pub eos: Eos,
+    pub range: Range,
+}
+
+pub struct IgnoreStatement {
+    pub rules: Vec<String>,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
@@ -43,6 +51,8 @@ pub struct Eos {
     pub data: bool,
     pub range: Range,
 }
+
+
 
 impl Default for Identifier {
     fn default() -> Self {

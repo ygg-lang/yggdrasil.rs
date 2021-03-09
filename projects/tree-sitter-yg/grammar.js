@@ -46,7 +46,7 @@ module.exports = grammar({
 
 
         // IgnoresStatement
-        ignore: $ => "ignore",
+        ignore: $ => "ignore!",
 
 
         assign_statement: $ => seq(
@@ -100,17 +100,20 @@ module.exports = grammar({
             // ~ 等于空格, 是短程符号
             // 因此上式等价于:
             // name <- ((a ~ b) | (name ~ c))
-            //binary_left(100, $.expression, token.immediate(/[ ]/), $.expression),
-            binary_left(40, $.expression, "~", $.expression),
-            binary_left(30, $.expression, "#", $.variant_tag),
-            binary_left(20, $.expression, "|", $.expression),
+            // binary_left(100, $.expression, token.immediate(" "), $.expression),
+            binary_left(30, $.expression, "~", $.expression),
+            ternary_left(20, $.expression, "|", $.expression, "#", $.variant_tag),
             binary_left(10, $.expression, "<-", $.expression),
         ),
 
-        tagged_expression: $ => seq(
-            field("expr", $.expression),
-            field("tag", optional($.variant_tag))
+        or: $ => prec.left(
+            field("lhs", $.expression),
+            "|",
+            field("rhs", $.expression),
+            "#",
+            field("tag", $.variant_tag),
         ),
+        
         variant_tag: $ => seq(
             field("name", $.id),
             optional(field("is_empty", "!"))
@@ -121,7 +124,7 @@ module.exports = grammar({
             field("name", $.id),
             optional(seq(".", field("dot", $.id))),
             "(",
-            interleave($.expr, ",", 1),
+            interleave($.expression, ",", 1),
             ")"
         ),
 
@@ -191,6 +194,21 @@ function interleave(rule, sep, trailing) {
         return seq(rule, repeat(seq(sep, rule)), optional(sep))
     }
 }
+
+
+function ternary_left(p, lhs, op1, mid, op2, rhs) {
+    return prec.left(
+        p,
+        seq(
+            field("lhs", lhs),
+            field("op1", op1),
+            field("mid", mid),
+            field("op2", op2),
+            field("rhs", rhs),
+        )
+    )
+}
+
 
 function binary_left(p, lhs, op, rhs) {
     return prec.left(
