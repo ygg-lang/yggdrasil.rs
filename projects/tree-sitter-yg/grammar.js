@@ -109,13 +109,7 @@ module.exports = grammar({
             binary_left(10, $.expression, "<-", $.expression),
         ),
 
-        or: $ => prec.left(20, seq(
-            field("lhs", $.variant_tag),
-            "|",
-            field("rhs", $.variant_tag),
-        )),
-
-        variant_tag: $ => prec.left(20,seq(
+        variant_tag: $ => prec.left(40,seq(
             field("expression", $.expression),
             optional(seq(
                 field("op", /[!_]?\#/),

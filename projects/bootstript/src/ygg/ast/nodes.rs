@@ -12,7 +12,7 @@ pub enum Statement {
     FragmentStatement(Box<FragmentStatement>),
     AssignStatement(Box<AssignStatement>),
     IgnoreStatement(Box<IgnoreStatement>),
-    EmptyStatement(Box<Eos>)
+    EmptyStatement(Box<Eos>),
 }
 
 #[derive(Clone, Debug)]
@@ -31,6 +31,8 @@ pub struct FragmentStatement {
 #[derive(Clone, Debug)]
 pub struct AssignStatement {
     pub id: Identifier,
+    pub eq: String,
+    pub rhs: Expression,
     pub eos: Eos,
     pub range: Range,
 }
@@ -41,7 +43,35 @@ pub struct IgnoreStatement {
 }
 
 #[derive(Clone, Debug)]
+pub enum Expression {
+    Priority(Box<Expression>),
+    Identifier(Box<Identifier>),
+    Integer(Box<Unsigned>),
+    String(Box<StringLiteral>),
+    UnarySuffix(Box<UnarySuffix>),
+    UnaryPrefix(Box<UnaryPrefix>),
+}
+
+#[derive(Clone, Debug)]
+pub struct UnarySuffix {}
+
+#[derive(Clone, Debug)]
+pub struct UnaryPrefix {}
+
+#[derive(Clone, Debug)]
 pub struct Identifier {
+    pub data: String,
+    pub range: Range,
+}
+
+#[derive(Clone, Debug)]
+pub struct Unsigned {
+    pub data: usize,
+    pub range: Range,
+}
+
+#[derive(Clone, Debug)]
+pub struct StringLiteral {
     pub data: String,
     pub range: Range,
 }
@@ -51,8 +81,6 @@ pub struct Eos {
     pub data: bool,
     pub range: Range,
 }
-
-
 
 impl Default for Identifier {
     fn default() -> Self {

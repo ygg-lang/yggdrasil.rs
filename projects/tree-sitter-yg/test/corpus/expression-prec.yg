@@ -17,23 +17,24 @@ test1 = name <- a ~ b | name ~ c
         (WHITESPACE)
         (WHITESPACE)
         (expression
-          (or
+          (expression
             (expression
-              (expression
-                (id))
-              (WHITESPACE)
-              (WHITESPACE)
-              (expression
-                (id)))
+              (id))
             (WHITESPACE)
             (WHITESPACE)
             (expression
-              (expression
-                (id))
+              (variant_tag
+                (expression
+                  (id)))
               (WHITESPACE)
               (WHITESPACE)
-              (expression
-                (id)))))))))
+              (variant_tag
+                (expression
+                  (id)))))
+          (WHITESPACE)
+          (WHITESPACE)
+          (expression
+            (id)))))))
 
 ==================
 Expression-1.2
@@ -55,7 +56,7 @@ test1 = name <- ((a ~ b) | (name ~ c))
         (WHITESPACE)
         (expression
           (expression
-            (or
+            (variant_tag
               (expression
                 (expression
                   (expression
@@ -63,9 +64,10 @@ test1 = name <- ((a ~ b) | (name ~ c))
                   (WHITESPACE)
                   (WHITESPACE)
                   (expression
-                    (id))))
-              (WHITESPACE)
-              (WHITESPACE)
+                    (id)))))
+            (WHITESPACE)
+            (WHITESPACE)
+            (variant_tag
               (expression
                 (expression
                   (expression
@@ -74,6 +76,7 @@ test1 = name <- ((a ~ b) | (name ~ c))
                   (WHITESPACE)
                   (expression
                     (id)))))))))))
+
 
 ==================
 Expression-2
@@ -95,31 +98,33 @@ test2 = name <- a ~ "b" | name <- c | "d" ~ e;
           (WHITESPACE)
           (WHITESPACE)
           (expression
-            (or
-              (expression
-                (expression
-                  (id))
-                (WHITESPACE)
-                (WHITESPACE)
-                (expression
-                  (string)))
-              (WHITESPACE)
-              (WHITESPACE)
-              (expression
-                (id)))))
-        (WHITESPACE)
-        (WHITESPACE)
-        (expression
-          (or
             (expression
               (id))
             (WHITESPACE)
             (WHITESPACE)
             (expression
-              (expression
-                (string))
+              (variant_tag
+                (expression
+                  (string)))
               (WHITESPACE)
               (WHITESPACE)
+              (variant_tag
+                (expression
+                  (id))))))
+        (WHITESPACE)
+        (WHITESPACE)
+        (expression
+          (expression
+            (variant_tag
               (expression
-                (id))))))
+                (id)))
+            (WHITESPACE)
+            (WHITESPACE)
+            (variant_tag
+              (expression
+                (string))))
+          (WHITESPACE)
+          (WHITESPACE)
+          (expression
+            (id))))
       (eos))))

@@ -12,7 +12,7 @@ test = name?
       (eq)
       (WHITESPACE)
       (expression
-        (unary_suffix
+        (UnarySuffix
           (expression
             (id)))))))
 
@@ -30,7 +30,7 @@ test = name+
       (eq)
       (WHITESPACE)
       (expression
-        (unary_suffix
+        (UnarySuffix
           (expression
             (id)))))))
 
@@ -48,7 +48,7 @@ test = name*
       (eq)
       (WHITESPACE)
       (expression
-        (unary_suffix
+        (UnarySuffix
           (expression
             (id)))))))
 
@@ -66,7 +66,7 @@ test = ^name
       (eq)
       (WHITESPACE)
       (expression
-        (unary_prefix
+        (UnaryPrefix
           (expression
             (id)))))))
 
@@ -125,11 +125,12 @@ test = a | b
       (eq)
       (WHITESPACE)
       (expression
-        (or
+        (variant_tag
           (expression
-            (id))
-          (WHITESPACE)
-          (WHITESPACE)
+            (id)))
+        (WHITESPACE)
+        (WHITESPACE)
+        (variant_tag
           (expression
             (id)))))))
 
@@ -140,22 +141,23 @@ test = a #A
 ------------------
 
 (program
-  (statement
-    (assign_statement
-      (id)
-      (WHITESPACE)
-      (eq)
-      (WHITESPACE)
-      (expression
-        (id))))
-  (WHITESPACE)
   (ERROR
-    (id)))
+    (id)
+    (WHITESPACE)
+    (eq)
+    (WHITESPACE)
+    (variant_tag
+      (expression
+        (id))
+      (WHITESPACE)
+      (id))))
 
 ==================
 Expression-4.3 `#`
 ==================
-test = a | b #A
+test =
+	| a #A
+	| b
 ------------------
 
 (program
@@ -164,15 +166,20 @@ test = a | b #A
       (id)
       (WHITESPACE)
       (eq)
+      (NEWLINE)
+      (WHITESPACE)
+      (WHITESPACE)
       (WHITESPACE)
       (expression
-        (or
+        (variant_tag
           (expression
             (id))
           (WHITESPACE)
-          (WHITESPACE)
+          (id))
+        (NEWLINE)
+        (WHITESPACE)
+        (WHITESPACE)
+        (WHITESPACE)
+        (variant_tag
           (expression
-            (id))
-          (WHITESPACE)
-          (variant_tag
             (id)))))))
