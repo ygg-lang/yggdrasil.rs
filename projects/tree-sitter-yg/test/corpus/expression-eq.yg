@@ -12,7 +12,7 @@ test = name
       (eq)
       (WHITESPACE)
       (expression
-        (UnaryPrefix
+        (unary_prefix
           (expression
             (id)))))))
 
@@ -30,7 +30,7 @@ test _= name
       (eq)
       (WHITESPACE)
       (expression
-        (UnaryPrefix
+        (unary_prefix
           (expression
             (id)))))))
 
@@ -48,6 +48,6 @@ test @= name
       (eq)
       (WHITESPACE)
       (expression
-        (UnaryPrefix
+        (unary_prefix
           (expression
             (id)))))))

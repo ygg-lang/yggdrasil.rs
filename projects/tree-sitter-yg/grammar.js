@@ -56,7 +56,7 @@ module.exports = grammar({
             field("id", $.id),
             field("eq", $.eq),
             optional("|"),
-            $.expression,
+            field("rhs", $.expression),
             optional($.eos)
         ),
 
@@ -82,11 +82,11 @@ module.exports = grammar({
         ),
 
         unary_prefix: $ => prec.left(200, choice(
-            seq(field("prefix", $._prefix_op), field("expr", $.expression)),
+            seq(field("prefix", $._prefix_op), field("base", $.expression)),
             // seq(field("prefix", "!"), field("expr", $.expression)),
         )),
         unary_suffix: $ => prec.right(210,
-            seq(field("expr", $.expression), field("suffix", $._suffix_op))
+            seq(field("base", $.expression), field("suffix", $._suffix_op))
         ),
 
         _prefix_op: $ => choice(

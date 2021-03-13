@@ -48,29 +48,9 @@ impl GSTBuilder {
     pub fn traverse(&mut self) -> Result<Program> {
         let tree = self.tree.clone();
         let this = tree.walk().node();
-        self.parse_program(this)
+        Program::parse(self,this)
     }
 
-    pub fn parse_program(&mut self, this: Node) -> Result<Program> {
-        let mut children = vec![];
-        for node in this.children(&mut this.walk()) {
-            let kind = SyntaxKind::from(&node);
-            match kind {
-                SyntaxKind::sym_whitespace => {
-                    continue;
-                }
-                SyntaxKind::sym_statement => children.push(self.parse_statement(node)?),
-                SyntaxKind::sym_eos => {
-                    println!("{:#?}", kind)
-                }
-                // SyntaxKind::sym_program=>{
-                //     println!("{:#?}", kind)
-                // }
-                _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", kind),
-            }
-        }
-        Ok(Program { children, range: this.range() })
-    }
     fn parse_statement(&mut self, this: Node) -> Result<Statement> {
         let node = match this.child(0) {
             Some(s) => s,
@@ -85,7 +65,7 @@ impl GSTBuilder {
                 Statement::GrammarStatement(Box::new(out))
             }
             SyntaxKind::sym_assign_statement => {
-                let out = self.parse_assign_statement(node)?;
+                let out = AssignStatement::parse(self, node)?;
                 Statement::AssignStatement(Box::new(out))
             }
             SyntaxKind::sym_fragment_statement => {
@@ -103,7 +83,7 @@ impl GSTBuilder {
             let kind = SyntaxKind::from(&node);
             match kind {
                 // Ignored group
-                SyntaxKind::sym_whitespace => continue,
+                SyntaxKind::sym_WHITESPACE => continue,
                 // Uncollected group
                 SyntaxKind::sym_grammar | SyntaxKind::sym_eos => continue,
                 // Anonymous group
@@ -121,7 +101,7 @@ impl GSTBuilder {
             let kind = SyntaxKind::from(&node);
             match kind {
                 // Ignored group
-                SyntaxKind::sym_whitespace => continue,
+                SyntaxKind::sym_WHITESPACE => continue,
                 // Uncollected group
                 SyntaxKind::sym_fragment | SyntaxKind::sym_eos => continue,
                 // Anonymous group
@@ -141,13 +121,36 @@ impl GSTBuilder {
     }
 }
 
+impl Program {
+    pub fn parse(state: &mut GSTBuilder, this: Node) -> Result<Self> {
+        let mut children = vec![];
+        for node in this.children(&mut this.walk()) {
+            let kind = SyntaxKind::from(&node);
+            match kind {
+                SyntaxKind::sym_WHITESPACE => {
+                    continue;
+                }
+                SyntaxKind::sym_statement => children.push(state.parse_statement(node)?),
+                SyntaxKind::sym_eos => {
+                    println!("{:#?}", kind)
+                }
+                // SyntaxKind::sym_program=>{
+                //     println!("{:#?}", kind)
+                // }
+                _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", kind),
+            }
+        }
+        Ok(Self { children, range: this.range() })
+    }
+}
+
 impl Statement {
     pub fn parse(cursor: &mut TreeCursor) -> Result<Option<Self>> {
         let node = cursor.node();
         let kind = SyntaxKind::from(node);
         let out = match kind {
             SyntaxKind::sym_program => None,
-            SyntaxKind::sym_whitespace => None,
+            SyntaxKind::sym_WHITESPACE => None,
             SyntaxKind::sym_fragment_statement => {
                 FragmentStatement::parse(cursor)?.map(|e| Statement::FragmentStatement(Box::new(e)))
             }
@@ -158,31 +161,68 @@ impl Statement {
 }
 
 impl FragmentStatement {
-    pub fn parse(cursor: &mut TreeCursor) -> Result<Option<Self>> {
+    pub fn parse(state: &mut GSTBuilder, this: Node) -> Result<Self> {
         let this = cursor.node();
 
         let id = this.child_by_field_name("id").unwrap();
-        let out = Self { id: Identifier::parse(id)?, range: this.range() };
-        Ok(Some(out))
-    }
-}
-
-impl Identifier {
-    pub fn parse(node: Node) -> Result<Self> {
-        let out = Self { data: "".to_string(), range: node.range() };
+        let out = Self { id: Identifier::parse(state,id)?, range: this.range() };
         Ok(out)
     }
 }
 
+impl AssignStatement {
+    pub fn parse(state: &mut GSTBuilder, this: Node) -> Result<Self> {
+        let id = match this.child_by_field_name("id") {
+            None => {
+                panic!("not found")
+            }
+            Some(node) => {
+                Identifier::parse(state,node)?
+            }
+        };
+        let eq = match this.child_by_field_name("eq") {
+            None => {
+                panic!("not found")
+            }
+            Some(node) => {
+                node.utf8_text(state.text.as_bytes())?.to_string()
+            }
+        };
+        let rhs = match this.child_by_field_name("rhs") {
+            None => {
+                panic!("not found")
+            }
+            Some(node) => {
+                Expression::parse(state, node)?
+            }
+        };
+        Ok(Self {
+            id,
+            eq,
+            rhs,
+            range: this.range()
+        })
+    }
+}
+
+impl Expression {
+    pub fn parse(state: &mut GSTBuilder, this: Node) -> Result<Self> {
+        unimplemented!()
+    }
+}
+
+impl Identifier {
+    pub fn parse(state: &mut GSTBuilder, this: Node) -> Result<Self> {
+        let data = this.utf8_text(state.text.as_bytes())?.to_string();
+        Ok(Self {
+            data,
+            range: this.range()
+        })
+    }
+}
+
 const TEST: &str = r#"
-grammar! basic;
-
-grammar! basic {}
-
-fragment! basic;
-
-
-
+test = 0
 "#;
 
 #[test]

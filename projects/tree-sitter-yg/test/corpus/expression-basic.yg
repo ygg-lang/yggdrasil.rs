@@ -12,7 +12,7 @@ test = name?
       (eq)
       (WHITESPACE)
       (expression
-        (UnarySuffix
+        (unary_suffix
           (expression
             (id)))))))
 
@@ -30,7 +30,7 @@ test = name+
       (eq)
       (WHITESPACE)
       (expression
-        (UnarySuffix
+        (unary_suffix
           (expression
             (id)))))))
 
@@ -48,7 +48,7 @@ test = name*
       (eq)
       (WHITESPACE)
       (expression
-        (UnarySuffix
+        (unary_suffix
           (expression
             (id)))))))
 
@@ -66,7 +66,7 @@ test = ^name
       (eq)
       (WHITESPACE)
       (expression
-        (UnaryPrefix
+        (unary_prefix
           (expression
             (id)))))))
 
