@@ -5,36 +5,39 @@ use tree_sitter_yg::language;
 use lsp_types::Diagnostic;
 use std::borrow::Borrow;
 
-pub struct MyVisitor {
-    warns: Vec<Diagnostic>,
+macro_rules! get_field {
+    () => {
+        pub fn named_one(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Self> {
+            match this.child_by_field_name(field) {
+                Some(node) => Ok(Self::parse(state, node)?),
+                None => Err(YGGError::node_missing(field, this.range())),
+            }
+        }
+    };
 }
 
-pub struct GSTBuilder {
+pub struct YGGBuilder {
     parser: Parser,
     tree: Tree,
     text: String,
+    warns: Vec<Diagnostic>,
 }
 
-impl GSTBuilder {
-    // visitor: impl MetaVisitor<MetaData = M> + 'static
+impl YGGBuilder {
     pub fn new() -> Result<Self> {
         let mut parser = Parser::new();
         parser.set_language(language())?;
         // test if parser can work
-        let tree = match parser.parse("", None) {
-            None => {
-                panic!("parser init failed")
-            }
-            Some(s) => s,
-        };
-        Ok(Self { parser, tree, text: String::new() })
+        let tree = parser.parse("", None).ok_or(YGGError::init_fail())?;
+        Ok(Self { parser, tree, text: String::new(), warns: vec![] })
     }
     fn update_by_text(&mut self, text: &str) -> Result<()> {
         // let tree = self.parser.parse(text, Some(&self.tree));
         match self.parser.parse(text.as_bytes(), None) {
             Some(s) => {
                 self.text = String::from(text);
-                self.tree = s
+                self.tree = s;
+                self.warns = vec![];
             }
             None => {
                 panic!("fail to update")
@@ -44,11 +47,11 @@ impl GSTBuilder {
     }
 }
 
-impl GSTBuilder {
+impl YGGBuilder {
     pub fn traverse(&mut self) -> Result<Program> {
         let tree = self.tree.clone();
         let this = tree.walk().node();
-        Program::parse(self,this)
+        Program::parse(self, this)
     }
 
     fn parse_statement(&mut self, this: Node) -> Result<Statement> {
@@ -122,7 +125,7 @@ impl GSTBuilder {
 }
 
 impl Program {
-    pub fn parse(state: &mut GSTBuilder, this: Node) -> Result<Self> {
+    pub fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
         let mut children = vec![];
         for node in this.children(&mut this.walk()) {
             let kind = SyntaxKind::from(&node);
@@ -145,14 +148,12 @@ impl Program {
 }
 
 impl Statement {
-    pub fn parse(cursor: &mut TreeCursor) -> Result<Option<Self>> {
-        let node = cursor.node();
-        let kind = SyntaxKind::from(node);
+    pub fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        let kind = SyntaxKind::from(this);
         let out = match kind {
-            SyntaxKind::sym_program => None,
-            SyntaxKind::sym_WHITESPACE => None,
             SyntaxKind::sym_fragment_statement => {
-                FragmentStatement::parse(cursor)?.map(|e| Statement::FragmentStatement(Box::new(e)))
+                let out = FragmentStatement::parse(state, this)?;
+                Self::FragmentStatement(Box::new(out))
             }
             _ => unimplemented!("{:#?}", kind),
         };
@@ -161,74 +162,63 @@ impl Statement {
 }
 
 impl FragmentStatement {
-    pub fn parse(state: &mut GSTBuilder, this: Node) -> Result<Self> {
-        let this = cursor.node();
-
-        let id = this.child_by_field_name("id").unwrap();
-        let out = Self { id: Identifier::parse(state,id)?, range: this.range() };
-        Ok(out)
+    pub fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        let id = Identifier::named_one(state, this, "id")?;
+        Ok(Self { id, range: this.range() })
     }
 }
 
 impl AssignStatement {
-    pub fn parse(state: &mut GSTBuilder, this: Node) -> Result<Self> {
-        let id = match this.child_by_field_name("id") {
-            None => {
-                panic!("not found")
-            }
-            Some(node) => {
-                Identifier::parse(state,node)?
-            }
-        };
+    pub fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        let id = Identifier::named_one(state, this, "id")?;
         let eq = match this.child_by_field_name("eq") {
-            None => {
-                panic!("not found")
-            }
-            Some(node) => {
-                node.utf8_text(state.text.as_bytes())?.to_string()
-            }
+            Some(node) => node.utf8_text(state.text.as_bytes())?.to_string(),
+            None => return YGGError::node_missing("eq", this.range()),
         };
-        let rhs = match this.child_by_field_name("rhs") {
-            None => {
-                panic!("not found")
-            }
-            Some(node) => {
-                Expression::parse(state, node)?
-            }
-        };
-        Ok(Self {
-            id,
-            eq,
-            rhs,
-            range: this.range()
-        })
+        let rhs = Expression::named_one(state, this, "id")?;
+        Ok(Self { id, eq, rhs, range: this.range() })
     }
 }
 
 impl Expression {
-    pub fn parse(state: &mut GSTBuilder, this: Node) -> Result<Self> {
-        unimplemented!()
+    pub fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        let kind = SyntaxKind::from(&this);
+        let out = match kind {
+            SyntaxKind::sym_id => {
+                let out = Identifier::parse(state, this)?;
+                Self::Identifier(Box::new(out))
+            }
+            _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", kind),
+        };
+        Ok(out)
     }
+    get_field!();
 }
 
+
+
 impl Identifier {
-    pub fn parse(state: &mut GSTBuilder, this: Node) -> Result<Self> {
+    pub fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
         let data = this.utf8_text(state.text.as_bytes())?.to_string();
-        Ok(Self {
-            data,
-            range: this.range()
-        })
+        Ok(Self { data, range: this.range() })
+    }
+    pub fn named_one(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Self> {
+        match this.child_by_field_name(field) {
+            Some(node) => Ok(Self::parse(state, node)?),
+            None => YGGError::node_missing(field, this.range()),
+        }
     }
 }
 
 const TEST: &str = r#"
-test = 0
+test = a;
 "#;
 
 #[test]
 fn main() -> Result<()> {
-    let mut parser = GSTBuilder::new()?;
+    let mut parser = YGGBuilder::new()?;
     parser.update_by_text(TEST)?;
-    parser.traverse()?;
+    let out = parser.traverse()?;
+    println!("{:#?}" , out);
     Ok(())
 }

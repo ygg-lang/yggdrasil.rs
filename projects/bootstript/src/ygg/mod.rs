@@ -4,7 +4,7 @@ pub mod ast;
 
 mod errors;
 
-pub use errors::{MyError, Result};
+pub use errors::{Result, YGGError};
 use std::mem::transmute;
 use tree_sitter::{Node, TreeCursor};
 
