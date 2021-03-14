@@ -4,6 +4,7 @@ use std::{
     str::Utf8Error,
 };
 use tree_sitter::{LanguageError, Range};
+use std::num::ParseIntError;
 
 pub type Result<T> = std::result::Result<T, YGGError>;
 
@@ -31,7 +32,13 @@ impl From<LanguageError> for YGGError {
 
 impl From<Utf8Error> for YGGError {
     fn from(e: Utf8Error) -> Self {
-        Self::LanguageError { error: e.to_string() }
+        Self::TextError { error: e.to_string() }
+    }
+}
+
+impl From<ParseIntError> for YGGError {
+    fn from(e: ParseIntError) -> Self {
+        Self::TextError { error: e.to_string() }
     }
 }
 

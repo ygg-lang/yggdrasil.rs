@@ -5,15 +5,25 @@ use tree_sitter_yg::language;
 use lsp_types::Diagnostic;
 use std::borrow::Borrow;
 
-macro_rules! get_field {
-    () => {
-        pub fn named_one(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Self> {
-            match this.child_by_field_name(field) {
-                Some(node) => Ok(Self::parse(state, node)?),
-                None => Err(YGGError::node_missing(field, this.range())),
+macro_rules! parsed_wrap {
+    ($t:ty => [$i:ident]) => {
+        impl Parsed for $t {
+            fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+                let $i = Parsed::parse(state, this)?;
+                Ok(Self { $i, range: this.range() })
             }
         }
     };
+}
+
+pub trait Parsed where Self: Sized  {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> ;
+    fn named_one(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Self> {
+        match this.child_by_field_name(field) {
+            Some(node) => Ok(Self::parse(state, node)?),
+            None => Err(YGGError::node_missing(field, this.range())),
+        }
+    }
 }
 
 pub struct YGGBuilder {
@@ -161,57 +171,64 @@ impl Statement {
     }
 }
 
-impl FragmentStatement {
-    pub fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+impl Parsed for FragmentStatement {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
         let id = Identifier::named_one(state, this, "id")?;
         Ok(Self { id, range: this.range() })
     }
 }
 
-impl AssignStatement {
-    pub fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+impl Parsed for AssignStatement {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
         let id = Identifier::named_one(state, this, "id")?;
-        let eq = match this.child_by_field_name("eq") {
-            Some(node) => node.utf8_text(state.text.as_bytes())?.to_string(),
-            None => return YGGError::node_missing("eq", this.range()),
-        };
-        let rhs = Expression::named_one(state, this, "id")?;
+        let eq = String::named_one(state,this,"eq")?;
+        let rhs = Expression::named_one(state, this, "rhs")?;
         Ok(Self { id, eq, rhs, range: this.range() })
     }
 }
 
-impl Expression {
-    pub fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let kind = SyntaxKind::from(&this);
-        let out = match kind {
-            SyntaxKind::sym_id => {
-                let out = Identifier::parse(state, this)?;
-                Self::Identifier(Box::new(out))
-            }
-            _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", kind),
-        };
-        Ok(out)
+impl Parsed for Expression {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        for node in this.children(&mut this.walk()) {
+            let kind = SyntaxKind::from(&node);
+            let out = match kind {
+                SyntaxKind::sym_expression => {
+                    let out = Expression::parse(state, node)?;
+                    Self::Priority(Box::new(out))
+                }
+                SyntaxKind::sym_id => {
+                    let out = Identifier::parse(state, node)?;
+                    Self::Identifier(Box::new(out))
+                }
+                SyntaxKind::sym_unsigned => {
+                    let out = Unsigned::parse(state, node)?;
+                    Self::Integer(Box::new(out))
+                }
+                _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", kind),
+            };
+            return Ok(out)
+        }
+        unreachable!()
     }
-    get_field!();
 }
 
+parsed_wrap!(Identifier => [data]);
+parsed_wrap!(Unsigned => [data]);
 
-
-impl Identifier {
-    pub fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let data = this.utf8_text(state.text.as_bytes())?.to_string();
-        Ok(Self { data, range: this.range() })
+impl Parsed for usize {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        Ok(this.utf8_text(state.text.as_bytes())?.parse::<usize>()?)
     }
-    pub fn named_one(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Self> {
-        match this.child_by_field_name(field) {
-            Some(node) => Ok(Self::parse(state, node)?),
-            None => YGGError::node_missing(field, this.range()),
-        }
+}
+
+impl Parsed for String {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        Ok(this.utf8_text(state.text.as_bytes())?.to_string())
     }
 }
 
 const TEST: &str = r#"
-test = a;
+fragment! a;
 "#;
 
 #[test]
