@@ -1,10 +1,10 @@
 use std::{
     error::Error,
     fmt::{Debug, Display, Formatter},
+    num::ParseIntError,
     str::Utf8Error,
 };
 use tree_sitter::{LanguageError, Range};
-use std::num::ParseIntError;
 
 pub type Result<T> = std::result::Result<T, YGGError>;
 
@@ -13,7 +13,7 @@ pub enum YGGError {
     LanguageError { error: String },
     TextError { error: String },
     NodeMissing { name: String, range: Range },
-    InitializationFailed
+    InitializationFailed,
 }
 
 impl Display for YGGError {
@@ -46,7 +46,7 @@ impl YGGError {
     pub fn node_missing(name: &str, range: Range) -> Self {
         Self::NodeMissing { name: String::from(name), range }
     }
-    pub fn init_fail()-> Self {
+    pub fn init_fail() -> Self {
         Self::InitializationFailed
     }
 }

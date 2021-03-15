@@ -16,13 +16,23 @@ macro_rules! parsed_wrap {
     };
 }
 
-pub trait Parsed where Self: Sized {
+pub trait Parsed
+where
+    Self: Sized,
+{
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self>;
     fn named_one(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Self> {
         match this.child_by_field_name(field) {
             Some(node) => Ok(Self::parse(state, node)?),
             None => Err(YGGError::node_missing(field, this.range())),
         }
+    }
+    fn named_many(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Vec<Self>> {
+        let mut children = vec![];
+        for node in this.children_by_field_name(field, &mut this.walk()) {
+            children.push(Parsed::parse(state, node)?)
+        }
+        return Ok(children);
     }
 }
 
@@ -55,9 +65,6 @@ impl YGGBuilder {
         }
         Ok(())
     }
-}
-
-impl YGGBuilder {
     pub fn traverse(&mut self) -> Result<Program> {
         let tree = self.tree.clone();
         let this = tree.walk().node();
@@ -67,42 +74,19 @@ impl YGGBuilder {
 
 impl Parsed for Program {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let mut children = vec![];
-        for node in this.children(&mut this.walk()) {
-            let kind = SyntaxKind::from(&node);
-            match kind {
-                SyntaxKind::sym_WHITESPACE => {
-                    continue;
-                }
-                SyntaxKind::sym_statement => children.push(Parsed::parse(state, node)?),
-                SyntaxKind::sym_eos => {
-                    println!("{:#?}", kind)
-                }
-                // SyntaxKind::sym_program=>{
-                //     println!("{:#?}", kind)
-                // }
-                _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", kind),
-            }
-        }
-        Ok(Self { children, range: this.range() })
+        let statement = Parsed::named_many(state, this, "statement")?;
+        Ok(Self { statement, range: this.range() })
     }
 }
 
 impl Parsed for Statement {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
         for node in this.children(&mut this.walk()) {
-            let kind = SyntaxKind::from(&node);
-            let out = match kind {
-                SyntaxKind::sym_grammar_statement => {
-                    Statement::GrammarStatement(Box::new(Parsed::parse(state, node)?))
-                }
-                SyntaxKind::sym_assign_statement => {
-                    Statement::AssignStatement(Box::new(Parsed::parse(state, node)?))
-                }
-                SyntaxKind::sym_fragment_statement => {
-                    Statement::FragmentStatement(Box::new(Parsed::parse(state, node)?))
-                }
-                _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", kind),
+            let out = match SyntaxKind::from(&node) {
+                SyntaxKind::sym_grammar_statement => Self::GrammarStatement(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_assign_statement => Self::AssignStatement(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_fragment_statement => Self::FragmentStatement(Box::new(Parsed::parse(state, node)?)),
+                _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node)),
             };
             return Ok(out);
         }
@@ -112,8 +96,9 @@ impl Parsed for Statement {
 
 impl Parsed for GrammarStatement {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let id = Identifier::named_one(state, this, "id")?;
-        Ok(Self { id, ext: vec![], range: this.range() })
+        let id = Parsed::named_one(state, this, "id")?;
+        let ext = Parsed::named_many(state, this, "ext")?;
+        Ok(Self { id, ext, range: this.range() })
     }
 }
 
@@ -136,25 +121,33 @@ impl Parsed for AssignStatement {
 impl Parsed for Expression {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
         for node in this.children(&mut this.walk()) {
-            let kind = SyntaxKind::from(&node);
-            let out = match kind {
-                SyntaxKind::sym_expression => {
-                    let out = Expression::parse(state, node)?;
-                    Self::Priority(Box::new(out))
-                }
-                SyntaxKind::sym_id => {
-                    let out = Identifier::parse(state, node)?;
-                    Self::Identifier(Box::new(out))
-                }
-                SyntaxKind::sym_unsigned => {
-                    let out = Unsigned::parse(state, node)?;
-                    Self::Integer(Box::new(out))
-                }
-                _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", kind),
+            let out = match SyntaxKind::from(&node) {
+                SyntaxKind::sym_expression => Self::Priority(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_id => Self::Identifier(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_unsigned => Self::Integer(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_unary_suffix => Self::UnarySuffix(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_unary_prefix => Self::UnaryPrefix(Box::new(Parsed::parse(state, node)?)),
+                _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node)),
             };
             return Ok(out);
         }
         unreachable!()
+    }
+}
+
+impl Parsed for UnarySuffix {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        let suffix = Parsed::named_one(state, this, "suffix")?;
+        let base = Parsed::named_one(state, this, "base")?;
+        Ok(Self { suffix, base, range: this.range() })
+    }
+}
+
+impl Parsed for UnaryPrefix {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        let prefix = Parsed::named_one(state, this, "prefix")?;
+        let base = Parsed::named_one(state, this, "base")?;
+        Ok(Self { prefix, base, range: this.range() })
     }
 }
 
@@ -174,7 +167,7 @@ impl Parsed for String {
 }
 
 const TEST: &str = r#"
-fragment! a;
+test = e1 ~ e2 ~ e3
 "#;
 
 #[test]

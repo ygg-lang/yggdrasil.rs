@@ -16,7 +16,7 @@ module.exports = grammar({
     word: $ => $.id,
 
     rules: {
-        program: $ => repeat($.statement),
+        program: $ => repeat(field("statement", $.statement)),
 
         statement: $ => choice(
             $.grammar_statement,
@@ -104,12 +104,15 @@ module.exports = grammar({
             // 因此上式等价于:
             // name <- ((a ~ b) | (name ~ c))
             // binary_left(100, $.expression, token.immediate(" "), $.expression),
-            binary_left(30, $.expression, "~", $.expression),
-            binary_left(20, $.variant_tag, "|", $.variant_tag),
-            binary_left(10, $.expression, "<-", $.expression),
+            $.concat_expr,
+            $.or_expr,
+            $.field_expr,
         ),
+        concat_expr: $ => multiple_left(30, "~", $.expression),
+        or_expr: $ => multiple_left(20, "|", $.variant_tag),
+        field_expr: $ => binary_left(10, $.expression, "<-", $.expression),
 
-        variant_tag: $ => prec.left(40,seq(
+        variant_tag: $ => prec.left(40, seq(
             field("expression", $.expression),
             optional(seq(
                 field("op", /[!_]?\#/),
@@ -193,6 +196,19 @@ function interleave(rule, sep, trailing) {
     }
 }
 
+
+function multiple_left(p, expr, op) {
+    return prec.left(
+        p,
+        seq(
+            field("exprs", expr),
+            optional(seq(
+                field("ops", op),
+                field("exprs", expr),
+            )),
+        )
+    )
+}
 
 function ternary_left(p, lhs, op1, mid, op2, rhs) {
     return prec.left(

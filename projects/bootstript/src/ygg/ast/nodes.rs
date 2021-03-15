@@ -2,7 +2,7 @@ use super::*;
 
 #[derive(Clone, Debug)]
 pub struct Program {
-    pub children: Vec<Statement>,
+    pub statement: Vec<Statement>,
     pub range: Range,
 }
 
