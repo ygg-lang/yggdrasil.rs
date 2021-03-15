@@ -16,8 +16,8 @@ macro_rules! parsed_wrap {
     };
 }
 
-pub trait Parsed where Self: Sized  {
-    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> ;
+pub trait Parsed where Self: Sized {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self>;
     fn named_one(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Self> {
         match this.child_by_field_name(field) {
             Some(node) => Ok(Self::parse(state, node)?),
@@ -63,79 +63,10 @@ impl YGGBuilder {
         let this = tree.walk().node();
         Program::parse(self, this)
     }
-
-    fn parse_statement(&mut self, this: Node) -> Result<Statement> {
-        let node = match this.child(0) {
-            Some(s) => s,
-            None => {
-                panic!("missing node")
-            }
-        };
-        let kind = SyntaxKind::from(&node);
-        let out = match kind {
-            SyntaxKind::sym_grammar_statement => {
-                let out = self.parse_grammar_statement(node)?;
-                Statement::GrammarStatement(Box::new(out))
-            }
-            SyntaxKind::sym_assign_statement => {
-                let out = AssignStatement::parse(self, node)?;
-                Statement::AssignStatement(Box::new(out))
-            }
-            SyntaxKind::sym_fragment_statement => {
-                let out = self.parse_fragment_statement(node)?;
-                Statement::FragmentStatement(Box::new(out))
-            }
-            _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", kind),
-        };
-        Ok(out)
-    }
-    fn parse_grammar_statement(&mut self, this: Node) -> Result<GrammarStatement> {
-        let mut id = Default::default();
-        let mut ext = Default::default();
-        for node in this.children(&mut this.walk()) {
-            let kind = SyntaxKind::from(&node);
-            match kind {
-                // Ignored group
-                SyntaxKind::sym_WHITESPACE => continue,
-                // Uncollected group
-                SyntaxKind::sym_grammar | SyntaxKind::sym_eos => continue,
-                // Anonymous group
-                SyntaxKind::anon_sym_LBRACE | SyntaxKind::anon_sym_RBRACE => continue,
-                // Named group
-                SyntaxKind::sym_id => id = self.parse_id(node)?,
-                _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", kind),
-            }
-        }
-        Ok(GrammarStatement { id, ext, range: this.range() })
-    }
-    fn parse_fragment_statement(&mut self, this: Node) -> Result<FragmentStatement> {
-        let mut id = Default::default();
-        for node in this.children(&mut this.walk()) {
-            let kind = SyntaxKind::from(&node);
-            match kind {
-                // Ignored group
-                SyntaxKind::sym_WHITESPACE => continue,
-                // Uncollected group
-                SyntaxKind::sym_fragment | SyntaxKind::sym_eos => continue,
-                // Anonymous group
-                // Named group
-                SyntaxKind::sym_id => id = self.parse_id(node)?,
-                _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", kind),
-            }
-        }
-        Ok(FragmentStatement { id, range: this.range() })
-    }
-    fn parse_assign_statement(&mut self, this: Node) -> Result<AssignStatement> {
-        unimplemented!()
-    }
-    fn parse_id(&mut self, this: Node) -> Result<Identifier> {
-        let out = Identifier { data: "".to_string(), range: this.range() };
-        Ok(out)
-    }
 }
 
-impl Program {
-    pub fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+impl Parsed for Program {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
         let mut children = vec![];
         for node in this.children(&mut this.walk()) {
             let kind = SyntaxKind::from(&node);
@@ -143,7 +74,7 @@ impl Program {
                 SyntaxKind::sym_WHITESPACE => {
                     continue;
                 }
-                SyntaxKind::sym_statement => children.push(state.parse_statement(node)?),
+                SyntaxKind::sym_statement => children.push(Parsed::parse(state, node)?),
                 SyntaxKind::sym_eos => {
                     println!("{:#?}", kind)
                 }
@@ -157,17 +88,32 @@ impl Program {
     }
 }
 
-impl Statement {
-    pub fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let kind = SyntaxKind::from(this);
-        let out = match kind {
-            SyntaxKind::sym_fragment_statement => {
-                let out = FragmentStatement::parse(state, this)?;
-                Self::FragmentStatement(Box::new(out))
-            }
-            _ => unimplemented!("{:#?}", kind),
-        };
-        Ok(out)
+impl Parsed for Statement {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        for node in this.children(&mut this.walk()) {
+            let kind = SyntaxKind::from(&node);
+            let out = match kind {
+                SyntaxKind::sym_grammar_statement => {
+                    Statement::GrammarStatement(Box::new(Parsed::parse(state, node)?))
+                }
+                SyntaxKind::sym_assign_statement => {
+                    Statement::AssignStatement(Box::new(Parsed::parse(state, node)?))
+                }
+                SyntaxKind::sym_fragment_statement => {
+                    Statement::FragmentStatement(Box::new(Parsed::parse(state, node)?))
+                }
+                _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", kind),
+            };
+            return Ok(out);
+        }
+        unreachable!()
+    }
+}
+
+impl Parsed for GrammarStatement {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        let id = Identifier::named_one(state, this, "id")?;
+        Ok(Self { id, ext: vec![], range: this.range() })
     }
 }
 
@@ -181,7 +127,7 @@ impl Parsed for FragmentStatement {
 impl Parsed for AssignStatement {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
         let id = Identifier::named_one(state, this, "id")?;
-        let eq = String::named_one(state,this,"eq")?;
+        let eq = String::named_one(state, this, "eq")?;
         let rhs = Expression::named_one(state, this, "rhs")?;
         Ok(Self { id, eq, rhs, range: this.range() })
     }
@@ -206,7 +152,7 @@ impl Parsed for Expression {
                 }
                 _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", kind),
             };
-            return Ok(out)
+            return Ok(out);
         }
         unreachable!()
     }
@@ -236,6 +182,6 @@ fn main() -> Result<()> {
     let mut parser = YGGBuilder::new()?;
     parser.update_by_text(TEST)?;
     let out = parser.traverse()?;
-    println!("{:#?}" , out);
+    println!("{:#?}", out);
     Ok(())
 }
