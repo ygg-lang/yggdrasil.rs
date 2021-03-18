@@ -14,7 +14,8 @@ test = name?
       (expression
         (unary_suffix
           (expression
-            (id)))))))
+            (data
+              (id))))))))
 
 ==================
 Expression-1.2 `+`
@@ -32,7 +33,8 @@ test = name+
       (expression
         (unary_suffix
           (expression
-            (id)))))))
+            (data
+              (id))))))))
 
 ==================
 Expression-1.3 `*`
@@ -50,7 +52,8 @@ test = name*
       (expression
         (unary_suffix
           (expression
-            (id)))))))
+            (data
+              (id))))))))
 
 ==================
 Expression-2.1 `^`
@@ -68,7 +71,8 @@ test = ^name
       (expression
         (unary_prefix
           (expression
-            (id)))))))
+            (data
+              (id))))))))
 
 ==================
 Expression-3.1 `~`
@@ -86,11 +90,14 @@ test = a ~ b
       (expression
         (concat_expr
           (expression
-            (id))
+            (data
+              (id)))
           (WHITESPACE)
-          (WHITESPACE)
-          (expression
-            (id)))))))
+          (concat_item
+            (WHITESPACE)
+            (expression
+              (data
+                (id)))))))))
 
 ==================
 Expression-3.2 ` `
@@ -106,7 +113,8 @@ test = a  b
       (eq)
       (WHITESPACE)
       (expression
-        (id))))
+        (data
+          (id)))))
   (WHITESPACE)
   (WHITESPACE)
   (ERROR
@@ -129,12 +137,15 @@ test = a | b
         (or_expr
           (variant_tag
             (expression
-              (id)))
+              (data
+                (id))))
           (WHITESPACE)
-          (WHITESPACE)
-          (variant_tag
-            (expression
-              (id))))))))
+          (or_item
+            (WHITESPACE)
+            (variant_tag
+              (expression
+                (data
+                  (id))))))))))
 
 ==================
 Expression-4.2 `#`
@@ -150,7 +161,8 @@ test = a #A
     (WHITESPACE)
     (variant_tag
       (expression
-        (id))
+        (data
+          (id)))
       (WHITESPACE)
       (id))))
 
@@ -176,13 +188,16 @@ test =
         (or_expr
           (variant_tag
             (expression
-              (id))
+              (data
+                (id)))
             (WHITESPACE)
             (id))
           (NEWLINE)
           (WHITESPACE)
           (WHITESPACE)
-          (WHITESPACE)
-          (variant_tag
-            (expression
-              (id))))))))
+          (or_item
+            (WHITESPACE)
+            (variant_tag
+              (expression
+                (data
+                  (id))))))))))

@@ -12,7 +12,8 @@ test = 0
       (eq)
       (WHITESPACE)
       (expression
-        (unsigned)))))
+        (data
+          (unsigned))))))
 
 ==================
 Expression-1.1 `number`
@@ -28,7 +29,8 @@ test = 10
       (eq)
       (WHITESPACE)
       (expression
-        (unsigned)))))
+        (data
+          (unsigned))))))
 
 ==================
 Expression-2.1 `string`
@@ -44,7 +46,8 @@ test = "s"
       (eq)
       (WHITESPACE)
       (expression
-        (string)))))
+        (data
+          (string))))))
 
 ==================
 Expression-2.2 `string`
@@ -60,7 +63,8 @@ test = "\s"
       (eq)
       (WHITESPACE)
       (expression
-        (string)))))
+        (data
+          (string))))))
 
 ==================
 Expression-3.1 `set`
@@ -76,7 +80,8 @@ test = \p{XID_Start}
       (eq)
       (WHITESPACE)
       (expression
-        (regex_set)))))
+        (data
+          (regex_set))))))
 
 ==================
 Expression-4.1 `range`
@@ -92,8 +97,9 @@ test = [0]
       (eq)
       (WHITESPACE)
       (expression
-        (regex_range
-          (regex_range_item))))))
+        (data
+          (regex_range
+            (regex_range_item)))))))
 
 ==================
 Expression-4.2 `range`
@@ -109,11 +115,12 @@ test = [0-1]
       (eq)
       (WHITESPACE)
       (expression
-        (regex_range
-          (regex_range_item
-            (regex_range_item_group
-              (regex_range_item)
-              (regex_range_item))))))))
+        (data
+          (regex_range
+            (regex_range_item
+              (regex_range_item_group
+                (regex_range_item)
+                (regex_range_item)))))))))
 
 ==================
 Expression-4.3 `range`
@@ -129,12 +136,12 @@ test = [0-1]
       (eq)
       (WHITESPACE)
       (expression
-        (regex_range
-          (regex_range_item
-            (regex_range_item_group
-              (regex_range_item)
-              (regex_range_item))))))))
-
+        (data
+          (regex_range
+            (regex_range_item
+              (regex_range_item_group
+                (regex_range_item)
+                (regex_range_item)))))))))
 
 ==================
 Expression-4.4 `range`
@@ -150,20 +157,22 @@ test = [_0-9a-zA-Z]
       (eq)
       (WHITESPACE)
       (expression
-        (regex_range
-          (regex_range_item)
-          (regex_range_item
-            (regex_range_item_group
-              (regex_range_item)
-              (regex_range_item)))
-          (regex_range_item
-            (regex_range_item_group
-              (regex_range_item)
-              (regex_range_item)))
-          (regex_range_item
-            (regex_range_item_group
-              (regex_range_item)
-              (regex_range_item))))))))
+        (data
+          (regex_range
+            (regex_range_item)
+            (regex_range_item
+              (regex_range_item_group
+                (regex_range_item)
+                (regex_range_item)))
+            (regex_range_item
+              (regex_range_item_group
+                (regex_range_item)
+                (regex_range_item)))
+            (regex_range_item
+              (regex_range_item_group
+                (regex_range_item)
+                (regex_range_item)))))))))
+
 
 ==================
 Expression-4.5 `range`
@@ -179,9 +188,10 @@ test = [^ _]
       (eq)
       (WHITESPACE)
       (expression
-        (regex_range
-          (regex_range_item)
-          (regex_range_item))))))
+        (data
+          (regex_range
+            (regex_range_item)
+            (regex_range_item)))))))
 
 ==================
 Expression-5.1 `regex`
@@ -197,9 +207,10 @@ test = /i/i
       (eq)
       (WHITESPACE)
       (expression
-        (regex_long
-          (ERROR
-            (id))))))
+        (data
+          (regex_long
+            (ERROR
+              (id)))))))
   (ERROR
     (id)))
 

@@ -76,6 +76,14 @@ pub struct UnaryPrefix {
 }
 
 #[derive(Clone, Debug)]
+pub enum Atom {
+    Id(Identifier),
+    Integer(Unsigned),
+    String(StringLiteral),
+    Regex
+}
+
+#[derive(Clone, Debug)]
 pub struct Identifier {
     pub data: String,
     pub range: Range,

@@ -10,7 +10,6 @@ module.exports = grammar({
 
     ],
     inline: $ => [
-        $._binary_expression,
         $._grammar_exts
     ],
     word: $ => $.id,
@@ -68,17 +67,12 @@ module.exports = grammar({
 
         expression: $ => choice(
             seq("(", $.expression, ")"),
-            $.id,
-            $.string,
-            $.unsigned,
-            $.macro_call,
-            $.regex_long,
-            $.regex_range,
-            $.regex_set,
+            $.data,
             $.unary_suffix,
             $.unary_prefix,
-            $._binary_expression,
-            // ...
+            $.concat_expr,
+            $.or_expr,
+            $.field_expr,
         ),
 
         unary_prefix: $ => prec.left(200, choice(
@@ -96,18 +90,6 @@ module.exports = grammar({
             "?", "*", "+"
         ),
 
-        _binary_expression: $ => choice(
-            // 空格连接禁止换行, 否则有可能会把下面几行的函数给吃进去
-            // name <- a ~ b | name ~ c
-            // <- 是长程符号
-            // ~ 等于空格, 是短程符号
-            // 因此上式等价于:
-            // name <- ((a ~ b) | (name ~ c))
-            // binary_left(100, $.expression, token.immediate(" "), $.expression),
-            $.concat_expr,
-            $.or_expr,
-            $.field_expr,
-        ),
         concat_expr: $ => prec.left(
             30,
             seq(
@@ -115,13 +97,38 @@ module.exports = grammar({
                 field("item", $.concat_item),
             )
         ),
-        concat_item: $ => prec.left(30,
+        concat_item: $ => prec.left(
+            30,
             repeat1(seq(
-            field("op", "~"),
-            field("expr", $.expression),
-        ))),
-        or_expr: $ => multiple_left(20, "|", $.variant_tag),
-        field_expr: $ => binary_left(10, $.expression, "<-", $.expression),
+                field("op", "~"),
+                field("expr", $.expression),
+            ))
+        ),
+        or_expr: $ => prec.left(
+            20,
+            seq(
+                field("base", $.variant_tag),
+                field("item", $.or_item),
+            )
+        ),
+        or_item: $ => prec.left(
+            20,
+            repeat1(seq(
+                field("op", "|"),
+                field("expr", $.variant_tag),
+            ))
+        ),
+        field_expr: $ => binary_left(10, $.id, "<-", $.expression),
+
+        data: $ => choice(
+            $.id,
+            $.string,
+            $.unsigned,
+            $.macro_call,
+            $.regex_long,
+            $.regex_range,
+            $.regex_set,
+        ),
 
         variant_tag: $ => prec.left(100, seq(
             field("expression", $.expression),
@@ -208,7 +215,7 @@ function interleave(rule, sep, trailing) {
 }
 
 
-function multiple_left(p, op, expr) {
+function variadic_left(p, op, expr) {
     return prec.left(
         p,
         seq(

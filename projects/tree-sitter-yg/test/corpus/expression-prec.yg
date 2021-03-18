@@ -13,32 +13,38 @@ test1 = name <- a ~ b | name ~ c
       (WHITESPACE)
       (expression
         (field_expr
-          (expression
-            (id))
+          (id)
           (WHITESPACE)
           (WHITESPACE)
           (expression
             (concat_expr
               (expression
-                (id))
+                (data
+                  (id)))
               (WHITESPACE)
-              (WHITESPACE)
-              (expression
-                (concat_expr
-                  (expression
-                    (or_expr
-                      (variant_tag
-                        (expression
-                          (id)))
+              (concat_item
+                (WHITESPACE)
+                (expression
+                  (concat_expr
+                    (expression
+                      (or_expr
+                        (variant_tag
+                          (expression
+                            (data
+                              (id))))
+                        (WHITESPACE)
+                        (or_item
+                          (WHITESPACE)
+                          (variant_tag
+                            (expression
+                              (data
+                                (id)))))))
+                    (WHITESPACE)
+                    (concat_item
                       (WHITESPACE)
-                      (WHITESPACE)
-                      (variant_tag
-                        (expression
-                          (id)))))
-                  (WHITESPACE)
-                  (WHITESPACE)
-                  (expression
-                    (id)))))))))))
+                      (expression
+                        (data
+                          (id))))))))))))))
 
 ==================
 Expression-1.2
@@ -55,8 +61,7 @@ test1 = name <- ((a ~ b) | (name ~ c))
       (WHITESPACE)
       (expression
         (field_expr
-          (expression
-            (id))
+          (id)
           (WHITESPACE)
           (WHITESPACE)
           (expression
@@ -67,23 +72,30 @@ test1 = name <- ((a ~ b) | (name ~ c))
                     (expression
                       (concat_expr
                         (expression
-                          (id))
+                          (data
+                            (id)))
                         (WHITESPACE)
-                        (WHITESPACE)
-                        (expression
-                          (id))))))
+                        (concat_item
+                          (WHITESPACE)
+                          (expression
+                            (data
+                              (id))))))))
                 (WHITESPACE)
-                (WHITESPACE)
-                (variant_tag
-                  (expression
+                (or_item
+                  (WHITESPACE)
+                  (variant_tag
                     (expression
-                      (concat_expr
-                        (expression
-                          (id))
-                        (WHITESPACE)
-                        (WHITESPACE)
-                        (expression
-                          (id))))))))))))))
+                      (expression
+                        (concat_expr
+                          (expression
+                            (data
+                              (id)))
+                          (WHITESPACE)
+                          (concat_item
+                            (WHITESPACE)
+                            (expression
+                              (data
+                                (id)))))))))))))))))
 
 
 ==================
@@ -101,45 +113,51 @@ test2 = name <- a ~ "b" | name <- c | "d" ~ e;
       (WHITESPACE)
       (expression
         (field_expr
-          (expression
-            (id))
+          (id)
           (WHITESPACE)
           (WHITESPACE)
           (expression
             (concat_expr
               (expression
-                (id))
+                (data
+                  (id)))
               (WHITESPACE)
-              (WHITESPACE)
-              (expression
-                (field_expr
-                  (expression
-                    (or_expr
+              (concat_item
+                (WHITESPACE)
+                (expression
+                  (or_expr
+                    (variant_tag
+                      (expression
+                        (data
+                          (string))))
+                    (WHITESPACE)
+                    (or_item
+                      (WHITESPACE)
                       (variant_tag
                         (expression
-                          (string)))
-                      (WHITESPACE)
-                      (WHITESPACE)
-                      (variant_tag
-                        (expression
-                          (id)))))
-                  (WHITESPACE)
-                  (WHITESPACE)
-                  (expression
-                    (concat_expr
-                      (expression
-                        (or_expr
-                          (variant_tag
+                          (field_expr
+                            (id)
+                            (WHITESPACE)
+                            (WHITESPACE)
                             (expression
-                              (id)))
-                          (WHITESPACE)
-                          (WHITESPACE)
-                          (variant_tag
-                            (expression
-                              (string)))))
-                      (WHITESPACE)
-                      (WHITESPACE)
-                      (expression
-                        (id))))))))))
+                              (concat_expr
+                                (expression
+                                  (or_expr
+                                    (variant_tag
+                                      (expression
+                                        (data
+                                          (id))))
+                                    (WHITESPACE)
+                                    (or_item
+                                      (WHITESPACE)
+                                      (variant_tag
+                                        (expression
+                                          (data
+                                            (string)))))))
+                                (WHITESPACE)
+                                (concat_item
+                                  (WHITESPACE)
+                                  (expression
+                                    (data
+                                      (id)))))))))))))))))
       (eos))))
-
