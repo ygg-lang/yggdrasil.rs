@@ -84,12 +84,13 @@ test = a ~ b
       (eq)
       (WHITESPACE)
       (expression
-        (expression
-          (id))
-        (WHITESPACE)
-        (WHITESPACE)
-        (expression
-          (id))))))
+        (concat_expr
+          (expression
+            (id))
+          (WHITESPACE)
+          (WHITESPACE)
+          (expression
+            (id)))))))
 
 ==================
 Expression-3.2 ` `
@@ -125,14 +126,15 @@ test = a | b
       (eq)
       (WHITESPACE)
       (expression
-        (variant_tag
-          (expression
-            (id)))
-        (WHITESPACE)
-        (WHITESPACE)
-        (variant_tag
-          (expression
-            (id)))))))
+        (or_expr
+          (variant_tag
+            (expression
+              (id)))
+          (WHITESPACE)
+          (WHITESPACE)
+          (variant_tag
+            (expression
+              (id))))))))
 
 ==================
 Expression-4.2 `#`
@@ -171,15 +173,16 @@ test =
       (WHITESPACE)
       (WHITESPACE)
       (expression
-        (variant_tag
-          (expression
+        (or_expr
+          (variant_tag
+            (expression
+              (id))
+            (WHITESPACE)
             (id))
+          (NEWLINE)
           (WHITESPACE)
-          (id))
-        (NEWLINE)
-        (WHITESPACE)
-        (WHITESPACE)
-        (WHITESPACE)
-        (variant_tag
-          (expression
-            (id)))))))
+          (WHITESPACE)
+          (WHITESPACE)
+          (variant_tag
+            (expression
+              (id))))))))

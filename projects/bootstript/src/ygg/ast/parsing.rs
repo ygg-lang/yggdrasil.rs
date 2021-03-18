@@ -127,11 +127,20 @@ impl Parsed for Expression {
                 SyntaxKind::sym_unsigned => Self::Integer(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unary_suffix => Self::UnarySuffix(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unary_prefix => Self::UnaryPrefix(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_concat_expr=>Self::ConcatExpression(Box::new(Parsed::parse(state, node)?)),
                 _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node)),
             };
             return Ok(out);
         }
         unreachable!()
+    }
+}
+
+impl Parsed for ConcatExpression {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        let op = Parsed::named_many(state, this, "op")?;
+        let expr = Parsed::named_many(state, this, "expr")?;
+        Ok(Self {op, expr, range: this.range() })
     }
 }
 

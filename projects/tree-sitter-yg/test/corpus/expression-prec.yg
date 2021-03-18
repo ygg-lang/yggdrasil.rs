@@ -12,29 +12,33 @@ test1 = name <- a ~ b | name ~ c
       (eq)
       (WHITESPACE)
       (expression
-        (expression
-          (id))
-        (WHITESPACE)
-        (WHITESPACE)
-        (expression
+        (field_expr
           (expression
-            (expression
-              (id))
-            (WHITESPACE)
-            (WHITESPACE)
-            (expression
-              (variant_tag
-                (expression
-                  (id)))
-              (WHITESPACE)
-              (WHITESPACE)
-              (variant_tag
-                (expression
-                  (id)))))
+            (id))
           (WHITESPACE)
           (WHITESPACE)
           (expression
-            (id)))))))
+            (concat_expr
+              (expression
+                (id))
+              (WHITESPACE)
+              (WHITESPACE)
+              (expression
+                (concat_expr
+                  (expression
+                    (or_expr
+                      (variant_tag
+                        (expression
+                          (id)))
+                      (WHITESPACE)
+                      (WHITESPACE)
+                      (variant_tag
+                        (expression
+                          (id)))))
+                  (WHITESPACE)
+                  (WHITESPACE)
+                  (expression
+                    (id)))))))))))
 
 ==================
 Expression-1.2
@@ -50,32 +54,36 @@ test1 = name <- ((a ~ b) | (name ~ c))
       (eq)
       (WHITESPACE)
       (expression
-        (expression
-          (id))
-        (WHITESPACE)
-        (WHITESPACE)
-        (expression
+        (field_expr
           (expression
-            (variant_tag
-              (expression
-                (expression
+            (id))
+          (WHITESPACE)
+          (WHITESPACE)
+          (expression
+            (expression
+              (or_expr
+                (variant_tag
                   (expression
-                    (id))
-                  (WHITESPACE)
-                  (WHITESPACE)
+                    (expression
+                      (concat_expr
+                        (expression
+                          (id))
+                        (WHITESPACE)
+                        (WHITESPACE)
+                        (expression
+                          (id))))))
+                (WHITESPACE)
+                (WHITESPACE)
+                (variant_tag
                   (expression
-                    (id)))))
-            (WHITESPACE)
-            (WHITESPACE)
-            (variant_tag
-              (expression
-                (expression
-                  (expression
-                    (id))
-                  (WHITESPACE)
-                  (WHITESPACE)
-                  (expression
-                    (id)))))))))))
+                    (expression
+                      (concat_expr
+                        (expression
+                          (id))
+                        (WHITESPACE)
+                        (WHITESPACE)
+                        (expression
+                          (id))))))))))))))
 
 
 ==================
@@ -92,39 +100,46 @@ test2 = name <- a ~ "b" | name <- c | "d" ~ e;
       (eq)
       (WHITESPACE)
       (expression
-        (expression
+        (field_expr
           (expression
             (id))
           (WHITESPACE)
           (WHITESPACE)
           (expression
-            (expression
-              (id))
-            (WHITESPACE)
-            (WHITESPACE)
-            (expression
-              (variant_tag
-                (expression
-                  (string)))
+            (concat_expr
+              (expression
+                (id))
               (WHITESPACE)
               (WHITESPACE)
-              (variant_tag
-                (expression
-                  (id))))))
-        (WHITESPACE)
-        (WHITESPACE)
-        (expression
-          (expression
-            (variant_tag
               (expression
-                (id)))
-            (WHITESPACE)
-            (WHITESPACE)
-            (variant_tag
-              (expression
-                (string))))
-          (WHITESPACE)
-          (WHITESPACE)
-          (expression
-            (id))))
+                (field_expr
+                  (expression
+                    (or_expr
+                      (variant_tag
+                        (expression
+                          (string)))
+                      (WHITESPACE)
+                      (WHITESPACE)
+                      (variant_tag
+                        (expression
+                          (id)))))
+                  (WHITESPACE)
+                  (WHITESPACE)
+                  (expression
+                    (concat_expr
+                      (expression
+                        (or_expr
+                          (variant_tag
+                            (expression
+                              (id)))
+                          (WHITESPACE)
+                          (WHITESPACE)
+                          (variant_tag
+                            (expression
+                              (string)))))
+                      (WHITESPACE)
+                      (WHITESPACE)
+                      (expression
+                        (id))))))))))
       (eos))))
+

@@ -108,11 +108,22 @@ module.exports = grammar({
             $.or_expr,
             $.field_expr,
         ),
-        concat_expr: $ => multiple_left(30, "~", $.expression),
+        concat_expr: $ => prec.left(
+            30,
+            seq(
+                field("base", $.expression),
+                field("item", $.concat_item),
+            )
+        ),
+        concat_item: $ => prec.left(30,
+            repeat1(seq(
+            field("op", "~"),
+            field("expr", $.expression),
+        ))),
         or_expr: $ => multiple_left(20, "|", $.variant_tag),
         field_expr: $ => binary_left(10, $.expression, "<-", $.expression),
 
-        variant_tag: $ => prec.left(40, seq(
+        variant_tag: $ => prec.left(100, seq(
             field("expression", $.expression),
             optional(seq(
                 field("op", /[!_]?\#/),
@@ -197,14 +208,14 @@ function interleave(rule, sep, trailing) {
 }
 
 
-function multiple_left(p, expr, op) {
+function multiple_left(p, op, expr) {
     return prec.left(
         p,
         seq(
-            field("exprs", expr),
-            optional(seq(
-                field("ops", op),
-                field("exprs", expr),
+            field("expr", expr),
+            repeat1(seq(
+                field("op", op),
+                field("expr", expr),
             )),
         )
     )

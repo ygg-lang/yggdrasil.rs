@@ -51,6 +51,14 @@ pub enum Expression {
     String(Box<StringLiteral>),
     UnarySuffix(Box<UnarySuffix>),
     UnaryPrefix(Box<UnaryPrefix>),
+    ConcatExpression(Box<ConcatExpression>)
+}
+
+#[derive(Clone, Debug)]
+pub struct ConcatExpression {
+    pub op: Vec<String>,
+    pub expr: Vec<Expression>,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
