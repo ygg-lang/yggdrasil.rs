@@ -2,7 +2,7 @@
 name = "bootstript-yg"
 publish = false
 description = "Yggdrasil grammar for the tree-sitter parsing library"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Max Brunsfeld <maxbrunsfeld@gmail.com>"]
 license = "MPL2.0"
 readme = "bindings/rust/readme.md"

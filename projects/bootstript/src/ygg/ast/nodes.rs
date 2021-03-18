@@ -1,12 +1,12 @@
 use super::*;
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct Program {
     pub statement: Vec<Statement>,
     pub range: Range,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub enum Statement {
     GrammarStatement(Box<GrammarStatement>),
     FragmentStatement(Box<FragmentStatement>),
@@ -28,7 +28,7 @@ pub struct FragmentStatement {
     pub range: Range,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct AssignStatement {
     pub id: Identifier,
     pub eq: String,
@@ -45,19 +45,17 @@ pub struct IgnoreStatement {
 #[derive(Clone, Debug)]
 pub enum Expression {
     ErrorNode,
+    Data(Box<Data>),
     Priority(Box<Expression>),
-    Identifier(Box<Identifier>),
-    Integer(Box<Unsigned>),
-    String(Box<StringLiteral>),
     UnarySuffix(Box<UnarySuffix>),
     UnaryPrefix(Box<UnaryPrefix>),
-    ConcatExpression(Box<ConcatExpression>)
+    ConcatExpression(Box<ConcatExpression>),
 }
 
 #[derive(Clone, Debug)]
 pub struct ConcatExpression {
-    pub op: Vec<String>,
-    pub expr: Vec<Expression>,
+    pub base: Expression,
+    pub terms: Vec<(String, Expression)>,
     pub range: Range,
 }
 
@@ -75,12 +73,12 @@ pub struct UnaryPrefix {
     pub range: Range,
 }
 
-#[derive(Clone, Debug)]
-pub enum Atom {
-    Id(Identifier),
-    Integer(Unsigned),
-    String(StringLiteral),
-    Regex
+#[derive(Clone)]
+pub enum Data {
+    Identifier(Box<Identifier>),
+    Integer(Box<Unsigned>),
+    String(Box<StringLiteral>),
+    Regex,
 }
 
 #[derive(Clone, Debug)]

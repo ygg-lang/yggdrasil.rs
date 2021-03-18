@@ -111,9 +111,9 @@ impl Parsed for FragmentStatement {
 
 impl Parsed for AssignStatement {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let id = Identifier::named_one(state, this, "id")?;
-        let eq = String::named_one(state, this, "eq")?;
-        let rhs = Expression::named_one(state, this, "rhs")?;
+        let id = Parsed::named_one(state, this, "id")?;
+        let eq = Parsed::named_one(state, this, "eq")?;
+        let rhs = Parsed::named_one(state, this, "rhs")?;
         Ok(Self { id, eq, rhs, range: this.range() })
     }
 }
@@ -122,12 +122,11 @@ impl Parsed for Expression {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
         for node in this.children(&mut this.walk()) {
             let out = match SyntaxKind::from(&node) {
+                SyntaxKind::sym_data => Self::Data(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_expression => Self::Priority(Box::new(Parsed::parse(state, node)?)),
-                SyntaxKind::sym_id => Self::Identifier(Box::new(Parsed::parse(state, node)?)),
-                SyntaxKind::sym_unsigned => Self::Integer(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unary_suffix => Self::UnarySuffix(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unary_prefix => Self::UnaryPrefix(Box::new(Parsed::parse(state, node)?)),
-                SyntaxKind::sym_concat_expr=>Self::ConcatExpression(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_concat_expr => Self::ConcatExpression(Box::new(Parsed::parse(state, node)?)),
                 _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node)),
             };
             return Ok(out);
@@ -138,9 +137,9 @@ impl Parsed for Expression {
 
 impl Parsed for ConcatExpression {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let op = Parsed::named_many(state, this, "op")?;
-        let expr = Parsed::named_many(state, this, "expr")?;
-        Ok(Self {op, expr, range: this.range() })
+        let op = Parsed::named_one(state, this, "base")?;
+        let expr = Parsed::named_many(state, this, "item")?;
+        Ok(Self { base: op, terms: expr, range: this.range() })
     }
 }
 
@@ -160,8 +159,30 @@ impl Parsed for UnaryPrefix {
     }
 }
 
+impl Parsed for Data {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        for node in this.children(&mut this.walk()) {
+            let out = match SyntaxKind::from(&node) {
+                SyntaxKind::sym_id => Self::Identifier(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_unsigned => Self::Integer(Box::new(Parsed::parse(state, node)?)),
+                _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node)),
+            };
+            return Ok(out);
+        }
+        unreachable!()
+    }
+}
+
 parsed_wrap!(Identifier => [data]);
 parsed_wrap!(Unsigned => [data]);
+
+impl Parsed for (String, Expression) {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        let op = Parsed::named_one(state, this, "op")?;
+        let expr = Parsed::named_one(state, this, "expr")?;
+        Ok((op, expr))
+    }
+}
 
 impl Parsed for usize {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
