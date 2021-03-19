@@ -94,7 +94,10 @@ module.exports = grammar({
             30,
             seq(
                 field("base", $.expression),
-                field("item", $.concat_item),
+                repeat1(seq(
+                    field("op", "~"),
+                    field("expr", $.expression),
+                )),
             )
         ),
         concat_item: $ => prec.left(

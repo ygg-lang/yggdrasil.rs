@@ -28,7 +28,7 @@ pub struct FragmentStatement {
     pub range: Range,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AssignStatement {
     pub id: Identifier,
     pub eq: String,
@@ -42,7 +42,7 @@ pub struct IgnoreStatement {
     pub range: Range,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub enum Expression {
     ErrorNode,
     Data(Box<Data>),
@@ -50,12 +50,22 @@ pub enum Expression {
     UnarySuffix(Box<UnarySuffix>),
     UnaryPrefix(Box<UnaryPrefix>),
     ConcatExpression(Box<ConcatExpression>),
+    FieldExpression(Box<FieldExpression>),
 }
 
 #[derive(Clone, Debug)]
 pub struct ConcatExpression {
     pub base: Expression,
-    pub terms: Vec<(String, Expression)>,
+    pub op: Vec<String>,
+    pub expr: Vec<Expression>,
+    pub range: Range,
+}
+
+#[derive(Clone, Debug)]
+pub struct FieldExpression {
+    pub lhs: Identifier,
+    pub op: String,
+    pub rhs: Expression,
     pub range: Range,
 }
 

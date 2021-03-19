@@ -93,14 +93,45 @@ test = a ~ b
             (data
               (id)))
           (WHITESPACE)
-          (concat_item
-            (WHITESPACE)
-            (expression
-              (data
-                (id)))))))))
+          (WHITESPACE)
+          (expression
+            (data
+              (id))))))))
 
 ==================
-Expression-3.2 ` `
+Expression-3.2 `~`
+==================
+test = a ~ b ~ c
+------------------
+
+(program
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (concat_expr
+          (expression
+            (data
+              (id)))
+          (WHITESPACE)
+          (WHITESPACE)
+          (expression
+            (concat_expr
+              (expression
+                (data
+                  (id)))
+              (WHITESPACE)
+              (WHITESPACE)
+              (expression
+                (data
+                  (id))))))))))
+
+
+==================
+Expression-3.3 ` `
 ==================
 test = a  b
 ------------------

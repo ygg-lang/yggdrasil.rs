@@ -127,6 +127,7 @@ impl Parsed for Expression {
                 SyntaxKind::sym_unary_suffix => Self::UnarySuffix(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unary_prefix => Self::UnaryPrefix(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_concat_expr => Self::ConcatExpression(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_field_expr => Self::FieldExpression(Box::new(Parsed::parse(state, node)?)),
                 _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node)),
             };
             return Ok(out);
@@ -137,9 +138,19 @@ impl Parsed for Expression {
 
 impl Parsed for ConcatExpression {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let op = Parsed::named_one(state, this, "base")?;
-        let expr = Parsed::named_many(state, this, "item")?;
-        Ok(Self { base: op, terms: expr, range: this.range() })
+        let base = Parsed::named_one(state, this, "base")?;
+        let op = Parsed::named_many(state, this, "op")?;
+        let expr = Parsed::named_many(state, this, "expr")?;
+        Ok(Self { base, op, expr, range: this.range() })
+    }
+}
+
+impl Parsed for FieldExpression {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        let lhs = Parsed::named_one(state, this, "lhs")?;
+        let op = Parsed::named_one(state, this, "op")?;
+        let rhs = Parsed::named_one(state, this, "rhs")?;
+        Ok(Self { lhs, op, rhs, range: this.range() })
     }
 }
 
