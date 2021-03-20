@@ -9,6 +9,9 @@ module.exports = grammar({
     supertypes: $ => [
 
     ],
+    conflict: $ => [
+
+    ],
     inline: $ => [
         $._grammar_exts
     ],
@@ -64,23 +67,33 @@ module.exports = grammar({
             "_=",
             "@="
         ),
-
+        // Unhide top level expression
         expression: $ => choice(
-            seq("(", $.expression, ")"),
+            seq("(", $._expression, ")"),
             $.data,
             $.unary_suffix,
             $.unary_prefix,
-            $.concat_expr,
-            $.or_expr,
+            alias($._concat_expr, $.concat_expr),
+            alias($._or_expr, $.or_expr),
+            $.field_expr,
+        ),
+        // Hide recursive expression
+        _expression: $ => choice(
+            seq("(", $._expression, ")"),
+            $.data,
+            $.unary_suffix,
+            $.unary_prefix,
+            $._concat_expr,
+            $._or_expr,
             $.field_expr,
         ),
 
         unary_prefix: $ => prec.left(200, choice(
-            seq(field("prefix", $._prefix_op), field("base", $.expression)),
-            // seq(field("prefix", "!"), field("expr", $.expression)),
+            seq(field("prefix", $._prefix_op), field("base", $._expression)),
+            // seq(field("prefix", "!"), field("expr", $._expression)),
         )),
         unary_suffix: $ => prec.right(210,
-            seq(field("base", $.expression), field("suffix", $._suffix_op))
+            seq(field("base", $._expression), field("suffix", $._suffix_op))
         ),
 
         _prefix_op: $ => choice(
@@ -90,38 +103,26 @@ module.exports = grammar({
             "?", "*", "+"
         ),
 
-        concat_expr: $ => prec.left(
+        _concat_expr: $ => prec.left(
             30,
             seq(
                 field("base", $.expression),
                 repeat1(seq(
                     field("op", "~"),
-                    field("expr", $.expression),
-                )),
-            )
+                    field("expr", $._expression),
+                ))),
         ),
-        concat_item: $ => prec.left(
-            130,
-            repeat1(seq(
-                field("op", "~"),
-                field("expr", $.expression),
-            ))
-        ),
-        or_expr: $ => prec.left(
+        _or_expr: $ => prec.left(
             20,
             seq(
                 field("base", $.variant_tag),
-                field("item", $.or_item),
+                repeat1(seq(
+                    field("op", "|"),
+                    field("expr", $.variant_tag),
+                )),
             )
         ),
-        or_item: $ => prec.left(
-            20,
-            repeat1(seq(
-                field("op", "|"),
-                field("expr", $.variant_tag),
-            ))
-        ),
-        field_expr: $ => binary_left(10, $.id, "<-", $.expression),
+        field_expr: $ => binary_left(10, $.id, "<-", $._expression),
 
         data: $ => choice(
             $.id,
@@ -134,7 +135,7 @@ module.exports = grammar({
         ),
 
         variant_tag: $ => prec.left(100, seq(
-            field("expression", $.expression),
+            field("expression", $._expression),
             optional(seq(
                 field("op", /[!_]?\#/),
                 field("name", $.id),
@@ -146,7 +147,7 @@ module.exports = grammar({
             field("name", $.id),
             optional(seq(".", field("dot", $.id))),
             "(",
-            interleave($.expression, ",", 1),
+            interleave($._expression, ",", 1),
             ")"
         ),
 

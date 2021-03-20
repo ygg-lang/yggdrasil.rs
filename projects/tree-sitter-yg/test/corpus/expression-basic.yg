@@ -101,7 +101,7 @@ test = a ~ b
 ==================
 Expression-3.2 `~`
 ==================
-test = a ~ b ~ c
+test = e1 ~ e2 ~ e3 ~ e4
 ------------------
 
 (program
@@ -126,9 +126,15 @@ test = a ~ b ~ c
               (WHITESPACE)
               (WHITESPACE)
               (expression
-                (data
-                  (id))))))))))
-
+                  (concat_expr
+                    (expression
+                  (data
+                    (id)))
+                (WHITESPACE)
+                (WHITESPACE)
+                (expression
+                  (data
+                    (id))))))))))))
 
 ==================
 Expression-3.3 ` `

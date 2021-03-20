@@ -120,15 +120,19 @@ impl Parsed for AssignStatement {
 
 impl Parsed for Expression {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        println!("{}", this.to_sexp());
         for node in this.children(&mut this.walk()) {
             let out = match SyntaxKind::from(&node) {
-                SyntaxKind::sym_data => Self::Data(Box::new(Parsed::parse(state, node)?)),
+                //SyntaxKind::sym_data => Self::Data(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_expression => Self::Priority(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unary_suffix => Self::UnarySuffix(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unary_prefix => Self::UnaryPrefix(Box::new(Parsed::parse(state, node)?)),
-                SyntaxKind::sym_concat_expr => Self::ConcatExpression(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::alias_sym_concat_expr => Self::ConcatExpression(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_field_expr => Self::FieldExpression(Box::new(Parsed::parse(state, node)?)),
-                _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node)),
+                _ => {
+                    println!("{}", node.to_sexp());
+                    unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node))
+                },
             };
             return Ok(out);
         }
@@ -208,13 +212,18 @@ impl Parsed for String {
 }
 
 const TEST: &str = r#"
-test = e1 ~ e2 ~ e3
+test = e1?
+test = e1 ~ e2 ~ e3 ~ e4
+"#;
+
+const TEST2: &str = r#"
+test = e1 ~ e2 ~ e3 ~ e4
 "#;
 
 #[test]
 fn main() -> Result<()> {
     let mut parser = YGGBuilder::new()?;
-    parser.update_by_text(TEST)?;
+    parser.update_by_text(TEST2)?;
     let out = parser.traverse()?;
     println!("{:#?}", out);
     Ok(())
