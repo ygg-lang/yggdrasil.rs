@@ -57,7 +57,7 @@ pub enum Expression {
 pub struct ConcatExpression {
     pub base: Expression,
     pub op: Vec<String>,
-    pub rhs: Vec<Expression>,
+    pub expr: Vec<Expression>,
     pub range: Range,
 }
 

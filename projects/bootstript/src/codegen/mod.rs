@@ -7,7 +7,7 @@ use tree_sitter_cli::generate::{
 };
 
 ///
-use tree_sitter_cli::generate::parse_grammar::parse_grammar;
+// use tree_sitter_cli::generate::parse_grammar::parse_grammar;
 
 pub fn test_input_grammar() -> InputGrammar {
     let r1 = Rule::Choice(vec![

@@ -10,7 +10,7 @@ indent_size = 4
 indent_style = space
 indent_size = 4
 
-[*.arc]
+[projects/bootstript/tests/**/*.yaml]
 end_of_line = lf
 indent_style = space
 indent_size = 4

@@ -1,5 +1,6 @@
 #![feature(once_cell)]
 #![feature(box_patterns)]
+#![feature(box_syntax)]
 
 mod codegen;
 mod debug;
@@ -7,7 +8,6 @@ mod debug;
 mod ygg;
 
 pub use tree_sitter::{Parser, Tree};
-
+pub use self::ygg::{Result,ast};
 pub use tree_sitter_yg::language;
-
 pub use self::ygg::SyntaxKind;

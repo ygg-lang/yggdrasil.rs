@@ -3,6 +3,7 @@ use std::{
     fmt::{Debug, Formatter},
     ops::{Deref, DerefMut},
 };
+use std::ops::AddAssign;
 
 impl Debug for Program {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -43,8 +44,8 @@ impl Debug for Expression {
             Expression::ErrorNode => f.write_str("ErrorNode"),
             Expression::Data(v) => {
                 f.write_str("Data::")?;
-                Debug::fmt(v,f)
-            },
+                Debug::fmt(v, f)
+            }
             Expression::Priority(v) => f
                 .debug_tuple("Priority") //
                 .field(&v)
@@ -61,7 +62,7 @@ impl Debug for Expression {
                 f.write_str("ConcatExpression ")?;
                 let mut list = f.debug_list();
                 list.entry(&v.base);
-                for (o, e) in v.op.iter().zip(v.rhs.iter()) {
+                for (o, e) in v.op.iter().zip(v.expr.iter()) {
                     list.entry(o);
                     list.entry(e);
                 }
@@ -85,5 +86,42 @@ impl Debug for Data {
             Data::String(v) => f.debug_tuple("String").field(&v.data).finish(),
             Data::Regex => f.debug_tuple("Regex").finish(),
         }
+    }
+}
+
+impl From<Expression> for ConcatExpression {
+    fn from(expr: Expression) -> Self {
+        match expr {
+            Expression::ConcatExpression(c) => {
+                *c
+            }
+            _ => Self { base: expr, op: vec![], expr: vec![], range: Range {
+                start_byte: 0,
+                end_byte: 0,
+                start_point: Default::default(),
+                end_point: Default::default()
+            } },
+        }
+    }
+}
+
+impl AddAssign<Expression> for ConcatExpression {
+    fn add_assign(&mut self, rhs: Expression) {
+        match rhs {
+            Expression::ConcatExpression(c) => { self.add_assign(*c)}
+            _ => {
+                self.op.push(String::from("~"));
+                self.expr.push(rhs);
+            }
+        }
+    }
+}
+
+impl AddAssign<ConcatExpression> for ConcatExpression {
+    fn add_assign(&mut self, rhs: ConcatExpression) {
+        self.op.push(String::from("~"));
+        self.expr.push(rhs.base);
+        self.op.extend(rhs.op);
+        self.expr.extend(rhs.expr);
     }
 }

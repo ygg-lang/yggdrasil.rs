@@ -4,6 +4,7 @@ use tree_sitter_yg::language;
 
 use lsp_types::Diagnostic;
 use std::borrow::Borrow;
+use std::ops::AddAssign;
 
 macro_rules! parsed_wrap {
     ($t:ty => [$i:ident]) => {
@@ -51,7 +52,7 @@ impl YGGBuilder {
         let tree = parser.parse("", None).ok_or(YGGError::init_fail())?;
         Ok(Self { parser, tree, text: String::new(), warns: vec![] })
     }
-    fn update_by_text(&mut self, text: &str) -> Result<()> {
+    pub fn update_by_text(&mut self, text: &str) -> Result<()> {
         // let tree = self.parser.parse(text, Some(&self.tree));
         match self.parser.parse(text.as_bytes(), None) {
             Some(s) => {
@@ -104,7 +105,7 @@ impl Parsed for GrammarStatement {
 
 impl Parsed for FragmentStatement {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let id = Identifier::named_one(state, this, "id")?;
+        let id = Parsed::named_one(state, this, "id")?;
         Ok(Self { id, range: this.range() })
     }
 }
@@ -122,16 +123,17 @@ impl Parsed for Expression {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
         for node in this.children(&mut this.walk()) {
             let out = match SyntaxKind::from(&node) {
+                SyntaxKind::sym_expression => return Parsed::parse(state, node),
                 SyntaxKind::sym_data => Self::Data(Box::new(Parsed::parse(state, node)?)),
-                SyntaxKind::sym_expression => Self::Priority(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unary_suffix => Self::UnarySuffix(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unary_prefix => Self::UnaryPrefix(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_concat_expr => Self::ConcatExpression(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_field_expr => Self::FieldExpression(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::anon_sym_LPAREN=>{continue}
                 _ => {
                     println!("{}", node.to_sexp());
                     unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node))
-                },
+                }
             };
             return Ok(out);
         }
@@ -141,31 +143,12 @@ impl Parsed for Expression {
 
 impl Parsed for ConcatExpression {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let lhs = Expression::named_one(state, this, "lhs")?;
-        let o = String::named_one(state, this, "op")?;
+        let mut l = Expression::named_one(state, this, "lhs")?;
         let r = Expression::named_one(state, this, "rhs")?;
-        match lhs {
-            Expression::ConcatExpression(box Self { base, op, rhs, range: _ }) => {
-                let mut new_op = op.clone();
-                let mut new_rhs = rhs.clone();
-                new_op.push(o);
-                new_rhs.push(r);
-                Ok(Self {
-                    base,
-                    op: new_op,
-                    rhs: new_rhs,
-                    range: this.range()
-                })
-            }
-            _ => {
-                Ok(Self {
-                    base: lhs,
-                    op: vec![o],
-                    rhs: vec![r],
-                    range: this.range()
-                })
-            }
-        }
+        let mut c = ConcatExpression::from(l);
+        c.add_assign(r);
+        c.range = this.range();
+        Ok(c)
     }
 }
 
@@ -231,20 +214,3 @@ impl Parsed for String {
     }
 }
 
-const TEST: &str = r#"
-test = e1?
-test = e1 ~ e2 ~ e3 ~ e4
-"#;
-
-const TEST2: &str = r#"
-test = e1 ~ e2 ~ e3 ~ e4
-"#;
-
-#[test]
-fn main() -> Result<()> {
-    let mut parser = YGGBuilder::new()?;
-    parser.update_by_text(TEST2)?;
-    let out = parser.traverse()?;
-    println!("{:#?}", out);
-    Ok(())
-}
