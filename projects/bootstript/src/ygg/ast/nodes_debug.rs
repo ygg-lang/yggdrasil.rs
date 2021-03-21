@@ -61,7 +61,7 @@ impl Debug for Expression {
                 f.write_str("ConcatExpression ")?;
                 let mut list = f.debug_list();
                 list.entry(&v.base);
-                for (o, e) in v.op.iter().zip(v.expr.iter()) {
+                for (o, e) in v.op.iter().zip(v.rhs.iter()) {
                     list.entry(o);
                     list.entry(e);
                 }

@@ -1,4 +1,5 @@
 #![feature(once_cell)]
+#![feature(box_patterns)]
 
 mod codegen;
 mod debug;

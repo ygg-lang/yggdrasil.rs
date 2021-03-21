@@ -120,14 +120,13 @@ impl Parsed for AssignStatement {
 
 impl Parsed for Expression {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        println!("{}", this.to_sexp());
         for node in this.children(&mut this.walk()) {
             let out = match SyntaxKind::from(&node) {
-                //SyntaxKind::sym_data => Self::Data(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_data => Self::Data(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_expression => Self::Priority(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unary_suffix => Self::UnarySuffix(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unary_prefix => Self::UnaryPrefix(Box::new(Parsed::parse(state, node)?)),
-                SyntaxKind::alias_sym_concat_expr => Self::ConcatExpression(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_concat_expr => Self::ConcatExpression(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_field_expr => Self::FieldExpression(Box::new(Parsed::parse(state, node)?)),
                 _ => {
                     println!("{}", node.to_sexp());
@@ -142,10 +141,31 @@ impl Parsed for Expression {
 
 impl Parsed for ConcatExpression {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let base = Parsed::named_one(state, this, "base")?;
-        let op = Parsed::named_many(state, this, "op")?;
-        let expr = Parsed::named_many(state, this, "expr")?;
-        Ok(Self { base, op, expr, range: this.range() })
+        let lhs = Expression::named_one(state, this, "lhs")?;
+        let o = String::named_one(state, this, "op")?;
+        let r = Expression::named_one(state, this, "rhs")?;
+        match lhs {
+            Expression::ConcatExpression(box Self { base, op, rhs, range: _ }) => {
+                let mut new_op = op.clone();
+                let mut new_rhs = rhs.clone();
+                new_op.push(o);
+                new_rhs.push(r);
+                Ok(Self {
+                    base,
+                    op: new_op,
+                    rhs: new_rhs,
+                    range: this.range()
+                })
+            }
+            _ => {
+                Ok(Self {
+                    base: lhs,
+                    op: vec![o],
+                    rhs: vec![r],
+                    range: this.range()
+                })
+            }
+        }
     }
 }
 

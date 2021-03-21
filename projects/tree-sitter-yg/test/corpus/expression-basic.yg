@@ -114,27 +114,27 @@ test = e1 ~ e2 ~ e3 ~ e4
       (expression
         (concat_expr
           (expression
-            (data
-              (id)))
+            (concat_expr
+              (expression
+                (concat_expr
+                  (expression
+                    (data
+                      (id)))
+                  (WHITESPACE)
+                  (WHITESPACE)
+                  (expression
+                    (data
+                      (id)))))
+              (WHITESPACE)
+              (WHITESPACE)
+              (expression
+                (data
+                  (id)))))
           (WHITESPACE)
           (WHITESPACE)
           (expression
-            (concat_expr
-              (expression
-                (data
-                  (id)))
-              (WHITESPACE)
-              (WHITESPACE)
-              (expression
-                  (concat_expr
-                    (expression
-                  (data
-                    (id)))
-                (WHITESPACE)
-                (WHITESPACE)
-                (expression
-                  (data
-                    (id))))))))))))
+            (data
+              (id))))))))
 
 ==================
 Expression-3.3 ` `
@@ -177,12 +177,11 @@ test = a | b
               (data
                 (id))))
           (WHITESPACE)
-          (or_item
-            (WHITESPACE)
-            (variant_tag
-              (expression
-                (data
-                  (id))))))))))
+          (WHITESPACE)
+          (variant_tag
+            (expression
+              (data
+                (id)))))))))
 
 ==================
 Expression-4.2 `#`
@@ -232,9 +231,8 @@ test =
           (NEWLINE)
           (WHITESPACE)
           (WHITESPACE)
-          (or_item
-            (WHITESPACE)
-            (variant_tag
-              (expression
-                (data
-                  (id))))))))))
+          (WHITESPACE)
+          (variant_tag
+            (expression
+              (data
+                (id)))))))))
