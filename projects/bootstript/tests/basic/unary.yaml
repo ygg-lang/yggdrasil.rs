@@ -1,0 +1,98 @@
+[
+    AssignStatement {
+        id: "test1",
+        eq: "=",
+        rhs: UnarySuffix(
+            UnarySuffix {
+                suffix: "?",
+                base: Data::Identifier(
+                    "e1",
+                ),
+                range: Range {
+                    start_byte: 9,
+                    end_byte: 12,
+                    start_point: Point {
+                        row: 1,
+                        column: 8,
+                    },
+                    end_point: Point {
+                        row: 1,
+                        column: 11,
+                    },
+                },
+            },
+        ),
+    },
+    AssignStatement {
+        id: "test2",
+        eq: "=",
+        rhs: UnarySuffix(
+            UnarySuffix {
+                suffix: "+",
+                base: Data::Identifier(
+                    "e1",
+                ),
+                range: Range {
+                    start_byte: 22,
+                    end_byte: 25,
+                    start_point: Point {
+                        row: 2,
+                        column: 8,
+                    },
+                    end_point: Point {
+                        row: 2,
+                        column: 11,
+                    },
+                },
+            },
+        ),
+    },
+    AssignStatement {
+        id: "test3",
+        eq: "=",
+        rhs: UnarySuffix(
+            UnarySuffix {
+                suffix: "*",
+                base: Data::Identifier(
+                    "e1",
+                ),
+                range: Range {
+                    start_byte: 35,
+                    end_byte: 38,
+                    start_point: Point {
+                        row: 3,
+                        column: 8,
+                    },
+                    end_point: Point {
+                        row: 3,
+                        column: 11,
+                    },
+                },
+            },
+        ),
+    },
+    AssignStatement {
+        id: "test4",
+        eq: "=",
+        rhs: UnaryPrefix(
+            UnaryPrefix {
+                prefix: "^",
+                base: Data::Identifier(
+                    "e1",
+                ),
+                range: Range {
+                    start_byte: 48,
+                    end_byte: 51,
+                    start_point: Point {
+                        row: 4,
+                        column: 8,
+                    },
+                    end_point: Point {
+                        row: 4,
+                        column: 11,
+                    },
+                },
+            },
+        ),
+    },
+]

@@ -51,12 +51,14 @@ impl Debug for Expression {
                 .field(&v)
                 .finish(),
             Expression::UnarySuffix(v) => f
-                .debug_tuple("UnarySuffix") //
-                .field(&v)
+                .debug_tuple("Unary::Suffix") //
+                .field(&v.base)
+                .field(&v.suffix)
                 .finish(),
             Expression::UnaryPrefix(v) => f
-                .debug_tuple("UnaryPrefix") //
-                .field(&v)
+                .debug_tuple("Unary::Prefix") //
+                .field(&v.prefix)
+                .field(&v.base)
                 .finish(),
             Expression::ConcatExpression(v) => {
                 f.write_str("ConcatExpression ")?;
@@ -74,6 +76,16 @@ impl Debug for Expression {
                 .field("op", &v.op)
                 .field("rhs", &v.rhs)
                 .finish(),
+            Expression::ChoiceExpression(v) => {
+                f.write_str("ChoiceExpression ")?;
+                let mut list = f.debug_list();
+                list.entry(&v.base);
+                for (o, e) in v.op.iter().zip(v.expr.iter()) {
+                    list.entry(o);
+                    list.entry(e);
+                }
+                list.finish()
+            }
         }
     }
 }

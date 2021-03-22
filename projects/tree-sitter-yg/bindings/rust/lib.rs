@@ -12,7 +12,7 @@
 //!     }
 //! "#;
 //! let mut parser = Parser::new();
-//! parser.set_language(tree_sitter_rust::language()).expect("Error loading Rust grammar");
+//! parser.set_language(tree_sitter_ygg::language()).expect("Error loading Rust grammar");
 //! let parsed = parser.parse(code, None);
 //! # let parsed = parsed.unwrap();
 //! # let root = parsed.root_node();
@@ -27,14 +27,14 @@
 use tree_sitter::Language;
 
 extern "C" {
-    fn tree_sitter_yg() -> Language;
+    fn tree_sitter_ygg() -> Language;
 }
 
 /// Returns the tree-sitter [Language][] for this grammar.
 ///
 /// [Language]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Language.html
 pub fn language() -> Language {
-    unsafe { tree_sitter_yg() }
+    unsafe { tree_sitter_ygg() }
 }
 
 /// The source of the Rust tree-sitter grammar description.

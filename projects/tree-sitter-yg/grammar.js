@@ -1,5 +1,5 @@
 module.exports = grammar({
-    name: 'yg',
+    name: 'ygg',
 
     extras: $ => [
         $.NEWLINE,

@@ -50,6 +50,7 @@ pub enum Expression {
     UnarySuffix(Box<UnarySuffix>),
     UnaryPrefix(Box<UnaryPrefix>),
     ConcatExpression(Box<ConcatExpression>),
+    ChoiceExpression(Box<ChoiceExpression>),
     FieldExpression(Box<FieldExpression>),
 }
 
@@ -58,6 +59,22 @@ pub struct ConcatExpression {
     pub base: Expression,
     pub op: Vec<String>,
     pub expr: Vec<Expression>,
+    pub range: Range,
+}
+
+#[derive(Clone, Debug)]
+pub struct ChoiceExpression {
+    pub base: TaggedExpression,
+    pub op: Vec<String>,
+    pub expr: Vec<TaggedExpression>,
+    pub range: Range,
+}
+
+#[derive(Clone, Debug)]
+pub struct TaggedExpression {
+    pub base: Expression,
+    pub tag: String,
+    pub tag_mode: Vec<Expression>,
     pub range: Range,
 }
 
