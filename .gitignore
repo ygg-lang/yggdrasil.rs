@@ -5,8 +5,6 @@
 
 # Cargo
 build
-examples
-!examples/ast.rs
 /target/
 Cargo.lock
 
@@ -23,6 +21,7 @@ package-lock.json
 *.ps1
 *.m
 *.nb
+*.g4
 projects/tree-sitter-yg/src/**/*
 parser.exp
 parser.lib

@@ -1,0 +1,10 @@
+//? 
+fragment! std;
+
+
+fn! interleave(rule: rule, sep, trailing = false) {
+    seq(rule, repeat(seq(",", rule)))
+}
+
+
+

@@ -1,0 +1,67 @@
+grammar! json
+
+ignore! /\s/
+
+program = _value
+
+_value = 
+    | Object
+    | Array
+    | Number
+    | String
+    | True
+    | False
+    | Null
+
+
+Object = "{" ~ @interleave(pair, ",")? ~ "}"
+
+Pair = (key <- string | number) ":" (value <- _value)
+
+Array = "[" @interleave(_value, ",") "]"
+
+String =
+  | '"' ~ '"'
+  | '"' ~string_content ~ '"'
+
+string_content @= ([^\\"\n]+ | escape_sequence)+
+
+
+escape_sequence @= '\\' | /(\"|\\|\/|b|f|n|r|t|u)/
+
+Number = {
+  // 子域里所有的都是 inline 的, 不会在最后的结果中出现
+  sign = '-' | '+';
+
+
+
+  decimal_digits = /\d+/
+  signed_integer = sign ? decimal_digits
+  exponent_part = ^'e' ? ~signed_integer
+
+  hex_literal = 0 ~ ^"x" ~ [0-9a-fA-F]+
+
+  binary_literal = 0 ~ ^"b" ~ [0-1]+
+
+  octal_literal = 0 ~ ^"o" ~ [0-7]+
+
+  decimal_integer_literal = sign(0 | ([1-9] ~ decimal_digits ?))
+
+  decimal_literal = choice(
+    seq(decimal_integer_literal, '.', optional(decimal_digits), optional(exponent_part)),
+    seq('.', decimal_digits, optional(exponent_part)),
+    seq(decimal_integer_literal, optional(exponent_part))
+  )
+
+  return token(hex_literal, decimal_literal, binary_literal, octal_literal)
+}
+
+
+// 关键词建议大写
+
+NULL  @= "null"
+TRUE  @= "true"
+FALSE @= "false"
+
+
+
