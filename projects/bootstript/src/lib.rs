@@ -7,7 +7,6 @@ mod debug;
 #[allow(unused)]
 mod ygg;
 
+pub use self::ygg::{ast, Result, SyntaxKind};
 pub use tree_sitter::{Parser, Tree};
-pub use self::ygg::{Result,ast};
 pub use tree_sitter_yg::language;
-pub use self::ygg::SyntaxKind;

@@ -1,9 +1,8 @@
 use super::*;
 use std::{
     fmt::{Debug, Formatter},
-    ops::{Deref, DerefMut},
+    ops::{AddAssign, Deref, DerefMut},
 };
-use std::ops::AddAssign;
 
 impl Debug for Program {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -41,15 +40,10 @@ impl Debug for Statement {
 impl Debug for Expression {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Expression::ErrorNode => f.write_str("ErrorNode"),
             Expression::Data(v) => {
                 f.write_str("Data::")?;
                 Debug::fmt(v, f)
             }
-            Expression::Priority(v) => f
-                .debug_tuple("Priority") //
-                .field(&v)
-                .finish(),
             Expression::UnarySuffix(v) => f
                 .debug_tuple("Unary::Suffix") //
                 .field(&v.base)
@@ -104,15 +98,13 @@ impl Debug for Data {
 impl From<Expression> for ConcatExpression {
     fn from(expr: Expression) -> Self {
         match expr {
-            Expression::ConcatExpression(c) => {
-                *c
-            }
-            _ => Self { base: expr, op: vec![], expr: vec![], range: Range {
-                start_byte: 0,
-                end_byte: 0,
-                start_point: Default::default(),
-                end_point: Default::default()
-            } },
+            Expression::ConcatExpression(c) => *c,
+            _ => Self {
+                base: expr,
+                op: vec![],
+                expr: vec![],
+                range: Range { start_byte: 0, end_byte: 0, start_point: Default::default(), end_point: Default::default() },
+            },
         }
     }
 }
@@ -120,7 +112,7 @@ impl From<Expression> for ConcatExpression {
 impl AddAssign<Expression> for ConcatExpression {
     fn add_assign(&mut self, rhs: Expression) {
         match rhs {
-            Expression::ConcatExpression(c) => { self.add_assign(*c)}
+            Expression::ConcatExpression(c) => self.add_assign(*c),
             _ => {
                 self.op.push(String::from("~"));
                 self.expr.push(rhs);
@@ -132,6 +124,33 @@ impl AddAssign<Expression> for ConcatExpression {
 impl AddAssign<ConcatExpression> for ConcatExpression {
     fn add_assign(&mut self, rhs: ConcatExpression) {
         self.op.push(String::from("~"));
+        self.expr.push(rhs.base);
+        self.op.extend(rhs.op);
+        self.expr.extend(rhs.expr);
+    }
+}
+
+impl From<TaggedExpression> for ChoiceExpression {
+    fn from(expr: TaggedExpression) -> Self {
+        Self {
+            base: expr,
+            op: vec![],
+            expr: vec![],
+            range: Range { start_byte: 0, end_byte: 0, start_point: Default::default(), end_point: Default::default() },
+        }
+    }
+}
+
+impl AddAssign<TaggedExpression> for ChoiceExpression {
+    fn add_assign(&mut self, rhs: TaggedExpression) {
+        self.op.push(String::from("|"));
+        self.expr.push(rhs);
+    }
+}
+
+impl AddAssign<ChoiceExpression> for ChoiceExpression {
+    fn add_assign(&mut self, rhs: ChoiceExpression) {
+        self.op.push(String::from("|"));
         self.expr.push(rhs.base);
         self.op.extend(rhs.op);
         self.expr.extend(rhs.expr);

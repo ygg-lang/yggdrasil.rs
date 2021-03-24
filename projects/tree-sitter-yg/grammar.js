@@ -69,7 +69,7 @@ module.exports = grammar({
         ),
         // Unhide top level expression
         expression: $ => choice(
-            seq("(", $.expression, ")"),
+            seq("(", optional("|"), $.expression, ")"),
             $.data,
             $.unary_suffix,
             $.unary_prefix,
@@ -110,8 +110,13 @@ module.exports = grammar({
         variant_tag: $ => prec.left(100, seq(
             field("expression", $.expression),
             optional(seq(
-                field("op", /[!_]?\#/),
-                field("name", $.id),
+                "#",
+                field("tag", $.id),
+                optional(field("mode", /[!^]/)),
+                optional(seq(
+                    ":",
+                    field("ty", $.id)
+                )),
             ))
         )),
 

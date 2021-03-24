@@ -2,25 +2,26 @@ grammar! json
 
 ignore! /\s/
 
-program = _value
+import! "@type"
 
-_value = 
-    | Object
-    | Array
-    | Number
-    | String
-    | True
-    | False
+program = value
+
+value = 
+    | object
+    | array
+    | number
+    | string
+    | boolean
     | Null
 
 
-Object = "{" ~ @interleave(pair, ",")? ~ "}"
+object = "{" ~ @interleave(pair, ",")? ~ "}"
 
 Pair = (key <- string | number) ":" (value <- _value)
 
-Array = "[" @interleave(_value, ",") "]"
+array = "[" @interleave(_value, ",") "]"
 
-String =
+string =
   | '"' ~ '"'
   | '"' ~string_content ~ '"'
 
@@ -29,7 +30,7 @@ string_content @= ([^\\"\n]+ | escape_sequence)+
 
 escape_sequence @= '\\' | /(\"|\\|\/|b|f|n|r|t|u)/
 
-Number = {
+number = {
   // 子域里所有的都是 inline 的, 不会在最后的结果中出现
   sign = '-' | '+';
 
@@ -63,5 +64,7 @@ NULL  @= "null"
 TRUE  @= "true"
 FALSE @= "false"
 
+boolean :bool @= "true" | "false"
 
+null = "null"
 

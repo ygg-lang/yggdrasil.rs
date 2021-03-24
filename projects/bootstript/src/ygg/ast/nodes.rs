@@ -44,9 +44,9 @@ pub struct IgnoreStatement {
 
 #[derive(Clone)]
 pub enum Expression {
-    ErrorNode,
+    //ErrorNode,
     Data(Box<Data>),
-    Priority(Box<Expression>),
+    //Priority(Box<Expression>),
     UnarySuffix(Box<UnarySuffix>),
     UnaryPrefix(Box<UnaryPrefix>),
     ConcatExpression(Box<ConcatExpression>),
@@ -72,9 +72,9 @@ pub struct ChoiceExpression {
 
 #[derive(Clone, Debug)]
 pub struct TaggedExpression {
-    pub base: Expression,
+    pub expr: Expression,
     pub tag: String,
-    pub tag_mode: Vec<Expression>,
+    pub tag_mode: String,
     pub range: Range,
 }
 
@@ -138,11 +138,5 @@ impl Default for Identifier {
             data: "".to_string(),
             range: Range { start_byte: 0, end_byte: 0, start_point: Default::default(), end_point: Default::default() },
         }
-    }
-}
-
-impl Default for Expression {
-    fn default() -> Self {
-        Self::ErrorNode
     }
 }

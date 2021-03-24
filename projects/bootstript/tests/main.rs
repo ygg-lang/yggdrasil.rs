@@ -1,7 +1,6 @@
 pub mod basic;
 
-use bootstript_yg::Result;
-use bootstript_yg::ast::YGGBuilder;
+use bootstript_yg::{ast::YGGBuilder, Result};
 
 #[test]
 fn ready() {

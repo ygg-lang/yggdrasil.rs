@@ -1,0 +1,60 @@
+[type.bool]
+
+
+[type.bool.parsed]
+impl = """
+impl Parsed for bool {
+    fn parse(state: &mut {{builder}}, this: Node) -> Result<Self> {
+        match this.utf8_text(state.text.as_bytes())? {
+            "true" => Ok(true),
+            "false" => Ok(false),
+            _ => Err({{error}})
+        }
+    }
+}
+"""
+error = ["Utf8Error", "ParseIntError"]
+
+[type.usize.from.TEXT]
+impl = """
+impl Parsed for usize {
+    fn parse(state: &mut {{builder}}, this: Node) -> Result<Self> {
+        Ok(this.utf8_text(state.text.as_bytes())?.parse::<usize>()?)
+    }
+}
+"""
+error = ["Utf8Error", "ParseIntError"]
+
+[type.String.from.TEXT]
+impl = """
+impl Parsed for String {
+    fn parse(state: &mut {{builder}}, this: Node) -> Result<Self> {
+        Ok(this.utf8_text(state.text.as_bytes())?.to_string())
+    }
+}
+"""
+error = ["Utf8Error"]
+
+
+[error.from.ParseIntError]
+impl = """
+impl From<std::num::ParseIntError> for {{error}} {
+    fn from(e: std::num::ParseIntError) -> Self {
+        Self::TextDecodeError { error: e.to_string() }
+    }
+}
+"""
+field = ["TextDecodeError"]
+
+
+[error.from.Utf8Error]
+impl = """
+impl From<std::str::Utf8Error> for {{error}} {
+    fn from(e: std::str::Utf8Error) -> Self {
+        Self::TextDecodeError { error: e.to_string() }
+    }
+}
+"""
+field = ["TextDecodeError"]
+
+type ::TextDecodeError
