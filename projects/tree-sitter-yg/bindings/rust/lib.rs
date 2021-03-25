@@ -37,9 +37,6 @@ pub fn language() -> Language {
     unsafe { tree_sitter_ygg() }
 }
 
-/// The source of the Rust tree-sitter grammar description.
-pub const GRAMMAR: &str = include_str!("../../examples/yggdrasil.yg");
-
 /// The syntax highlighting query for this language.
 pub const HIGHLIGHT_QUERY: &str = include_str!("../../queries/highlights.scm");
 

@@ -6,28 +6,32 @@ use lsp_types::Diagnostic;
 use std::{borrow::Borrow, ops::AddAssign};
 
 macro_rules! parsed_wrap {
-    ($t:ty => [$i:ident: $method:ident]) => {
+    // ($t:ty: [$i:ident << $($method:tt)*]) => {
+    //     impl Parsed for $t {
+    //         fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+    //             let $i = parsed_wrap!(@ state, this, $method);
+    //             Ok(Self { $i, range: this.range() })
+    //         }
+    //     }
+    // };
+    ($t:ty: $($i:ident << $method:tt),+) => {
         impl Parsed for $t {
             fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-                let $i = Parsed::$method(state, this)?;
-                Ok(Self { $i, range: this.range() })
+
+                $(let $i = parsed_wrap!(@ state, this, $method);)+
+                Ok(Self { $($i,)+ range: this.range() })
             }
         }
     };
-    ($t:ty => [$i:ident: $method:ident($name:literal)]) => {
-        impl Parsed for $t {
-            fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-                let $i = Parsed::$method(state, this, $name)?;
-                Ok(Self { $i, range: this.range() })
-            }
-        }
-    };
+    (@ $state:ident,$this:ident,$method:ident) => {Parsed::$method($state, $this)?};
+    (@ $state:ident,$this:ident,$method:ident($name:literal))=>{Parsed::$method($state, $this, $name)?};
 }
 
-macro_rules! parsed_method {
-    ($method:ident) => {Parsed::$method(state, this)?};
-    ($method:ident($name:literal))=>{Parsed::$method(state, this, $name)?};
-}
+// parsed_wrap!(Identifier: data << parse);
+// parsed_wrap!(UnaryPrefix:
+//     prefix << named_one("prefix"),
+//     data << parse
+// );
 
 pub trait Parsed
 where
@@ -211,7 +215,6 @@ impl Parsed for UnaryPrefix {
     }
 }
 
-parsed_wrap!(UnaryPrefix => [prefix: named_one("prefix")]);
 
 impl Parsed for Data {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
@@ -227,9 +230,9 @@ impl Parsed for Data {
     }
 }
 
-
-parsed_wrap!(Identifier => [data: parse]);
-parsed_wrap!(Unsigned => [data: parse]);
+parsed_wrap!(Identifier: data << parse);
+parsed_wrap!(Unsigned: data << parse);
+//parsed_wrap!(Unsigned => [data: named_one("prefix")]);
 
 impl Parsed for usize {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
