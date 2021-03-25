@@ -130,8 +130,8 @@ impl AddAssign<ConcatExpression> for ConcatExpression {
     }
 }
 
-impl From<TaggedExpression> for ChoiceExpression {
-    fn from(expr: TaggedExpression) -> Self {
+impl From<ChoiceTag> for ChoiceExpression {
+    fn from(expr: ChoiceTag) -> Self {
         Self {
             base: expr,
             op: vec![],
@@ -141,8 +141,8 @@ impl From<TaggedExpression> for ChoiceExpression {
     }
 }
 
-impl AddAssign<TaggedExpression> for ChoiceExpression {
-    fn add_assign(&mut self, rhs: TaggedExpression) {
+impl AddAssign<ChoiceTag> for ChoiceExpression {
+    fn add_assign(&mut self, rhs: ChoiceTag) {
         self.op.push(String::from("|"));
         self.expr.push(rhs);
     }

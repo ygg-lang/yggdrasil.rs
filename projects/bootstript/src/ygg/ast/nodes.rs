@@ -44,9 +44,9 @@ pub struct IgnoreStatement {
 
 #[derive(Clone)]
 pub enum Expression {
-    //ErrorNode,
+    // ErrorNode,
     Data(Box<Data>),
-    //Priority(Box<Expression>),
+    // Priority(Box<Expression>),
     UnarySuffix(Box<UnarySuffix>),
     UnaryPrefix(Box<UnaryPrefix>),
     ConcatExpression(Box<ConcatExpression>),
@@ -64,14 +64,14 @@ pub struct ConcatExpression {
 
 #[derive(Clone, Debug)]
 pub struct ChoiceExpression {
-    pub base: TaggedExpression,
+    pub base: ChoiceTag,
     pub op: Vec<String>,
-    pub expr: Vec<TaggedExpression>,
+    pub expr: Vec<ChoiceTag>,
     pub range: Range,
 }
 
 #[derive(Clone, Debug)]
-pub struct TaggedExpression {
+pub struct ChoiceTag {
     pub expr: Expression,
     pub tag: String,
     pub tag_mode: String,

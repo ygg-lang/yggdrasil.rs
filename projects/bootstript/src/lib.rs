@@ -3,7 +3,6 @@
 #![feature(box_syntax)]
 
 mod codegen;
-mod debug;
 #[allow(unused)]
 mod ygg;
 

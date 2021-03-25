@@ -18,24 +18,24 @@ statement =
     | fragment_statement  #Fragment
     | include_statement   #Include
     | ignore_statement    #Ignore
-    | eos                 #Empty!
+    | eos                 #Empty
 
 //?
 //* grammar tsg
 //* grammar tsg {"*.tsg", }
-grammar_statement _= grammar ~ ^id ~ _grammar_exts? ~ eos?
+grammar_statement ^= grammar ~ ^id ~ _grammar_exts? ~ eos?
 _grammar_exts      = "{" ~ @interleave(extensions <- string, ",", trailing = true)? ~ "}"
 
 
 //? `fragment` means that this file cannot build as grammar, it can only be imported.
 //? `id` represents the default name when importing, which can be changed by `as`.
 //* fragment ascii
-fragment_statement _= _fragment ~ ^id ~ eos?
+fragment_statement ^= fragment ~ ^id ~ eos?
 
 
 //?
 //*
-import_statement _=
+import_statement ^=
     | import ~ (path <- string) ~ (as ^id)?         #FromPath
     | import ~ (path <- string) ~ _import_selected  #FromPathItems
 _import_selected  = "{" ~ @interleave(item <- import_item, ",", trailing = 1)? ~ "}"
@@ -44,19 +44,19 @@ import_item       = (id <- id) ~ as ~ (alias <- id)
 //?
 //* ignores /\/
 //* ignores [comment, comment_inline]
-ignores_statement _=
+ignores_statement ^=
     | ignores ~ ^id
     | ignores ~ "{" ~ @interleave(^id, ",", trailing = 1)? ~ "}"
 
 
-expression _= 
-    | _priority         #Priority^
+expression ^= 
+    | _priority         #Priority!
     | data              #Data
     | unary_suffix      #Suffix
     | unary_prefix      #Prefix
     | concat_expression #Concat
     | or_expression     #Or
-_priority _= "(" ~ "|"? ~ expression ~ ")"
+_priority ^= "(" ~ "|"? ~ expression ~ ")"
 unary_suffix =
     | @unary_suffix(210, _suffix_ops, expression)
 unary_prefix =
@@ -85,7 +85,7 @@ data = _atom
 atom = 
     | id
     | string
-    | unsigned # Integer
+    | unsigned    #Integer
     | regex
     | macro_call
 
@@ -111,11 +111,11 @@ string @=
     | /'[^'\\]*(\\.[^'\\]*)*'/ 
     | /"[^"\\]*(\\.[^"\\]*)*"/ 
 // regex
-regex_long _= "/" ~ (item <- regex_item) ~ "/" ~ (mode <- regex_mode)?
+regex_long ^= "/" ~ (item <- regex_item) ~ "/" ~ (mode <- regex_mode)?
 regex_mode  = [igm]
 regex_item  = 
     | 
-regex_range = (is_neg <- "[" | "[^")  ~ regex_range_item* ~ "]"
+regex_range = (mode <- "[" | "[^")  ~ regex_range_item* ~ "]"
 regex_range_item =
     | regex_set
     | regex_range_item_group
@@ -123,7 +123,7 @@ regex_range_item =
 regex_range_item_group = 
     | @binary_left(10, regex_range_item, "-", regex_range_item)
 regex_set = "\\p" ~ "{" ~ (set <- /[_0-9a-zA-Z]+/) ~ "}"
-regex_repeats _=
+regex_repeats ^=
     | "{" ~ (repeats <- integer) ~ "}"
     | "{" ~ (least <- integer?) ~ "," ~ (most <- integer?) ~ "}"
 // end of line

@@ -73,8 +73,8 @@ module.exports = grammar({
             $.data,
             $.unary_suffix,
             $.unary_prefix,
-            $.concat_expr,
-            $.or_expr,
+            $.concat_expression,
+            $.choice_expression,
             $.field_expr,
         ),
 
@@ -93,8 +93,8 @@ module.exports = grammar({
             "?", "*", "+"
         ),
 
-        concat_expr: $ => binary_left(30, $.expression, "~", $.expression),
-        or_expr: $ => binary_left(20, $.variant_tag, "|", $.variant_tag),
+        concat_expression: $ => binary_left(30, $.expression, "~", $.expression),
+        choice_expression: $ => binary_left(20, $.choice_tag, "|", $.choice_tag),
         field_expr: $ => binary_left(10, $.expression, "<-", $.expression),
 
         data: $ => choice(
@@ -107,7 +107,7 @@ module.exports = grammar({
             $.regex_set,
         ),
 
-        variant_tag: $ => prec.left(100, seq(
+        choice_tag: $ => prec.left(100, seq(
             field("expression", $.expression),
             optional(seq(
                 "#",

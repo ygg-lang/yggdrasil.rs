@@ -2,36 +2,20 @@ use super::*;
 use tree_sitter::{Parser, Tree, TreeCursor};
 use tree_sitter_yg::language;
 
-use lsp_types::Diagnostic;
 use std::{borrow::Borrow, ops::AddAssign};
 
 macro_rules! parsed_wrap {
-    // ($t:ty: [$i:ident << $($method:tt)*]) => {
-    //     impl Parsed for $t {
-    //         fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-    //             let $i = parsed_wrap!(@ state, this, $method);
-    //             Ok(Self { $i, range: this.range() })
-    //         }
-    //     }
-    // };
     ($t:ty: $($i:ident << $method:tt),+) => {
         impl Parsed for $t {
             fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-
                 $(let $i = parsed_wrap!(@ state, this, $method);)+
                 Ok(Self { $($i,)+ range: this.range() })
             }
         }
     };
     (@ $state:ident,$this:ident,$method:ident) => {Parsed::$method($state, $this)?};
-    (@ $state:ident,$this:ident,$method:ident($name:literal))=>{Parsed::$method($state, $this, $name)?};
+    (@ $state:ident,$this:ident,($method:ident, $name:literal))=>{Parsed::$method($state, $this, $name)?};
 }
-
-// parsed_wrap!(Identifier: data << parse);
-// parsed_wrap!(UnaryPrefix:
-//     prefix << named_one("prefix"),
-//     data << parse
-// );
 
 pub trait Parsed
 where
@@ -57,7 +41,6 @@ pub struct YGGBuilder {
     parser: Parser,
     tree: Tree,
     text: String,
-    warns: Vec<Diagnostic>,
 }
 
 impl YGGBuilder {
@@ -89,12 +72,9 @@ impl YGGBuilder {
     }
 }
 
-impl Parsed for Program {
-    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let statement = Parsed::named_many(state, this, "statement")?;
-        Ok(Self { statement, range: this.range() })
-    }
-}
+parsed_wrap!(Program:
+    statement << (named_many, "statement")
+);
 
 impl Parsed for Statement {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
@@ -111,29 +91,14 @@ impl Parsed for Statement {
     }
 }
 
-impl Parsed for GrammarStatement {
-    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let id = Parsed::named_one(state, this, "id")?;
-        let ext = Parsed::named_many(state, this, "ext")?;
-        Ok(Self { id, ext, range: this.range() })
-    }
-}
+parsed_wrap!(GrammarStatement:
+    id << (named_one, "id"),
+    ext << (named_many, "ext")
+);
 
-impl Parsed for FragmentStatement {
-    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let id = Parsed::named_one(state, this, "id")?;
-        Ok(Self { id, range: this.range() })
-    }
-}
-
-impl Parsed for AssignStatement {
-    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let id = Parsed::named_one(state, this, "id")?;
-        let eq = Parsed::named_one(state, this, "eq")?;
-        let rhs = Parsed::named_one(state, this, "rhs")?;
-        Ok(Self { id, eq, rhs, range: this.range() })
-    }
-}
+parsed_wrap!(FragmentStatement:
+    id << (named_one, "id")
+);
 
 impl Parsed for Expression {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
@@ -172,7 +137,7 @@ impl Parsed for ConcatExpression {
 
 impl Parsed for ChoiceExpression {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let mut l = TaggedExpression::named_one(state, this, "lhs")?;
+        let mut l = ChoiceTag::named_one(state, this, "lhs")?;
         let r = ChoiceExpression::named_one(state, this, "rhs")?;
         let mut c = ChoiceExpression::from(l);
         c.add_assign(r);
@@ -181,40 +146,27 @@ impl Parsed for ChoiceExpression {
     }
 }
 
-impl Parsed for TaggedExpression {
-    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let expr = Parsed::named_one(state, this, "expr")?;
-        let op = Parsed::named_one(state, this, "op")?;
-        let name = Parsed::named_one(state, this, "name")?;
-        Ok(Self { expr, tag: op, tag_mode: name, range: this.range() })
-    }
-}
+parsed_wrap!(ChoiceTag:
+    expr << (named_one, "id"),
+    tag << (named_one, "eq"),
+    tag_name << (named_one, "rhs")
+);
 
-impl Parsed for FieldExpression {
-    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let lhs = Parsed::named_one(state, this, "lhs")?;
-        let op = Parsed::named_one(state, this, "op")?;
-        let rhs = Parsed::named_one(state, this, "rhs")?;
-        Ok(Self { lhs, op, rhs, range: this.range() })
-    }
-}
+parsed_wrap!(FieldExpression:
+    lhs << (named_one, "lhs"),
+    op << (named_one, "op"),
+    rhs << (named_one, "rhs")
+);
 
-impl Parsed for UnarySuffix {
-    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let suffix = Parsed::named_one(state, this, "suffix")?;
-        let base = Parsed::named_one(state, this, "base")?;
-        Ok(Self { suffix, base, range: this.range() })
-    }
-}
+parsed_wrap!(UnarySuffix:
+    suffix << (named_one, "suffix"),
+    base << (named_one, "base")
+);
 
-impl Parsed for UnaryPrefix {
-    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let prefix = Parsed::named_one(state, this, "prefix")?;
-        let base = Parsed::named_one(state, this, "base")?;
-        Ok(Self { prefix, base, range: this.range() })
-    }
-}
-
+parsed_wrap!(UnaryPrefix:
+    prefix << (named_one, "prefix"),
+    base << (named_one, "base")
+);
 
 impl Parsed for Data {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
@@ -232,7 +184,6 @@ impl Parsed for Data {
 
 parsed_wrap!(Identifier: data << parse);
 parsed_wrap!(Unsigned: data << parse);
-//parsed_wrap!(Unsigned => [data: named_one("prefix")]);
 
 impl Parsed for usize {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
@@ -251,7 +202,7 @@ impl Parsed for bool {
         match this.utf8_text(state.text.as_bytes())? {
             "true" => Ok(true),
             "false" => Ok(false),
-            _ => Err(YGGError::TextDecodeError { error: String::from("not") })
+            _ => Err(YGGError::TextDecodeError { error: String::from("not") }),
         }
     }
 }

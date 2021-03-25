@@ -88,7 +88,7 @@ test = a ~ b
       (eq)
       (WHITESPACE)
       (expression
-        (concat_expr
+        (concat_expression
           (expression
             (data
               (id)))
@@ -112,11 +112,11 @@ test = e1 ~ e2 ~ e3 ~ e4
       (eq)
       (WHITESPACE)
       (expression
-        (concat_expr
+        (concat_expression
           (expression
-            (concat_expr
+            (concat_expression
               (expression
-                (concat_expr
+                (concat_expression
                   (expression
                     (data
                       (id)))
@@ -171,14 +171,14 @@ test = a | b
       (eq)
       (WHITESPACE)
       (expression
-        (or_expr
-          (variant_tag
+        (choice_expression
+          (choice_tag
             (expression
               (data
                 (id))))
           (WHITESPACE)
           (WHITESPACE)
-          (variant_tag
+          (choice_tag
             (expression
               (data
                 (id)))))))))
@@ -195,7 +195,7 @@ test = a #A
     (WHITESPACE)
     (eq)
     (WHITESPACE)
-    (variant_tag
+    (choice_tag
       (expression
         (data
           (id)))
@@ -221,8 +221,8 @@ test =
       (WHITESPACE)
       (WHITESPACE)
       (expression
-        (or_expr
-          (variant_tag
+        (choice_expression
+          (choice_tag
             (expression
               (data
                 (id)))
@@ -232,7 +232,7 @@ test =
           (WHITESPACE)
           (WHITESPACE)
           (WHITESPACE)
-          (variant_tag
+          (choice_tag
             (expression
               (data
                 (id)))))))))
