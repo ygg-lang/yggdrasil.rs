@@ -10,7 +10,7 @@ pub struct Rule {
     ///
     name: String,
     ///
-    structure: String,
+    structure: Option<String>,
     ///
     force_inline: bool,
     /// Eliminate unnamed nodes
