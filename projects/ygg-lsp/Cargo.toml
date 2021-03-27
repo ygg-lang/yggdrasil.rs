@@ -1,0 +1,31 @@
+[package]
+name = "yggdrasil-lsp"
+publish = false
+version = "0.1.0"
+authors = ["Aster <192607617@qq.com>"]
+description = "Yggdrasil Language Server"
+repository = "..."
+readme = "Readme.md"
+license = "MPL-2.0"
+edition = "2018"
+
+[dependencies]
+yggdrasil-bootstript = { version = "0.1", path = "../bootstript"}
+async-trait = "0.1"
+futures = { version = "0.3", features = ["compat"] }
+# jsonrpc-core = "14.0"
+# jsonrpc-derive = "14.0"
+log = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "0.2", features = ["rt-core", "io-std", "macros", "test-util"] }
+tokio-util = { version = "0.6", features = ["codec"] }
+# lsp-types = { version = "0.82", features = ["proposed"] }
+tower-lsp = "0.13"
+tower-service = "0.3"
+tower-test = "0.3"
+# clipboard = "0.5"
+cli-clipboard = "0.2"
+unicode-xid = "0.2"
+state = "0.2"
+itertools = "0.10"
