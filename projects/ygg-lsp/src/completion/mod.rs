@@ -14,10 +14,11 @@ use tower_lsp::lsp_types::{
 use unicode_xid::UnicodeXID;
 
 pub static COMPLETION_OPTIONS: SyncLazy<CompletionOptions> = SyncLazy::new(|| {
-    let completion_trigger = vec!['#', '.'];
+    let completion_trigger = vec!['@', '\\'];
     CompletionOptions {
         resolve_provider: Some(false),
         trigger_characters: Some(completion_trigger.iter().map(ToString::to_string).collect()),
+        all_commit_characters: None,
         work_done_progress_options: WorkDoneProgressOptions { work_done_progress: Some(false) },
     }
 });

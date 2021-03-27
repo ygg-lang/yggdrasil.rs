@@ -53,7 +53,7 @@ impl FileStateUpdate<DidOpenTextDocumentParams> for FileStateMap {
 impl FileStateUpdate<DidChangeTextDocumentParams> for FileStateMap {
     fn update(&mut self, p: DidChangeTextDocumentParams) {
         let url = p.text_document.uri;
-        let v = p.text_document.version.unwrap_or(0) as usize;
+        let v = p.text_document.version as usize;
         let text = p.content_changes.iter().rev().nth(0).map(|e| e.text.clone()).unwrap_or_default();
         self.update_versioned(&url, v, text)
     }

@@ -1,9 +1,8 @@
 mod from_ast;
 
-use std::collections::HashMap;
-
 pub type Map<K, V> = std::collections::HashMap<K, V>;
 // pub type Map<K, V> = indexmap::IndexMap<K, V>;
+
 
 #[derive(Clone,Debug)]
 pub struct Rule {

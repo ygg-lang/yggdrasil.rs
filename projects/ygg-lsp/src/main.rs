@@ -30,11 +30,12 @@ impl LanguageServer for Backend {
             // should read from cargo.toml
             version: Some(format!("V{}", env!("CARGO_PKG_VERSION"))),
         };
-        let ws = WorkspaceCapability {
-            workspace_folders: Some(WorkspaceFolderCapability {
+        let ws = WorkspaceServerCapabilities {
+            workspace_folders: Some(WorkspaceFoldersServerCapabilities {
                 supported: Some(true),
-                change_notifications: Some(WorkspaceFolderCapabilityChangeNotifications::Bool(true)),
+                change_notifications: Some(OneOf::Left(true)),
             }),
+            file_operations: None
         };
         let init = InitializeResult {
             server_info: Some(server_info),
@@ -50,11 +51,11 @@ impl LanguageServer for Backend {
                 selection_range_provider: Some(SelectionRangeProviderCapability::Simple(true)),
                 code_action_provider: Some(CodeActionProviderCapability::Simple(true)),
                 code_lens_provider: Some(CodeLensOptions { resolve_provider: None }),
-                document_highlight_provider: Some(false),
+                document_highlight_provider: Some(OneOf::Left(false)),
                 // semantic_highlighting: None,
-                document_symbol_provider: Some(true),
-                document_formatting_provider: Some(true),
-                workspace_symbol_provider: Some(true),
+                document_symbol_provider: Some(OneOf::Left(false)),
+                document_formatting_provider: Some(OneOf::Left(false)),
+                workspace_symbol_provider: Some(OneOf::Left(false)),
                 execute_command_provider: Some(server_commands()),
                 workspace: Some(ws),
                 ..ServerCapabilities::default()

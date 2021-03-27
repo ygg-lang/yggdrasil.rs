@@ -2,7 +2,10 @@
 #![feature(box_patterns)]
 #![feature(box_syntax)]
 
+#[allow(unused)]
+#[allow(dead_code)]
 mod codegen;
+#[allow(dead_code)]
 #[allow(unused)]
 mod ygg;
 

@@ -3,7 +3,7 @@ mod document_symbol;
 
 pub use self::{code_lens::code_lens_provider, document_symbol::document_symbol_provider};
 use crate::io::read_url;
-use arc_rs::ParserConfig;
+// use arc_rs::ParserConfig;
 use serde_json::Value;
 use tower_lsp::lsp_types::*;
 
@@ -46,5 +46,7 @@ fn action() -> CodeAction {
         edit: None,
         command: None,
         is_preferred: Some(true),
+        disabled: None,
+        data: None
     }
 }

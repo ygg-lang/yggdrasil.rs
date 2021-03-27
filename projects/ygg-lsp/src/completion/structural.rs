@@ -27,9 +27,11 @@ fn build_table(a: usize, b: usize) -> CompletionItem {
         filter_text: Some(format!("\\table{}x{}", a, b)),
         insert_text: Some(insert_text.join("\n")),
         insert_text_format: Some(InsertTextFormat::Snippet),
+        insert_text_mode: None,
         text_edit: None,
         additional_text_edits: None,
         command: None,
+        commit_characters: None,
         data: None,
         tags: None,
     }

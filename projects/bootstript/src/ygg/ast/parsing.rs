@@ -49,7 +49,7 @@ impl YGGBuilder {
         parser.set_language(language())?;
         // test if parser can work
         let tree = parser.parse("", None).ok_or(YGGError::init_fail())?;
-        Ok(Self { parser, tree, text: String::new(), warns: vec![] })
+        Ok(Self { parser, tree, text: String::new() })
     }
     pub fn update_by_text(&mut self, text: &str) -> Result<()> {
         // let tree = self.parser.parse(text, Some(&self.tree));
@@ -57,7 +57,6 @@ impl YGGBuilder {
             Some(s) => {
                 self.text = String::from(text);
                 self.tree = s;
-                self.warns = vec![];
             }
             None => {
                 panic!("fail to update")
@@ -90,6 +89,12 @@ impl Parsed for Statement {
         unreachable!()
     }
 }
+
+parsed_wrap!(AssignStatement:
+    id << (named_one, "id"),
+    eq << (named_one, "eq"),
+    rhs << (named_one, "rhs")
+);
 
 parsed_wrap!(GrammarStatement:
     id << (named_one, "id"),
@@ -149,7 +154,7 @@ impl Parsed for ChoiceExpression {
 parsed_wrap!(ChoiceTag:
     expr << (named_one, "id"),
     tag << (named_one, "eq"),
-    tag_name << (named_one, "rhs")
+    tag_mode << (named_one, "rhs")
 );
 
 parsed_wrap!(FieldExpression:
