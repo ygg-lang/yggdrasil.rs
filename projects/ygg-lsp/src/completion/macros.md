@@ -1,19 +1,22 @@
-# comment
-Remove from rendering result
+# interleave
+Insert a symbol alternately
 
-- inline mode
-
-```notedown
-\comment: something will not shown
+```ygg
+@interleave(rule, separator, trailing)
+- rule:      Expression #Untagged
+- separator: Expression #Untagged
+- trailing?: Integer
 ```
 
-- text mode
+- `rule`:
+- `separator`:
+- `trailing`:
 
-```notedown
-\comment[something will not shown]
-```
+[a, b, c,]
+[a, b, c]
+[a, b, c,]
 
-# img
+# binary_left
 Embed images in documents
 - smart link
 
@@ -33,12 +36,12 @@ Embed images in documents
 \img[some tips not shown]
 ```
 
-# link
+# binary_right
 Link
 
 todo
 
-# read_more
+# unary_prefix
 Omit the following text
 
 **Only works in blog mode**
@@ -48,7 +51,7 @@ Omit the following text
 ```
 
 
-# toc
+# unary_suffix
 Table of Contents
 
 
@@ -57,7 +60,7 @@ Table of Contents
 ```
 
 
-# toc_ignore
+# hook
 Ignore next header
 
 todo

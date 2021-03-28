@@ -1,4 +1,4 @@
-# comment
+# WHITESPACE
 Remove from rendering result
 
 - inline mode
@@ -13,7 +13,7 @@ Remove from rendering result
 \comment[something will not shown]
 ```
 
-# img
+# NEWLINE
 Embed images in documents
 - smart link
 
@@ -31,39 +31,4 @@ Embed images in documents
 
 ```notedown
 \img[some tips not shown]
-```
-
-# link
-Link
-
-todo
-
-# read_more
-Omit the following text
-
-**Only works in blog mode**
-
-```notedown
-\cmd: read_more
-```
-
-
-# toc
-Table of Contents
-
-
-```notedown
-\toc
-```
-
-
-# toc_ignore
-Ignore next header
-
-todo
-
-```notedown
-\toc_ignore
-
-## The header will not appear in TOC
 ```

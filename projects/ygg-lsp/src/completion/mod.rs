@@ -1,17 +1,14 @@
-mod command;
+mod macros;
 mod structural;
+mod constants;
 
 use crate::{completion::structural::complete_table, io::FILE_STORAGE};
-use command::build_command;
 use serde::{Deserialize, Serialize};
 use std::{collections::VecDeque, lazy::SyncLazy};
-use tower_lsp::lsp_types::{
-    CompletionItem,
-    CompletionItemKind::{self, *},
-    CompletionOptions, CompletionParams, CompletionResponse, Documentation, InsertTextFormat, MarkupContent, MarkupKind,
-    Position, WorkDoneProgressOptions,
-};
+use tower_lsp::lsp_types::{CompletionContext, CompletionItem, CompletionItemKind::{self, *}, CompletionOptions, CompletionParams, CompletionResponse, CompletionTriggerKind, Documentation, InsertTextFormat, MarkupContent, MarkupKind, Position, WorkDoneProgressOptions};
 use unicode_xid::UnicodeXID;
+use self::constants::{COMPLETE_CONSTANTS_RESPONSE};
+use self::macros::{COMPLETE_MACROS};
 
 pub static COMPLETION_OPTIONS: SyncLazy<CompletionOptions> = SyncLazy::new(|| {
     let completion_trigger = vec!['@', '\\'];
@@ -24,32 +21,38 @@ pub static COMPLETION_OPTIONS: SyncLazy<CompletionOptions> = SyncLazy::new(|| {
 });
 
 pub async fn completion_provider(p: CompletionParams) -> Option<CompletionResponse> {
-    let text = FILE_STORAGE.get().read().await.read(&p.text_document_position.text_document.uri);
-    match text {
-        Some(s) => completion_provider_dynamic(s, p.text_document_position.position),
-        None => {
-            let c = p.context.and_then(|e| e.trigger_character).and_then(|e| e.chars().next());
-            completion_provider_static(c)
+    // let text = FILE_STORAGE.get().read().await.read(&p.text_document_position.text_document.uri);
+    // match text {
+    //     Some(s) => completion_provider_dynamic(s, p.text_document_position.position),
+    //     None => {
+    //         let c = p.context.and_then(|e| e.trigger_character).and_then(|e| e.chars().next());
+    //         completion_provider_static(c)
+    //     }
+    // }
+    let ctx = match p.context {
+        Some(s) => {s},
+        None => {return None}
+    };
+    match ctx.trigger_kind {
+        CompletionTriggerKind::Invoked => {
+            Some(COMPLETE_CONSTANTS_RESPONSE.to_owned())
+        }
+        CompletionTriggerKind::TriggerCharacter => {
+            match ctx.trigger_character.and_then(|e| e.chars().next()) {
+                Some('@') => Some(COMPLETE_MACROS.to_owned()),
+                Some('\\') => {
+                    let mut items = vec![];
+                    items.extend(list_completion_kinds());
+                    Some(CompletionResponse::Array(items))
+                },
+                _ => None,
+            }
+        }
+        CompletionTriggerKind::TriggerForIncompleteCompletions => {
+            // unimplemented!()
+            None
         }
     }
-}
-
-fn completion_provider_static(c: Option<char>) -> Option<CompletionResponse> {
-    match c {
-        Some('#') => {
-            let mut items = vec![];
-            items.extend(COMPLETE_COMMANDS.to_owned());
-            items.extend(complete_table());
-            Some(CompletionResponse::Array(items))
-        }
-        Some('[') => None,
-        _ => None,
-    }
-}
-
-fn completion_provider_dynamic(text: String, position: Position) -> Option<CompletionResponse> {
-    let word = get_completion_word(text, position);
-    completion_provider_static(word.chars().nth(0))
 }
 
 fn get_completion_word(text: String, tp: Position) -> String {
@@ -118,11 +121,6 @@ fn load_md_doc(input: &str) -> Vec<DocumentString> {
     return Vec::from(out);
 }
 
-pub static COMPLETE_COMMANDS: SyncLazy<Vec<CompletionItem>> = SyncLazy::new(|| {
-    let parsed = load_md_doc(include_str!("command.md"));
-    parsed.iter().map(|doc| build_command(&doc.cmd, &doc.short, &doc.long)).collect()
-});
-
 #[allow(dead_code)]
 fn list_completion_kinds() -> Vec<CompletionItem> {
     fn item(e: CompletionItemKind) -> CompletionItem {
@@ -159,7 +157,7 @@ fn list_completion_kinds() -> Vec<CompletionItem> {
 
 #[test]
 fn check_yaml() {
-    println!("{:#?}", load_md_doc(include_str!("command.md")));
-    println!("{:#?}", load_md_doc(include_str!("open_close.md")));
+    println!("{:#?}", load_md_doc(include_str!("macros.md")));
+    println!("{:#?}", load_md_doc(include_str!("constants_ascii.md")));
     println!("{:#?}", load_md_doc(include_str!("self_close.md")));
 }

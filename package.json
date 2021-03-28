@@ -3,6 +3,7 @@
     "scripts": {
         "t":  "wee generate -t && wee test",
         "test": "cd projects/tree-sitter-yg && tree-sitter test",
-        "generate": "cd projects/tree-sitter-yg && tree-sitter generate"
+        "generate": "cd projects/tree-sitter-yg && tree-sitter generate",
+        "install": "cd projects/ygg-lsp && cargo install --path . --debug"
     }
 }
