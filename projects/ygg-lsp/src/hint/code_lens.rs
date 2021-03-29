@@ -7,5 +7,5 @@ pub fn code_lens_provider(args: CodeLensParams) -> Option<Vec<CodeLens>> {
     //     Err(_) => return None,
     // };
     // Some(ast.toc(9).build_code_lens())
-    return None
+    return None;
 }

@@ -3,8 +3,7 @@ mod from_ast;
 pub type Map<K, V> = std::collections::HashMap<K, V>;
 // pub type Map<K, V> = indexmap::IndexMap<K, V>;
 
-
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct Rule {
     ///
     name: String,
@@ -28,21 +27,19 @@ pub struct Rule {
     eliminate_unnamed: bool,
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct MetaInfo {
     name: String,
     exts: Vec<String>,
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct RuleMap {
     inner: Map<String, Rule>,
 }
 
 impl RuleMap {
-    pub fn inline(&mut self) {
-
-    }
+    pub fn inline(&mut self) {}
     pub fn named_rules(&self) -> Vec<Rule> {
         self.inner.values().cloned().filter(|r| !r.force_inline).collect()
     }

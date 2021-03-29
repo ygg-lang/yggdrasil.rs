@@ -34,7 +34,11 @@ fn extract_actions() -> Vec<CodeActionOrCommand> {
 }
 
 fn cmd(show: &str, run: &str, arg: Vec<Value>) -> CodeActionOrCommand {
-    CodeActionOrCommand::Command(Command { title: String::from(show), command: String::from(run), arguments: Some(arg) })
+    CodeActionOrCommand::Command(Command {
+        title: String::from(show),
+        command: String::from(run),
+        arguments: Some(arg),
+    })
 }
 
 #[allow(dead_code)]
@@ -47,6 +51,6 @@ fn action() -> CodeAction {
         command: None,
         is_preferred: Some(true),
         disabled: None,
-        data: None
+        data: None,
     }
 }

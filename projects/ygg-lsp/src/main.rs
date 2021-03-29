@@ -15,6 +15,7 @@ mod commands;
 mod completion;
 mod diagnostic;
 mod hint;
+#[allow(dead_code)]
 mod io;
 
 #[derive(Debug)]
@@ -35,7 +36,7 @@ impl LanguageServer for Backend {
                 supported: Some(true),
                 change_notifications: Some(OneOf::Left(true)),
             }),
-            file_operations: None
+            file_operations: None,
         };
         let init = InitializeResult {
             server_info: Some(server_info),
@@ -117,12 +118,18 @@ impl LanguageServer for Backend {
         Ok(None)
     }
     /// 当光标在位置 x 时, 哪些内容要被选中
-    async fn document_highlight(&self, _: DocumentHighlightParams) -> Result<Option<Vec<DocumentHighlight>>> {
+    async fn document_highlight(
+        &self,
+        _: DocumentHighlightParams,
+    ) -> Result<Option<Vec<DocumentHighlight>>> {
         // self.client.log_message(MessageType::Info, format!("{:#?}", hp)).await;
         Ok(None)
     }
 
-    async fn document_symbol(&self, params: DocumentSymbolParams) -> Result<Option<DocumentSymbolResponse>> {
+    async fn document_symbol(
+        &self,
+        params: DocumentSymbolParams,
+    ) -> Result<Option<DocumentSymbolResponse>> {
         // self.client.log_message(MessageType::Info, format!("{:#?}", sp)).await;
         Ok(document_symbol_provider(params))
     }

@@ -12,5 +12,5 @@ pub fn document_symbol_provider(args: DocumentSymbolParams) -> Option<DocumentSy
     //     None => vec![],
     // };
     // Some(DocumentSymbolResponse::Nested(nested))
-    return None
+    return None;
 }
