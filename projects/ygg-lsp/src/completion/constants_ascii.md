@@ -1,52 +1,49 @@
-# ASCII_ALPHANUMERIC
-Ignore next header
-
-todo
+# ASCII_ALPHA_DIGIT
+ASCII alpha numeric
 
 ```ygg
 [0-9a-zA-Z]
 ```
 
-# ASCII_NUMERIC
-Ignore next header
-
-todo
-
-```ygg
-[0-9]
-```
-
 # ASCII_UPPERCASE
-Ignore next header
-
-todo
+ASCII uppercase
 
 ```ygg
 [A-Z]
 ```
 
 # ASCII_LOWERCASE
-Ignore next header
-
-todo
+ASCII lowercase
 
 ```ygg
-[A-Z]
+[a-z]
+```
+
+
+# ASCII_DIGIT
+ASCII numbers
+
+```ygg
+[0-9]
+```
+
+
+# ASCII_DIGIT_NONZERO
+ASCII numbers except 0
+
+```ygg
+[1-9]
 ```
 
 # ASCII_BIN
-Ignore next header
-
-todo
+ASCII numbers in binary
 
 ```ygg
 [0-1]
 ```
 
 # ASCII_OCT
-Ignore next header
-
-todo
+ASCII numbers in octal
 
 ```ygg
 [0-7]
@@ -54,9 +51,7 @@ todo
 
 
 # ASCII_HEX
-Ignore next header
-
-todo
+ASCII numbers in hexadecimal
 
 ```ygg
 [0-9a-fA-F]

@@ -1,34 +1,64 @@
 # WHITESPACE
-Remove from rendering result
+Can be overwritten
 
-- inline mode
-
-```notedown
-\comment: something will not shown
+```ygg
+@overridable
+WHITESPACE = ASCII_WHITESPACE
+ASCII_WHITESPACE @= 
+    | 
 ```
 
-- text mode
-
-```notedown
-\comment[something will not shown]
-```
 
 # NEWLINE
-Embed images in documents
-- smart link
+Can be overwritten
 
-```notedown
-[some/path.png]
+```ygg
+@overridable
+NEWLINE = ASCII_NEWLINE
+ASCII_NEWLINE @=
+    | \r ~ \n  // CRLF Windows
+    | \n       // LF   Linux, MAC OSX
 ```
 
-- inline mode
+# ASCII_NEWLINE
+New line in ASCII
 
-```notedown
-\img: something will not shown`
+```ygg
+ASCII_NEWLINE @=
+    | \r ~ \n  // CRLF Windows
+    | \n       // LF   Linux, MAC OSX
 ```
 
-- text mode
+# UNICODE_NEWLINE
+New line in unicode
 
-```notedown
-\img[some tips not shown]
+The Unicode standard defines a number of characters that conforming applications should recognize as line terminators: [UAX #14: Unicode Line Breaking Algorithm](https://www.unicode.org/reports/tr14/tr14-32.html)
+
+```ygg
+UNICODE_NEWLINE @=
+    | \r ~ \n  // CRLF
+    | \r       // CR   Carriage Return
+    | \n       // LF   Line Feed
+    | \u{000B} // VT   Vertical Tab
+    | \u{000C} // FF:    Form Feed
+    | \u{0085} // NEL:   Next Line
+    | \u{2028} // LS:    Line Separator
+    | \u{2029} // PS   Paragraph Separator
 ```
+
+# ASCII_WHITESPACE
+ASCII_WHITESPACE
+
+```ygg
+[]
+```
+
+# UNICODE_WHITESPACE
+UNICODE_WHITESPACE
+
+```ygg
+[]
+```
+
+
+
