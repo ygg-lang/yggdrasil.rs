@@ -57,8 +57,6 @@ pub async fn completion_provider(p: CompletionParams) -> Option<CompletionRespon
     }
 }
 
-
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DocumentString {
     cmd: String,
@@ -136,6 +134,7 @@ fn list_completion_kinds() -> Vec<CompletionItem> {
 #[test]
 fn check_yaml() {
     println!("{:#?}", load_md_doc(include_str!("macros.md")));
+    println!("{:#?}", load_md_doc(include_str!("macros_nullary.md")));
     println!("{:#?}", load_md_doc(include_str!("constants_ascii.md")));
     println!("{:#?}", load_md_doc(include_str!("constants_op.md")));
     println!("{:#?}", load_md_doc(include_str!("constants_text.md")));

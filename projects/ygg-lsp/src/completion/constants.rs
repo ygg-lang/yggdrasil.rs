@@ -33,7 +33,7 @@ pub fn build_command(doc: &DocumentString, kind: CompletionItemKind) -> Completi
         documentation: Some(Documentation::MarkupContent(doc)),
         deprecated: None,
         preselect: None,
-        sort_text: Some(format!("9{}",cmd.to_lowercase())),
+        sort_text: Some(format!("9{}", cmd.to_lowercase())),
         filter_text: None,
         insert_text: Some(cmd),
         insert_text_format: None,

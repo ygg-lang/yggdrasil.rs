@@ -1,6 +1,5 @@
 use super::*;
 
-
 pub fn hover_provider(p: HoverParams) -> Option<Hover> {
     let _ = p;
     // Some(Hover {

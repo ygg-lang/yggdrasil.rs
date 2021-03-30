@@ -2,7 +2,9 @@ mod code_lens;
 mod document_symbol;
 mod hover;
 
-pub use self::{code_lens::code_lens_provider, document_symbol::document_symbol_provider};
+pub use self::{
+    code_lens::code_lens_provider, document_symbol::document_symbol_provider, hover::hover_provider,
+};
 //use crate::io::read_url;
 // use arc_rs::ParserConfig;
 use serde_json::Value;
