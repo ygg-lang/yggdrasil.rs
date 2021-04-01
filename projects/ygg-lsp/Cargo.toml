@@ -3,13 +3,13 @@ name = "yggdrasil-lsp"
 version = "0.1.0"
 authors = ["Aster <192607617@qq.com>"]
 description = "Yggdrasil Language Server"
-repository = "..."
+repository = "https://github.com/ygg-lang/yggdrasil-rs"
 readme = "Readme.md"
 license = "MPL-2.0"
 edition = "2018"
 
 [dependencies]
-yggdrasil-bootstript = { version = "0.1", path = "../bootstript"}
+yggdrasil-bootstript = { version = "0.1", path = "../ygg-bootstript" }
 async-trait = "0.1"
 futures = { version = "0.3", features = ["compat"] }
 # jsonrpc-core = "14.0"

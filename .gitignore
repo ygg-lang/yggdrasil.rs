@@ -22,7 +22,7 @@ package-lock.json
 *.m
 *.nb
 *.g4
-projects/tree-sitter-yg/src/**/*
+projects/tree-sitter-ygg/src/**/*
 parser.exp
 parser.lib
 parser.obj

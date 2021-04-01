@@ -8,7 +8,7 @@ license = "MPL2.0"
 readme = "../../readme.md"
 keywords = ["incremental", "parsing", "rust"]
 categories = ["parsing", "text-editors"]
-repository = "https://github.com/tree-sitter/tree-sitter-rust"
+repository = "https://github.com/ygg-lang/yggdrasil-rs"
 edition = "2018"
 
 include = [
@@ -20,7 +20,7 @@ lsp-types = "0.90"
 
 tree-sitter = "0.20"
 tree-sitter-cli = "0.20"
-tree-sitter-yg = {version="0.1", path = "../tree-sitter-yg"}
+tree-sitter-ygg = {version="0.1", path = "../tree-sitter-ygg"}
 indexmap = "1.7"
 convert_case = "0.4"
 serde = {version = "1.0", features = ["derive"]}

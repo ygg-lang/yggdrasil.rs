@@ -1,5 +1,5 @@
 {
-    "name": "tree-sitter-yggdrasil",
+    "name": "tree-sitter-ygg",
     "version": "0.1.0",
     "description": "Yggdrasil grammar for tree-sitter",
     "main": "bindings/node",
@@ -10,7 +10,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/nyar-vm/Yggdrasil-Grammar"
+        "url": "https://github.com/ygg-lang/yggdrasil-rs"
     },
     "author": "Aster <192608617@qq.com> (https://github.com/oovm)",
     "license": "MPL2.0",

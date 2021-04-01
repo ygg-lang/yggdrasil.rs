@@ -1,5 +1,5 @@
 [package]
-name = "tree-sitter-yg"
+name = "tree-sitter-ygg"
 description = "Yggdrasil grammar for the tree-sitter parsing library"
 version = "0.1.0"
 authors = ["Max Brunsfeld <maxbrunsfeld@gmail.com>"]
@@ -7,7 +7,7 @@ license = "MIT"
 readme = "bindings/rust/readme.md"
 keywords = ["incremental", "parsing", "rust"]
 categories = ["parsing", "text-editors"]
-repository = "https://github.com/tree-sitter/tree-sitter-rust"
+repository = "https://github.com/ygg-lang/yggdrasil-rs"
 edition = "2018"
 
 build = "bindings/rust/build.rs"
@@ -26,7 +26,6 @@ path = "bindings/rust/lib.rs"
 tree-sitter = "0.20"
 
 [dev-dependencies]
-
 
 [build-dependencies]
 cc = "1.0"
