@@ -63,5 +63,5 @@ test5 =
 
 #[test]
 fn test_or_tagged() -> Result<()> {
-    assert_ast(OR_SIMPLE, include_str!("or_simple.yaml"))
+    assert_ast(OR_TAGGED, include_str!("or_simple.yaml"))
 }

@@ -3,7 +3,7 @@ use convert_case::{Case, Casing};
 
 use crate::ast::AssignStatement;
 
-impl From<AssignStatement> for Rule {
+impl From<AssignStatement> for YGGRule {
     fn from(s: AssignStatement) -> Self {
         let mut name = s.id.data;
         let mut structure = None;

@@ -1,6 +1,6 @@
 use super::*;
 use tree_sitter::{Parser, Tree, TreeCursor};
-use tree_sitter_yg::language;
+use tree_sitter_ygg::language;
 
 use std::{borrow::Borrow, ops::AddAssign};
 

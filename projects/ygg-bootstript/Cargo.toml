@@ -19,11 +19,13 @@ include = [
 lsp-types = "0.90"
 
 tree-sitter = "0.20"
-tree-sitter-cli = "0.20"
-tree-sitter-ygg = {version="0.1", path = "../tree-sitter-ygg"}
+# tree-sitter-cli = { version = "0.20", git = "https://github.com/ygg-lang/tree-sitter" }
+tree-sitter-cli = { version = "0.20", path = "../../../tree-sitter/cli"}
+tree-sitter-ygg = { version="0.1", path = "../tree-sitter-ygg"}
 indexmap = "1.7"
 convert_case = "0.4"
 serde = {version = "1.0", features = ["derive"]}
+serde_json = "1.0"
 
 [dev-dependencies]
 
