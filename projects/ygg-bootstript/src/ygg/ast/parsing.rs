@@ -18,8 +18,8 @@ macro_rules! parsed_wrap {
 }
 
 pub trait Parsed
-where
-    Self: Sized,
+    where
+        Self: Sized,
 {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self>;
     fn named_one(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Self> {
@@ -30,6 +30,7 @@ where
     }
     fn named_many(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Vec<Self>> {
         let mut children = vec![];
+        // TODO: reduce cursor alloc
         for node in this.children_by_field_name(field, &mut this.walk()) {
             children.push(Parsed::parse(state, node)?)
         }
@@ -129,27 +130,17 @@ impl Parsed for Expression {
     }
 }
 
-impl Parsed for ConcatExpression {
-    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let mut l = Expression::named_one(state, this, "lhs")?;
-        let r = Expression::named_one(state, this, "rhs")?;
-        let mut c = ConcatExpression::from(l);
-        c.add_assign(r);
-        c.range = this.range();
-        Ok(c)
-    }
-}
+parsed_wrap!(ConcatExpression:
+    lhs << (named_one, "lhs"),
+    op << (named_one, "op"),
+    rhs << (named_one, "rhs")
+);
 
-impl Parsed for ChoiceExpression {
-    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let mut l = ChoiceTag::named_one(state, this, "lhs")?;
-        let r = ChoiceExpression::named_one(state, this, "rhs")?;
-        let mut c = ChoiceExpression::from(l);
-        c.add_assign(r);
-        c.range = this.range();
-        Ok(c)
-    }
-}
+parsed_wrap!(ChoiceExpression:
+    lhs << (named_one, "lhs"),
+    op << (named_one, "op"),
+    rhs << (named_one, "rhs")
+);
 
 parsed_wrap!(ChoiceTag:
     expr << (named_one, "id"),
@@ -207,7 +198,7 @@ impl Parsed for bool {
         match this.utf8_text(state.text.as_bytes())? {
             "true" => Ok(true),
             "false" => Ok(false),
-            _ => Err(YGGError::TextDecodeError { error: String::from("not") }),
+            _ => unreachable!(),
         }
     }
 }

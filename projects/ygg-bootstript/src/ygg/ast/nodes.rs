@@ -56,17 +56,17 @@ pub enum Expression {
 
 #[derive(Clone, Debug)]
 pub struct ConcatExpression {
-    pub base: Expression,
-    pub op: Vec<String>,
-    pub expr: Vec<Expression>,
+    pub lhs: Expression,
+    pub op: String,
+    pub rhs: Expression,
     pub range: Range,
 }
 
 #[derive(Clone, Debug)]
 pub struct ChoiceExpression {
-    pub base: ChoiceTag,
-    pub op: Vec<String>,
-    pub expr: Vec<ChoiceTag>,
+    pub lhs: ChoiceTag,
+    pub op: String,
+    pub rhs: ChoiceTag,
     pub range: Range,
 }
 

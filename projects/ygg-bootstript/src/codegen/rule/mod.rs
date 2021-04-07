@@ -13,7 +13,7 @@ pub struct YGGRule {
     ///
     name: String,
     ///
-    structure: Option<String>,
+    structure_name: Option<String>,
     ///
     force_inline: bool,
     /// Eliminate unnamed nodes
@@ -30,6 +30,8 @@ pub struct YGGRule {
     /// 012345
     /// ```
     eliminate_unnamed: bool,
+    ///
+    expression: RefinedExpression
 }
 
 #[derive(Clone, Debug)]

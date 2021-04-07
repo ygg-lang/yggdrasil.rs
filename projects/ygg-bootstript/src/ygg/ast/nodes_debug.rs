@@ -54,32 +54,44 @@ impl Debug for Expression {
                 .field(&v.prefix)
                 .field(&v.base)
                 .finish(),
-            Expression::ConcatExpression(v) => {
-                f.write_str("ConcatExpression ")?;
-                let mut list = f.debug_list();
-                list.entry(&v.base);
-                for (o, e) in v.op.iter().zip(v.expr.iter()) {
-                    list.entry(o);
-                    list.entry(e);
-                }
-                list.finish()
-            }
             Expression::FieldExpression(v) => f
+                .debug_struct("FieldExpression") //
+                .field("lhs", &v.lhs)
+                .field("op", &v.op)
+                .field("rhs", &v.rhs)
+                .finish(),
+            Expression::ConcatExpression(v) => f
                 .debug_struct("ConcatExpression") //
                 .field("lhs", &v.lhs)
                 .field("op", &v.op)
                 .field("rhs", &v.rhs)
                 .finish(),
-            Expression::ChoiceExpression(v) => {
-                f.write_str("ChoiceExpression ")?;
-                let mut list = f.debug_list();
-                list.entry(&v.base);
-                for (o, e) in v.op.iter().zip(v.expr.iter()) {
-                    list.entry(o);
-                    list.entry(e);
-                }
-                list.finish()
-            }
+            Expression::ChoiceExpression(v) => f
+                .debug_struct("ChoiceExpression") //
+                .field("lhs", &v.lhs)
+                .field("op", &v.op)
+                .field("rhs", &v.rhs)
+                .finish(),
+            // Expression::ConcatExpression(v) => {
+            //     f.write_str("ConcatExpression ")?;
+            //     let mut list = f.debug_list();
+            //     list.entry(&v.lhs);
+            //     for (o, e) in v.op.iter().zip(v.rhs.iter()) {
+            //         list.entry(o);
+            //         list.entry(e);
+            //     }
+            //     list.finish()
+            // }
+            // Expression::ChoiceExpression(v) => {
+            //     f.write_str("ChoiceExpression ")?;
+            //     let mut list = f.debug_list();
+            //     list.entry(&v.lhs);
+            //     for (o, e) in v.op.iter().zip(v.rhs.iter()) {
+            //         list.entry(o);
+            //         list.entry(e);
+            //     }
+            //     list.finish()
+            // }
         }
     }
 }
@@ -92,67 +104,5 @@ impl Debug for Data {
             Data::String(v) => f.debug_tuple("String").field(&v.data).finish(),
             Data::Regex => f.debug_tuple("Regex").finish(),
         }
-    }
-}
-
-impl From<Expression> for ConcatExpression {
-    fn from(expr: Expression) -> Self {
-        match expr {
-            Expression::ConcatExpression(c) => *c,
-            _ => Self {
-                base: expr,
-                op: vec![],
-                expr: vec![],
-                range: Range { start_byte: 0, end_byte: 0, start_point: Default::default(), end_point: Default::default() },
-            },
-        }
-    }
-}
-
-impl AddAssign<Expression> for ConcatExpression {
-    fn add_assign(&mut self, rhs: Expression) {
-        match rhs {
-            Expression::ConcatExpression(c) => self.add_assign(*c),
-            _ => {
-                self.op.push(String::from("~"));
-                self.expr.push(rhs);
-            }
-        }
-    }
-}
-
-impl AddAssign<ConcatExpression> for ConcatExpression {
-    fn add_assign(&mut self, rhs: ConcatExpression) {
-        self.op.push(String::from("~"));
-        self.expr.push(rhs.base);
-        self.op.extend(rhs.op);
-        self.expr.extend(rhs.expr);
-    }
-}
-
-impl From<ChoiceTag> for ChoiceExpression {
-    fn from(expr: ChoiceTag) -> Self {
-        Self {
-            base: expr,
-            op: vec![],
-            expr: vec![],
-            range: Range { start_byte: 0, end_byte: 0, start_point: Default::default(), end_point: Default::default() },
-        }
-    }
-}
-
-impl AddAssign<ChoiceTag> for ChoiceExpression {
-    fn add_assign(&mut self, rhs: ChoiceTag) {
-        self.op.push(String::from("|"));
-        self.expr.push(rhs);
-    }
-}
-
-impl AddAssign<ChoiceExpression> for ChoiceExpression {
-    fn add_assign(&mut self, rhs: ChoiceExpression) {
-        self.op.push(String::from("|"));
-        self.expr.push(rhs.base);
-        self.op.extend(rhs.op);
-        self.expr.extend(rhs.expr);
     }
 }

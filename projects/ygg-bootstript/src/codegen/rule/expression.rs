@@ -2,10 +2,23 @@ use super::*;
 
 #[derive(Clone, Debug)]
 pub enum RefinedExpression {
-    Choice(Box<RefinedChoice>)
+    Data(),
+    Choice(Box<RefinedChoice>),
+    Concat(Box<RefinedConcat>)
 }
 
 #[derive(Clone, Debug)]
 pub struct RefinedChoice {
-    inner: Vec<RefinedExpression>
+    inner: Vec<ChoiceItem>
+}
+
+#[derive(Clone, Debug)]
+pub struct ChoiceItem {
+    expr: RefinedExpression
+}
+
+
+#[derive(Clone, Debug)]
+pub struct RefinedConcat {
+    pub inner: Vec<RefinedExpression>
 }
