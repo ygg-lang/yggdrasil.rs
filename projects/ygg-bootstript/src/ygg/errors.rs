@@ -9,8 +9,9 @@ pub type Result<T> = std::result::Result<T, YGGError>;
 #[derive(Debug)]
 pub enum YGGError {
     LanguageError { error: String },
-    TextDecodeFailed { error: String},
+    TextDecodeFailed { error: String },
     NodeMissing { name: String, range: Range },
+    InfoMissing { text: String },
     InitializationFailed,
 }
 
@@ -30,13 +31,13 @@ impl From<LanguageError> for YGGError {
 
 impl From<std::str::Utf8Error> for YGGError {
     fn from(e: std::str::Utf8Error) -> Self {
-        Self::TextDecodeFailed { error: e.to_string()}
+        Self::TextDecodeFailed { error: e.to_string() }
     }
 }
 
 impl From<std::num::ParseIntError> for YGGError {
     fn from(e: std::num::ParseIntError) -> Self {
-        Self::TextDecodeFailed { error: e.to_string()}
+        Self::TextDecodeFailed { error: e.to_string() }
     }
 }
 
@@ -48,6 +49,9 @@ impl YGGError {
         Self::InitializationFailed
     }
     pub fn text_decode_failed(e: impl Into<String>) -> Self {
-        Self::TextDecodeFailed { error: e.to_string()}
+        Self::TextDecodeFailed { error: e.into() }
+    }
+    pub fn info_missing(e: impl Into<String>) -> Self {
+        Self::InfoMissing { text: e.into() }
     }
 }

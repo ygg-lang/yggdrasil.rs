@@ -2,23 +2,30 @@ use super::*;
 
 #[derive(Clone, Debug)]
 pub enum RefinedExpression {
-    Data(),
+    Data(Box<RefinedData>),
     Choice(Box<RefinedChoice>),
     Concat(Box<RefinedConcat>)
 }
 
 #[derive(Clone, Debug)]
 pub struct RefinedChoice {
-    inner: Vec<ChoiceItem>
+    pub  inner: Vec<RefinedTag>
 }
 
 #[derive(Clone, Debug)]
-pub struct ChoiceItem {
-    expr: RefinedExpression
+pub struct RefinedTag {
+   pub expr: RefinedExpression
 }
 
 
 #[derive(Clone, Debug)]
 pub struct RefinedConcat {
     pub inner: Vec<RefinedExpression>
+}
+
+#[derive(Clone, Debug)]
+pub enum RefinedData {
+    String(String),
+    Regex(String),
+    Integer(String),
 }

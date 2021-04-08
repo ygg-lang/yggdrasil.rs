@@ -6,6 +6,8 @@
 //     GeneratedParser,
 // };
 
+use super::*;
+
 use std::path::PathBuf;
 use tree_sitter_cli::generate::{generate_parser_for_grammar};
 use tree_sitter_cli::generate::parse_grammar::{GrammarJSON, parse_grammar};
@@ -14,9 +16,66 @@ use tree_sitter_cli::generate::grammars::VariableType::Named;
 use tree_sitter_cli::generate::rules::{MetadataParams, Precedence, Rule};
 use tree_sitter_cli::generate::rules::Rule::{Blank, Choice, Metadata, NamedSymbol, Repeat};
 
+
+impl GrammarManager {
+    pub fn build_input_grammar(&self) -> InputGrammar {
+        InputGrammar {
+            name: self.name.to_owned(),
+            variables: vec![],
+            extra_symbols: vec![],
+            expected_conflicts: vec![],
+            precedence_orderings: vec![],
+            external_tokens: vec![],
+            variables_to_inline: vec![],
+            supertype_symbols: vec![],
+            word_token: None
+        }
+    }
+}
+
+
+impl YGGRule {
+    pub fn build_variable(&self) -> Variable {
+        Variable {
+            name: self.name.to_owned(),
+            kind: VariableType::Named,
+            rule: Rule::Blank,
+        }
+    }
+}
+
+impl From<RefinedExpression> for Rule {
+    fn from(e: RefinedExpression) -> Self {
+        match e {
+            RefinedExpression::Data(data) => {Self::from(*data)}
+            RefinedExpression::Choice(_) => {unimplemented!()}
+            RefinedExpression::Concat(c) => {Self::from(*c)}
+        }
+    }
+}
+
+impl From<RefinedConcat> for Rule {
+    fn from(e: RefinedConcat) -> Self {
+        Self::Choice(
+            e.inner.iter().cloned().map(|e|e.into()).collect()
+        )
+    }
+}
+
+impl From<RefinedData> for Rule {
+    fn from(data: RefinedData) -> Self {
+        match data {
+            RefinedData::String(s) => {Self::String(s)}
+            RefinedData::Regex(s) => {Self::Pattern(s)}
+            RefinedData::Integer(s) => {Self::String(s)}
+        }
+    }
+}
+
+
 #[test]
 pub fn test() {
-    let grammar: GrammarJSON = serde_json::from_str(include_str!("../../../../tree-sitter-ygg/src/grammar.json")).unwrap();
+    let grammar: GrammarJSON = serde_json::from_str(include_str!("../../../../../tree-sitter-ygg/src/grammar.json")).unwrap();
     let grammar = parse_grammar(grammar).unwrap();
 
     // let (_name, _c_code) = generate_parser_for_grammar(
