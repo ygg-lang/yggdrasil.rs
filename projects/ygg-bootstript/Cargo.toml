@@ -16,7 +16,8 @@ include = [
 ]
 
 [dependencies]
-lsp-types = "0.90"
+# same as tower-lsp = "0.14"
+lsp-types = { version = "0.89", features = ["proposed"] }
 
 tree-sitter = "0.20"
 # tree-sitter-cli = { version = "0.20", git = "https://github.com/ygg-lang/tree-sitter" }

@@ -1,4 +1,5 @@
 pub mod basic;
+pub mod manager;
 
 use yggdrasil_bootstript::{ast::YGGBuilder, Result};
 

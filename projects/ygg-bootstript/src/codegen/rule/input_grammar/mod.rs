@@ -67,7 +67,8 @@ impl From<RefinedData> for Rule {
         match data {
             RefinedData::String(s) => {Self::String(s)}
             RefinedData::Regex(s) => {Self::Pattern(s)}
-            RefinedData::Integer(s) => {Self::String(s)}
+            RefinedData::Integer(s) => {Self::String(s.to_string())}
+            RefinedData::Identifier { id, .. } => {Self::NamedSymbol(id)}
         }
     }
 }

@@ -62,6 +62,9 @@ impl GrammarManager {
     pub fn named_rules(&self) -> Vec<YGGRule> {
         self.map.values().cloned().filter(|r| !r.force_inline).collect()
     }
+    pub fn show_diagnostic(&self) -> Vec<Diagnostic> {
+        self.diag.to_owned()
+    }
 }
 
 

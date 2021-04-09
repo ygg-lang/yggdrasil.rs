@@ -115,8 +115,8 @@ impl Parsed for Expression {
                 SyntaxKind::sym_unary_suffix => Self::UnarySuffix(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unary_prefix => Self::UnaryPrefix(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_field_expr => Self::FieldExpression(Box::new(Parsed::parse(state, node)?)),
-                SyntaxKind::sym_concat_expr => Self::ConcatExpression(Box::new(Parsed::parse(state, node)?)),
-                SyntaxKind::sym_or_expr => Self::ChoiceExpression(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_concat_expression => Self::ConcatExpression(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_choice_expression => Self::ChoiceExpression(Box::new(Parsed::parse(state, node)?)),
 
                 SyntaxKind::anon_sym_LPAREN => continue,
                 _ => {

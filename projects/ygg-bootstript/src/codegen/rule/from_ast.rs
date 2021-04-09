@@ -1,8 +1,9 @@
 use std::convert::TryFrom;
 use std::ops::AddAssign;
+use std::str::FromStr;
 use super::*;
 use convert_case::{Case, Casing};
-use lsp_types::{Position, Range};
+use lsp_types::{CodeDescription, NumberOrString, Position, Range, Url};
 
 use crate::ast::{AssignStatement, ChoiceExpression, ChoiceTag, Data, Expression, Program, Statement};
 use crate::ygg::ast::ConcatExpression;
@@ -17,21 +18,17 @@ impl TryFrom<Program> for GrammarManager {
         let mut name = Default::default();
         let mut map = Map::default();
         let mut ignores = Default::default();
-        let mut diag = Default::default();
+        let mut diag = vec![];
         for s in value.statement {
             match s {
                 Statement::GrammarStatement(g) => {
                     if !is_top_area {
-                        let r = g.range;
                         diag.push(Diagnostic {
-                            range: Range {
-                                start: Position { line: r.start_point.row as u32, character: r.start_point.column as u32 },
-                                end: Position { line: r.end_point.row as u32, character: r.end_point.column as u32 }
-                            },
+                            range: convert_range(g.range),
                             severity: Some(DiagnosticSeverity::Warning),
-                            code: None,
-                            code_description: None,
-                            source: None,
+                            code: Some(NumberOrString::String(String::from("SSS"))),
+                            code_description: Some(CodeDescription { href: Url::from_str("https://example.com").unwrap() }),
+                            source: Some(String::from("SSS")),
                             message: String::from("Grammar statement must be declared at the top"),
                             related_information: None,
                             tags: None,
@@ -79,7 +76,7 @@ impl From<AssignStatement> for YGGRule {
         match s.eq.as_str() {
             "_=" => eliminate_unnamed = true,
             "^=" => eliminate_unmarked = true,
-            _ => unreachable!(),
+            _ => (),
         }
         let expression = RefinedExpression::from(s.rhs);
 
@@ -171,7 +168,23 @@ impl From<ChoiceTag> for RefinedTag {
 }
 
 impl From<Data> for RefinedData {
-    fn from(_: Data) -> Self {
-        todo!()
+    fn from(data: Data) -> Self {
+        match data {
+            Data::Identifier(atom) => {
+                let mut id = atom.data.as_str();
+                let mut inline = false;
+                if atom.data.starts_with("_") {
+                    id = &atom.data[1..=id.len()];
+                    inline = true
+                }
+                RefinedData::Identifier {
+                    id: String::from(id),
+                    inline,
+                }
+            }
+            Data::Integer(atom) => { RefinedData::Integer(atom.data)}
+            Data::String(atom) => {RefinedData::String(atom.data)}
+            Data::Regex => {unimplemented!()}
+        }
     }
 }

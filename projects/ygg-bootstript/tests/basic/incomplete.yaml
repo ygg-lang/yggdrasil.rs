@@ -1,0 +1,29 @@
+[
+    GrammarStatement {
+        id: "test1",
+        ext: [],
+    },
+    AssignStatement {
+        id: "rule1",
+        eq: "=",
+        rhs: ConcatExpression {
+            lhs: Data::Identifier(
+                "a",
+            ),
+            op: "~",
+            rhs: Data::Identifier(
+                "b",
+            ),
+        },
+    },
+    FragmentStatement {
+        id: "test2",
+    },
+    AssignStatement {
+        id: "rule2",
+        eq: "=",
+        rhs: Data::Identifier(
+            "",
+        ),
+    },
+]

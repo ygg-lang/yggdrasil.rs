@@ -25,7 +25,11 @@ pub struct RefinedConcat {
 
 #[derive(Clone, Debug)]
 pub enum RefinedData {
+    Identifier {
+        id: String,
+        inline: bool
+    },
     String(String),
     Regex(String),
-    Integer(String),
+    Integer(usize),
 }
