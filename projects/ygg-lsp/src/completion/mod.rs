@@ -2,6 +2,7 @@ mod constants;
 mod dynamic;
 mod keywords;
 mod macros;
+mod escapes;
 
 use self::{constants::COMPLETE_CONSTANTS, keywords::COMPLETE_KEYWORDS, macros::COMPLETE_MACROS};
 // use crate::io::FILE_STORAGE;
@@ -15,12 +16,13 @@ use tower_lsp::lsp_types::{
 };
 
 pub static COMPLETION_OPTIONS: SyncLazy<CompletionOptions> = SyncLazy::new(|| {
-    let completion_trigger = vec!['@', '\\'];
+    let completion_trigger = vec!['@', '\\','`'];
     CompletionOptions {
         resolve_provider: Some(false),
         trigger_characters: Some(completion_trigger.iter().map(ToString::to_string).collect()),
         all_commit_characters: None,
         work_done_progress_options: WorkDoneProgressOptions { work_done_progress: Some(false) },
+        completion_item: None
     }
 });
 
@@ -46,6 +48,9 @@ pub async fn completion_provider(p: CompletionParams) -> Option<CompletionRespon
                     let mut items = vec![];
                     items.extend(list_completion_kinds());
                     Some(CompletionResponse::Array(items))
+                }
+                Some('`')=> {
+                    Some(CompletionResponse::Array(list_completion_kinds()))
                 }
                 _ => None,
             }

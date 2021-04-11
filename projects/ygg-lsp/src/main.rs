@@ -31,6 +31,7 @@ impl LanguageServer for Backend {
             // should read from cargo.toml
             version: Some(format!("V{}", env!("CARGO_PKG_VERSION"))),
         };
+
         let ws = WorkspaceServerCapabilities {
             workspace_folders: Some(WorkspaceFoldersServerCapabilities {
                 supported: Some(true),
@@ -61,11 +62,12 @@ impl LanguageServer for Backend {
                 workspace: Some(ws),
                 ..ServerCapabilities::default()
             },
+            offset_encoding: None
         };
         return Ok(init);
     }
     async fn initialized(&self, _: InitializedParams) {
-        self.client.log_message(MessageType::Info, "Notedown server initialized!").await;
+        self.client.log_message(MessageType::Info, "Yggdrasil server initialized!").await;
     }
 
     async fn shutdown(&self) -> Result<()> {
@@ -102,7 +104,7 @@ impl LanguageServer for Backend {
         FILE_STORAGE.get().write().await.update(params);
     }
     async fn completion(&self, params: CompletionParams) -> Result<Option<CompletionResponse>> {
-        self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
+        // self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
         Ok(completion_provider(params).await)
     }
     async fn completion_resolve(&self, params: CompletionItem) -> Result<CompletionItem> {
@@ -172,13 +174,8 @@ impl LanguageServer for Backend {
 
 impl Backend {
     pub async fn check_the_file(&self, url: &Url) {
-        let _ = url;
-        // self.execute_command(ExecuteCommandParams {
-        //     command: "notedown.inner.request-math-svg".to_string(),
-        //     arguments: vec![Value::String("x^2".to_string())],
-        //     work_done_progress_params: Default::default()
-        // }).await;
-        self.client.publish_diagnostics(url.clone(), diagnostics_provider(&url), None).await
+        let diags = diagnostics_provider(&url).await;
+        self.client.publish_diagnostics(url.to_owned(), diags, None).await
     }
 }
 

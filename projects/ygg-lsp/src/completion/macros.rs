@@ -21,6 +21,7 @@ pub fn build_command(doc: &DocumentString, args: bool) -> CompletionItem {
     };
     CompletionItem {
         label: format!("{}", cmd),
+        label_details: None,
         kind: Some(CompletionItemKind::Function),
         detail: Some(short),
         documentation: Some(Documentation::MarkupContent(doc)),

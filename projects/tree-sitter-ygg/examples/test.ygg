@@ -1,0 +1,4 @@
+grammar! test
+
+test = a ~ b
+

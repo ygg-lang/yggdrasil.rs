@@ -3,8 +3,13 @@ use std::{
     collections::HashMap,
     fmt::{self, Debug, Formatter},
 };
+use std::convert::TryFrom;
 use tokio::sync::RwLock;
 use tower_lsp::lsp_types::{Url, *};
+use yggdrasil_bootstript::ast::YGGBuilder;
+use crate::io::read_url;
+use yggdrasil_bootstript::{Result};
+use yggdrasil_bootstript::codegen::GrammarManager;
 
 pub static FILE_STORAGE: Storage<RwLock<FileStateMap>> = Storage::new();
 
@@ -12,8 +17,9 @@ pub trait FileStateUpdate<T> {
     fn update(&mut self, p: T);
 }
 
-#[derive(Clone)]
+
 pub struct FileStateMap {
+    builder: YGGBuilder,
     inner: HashMap<Url, FileState>,
 }
 
@@ -31,7 +37,10 @@ impl Debug for FileStateMap {
 
 impl Default for FileStateMap {
     fn default() -> Self {
-        Self { inner: Default::default() }
+        Self {
+            builder: YGGBuilder::new().unwrap(),
+            inner: Default::default(),
+        }
     }
 }
 
@@ -83,8 +92,24 @@ impl FileStateMap {
         }
         self.inner.insert(url.clone(), new);
     }
-    pub fn read(&self, url: &Url) -> Option<String> {
-        self.inner.get(url).map(|e| e.text.to_owned())
+    fn update_from_file(&mut self, url: &Url)->Result<String> {
+        let content = read_url(url)?;
+        let new = FileState { version:0, text: content.to_owned() };
+        self.inner.insert(url.clone(), new);
+        Ok(content)
+    }
+    pub fn parse(&mut self, url: &Url) -> Result<GrammarManager> {
+        match self.inner.get(url) {
+            Some(s) => {
+                self.builder.update_by_text(&s.text)?
+            },
+            None => {
+                let t = self.update_from_file(url)?;
+                self.builder.update_by_text(&t)?
+            }
+        };
+        let p = self.builder.traverse()?;
+        GrammarManager::try_from(p)
     }
 }
 

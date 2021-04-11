@@ -8,11 +8,13 @@ pub type Result<T> = std::result::Result<T, YGGError>;
 
 #[derive(Debug)]
 pub enum YGGError {
+    IOError { error: String},
     LanguageError { error: String },
     TextDecodeFailed { error: String },
     NodeMissing { name: String, range: Range },
     InfoMissing { text: String },
     InitializationFailed,
+    UnknownError
 }
 
 impl Display for YGGError {
@@ -40,6 +42,21 @@ impl From<std::num::ParseIntError> for YGGError {
         Self::TextDecodeFailed { error: e.to_string() }
     }
 }
+impl From<std::io::Error> for YGGError {
+    fn from(e: std::io::Error) -> Self {
+        Self::IOError {error: e.to_string()}
+    }
+}
+
+impl From<()> for YGGError {
+    fn from(_: ()) -> Self {
+        Self::UnknownError
+    }
+}
+
+
+
+
 
 impl YGGError {
     pub fn node_missing(name: &str, range: Range) -> Self {

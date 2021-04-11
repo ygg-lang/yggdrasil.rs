@@ -28,6 +28,7 @@ pub fn build_command(doc: &DocumentString, kind: CompletionItemKind) -> Completi
     let doc = MarkupContent { kind: MarkupKind::Markdown, value: doc.long.to_owned() };
     CompletionItem {
         label: cmd.clone(),
+        label_details: None,
         kind: Some(kind),
         detail: Some(short),
         documentation: Some(Documentation::MarkupContent(doc)),
