@@ -4,8 +4,8 @@ pub static COMPLETE_MACROS: SyncLazy<Vec<CompletionItem>> = SyncLazy::new(|| com
 
 pub fn complete_macros() -> Vec<CompletionItem> {
     let mut out = vec![];
-    out.extend(load_md_doc(include_str!("macros.md")).iter().map(|doc| build_command(doc, true)));
-    out.extend(load_md_doc(include_str!("macros_nullary.md")).iter().map(|doc| build_command(doc, false)));
+    out.extend(load_md_doc(include_str!("macros_args.md")).iter().map(|doc| build_command(doc, true)));
+    out.extend(load_md_doc(include_str!("macros.md")).iter().map(|doc| build_command(doc, false)));
     return out;
 }
 

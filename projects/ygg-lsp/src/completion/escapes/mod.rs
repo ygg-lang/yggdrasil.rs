@@ -1,34 +1,35 @@
 use super::*;
 
-pub static COMPLETE_KEYWORDS: SyncLazy<Vec<CompletionItem>> = SyncLazy::new(|| complete_keywords());
+pub static COMPLETE_ESCAPES: SyncLazy<Vec<CompletionItem>> = SyncLazy::new(|| complete_escapes());
 
-pub fn complete_keywords() -> Vec<CompletionItem> {
-    let parsed = load_md_doc(include_str!("keywords.md"));
-    parsed.iter().map(build_command).collect()
+pub fn complete_escapes() -> Vec<CompletionItem> {
+    let mut out = vec![];
+    out.extend(load_md_doc(include_str!("escapes_args.md")).iter().map(|doc| build_command(doc, true)));
+    out.extend(load_md_doc(include_str!("escapes.md")).iter().map(|doc| build_command(doc, false)));
+    return out;
 }
 
-pub fn build_command(doc: &DocumentString) -> CompletionItem {
+pub fn build_command(doc: &DocumentString, args: bool) -> CompletionItem {
     let cmd = doc.cmd.to_owned();
     let short = doc.short.to_owned();
     let doc = MarkupContent { kind: MarkupKind::Markdown, value: doc.long.to_owned() };
+    let insert_text = match args {
+        true => {
+            format!("{}{{$1}}", cmd)
+        }
+        false => cmd.clone(),
+    };
     CompletionItem {
-        label: cmd.clone(),
+        label: format!("{}", cmd),
         label_details: None,
         kind: Some(CompletionItemKind::Keyword),
         detail: Some(short),
         documentation: Some(Documentation::MarkupContent(doc)),
-        deprecated: None,
-        preselect: None,
-        sort_text: Some(format!("0{}", cmd)),
+        sort_text: None,
         filter_text: None,
-        insert_text: Some(format!("{} ", cmd)),
-        insert_text_format: None,
+        insert_text: Some(insert_text),
+        insert_text_format: Some(InsertTextFormat::Snippet),
         insert_text_mode: None,
-        text_edit: None,
-        additional_text_edits: None,
-        command: None,
-        commit_characters: None,
-        data: None,
-        tags: None,
+        ..CompletionItem::default()
     }
 }
