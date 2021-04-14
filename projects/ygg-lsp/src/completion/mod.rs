@@ -1,11 +1,13 @@
 mod constants;
 mod dynamic;
+mod escapes;
 mod keywords;
 mod macros;
-mod escapes;
 
-use self::{constants::COMPLETE_CONSTANTS, keywords::COMPLETE_KEYWORDS, macros::COMPLETE_MACROS};
-// use crate::io::FILE_STORAGE;
+use self::{
+    constants::COMPLETE_CONSTANTS, escapes::COMPLETE_ESCAPES, keywords::COMPLETE_KEYWORDS,
+    macros::COMPLETE_MACROS,
+};
 use serde::{Deserialize, Serialize};
 use std::{collections::VecDeque, lazy::SyncLazy};
 use tower_lsp::lsp_types::{
@@ -16,13 +18,13 @@ use tower_lsp::lsp_types::{
 };
 
 pub static COMPLETION_OPTIONS: SyncLazy<CompletionOptions> = SyncLazy::new(|| {
-    let completion_trigger = vec!['@', '\\','`'];
+    let completion_trigger = vec!['@', '\\', '`'];
     CompletionOptions {
         resolve_provider: Some(false),
         trigger_characters: Some(completion_trigger.iter().map(ToString::to_string).collect()),
         all_commit_characters: None,
         work_done_progress_options: WorkDoneProgressOptions { work_done_progress: Some(false) },
-        completion_item: None
+        completion_item: None,
     }
 });
 
@@ -44,14 +46,8 @@ pub async fn completion_provider(p: CompletionParams) -> Option<CompletionRespon
         CompletionTriggerKind::TriggerCharacter => {
             match ctx.trigger_character.and_then(|e| e.chars().next()) {
                 Some('@') => Some(CompletionResponse::Array(COMPLETE_MACROS.to_owned())),
-                Some('\\') => {
-                    let mut items = vec![];
-                    items.extend(list_completion_kinds());
-                    Some(CompletionResponse::Array(items))
-                }
-                Some('`')=> {
-                    Some(CompletionResponse::Array(list_completion_kinds()))
-                }
+                Some('\\') => Some(CompletionResponse::Array(COMPLETE_ESCAPES.to_owned())),
+                Some('`') => Some(CompletionResponse::Array(list_completion_kinds())),
                 _ => None,
             }
         }
@@ -138,10 +134,12 @@ fn list_completion_kinds() -> Vec<CompletionItem> {
 
 #[test]
 fn check_yaml() {
-    println!("{:#?}", load_md_doc(include_str!("macros_args.md")));
-    println!("{:#?}", load_md_doc(include_str!("macros.md")));
-    println!("{:#?}", load_md_doc(include_str!("constants_ascii.md")));
-    println!("{:#?}", load_md_doc(include_str!("constants_op.md")));
-    println!("{:#?}", load_md_doc(include_str!("constants_text.md")));
-    println!("{:#?}", load_md_doc(include_str!("keywords.md")));
+    println!("{:#?}", load_md_doc(include_str!("escapes/escapes.md")));
+    println!("{:#?}", load_md_doc(include_str!("escapes/escapes_args.md")));
+    println!("{:#?}", load_md_doc(include_str!("macros/macros.md")));
+    println!("{:#?}", load_md_doc(include_str!("macros/macros_args.md")));
+    println!("{:#?}", load_md_doc(include_str!("constants/constants_ascii.md")));
+    println!("{:#?}", load_md_doc(include_str!("constants/constants_op.md")));
+    println!("{:#?}", load_md_doc(include_str!("constants/constants_text.md")));
+    println!("{:#?}", load_md_doc(include_str!("keywords/keywords.md")));
 }

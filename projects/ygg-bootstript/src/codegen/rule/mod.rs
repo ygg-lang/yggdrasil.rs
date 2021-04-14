@@ -1,11 +1,14 @@
-use super::*;
-use lsp_types::{Diagnostic,DiagnosticSeverity};
-use tree_sitter_cli::generate::grammars::{InputGrammar, Variable, VariableType};
-use tree_sitter_cli::generate::rules::Rule;
 pub use self::expression::*;
+use super::*;
+use lsp_types::{Diagnostic, DiagnosticSeverity};
+use tree_sitter_cli::generate::{
+    grammars::{InputGrammar, Variable, VariableType},
+    rules::Rule,
+};
+use lsp_types::Url;
 
-mod from_ast;
 mod expression;
+mod from_ast;
 mod input_grammar;
 
 pub type Map<K, V> = std::collections::HashMap<K, V>;
@@ -43,13 +46,13 @@ pub struct MetaInfo {
     exts: Vec<String>,
 }
 
-
 #[derive(Clone, Debug)]
 pub struct GrammarManager {
     name: String,
     map: Map<String, YGGRule>,
     ignores: Vec<String>,
-    diag: Vec<Diagnostic>
+    url: Option<Url>,
+    diag: Vec<Diagnostic>,
 }
 
 impl GrammarManager {
@@ -62,12 +65,13 @@ impl GrammarManager {
     pub fn named_rules(&self) -> Vec<YGGRule> {
         self.map.values().cloned().filter(|r| !r.force_inline).collect()
     }
+    pub fn set_url(&mut self, url: Url) {
+        self.url = Some(url)
+    }
     pub fn show_diagnostic(&self) -> Vec<Diagnostic> {
         self.diag.to_owned()
     }
 }
-
-
 
 impl YGGRule {
     fn inline(&mut self, map: &GrammarManager) {}

@@ -66,7 +66,6 @@ fn test_or_tagged() -> Result<()> {
     assert_ast(OR_TAGGED, include_str!("or_simple.yaml"))
 }
 
-
 const INCOMPLETE: &str = r#"
 grammar! test1
 
@@ -76,7 +75,6 @@ fragment! test2
 
 rule2 =
 "#;
-
 
 #[test]
 fn test_incomplete() -> Result<()> {

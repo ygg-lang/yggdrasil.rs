@@ -4,7 +4,6 @@
 use crate::{
     commands::{command_provider, server_commands},
     completion::{completion_provider, COMPLETION_OPTIONS},
-    diagnostic::diagnostics_provider,
     hint::{code_action_provider, code_lens_provider, document_symbol_provider, hover_provider},
     io::{initialize_global_storages, FileStateUpdate, FILE_STORAGE},
 };
@@ -27,7 +26,7 @@ struct Backend {
 impl LanguageServer for Backend {
     async fn initialize(&self, _: InitializeParams) -> Result<InitializeResult> {
         let server_info = ServerInfo {
-            name: format!("Arc Config LSP"),
+            name: format!("Yggdrasil Config LSP"),
             // should read from cargo.toml
             version: Some(format!("V{}", env!("CARGO_PKG_VERSION"))),
         };
@@ -62,7 +61,7 @@ impl LanguageServer for Backend {
                 workspace: Some(ws),
                 ..ServerCapabilities::default()
             },
-            offset_encoding: None
+            offset_encoding: None,
         };
         return Ok(init);
     }
@@ -85,23 +84,23 @@ impl LanguageServer for Backend {
         Ok(command_provider(params, &self.client).await)
     }
     async fn did_open(&self, params: DidOpenTextDocumentParams) {
-        // self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
-        self.check_the_file(&params.text_document.uri).await;
+        let url = params.text_document.uri.clone();
         FILE_STORAGE.get().write().await.update(params);
+        self.check_the_file(&url).await;
     }
     async fn did_change(&self, params: DidChangeTextDocumentParams) {
         // self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
         FILE_STORAGE.get().write().await.update(params);
     }
     async fn did_save(&self, params: DidSaveTextDocumentParams) {
-        // self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
-        self.check_the_file(&params.text_document.uri).await;
+        let url = params.text_document.uri.clone();
         FILE_STORAGE.get().write().await.update(params);
+        self.check_the_file(&url).await;
     }
     async fn did_close(&self, params: DidCloseTextDocumentParams) {
-        // self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
-        self.check_the_file(&params.text_document.uri).await;
+        let url = params.text_document.uri.clone();
         FILE_STORAGE.get().write().await.update(params);
+        self.check_the_file(&url).await;
     }
     async fn completion(&self, params: CompletionParams) -> Result<Option<CompletionResponse>> {
         // self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
@@ -174,8 +173,15 @@ impl LanguageServer for Backend {
 
 impl Backend {
     pub async fn check_the_file(&self, url: &Url) {
-        let diags = diagnostics_provider(&url).await;
-        self.client.publish_diagnostics(url.to_owned(), diags, None).await
+        let mut store = FILE_STORAGE.get().write().await;
+        match store.parse(url) {
+            Ok(grammar) => {
+                // self.client.log_message(MessageType::Info, format!("Current: {}", url.as_str())).await;
+                // self.client.log_message(MessageType::Info, format!("Diagnostics: {:?}", grammar.show_diagnostic())).await;
+                self.client.publish_diagnostics(url.to_owned(), grammar.show_diagnostic(), None).await
+            }
+            Err(_) => {}
+        }
     }
 }
 

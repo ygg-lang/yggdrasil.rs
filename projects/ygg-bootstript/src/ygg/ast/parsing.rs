@@ -18,8 +18,8 @@ macro_rules! parsed_wrap {
 }
 
 pub trait Parsed
-    where
-        Self: Sized,
+where
+    Self: Sized,
 {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self>;
     fn named_one(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Self> {

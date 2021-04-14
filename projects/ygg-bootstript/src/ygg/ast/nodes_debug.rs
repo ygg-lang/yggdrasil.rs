@@ -72,26 +72,26 @@ impl Debug for Expression {
                 .field("op", &v.op)
                 .field("rhs", &v.rhs)
                 .finish(),
-            // Expression::ConcatExpression(v) => {
-            //     f.write_str("ConcatExpression ")?;
-            //     let mut list = f.debug_list();
-            //     list.entry(&v.lhs);
-            //     for (o, e) in v.op.iter().zip(v.rhs.iter()) {
-            //         list.entry(o);
-            //         list.entry(e);
-            //     }
-            //     list.finish()
-            // }
-            // Expression::ChoiceExpression(v) => {
-            //     f.write_str("ChoiceExpression ")?;
-            //     let mut list = f.debug_list();
-            //     list.entry(&v.lhs);
-            //     for (o, e) in v.op.iter().zip(v.rhs.iter()) {
-            //         list.entry(o);
-            //         list.entry(e);
-            //     }
-            //     list.finish()
-            // }
+            /* Expression::ConcatExpression(v) => {
+             *     f.write_str("ConcatExpression ")?;
+             *     let mut list = f.debug_list();
+             *     list.entry(&v.lhs);
+             *     for (o, e) in v.op.iter().zip(v.rhs.iter()) {
+             *         list.entry(o);
+             *         list.entry(e);
+             *     }
+             *     list.finish()
+             * }
+             * Expression::ChoiceExpression(v) => {
+             *     f.write_str("ChoiceExpression ")?;
+             *     let mut list = f.debug_list();
+             *     list.entry(&v.lhs);
+             *     for (o, e) in v.op.iter().zip(v.rhs.iter()) {
+             *         list.entry(o);
+             *         list.entry(e);
+             *     }
+             *     list.finish()
+             * } */
         }
     }
 }

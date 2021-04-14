@@ -1,22 +1,18 @@
+use crate::io::read_url;
 use state::Storage;
 use std::{
     collections::HashMap,
     fmt::{self, Debug, Formatter},
 };
-use std::convert::TryFrom;
 use tokio::sync::RwLock;
 use tower_lsp::lsp_types::{Url, *};
-use yggdrasil_bootstript::ast::YGGBuilder;
-use crate::io::read_url;
-use yggdrasil_bootstript::{Result};
-use yggdrasil_bootstript::codegen::GrammarManager;
+use yggdrasil_bootstript::{ast::YGGBuilder, codegen::GrammarManager, Result};
 
 pub static FILE_STORAGE: Storage<RwLock<FileStateMap>> = Storage::new();
 
 pub trait FileStateUpdate<T> {
     fn update(&mut self, p: T);
 }
-
 
 pub struct FileStateMap {
     builder: YGGBuilder,
@@ -37,10 +33,7 @@ impl Debug for FileStateMap {
 
 impl Default for FileStateMap {
     fn default() -> Self {
-        Self {
-            builder: YGGBuilder::new().unwrap(),
-            inner: Default::default(),
-        }
+        Self { builder: YGGBuilder::new().unwrap(), inner: Default::default() }
     }
 }
 
@@ -70,15 +63,19 @@ impl FileStateUpdate<DidChangeTextDocumentParams> for FileStateMap {
 
 impl FileStateUpdate<DidSaveTextDocumentParams> for FileStateMap {
     fn update(&mut self, p: DidSaveTextDocumentParams) {
-        // do nothing
-        let _ = p;
+        match self.update_from_file(&p.text_document.uri) {
+            Ok(_) => {}
+            Err(_) => {}
+        }
     }
 }
 
 impl FileStateUpdate<DidCloseTextDocumentParams> for FileStateMap {
     fn update(&mut self, p: DidCloseTextDocumentParams) {
-        // do nothing
-        let _ = p;
+        match self.update_from_file(&p.text_document.uri) {
+            Ok(_) => {}
+            Err(_) => {}
+        }
     }
 }
 
@@ -92,24 +89,21 @@ impl FileStateMap {
         }
         self.inner.insert(url.clone(), new);
     }
-    fn update_from_file(&mut self, url: &Url)->Result<String> {
+    fn update_from_file(&mut self, url: &Url) -> Result<String> {
         let content = read_url(url)?;
-        let new = FileState { version:0, text: content.to_owned() };
+        let new = FileState { version: 0, text: content.to_owned() };
         self.inner.insert(url.clone(), new);
         Ok(content)
     }
     pub fn parse(&mut self, url: &Url) -> Result<GrammarManager> {
         match self.inner.get(url) {
-            Some(s) => {
-                self.builder.update_by_text(&s.text)?
-            },
+            Some(s) => self.builder.update_by_text(&s.text)?,
             None => {
                 let t = self.update_from_file(url)?;
                 self.builder.update_by_text(&t)?
             }
         };
-        let p = self.builder.traverse()?;
-        GrammarManager::try_from(p)
+        Ok(self.builder.traverse()?.build_grammar(Some(url.to_owned()))?)
     }
 }
 
