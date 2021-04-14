@@ -177,10 +177,15 @@ impl Backend {
         match store.parse(url) {
             Ok(grammar) => {
                 // self.client.log_message(MessageType::Info, format!("Current: {}", url.as_str())).await;
-                // self.client.log_message(MessageType::Info, format!("Diagnostics: {:?}", grammar.show_diagnostic())).await;
+                // self.client.log_message(MessageType::Info, format!("Diagnostics: {:#?}", grammar.show_diagnostic())).await;
                 self.client.publish_diagnostics(url.to_owned(), grammar.show_diagnostic(), None).await
             }
-            Err(_) => {}
+            Err(e) => {
+                self.client
+                    .log_message(MessageType::Warning, format!("File check failed: {}", url.as_str()))
+                    .await;
+                self.client.log_message(MessageType::Warning, e).await
+            }
         }
     }
 }

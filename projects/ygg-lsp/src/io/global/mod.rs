@@ -23,6 +23,7 @@ pub struct FileStateMap {
 pub struct FileState {
     version: usize,
     text: String,
+    // grammar: GrammarManager
 }
 
 impl Debug for FileStateMap {

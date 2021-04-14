@@ -1,11 +1,10 @@
 pub use self::expression::*;
 use super::*;
-use lsp_types::{Diagnostic, DiagnosticSeverity};
+use lsp_types::{Diagnostic, DiagnosticSeverity, Url};
 use tree_sitter_cli::generate::{
     grammars::{InputGrammar, Variable, VariableType},
     rules::Rule,
 };
-use lsp_types::Url;
 
 mod expression;
 mod from_ast;

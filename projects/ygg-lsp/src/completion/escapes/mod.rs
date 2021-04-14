@@ -14,7 +14,7 @@ pub fn build_command(doc: &DocumentString, args: bool) -> CompletionItem {
     let short = doc.short.to_owned();
     let doc = MarkupContent { kind: MarkupKind::Markdown, value: doc.long.to_owned() };
     let insert_text = match args {
-        true =>             format!("{}{{$1}}", cmd),
+        true => format!("{}{{$1}}", cmd),
         false => cmd.clone(),
     };
     CompletionItem {

@@ -1,13 +1,13 @@
+use self::diagnostic::{duplicate_declaration_error, top_area_error};
 use super::*;
-use convert_case::{Case, Casing};
-use lsp_types::{CodeDescription, NumberOrString, Position, Range, Url};
-use std::{convert::TryFrom, ops::AddAssign, str::FromStr};
 use crate::{
     ast::{AssignStatement, ChoiceExpression, ChoiceTag, Data, Expression, Program, Statement},
     ygg::{ast::ConcatExpression, YGGError},
+    Result,
 };
-use self::diagnostic::{top_area_error,duplicate_declaration_error};
-use crate::Result;
+use convert_case::{Case, Casing};
+use lsp_types::{CodeDescription, NumberOrString, Position, Range, Url};
+use std::{convert::TryFrom, ops::AddAssign, str::FromStr};
 
 mod diagnostic;
 
@@ -27,26 +27,48 @@ impl Program {
                     if !is_top_area {
                         diag.push(top_area_error("Grammar statement must be declared at the top", s.range))
                     }
-                    if is_grammar.is_some() {
-                        diag.push(duplicate_declaration_error("Duplicate declaration `grammar!`", s.range, &url, grammar_pos  ))
-                    }
-                    else {
-                        is_grammar = Some(true);
-                        grammar_pos = Some(s.range);
-                        name = Some(s.id.data)
+                    match is_grammar {
+                        Some(true) => diag.push(duplicate_declaration_error(
+                            "Already declaration as `grammar!`",
+                            s.range,
+                            &url,
+                            grammar_pos,
+                        )),
+                        Some(false) => diag.push(duplicate_declaration_error(
+                            "Already declaration as `fragment!`",
+                            s.range,
+                            &url,
+                            grammar_pos,
+                        )),
+                        None => {
+                            is_grammar = Some(true);
+                            grammar_pos = Some(s.range);
+                            name = Some(s.id.data)
+                        }
                     }
                 }
                 Statement::FragmentStatement(s) => {
                     if !is_top_area {
                         diag.push(top_area_error("Fragment statement must be declared at the top", s.range))
                     }
-                    if is_grammar.is_some() {
-                        diag.push(duplicate_declaration_error("Duplicate declaration `grammar!`", s.range, &url, grammar_pos  ))
-                    }
-                    else {
-                        is_grammar = Some(false);
-                        grammar_pos = Some(s.range);
-                        name = Some(s.id.data)
+                    match is_grammar {
+                        Some(true) => diag.push(duplicate_declaration_error(
+                            "Already declaration as `grammar!`",
+                            s.range,
+                            &url,
+                            grammar_pos,
+                        )),
+                        Some(false) => diag.push(duplicate_declaration_error(
+                            "Already declaration as `fragment!`",
+                            s.range,
+                            &url,
+                            grammar_pos,
+                        )),
+                        None => {
+                            is_grammar = Some(false);
+                            grammar_pos = Some(s.range);
+                            name = Some(s.id.data)
+                        }
                     }
                 }
                 Statement::IgnoreStatement(s) => {
@@ -54,7 +76,12 @@ impl Program {
                         diag.push(top_area_error("Ignore statement must be declared at the top", s.range))
                     }
                     if !ignores.is_empty() {
-                        diag.push(duplicate_declaration_error("Duplicate declaration `grammar!`", f.range, &url, grammar_pos  ))
+                        diag.push(duplicate_declaration_error(
+                            "Already declaration ignore statement",
+                            s.range,
+                            &url,
+                            grammar_pos,
+                        ))
                     }
                     else {
                         ignores = s.rules;
@@ -72,9 +99,6 @@ impl Program {
         Ok(GrammarManager { name: name.ok_or(YGGError::info_missing("name not found"))?, map, ignores, url: None, diag })
     }
 }
-
-
-
 
 impl From<AssignStatement> for YGGRule {
     fn from(s: AssignStatement) -> Self {

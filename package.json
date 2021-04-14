@@ -4,6 +4,6 @@
         "t":  "wee generate -t && wee test",
         "test": "cd projects/tree-sitter-ygg && tree-sitter test",
         "generate": "cd projects/tree-sitter-ygg && tree-sitter generate",
-        "install": "cd projects/ygg-lsp && cargo test && cargo install --path . --debug"
+        "install": "cd projects/ygg-lsp && cargo install --path . --debug"
     }
 }
