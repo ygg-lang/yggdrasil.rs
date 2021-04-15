@@ -7,29 +7,7 @@
             },
             end: Position {
                 line: 5,
-                character: 15,
-            },
-        },
-        severity: Some(
-            Warning,
-        ),
-        code: None,
-        code_description: None,
-        source: None,
-        message: "Fragment statement must be declared at the top",
-        related_information: None,
-        tags: None,
-        data: None,
-    },
-    Diagnostic {
-        range: Range {
-            start: Position {
-                line: 5,
-                character: 0,
-            },
-            end: Position {
-                line: 5,
-                character: 15,
+                character: 4,
             },
         },
         severity: Some(
@@ -37,8 +15,10 @@
         ),
         code: None,
         code_description: None,
-        source: None,
-        message: "",
+        source: Some(
+            "Rule",
+        ),
+        message: "Duplicate declaration detected",
         related_information: None,
         tags: None,
         data: None,

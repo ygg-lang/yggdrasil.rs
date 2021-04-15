@@ -1,70 +1,71 @@
-grammar! json
+//?
+grammar! json {"*.json"}
+//?
+import! "json_types.toml"
+//? our json support comment starts with `//`
+ignore! {WHITESPACE, NEWLINE, COMMENT}
 
-ignore! /\s/
-
-import! "@type"
-
+//? entry point
 program = value
-
+//? 
 value = 
     | object
     | array
     | number
     | string
     | boolean
-    | Null
+    | null
+
+//+?
+
+//-
+object _= "{" ~ @interleave(pair, ",", triling = false)? ~ "}"
+pair   _= key ~ ":" ~ value
+key     = string | number
+
+//+?
+
+//-
+array = "[" ~ @interleave(value, ",") ~ "]"
+
+//+?
+
+//-
+number = 
+
+hex_literal = 0 ~ [xX] ~ [0-9a-fA-F]+
+oct_literal = 0 ~ [oO] ~ [0-7]+
+bin_literal = 0 ~ [bB] ~ [0-1]+
+
+sign       @= '-' | '+';
+dec_literal = 0 | [1-9] ~ [0-9]+
 
 
-object = "{" ~ @interleave(pair, ",")? ~ "}"
+decimal_digits = /\d+/
+signed_integer = sign ? decimal_digits
+exponent_part = [eE]? ~ signed_integer
+decimal_integer_literal = sign(0 | ([1-9] ~ decimal_digits ?))
 
-Pair = (key <- string | number) ":" (value <- _value)
+decimal_literal = 
+    | decimal_integer_literal ~ '.', optional(decimal_digits), optional(exponent_part)),
+    | '.', decimal_digits, optional(exponent_part)),
+    | decimal_integer_literal, optional(exponent_part))
 
-array = "[" @interleave(_value, ",") "]"
+//+?
 
-string =
-  | '"' ~ '"'
-  | '"' ~string_content ~ '"'
+//-
+string: JsonString _=
+    | '"' ~ '"'
+    | '"' ~ string_content ~ '"'
 
 string_content @= ([^\\"\n]+ | escape_sequence)+
 
-
 escape_sequence @= '\\' | /(\"|\\|\/|b|f|n|r|t|u)/
+escaped @= '\\' ~ [bfnrtu"/\\]
 
-number = {
-  // 子域里所有的都是 inline 的, 不会在最后的结果中出现
-  sign = '-' | '+';
-
-
-
-  decimal_digits = /\d+/
-  signed_integer = sign ? decimal_digits
-  exponent_part = ^'e' ? ~signed_integer
-
-  hex_literal = 0 ~ ^"x" ~ [0-9a-fA-F]+
-
-  binary_literal = 0 ~ ^"b" ~ [0-1]+
-
-  octal_literal = 0 ~ ^"o" ~ [0-7]+
-
-  decimal_integer_literal = sign(0 | ([1-9] ~ decimal_digits ?))
-
-  decimal_literal = choice(
-    seq(decimal_integer_literal, '.', optional(decimal_digits), optional(exponent_part)),
-    seq('.', decimal_digits, optional(exponent_part)),
-    seq(decimal_integer_literal, optional(exponent_part))
-  )
-
-  return token(hex_literal, decimal_literal, binary_literal, octal_literal)
-}
+boolean: bool @= "true" | "false"
+null   : void @= "null"
 
 
-// 关键词建议大写
-
-NULL  @= "null"
-TRUE  @= "true"
-FALSE @= "false"
-
-boolean :bool @= "true" | "false"
-
-null = "null"
-
+COMMENT = single_line_comment
+single_line_comment = "//" ~ [.]*

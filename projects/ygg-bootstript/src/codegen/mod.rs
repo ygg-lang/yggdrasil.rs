@@ -1,6 +1,6 @@
 mod rule;
 
-pub use self::rule::GrammarManager;
+pub use self::rule::GrammarState;
 
 pub fn convert_range(r: tree_sitter::Range) -> lsp_types::Range {
     lsp_types::Range {

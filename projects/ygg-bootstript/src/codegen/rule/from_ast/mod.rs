@@ -6,18 +6,18 @@ use crate::{
     Result,
 };
 use convert_case::{Case, Casing};
-use lsp_types::{CodeDescription, NumberOrString, Position, Range, Url};
-use std::{convert::TryFrom, ops::AddAssign, str::FromStr};
+use lsp_types::{CodeDescription, Url};
+use std::{ ops::AddAssign};
 
 mod diagnostic;
 
 impl Program {
-    pub fn build_grammar(self, url: Option<Url>) -> Result<GrammarManager> {
+    pub fn build_grammar(self, url: Option<Url>) -> Result<GrammarState> {
         let mut is_top_area = true;
         let mut is_grammar = None;
         let mut grammar_pos = None;
         let mut name = None;
-        let mut map = Map::default();
+        let mut map = Map::<String,YGGRule>::default();
         let mut ignores = vec![];
         let mut ignores_pos = None;
         let mut diag = vec![];
@@ -25,65 +25,69 @@ impl Program {
             match stmt {
                 Statement::GrammarStatement(s) => {
                     if !is_top_area {
-                        diag.push(top_area_error("Grammar statement must be declared at the top", s.range))
+                        diag.push(top_area_error( "Grammar","Grammar statement must be declared at the top", convert_range(s.range)))
                     }
                     match is_grammar {
                         Some(true) => diag.push(duplicate_declaration_error(
+                            "Grammar",
                             "Already declaration as `grammar!`",
-                            s.range,
+                            convert_range(s.range),
                             &url,
                             grammar_pos,
                         )),
                         Some(false) => diag.push(duplicate_declaration_error(
+                            "Grammar",
                             "Already declaration as `fragment!`",
-                            s.range,
+                            convert_range(s.range),
                             &url,
                             grammar_pos,
                         )),
                         None => {
                             is_grammar = Some(true);
-                            grammar_pos = Some(s.range);
+                            grammar_pos = Some(convert_range(s.range));
                             name = Some(s.id.data)
                         }
                     }
                 }
                 Statement::FragmentStatement(s) => {
                     if !is_top_area {
-                        diag.push(top_area_error("Fragment statement must be declared at the top", s.range))
+                        diag.push(top_area_error("Fragment","Fragment statement must be declared at the top", convert_range(s.range)))
                     }
                     match is_grammar {
                         Some(true) => diag.push(duplicate_declaration_error(
+                            "Fragment",
                             "Already declaration as `grammar!`",
-                            s.range,
+                            convert_range(s.range),
                             &url,
                             grammar_pos,
                         )),
                         Some(false) => diag.push(duplicate_declaration_error(
+                            "Fragment",
                             "Already declaration as `fragment!`",
-                            s.range,
+                            convert_range(s.range),
                             &url,
                             grammar_pos,
                         )),
                         None => {
                             is_grammar = Some(false);
-                            grammar_pos = Some(s.range);
+                            grammar_pos = Some(convert_range(s.range));
                             name = Some(s.id.data)
                         }
                     }
                 }
                 Statement::IgnoreStatement(s) => {
                     if !is_top_area {
-                        diag.push(top_area_error("Ignore statement must be declared at the top", s.range))
+                        diag.push(top_area_error("Ignore","Ignore statement must be declared at the top", convert_range(s.range)))
                     }
                     if !ignores.is_empty() {
                         diag.push(duplicate_declaration_error(
+                            "Ignore",
                             "Already declaration ignore statement",
-                            s.range,
+                            convert_range(s.range),
                             &url,
                             grammar_pos,
                         ))
-                    }
-                    else {
+                    } else {
                         ignores = s.rules;
                         ignores_pos = Some(s.range)
                     }
@@ -91,12 +95,25 @@ impl Program {
                 Statement::AssignStatement(s) => {
                     is_top_area = false;
                     let rule = YGGRule::from(*s);
-                    map.insert(rule.name.to_owned(), rule);
+                    match map.get(&rule.name) {
+                        Some(old) => {
+                            diag.push(duplicate_declaration_error(
+                                "Rule",
+                                format!("Already declaration as Rule `{}`", old.name),
+                                rule.range,
+                                &url,
+                                Some(old.range),
+                            ))
+                        }
+                        None => {
+                            map.insert(rule.name.to_owned(), rule);
+                        }
+                    }
                 }
                 Statement::EmptyStatement(_) => continue,
             }
         }
-        Ok(GrammarManager { name: name.ok_or(YGGError::info_missing("name not found"))?, map, ignores, url: None, diag })
+        Ok(GrammarState { name: name.ok_or(YGGError::info_missing("name not found"))?, map, ignores, url: None, diag })
     }
 }
 
@@ -118,8 +135,7 @@ impl From<AssignStatement> for YGGRule {
             _ => (),
         }
         let expression = RefinedExpression::from(s.rhs);
-
-        Self { name, structure_name: structure, force_inline, eliminate_unmarked, eliminate_unnamed, expression }
+        Self { name, structure_name: structure, force_inline, eliminate_unmarked, eliminate_unnamed, expression, range: convert_range(s.id.range) }
     }
 }
 
@@ -196,17 +212,9 @@ impl From<ChoiceTag> for RefinedTag {
 impl From<Data> for RefinedData {
     fn from(data: Data) -> Self {
         match data {
-            Data::Identifier(atom) => {
-                let mut id = atom.data.as_str();
-                let mut inline = false;
-                if atom.data.starts_with("_") {
-                    id = &atom.data[1..=id.len()];
-                    inline = true
-                }
-                RefinedData::Identifier { id: String::from(id), inline }
-            }
-            Data::Integer(atom) => RefinedData::Integer(atom.data),
-            Data::String(atom) => RefinedData::String(atom.data),
+            Data::Identifier(atom) => Self::Identifier(*atom),
+            Data::Integer(atom) => Self::Integer(atom.data),
+            Data::String(atom) => Self::String(atom.data),
             Data::Regex => {
                 unimplemented!()
             }

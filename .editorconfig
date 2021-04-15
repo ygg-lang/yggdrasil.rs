@@ -1,16 +1,13 @@
 [*]
 charset = utf-8
-
-
-[*.pest]
 indent_style = space
 indent_size = 4
 
-[*.toml]
-indent_style = space
-indent_size = 4
-
-[projects/bootstript/tests/**/*.yaml]
+[*.{yg, ygg}]
 end_of_line = lf
-indent_style = space
-indent_size = 4
+
+[*.{toml, json}]
+trim_trailing_whitespace = false
+
+[projects/**/*.yaml]
+end_of_line = lf

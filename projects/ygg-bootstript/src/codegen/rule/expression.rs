@@ -1,4 +1,5 @@
 use super::*;
+use crate::ygg::ast::Identifier;
 
 #[derive(Clone, Debug)]
 pub enum RefinedExpression {
@@ -24,7 +25,7 @@ pub struct RefinedConcat {
 
 #[derive(Clone, Debug)]
 pub enum RefinedData {
-    Identifier { id: String, inline: bool },
+    Identifier(Identifier),
     String(String),
     Regex(String),
     Integer(usize),

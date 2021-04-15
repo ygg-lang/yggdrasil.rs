@@ -15,7 +15,9 @@
         ),
         code: None,
         code_description: None,
-        source: None,
+        source: Some(
+            "Fragment",
+        ),
         message: "Fragment statement must be declared at the top",
         related_information: None,
         tags: None,
@@ -37,8 +39,10 @@
         ),
         code: None,
         code_description: None,
-        source: None,
-        message: "",
+        source: Some(
+            "Fragment",
+        ),
+        message: "Duplicate declaration detected",
         related_information: None,
         tags: None,
         data: None,

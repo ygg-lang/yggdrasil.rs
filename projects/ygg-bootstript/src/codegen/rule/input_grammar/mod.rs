@@ -19,7 +19,7 @@ use tree_sitter_cli::generate::{
     },
 };
 
-impl GrammarManager {
+impl GrammarState {
     pub fn build_input_grammar(&self) -> InputGrammar {
         InputGrammar {
             name: self.name.to_owned(),
@@ -65,7 +65,7 @@ impl From<RefinedData> for Rule {
             RefinedData::String(s) => Self::String(s),
             RefinedData::Regex(s) => Self::Pattern(s),
             RefinedData::Integer(s) => Self::String(s.to_string()),
-            RefinedData::Identifier { id, .. } => Self::NamedSymbol(id),
+            RefinedData::Identifier(s) => Self::NamedSymbol(s.data),
         }
     }
 }
@@ -74,7 +74,6 @@ impl From<RefinedData> for Rule {
 pub fn test() {
     let grammar: GrammarJSON = serde_json::from_str(include_str!("../../../../../tree-sitter-ygg/src/grammar.json")).unwrap();
     let grammar = parse_grammar(grammar).unwrap();
-
     // let (_name, _c_code) = generate_parser_for_grammar(
     //     grammar
     // ).unwrap();

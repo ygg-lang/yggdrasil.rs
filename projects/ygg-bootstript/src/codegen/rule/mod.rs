@@ -1,9 +1,8 @@
 pub use self::expression::*;
 use super::*;
-use lsp_types::{Diagnostic, DiagnosticSeverity, Url};
+use lsp_types::{Diagnostic, DocumentSymbolResponse, Range, Url};
 use tree_sitter_cli::generate::{
-    grammars::{InputGrammar, Variable, VariableType},
-    rules::Rule,
+    grammars::InputGrammar
 };
 
 mod expression;
@@ -37,6 +36,8 @@ pub struct YGGRule {
     eliminate_unnamed: bool,
     ///
     expression: RefinedExpression,
+    ///
+    range: Range
 }
 
 #[derive(Clone, Debug)]
@@ -46,15 +47,15 @@ pub struct MetaInfo {
 }
 
 #[derive(Clone, Debug)]
-pub struct GrammarManager {
+pub struct GrammarState {
+    url: Option<Url>,
     name: String,
     map: Map<String, YGGRule>,
     ignores: Vec<String>,
-    url: Option<Url>,
     diag: Vec<Diagnostic>,
 }
 
-impl GrammarManager {
+impl GrammarState {
     pub fn optimize(&mut self) {
         self.merge_regex();
         self.inline()
@@ -70,10 +71,13 @@ impl GrammarManager {
     pub fn show_diagnostic(&self) -> Vec<Diagnostic> {
         self.diag.to_owned()
     }
+    pub fn show_document_symbol(&self) -> DocumentSymbolResponse {
+        DocumentSymbolResponse::Nested(vec![])
+    }
 }
 
 impl YGGRule {
-    fn inline(&mut self, map: &GrammarManager) {}
+    fn inline(&mut self, map: &GrammarState) {}
     fn merge_regex(&mut self) {}
 }
 

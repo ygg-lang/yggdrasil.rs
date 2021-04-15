@@ -1,6 +1,7 @@
 use super::*;
 
 const UNARY: &str = r#"
+fragment! unary
 test1 = e1?;
 test2 = e1+;
 test3 = e1*;
@@ -13,6 +14,7 @@ fn test_unary() -> Result<()> {
 }
 
 const CONCAT_SIMPLE: &str = r#"
+fragment! concat_simple
 test1 = e1 ~ e2;
 test2 = e1 ~ e2 ~ e3 ~ e4;
 test3 = e1 ~ ((e2 ~ e3) ~ e4);
@@ -25,6 +27,7 @@ fn test_concat_simple() -> Result<()> {
 }
 
 const OR_SIMPLE: &str = r#"
+fragment! or_simple
 test1 = e1 | e2
 test2 =
     | e1
@@ -44,6 +47,7 @@ fn test_or_simple() -> Result<()> {
 }
 
 const OR_TAGGED: &str = r#"
+fragment! or_tagged
 test1 = e1 | e2 #B
 test2 =
     | e1 #A
