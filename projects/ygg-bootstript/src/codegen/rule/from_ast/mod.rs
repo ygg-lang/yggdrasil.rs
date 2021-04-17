@@ -94,7 +94,6 @@ impl Program {
                     }
                 }
                 Statement::AssignStatement(s) => {
-                    let a = HashSet::new()
                     is_top_area = false;
                     let rule = YGGRule::from(*s);
                     match map.get(&rule.name) {

@@ -8,6 +8,10 @@ readme = "Readme.md"
 license = "MPL-2.0"
 edition = "2018"
 
+[[bin]]
+name = "ygg"
+path = "src/main.rs"
+
 [dependencies]
 yggdrasil-bootstript = { version = "0.1", path = "../ygg-bootstript" }
 clap = "3.0.0-beta.4"
