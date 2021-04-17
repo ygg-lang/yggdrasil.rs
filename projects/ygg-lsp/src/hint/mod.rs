@@ -1,14 +1,11 @@
 mod code_lens;
-mod document_symbol;
 mod hover;
 
 pub use self::{
-    code_lens::code_lens_provider, document_symbol::document_symbol_provider, hover::hover_provider,
+    code_lens::code_lens_provider, hover::hover_provider,
 };
-//use crate::io::read_url;
-// use arc_rs::ParserConfig;
 use serde_json::Value;
-use tower_lsp::lsp_types::*;
+use lspower::lsp::*;
 
 pub fn code_action_provider(p: CodeActionParams) -> Option<CodeActionResponse> {
     let _ = p;
@@ -19,8 +16,8 @@ pub fn code_action_provider(p: CodeActionParams) -> Option<CodeActionResponse> {
 
 fn extract_actions() -> Vec<CodeActionOrCommand> {
     vec![
-        cmd("🗝 Extract key path as cite", "arc.extract.key", vec![Value::Bool(true)]),
-        cmd("📮 Extract value as json", "arc.extract.value", vec![Value::Bool(true)]),
+        cmd("Show Railroad Diagram for Rule", "ygg.railroad.rule", vec![Value::Bool(true)]),
+        cmd("Start Inspector from Rule", "ygg.inspector.rule", vec![Value::Bool(true)]),
     ]
 }
 

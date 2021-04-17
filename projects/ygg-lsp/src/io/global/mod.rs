@@ -5,8 +5,8 @@ use std::{
     fmt::{self, Debug, Formatter},
 };
 use tokio::sync::RwLock;
-use tower_lsp::lsp_types::{Url, *};
-use yggdrasil_bootstript::{ast::YGGBuilder, codegen::GrammarManager, Result};
+use lspower::lsp::{Url, *};
+use yggdrasil_bootstript::{ast::YGGBuilder, codegen::GrammarState, Result};
 
 pub static FILE_STORAGE: Storage<RwLock<FileStateMap>> = Storage::new();
 
@@ -96,7 +96,7 @@ impl FileStateMap {
         self.inner.insert(url.clone(), new);
         Ok(content)
     }
-    pub fn parse(&mut self, url: &Url) -> Result<GrammarManager> {
+    pub fn parse(&mut self, url: &Url) -> Result<GrammarState> {
         match self.inner.get(url) {
             Some(s) => self.builder.update_by_text(&s.text)?,
             None => {

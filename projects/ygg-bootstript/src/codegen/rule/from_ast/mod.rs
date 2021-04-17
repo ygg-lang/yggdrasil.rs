@@ -8,6 +8,7 @@ use crate::{
 use convert_case::{Case, Casing};
 use lsp_types::{CodeDescription, Url};
 use std::{ ops::AddAssign};
+use std::collections::HashSet;
 
 mod diagnostic;
 
@@ -93,6 +94,7 @@ impl Program {
                     }
                 }
                 Statement::AssignStatement(s) => {
+                    let a = HashSet::new()
                     is_top_area = false;
                     let rule = YGGRule::from(*s);
                     match map.get(&rule.name) {

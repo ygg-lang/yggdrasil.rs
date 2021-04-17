@@ -10,7 +10,7 @@ use self::{
 };
 use serde::{Deserialize, Serialize};
 use std::{collections::VecDeque, lazy::SyncLazy};
-use tower_lsp::lsp_types::{
+use lspower::lsp::{
     CompletionItem,
     CompletionItemKind::{self, *},
     CompletionOptions, CompletionParams, CompletionResponse, CompletionTriggerKind, Documentation,

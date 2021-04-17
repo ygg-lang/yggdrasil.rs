@@ -23,7 +23,9 @@ impl GrammarState {
     pub fn build_input_grammar(&self) -> InputGrammar {
         InputGrammar {
             name: self.name.to_owned(),
-            variables: vec![],
+            variables: vec![
+
+            ],
             extra_symbols: vec![],
             expected_conflicts: vec![],
             precedence_orderings: vec![],

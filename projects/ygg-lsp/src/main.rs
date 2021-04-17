@@ -4,11 +4,11 @@
 use crate::{
     commands::{command_provider, server_commands},
     completion::{completion_provider, COMPLETION_OPTIONS},
-    hint::{code_action_provider, code_lens_provider, document_symbol_provider, hover_provider},
+    hint::{code_action_provider, code_lens_provider, hover_provider},
     io::{initialize_global_storages, FileStateUpdate, FILE_STORAGE},
 };
 use serde_json::Value;
-use tower_lsp::{jsonrpc::Result, lsp_types::*, Client, LanguageServer, LspService, Server};
+use lspower::{jsonrpc::Result, lsp::*, Client, LanguageServer, LspService, Server};
 
 mod commands;
 mod completion;
@@ -22,15 +22,13 @@ struct Backend {
     client: Client,
 }
 
-#[tower_lsp::async_trait]
+#[lspower::async_trait]
 impl LanguageServer for Backend {
     async fn initialize(&self, _: InitializeParams) -> Result<InitializeResult> {
         let server_info = ServerInfo {
             name: format!("Yggdrasil Config LSP"),
-            // should read from cargo.toml
-            version: Some(format!("V{}", env!("CARGO_PKG_VERSION"))),
+            version: Some(format!("v{}", env!("CARGO_PKG_VERSION"))),
         };
-
         let ws = WorkspaceServerCapabilities {
             workspace_folders: Some(WorkspaceFoldersServerCapabilities {
                 supported: Some(true),
@@ -53,7 +51,6 @@ impl LanguageServer for Backend {
                 code_action_provider: Some(CodeActionProviderCapability::Simple(true)),
                 code_lens_provider: Some(CodeLensOptions { resolve_provider: None }),
                 document_highlight_provider: Some(OneOf::Left(false)),
-                // semantic_highlighting: None,
                 document_symbol_provider: Some(OneOf::Left(false)),
                 document_formatting_provider: Some(OneOf::Left(false)),
                 workspace_symbol_provider: Some(OneOf::Left(false)),
@@ -103,12 +100,8 @@ impl LanguageServer for Backend {
         self.check_the_file(&url).await;
     }
     async fn completion(&self, params: CompletionParams) -> Result<Option<CompletionResponse>> {
-        // self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
+        // completion_resolve was closed
         Ok(completion_provider(params).await)
-    }
-    async fn completion_resolve(&self, params: CompletionItem) -> Result<CompletionItem> {
-        // self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
-        Ok(params)
     }
     async fn hover(&self, params: HoverParams) -> Result<Option<Hover>> {
         // self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
@@ -131,8 +124,12 @@ impl LanguageServer for Backend {
         &self,
         params: DocumentSymbolParams,
     ) -> Result<Option<DocumentSymbolResponse>> {
-        // self.client.log_message(MessageType::Info, format!("{:#?}", sp)).await;
-        Ok(document_symbol_provider(params))
+        let mut store = FILE_STORAGE.get().write().await;
+        let s = match store.parse(&params.text_document.uri) {
+            Ok(e) => {Some(e.show_document_symbol())}
+            Err(_) => {None}
+        };
+        Ok(s)
     }
 
     /// Alt 键列出可执行的命令
@@ -176,8 +173,8 @@ impl Backend {
         let mut store = FILE_STORAGE.get().write().await;
         match store.parse(url) {
             Ok(grammar) => {
-                // self.client.log_message(MessageType::Info, format!("Current: {}", url.as_str())).await;
-                // self.client.log_message(MessageType::Info, format!("Diagnostics: {:#?}", grammar.show_diagnostic())).await;
+                self.client.log_message(MessageType::Info, format!("Current: {}", url.as_str())).await;
+                self.client.log_message(MessageType::Info, format!("Diagnostics: {:#?}", grammar.show_diagnostic())).await;
                 self.client.publish_diagnostics(url.to_owned(), grammar.show_diagnostic(), None).await
             }
             Err(e) => {

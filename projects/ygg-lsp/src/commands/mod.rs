@@ -1,7 +1,7 @@
 use cli_clipboard::{ClipboardContext, ClipboardProvider};
 use serde_json::Value;
 use std::{collections::HashSet, lazy::SyncLazy};
-use tower_lsp::{lsp_types::*, Client};
+use lspower::{lsp::*, Client};
 
 pub fn server_commands() -> ExecuteCommandOptions {
     let commands = SERVER_COMMANDS.iter().map(|s| s.to_string()).collect();

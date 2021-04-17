@@ -1,5 +1,6 @@
 pub mod basic;
 pub mod diagnostic;
+pub mod input_grammar;
 
 use yggdrasil_bootstript::{ast::YGGBuilder, Result};
 

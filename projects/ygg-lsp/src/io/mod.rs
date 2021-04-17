@@ -1,5 +1,5 @@
 use std::fs;
-use tower_lsp::lsp_types::Url;
+use lspower::lsp::Url;
 
 mod global;
 mod parser;

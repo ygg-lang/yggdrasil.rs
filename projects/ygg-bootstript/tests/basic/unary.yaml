@@ -1,4 +1,7 @@
 [
+    FragmentStatement {
+        id: "unary",
+    },
     AssignStatement {
         id: "test1",
         eq: "=",
