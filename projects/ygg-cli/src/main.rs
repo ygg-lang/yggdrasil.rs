@@ -1,16 +1,25 @@
+#![feature(path_try_exists)]
+
 // (Full example with detailed comments in examples/01d_quick_example.rs)
 //
 // This example demonstrates clap's full 'custom derive' style of creating arguments which is the
 // simplest method of use, but sacrifices some flexibility.
-use clap::{AppSettings, Clap, crate_version, crate_authors};
-use crate::init::CommandInit;
-use crate::test::CommandTest;
+use crate::{init::CommandInit, test::CommandTest};
+use anyhow::Result;
+use clap::{crate_authors, crate_version, AppSettings, Clap};
+use crate::ast::CommandAST;
+use crate::cst::CommandCST;
+use crate::new::CommandNew;
+use crate::publish::CommandPub;
 
-mod test;
+mod subs;
+
+mod ast;
+mod cst;
 mod init;
 mod new;
-mod cst;
-mod ast;
+mod test;
+mod publish;
 
 /// This doc string acts as a help message when the user runs '--help'
 /// as do all doc strings on fields
@@ -28,39 +37,24 @@ struct Options {
     subcmd: SubCommand,
 }
 
-
 #[derive(Clap)]
 enum SubCommand {
-    Test(CommandTest),
     Init(CommandInit),
+    New(CommandNew),
+    CST(CommandCST),
+    AST(CommandAST),
+    Test(CommandTest),
+    Pub(CommandPub)
 }
 
-
-fn main() {
+fn main() -> Result<()> {
     let opts: Options = Options::parse();
-
-    // Gets a value for config if supplied by user, or defaults to "default.conf"
-    println!("Value for config: {}", opts.config);
-
-    // Vary the output based on how many times the user used the "verbose" flag
-    // (i.e. 'myprog -v -v -v' or 'myprog -vvv' vs 'myprog -v'
-    match opts.verbose {
-        0 => println!("No verbose info"),
-        1 => println!("Some verbose info"),
-        2 => println!("Tons of verbose info"),
-        _ => println!("Don't be ridiculous"),
-    }
-
-    // You can handle information about subcommands by requesting their matches by name
-    // (as below), requesting just the name used, or both at the same time
     match opts.subcmd {
-        SubCommand::Test(cmd) => {
-            cmd.run()
-        }
-        SubCommand::Init(cmd) => {
-            cmd.run()
-        }
+        SubCommand::Init(cmd) => cmd.run(),
+        SubCommand::New(cmd) => cmd.run(),
+        SubCommand::CST(cmd) => cmd.run(),
+        SubCommand::AST(cmd) => cmd.run(),
+        SubCommand::Test(cmd) => cmd.run(),
+        SubCommand::Pub(cmd) => cmd.run(),
     }
-
-    // more program logic goes here...
 }

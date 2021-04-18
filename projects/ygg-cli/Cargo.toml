@@ -15,3 +15,4 @@ path = "src/main.rs"
 [dependencies]
 yggdrasil-bootstript = { version = "0.1", path = "../ygg-bootstript" }
 clap = "3.0.0-beta.4"
+anyhow = "1.0"

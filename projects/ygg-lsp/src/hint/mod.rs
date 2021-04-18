@@ -1,11 +1,9 @@
 mod code_lens;
 mod hover;
 
-pub use self::{
-    code_lens::code_lens_provider, hover::hover_provider,
-};
-use serde_json::Value;
+pub use self::{code_lens::code_lens_provider, hover::hover_provider};
 use lspower::lsp::*;
+use serde_json::Value;
 
 pub fn code_action_provider(p: CodeActionParams) -> Option<CodeActionResponse> {
     let _ = p;

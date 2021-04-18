@@ -10,13 +10,14 @@ pub struct CommandTest {
     input: String,
 }
 
-
 impl CommandTest {
-    pub fn run(&self) {
+    pub fn run(&self) -> Result<()> {
         if self.debug {
             println!("Printing debug info...");
-        } else {
+        }
+        else {
             println!("Printing normally...");
         }
+        Ok(())
     }
 }

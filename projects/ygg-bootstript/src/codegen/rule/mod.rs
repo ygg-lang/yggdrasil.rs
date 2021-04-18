@@ -1,9 +1,7 @@
 pub use self::expression::*;
 use super::*;
 use lsp_types::{Diagnostic, DocumentSymbolResponse, Range, Url};
-use tree_sitter_cli::generate::{
-    grammars::InputGrammar
-};
+use tree_sitter_cli::generate::grammars::InputGrammar;
 
 mod expression;
 mod from_ast;
@@ -37,7 +35,7 @@ pub struct YGGRule {
     ///
     expression: RefinedExpression,
     ///
-    range: Range
+    range: Range,
 }
 
 #[derive(Clone, Debug)]

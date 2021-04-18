@@ -2,7 +2,6 @@ use crate::codegen::convert_range;
 use lsp_types::{Diagnostic, DiagnosticRelatedInformation, DiagnosticSeverity, Location, NumberOrString, Range, Url};
 use std::str::FromStr;
 
-
 pub fn top_area_error(src: &str, msg: &str, range: Range) -> Diagnostic {
     Diagnostic {
         range,
@@ -17,7 +16,13 @@ pub fn top_area_error(src: &str, msg: &str, range: Range) -> Diagnostic {
     }
 }
 
-pub fn duplicate_declaration_error(src:&str, msg: impl Into<String>, this: Range, url: &Option<Url>, last: Option<Range>) -> Diagnostic {
+pub fn duplicate_declaration_error(
+    src: &str,
+    msg: impl Into<String>,
+    this: Range,
+    url: &Option<Url>,
+    last: Option<Range>,
+) -> Diagnostic {
     let related_information = match url {
         Some(u) => Some(vec![DiagnosticRelatedInformation {
             location: Location { uri: u.to_owned(), range: last.unwrap() },

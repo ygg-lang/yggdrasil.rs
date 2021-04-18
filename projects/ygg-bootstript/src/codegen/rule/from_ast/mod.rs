@@ -7,8 +7,7 @@ use crate::{
 };
 use convert_case::{Case, Casing};
 use lsp_types::{CodeDescription, Url};
-use std::{ ops::AddAssign};
-use std::collections::HashSet;
+use std::{collections::HashSet, ops::AddAssign};
 
 mod diagnostic;
 
@@ -18,7 +17,7 @@ impl Program {
         let mut is_grammar = None;
         let mut grammar_pos = None;
         let mut name = None;
-        let mut map = Map::<String,YGGRule>::default();
+        let mut map = Map::<String, YGGRule>::default();
         let mut ignores = vec![];
         let mut ignores_pos = None;
         let mut diag = vec![];
@@ -26,7 +25,11 @@ impl Program {
             match stmt {
                 Statement::GrammarStatement(s) => {
                     if !is_top_area {
-                        diag.push(top_area_error( "Grammar","Grammar statement must be declared at the top", convert_range(s.range)))
+                        diag.push(top_area_error(
+                            "Grammar",
+                            "Grammar statement must be declared at the top",
+                            convert_range(s.range),
+                        ))
                     }
                     match is_grammar {
                         Some(true) => diag.push(duplicate_declaration_error(
@@ -52,7 +55,11 @@ impl Program {
                 }
                 Statement::FragmentStatement(s) => {
                     if !is_top_area {
-                        diag.push(top_area_error("Fragment","Fragment statement must be declared at the top", convert_range(s.range)))
+                        diag.push(top_area_error(
+                            "Fragment",
+                            "Fragment statement must be declared at the top",
+                            convert_range(s.range),
+                        ))
                     }
                     match is_grammar {
                         Some(true) => diag.push(duplicate_declaration_error(
@@ -78,7 +85,11 @@ impl Program {
                 }
                 Statement::IgnoreStatement(s) => {
                     if !is_top_area {
-                        diag.push(top_area_error("Ignore","Ignore statement must be declared at the top", convert_range(s.range)))
+                        diag.push(top_area_error(
+                            "Ignore",
+                            "Ignore statement must be declared at the top",
+                            convert_range(s.range),
+                        ))
                     }
                     if !ignores.is_empty() {
                         diag.push(duplicate_declaration_error(
@@ -88,7 +99,8 @@ impl Program {
                             &url,
                             grammar_pos,
                         ))
-                    } else {
+                    }
+                    else {
                         ignores = s.rules;
                         ignores_pos = Some(s.range)
                     }
@@ -97,15 +109,13 @@ impl Program {
                     is_top_area = false;
                     let rule = YGGRule::from(*s);
                     match map.get(&rule.name) {
-                        Some(old) => {
-                            diag.push(duplicate_declaration_error(
-                                "Rule",
-                                format!("Already declaration as Rule `{}`", old.name),
-                                rule.range,
-                                &url,
-                                Some(old.range),
-                            ))
-                        }
+                        Some(old) => diag.push(duplicate_declaration_error(
+                            "Rule",
+                            format!("Already declaration as Rule `{}`", old.name),
+                            rule.range,
+                            &url,
+                            Some(old.range),
+                        )),
                         None => {
                             map.insert(rule.name.to_owned(), rule);
                         }
@@ -136,7 +146,15 @@ impl From<AssignStatement> for YGGRule {
             _ => (),
         }
         let expression = RefinedExpression::from(s.rhs);
-        Self { name, structure_name: structure, force_inline, eliminate_unmarked, eliminate_unnamed, expression, range: convert_range(s.id.range) }
+        Self {
+            name,
+            structure_name: structure,
+            force_inline,
+            eliminate_unmarked,
+            eliminate_unnamed,
+            expression,
+            range: convert_range(s.id.range),
+        }
     }
 }
 

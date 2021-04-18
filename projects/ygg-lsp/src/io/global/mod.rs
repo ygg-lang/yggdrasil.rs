@@ -1,11 +1,11 @@
 use crate::io::read_url;
+use lspower::lsp::{Url, *};
 use state::Storage;
 use std::{
     collections::HashMap,
     fmt::{self, Debug, Formatter},
 };
 use tokio::sync::RwLock;
-use lspower::lsp::{Url, *};
 use yggdrasil_bootstript::{ast::YGGBuilder, codegen::GrammarState, Result};
 
 pub static FILE_STORAGE: Storage<RwLock<FileStateMap>> = Storage::new();

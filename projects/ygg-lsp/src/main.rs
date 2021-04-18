@@ -7,8 +7,8 @@ use crate::{
     hint::{code_action_provider, code_lens_provider, hover_provider},
     io::{initialize_global_storages, FileStateUpdate, FILE_STORAGE},
 };
-use serde_json::Value;
 use lspower::{jsonrpc::Result, lsp::*, Client, LanguageServer, LspService, Server};
+use serde_json::Value;
 
 mod commands;
 mod completion;
@@ -126,8 +126,8 @@ impl LanguageServer for Backend {
     ) -> Result<Option<DocumentSymbolResponse>> {
         let mut store = FILE_STORAGE.get().write().await;
         let s = match store.parse(&params.text_document.uri) {
-            Ok(e) => {Some(e.show_document_symbol())}
-            Err(_) => {None}
+            Ok(e) => Some(e.show_document_symbol()),
+            Err(_) => None,
         };
         Ok(s)
     }
@@ -174,7 +174,12 @@ impl Backend {
         match store.parse(url) {
             Ok(grammar) => {
                 self.client.log_message(MessageType::Info, format!("Current: {}", url.as_str())).await;
-                self.client.log_message(MessageType::Info, format!("Diagnostics: {:#?}", grammar.show_diagnostic())).await;
+                self.client
+                    .log_message(
+                        MessageType::Info,
+                        format!("Diagnostics: {:#?}", grammar.show_diagnostic()),
+                    )
+                    .await;
                 self.client.publish_diagnostics(url.to_owned(), grammar.show_diagnostic(), None).await
             }
             Err(e) => {

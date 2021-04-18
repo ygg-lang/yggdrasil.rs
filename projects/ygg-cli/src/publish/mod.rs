@@ -3,7 +3,7 @@ use std::{env, fs, path::Path, process::Command};
 
 /// Create a new grammar project
 #[derive(Clap)]
-pub struct CommandNew {
+pub struct CommandPub {
     /// Set the folder name of the project
     grammar_name: String,
     /// Overwrite the existing grammar project
@@ -14,7 +14,7 @@ pub struct CommandNew {
     placeholder: bool,
 }
 
-impl CommandNew {
+impl CommandPub {
     pub fn run(&self) -> Result<()> {
         let curr = env::current_dir()?;
         let dir_name = curr.join("projects").join(&grammar_name);
