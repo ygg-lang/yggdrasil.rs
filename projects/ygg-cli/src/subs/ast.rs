@@ -1,5 +1,4 @@
 use super::*;
-use std::{env, fs, path::Path, process::Command};
 
 /// Create a new grammar project
 #[derive(Clap)]

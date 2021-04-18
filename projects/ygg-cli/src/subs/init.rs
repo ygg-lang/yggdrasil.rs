@@ -1,5 +1,4 @@
 use super::*;
-use std::{env, fs, path::Path, process::Command};
 
 /// Initialize the project
 #[derive(Clap)]
