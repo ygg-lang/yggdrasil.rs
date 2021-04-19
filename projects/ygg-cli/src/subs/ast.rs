@@ -10,9 +10,18 @@ pub struct CommandAST {
 
 impl CommandAST {
     pub fn run(&self) -> Result<()> {
-        let curr = env::current_dir()?;
-        let dir_name = curr.join("projects").join(&grammar_name);
-        println!("{:?}", dir_name);
+        if self.grammar_name.iter().next().filter(|s| s.as_str() != "*").is_none() {
+            return self.build_all();
+        }
+        for name in &self.grammar_name {
+            self.build_one(name)?
+        }
         Ok(())
+    }
+    pub fn build_one(&self, _name: &str) -> Result<()> {
+        unimplemented!()
+    }
+    pub fn build_all(&self) -> Result<()> {
+        unimplemented!()
     }
 }

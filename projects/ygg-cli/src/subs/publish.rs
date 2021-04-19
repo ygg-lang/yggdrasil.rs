@@ -16,16 +16,14 @@ pub struct CommandPub {
 impl CommandPub {
     pub fn run(&self) -> Result<()> {
         let curr = env::current_dir()?;
-        let dir_name = curr.join("projects").join(&grammar_name);
+        let dir_name = curr.join("projects").join(&self.grammar_name);
         if self.force {
             // Command::new("rm").args(["-rf", &dir_name]).spawn()?.wait()?;
             if let Ok(true) = fs::try_exists(&dir_name) {
                 fs::remove_dir_all(&dir_name)?
             };
         }
-        if self.placeholder {
-
-        }
+        if self.placeholder {}
         Command::new("cd").args([&dir_name]).spawn()?.wait()?;
         Ok(())
     }

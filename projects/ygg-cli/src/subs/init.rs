@@ -19,10 +19,7 @@ impl CommandInit {
                 fs::remove_dir_all(&dir_name)?
             };
         }
-        Command::new("git")
-            .args(["clone", "https://github.com/ygg-lang/project-yggdrasil-template.git", &dir_name])
-            .spawn()?
-            .wait()?;
+        Command::new("git").args(["clone", "https://github.com/ygg-lang/project-yggdrasil-template.git", &dir_name]).spawn()?.wait()?;
         //let curr =  env::current_dir()?;
         //env::set_current_dir(&curr)?;
         //let curr = curr.join(&dir_name);

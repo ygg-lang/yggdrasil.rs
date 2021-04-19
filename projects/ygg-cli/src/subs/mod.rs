@@ -2,25 +2,40 @@ mod ast;
 mod cst;
 mod init;
 mod new;
-mod test;
 mod publish;
+mod test;
 
-use std::{env, fs, path::Path, process::Command};
+use self::{ast::CommandAST, cst::CommandCST, init::CommandInit, new::CommandNew, publish::CommandPub, test::CommandTest};
+use crate::Options;
 use anyhow::Result;
 use clap::Clap;
-use self::ast::CommandAST;
-use self::cst::CommandCST;
-use self::init::CommandInit;
-use self::new::CommandNew;
-use self::test::CommandTest;
-use self::publish::CommandPub;
+use std::{env, fs, path::Path, process::Command};
 
 #[derive(Clap)]
-enum SubCommand {
+pub enum SubCommand {
     Init(CommandInit),
     New(CommandNew),
     CST(CommandCST),
     AST(CommandAST),
     Test(CommandTest),
-    Pub(CommandPub)
+    Pub(CommandPub),
+}
+
+impl SubCommand {
+    pub fn run(&self, _: &Options) -> Result<()> {
+        Self::calibrate_current_dir()?;
+        match self {
+            SubCommand::Init(cmd) => cmd.run(),
+            SubCommand::New(cmd) => cmd.run(),
+            SubCommand::CST(cmd) => cmd.run(),
+            SubCommand::AST(cmd) => cmd.run(),
+            SubCommand::Test(cmd) => cmd.run(),
+            SubCommand::Pub(cmd) => cmd.run(),
+        }
+    }
+    pub fn calibrate_current_dir() -> Result<()> {
+        let curr = env::current_dir()?;
+        env::set_current_dir(curr)?;
+        Ok(())
+    }
 }
