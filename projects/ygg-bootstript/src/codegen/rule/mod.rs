@@ -2,7 +2,7 @@ pub use self::expression::*;
 use super::*;
 use lsp_types::{Diagnostic, DocumentSymbolResponse, Range, Url};
 use tree_sitter_cli::generate::grammars::InputGrammar;
-
+use rkyv::{Archive,Serialize,Deserialize};
 mod expression;
 mod from_ast;
 mod input_grammar;
@@ -50,7 +50,6 @@ pub struct GrammarState {
     name: String,
     map: Map<String, YGGRule>,
     ignores: Vec<String>,
-    diag: Vec<Diagnostic>,
 }
 
 impl GrammarState {
@@ -65,9 +64,6 @@ impl GrammarState {
     }
     pub fn set_url(&mut self, url: Url) {
         self.url = Some(url)
-    }
-    pub fn show_diagnostic(&self) -> Vec<Diagnostic> {
-        self.diag.to_owned()
     }
     pub fn show_document_symbol(&self) -> DocumentSymbolResponse {
         DocumentSymbolResponse::Nested(vec![])

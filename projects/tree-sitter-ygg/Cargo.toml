@@ -2,25 +2,25 @@
 name = "tree-sitter-ygg"
 description = "Yggdrasil grammar for the tree-sitter parsing library"
 version = "0.1.0"
-authors = ["Max Brunsfeld <maxbrunsfeld@gmail.com>"]
+authors = ["Aster <192608617@qq.com>"]
 license = "MIT"
-readme = "bindings/rust/readme.md"
+readme = "../../readme.md"
 keywords = ["incremental", "parsing", "rust"]
 categories = ["parsing", "text-editors"]
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
 edition = "2018"
+build = "src/build.rs"
+autoexamples = false
 
-build = "bindings/rust/build.rs"
 include = [
     "bindings/rust/*",
     "grammar.js",
     "queries/*",
     "src/*",
 ]
-autoexamples = false
 
 [lib]
-path = "bindings/rust/lib.rs"
+path = "src/lib.rs"
 
 [dependencies]
 tree-sitter = "0.20"

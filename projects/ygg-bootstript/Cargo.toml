@@ -25,9 +25,9 @@ tree-sitter-cli = { version = "0.20", path = "../../../tree-sitter/cli"}
 tree-sitter-ygg = { version="0.1", path = "../tree-sitter-ygg"}
 indexmap = "1.7"
 convert_case = "0.4"
-serde = {version = "1.0", features = ["derive"]}
-serde_json = "1.0"
 xxhash-rust = { version = "0.8", features = ["xxh3"] }
+rkyv = "0.7"
+toml = "0.5"
 
 [dev-dependencies]
 

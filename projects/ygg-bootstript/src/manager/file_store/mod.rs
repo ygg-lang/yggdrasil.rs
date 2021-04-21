@@ -1,22 +1,22 @@
+use crate::codegen::GrammarState;
 use super::*;
 
-
+#[derive(Clone, Debug)]
 pub struct FileStore {
-   pub fingerprint: u128,
+    pub fingerprint: u128,
     pub data: FileType,
 }
 
 pub struct FileFingerprint {
     pub fingerprint: u128,
-    pub  text: String
+    pub text: String,
 }
 
+#[derive(Clone, Debug)]
 pub enum FileType {
-    Grammar(),
-    Fragment(),
+    Grammar(Box<GrammarState>),
     TypeDefine(),
 }
-
 
 impl FileStore {
     pub fn load_url(url: &Url, f: FileFingerprint) -> Result<Self> {
@@ -27,7 +27,7 @@ impl FileStore {
             Some("ygg") | Some("yg") => Self::parse_ygg(text),
             _ => Err(YGGError::IOError { error: String::from("Unsupported file extension") }),
         }?;
-        Ok(Self { fingerprint , data })
+        Ok(Self { fingerprint, data })
     }
     pub fn parse_toml(_input: String) -> Result<FileType> {
         unimplemented!()
@@ -38,14 +38,11 @@ impl FileStore {
 }
 
 impl FileFingerprint {
-    pub fn new(url:&Url) -> Result<Self> {
+    pub fn new(url: &Url) -> Result<Self> {
         let input = fs::read_to_string(url.to_file_path()?)?;
         let mut bytes = input.clone().into_bytes();
         bytes.extend_from_slice(url.as_str().as_bytes());
-        Ok(Self {
-            fingerprint: xxh3_128(&bytes),
-            text: input
-        })
+        Ok(Self { fingerprint: xxh3_128(&bytes), text: input })
     }
 }
 
