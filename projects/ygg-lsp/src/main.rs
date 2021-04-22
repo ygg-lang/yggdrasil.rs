@@ -5,10 +5,11 @@ use crate::{
     commands::{command_provider, server_commands},
     completion::{completion_provider, COMPLETION_OPTIONS},
     hint::{code_action_provider, code_lens_provider, hover_provider},
-    io::{initialize_global_storages, FileStateUpdate, FILE_STORAGE},
+    io::{initialize_global_storages, FileStateUpdate},
 };
 use lspower::{jsonrpc::Result, lsp::*, Client, LanguageServer, LspService, Server};
 use serde_json::Value;
+use yggdrasil_bootstript::GRAMMAR_MANAGER;
 
 mod commands;
 mod completion;
@@ -82,21 +83,21 @@ impl LanguageServer for Backend {
     }
     async fn did_open(&self, params: DidOpenTextDocumentParams) {
         let url = params.text_document.uri.clone();
-        FILE_STORAGE.get().write().await.update(params);
+        GRAMMAR_MANAGER.get().write().await.update(params);
         self.check_the_file(&url).await;
     }
     async fn did_change(&self, params: DidChangeTextDocumentParams) {
         // self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
-        FILE_STORAGE.get().write().await.update(params);
+        GRAMMAR_MANAGER.write().await.update(params);
     }
     async fn did_save(&self, params: DidSaveTextDocumentParams) {
         let url = params.text_document.uri.clone();
-        FILE_STORAGE.get().write().await.update(params);
+        GRAMMAR_MANAGER.write().await.update(params);
         self.check_the_file(&url).await;
     }
     async fn did_close(&self, params: DidCloseTextDocumentParams) {
         let url = params.text_document.uri.clone();
-        FILE_STORAGE.get().write().await.update(params);
+        GRAMMAR_MANAGER.write().await.update(params);
         self.check_the_file(&url).await;
     }
     async fn completion(&self, params: CompletionParams) -> Result<Option<CompletionResponse>> {
@@ -124,9 +125,9 @@ impl LanguageServer for Backend {
         &self,
         params: DocumentSymbolParams,
     ) -> Result<Option<DocumentSymbolResponse>> {
-        let mut store = FILE_STORAGE.get().write().await;
+        let mut store = GRAMMAR_MANAGER.get().write().await;
         let s = match store.parse(&params.text_document.uri) {
-            Ok(e) => Some(e.show_document_symbol()),
+            Ok(e) => Some(e.0.show_document_symbol()),
             Err(_) => None,
         };
         Ok(s)
@@ -170,17 +171,10 @@ impl LanguageServer for Backend {
 
 impl Backend {
     pub async fn check_the_file(&self, url: &Url) {
-        let mut store = FILE_STORAGE.get().write().await;
+        let mut store = GRAMMAR_MANAGER.get().write().await;
         match store.parse(url) {
             Ok(grammar) => {
-                self.client.log_message(MessageType::Info, format!("Current: {}", url.as_str())).await;
-                self.client
-                    .log_message(
-                        MessageType::Info,
-                        format!("Diagnostics: {:#?}", grammar.show_diagnostic()),
-                    )
-                    .await;
-                self.client.publish_diagnostics(url.to_owned(), grammar.show_diagnostic(), None).await
+                self.client.publish_diagnostics(url.to_owned(), grammar.1, None).await
             }
             Err(e) => {
                 self.client

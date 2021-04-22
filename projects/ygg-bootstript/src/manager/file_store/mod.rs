@@ -1,5 +1,8 @@
-use crate::codegen::GrammarState;
+use crate::codegen::GrammarType;
 use super::*;
+pub use self::finger_print::FileFingerprint;
+
+mod finger_print;
 
 #[derive(Clone, Debug)]
 pub struct FileStore {
@@ -7,15 +10,14 @@ pub struct FileStore {
     pub data: FileType,
 }
 
-pub struct FileFingerprint {
-    pub fingerprint: u128,
-    pub text: String,
-}
+
 
 #[derive(Clone, Debug)]
 pub enum FileType {
-    Grammar(Box<GrammarState>),
-    TypeDefine(),
+    Grammar(GrammarState),
+    Type(GrammarType),
+    GrammarString(String),
+    TypeString(String),
 }
 
 impl FileStore {
@@ -25,7 +27,7 @@ impl FileStore {
         let data = match path.extension().and_then(|e| e.to_str()) {
             Some("toml") => Self::parse_toml(text),
             Some("ygg") | Some("yg") => Self::parse_ygg(text),
-            _ => Err(YGGError::IOError { error: String::from("Unsupported file extension") }),
+            _ => Err(YGGError::io_error("Unsupported file extension")),
         }?;
         Ok(Self { fingerprint, data })
     }
@@ -37,17 +39,3 @@ impl FileStore {
     }
 }
 
-impl FileFingerprint {
-    pub fn new(url: &Url) -> Result<Self> {
-        let input = fs::read_to_string(url.to_file_path()?)?;
-        let mut bytes = input.clone().into_bytes();
-        bytes.extend_from_slice(url.as_str().as_bytes());
-        Ok(Self { fingerprint: xxh3_128(&bytes), text: input })
-    }
-}
-
-impl PartialEq<FileFingerprint> for FileStore {
-    fn eq(&self, other: &FileFingerprint) -> bool {
-        self.fingerprint == other.fingerprint
-    }
-}

@@ -6,18 +6,15 @@ pub struct CommandTest {
     /// Print debug info
     #[clap(short)]
     debug: bool,
-
-    input: String,
+    ///
+    grammar: String,
+    ///
+    tests: String,
 }
 
 impl CommandTest {
     pub fn run(&self) -> Result<()> {
-        if self.debug {
-            println!("Printing debug info...");
-        }
-        else {
-            println!("Printing normally...");
-        }
+        println!("ygg ast does not been unimplemented!");
         Ok(())
     }
 }

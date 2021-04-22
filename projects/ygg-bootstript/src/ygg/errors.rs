@@ -67,4 +67,7 @@ impl YGGError {
     pub fn info_missing(e: impl Into<String>) -> Self {
         Self::InfoMissing { text: e.into() }
     }
+    pub fn io_error(e: impl Into<String>) -> Self {
+        Self::IOError { error: e.into() }
+    }
 }

@@ -6,36 +6,17 @@ use std::{
     fmt::{self, Debug, Formatter},
 };
 use tokio::sync::RwLock;
-use yggdrasil_bootstript::{ast::YGGBuilder, codegen::GrammarState, Result};
+use yggdrasil_bootstript::{ast::YGGBuilder, codegen::GrammarState, GRAMMAR_MANAGER, GrammarManager, Result};
 
-pub static FILE_STORAGE: Storage<RwLock<FileStateMap>> = Storage::new();
 
 pub trait FileStateUpdate<T> {
     fn update(&mut self, p: T);
-}
-
-pub struct FileStateMap {
-    builder: YGGBuilder,
-    inner: HashMap<Url, FileState>,
 }
 
 #[derive(Clone, Debug)]
 pub struct FileState {
     version: usize,
     text: String,
-    // grammar: GrammarManager
-}
-
-impl Debug for FileStateMap {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        self.inner.fmt(f)
-    }
-}
-
-impl Default for FileStateMap {
-    fn default() -> Self {
-        Self { builder: YGGBuilder::new().unwrap(), inner: Default::default() }
-    }
 }
 
 impl Default for FileState {
@@ -44,7 +25,7 @@ impl Default for FileState {
     }
 }
 
-impl FileStateUpdate<DidOpenTextDocumentParams> for FileStateMap {
+impl FileStateUpdate<DidOpenTextDocumentParams> for GrammarManager {
     fn update(&mut self, p: DidOpenTextDocumentParams) {
         let url = p.text_document.uri;
         let v = p.text_document.version as usize;
@@ -53,7 +34,7 @@ impl FileStateUpdate<DidOpenTextDocumentParams> for FileStateMap {
     }
 }
 
-impl FileStateUpdate<DidChangeTextDocumentParams> for FileStateMap {
+impl FileStateUpdate<DidChangeTextDocumentParams> for GrammarManager {
     fn update(&mut self, p: DidChangeTextDocumentParams) {
         let url = p.text_document.uri;
         let v = p.text_document.version as usize;
@@ -62,7 +43,7 @@ impl FileStateUpdate<DidChangeTextDocumentParams> for FileStateMap {
     }
 }
 
-impl FileStateUpdate<DidSaveTextDocumentParams> for FileStateMap {
+impl FileStateUpdate<DidSaveTextDocumentParams> for GrammarManager {
     fn update(&mut self, p: DidSaveTextDocumentParams) {
         match self.update_from_file(&p.text_document.uri) {
             Ok(_) => {}
@@ -71,7 +52,7 @@ impl FileStateUpdate<DidSaveTextDocumentParams> for FileStateMap {
     }
 }
 
-impl FileStateUpdate<DidCloseTextDocumentParams> for FileStateMap {
+impl FileStateUpdate<DidCloseTextDocumentParams> for GrammarManager {
     fn update(&mut self, p: DidCloseTextDocumentParams) {
         match self.update_from_file(&p.text_document.uri) {
             Ok(_) => {}
@@ -80,34 +61,8 @@ impl FileStateUpdate<DidCloseTextDocumentParams> for FileStateMap {
     }
 }
 
-impl FileStateMap {
-    fn update_versioned(&mut self, url: &Url, version: usize, content: String) {
-        let new = FileState { version, text: content };
-        if let Some(last) = self.inner.get(url) {
-            if last.version >= new.version {
-                return ();
-            }
-        }
-        self.inner.insert(url.clone(), new);
-    }
-    fn update_from_file(&mut self, url: &Url) -> Result<String> {
-        let content = read_url(url)?;
-        let new = FileState { version: 0, text: content.to_owned() };
-        self.inner.insert(url.clone(), new);
-        Ok(content)
-    }
-    pub fn parse(&mut self, url: &Url) -> Result<GrammarState> {
-        match self.inner.get(url) {
-            Some(s) => self.builder.update_by_text(&s.text)?,
-            None => {
-                let t = self.update_from_file(url)?;
-                self.builder.update_by_text(&t)?
-            }
-        };
-        Ok(self.builder.traverse()?.build_grammar(Some(url.to_owned()))?)
-    }
-}
+
 
 pub fn initialize_global_storages() {
-    FILE_STORAGE.set(RwLock::new(FileStateMap::default()));
+    GRAMMAR_MANAGER.set(RwLock::new(GrammarManager::default()));
 }
