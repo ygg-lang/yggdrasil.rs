@@ -1,8 +1,8 @@
 pub use self::expression::*;
 use super::*;
 use lsp_types::{Diagnostic, DocumentSymbolResponse, Range, Url};
+use rkyv::{Archive, Deserialize, Serialize};
 use tree_sitter_cli::generate::grammars::InputGrammar;
-use rkyv::{Archive,Serialize,Deserialize};
 mod expression;
 mod from_ast;
 mod input_grammar;

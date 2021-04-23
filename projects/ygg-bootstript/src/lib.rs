@@ -10,7 +10,9 @@ mod ygg;
 
 mod manager;
 
-pub use self::ygg::{ast, Result, SyntaxKind, YGGError};
+pub use self::{
+    manager::{GrammarManager, GRAMMAR_MANAGER},
+    ygg::{ast, Result, SyntaxKind, YGGError},
+};
 pub use tree_sitter::{Parser, Tree};
 pub use tree_sitter_ygg::language;
-pub use self::manager::{GRAMMAR_MANAGER,GrammarManager};

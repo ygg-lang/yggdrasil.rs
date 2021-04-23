@@ -72,7 +72,8 @@ impl From<RefinedData> for Rule {
 
 #[test]
 pub fn test() {
-    let grammar: GrammarJSON = serde_json::from_str(include_str!("../../../../../tree-sitter-ygg/src/tree_sitter/grammar.json")).unwrap();
+    let grammar: GrammarJSON =
+        serde_json::from_str(include_str!("../../../../../tree-sitter-ygg/src/tree_sitter/grammar.json")).unwrap();
     let grammar = parse_grammar(grammar).unwrap();
     // let (_name, _c_code) = generate_parser_for_grammar(
     //     grammar

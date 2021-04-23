@@ -1,19 +1,21 @@
 #![feature(once_cell)]
 #![feature(extend_one)]
 
+use lspower::{Client, jsonrpc::Result, LanguageServer, lsp::*, LspService, Server};
+use lspower::jsonrpc::Error;
+use serde_json::Value;
+
+use yggdrasil_bootstript::{GRAMMAR_MANAGER, YGGError};
+
 use crate::{
     commands::{command_provider, server_commands},
-    completion::{completion_provider, COMPLETION_OPTIONS},
+    completion::{COMPLETION_OPTIONS, completion_provider},
     hint::{code_action_provider, code_lens_provider, hover_provider},
-    io::{initialize_global_storages, FileStateUpdate},
+    io::FileStateUpdate,
 };
-use lspower::{jsonrpc::Result, lsp::*, Client, LanguageServer, LspService, Server};
-use serde_json::Value;
-use yggdrasil_bootstript::GRAMMAR_MANAGER;
 
 mod commands;
 mod completion;
-mod diagnostic;
 mod hint;
 #[allow(dead_code)]
 mod io;
@@ -83,21 +85,17 @@ impl LanguageServer for Backend {
     }
     async fn did_open(&self, params: DidOpenTextDocumentParams) {
         let url = params.text_document.uri.clone();
-        GRAMMAR_MANAGER.get().write().await.update(params);
         self.check_the_file(&url).await;
     }
     async fn did_change(&self, params: DidChangeTextDocumentParams) {
         // self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
-        GRAMMAR_MANAGER.write().await.update(params);
     }
     async fn did_save(&self, params: DidSaveTextDocumentParams) {
         let url = params.text_document.uri.clone();
-        GRAMMAR_MANAGER.write().await.update(params);
         self.check_the_file(&url).await;
     }
     async fn did_close(&self, params: DidCloseTextDocumentParams) {
         let url = params.text_document.uri.clone();
-        GRAMMAR_MANAGER.write().await.update(params);
         self.check_the_file(&url).await;
     }
     async fn completion(&self, params: CompletionParams) -> Result<Option<CompletionResponse>> {
@@ -125,8 +123,8 @@ impl LanguageServer for Backend {
         &self,
         params: DocumentSymbolParams,
     ) -> Result<Option<DocumentSymbolResponse>> {
-        let mut store = GRAMMAR_MANAGER.get().write().await;
-        let s = match store.parse(&params.text_document.uri) {
+        let mut store = GRAMMAR_MANAGER.write().await;
+        let s = match store.parse_grammar(&params.text_document.uri) {
             Ok(e) => Some(e.0.show_document_symbol()),
             Err(_) => None,
         };
@@ -162,35 +160,12 @@ impl LanguageServer for Backend {
         self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
         Ok(None)
     }
-
-    async fn selection_range(&self, params: SelectionRangeParams) -> Result<Option<Vec<SelectionRange>>> {
-        self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
-        Ok(None)
-    }
-}
-
-impl Backend {
-    pub async fn check_the_file(&self, url: &Url) {
-        let mut store = GRAMMAR_MANAGER.get().write().await;
-        match store.parse(url) {
-            Ok(grammar) => {
-                self.client.publish_diagnostics(url.to_owned(), grammar.1, None).await
-            }
-            Err(e) => {
-                self.client
-                    .log_message(MessageType::Warning, format!("File check failed: {}", url.as_str()))
-                    .await;
-                self.client.log_message(MessageType::Warning, e).await
-            }
-        }
-    }
 }
 
 #[tokio::main]
 async fn main() {
     let std_in = tokio::io::stdin();
     let stdout = tokio::io::stdout();
-    initialize_global_storages();
     let (service, messages) = LspService::new(|client| Backend { client });
     Server::new(std_in, stdout).interleave(messages).serve(service).await;
 }

@@ -1,4 +1,2 @@
-
-pub struct GrammarType {
-
-}
+#[derive(Clone, Debug)]
+pub struct GrammarType {}

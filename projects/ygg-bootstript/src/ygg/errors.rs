@@ -70,4 +70,7 @@ impl YGGError {
     pub fn io_error(e: impl Into<String>) -> Self {
         Self::IOError { error: e.into() }
     }
+    pub fn language_error(e: impl Into<String>) -> Self {
+        Self::LanguageError { error: e.into() }
+    }
 }

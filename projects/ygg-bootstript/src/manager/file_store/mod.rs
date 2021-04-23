@@ -1,7 +1,7 @@
-use crate::codegen::GrammarType;
+pub use self::{file_wrap::FileType, finger_print::FileFingerprint};
 use super::*;
-pub use self::finger_print::FileFingerprint;
 
+mod file_wrap;
 mod finger_print;
 
 #[derive(Clone, Debug)]
@@ -10,32 +10,21 @@ pub struct FileStore {
     pub data: FileType,
 }
 
-
-
-#[derive(Clone, Debug)]
-pub enum FileType {
-    Grammar(GrammarState),
-    Type(GrammarType),
-    GrammarString(String),
-    TypeString(String),
-}
-
 impl FileStore {
     pub fn load_url(url: &Url, f: FileFingerprint) -> Result<Self> {
         let FileFingerprint { fingerprint, text } = f;
         let path = url.to_file_path()?;
         let data = match path.extension().and_then(|e| e.to_str()) {
-            Some("toml") => Self::parse_toml(text),
-            Some("ygg") | Some("yg") => Self::parse_ygg(text),
-            _ => Err(YGGError::io_error("Unsupported file extension")),
+            Some("toml") => Ok(FileType::TypeString(text)),
+            Some("ygg") | Some("yg") => Ok(FileType::GrammarString(text)),
+            _ => Err(YGGError::language_error("Unsupported file extension")),
         }?;
         Ok(Self { fingerprint, data })
+    }
+    pub fn parse_ygg(&mut self, url: Url, parser: &mut YGGBuilder) -> Result<(&GrammarState, Vec<Diagnostic>)> {
+        self.data.parse_ygg(url, parser)
     }
     pub fn parse_toml(_input: String) -> Result<FileType> {
         unimplemented!()
     }
-    pub fn parse_ygg(_input: String) -> Result<FileType> {
-        unimplemented!()
-    }
 }
-
