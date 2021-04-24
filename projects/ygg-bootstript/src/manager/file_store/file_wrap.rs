@@ -16,9 +16,9 @@ impl FileType {
         match self {
             FileType::Grammar(g) => Ok((g, vec![])),
             FileType::GrammarString(s) => {
-                parser.update_by_text(s);
+                parser.update_by_text(s)?;
                 let mut diag = vec![];
-                let (mut grammar, err) = parser.traverse()?.build_grammar(Some(url))?;
+                let (mut grammar, err) = parser.traverse()?.build_grammar(url)?;
                 diag.extend(err);
                 *self = Self::Grammar(grammar);
                 let grammar = match self {

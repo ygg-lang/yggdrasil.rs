@@ -3,7 +3,7 @@ use std::fs;
 
 mod global;
 mod parser;
-pub use global::{FileStateUpdate};
+pub use global::FileStateUpdate;
 use yggdrasil_bootstript::Result;
 
 pub fn read_url(url: &Url) -> Result<String> {

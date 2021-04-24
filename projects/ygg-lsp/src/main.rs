@@ -1,17 +1,18 @@
 #![feature(once_cell)]
 #![feature(extend_one)]
 
-use lspower::{Client, jsonrpc::Result, LanguageServer, lsp::*, LspService, Server};
-use lspower::jsonrpc::Error;
+use lspower::{
+    jsonrpc::{Result},
+    lsp::*,
+    Client, LanguageServer, LspService, Server,
+};
 use serde_json::Value;
 
-use yggdrasil_bootstript::{GRAMMAR_MANAGER, YGGError};
 
 use crate::{
     commands::{command_provider, server_commands},
-    completion::{COMPLETION_OPTIONS, completion_provider},
-    hint::{code_action_provider, code_lens_provider, hover_provider},
-    io::FileStateUpdate,
+    completion::{completion_provider, COMPLETION_OPTIONS},
+    hint::{code_action_provider, code_lens_provider, document_symbol_provider, hover_provider},
 };
 
 mod commands;
@@ -42,7 +43,9 @@ impl LanguageServer for Backend {
         let init = InitializeResult {
             server_info: Some(server_info),
             capabilities: ServerCapabilities {
-                text_document_sync: Some(TextDocumentSyncCapability::Kind(TextDocumentSyncKind::Full)),
+                text_document_sync: Some(TextDocumentSyncCapability::Kind(
+                    TextDocumentSyncKind::Incremental,
+                )),
                 hover_provider: Some(HoverProviderCapability::Simple(true)),
                 completion_provider: Some(COMPLETION_OPTIONS.to_owned()),
                 signature_help_provider: Some(SignatureHelpOptions {
@@ -88,7 +91,7 @@ impl LanguageServer for Backend {
         self.check_the_file(&url).await;
     }
     async fn did_change(&self, params: DidChangeTextDocumentParams) {
-        // self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
+        self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
     }
     async fn did_save(&self, params: DidSaveTextDocumentParams) {
         let url = params.text_document.uri.clone();
@@ -119,16 +122,9 @@ impl LanguageServer for Backend {
         Ok(None)
     }
 
-    async fn document_symbol(
-        &self,
-        params: DocumentSymbolParams,
-    ) -> Result<Option<DocumentSymbolResponse>> {
-        let mut store = GRAMMAR_MANAGER.write().await;
-        let s = match store.parse_grammar(&params.text_document.uri) {
-            Ok(e) => Some(e.0.show_document_symbol()),
-            Err(_) => None,
-        };
-        Ok(s)
+    #[rustfmt::skip]
+    async fn document_symbol(&self, params: DocumentSymbolParams) -> Result<Option<DocumentSymbolResponse>> {
+        document_symbol_provider(params).await
     }
 
     /// Alt 键列出可执行的命令

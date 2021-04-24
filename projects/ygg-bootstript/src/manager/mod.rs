@@ -1,5 +1,4 @@
 use lsp_types::{Diagnostic, Url};
-use rkyv::{Archive, Deserialize, Serialize};
 use std::{collections::HashMap, fs, lazy::SyncLazy, path::Path, rc::Rc};
 use tokio::sync::RwLock;
 
@@ -67,7 +66,7 @@ impl GrammarManager {
     }
 
     pub fn parse_grammar(&mut self, url: &Url) -> Result<(&GrammarState, Vec<Diagnostic>)> {
-        self.update_url(url.to_owned());
+        self.update_url(url.to_owned())?;
         let parser = &mut self.builder;
         let s = match self.file_store.get_mut(url) {
             Some(s) => Ok(s),
@@ -76,7 +75,6 @@ impl GrammarManager {
         s.parse_ygg(url.to_owned(), parser)
     }
 }
-
 
 impl GrammarManager {
     pub fn collect_diagnostic(&mut self, url: &Url) -> Result<Vec<Diagnostic>> {

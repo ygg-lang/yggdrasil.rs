@@ -46,7 +46,7 @@ pub struct MetaInfo {
 
 #[derive(Clone, Debug)]
 pub struct GrammarState {
-    url: Option<Url>,
+    url: Url,
     name: String,
     map: Map<String, YGGRule>,
     ignores: Vec<String>,
@@ -61,9 +61,6 @@ impl GrammarState {
     fn merge_regex(&mut self) {}
     pub fn named_rules(&self) -> Vec<YGGRule> {
         self.map.values().cloned().filter(|r| !r.force_inline).collect()
-    }
-    pub fn set_url(&mut self, url: Url) {
-        self.url = Some(url)
     }
     pub fn show_document_symbol(&self) -> DocumentSymbolResponse {
         DocumentSymbolResponse::Nested(vec![])

@@ -12,7 +12,7 @@ use std::{collections::HashSet, ops::AddAssign};
 mod diagnostic;
 
 impl Program {
-    pub fn build_grammar(self, url: Option<Url>) -> Result<(GrammarState, Vec<Diagnostic>)> {
+    pub fn build_grammar(self, url: Url) -> Result<(GrammarState, Vec<Diagnostic>)> {
         let mut is_top_area = true;
         let mut is_grammar = None;
         let mut grammar_pos = None;
@@ -124,7 +124,7 @@ impl Program {
                 Statement::EmptyStatement(_) => continue,
             }
         }
-        let state = GrammarState { name: name.ok_or(YGGError::info_missing("name not found"))?, map, ignores, url: None };
+        let state = GrammarState { name: name.ok_or(YGGError::info_missing("name not found"))?, map, ignores, url, };
 
         Ok((state, diag))
     }

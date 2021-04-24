@@ -1,14 +1,18 @@
-use lspower::lsp::*;
-use serde_json::Value;
-use yggdrasil_bootstript::GrammarManager;
-pub use self::{code_lens::code_lens_provider, hover::hover_provider};
-use lspower::jsonrpc::{Error,Result};
-use yggdrasil_bootstript::GRAMMAR_MANAGER;
+pub use self::{
+    code_lens::code_lens_provider, document_symbol::document_symbol_provider, hover::hover_provider,
+};
 use crate::Backend;
+use lspower::{
+    jsonrpc::{ Result},
+    lsp::*,
+};
+use serde_json::Value;
+use yggdrasil_bootstript::{ GRAMMAR_MANAGER};
 
 mod code_lens;
-mod hover;
 mod diagnostic;
+mod document_symbol;
+mod hover;
 
 pub fn code_action_provider(p: CodeActionParams) -> Option<CodeActionResponse> {
     let _ = p;

@@ -20,15 +20,12 @@ pub fn duplicate_declaration_error(
     src: &str,
     msg: impl Into<String>,
     this: Range,
-    url: &Option<Url>,
+    url: &Url,
     last: Option<Range>,
 ) -> Diagnostic {
-    let related_information = match url {
-        Some(u) => Some(vec![DiagnosticRelatedInformation {
-            location: Location { uri: u.to_owned(), range: last.unwrap() },
-            message: msg.into(),
-        }]),
-        None => None,
+    let info = DiagnosticRelatedInformation {
+        location: Location { uri: url.to_owned(), range: last.unwrap() },
+        message: msg.into(),
     };
     Diagnostic {
         range: this,
@@ -37,7 +34,7 @@ pub fn duplicate_declaration_error(
         code_description: None,
         source: Some(String::from(src)),
         message: String::from("Duplicate declaration detected"),
-        related_information,
+        related_information: Some(vec![info]),
         tags: None,
         data: None,
     }
