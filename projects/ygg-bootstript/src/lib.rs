@@ -3,6 +3,8 @@
 #![feature(box_syntax)]
 #![feature(trivial_bounds)]
 
+#[allow(dead_code)]
+#[allow(unused)]
 pub mod codegen;
 #[allow(dead_code)]
 #[allow(unused)]
@@ -11,7 +13,7 @@ mod ygg;
 mod manager;
 
 pub use self::{
-    manager::{GrammarManager, GRAMMAR_MANAGER},
+    manager::*,
     ygg::{ast, Result, SyntaxKind, YGGError},
 };
 pub use tree_sitter::{Parser, Tree};

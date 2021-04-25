@@ -124,7 +124,7 @@ impl Program {
                 Statement::EmptyStatement(_) => continue,
             }
         }
-        let state = GrammarState { name: name.ok_or(YGGError::info_missing("name not found"))?, map, ignores, url, };
+        let state = GrammarState { name: name.ok_or(YGGError::info_missing("name not found"))?, map, ignores, url };
 
         Ok((state, diag))
     }

@@ -10,7 +10,6 @@ edition = "2018"
 
 [dependencies]
 yggdrasil-bootstript = { version = "0.1", path = "../ygg-bootstript" }
-async-trait = "0.1"
 futures = { version = "0.3", features = ["compat"] }
 # jsonrpc-core = "14.0"
 # jsonrpc-derive = "14.0"

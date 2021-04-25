@@ -2,12 +2,9 @@ pub use self::{
     code_lens::code_lens_provider, document_symbol::document_symbol_provider, hover::hover_provider,
 };
 use crate::Backend;
-use lspower::{
-    jsonrpc::{ Result},
-    lsp::*,
-};
+use lspower::{jsonrpc::Result, lsp::*};
 use serde_json::Value;
-use yggdrasil_bootstript::{ GRAMMAR_MANAGER};
+use yggdrasil_bootstript::FILE_MANAGER;
 
 mod code_lens;
 mod diagnostic;

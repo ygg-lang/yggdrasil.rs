@@ -1,5 +1,4 @@
 use super::*;
-use xxhash_rust::xxh3::xxh3_128;
 
 pub struct FileFingerprint {
     pub fingerprint: u128,

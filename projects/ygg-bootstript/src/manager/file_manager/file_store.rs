@@ -1,8 +1,4 @@
-pub use self::{file_wrap::FileType, finger_print::FileFingerprint};
 use super::*;
-
-mod file_wrap;
-mod finger_print;
 
 #[derive(Clone, Debug)]
 pub struct FileStore {

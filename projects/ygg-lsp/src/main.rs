@@ -1,13 +1,8 @@
 #![feature(once_cell)]
 #![feature(extend_one)]
 
-use lspower::{
-    jsonrpc::{Result},
-    lsp::*,
-    Client, LanguageServer, LspService, Server,
-};
+use lspower::{jsonrpc::Result, lsp::*, Client, LanguageServer, LspService, Server};
 use serde_json::Value;
-
 
 use crate::{
     commands::{command_provider, server_commands},

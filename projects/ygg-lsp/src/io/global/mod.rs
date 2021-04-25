@@ -1,23 +1,21 @@
-
 use lspower::{
     jsonrpc::{Error, Result},
-    lsp::{*},
+    lsp::*,
 };
-use yggdrasil_bootstript::{  GrammarManager};
+use yggdrasil_bootstript::FileManager;
 
 pub trait FileStateUpdate<T> {
     fn update(&mut self, p: T) -> Result<()>;
 }
 
-
-impl FileStateUpdate<DidOpenTextDocumentParams> for GrammarManager {
+impl FileStateUpdate<DidOpenTextDocumentParams> for FileManager {
     fn update(&mut self, p: DidOpenTextDocumentParams) -> Result<()> {
         let url = p.text_document.uri;
         self.update_url(url).map_err(|_| Error::internal_error())
     }
 }
 
-impl FileStateUpdate<DidChangeTextDocumentParams> for GrammarManager {
+impl FileStateUpdate<DidChangeTextDocumentParams> for FileManager {
     fn update(&mut self, p: DidChangeTextDocumentParams) -> Result<()> {
         // TODO: Incremental update
         // let url = p.text_document.uri;
@@ -29,14 +27,14 @@ impl FileStateUpdate<DidChangeTextDocumentParams> for GrammarManager {
     }
 }
 
-impl FileStateUpdate<DidSaveTextDocumentParams> for GrammarManager {
+impl FileStateUpdate<DidSaveTextDocumentParams> for FileManager {
     fn update(&mut self, p: DidSaveTextDocumentParams) -> Result<()> {
         let url = p.text_document.uri;
         self.update_url(url).map_err(|_| Error::internal_error())
     }
 }
 
-impl FileStateUpdate<DidCloseTextDocumentParams> for GrammarManager {
+impl FileStateUpdate<DidCloseTextDocumentParams> for FileManager {
     fn update(&mut self, p: DidCloseTextDocumentParams) -> Result<()> {
         let url = p.text_document.uri;
         self.update_url(url).map_err(|_| Error::internal_error())
