@@ -1,17 +1,19 @@
-use self::diagnostic::{duplicate_declaration_error, top_area_error};
-use super::*;
+use std::{collections::HashSet, ops::AddAssign};
+
+use convert_case::{Case, Casing};
+use lsp_types::{CodeDescription, CodeLens, Url};
+use serde_json::Value;
+
+use super::{
+    hints::{duplicate_declaration_error, top_area_error,name_missing},
+    *,
+};
 use crate::{
     ast::{AssignStatement, ChoiceExpression, ChoiceTag, Data, Expression, Program, Statement},
     manager::HintItems,
     ygg::{ast::ConcatExpression, YGGError},
     Result,
 };
-use convert_case::{Case, Casing};
-use lsp_types::{CodeDescription, CodeLens, Url};
-use serde_json::Value;
-use std::{collections::HashSet, ops::AddAssign};
-
-mod diagnostic;
 
 impl Program {
     pub fn build_grammar(self, url: Url) -> Result<(GrammarState, HintItems)> {
@@ -23,6 +25,7 @@ impl Program {
         let mut ignores = vec![];
         let mut ignores_pos = None;
         let mut diag = vec![];
+        let mut lens = vec![];
         for stmt in self.statement {
             match stmt {
                 Statement::GrammarStatement(s) => {
@@ -129,14 +132,14 @@ impl Program {
         let name = match name {
             Some(s) => s,
             None => {
-                CodeLens { range: Default::default(), command: None, data: Some(Value::String(String::from("gggggggggg"))) };
+                lens.push(name_missing());
                 String::from("<anonymous>")
             }
         };
 
         let state = GrammarState { name, map, ignores, url };
 
-        let hint = HintItems { diagnostic: diag, code_lens: vec![], document_symbol: vec![] };
+        let hint = HintItems { diagnostic: diag, code_lens: lens, document_symbol: vec![] };
 
         Ok((state, hint))
     }

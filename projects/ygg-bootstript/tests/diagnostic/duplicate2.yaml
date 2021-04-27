@@ -1,26 +1,82 @@
-[
-    Diagnostic {
-        range: Range {
-            start: Position {
-                line: 5,
-                character: 0,
+HintItems {
+    diagnostic: [
+        Diagnostic {
+            range: Range {
+                start: Position {
+                    line: 3,
+                    character: 0,
+                },
+                end: Position {
+                    line: 3,
+                    character: 4,
+                },
             },
-            end: Position {
-                line: 5,
-                character: 4,
-            },
+            severity: Some(
+                Error,
+            ),
+            code: None,
+            code_description: None,
+            source: Some(
+                "Rule",
+            ),
+            message: "Duplicate declaration detected",
+            related_information: Some(
+                [
+                    DiagnosticRelatedInformation {
+                        location: Location {
+                            uri: Url {
+                                scheme: "file",
+                                cannot_be_a_base: false,
+                                username: "",
+                                password: None,
+                                host: Some(
+                                    Domain(
+                                        "example",
+                                    ),
+                                ),
+                                port: None,
+                                path: "/path",
+                                query: None,
+                                fragment: None,
+                            },
+                            range: Range {
+                                start: Position {
+                                    line: 1,
+                                    character: 0,
+                                },
+                                end: Position {
+                                    line: 1,
+                                    character: 4,
+                                },
+                            },
+                        },
+                        message: "Already declaration as Rule `rule`",
+                    },
+                ],
+            ),
+            tags: None,
+            data: None,
         },
-        severity: Some(
-            Error,
-        ),
-        code: None,
-        code_description: None,
-        source: Some(
-            "Rule",
-        ),
-        message: "Duplicate declaration detected",
-        related_information: None,
-        tags: None,
-        data: None,
-    },
-]
+    ],
+    code_lens: [
+        CodeLens {
+            range: Range {
+                start: Position {
+                    line: 0,
+                    character: 0,
+                },
+                end: Position {
+                    line: 0,
+                    character: 0,
+                },
+            },
+            command: None,
+            data: Some(
+                String(
+                    "Grammar name not found",
+                ),
+            ),
+        },
+    ],
+    document_symbol: [],
+}

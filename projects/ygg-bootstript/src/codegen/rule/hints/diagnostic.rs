@@ -1,6 +1,4 @@
-use crate::codegen::convert_range;
-use lsp_types::{Diagnostic, DiagnosticRelatedInformation, DiagnosticSeverity, Location, NumberOrString, Range, Url};
-use std::str::FromStr;
+use super::*;
 
 pub fn top_area_error(src: &str, msg: &str, range: Range) -> Diagnostic {
     Diagnostic {

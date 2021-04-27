@@ -14,8 +14,6 @@ fn test_duplicate1() -> Result<()> {
 }
 
 const DUPLICATE2: &str = r#"
-grammar! test
-
 rule = a ~ b
 
 rule = a ~ b

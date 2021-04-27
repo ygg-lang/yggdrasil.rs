@@ -8,10 +8,13 @@ impl GrammarState {
         Ok(hint)
     }
     fn inline(&mut self) -> Result<HintItems> {
-        unimplemented!()
+        Ok(HintItems::default())
     }
     fn merge_regex(&mut self) -> Result<HintItems> {
-        unimplemented!()
+        Ok(HintItems::default())
+    }
+    pub fn report_meta(&self) -> HintItems {
+        HintItems::default()
     }
 }
 

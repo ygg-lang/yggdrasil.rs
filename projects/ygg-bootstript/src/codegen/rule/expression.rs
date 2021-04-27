@@ -1,5 +1,4 @@
-use super::*;
-use crate::ygg::ast::Identifier;
+use crate::{codegen::rule::*, ygg::ast::Identifier};
 
 #[derive(Clone, Debug)]
 pub enum RefinedExpression {

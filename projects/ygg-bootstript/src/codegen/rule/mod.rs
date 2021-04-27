@@ -1,13 +1,15 @@
 pub use self::expression::*;
 use super::*;
+use crate::{manager::HintItems, Result};
 use lsp_types::{Diagnostic, DocumentSymbolResponse, Range, Url};
 use rkyv::{Archive, Deserialize, Serialize};
 use tree_sitter_cli::generate::grammars::InputGrammar;
+
 mod expression;
 mod from_ast;
+mod hints;
 mod input_grammar;
 mod optimize;
-use crate::{manager::HintItems, Result};
 
 pub type Map<K, V> = std::collections::HashMap<K, V>;
 // pub type Map<K, V> = indexmap::IndexMap<K, V>;

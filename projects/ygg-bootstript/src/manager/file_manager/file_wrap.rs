@@ -22,6 +22,7 @@ impl FileType {
                 let (mut grammar, err) = parser.traverse()?.build_grammar(url.to_owned())?;
                 hints += err;
                 hints += grammar.optimize()?;
+                hints += grammar.report_meta();
                 *self = Self::Grammar(grammar);
                 let grammar = match self {
                     FileType::Grammar(g) => Ok(g),
