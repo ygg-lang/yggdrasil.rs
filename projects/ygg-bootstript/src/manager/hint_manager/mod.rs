@@ -1,8 +1,12 @@
-use crate::{ast::YGGBuilder, manager::file_manager::FileStore};
-use lsp_types::{CodeLens, Diagnostic, Url};
-use std::{collections::HashMap, lazy::SyncLazy};
+pub use self::item::HintItems;
+use crate::{Result, YGGError, FILE_MANAGER};
+use lsp_types::{CodeLens, Diagnostic, DocumentSymbol, Url};
+use std::{
+    collections::HashMap,
+    lazy::SyncLazy,
+    ops::{Add, AddAssign},
+};
 use tokio::sync::RwLock;
-use self::item::HintItems;
 
 mod item;
 
@@ -27,5 +31,9 @@ impl HintManager {
     #[inline]
     pub fn set(&mut self, url: Url, hint: HintItems) -> Option<HintItems> {
         self.items.insert(url, hint)
+    }
+    pub async fn update(&mut self, url: &Url) -> Result<&HintItems> {
+        FILE_MANAGER.write().await.parse_file(&url).await?;
+        self.get(url).ok_or(YGGError::UnknownError)
     }
 }

@@ -6,6 +6,8 @@ use tree_sitter_cli::generate::grammars::InputGrammar;
 mod expression;
 mod from_ast;
 mod input_grammar;
+mod optimize;
+use crate::{manager::HintItems, Result};
 
 pub type Map<K, V> = std::collections::HashMap<K, V>;
 // pub type Map<K, V> = indexmap::IndexMap<K, V>;
@@ -53,23 +55,12 @@ pub struct GrammarState {
 }
 
 impl GrammarState {
-    pub fn optimize(&mut self) {
-        self.merge_regex();
-        self.inline()
-    }
-    fn inline(&mut self) {}
-    fn merge_regex(&mut self) {}
     pub fn named_rules(&self) -> Vec<YGGRule> {
         self.map.values().cloned().filter(|r| !r.force_inline).collect()
     }
     pub fn show_document_symbol(&self) -> DocumentSymbolResponse {
         DocumentSymbolResponse::Nested(vec![])
     }
-}
-
-impl YGGRule {
-    fn inline(&mut self, map: &GrammarState) {}
-    fn merge_regex(&mut self) {}
 }
 
 impl YGGRule {

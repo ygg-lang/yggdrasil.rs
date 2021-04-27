@@ -4,7 +4,7 @@ use crate::{
     ygg::ast::YGGBuilder,
     Result, YGGError,
 };
-use lsp_types::{Diagnostic, Url};
+use lsp_types::Url;
 use std::{collections::HashMap, fs, lazy::SyncLazy, path::Path};
 use tokio::sync::RwLock;
 use xxhash_rust::xxh3::xxh3_128;
@@ -64,30 +64,37 @@ impl FileManager {
 }
 
 impl FileManager {
-    pub fn parse_type(&mut self, _url: &Url) -> Result<(&GrammarType, Vec<Diagnostic>)> {
+    pub async fn parse_file(&mut self, url: &Url) -> Result<&FileStore> {
+        match url.to_file_path()?.extension().and_then(|e| e.to_str()) {
+            Some("toml") => {
+                self.parse_type(url).await?;
+                match self.get_file(url) {
+                    Some(s) => Ok(s),
+                    None => Err(YGGError::Unreachable),
+                }
+            }
+            Some("ygg") | Some("yg") => {
+                self.parse_grammar(url).await?;
+                match self.get_file(url) {
+                    Some(s) => Ok(s),
+                    None => Err(YGGError::Unreachable),
+                }
+            }
+            _ => Err(YGGError::language_error("Unsupported file extension")),
+        }
+    }
+
+    pub async fn parse_type(&mut self, _url: &Url) -> Result<&GrammarType> {
         unimplemented!()
     }
 
-    pub fn parse_grammar(&mut self, url: &Url) -> Result<(&GrammarState, Vec<Diagnostic>)> {
+    pub async fn parse_grammar(&mut self, url: &Url) -> Result<&GrammarState> {
         self.update_url(url.to_owned())?;
         let parser = &mut self.builder;
         let s = match self.file_store.get_mut(url) {
             Some(s) => Ok(s),
             _ => Err(YGGError::language_error("Grammar not found")),
         }?;
-        s.parse_ygg(url.to_owned(), parser)
-    }
-}
-
-impl FileManager {
-    pub fn collect_diagnostic(&mut self, url: &Url) -> Result<Vec<Diagnostic>> {
-        match url.to_file_path()?.extension().and_then(|e| e.to_str()) {
-            Some("toml") => Ok(self.parse_type(url)?.1),
-            Some("ygg") | Some("yg") => Ok(self.parse_grammar(url)?.1),
-            _ => Err(YGGError::language_error("Unsupported file extension")),
-        }
-    }
-    pub fn collect_symbol(&mut self, _url: &Url) -> Result<Vec<Diagnostic>> {
-        unimplemented!()
+        s.parse_ygg(url.to_owned(), parser).await
     }
 }

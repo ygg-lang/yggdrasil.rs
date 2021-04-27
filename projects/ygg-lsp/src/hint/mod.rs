@@ -4,7 +4,7 @@ pub use self::{
 use crate::Backend;
 use lspower::{jsonrpc::Result, lsp::*};
 use serde_json::Value;
-use yggdrasil_bootstript::FILE_MANAGER;
+use yggdrasil_bootstript::HINT_MANAGER;
 
 mod code_lens;
 mod diagnostic;

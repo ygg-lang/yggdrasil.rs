@@ -1,12 +1,12 @@
 use super::*;
 
-pub async fn document_symbol_provider(
-    params: DocumentSymbolParams,
-) -> Result<Option<DocumentSymbolResponse>> {
-    let mut store = FILE_MANAGER.write().await;
-    let s = match store.parse_grammar(&params.text_document.uri) {
-        Ok(e) => Some(e.0.show_document_symbol()),
-        Err(_) => None,
+#[rustfmt::skip]
+pub async fn document_symbol_provider(params: DocumentSymbolParams) -> Result<Option<DocumentSymbolResponse>> {
+    let url = params.text_document.uri;
+    HINT_MANAGER.write().await.update(&url).await.ok();
+    let out = match HINT_MANAGER.read().await.get(&url) {
+        Some(s) => {Some(DocumentSymbolResponse::Nested(s.document_symbol.to_owned()))},
+        None => {None}
     };
-    Ok(s)
+    Ok(out)
 }

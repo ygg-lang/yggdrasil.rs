@@ -2,7 +2,7 @@ use lspower::{
     jsonrpc::{Error, Result},
     lsp::*,
 };
-use yggdrasil_bootstript::FileManager;
+use yggdrasil_bootstript::manager::FileManager;
 
 pub trait FileStateUpdate<T> {
     fn update(&mut self, p: T) -> Result<()>;

@@ -13,7 +13,7 @@ mod ygg;
 pub mod manager;
 
 pub use self::{
-    manager::{HINT_MANAGER,FILE_MANAGER},
+    manager::{FILE_MANAGER, HINT_MANAGER},
     ygg::{ast, Result, SyntaxKind, YGGError},
 };
 pub use tree_sitter::{Parser, Tree};

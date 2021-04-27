@@ -83,18 +83,18 @@ impl LanguageServer for Backend {
     }
     async fn did_open(&self, params: DidOpenTextDocumentParams) {
         let url = params.text_document.uri.clone();
-        self.check_the_file(&url).await;
+        self.diagnostics_provider(&url).await;
     }
     async fn did_change(&self, params: DidChangeTextDocumentParams) {
         self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
     }
     async fn did_save(&self, params: DidSaveTextDocumentParams) {
         let url = params.text_document.uri.clone();
-        self.check_the_file(&url).await;
+        self.diagnostics_provider(&url).await;
     }
     async fn did_close(&self, params: DidCloseTextDocumentParams) {
         let url = params.text_document.uri.clone();
-        self.check_the_file(&url).await;
+        self.diagnostics_provider(&url).await;
     }
     async fn completion(&self, params: CompletionParams) -> Result<Option<CompletionResponse>> {
         // completion_resolve was closed
@@ -130,7 +130,7 @@ impl LanguageServer for Backend {
     /// 单独一行的特殊注释
     async fn code_lens(&self, params: CodeLensParams) -> Result<Option<Vec<CodeLens>>> {
         // self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
-        Ok(code_lens_provider(params))
+        code_lens_provider(params).await
     }
     async fn document_link(&self, params: DocumentLinkParams) -> Result<Option<Vec<DocumentLink>>> {
         self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;

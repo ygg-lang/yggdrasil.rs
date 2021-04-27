@@ -15,6 +15,7 @@ pub enum YGGError {
     InfoMissing { text: String },
     InitializationFailed,
     UnknownError,
+    Unreachable,
 }
 
 impl Display for YGGError {

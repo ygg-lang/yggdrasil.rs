@@ -1,11 +1,14 @@
 use super::*;
 
 impl Backend {
-    pub async fn check_the_file(&self, url: &Url) {
-        let mut store = FILE_MANAGER.write().await;
-        match store.collect_diagnostic(url) {
-            Ok(diag) => self.client.publish_diagnostics(url.to_owned(), diag, None).await,
-            Err(_) => (),
-        }
+    pub async fn diagnostics_provider(&self, url: &Url) {
+        HINT_MANAGER.write().await.update(&url).await.ok();
+        let diag = match HINT_MANAGER.read().await.get(url) {
+            Some(s) => s.diagnostic.to_owned(),
+            None => {
+                vec![]
+            }
+        };
+        self.client.publish_diagnostics(url.to_owned(), diag, None).await
     }
 }

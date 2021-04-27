@@ -2,13 +2,14 @@ use self::diagnostic::{duplicate_declaration_error, top_area_error};
 use super::*;
 use crate::{
     ast::{AssignStatement, ChoiceExpression, ChoiceTag, Data, Expression, Program, Statement},
+    manager::HintItems,
     ygg::{ast::ConcatExpression, YGGError},
-    HintItems, Result,
+    Result,
 };
 use convert_case::{Case, Casing};
-use lsp_types::{CodeDescription, Url};
+use lsp_types::{CodeDescription, CodeLens, Url};
+use serde_json::Value;
 use std::{collections::HashSet, ops::AddAssign};
-
 
 mod diagnostic;
 
@@ -125,9 +126,17 @@ impl Program {
                 Statement::EmptyStatement(_) => continue,
             }
         }
-        let state = GrammarState { name: name.ok_or(YGGError::info_missing("name not found"))?, map, ignores, url };
+        let name = match name {
+            Some(s) => s,
+            None => {
+                CodeLens { range: Default::default(), command: None, data: Some(Value::String(String::from("gggggggggg"))) };
+                String::from("<anonymous>")
+            }
+        };
 
-        let hint = HintItems { diagnostic: diag, code_lens: vec![] };
+        let state = GrammarState { name, map, ignores, url };
+
+        let hint = HintItems { diagnostic: diag, code_lens: vec![], document_symbol: vec![] };
 
         Ok((state, hint))
     }
