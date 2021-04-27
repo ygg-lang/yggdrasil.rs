@@ -3,16 +3,17 @@ use super::*;
 use crate::{
     ast::{AssignStatement, ChoiceExpression, ChoiceTag, Data, Expression, Program, Statement},
     ygg::{ast::ConcatExpression, YGGError},
-    Result,
+    HintItems, Result,
 };
 use convert_case::{Case, Casing};
 use lsp_types::{CodeDescription, Url};
 use std::{collections::HashSet, ops::AddAssign};
 
+
 mod diagnostic;
 
 impl Program {
-    pub fn build_grammar(self, url: Url) -> Result<(GrammarState, Vec<Diagnostic>)> {
+    pub fn build_grammar(self, url: Url) -> Result<(GrammarState, HintItems)> {
         let mut is_top_area = true;
         let mut is_grammar = None;
         let mut grammar_pos = None;
@@ -126,7 +127,9 @@ impl Program {
         }
         let state = GrammarState { name: name.ok_or(YGGError::info_missing("name not found"))?, map, ignores, url };
 
-        Ok((state, diag))
+        let hint = HintItems { diagnostic: diag, code_lens: vec![] };
+
+        Ok((state, hint))
     }
 }
 

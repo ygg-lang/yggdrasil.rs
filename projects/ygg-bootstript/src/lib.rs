@@ -10,10 +10,10 @@ pub mod codegen;
 #[allow(unused)]
 mod ygg;
 
-mod manager;
+pub mod manager;
 
 pub use self::{
-    manager::*,
+    manager::{HINT_MANAGER,FILE_MANAGER},
     ygg::{ast, Result, SyntaxKind, YGGError},
 };
 pub use tree_sitter::{Parser, Tree};

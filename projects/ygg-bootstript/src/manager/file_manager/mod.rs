@@ -13,8 +13,10 @@ mod file_store;
 mod file_wrap;
 mod finger_print;
 
-pub static FILE_MANAGER: SyncLazy<RwLock<FileManager>> =
-    SyncLazy::new(|| RwLock::new(FileManager::new().expect("Manager initialization failed")));
+#[rustfmt::skip]
+pub static FILE_MANAGER: SyncLazy<RwLock<FileManager>> = SyncLazy::new(|| {
+    RwLock::new(FileManager::new().expect("Manager initialization failed"))
+});
 
 //#[derive(Archive, Deserialize, Serialize, Debug, PartialEq)]
 pub struct FileManager {
