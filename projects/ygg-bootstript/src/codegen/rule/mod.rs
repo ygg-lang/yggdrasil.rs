@@ -1,9 +1,12 @@
-pub use self::expression::*;
-use super::*;
-use crate::{manager::HintItems, Result};
 use lsp_types::{Diagnostic, DocumentSymbolResponse, Range, Url};
 use rkyv::{Archive, Deserialize, Serialize};
 use tree_sitter_cli::generate::grammars::InputGrammar;
+
+use crate::{manager::HintItems, Result};
+
+use super::*;
+
+pub use self::expression::*;
 
 mod expression;
 mod from_ast;

@@ -17,7 +17,7 @@ impl FileStore {
         }?;
         Ok(Self { fingerprint, data })
     }
-    pub async fn parse_ygg(&mut self, url: Url, parser: &mut YGGBuilder) -> Result<&GrammarState> {
+    pub async fn parse_ygg(&mut self, url: Url, parser: &mut YGGBuilder) -> ParseResult<&GrammarState> {
         self.data.parse_ygg(url, parser).await
     }
     pub fn parse_toml(_input: String) -> Result<FileType> {

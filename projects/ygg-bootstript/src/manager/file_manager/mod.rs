@@ -8,6 +8,7 @@ use lsp_types::Url;
 use std::{collections::HashMap, fs, lazy::SyncLazy, path::Path};
 use tokio::sync::RwLock;
 use xxhash_rust::xxh3::xxh3_128;
+use crate::manager::HintItems;
 
 mod file_store;
 mod file_wrap;
@@ -17,6 +18,8 @@ mod finger_print;
 pub static FILE_MANAGER: SyncLazy<RwLock<FileManager>> = SyncLazy::new(|| {
     RwLock::new(FileManager::new().expect("Manager initialization failed"))
 });
+
+pub type ParseResult<T> = Result<(T, Option<HintItems>)>;
 
 //#[derive(Archive, Deserialize, Serialize, Debug, PartialEq)]
 pub struct FileManager {
@@ -64,19 +67,20 @@ impl FileManager {
 }
 
 impl FileManager {
-    pub async fn parse_file(&mut self, url: &Url) -> Result<&FileStore> {
+    pub async fn parse_file(&mut self, url: &Url) -> ParseResult<&FileStore> {
+        let hints;
         match url.to_file_path()?.extension().and_then(|e| e.to_str()) {
             Some("toml") => {
-                self.parse_type(url).await?;
+                hints = self.parse_type(url).await?.1;
                 match self.get_file(url) {
-                    Some(s) => Ok(s),
+                    Some(s) => Ok((s,hints)),
                     None => Err(YGGError::Unreachable),
                 }
             }
             Some("ygg") | Some("yg") => {
-                self.parse_grammar(url).await?;
+                hints = self.parse_grammar(url).await?.1;
                 match self.get_file(url) {
-                    Some(s) => Ok(s),
+                    Some(s) => Ok((s, hints)),
                     None => Err(YGGError::Unreachable),
                 }
             }
@@ -84,11 +88,11 @@ impl FileManager {
         }
     }
 
-    pub async fn parse_type(&mut self, _url: &Url) -> Result<&GrammarType> {
+    pub async fn parse_type(&mut self, _url: &Url) -> ParseResult<&GrammarType> {
         unimplemented!()
     }
 
-    pub async fn parse_grammar(&mut self, url: &Url) -> Result<&GrammarState> {
+    pub async fn parse_grammar(&mut self, url: &Url) -> ParseResult<&GrammarState> {
         self.update_url(url.to_owned())?;
         let parser = &mut self.builder;
         let s = match self.file_store.get_mut(url) {

@@ -3,8 +3,8 @@ use lsp_types::{CodeLens, Diagnostic, DiagnosticRelatedInformation, DiagnosticSe
 use serde_json::Value;
 use std::str::FromStr;
 
-pub use diagnostic::*;
 pub use code_lens::*;
+pub use diagnostic::*;
 
 mod code_lens;
 mod diagnostic;

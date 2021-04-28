@@ -5,7 +5,7 @@ use lsp_types::{CodeDescription, CodeLens, Url};
 use serde_json::Value;
 
 use super::{
-    hints::{duplicate_declaration_error, top_area_error,name_missing},
+    hints::{duplicate_declaration_error, name_missing, top_area_error},
     *,
 };
 use crate::{

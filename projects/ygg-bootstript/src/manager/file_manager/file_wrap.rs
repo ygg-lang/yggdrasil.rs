@@ -1,5 +1,4 @@
 use super::*;
-use crate::{manager::HintItems, HINT_MANAGER};
 
 #[derive(Clone, Debug)]
 pub enum FileType {
@@ -13,9 +12,9 @@ impl FileType {
     pub fn parse_toml(&mut self) -> Result<FileType> {
         unimplemented!()
     }
-    pub async fn parse_ygg(&mut self, url: Url, parser: &mut YGGBuilder) -> Result<&GrammarState> {
+    pub async fn parse_ygg(&mut self, url: Url, parser: &mut YGGBuilder) -> ParseResult<&GrammarState> {
         match self {
-            FileType::Grammar(g) => Ok(g),
+            FileType::Grammar(g) => Ok((g, None)),
             FileType::GrammarString(s) => {
                 parser.update_by_text(s)?;
                 let mut hints = HintItems::default();
@@ -28,9 +27,9 @@ impl FileType {
                     FileType::Grammar(g) => Ok(g),
                     _ => Err(YGGError::Unreachable),
                 }?;
-                HINT_MANAGER.write().await.set(url, hints);
-
-                Ok(grammar)
+                // dead lock
+                // HINT_MANAGER.write().await.set(url, hints);
+                Ok((grammar, Some(hints)))
             }
             _ => Err(YGGError::language_error("Not a grammar file")),
         }

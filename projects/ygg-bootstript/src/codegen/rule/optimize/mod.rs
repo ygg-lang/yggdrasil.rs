@@ -1,4 +1,11 @@
+use lsp_types::{DocumentSymbol, SymbolKind};
+use crate::codegen::GrammarState;
+use crate::manager::HintItems;
 use super::*;
+use std::mem::transmute;
+
+#[allow(deprecated)]
+mod meta_info;
 
 impl GrammarState {
     pub fn optimize(&mut self) -> Result<HintItems> {
@@ -12,9 +19,6 @@ impl GrammarState {
     }
     fn merge_regex(&mut self) -> Result<HintItems> {
         Ok(HintItems::default())
-    }
-    pub fn report_meta(&self) -> HintItems {
-        HintItems::default()
     }
 }
 

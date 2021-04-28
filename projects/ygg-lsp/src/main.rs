@@ -52,7 +52,7 @@ impl LanguageServer for Backend {
                 code_action_provider: Some(CodeActionProviderCapability::Simple(true)),
                 code_lens_provider: Some(CodeLensOptions { resolve_provider: None }),
                 document_highlight_provider: Some(OneOf::Left(false)),
-                document_symbol_provider: Some(OneOf::Left(false)),
+                document_symbol_provider: Some(OneOf::Left(true)),
                 document_formatting_provider: Some(OneOf::Left(false)),
                 workspace_symbol_provider: Some(OneOf::Left(false)),
                 execute_command_provider: Some(server_commands()),
@@ -82,19 +82,16 @@ impl LanguageServer for Backend {
         Ok(command_provider(params, &self.client).await)
     }
     async fn did_open(&self, params: DidOpenTextDocumentParams) {
-        let url = params.text_document.uri.clone();
-        self.diagnostics_provider(&url).await;
+        self.diagnostics_provider(&params.text_document.uri).await;
     }
     async fn did_change(&self, params: DidChangeTextDocumentParams) {
         self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
     }
     async fn did_save(&self, params: DidSaveTextDocumentParams) {
-        let url = params.text_document.uri.clone();
-        self.diagnostics_provider(&url).await;
+        self.diagnostics_provider(&params.text_document.uri).await;
     }
     async fn did_close(&self, params: DidCloseTextDocumentParams) {
-        let url = params.text_document.uri.clone();
-        self.diagnostics_provider(&url).await;
+        self.diagnostics_provider(&params.text_document.uri).await;
     }
     async fn completion(&self, params: CompletionParams) -> Result<Option<CompletionResponse>> {
         // completion_resolve was closed
@@ -119,7 +116,10 @@ impl LanguageServer for Backend {
 
     #[rustfmt::skip]
     async fn document_symbol(&self, params: DocumentSymbolParams) -> Result<Option<DocumentSymbolResponse>> {
-        document_symbol_provider(params).await
+        self.client.log_message(MessageType::Info, "Call document_symbol").await;
+        let out = document_symbol_provider(params).await?;
+        self.client.log_message(MessageType::Info, format!("{:#?}", out)).await;
+        Ok(out)
     }
 
     /// Alt 键列出可执行的命令

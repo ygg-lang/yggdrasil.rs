@@ -33,7 +33,9 @@ impl HintManager {
         self.items.insert(url, hint)
     }
     pub async fn update(&mut self, url: &Url) -> Result<&HintItems> {
-        FILE_MANAGER.write().await.parse_file(&url).await?;
-        self.get(url).ok_or(YGGError::UnknownError)
+        if let Some(s) = FILE_MANAGER.write().await.parse_file(&url).await?.1 {
+            self.items.insert(url.to_owned(), s);
+        }
+        self.get(url).ok_or(YGGError::Unreachable)
     }
 }
