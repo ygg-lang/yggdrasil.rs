@@ -121,7 +121,7 @@ impl Program {
                             format!("Already declaration as Rule `{}`", old.name),
                             rule.range,
                             &url,
-                            old.range,
+                            old.name_position,
                         )),
                         None => {
                             map.insert(rule.name.to_owned(), rule);
@@ -160,10 +160,8 @@ impl From<AssignStatement> for YGGRule {
         let mut name = s.id.data;
         let mut structure = None;
         let force_inline = name.starts_with("_");
-        match force_inline {
-            // trim first _
-            true => name = String::from(&name[1..=name.len()]),
-            false => structure = Some(name.to_case(Case::UpperCamel)),
+        if !force_inline {
+            structure = Some(name.to_case(Case::UpperCamel))
         }
         let mut eliminate_unmarked = false;
         let mut eliminate_unnamed = false;
@@ -180,7 +178,8 @@ impl From<AssignStatement> for YGGRule {
             eliminate_unmarked,
             eliminate_unnamed,
             expression,
-            range: convert_range(s.id.range),
+            range: convert_range(s.range),
+            name_position: convert_range(s.id.range),
         }
     }
 }

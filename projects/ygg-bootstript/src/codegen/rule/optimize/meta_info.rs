@@ -2,7 +2,12 @@ use super::*;
 
 impl GrammarState {
     pub fn report_meta(&self) -> HintItems {
-        let document_symbol = vec![self.top_area(), test_node()];
+        let mut document_symbol = vec![];
+        document_symbol.push(self.top_area());
+        for rule in self.rules() {
+            document_symbol.push(rule.symbol_item())
+        }
+        document_symbol.push(test_node());
         HintItems { diagnostic: vec![], code_lens: vec![], document_symbol }
     }
     fn top_area(&self) -> DocumentSymbol {
@@ -15,6 +20,7 @@ impl GrammarState {
         if self.is_grammar {
             terms.push(self.extension())
         }
+        terms.push(self.ignores());
         DocumentSymbol {
             name: name.to_string(),
             detail: Some(self.name.to_owned()),
@@ -64,6 +70,37 @@ impl GrammarState {
             selection_range: range,
             children: None,
         }
+    }
+    fn ignores(&self) -> DocumentSymbol {
+        DocumentSymbol {
+            name: "Ignores".to_string(),
+            detail: Some(self.ignores.len().to_string()),
+            kind: SymbolKind::Number,
+            tags: None,
+            deprecated: None,
+            range: Default::default(),
+            selection_range: Default::default(),
+            children: None,
+        }
+    }
+}
+
+impl YGGRule {
+    fn symbol_item(&self) -> DocumentSymbol {
+        let (detail, kind) = self.symbol_detail();
+        DocumentSymbol {
+            name: self.name.to_owned(),
+            detail,
+            kind,
+            tags: None,
+            deprecated: None,
+            range: Default::default(),
+            selection_range: Default::default(),
+            children: None,
+        }
+    }
+    fn symbol_detail(&self) -> (Option<String>, SymbolKind) {
+        if self.force_inline { (Some("inlined".to_string()), SymbolKind::Variable) } else { (None, SymbolKind::Field) }
     }
 }
 
