@@ -12,7 +12,7 @@ impl FileType {
     pub fn parse_toml(&mut self) -> Result<FileType> {
         unimplemented!()
     }
-    pub fn parse_ygg(&mut self, url: Url, parser: &mut YGGBuilder) -> ParseResult<&GrammarState> {
+    pub async fn parse_ygg(&mut self, url: Url, parser: &mut YGGBuilder) -> ParseResult<&GrammarState> {
         match self {
             FileType::Grammar(g) => Ok((g, None)),
             FileType::GrammarString(s) => {
@@ -20,7 +20,7 @@ impl FileType {
                 let mut hints = HintItems::default();
                 let (mut grammar, err) = parser.traverse()?.build_grammar(url.to_owned())?;
                 hints += err;
-                hints += grammar.optimize()?;
+                hints += grammar.optimize().await?;
                 hints += grammar.report_meta();
                 *self = Self::Grammar(grammar);
                 let grammar = match self {

@@ -71,14 +71,14 @@ impl FileManager {
         let hints;
         match url.to_file_path()?.extension().and_then(|e| e.to_str()) {
             Some("toml") => {
-                hints = self.parse_type(url)?.1;
+                hints = self.parse_type(url).await?.1;
                 match self.get_file(url) {
                     Some(s) => Ok((s, hints)),
                     None => Err(YGGError::Unreachable),
                 }
             }
             Some("ygg") | Some("yg") => {
-                hints = self.parse_grammar(url)?.1;
+                hints = self.parse_grammar(url).await?.1;
                 match self.get_file(url) {
                     Some(s) => Ok((s, hints)),
                     None => Err(YGGError::Unreachable),
@@ -88,17 +88,17 @@ impl FileManager {
         }
     }
 
-    pub fn parse_type(&mut self, _url: &Url) -> ParseResult<&GrammarType> {
+    pub async fn parse_type(&mut self, _url: &Url) -> ParseResult<&GrammarType> {
         unimplemented!()
     }
 
-    pub fn parse_grammar(&mut self, url: &Url) -> ParseResult<&GrammarState> {
+    pub async fn parse_grammar(&mut self, url: &Url) -> ParseResult<&GrammarState> {
         self.update_url(url.to_owned())?;
         let parser = &mut self.builder;
         let s = match self.file_store.get_mut(url) {
             Some(s) => Ok(s),
             _ => Err(YGGError::language_error("Grammar not found")),
         }?;
-        s.parse_ygg(url.to_owned(), parser)
+        s.parse_ygg(url.to_owned(), parser).await
     }
 }

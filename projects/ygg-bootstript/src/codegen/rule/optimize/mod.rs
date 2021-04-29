@@ -7,11 +7,15 @@ use std::mem::transmute;
 mod meta_info;
 
 impl GrammarState {
-    pub fn optimize(&mut self) -> Result<HintItems> {
+    pub async fn optimize(&mut self) -> Result<HintItems> {
         let mut hint = HintItems::default();
+        self.link_external().await?;
         hint += self.merge_regex()?;
         hint += self.inline()?;
         Ok(hint)
+    }
+    async fn link_external(&mut self)  -> Result<()> {
+        Ok(())
     }
     fn inline(&mut self) -> Result<HintItems> {
         Ok(HintItems::default())

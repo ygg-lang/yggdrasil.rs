@@ -144,7 +144,7 @@ impl Program {
             name_position,
             extensions: ext.into_iter().map(|e| (e.data, convert_range(e.range))).collect(),
             map,
-            ignores,
+            ignores: ignores.into_iter().map(|e| (e.data, convert_range(e.range))).collect(),
             url,
             is_grammar: is_grammar.unwrap_or(false),
         };

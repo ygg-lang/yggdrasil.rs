@@ -38,7 +38,7 @@ pub struct AssignStatement {
 
 #[derive(Clone, Debug)]
 pub struct IgnoreStatement {
-    pub rules: Vec<String>,
+    pub rules: Vec<StringRanged>,
     pub range: Range,
 }
 

@@ -65,7 +65,7 @@ pub struct GrammarState {
     name: String,
     name_position: Range,
     extensions: Vec<(String, Range)>,
-    ignores: Vec<String>,
+    ignores: Vec<(String, Range)>,
     map: Map<String, YGGRule>,
 }
 

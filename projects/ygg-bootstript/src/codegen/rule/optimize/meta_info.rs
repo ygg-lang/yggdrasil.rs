@@ -72,15 +72,30 @@ impl GrammarState {
         }
     }
     fn ignores(&self) -> DocumentSymbol {
+        let n = self.ignores.len();
+        let children = match n {
+            0 => {None},
+            _ => {
+                let mut out = vec![];
+                for (name, r) in &self.ignores {
+                    if let Some(s) = self.get(name) {
+                        let mut s = s.symbol_item();
+                        s.range = *r;
+                        out.push(s)
+                    }
+                }
+                Some(out)
+            }
+        };
         DocumentSymbol {
             name: "Ignores".to_string(),
-            detail: Some(self.ignores.len().to_string()),
+            detail: Some(n.to_string()),
             kind: SymbolKind::Number,
             tags: None,
             deprecated: None,
             range: Default::default(),
             selection_range: Default::default(),
-            children: None,
+            children,
         }
     }
 }
