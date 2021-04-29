@@ -180,6 +180,7 @@ impl Parsed for Data {
 
 parsed_wrap!(Identifier: data << parse);
 parsed_wrap!(Unsigned: data << parse);
+parsed_wrap!(StringRanged: data << parse);
 
 impl Parsed for usize {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {

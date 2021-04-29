@@ -1,7 +1,6 @@
-use lsp_types::{DocumentSymbol, SymbolKind};
-use crate::codegen::GrammarState;
-use crate::manager::HintItems;
 use super::*;
+use crate::{codegen::GrammarState, manager::HintItems};
+use lsp_types::{DocumentSymbol, SymbolKind};
 use std::mem::transmute;
 
 #[allow(deprecated)]

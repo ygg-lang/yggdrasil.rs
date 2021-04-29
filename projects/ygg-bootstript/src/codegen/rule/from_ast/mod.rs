@@ -19,9 +19,10 @@ impl Program {
     pub fn build_grammar(self, url: Url) -> Result<(GrammarState, HintItems)> {
         let mut is_top_area = true;
         let mut is_grammar = None;
-        let mut grammar_pos = None;
+        let mut name_position = Default::default();
         let mut name = None;
         let mut map = Map::<String, YGGRule>::default();
+        let mut ext = vec![];
         let mut ignores = vec![];
         let mut ignores_pos = None;
         let mut diag = vec![];
@@ -42,18 +43,19 @@ impl Program {
                             "Already declaration as `grammar!`",
                             convert_range(s.range),
                             &url,
-                            grammar_pos,
+                            name_position,
                         )),
                         Some(false) => diag.push(duplicate_declaration_error(
                             "Grammar",
                             "Already declaration as `fragment!`",
                             convert_range(s.range),
                             &url,
-                            grammar_pos,
+                            name_position,
                         )),
                         None => {
                             is_grammar = Some(true);
-                            grammar_pos = Some(convert_range(s.range));
+                            name_position = convert_range(s.range);
+                            ext = s.ext;
                             name = Some(s.id.data)
                         }
                     }
@@ -72,18 +74,18 @@ impl Program {
                             "Already declaration as `grammar!`",
                             convert_range(s.range),
                             &url,
-                            grammar_pos,
+                            name_position,
                         )),
                         Some(false) => diag.push(duplicate_declaration_error(
                             "Fragment",
                             "Already declaration as `fragment!`",
                             convert_range(s.range),
                             &url,
-                            grammar_pos,
+                            name_position,
                         )),
                         None => {
                             is_grammar = Some(false);
-                            grammar_pos = Some(convert_range(s.range));
+                            name_position = convert_range(s.range);
                             name = Some(s.id.data)
                         }
                     }
@@ -102,7 +104,7 @@ impl Program {
                             "Already declaration ignore statement",
                             convert_range(s.range),
                             &url,
-                            grammar_pos,
+                            name_position,
                         ))
                     }
                     else {
@@ -119,7 +121,7 @@ impl Program {
                             format!("Already declaration as Rule `{}`", old.name),
                             rule.range,
                             &url,
-                            Some(old.range),
+                            old.range,
                         )),
                         None => {
                             map.insert(rule.name.to_owned(), rule);
@@ -137,7 +139,15 @@ impl Program {
             }
         };
 
-        let state = GrammarState { name, map, ignores, url };
+        let state = GrammarState {
+            name,
+            name_position,
+            extensions: ext.into_iter().map(|e| (e.data, convert_range(e.range))).collect(),
+            map,
+            ignores,
+            url,
+            is_grammar: is_grammar.unwrap_or(false),
+        };
 
         let hint = HintItems { diagnostic: diag, code_lens: lens, document_symbol: vec![] };
 

@@ -18,7 +18,7 @@ pub enum Statement {
 #[derive(Clone, Debug)]
 pub struct GrammarStatement {
     pub id: Identifier,
-    pub ext: Vec<String>,
+    pub ext: Vec<StringRanged>,
     pub range: Range,
 }
 
@@ -127,16 +127,13 @@ pub struct StringLiteral {
 }
 
 #[derive(Clone, Debug)]
-pub struct Eos {
-    pub data: bool,
+pub struct StringRanged {
+    pub data: String,
     pub range: Range,
 }
 
-impl Default for Identifier {
-    fn default() -> Self {
-        Self {
-            data: "".to_string(),
-            range: Range { start_byte: 0, end_byte: 0, start_point: Default::default(), end_point: Default::default() },
-        }
-    }
+#[derive(Clone, Debug)]
+pub struct Eos {
+    pub data: bool,
+    pub range: Range,
 }

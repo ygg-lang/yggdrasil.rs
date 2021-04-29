@@ -3,6 +3,10 @@
         id: "test1",
         ext: [],
     },
+    GrammarStatement {
+        id: "test2",
+        ext: [],
+    },
     AssignStatement {
         id: "rule1",
         eq: "=",
@@ -15,9 +19,6 @@
                 "b",
             ),
         },
-    },
-    FragmentStatement {
-        id: "test2",
     },
     AssignStatement {
         id: "rule2",

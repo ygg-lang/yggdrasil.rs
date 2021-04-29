@@ -2,7 +2,7 @@ use lsp_types::{Diagnostic, DocumentSymbolResponse, Range, Url};
 use rkyv::{Archive, Deserialize, Serialize};
 use tree_sitter_cli::generate::grammars::InputGrammar;
 
-use crate::{manager::HintItems, Result};
+use crate::{ast::StringRanged, manager::HintItems, Result};
 
 use super::*;
 
@@ -54,7 +54,10 @@ pub struct MetaInfo {
 #[derive(Clone, Debug)]
 pub struct GrammarState {
     url: Url,
+    is_grammar: bool,
     name: String,
+    name_position: Range,
+    extensions: Vec<(String, Range)>,
     map: Map<String, YGGRule>,
     ignores: Vec<String>,
 }

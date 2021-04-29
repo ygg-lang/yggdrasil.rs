@@ -69,9 +69,9 @@ fn test_or_tagged() -> Result<()> {
 const INCOMPLETE: &str = r#"
 grammar! test1
 
-rule1 = a ~ b
+grammar! test2 {"a"}
 
-fragment! test2
+rule1 = a ~ b
 
 rule2 =
 "#;

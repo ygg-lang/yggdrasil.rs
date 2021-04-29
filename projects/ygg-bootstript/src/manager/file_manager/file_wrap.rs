@@ -12,7 +12,7 @@ impl FileType {
     pub fn parse_toml(&mut self) -> Result<FileType> {
         unimplemented!()
     }
-    pub async fn parse_ygg(&mut self, url: Url, parser: &mut YGGBuilder) -> ParseResult<&GrammarState> {
+    pub fn parse_ygg(&mut self, url: Url, parser: &mut YGGBuilder) -> ParseResult<&GrammarState> {
         match self {
             FileType::Grammar(g) => Ok((g, None)),
             FileType::GrammarString(s) => {
@@ -27,7 +27,7 @@ impl FileType {
                     FileType::Grammar(g) => Ok(g),
                     _ => Err(YGGError::Unreachable),
                 }?;
-                // dead lock
+                // FIXME: dead lock
                 // HINT_MANAGER.write().await.set(url, hints);
                 Ok((grammar, Some(hints)))
             }

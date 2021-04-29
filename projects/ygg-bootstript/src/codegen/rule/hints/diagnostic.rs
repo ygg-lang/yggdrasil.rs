@@ -14,15 +14,15 @@ pub fn top_area_error(src: &str, msg: &str, range: Range) -> Diagnostic {
     }
 }
 
+#[rustfmt::skip]
 pub fn duplicate_declaration_error(
     src: &str,
     msg: impl Into<String>,
     this: Range,
     url: &Url,
-    last: Option<Range>,
+    last: Range,
 ) -> Diagnostic {
-    let info =
-        DiagnosticRelatedInformation { location: Location { uri: url.to_owned(), range: last.unwrap() }, message: msg.into() };
+    let info = DiagnosticRelatedInformation { location: Location { uri: url.to_owned(), range: last }, message: msg.into() };
     Diagnostic {
         range: this,
         severity: Some(DiagnosticSeverity::Error),

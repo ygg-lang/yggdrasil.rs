@@ -70,7 +70,13 @@ HintItems {
                     character: 0,
                 },
             },
-            command: None,
+            command: Some(
+                Command {
+                    title: "Grammar name missing",
+                    command: "ygg.insert_grammar",
+                    arguments: None,
+                },
+            ),
             data: Some(
                 String(
                     "Grammar name not found",
