@@ -1,9 +1,5 @@
 pub use self::{file_store::FileStore, file_wrap::FileType, finger_print::FileFingerprint};
-use crate::{
-    codegen::{GrammarState, GrammarType},
-    manager::HintItems,
-    Result, YGGError,
-};
+use crate::{codegen::{GrammarState, GrammarType}, manager::HintItems, Result, YGGError};
 use dashmap::{mapref::one::Ref, DashMap};
 use lsp_types::Url;
 use std::{fs, lazy::SyncLazy, path::Path};
@@ -15,8 +11,6 @@ mod file_wrap;
 mod finger_print;
 
 pub static FILE_MANAGER: SyncLazy<FileManager> = SyncLazy::new(|| FileManager::default());
-
-pub type ParseResult<T> = Result<(T, Option<HintItems>)>;
 
 //#[derive(Archive, Deserialize, Serialize, Debug, PartialEq)]
 pub struct FileManager {
@@ -61,32 +55,29 @@ impl FileManager {
 }
 
 impl FileManager {
-    pub async fn parse_file(&self, url: &Url) -> ParseResult<Ref<'_, Url, FileStore>> {
-        let hints;
+    pub async fn parse_file(&self, url: &Url) -> Result<Ref<'_, Url, FileStore>> {
         match url.to_file_path()?.extension().and_then(|e| e.to_str()) {
             Some("toml") => {
-                hints = self.parse_type(url).await?.1;
-                match self.get_file(url) {
-                    Some(s) => Ok((s, hints)),
-                    None => Err(YGGError::Unreachable),
-                }
+                self.parse_type(url).await?;
+                Ok(())
             }
             Some("ygg") | Some("yg") => {
-                hints = self.parse_grammar(url).await?.1;
-                match self.get_file(url) {
-                    Some(s) => Ok((s, hints)),
-                    None => Err(YGGError::Unreachable),
-                }
+                self.parse_grammar(url).await?;
+                Ok(())
             }
             _ => Err(YGGError::language_error("Unsupported file extension")),
+        }?;
+        match self.get_file(url) {
+            Some(s) => Ok(s),
+            None => Err(YGGError::Unreachable),
         }
     }
 
-    pub async fn parse_type(&self, _url: &Url) -> ParseResult<&GrammarType> {
+    pub async fn parse_type(&self, _url: &Url) -> Result<&GrammarType> {
         unimplemented!()
     }
 
-    pub async fn parse_grammar(&self, url: &Url) -> ParseResult<GrammarState> {
+    pub async fn parse_grammar(&self, url: &Url) -> Result<GrammarState> {
         self.update_url(url.to_owned())?;
         self.store
             .get_mut(url)

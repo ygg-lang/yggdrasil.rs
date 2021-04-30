@@ -6,6 +6,7 @@ use std::{
     lazy::SyncLazy,
     ops::{Add, AddAssign},
 };
+use dashmap::mapref::one::RefMut;
 
 mod item;
 
@@ -26,17 +27,24 @@ pub struct HintManager {
 
 impl HintManager {
     #[inline]
-    pub fn get(&self, url: &Url) -> Option<HintRef<'_>> {
+    pub fn get(&self, url: &Url) -> Option<Ref<'_, Url, HintItems>> {
         self.hint_store.get(url)
+    }
+    #[inline]
+    pub fn get_mut(&self, url: &Url) -> Option<RefMut<'_, Url, HintItems>> {
+        self.hint_store.get_mut(url)
     }
     #[inline]
     pub fn set(&self, url: Url, hint: HintItems) -> Option<HintItems> {
         self.hint_store.insert(url, hint)
     }
     pub async fn update(&self, url: &Url) -> Result<HintRef<'_>> {
-        if let Some(s) = FILE_MANAGER.parse_file(&url).await?.1 {
-            self.hint_store.insert(url.to_owned(), s);
-        }
-        self.get(url).ok_or(YGGError::Unreachable)
+        FILE_MANAGER.parse_file(&url).await?;
+        HINT_MANAGER.hint_store.get(url).ok_or(YGGError::Unreachable)
+
+        // if let Some(s) = FILE_MANAGER.parse_file(&url).await? {
+        //     self.hint_store.insert(url.to_owned(), s);
+        // }
+        // self.get(url).ok_or(YGGError::Unreachable)
     }
 }

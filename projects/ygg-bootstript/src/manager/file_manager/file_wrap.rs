@@ -1,3 +1,4 @@
+use crate::HINT_MANAGER;
 use super::*;
 use crate::manager::global_parser::PARSER_MANAGER;
 
@@ -13,12 +14,12 @@ impl FileType {
     pub fn parse_toml(&mut self) -> Result<FileType> {
         unimplemented!()
     }
-    pub async fn parse_ygg(&mut self, url: Url) -> ParseResult<GrammarState> {
+    pub async fn parse_ygg(&mut self, url: Url) -> Result<GrammarState> {
         let mut parser = PARSER_MANAGER.write().await;
         match self {
             FileType::Grammar(g) => {
                 // TODO: no clone
-                Ok((g.clone(), None))
+                Ok(g.clone())
             }
             FileType::GrammarString(s) => {
                 parser.update_by_text(s)?;
@@ -35,8 +36,8 @@ impl FileType {
                 // }?;
                 *self = Self::Grammar(grammar.to_owned());
                 // FIXME: dead lock
-                // HINT_MANAGER.write().await.set(url, hints);
-                Ok((grammar, Some(hints)))
+                HINT_MANAGER.set(url, hints);
+                Ok(grammar)
             }
             _ => Err(YGGError::language_error("Not a grammar file")),
         }
