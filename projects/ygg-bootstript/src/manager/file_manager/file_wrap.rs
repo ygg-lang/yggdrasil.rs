@@ -1,4 +1,5 @@
 use super::*;
+use crate::manager::global_parser::PARSER_MANAGER;
 
 #[derive(Clone, Debug)]
 pub enum FileType {
@@ -12,9 +13,13 @@ impl FileType {
     pub fn parse_toml(&mut self) -> Result<FileType> {
         unimplemented!()
     }
-    pub async fn parse_ygg(&mut self, url: Url, parser: &mut YGGBuilder) -> ParseResult<&GrammarState> {
+    pub async fn parse_ygg(&mut self, url: Url) -> ParseResult<GrammarState> {
+        let mut parser = PARSER_MANAGER.write().await;
         match self {
-            FileType::Grammar(g) => Ok((g, None)),
+            FileType::Grammar(g) => {
+                // TODO: no clone
+                Ok((g.clone(), None))
+            }
             FileType::GrammarString(s) => {
                 parser.update_by_text(s)?;
                 let mut hints = HintItems::default();
@@ -22,11 +27,13 @@ impl FileType {
                 hints += err;
                 hints += grammar.optimize().await?;
                 hints += grammar.report_meta();
-                *self = Self::Grammar(grammar);
-                let grammar = match self {
-                    FileType::Grammar(g) => Ok(g),
-                    _ => Err(YGGError::Unreachable),
-                }?;
+                // FIXME: Use ref
+                // *self = Self::Grammar(grammar);
+                // let grammar = match self {
+                //     FileType::Grammar(g) => Ok(g),
+                //     _ => Err(YGGError::Unreachable),
+                // }?;
+                *self = Self::Grammar(grammar.to_owned());
                 // FIXME: dead lock
                 // HINT_MANAGER.write().await.set(url, hints);
                 Ok((grammar, Some(hints)))

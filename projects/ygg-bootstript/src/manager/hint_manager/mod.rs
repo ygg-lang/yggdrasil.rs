@@ -1,40 +1,41 @@
 pub use self::item::HintItems;
 use crate::{Result, YGGError, FILE_MANAGER};
+use dashmap::{mapref::one::Ref, DashMap};
 use lsp_types::{CodeLens, Diagnostic, DocumentSymbol, Url};
 use std::{
-    collections::HashMap,
     lazy::SyncLazy,
     ops::{Add, AddAssign},
 };
-use tokio::sync::RwLock;
 
 mod item;
 
-pub static HINT_MANAGER: SyncLazy<RwLock<HintManager>> = SyncLazy::new(|| RwLock::new(HintManager::default()));
+pub static HINT_MANAGER: SyncLazy<HintManager> = SyncLazy::new(|| HintManager::default());
+
+pub type HintRef<'a> = Ref<'a, Url, HintItems>;
 
 impl Default for HintManager {
     fn default() -> Self {
-        Self { items: Default::default() }
+        Self { hint_store: Default::default() }
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug)]
 pub struct HintManager {
-    items: HashMap<Url, HintItems>,
+    pub hint_store: DashMap<Url, HintItems>,
 }
 
 impl HintManager {
     #[inline]
-    pub fn get(&self, url: &Url) -> Option<&HintItems> {
-        self.items.get(url)
+    pub fn get(&self, url: &Url) -> Option<HintRef<'_>> {
+        self.hint_store.get(url)
     }
     #[inline]
-    pub fn set(&mut self, url: Url, hint: HintItems) -> Option<HintItems> {
-        self.items.insert(url, hint)
+    pub fn set(&self, url: Url, hint: HintItems) -> Option<HintItems> {
+        self.hint_store.insert(url, hint)
     }
-    pub async fn update(&mut self, url: &Url) -> Result<&HintItems> {
-        if let Some(s) = FILE_MANAGER.write().await.parse_file(&url).await?.1 {
-            self.items.insert(url.to_owned(), s);
+    pub async fn update(&self, url: &Url) -> Result<HintRef<'_>> {
+        if let Some(s) = FILE_MANAGER.parse_file(&url).await?.1 {
+            self.hint_store.insert(url.to_owned(), s);
         }
         self.get(url).ok_or(YGGError::Unreachable)
     }

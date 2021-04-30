@@ -14,7 +14,7 @@ impl GrammarState {
         hint += self.inline()?;
         Ok(hint)
     }
-    async fn link_external(&mut self)  -> Result<()> {
+    async fn link_external(&mut self) -> Result<()> {
         Ok(())
     }
     fn inline(&mut self) -> Result<HintItems> {

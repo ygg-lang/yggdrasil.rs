@@ -74,7 +74,7 @@ impl GrammarState {
     fn ignores(&self) -> DocumentSymbol {
         let n = self.ignores.len();
         let children = match n {
-            0 => {None},
+            0 => None,
             _ => {
                 let mut out = vec![];
                 for (name, r) in &self.ignores {

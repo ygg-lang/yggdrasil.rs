@@ -49,7 +49,6 @@ pub struct YGGRule {
     eliminate_unnamed: bool,
     ///
     expression: RefinedExpression,
-
 }
 
 #[derive(Clone, Debug)]
