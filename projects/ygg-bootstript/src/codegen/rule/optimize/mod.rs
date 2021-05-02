@@ -3,6 +3,7 @@ use crate::{codegen::GrammarState, manager::HintItems};
 use lsp_types::{DocumentSymbol, SymbolKind};
 use std::mem::transmute;
 
+mod inline;
 #[allow(deprecated)]
 mod meta_info;
 
@@ -26,6 +27,5 @@ impl GrammarState {
 }
 
 impl YGGRule {
-    fn inline(&mut self, _map: &GrammarState) {}
     fn merge_regex(&mut self) {}
 }

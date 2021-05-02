@@ -9,7 +9,11 @@ macro_rules! parsed_wrap {
         impl Parsed for $t {
             fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
                 $(let $i = parsed_wrap!(@ state, this, $method);)+
-                Ok(Self { $($i,)+ range: this.range() })
+                #[cfg(feature="lsp")]
+                let range = convert_range(this.range());
+                #[cfg(not(feature="lsp"))]
+                let range = this.range();
+                Ok(Self { $($i,)+ range })
             }
         }
     };

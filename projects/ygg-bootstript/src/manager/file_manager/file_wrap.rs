@@ -1,6 +1,5 @@
-use crate::HINT_MANAGER;
 use super::*;
-use crate::manager::global_parser::PARSER_MANAGER;
+use crate::{manager::global_parser::PARSER_MANAGER, HINT_MANAGER};
 
 #[derive(Clone, Debug)]
 pub enum FileType {

@@ -1,12 +1,14 @@
 pub use self::item::HintItems;
 use crate::{Result, YGGError, FILE_MANAGER};
-use dashmap::{mapref::one::Ref, DashMap};
+use dashmap::{
+    mapref::one::{Ref, RefMut},
+    DashMap,
+};
 use lsp_types::{CodeLens, Diagnostic, DocumentSymbol, Url};
 use std::{
     lazy::SyncLazy,
     ops::{Add, AddAssign},
 };
-use dashmap::mapref::one::RefMut;
 
 mod item;
 

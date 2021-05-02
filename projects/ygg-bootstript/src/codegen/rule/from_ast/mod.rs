@@ -31,30 +31,26 @@ impl Program {
             match stmt {
                 Statement::GrammarStatement(s) => {
                     if !is_top_area {
-                        diag.push(top_area_error(
-                            "Grammar",
-                            "Grammar statement must be declared at the top",
-                            convert_range(s.range),
-                        ))
+                        diag.push(top_area_error("Grammar", "Grammar statement must be declared at the top", s.range))
                     }
                     match is_grammar {
                         Some(true) => diag.push(duplicate_declaration_error(
                             "Grammar",
                             "Already declaration as `grammar!`",
-                            convert_range(s.range),
+                            s.range,
                             &url,
                             name_position,
                         )),
                         Some(false) => diag.push(duplicate_declaration_error(
                             "Grammar",
                             "Already declaration as `fragment!`",
-                            convert_range(s.range),
+                            s.range,
                             &url,
                             name_position,
                         )),
                         None => {
                             is_grammar = Some(true);
-                            name_position = convert_range(s.range);
+                            name_position = s.range;
                             ext = s.ext;
                             name = Some(s.id.data)
                         }
@@ -62,47 +58,39 @@ impl Program {
                 }
                 Statement::FragmentStatement(s) => {
                     if !is_top_area {
-                        diag.push(top_area_error(
-                            "Fragment",
-                            "Fragment statement must be declared at the top",
-                            convert_range(s.range),
-                        ))
+                        diag.push(top_area_error("Fragment", "Fragment statement must be declared at the top", s.range))
                     }
                     match is_grammar {
                         Some(true) => diag.push(duplicate_declaration_error(
                             "Fragment",
                             "Already declaration as `grammar!`",
-                            convert_range(s.range),
+                            s.range,
                             &url,
                             name_position,
                         )),
                         Some(false) => diag.push(duplicate_declaration_error(
                             "Fragment",
                             "Already declaration as `fragment!`",
-                            convert_range(s.range),
+                            s.range,
                             &url,
                             name_position,
                         )),
                         None => {
                             is_grammar = Some(false);
-                            name_position = convert_range(s.range);
+                            name_position = s.range;
                             name = Some(s.id.data)
                         }
                     }
                 }
                 Statement::IgnoreStatement(s) => {
                     if !is_top_area {
-                        diag.push(top_area_error(
-                            "Ignore",
-                            "Ignore statement must be declared at the top",
-                            convert_range(s.range),
-                        ))
+                        diag.push(top_area_error("Ignore", "Ignore statement must be declared at the top", s.range))
                     }
                     if !ignores.is_empty() {
                         diag.push(duplicate_declaration_error(
                             "Ignore",
                             "Already declaration ignore statement",
-                            convert_range(s.range),
+                            s.range,
                             &url,
                             name_position,
                         ))
@@ -142,9 +130,9 @@ impl Program {
         let state = GrammarState {
             name,
             name_position,
-            extensions: ext.into_iter().map(|e| (e.data, convert_range(e.range))).collect(),
-            map,
-            ignores: ignores.into_iter().map(|e| (e.data, convert_range(e.range))).collect(),
+            extensions: ext.into_iter().map(|e| (e.data, e.range)).collect(),
+            rule_map: map,
+            ignores: ignores.into_iter().map(|e| (e.data, e.range)).collect(),
             url,
             is_grammar: is_grammar.unwrap_or(false),
         };
@@ -175,11 +163,12 @@ impl From<AssignStatement> for YGGRule {
             name,
             structure_name: structure,
             force_inline,
+            already_inline: false,
             eliminate_unmarked,
             eliminate_unnamed,
             expression,
-            range: convert_range(s.range),
-            name_position: convert_range(s.id.range),
+            range: s.range,
+            name_position: s.id.range,
         }
     }
 }

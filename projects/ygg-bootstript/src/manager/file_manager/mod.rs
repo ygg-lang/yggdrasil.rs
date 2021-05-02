@@ -1,5 +1,9 @@
 pub use self::{file_store::FileStore, file_wrap::FileType, finger_print::FileFingerprint};
-use crate::{codegen::{GrammarState, GrammarType}, manager::HintItems, Result, YGGError};
+use crate::{
+    codegen::{GrammarState, GrammarType},
+    manager::HintItems,
+    Result, YGGError,
+};
 use dashmap::{mapref::one::Ref, DashMap};
 use lsp_types::Url;
 use std::{fs, lazy::SyncLazy, path::Path};

@@ -8,4 +8,3 @@ pub use self::{
     parsing::{Parsed, YGGBuilder},
 };
 use super::*;
-use tree_sitter::Range;

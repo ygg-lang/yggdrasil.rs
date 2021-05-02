@@ -3,6 +3,11 @@ pub mod ast;
 // pub mod gst;
 
 mod errors;
+#[cfg(feature = "lsp")]
+mod lsp;
+
+#[cfg(feature = "lsp")]
+pub use lsp::convert_range;
 
 pub use errors::{Result, YGGError};
 use std::mem::transmute;

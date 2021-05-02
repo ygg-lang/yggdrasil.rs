@@ -38,6 +38,7 @@ pub struct YGGRule {
     /// name <- expr
     /// ^expr
     /// ```
+    already_inline: bool,
     eliminate_unmarked: bool,
     /// Eliminate unnamed nodes
     /// ```ygg
@@ -65,29 +66,50 @@ pub struct GrammarState {
     name_position: Range,
     extensions: Vec<(String, Range)>,
     ignores: Vec<(String, Range)>,
-    map: Map<String, YGGRule>,
+    pub(self) rule_map: Map<String, YGGRule>,
 }
 
 impl GrammarState {
     #[inline]
     pub fn get(&self, rule: &str) -> Option<&YGGRule> {
-        self.map.get(rule)
+        self.rule_map.get(rule)
+    }
+    pub fn get_inline(&self, rule: &str) -> Option<&YGGRule> {
+        match self.rule_map.get(rule) {
+            Some(s) => Some(s),
+            // Check manual inlining
+            None if rule.starts_with("_") => self.rule_map.get(&rule[1..=rule.len()]),
+            _ => None,
+        }
+    }
+    #[inline]
+    pub fn get_mut(&mut self, rule: &str) -> Option<&mut YGGRule> {
+        self.rule_map.get_mut(rule)
+    }
+    #[inline]
+    pub fn get_inline_mut(&mut self, rule: &str) -> Option<&mut YGGRule> {
+        match self.rule_map.get(rule) {
+            Some(_) => self.rule_map.get_mut(rule),
+            // Check manual inlining
+            None if rule.starts_with("_") => self.rule_map.get_mut(&rule[1..=rule.len()]),
+            _ => None,
+        }
     }
     #[inline]
     pub fn insert(&mut self, name: String, rule: YGGRule) -> Option<YGGRule> {
-        self.map.insert(name, rule)
+        self.rule_map.insert(name, rule)
     }
     #[inline]
     pub fn keys(&self) -> Keys<String, YGGRule> {
-        self.map.keys()
+        self.rule_map.keys()
     }
     #[inline]
     pub fn rules(&self) -> Values<String, YGGRule> {
-        self.map.values()
+        self.rule_map.values()
     }
     #[inline]
     pub fn named_rules(&self) -> Vec<YGGRule> {
-        self.map.values().cloned().filter(|r| !r.force_inline).collect()
+        self.rule_map.values().cloned().filter(|r| !r.force_inline).collect()
     }
 }
 
