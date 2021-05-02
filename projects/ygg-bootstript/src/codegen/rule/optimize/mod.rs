@@ -15,6 +15,13 @@ impl GrammarState {
         hint += self.inline()?;
         Ok(hint)
     }
+    /// optimize without import
+    pub fn optimize_local(&mut self) -> Result<HintItems> {
+        let mut hint = HintItems::default();
+        hint += self.merge_regex()?;
+        hint += self.inline()?;
+        Ok(hint)
+    }
     async fn link_external(&mut self) -> Result<()> {
         Ok(())
     }

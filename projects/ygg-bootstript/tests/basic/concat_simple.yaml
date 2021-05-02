@@ -1,31 +1,54 @@
-[
-    AssignStatement {
-        id: "test1",
-        eq: "=",
-        rhs: ConcatExpression {
-            lhs: Data::Identifier(
-                "e1",
-            ),
+AssignStatement {
+    id: "test1",
+    eq: "=",
+    rhs: ConcatExpression {
+        lhs: Data::Identifier(
+            "e1",
+        ),
+        op: "~",
+        rhs: Data::Identifier(
+            "e2",
+        ),
+    },
+}
+AssignStatement {
+    id: "test2",
+    eq: "=",
+    rhs: ConcatExpression {
+        lhs: ConcatExpression {
+            lhs: ConcatExpression {
+                lhs: Data::Identifier(
+                    "e1",
+                ),
+                op: "~",
+                rhs: Data::Identifier(
+                    "e2",
+                ),
+            },
             op: "~",
             rhs: Data::Identifier(
-                "e2",
+                "e3",
             ),
         },
+        op: "~",
+        rhs: Data::Identifier(
+            "e4",
+        ),
     },
-    AssignStatement {
-        id: "test2",
-        eq: "=",
+}
+AssignStatement {
+    id: "test3",
+    eq: "=",
+    rhs: ConcatExpression {
+        lhs: Data::Identifier(
+            "e1",
+        ),
+        op: "~",
         rhs: ConcatExpression {
             lhs: ConcatExpression {
-                lhs: ConcatExpression {
-                    lhs: Data::Identifier(
-                        "e1",
-                    ),
-                    op: "~",
-                    rhs: Data::Identifier(
-                        "e2",
-                    ),
-                },
+                lhs: Data::Identifier(
+                    "e2",
+                ),
                 op: "~",
                 rhs: Data::Identifier(
                     "e3",
@@ -37,54 +60,29 @@
             ),
         },
     },
-    AssignStatement {
-        id: "test3",
-        eq: "=",
-        rhs: ConcatExpression {
+}
+AssignStatement {
+    id: "test4",
+    eq: "=",
+    rhs: ConcatExpression {
+        lhs: ConcatExpression {
             lhs: Data::Identifier(
                 "e1",
             ),
             op: "~",
-            rhs: ConcatExpression {
-                lhs: ConcatExpression {
-                    lhs: Data::Identifier(
-                        "e2",
-                    ),
-                    op: "~",
-                    rhs: Data::Identifier(
-                        "e3",
-                    ),
-                },
-                op: "~",
-                rhs: Data::Identifier(
-                    "e4",
-                ),
-            },
+            rhs: Data::Identifier(
+                "e2",
+            ),
         },
-    },
-    AssignStatement {
-        id: "test4",
-        eq: "=",
+        op: "~",
         rhs: ConcatExpression {
-            lhs: ConcatExpression {
-                lhs: Data::Identifier(
-                    "e1",
-                ),
-                op: "~",
-                rhs: Data::Identifier(
-                    "e2",
-                ),
-            },
+            lhs: Data::Identifier(
+                "e3",
+            ),
             op: "~",
-            rhs: ConcatExpression {
-                lhs: Data::Identifier(
-                    "e3",
-                ),
-                op: "~",
-                rhs: Data::Identifier(
-                    "e4",
-                ),
-            },
+            rhs: Data::Identifier(
+                "e4",
+            ),
         },
     },
-]
+}

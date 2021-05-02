@@ -22,7 +22,7 @@ use tree_sitter_cli::generate::{
 impl GrammarState {
     pub fn build_input_grammar(&self) -> InputGrammar {
         InputGrammar {
-            name: self.name.to_owned(),
+            name: self.name.data.to_owned(),
             variables: vec![],
             extra_symbols: vec![],
             expected_conflicts: vec![],
@@ -44,12 +44,17 @@ impl YGGRule {
 impl From<RefinedExpression> for Rule {
     fn from(e: RefinedExpression) -> Self {
         match e {
-            RefinedExpression::Data(data) => Self::from(*data),
-            RefinedExpression::Choice(_) => {
-                unimplemented!()
-            }
-            RefinedExpression::Concat(c) => Self::from(*c),
+            RefinedExpression::Data(r) => Self::from(*r),
+            RefinedExpression::Choice(r) => Self::from(*r),
+            RefinedExpression::Concat(r) => Self::from(*r),
+            RefinedExpression::Unary(r) => Self::from(*r),
         }
+    }
+}
+
+impl From<RefinedUnary> for Rule {
+    fn from(_: RefinedUnary) -> Self {
+        unimplemented!()
     }
 }
 
@@ -67,6 +72,12 @@ impl From<RefinedData> for Rule {
             RefinedData::Integer(s) => Self::String(s.to_string()),
             RefinedData::Identifier(s) => Self::NamedSymbol(s.data),
         }
+    }
+}
+
+impl From<RefinedChoice> for Rule {
+    fn from(e: RefinedChoice) -> Self {
+        todo!("{:?}", e)
     }
 }
 

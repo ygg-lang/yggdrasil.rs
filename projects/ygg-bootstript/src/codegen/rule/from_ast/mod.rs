@@ -14,6 +14,7 @@ use crate::{
     ygg::{ast::ConcatExpression, YGGError},
     Result,
 };
+use crate::ast::{UnaryPrefix, UnarySuffix};
 
 impl Program {
     pub fn build_grammar(self, url: Url) -> Result<(GrammarState, HintItems)> {
@@ -21,8 +22,8 @@ impl Program {
         let mut is_grammar = None;
         let mut name_position = Default::default();
         let mut name = None;
-        let mut map = Map::<String, YGGRule>::default();
-        let mut ext = vec![];
+        let mut rule_map = Map::<String, YGGRule>::default();
+        let mut extensions = vec![];
         let mut ignores = vec![];
         let mut ignores_pos = None;
         let mut diag = vec![];
@@ -51,7 +52,7 @@ impl Program {
                         None => {
                             is_grammar = Some(true);
                             name_position = s.range;
-                            ext = s.ext;
+                            extensions = s.ext;
                             name = Some(s.id.data)
                         }
                     }
@@ -103,7 +104,7 @@ impl Program {
                 Statement::AssignStatement(s) => {
                     is_top_area = false;
                     let rule = YGGRule::from(*s);
-                    match map.get(&rule.name) {
+                    match rule_map.get(&rule.name) {
                         Some(old) => diag.push(duplicate_declaration_error(
                             "Rule",
                             format!("Already declaration as Rule `{}`", old.name),
@@ -112,27 +113,30 @@ impl Program {
                             old.name_position,
                         )),
                         None => {
-                            map.insert(rule.name.to_owned(), rule);
+                            rule_map.insert(rule.name.to_owned(), rule);
                         }
                     }
                 }
                 Statement::EmptyStatement(_) => continue,
             }
         }
-        let name = match name {
-            Some(s) => s,
-            None => {
-                lens.push(name_missing());
-                String::from("<anonymous>")
-            }
+
+        let name = Identifier {
+            data: match name {
+                Some(s) => s,
+                None => {
+                    lens.push(name_missing());
+                    String::from("<anonymous>")
+                }
+            },
+            range: name_position
         };
 
         let state = GrammarState {
             name,
-            name_position,
-            extensions: ext.into_iter().map(|e| (e.data, e.range)).collect(),
-            rule_map: map,
-            ignores: ignores.into_iter().map(|e| (e.data, e.range)).collect(),
+            extensions,
+            rule_map,
+            ignores,
             url,
             is_grammar: is_grammar.unwrap_or(false),
         };
@@ -177,11 +181,11 @@ impl From<Expression> for RefinedExpression {
     fn from(raw: Expression) -> Self {
         match raw {
             Expression::Data(e) => Self::Data(box RefinedData::from(*e)),
-            Expression::UnarySuffix(_) => {
-                unimplemented!()
+            Expression::UnarySuffix(e) => {
+                Self::Unary(box RefinedUnary::from(*e))
             }
-            Expression::UnaryPrefix(_) => {
-                unimplemented!()
+            Expression::UnaryPrefix(e) => {
+                Self::Unary(box RefinedUnary::from(*e))
             }
             Expression::ConcatExpression(e) => Self::Concat(box RefinedConcat::from(*e)),
             Expression::ChoiceExpression(e) => Self::Choice(box RefinedChoice::from(*e)),
@@ -240,6 +244,27 @@ impl From<RefinedExpression> for RefinedChoice {
 impl From<ChoiceTag> for RefinedTag {
     fn from(e: ChoiceTag) -> Self {
         Self { expr: e.expr.into() }
+    }
+}
+
+
+impl From<UnaryPrefix> for RefinedUnary {
+    fn from(e: UnaryPrefix) -> Self {
+        Self {
+            base: RefinedExpression::from(e.base),
+            prefix: vec![e.prefix],
+            suffix: vec![]
+        }
+    }
+}
+
+impl From<UnarySuffix> for RefinedUnary {
+    fn from(e: UnarySuffix) -> Self {
+        Self {
+            base: RefinedExpression::from(e.base),
+            prefix: vec![],
+            suffix: vec![e.suffix]
+        }
     }
 }
 

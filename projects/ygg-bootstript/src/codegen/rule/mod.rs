@@ -7,6 +7,7 @@ use std::collections::{
 use tree_sitter_cli::generate::grammars::InputGrammar;
 
 use crate::{ast::StringRanged, manager::HintItems, Result};
+use crate::ast::Identifier;
 
 use super::*;
 
@@ -20,6 +21,16 @@ mod optimize;
 
 pub type Map<K, V> = std::collections::HashMap<K, V>;
 // pub type Map<K, V> = indexmap::IndexMap<K, V>;
+
+#[derive(Clone, Debug)]
+pub struct GrammarState {
+    url: Url,
+    is_grammar: bool,
+    name: Identifier,
+    extensions: Vec<StringRanged>,
+    ignores: Vec<StringRanged>,
+    rule_map: Map<String, YGGRule>,
+}
 
 #[derive(Clone, Debug)]
 pub struct YGGRule {
@@ -50,23 +61,6 @@ pub struct YGGRule {
     eliminate_unnamed: bool,
     ///
     expression: RefinedExpression,
-}
-
-#[derive(Clone, Debug)]
-pub struct MetaInfo {
-    name: String,
-    exts: Vec<String>,
-}
-
-#[derive(Clone, Debug)]
-pub struct GrammarState {
-    url: Url,
-    is_grammar: bool,
-    name: String,
-    name_position: Range,
-    extensions: Vec<(String, Range)>,
-    ignores: Vec<(String, Range)>,
-    pub(self) rule_map: Map<String, YGGRule>,
 }
 
 impl GrammarState {

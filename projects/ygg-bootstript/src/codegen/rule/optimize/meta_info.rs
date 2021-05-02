@@ -15,7 +15,7 @@ impl GrammarState {
             true => "Grammar",
             false => "Fragment",
         };
-        let range = self.name_position;
+        let range = self.name.range;
         let mut terms = vec![];
         if self.is_grammar {
             terms.push(self.extension())
@@ -23,7 +23,7 @@ impl GrammarState {
         terms.push(self.ignores());
         DocumentSymbol {
             name: name.to_string(),
-            detail: Some(self.name.to_owned()),
+            detail: Some(self.name.data.to_owned()),
             kind: SymbolKind::Namespace,
             tags: None,
             deprecated: None,
@@ -35,7 +35,7 @@ impl GrammarState {
     fn extension(&self) -> DocumentSymbol {
         let detail;
         let children;
-        let range = self.name_position;
+        let range = self.name.range;
         let n = self.extensions.len();
         match n {
             0 => {
@@ -44,7 +44,13 @@ impl GrammarState {
             }
             _ => {
                 detail = n.to_string();
-                children = Some(self.extensions.iter().enumerate().map(|(i, (e, r))| self.extension_item(i, e, r)).collect());
+                children = Some(
+                    self.extensions
+                        .iter()
+                        .enumerate()
+                        .map(|(i, r)| self.extension_item(i, r.data.to_owned(), r.range))
+                        .collect(),
+                );
             }
         };
         DocumentSymbol {
@@ -58,8 +64,7 @@ impl GrammarState {
             children,
         }
     }
-    fn extension_item(&self, index: usize, ext: &String, range: &Range) -> DocumentSymbol {
-        let range = *range;
+    fn extension_item(&self, index: usize, ext: String, range: Range) -> DocumentSymbol {
         DocumentSymbol {
             name: ext.to_owned(),
             detail: Some((index + 1).to_string()),
@@ -77,10 +82,10 @@ impl GrammarState {
             0 => None,
             _ => {
                 let mut out = vec![];
-                for (name, r) in &self.ignores {
-                    if let Some(s) = self.get(name) {
+                for r in &self.ignores {
+                    if let Some(s) = self.get(&r.data) {
                         let mut s = s.symbol_item();
-                        s.range = *r;
+                        s.range = r.range;
                         out.push(s)
                     }
                 }

@@ -1,78 +1,40 @@
-[
-    AssignStatement {
-        id: "test1",
-        eq: "=",
-        rhs: ConcatExpression [
-            Data::Identifier(
-                "e1",
-            ),
-            "~",
-            Data::Identifier(
-                "e2",
-            ),
-        ],
-    },
-    AssignStatement {
-        id: "test2",
-        eq: "=",
-        rhs: ConcatExpression [
-            Data::Identifier(
-                "e1",
-            ),
-            "~",
-            Data::Identifier(
-                "e2",
-            ),
-            "~",
-            Data::Identifier(
-                "e3",
-            ),
-            "~",
-            Data::Identifier(
-                "e4",
-            ),
-        ],
-    },
-    AssignStatement {
-        id: "test3",
-        eq: "=",
-        rhs: ConcatExpression [
-            Data::Identifier(
-                "e1",
-            ),
-            "~",
-            Data::Identifier(
-                "e2",
-            ),
-            "~",
-            Data::Identifier(
-                "e3",
-            ),
-            "~",
-            Data::Identifier(
-                "e4",
-            ),
-        ],
-    },
-    AssignStatement {
-        id: "test4",
-        eq: "=",
-        rhs: ConcatExpression [
-            Data::Identifier(
-                "e1",
-            ),
-            "~",
-            Data::Identifier(
-                "e2",
-            ),
-            "~",
-            Data::Identifier(
-                "e3",
-            ),
-            "~",
-            Data::Identifier(
-                "e4",
-            ),
-        ],
-    },
-]
+AssignStatement {
+    id: "test1",
+    eq: "=",
+    rhs: Unary::Suffix(
+        Data::Identifier(
+            "e1",
+        ),
+        "?",
+    ),
+}
+AssignStatement {
+    id: "test2",
+    eq: "=",
+    rhs: Unary::Suffix(
+        Data::Identifier(
+            "e1",
+        ),
+        "+",
+    ),
+}
+AssignStatement {
+    id: "test3",
+    eq: "=",
+    rhs: Unary::Suffix(
+        Data::Identifier(
+            "e1",
+        ),
+        "*",
+    ),
+}
+AssignStatement {
+    id: "test4",
+    eq: "=",
+    rhs: Unary::Prefix(
+        "^",
+        Data::Identifier(
+            "e1",
+        ),
+    ),
+}

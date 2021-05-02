@@ -3,6 +3,7 @@ use crate::{codegen::rule::*, ygg::ast::Identifier};
 #[derive(Clone, Debug)]
 pub enum RefinedExpression {
     Data(Box<RefinedData>),
+    Unary(Box<RefinedUnary>),
     Choice(Box<RefinedChoice>),
     Concat(Box<RefinedConcat>),
 }
@@ -20,6 +21,13 @@ pub struct RefinedTag {
 #[derive(Clone, Debug)]
 pub struct RefinedConcat {
     pub inner: Vec<RefinedExpression>,
+}
+
+#[derive(Clone, Debug)]
+pub struct RefinedUnary {
+    pub base: RefinedExpression,
+    pub prefix: Vec<String>,
+    pub suffix: Vec<String>
 }
 
 #[derive(Clone, Debug)]
