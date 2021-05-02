@@ -109,7 +109,7 @@ impl YGGRule {
     fn symbol_item(&self) -> DocumentSymbol {
         let (detail, kind) = self.symbol_detail();
         DocumentSymbol {
-            name: self.name.to_owned(),
+            name: self.name.data.to_owned(),
             detail,
             kind,
             tags: None,

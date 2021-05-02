@@ -7,7 +7,8 @@ use std::fmt::Write;
 
 pub mod basic;
 pub mod diagnostic;
-pub mod input_grammar;
+pub mod optimize;
+pub mod codegen;
 
 pub static EXAMPLE_URL: SyncLazy<Url> = SyncLazy::new(|| Url::from_str("file://example/path").unwrap());
 

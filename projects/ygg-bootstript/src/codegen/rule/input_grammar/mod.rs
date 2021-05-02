@@ -37,7 +37,7 @@ impl GrammarState {
 
 impl YGGRule {
     pub fn build_variable(&self) -> Variable {
-        Variable { name: self.name.to_owned(), kind: VariableType::Named, rule: Rule::Blank }
+        Variable { name: self.name.data.to_owned(), kind: VariableType::Named, rule: Rule::Blank }
     }
 }
 

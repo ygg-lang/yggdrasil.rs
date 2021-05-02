@@ -1,0 +1,11 @@
+InputGrammar {
+    name: "unary",
+    variables: [],
+    extra_symbols: [],
+    expected_conflicts: [],
+    precedence_orderings: [],
+    external_tokens: [],
+    variables_to_inline: [],
+    supertype_symbols: [],
+    word_token: None,
+}

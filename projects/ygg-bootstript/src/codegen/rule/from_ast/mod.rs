@@ -104,16 +104,16 @@ impl Program {
                 Statement::AssignStatement(s) => {
                     is_top_area = false;
                     let rule = YGGRule::from(*s);
-                    match rule_map.get(&rule.name) {
+                    match rule_map.get(&rule.name.data) {
                         Some(old) => diag.push(duplicate_declaration_error(
                             "Rule",
-                            format!("Already declaration as Rule `{}`", old.name),
+                            format!("Already declaration as Rule `{}`", old.name.data),
                             rule.range,
                             &url,
-                            old.name_position,
+                            old.name.range,
                         )),
                         None => {
-                            rule_map.insert(rule.name.to_owned(), rule);
+                            rule_map.insert(rule.name.data.to_owned(), rule);
                         }
                     }
                 }
@@ -164,7 +164,10 @@ impl From<AssignStatement> for YGGRule {
         }
         let expression = RefinedExpression::from(s.rhs);
         Self {
-            name,
+            name: Identifier {
+                data: name,
+                range: s.id.range
+            },
             structure_name: structure,
             force_inline,
             already_inline: false,
@@ -172,7 +175,6 @@ impl From<AssignStatement> for YGGRule {
             eliminate_unnamed,
             expression,
             range: s.range,
-            name_position: s.id.range,
         }
     }
 }

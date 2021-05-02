@@ -1,17 +1,11 @@
 use lsp_types::{Diagnostic, DocumentSymbolResponse, Range, Url};
 use rkyv::{Archive, Deserialize, Serialize};
-use std::collections::{
-    hash_map::{Keys, Values},
-    HashMap,
-};
 use tree_sitter_cli::generate::grammars::InputGrammar;
-
 use crate::{ast::StringRanged, manager::HintItems, Result};
 use crate::ast::Identifier;
-
 use super::*;
-
 pub use self::expression::*;
+use self::remap::{Values,Keys,Map};
 
 mod expression;
 mod from_ast;
@@ -19,8 +13,17 @@ mod hints;
 mod input_grammar;
 mod optimize;
 
-pub type Map<K, V> = std::collections::HashMap<K, V>;
-// pub type Map<K, V> = indexmap::IndexMap<K, V>;
+// used for ide hint
+#[cfg(debug_assertions)]
+mod remap {
+    pub type Map<K, V> = std::collections::HashMap<K, V>;
+    pub use std::collections::hash_map::{Keys, Values};
+}
+#[cfg(not(debug_assertions))]
+mod remap {
+    pub type Map<K, V> = indexmap::IndexMap<K, V>;
+    pub use indexmap::map::{Keys, Values};
+}
 
 #[derive(Clone, Debug)]
 pub struct GrammarState {
@@ -35,9 +38,7 @@ pub struct GrammarState {
 #[derive(Clone, Debug)]
 pub struct YGGRule {
     ///
-    name: String,
-    /// position of the rule
-    name_position: Range,
+    name: Identifier,
     /// position of all parts
     range: Range,
     ///
