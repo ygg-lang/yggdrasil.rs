@@ -1,0 +1,11 @@
+grammar! ygg
+
+program = ^statement*
+
+statement =
+    | grammar_statement
+    | fragment_statement
+    | assign_statement
+
+
+

@@ -36,3 +36,28 @@ pub fn assert_diagnostic(text: &str, target: &str) -> Result<()> {
     assert_eq!(format!("{:#?}", diag), target);
     Ok(())
 }
+
+
+pub fn assert_optimize(text: &str, target: &str) -> Result<()> {
+    let mut parser = YGGBuilder::new()?;
+    parser.update_by_text(text)?;
+    let mut grammar = parser.traverse()?.build_grammar((*EXAMPLE_URL).clone())?.0;
+    grammar.optimize_local()?;
+    let mut out = String::new();
+    for rule in grammar.named_rules() {
+        writeln!(out, "{:#?}", rule)?
+    }
+    assert_eq!(out, target);
+    Ok(())
+}
+
+pub fn assert_codegen(text: &str, target: &str) -> Result<()> {
+    let mut parser = YGGBuilder::new()?;
+    parser.update_by_text(text)?;
+    let mut grammar = parser.traverse()?.build_grammar((*EXAMPLE_URL).clone())?.0;
+    grammar.optimize_local()?;
+    let out = grammar.build_input_grammar();
+    assert_eq!(format!("{:#?}",out), target);
+    Ok(())
+
+}
