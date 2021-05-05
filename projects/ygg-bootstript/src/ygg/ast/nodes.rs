@@ -94,8 +94,9 @@ pub struct ChoiceExpression {
 #[derive(Clone, Debug)]
 pub struct ChoiceTag {
     pub expr: Expression,
-    pub tag: String,
-    pub tag_mode: String,
+    pub tag: Option<String>,
+    pub mode: Option<String>,
+    pub ty: Option<String>,
     #[cfg(feature = "lsp")]
     pub range: lsp_types::Range,
     #[cfg(not(feature = "lsp"))]

@@ -29,7 +29,16 @@ where
     fn named_one(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Self> {
         match this.child_by_field_name(field) {
             Some(node) => Ok(Self::parse(state, node)?),
-            None => Err(YGGError::node_missing(field, this.range())),
+            None => {
+                unreachable!();
+                Err(YGGError::node_missing(field, this.range()))
+            },
+        }
+    }
+    fn named_some(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Option<Self>> {
+        match this.child_by_field_name(field) {
+            Some(node) => Ok(Some(Self::parse(state, node)?)),
+            None => Ok(None),
         }
     }
     fn named_many(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Vec<Self>> {
@@ -147,9 +156,10 @@ parsed_wrap!(ChoiceExpression:
 );
 
 parsed_wrap!(ChoiceTag:
-    expr << (named_one, "id"),
-    tag << (named_one, "eq"),
-    tag_mode << (named_one, "rhs")
+    expr << (named_one, "expression"),
+    tag << (named_some, "tag"),
+    mode << (named_some, "mode"),
+    ty << (named_some, "ty")
 );
 
 parsed_wrap!(FieldExpression:

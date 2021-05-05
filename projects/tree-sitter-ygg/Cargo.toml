@@ -1,10 +1,10 @@
 [package]
 name = "tree-sitter-ygg"
 description = "Yggdrasil grammar for the tree-sitter parsing library"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Aster <192608617@qq.com>"]
 license = "MIT"
-readme = "../../readme.md"
+readme = "readme.md"
 keywords = ["incremental", "parsing", "rust"]
 categories = ["parsing", "text-editors"]
 repository = "https://github.com/ygg-lang/yggdrasil-rs"

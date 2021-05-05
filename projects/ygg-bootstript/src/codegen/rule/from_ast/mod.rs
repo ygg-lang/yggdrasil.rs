@@ -1,5 +1,4 @@
 use std::{collections::HashSet, ops::AddAssign};
-
 use convert_case::{Case, Casing};
 use lsp_types::{CodeDescription, CodeLens, Url};
 use serde_json::Value;
@@ -15,6 +14,9 @@ use crate::{
     Result,
 };
 use crate::ast::{UnaryPrefix, UnarySuffix};
+
+mod choice;
+mod concat;
 
 impl Program {
     pub fn build_grammar(self, url: Url) -> Result<(GrammarState, HintItems)> {
@@ -198,56 +200,8 @@ impl From<Expression> for RefinedExpression {
     }
 }
 
-impl From<ConcatExpression> for RefinedConcat {
-    fn from(e: ConcatExpression) -> Self {
-        let lhs = RefinedExpression::from(e.lhs);
-        let rhs = RefinedExpression::from(e.rhs);
-        let mut base = Self::from(lhs);
-        base += rhs;
-        return base;
-    }
-}
 
-impl From<RefinedExpression> for RefinedConcat {
-    fn from(e: RefinedExpression) -> Self {
-        match e {
-            RefinedExpression::Concat(c) => Self { inner: c.inner },
-            _ => Self { inner: vec![e] },
-        }
-    }
-}
 
-impl AddAssign<RefinedExpression> for RefinedConcat {
-    fn add_assign(&mut self, rhs: RefinedExpression) {
-        match rhs {
-            RefinedExpression::Concat(c) => self.inner.extend(c.inner),
-            _ => self.inner.push(rhs),
-        }
-    }
-}
-
-impl From<ChoiceExpression> for RefinedChoice {
-    fn from(_: ChoiceExpression) -> Self {
-        todo!()
-        // let lhs = RefinedExpression::from(e.lhs);
-        // let rhs = RefinedExpression::from(e.rhs);
-        // let mut base = Self::from(lhs);
-        // base += rhs;
-        // return base;
-    }
-}
-
-impl From<RefinedExpression> for RefinedChoice {
-    fn from(_: RefinedExpression) -> Self {
-        todo!()
-    }
-}
-
-impl From<ChoiceTag> for RefinedTag {
-    fn from(e: ChoiceTag) -> Self {
-        Self { expr: e.expr.into() }
-    }
-}
 
 
 impl From<UnaryPrefix> for RefinedUnary {

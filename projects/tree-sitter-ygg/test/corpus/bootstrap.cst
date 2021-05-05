@@ -1,0 +1,77 @@
+==================
+Bootstrap
+==================
+grammar! ygg {"*.ygg"}
+
+program = ^statement*
+
+statement =
+    | grammar_statement
+    | fragment_statement
+    | assign_statement
+------------------
+
+(program
+  (statement
+    (grammar_statement
+      (grammar)
+      (WHITESPACE)
+      (id)))
+  (WHITESPACE)
+  (WHITESPACE)
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (expression
+        (unary_prefix
+          (expression
+            (unary_suffix
+              (expression
+                (data
+                  (id)))))))))
+  (WHITESPACE)
+  (WHITESPACE)
+  (statement
+    (assign_statement
+      (id)
+      (WHITESPACE)
+      (eq)
+      (WHITESPACE)
+      (WHITESPACE)
+      (WHITESPACE)
+      (WHITESPACE)
+      (WHITESPACE)
+      (WHITESPACE)
+      (expression
+        (choice_expression
+          (choice_tag
+            (expression
+              (choice_expression
+                (choice_tag
+                  (expression
+                    (data
+                      (id))))
+                (WHITESPACE)
+                (WHITESPACE)
+                (WHITESPACE)
+                (WHITESPACE)
+                (WHITESPACE)
+                (WHITESPACE)
+                (choice_tag
+                  (expression
+                    (data
+                      (id)))))))
+          (WHITESPACE)
+          (WHITESPACE)
+          (WHITESPACE)
+          (WHITESPACE)
+          (WHITESPACE)
+          (WHITESPACE)
+          (choice_tag
+            (expression
+              (data
+                (id)))))))))
+
