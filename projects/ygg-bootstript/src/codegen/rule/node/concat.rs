@@ -1,5 +1,10 @@
-
 use super::*;
+
+impl From<ConcatExpression> for ExpressionNode {
+    fn from(e: ConcatExpression) -> Self {
+        Self { tag: None, ty: None, field: None, node: RefinedExpression::Concat(box RefinedConcat::from(e)) }
+    }
+}
 
 impl From<ConcatExpression> for RefinedConcat {
     fn from(e: ConcatExpression) -> Self {
@@ -15,16 +20,16 @@ impl From<ExpressionNode> for RefinedConcat {
     fn from(e: ExpressionNode) -> Self {
         match e.get_concat() {
             Some(s) => Self { inner: s.inner },
-            None => Self { inner: vec![e] }
+            None => Self { inner: vec![e] },
         }
     }
 }
 
 impl AddAssign<ExpressionNode> for RefinedConcat {
     fn add_assign(&mut self, rhs: ExpressionNode) {
-        match rhs {
-            ExpressionNode::Concat(c) => self.inner.extend(c.inner),
-            _ => self.inner.push(rhs),
+        match rhs.get_concat() {
+            Some(c) => self.inner.extend(c.inner),
+            None => self.inner.push(rhs),
         }
     }
 }

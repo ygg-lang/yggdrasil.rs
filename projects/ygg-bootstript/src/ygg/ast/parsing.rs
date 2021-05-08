@@ -32,7 +32,7 @@ where
             None => {
                 unreachable!();
                 Err(YGGError::node_missing(field, this.range()))
-            },
+            }
         }
     }
     fn named_some(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Option<Self>> {

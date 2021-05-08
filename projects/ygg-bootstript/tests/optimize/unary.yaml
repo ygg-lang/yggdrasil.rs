@@ -29,31 +29,41 @@ YGGRule {
     already_inline: false,
     eliminate_unmarked: false,
     eliminate_unnamed: false,
-    expression: Unary(
-        RefinedUnary {
-            base: Data(
-                Identifier(
-                    Identifier {
-                        data: "e1",
-                        range: Range {
-                            start: Position {
-                                line: 2,
-                                character: 8,
+    expression: ExpressionNode {
+        tag: None,
+        ty: None,
+        field: None,
+        node: Unary(
+            RefinedUnary {
+                base: ExpressionNode {
+                    tag: None,
+                    ty: None,
+                    field: None,
+                    node: Data(
+                        Identifier(
+                            Identifier {
+                                data: "e1",
+                                range: Range {
+                                    start: Position {
+                                        line: 2,
+                                        character: 8,
+                                    },
+                                    end: Position {
+                                        line: 2,
+                                        character: 10,
+                                    },
+                                },
                             },
-                            end: Position {
-                                line: 2,
-                                character: 10,
-                            },
-                        },
-                    },
-                ),
-            ),
-            prefix: [],
-            suffix: [
-                "?",
-            ],
-        },
-    ),
+                        ),
+                    ),
+                },
+                prefix: [],
+                suffix: [
+                    "?",
+                ],
+            },
+        ),
+    },
 }
 YGGRule {
     name: Identifier {
@@ -86,88 +96,41 @@ YGGRule {
     already_inline: false,
     eliminate_unmarked: false,
     eliminate_unnamed: false,
-    expression: Unary(
-        RefinedUnary {
-            base: Data(
-                Identifier(
-                    Identifier {
-                        data: "e1",
-                        range: Range {
-                            start: Position {
-                                line: 3,
-                                character: 8,
+    expression: ExpressionNode {
+        tag: None,
+        ty: None,
+        field: None,
+        node: Unary(
+            RefinedUnary {
+                base: ExpressionNode {
+                    tag: None,
+                    ty: None,
+                    field: None,
+                    node: Data(
+                        Identifier(
+                            Identifier {
+                                data: "e1",
+                                range: Range {
+                                    start: Position {
+                                        line: 3,
+                                        character: 8,
+                                    },
+                                    end: Position {
+                                        line: 3,
+                                        character: 10,
+                                    },
+                                },
                             },
-                            end: Position {
-                                line: 3,
-                                character: 10,
-                            },
-                        },
-                    },
-                ),
-            ),
-            prefix: [],
-            suffix: [
-                "+",
-            ],
-        },
-    ),
-}
-YGGRule {
-    name: Identifier {
-        data: "test3",
-        range: Range {
-            start: Position {
-                line: 4,
-                character: 0,
+                        ),
+                    ),
+                },
+                prefix: [],
+                suffix: [
+                    "+",
+                ],
             },
-            end: Position {
-                line: 4,
-                character: 5,
-            },
-        },
+        ),
     },
-    range: Range {
-        start: Position {
-            line: 4,
-            character: 0,
-        },
-        end: Position {
-            line: 4,
-            character: 12,
-        },
-    },
-    structure_name: Some(
-        "Test3",
-    ),
-    force_inline: false,
-    already_inline: false,
-    eliminate_unmarked: false,
-    eliminate_unnamed: false,
-    expression: Unary(
-        RefinedUnary {
-            base: Data(
-                Identifier(
-                    Identifier {
-                        data: "e1",
-                        range: Range {
-                            start: Position {
-                                line: 4,
-                                character: 8,
-                            },
-                            end: Position {
-                                line: 4,
-                                character: 10,
-                            },
-                        },
-                    },
-                ),
-            ),
-            prefix: [],
-            suffix: [
-                "*",
-            ],
-        },
-    ),
 }
 YGGRule {
     name: Identifier {
@@ -200,29 +163,106 @@ YGGRule {
     already_inline: false,
     eliminate_unmarked: false,
     eliminate_unnamed: false,
-    expression: Unary(
-        RefinedUnary {
-            base: Data(
-                Identifier(
-                    Identifier {
-                        data: "e1",
-                        range: Range {
-                            start: Position {
-                                line: 5,
-                                character: 9,
+    expression: ExpressionNode {
+        tag: None,
+        ty: None,
+        field: None,
+        node: Unary(
+            RefinedUnary {
+                base: ExpressionNode {
+                    tag: None,
+                    ty: None,
+                    field: None,
+                    node: Data(
+                        Identifier(
+                            Identifier {
+                                data: "e1",
+                                range: Range {
+                                    start: Position {
+                                        line: 5,
+                                        character: 9,
+                                    },
+                                    end: Position {
+                                        line: 5,
+                                        character: 11,
+                                    },
+                                },
                             },
-                            end: Position {
-                                line: 5,
-                                character: 11,
-                            },
-                        },
-                    },
-                ),
-            ),
-            prefix: [
-                "^",
-            ],
-            suffix: [],
+                        ),
+                    ),
+                },
+                prefix: [
+                    "^",
+                ],
+                suffix: [],
+            },
+        ),
+    },
+}
+YGGRule {
+    name: Identifier {
+        data: "test3",
+        range: Range {
+            start: Position {
+                line: 4,
+                character: 0,
+            },
+            end: Position {
+                line: 4,
+                character: 5,
+            },
         },
+    },
+    range: Range {
+        start: Position {
+            line: 4,
+            character: 0,
+        },
+        end: Position {
+            line: 4,
+            character: 12,
+        },
+    },
+    structure_name: Some(
+        "Test3",
     ),
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        tag: None,
+        ty: None,
+        field: None,
+        node: Unary(
+            RefinedUnary {
+                base: ExpressionNode {
+                    tag: None,
+                    ty: None,
+                    field: None,
+                    node: Data(
+                        Identifier(
+                            Identifier {
+                                data: "e1",
+                                range: Range {
+                                    start: Position {
+                                        line: 4,
+                                        character: 8,
+                                    },
+                                    end: Position {
+                                        line: 4,
+                                        character: 10,
+                                    },
+                                },
+                            },
+                        ),
+                    ),
+                },
+                prefix: [],
+                suffix: [
+                    "*",
+                ],
+            },
+        ),
+    },
 }

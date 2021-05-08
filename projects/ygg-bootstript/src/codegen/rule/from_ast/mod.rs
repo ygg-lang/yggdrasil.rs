@@ -1,18 +1,15 @@
-
 use convert_case::{Case, Casing};
-use lsp_types::{ Url};
-
+use lsp_types::Url;
 
 use super::{
     hints::{duplicate_declaration_error, name_missing, top_area_error},
     *,
 };
 use crate::{
-    ast::{AssignStatement, Data, Expression, Program, Statement},
+    ast::{AssignStatement,  Program, Statement},
     manager::HintItems,
     Result,
 };
-use crate::ast::{UnaryPrefix, UnarySuffix};
 
 impl Program {
     pub fn build_grammar(self, url: Url) -> Result<(GrammarState, HintItems)> {
@@ -127,17 +124,10 @@ impl Program {
                     String::from("<anonymous>")
                 }
             },
-            range: name_position
+            range: name_position,
         };
 
-        let state = GrammarState {
-            name,
-            extensions,
-            rule_map,
-            ignores,
-            url,
-            is_grammar: is_grammar.unwrap_or(false),
-        };
+        let state = GrammarState { name, extensions, rule_map, ignores, url, is_grammar: is_grammar.unwrap_or(false) };
 
         let hint = HintItems { diagnostic: diag, code_lens: lens, document_symbol: vec![] };
 
@@ -162,10 +152,7 @@ impl From<AssignStatement> for YGGRule {
         }
         let expression = ExpressionNode::from(s.rhs);
         Self {
-            name: Identifier {
-                data: name,
-                range: s.id.range
-            },
+            name: Identifier { data: name, range: s.id.range },
             structure_name: structure,
             force_inline,
             already_inline: false,

@@ -63,7 +63,7 @@ test5 =
 
 #[test]
 fn test_or_tagged() -> Result<()> {
-    assert_ast(OR_TAGGED, include_str!("or_simple.yaml"))
+    assert_ast(OR_TAGGED, include_str!("or_tagged.yaml"))
 }
 
 const INCOMPLETE: &str = r#"
@@ -80,8 +80,6 @@ rule2 =
 fn test_incomplete() -> Result<()> {
     assert_ast(INCOMPLETE, include_str!("incomplete.yaml"))
 }
-
-
 
 #[test]
 fn test_bootstrap() -> Result<()> {

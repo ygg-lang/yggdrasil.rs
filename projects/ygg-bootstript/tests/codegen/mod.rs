@@ -14,8 +14,6 @@ fn test_unary() -> Result<()> {
     assert_codegen(UNARY, include_str!("unary.yaml"))
 }
 
-
-
 #[test]
 fn test_bootstrap() -> Result<()> {
     assert_codegen(include_str!("../bootstrap.ygg"), include_str!("bootstrap.yaml"))

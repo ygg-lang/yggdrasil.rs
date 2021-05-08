@@ -1,14 +1,13 @@
 #![feature(once_cell)]
 
 use lsp_types::Url;
-use std::{lazy::SyncLazy, str::FromStr};
+use std::{fmt::Write, lazy::SyncLazy, str::FromStr};
 use yggdrasil_bootstript::{ast::YGGBuilder, Result};
-use std::fmt::Write;
 
 pub mod basic;
+pub mod codegen;
 pub mod diagnostic;
 pub mod optimize;
-pub mod codegen;
 
 pub static EXAMPLE_URL: SyncLazy<Url> = SyncLazy::new(|| Url::from_str("file://example/path").unwrap());
 
@@ -37,7 +36,6 @@ pub fn assert_diagnostic(text: &str, target: &str) -> Result<()> {
     Ok(())
 }
 
-
 pub fn assert_optimize(text: &str, target: &str) -> Result<()> {
     let mut parser = YGGBuilder::new()?;
     parser.update_by_text(text)?;
@@ -57,7 +55,6 @@ pub fn assert_codegen(text: &str, target: &str) -> Result<()> {
     let mut grammar = parser.traverse()?.build_grammar((*EXAMPLE_URL).clone())?.0;
     grammar.optimize_local()?;
     let out = grammar.build_input_grammar();
-    assert_eq!(format!("{:#?}",out), target);
+    assert_eq!(format!("{:#?}", out), target);
     Ok(())
-
 }

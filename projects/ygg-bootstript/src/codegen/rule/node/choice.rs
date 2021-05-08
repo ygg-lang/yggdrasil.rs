@@ -1,5 +1,11 @@
 use super::*;
 
+impl From<ChoiceExpression> for ExpressionNode {
+    fn from(e: ChoiceExpression) -> Self {
+        Self { tag: None, ty: None, field: None, node: RefinedExpression::Choice(box RefinedChoice::from(e)) }
+    }
+}
+
 impl From<ChoiceExpression> for RefinedChoice {
     fn from(e: ChoiceExpression) -> Self {
         let lhs = ExpressionNode::from(e.lhs);
@@ -14,11 +20,9 @@ impl From<ChoiceTag> for ExpressionNode {
     fn from(e: ChoiceTag) -> Self {
         ExpressionNode {
             tag: ExpressionTag::new_optional(e.tag, e.mode),
-            ty: None,
+            ty: e.ty,
             field: None,
-            node: RefinedExpression::Choice(box RefinedChoice {
-                inner: vec![RefinedExpression::from(e.expr)]
-            })
+            node: RefinedExpression::Choice(box RefinedChoice { inner: vec![ExpressionNode::from(e.expr)] }),
         }
     }
 }
@@ -29,12 +33,11 @@ impl From<ExpressionNode> for RefinedChoice {
     }
 }
 
-
 impl AddAssign<ExpressionNode> for RefinedChoice {
     fn add_assign(&mut self, rhs: ExpressionNode) {
-        match rhs {
-            ExpressionNode::Choice(c) => self.inner.extend(c.inner),
-            _ => self.inner.push(rhs),
+        match rhs.get_choice() {
+            Some(c) => self.inner.extend(c.inner),
+            None => self.inner.push(rhs),
         }
     }
 }

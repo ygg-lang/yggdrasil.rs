@@ -1,28 +1,23 @@
 use crate::ast::*;
 use std::ops::AddAssign;
 
-mod expr;
 mod choice;
 mod concat;
+mod expr;
 mod unary;
 
 #[derive(Clone, Debug)]
 pub struct ExpressionNode {
-    tag: Option<ExpressionTag>,
-    ty: Option<ExpressionType>,
-    field: Option<Identifier>,
-    node :RefinedExpression
+    pub tag: Option<ExpressionTag>,
+    pub ty: Option<Identifier>,
+    pub field: Option<Identifier>,
+    pub node: RefinedExpression,
 }
 #[derive(Clone, Debug)]
 pub struct ExpressionTag {
-    tag: String,
+    tag: Identifier,
     mode: String,
 }
-#[derive(Clone, Debug)]
-pub struct ExpressionType {
-    ty: String
-}
-
 
 #[derive(Clone, Debug)]
 pub enum RefinedExpression {
@@ -32,22 +27,21 @@ pub enum RefinedExpression {
     Concat(Box<RefinedConcat>),
 }
 
-
 #[derive(Clone, Debug)]
 pub struct RefinedChoice {
-    inner: Vec<ExpressionNode>,
+    pub inner: Vec<ExpressionNode>,
 }
 
 #[derive(Clone, Debug)]
 pub struct RefinedConcat {
-    inner: Vec<ExpressionNode>,
+    pub inner: Vec<ExpressionNode>,
 }
 
 #[derive(Clone, Debug)]
 pub struct RefinedUnary {
     base: ExpressionNode,
     prefix: Vec<String>,
-    suffix: Vec<String>
+    suffix: Vec<String>,
 }
 
 #[derive(Clone, Debug)]
@@ -57,5 +51,3 @@ pub enum RefinedData {
     Regex(String),
     Integer(usize),
 }
-
-

@@ -1,60 +1,52 @@
 use super::*;
 
 impl ExpressionNode {
+    pub fn has_meta(&self) -> bool {
+        self.field.is_some()
+    }
     pub fn is_choice(&self) -> bool {
-        matches!(self.node, RefinedExpression::Choice(_)  )
+        matches!(self.node, RefinedExpression::Choice(_))
     }
     pub fn is_concat(&self) -> bool {
-        matches!(self.node, RefinedExpression::Concat(_)  )
+        matches!(self.node, RefinedExpression::Concat(_))
     }
 }
 
 impl ExpressionNode {
-    pub fn get_concat(self) -> Option<RefinedConcat> {
-        match self.node {
+    pub fn get_concat(&self) -> Option<RefinedConcat> {
+        match self.to_owned().node {
             RefinedExpression::Concat(c) => Some(*c),
-            _ => None
+            _ => None,
         }
     }
-    pub fn get_choice(self) -> Option<RefinedChoice> {
-        match self.node {
+    pub fn get_choice(&self) -> Option<RefinedChoice> {
+        match self.to_owned().node {
             RefinedExpression::Choice(c) => Some(*c),
-            _ => None
+            _ => None,
         }
     }
 }
 
 impl ExpressionTag {
-    pub fn new(tag: String, mode: Option<String>) -> Self {
-        Self {
-            tag,
-            mode: mode.unwrap_or_default(),
-        }
+    pub fn new(tag: Identifier, mode: Option<String>) -> Self {
+        Self { tag, mode: mode.unwrap_or_default() }
     }
-    pub fn new_optional(tag: Option<String>, mode: Option<String>) -> Option<Self>{
+    pub fn new_optional(tag: Option<Identifier>, mode: Option<String>) -> Option<Self> {
         match tag {
-            Some(s) => {
-                Some(
-                    Self::new(s, mode)
-                )
-            },
-            None => None
+            Some(s) => Some(Self::new(s, mode)),
+            None => None,
         }
     }
 }
 
 impl From<Expression> for ExpressionNode {
-    fn from(e: Expression) -> Self {
+    fn from(raw: Expression) -> Self {
         match raw {
             Expression::Data(e) => Self::from(*e),
-            Expression::UnarySuffix(e) => {
-                Self::Unary(box RefinedUnary::from(*e))
-            }
-            Expression::UnaryPrefix(e) => {
-                Self::Unary(box RefinedUnary::from(*e))
-            }
-            Expression::ConcatExpression(e) => RefinedExpression::Concat(box RefinedConcat::from(*e)),
-            Expression::ChoiceExpression(e) => RefinedExpression::Choice(box RefinedChoice::from(*e)),
+            Expression::UnarySuffix(e) => Self::from(*e),
+            Expression::UnaryPrefix(e) => Self::from(*e),
+            Expression::ConcatExpression(e) => Self::from(*e),
+            Expression::ChoiceExpression(e) => Self::from(*e),
             Expression::FieldExpression(_) => {
                 unimplemented!()
             }
@@ -62,23 +54,11 @@ impl From<Expression> for ExpressionNode {
     }
 }
 
-
-
-
-
-
-
 impl From<Data> for ExpressionNode {
-    fn from(data: Data) -> Self {
-        Self {
-            tag: None,
-            ty: None,
-            field: None,
-            node: RefinedExpression::Data(box RefinedData::from(*e))
-        }
+    fn from(e: Data) -> Self {
+        Self { tag: None, ty: None, field: None, node: RefinedExpression::Data(box RefinedData::from(e)) }
     }
 }
-
 
 impl From<Data> for RefinedData {
     fn from(data: Data) -> Self {

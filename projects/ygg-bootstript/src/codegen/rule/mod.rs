@@ -1,13 +1,15 @@
-use lsp_types::{ Range, Url};
-use crate::{ast::StringRanged, Result};
-use crate::ast::Identifier;
 pub use self::node::*;
-use self::remap::{Values,Keys,Map};
+use self::remap::{Keys, Map, Values};
+use crate::{
+    ast::{Identifier, StringRanged},
+    Result,
+};
+use lsp_types::{Range, Url};
 
-mod node;
+mod build;
 mod from_ast;
 mod hints;
-mod input_grammar;
+mod node;
 mod optimize;
 
 // used for ide hint

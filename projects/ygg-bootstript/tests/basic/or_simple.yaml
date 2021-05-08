@@ -1,40 +1,431 @@
 AssignStatement {
     id: "test1",
     eq: "=",
-    rhs: Unary::Suffix(
-        Data::Identifier(
-            "e1",
-        ),
-        "?",
-    ),
+    rhs: ChoiceExpression {
+        lhs: ChoiceTag {
+            expr: Data::Identifier(
+                "e1",
+            ),
+            tag: None,
+            mode: None,
+            ty: None,
+            range: Range {
+                start: Position {
+                    line: 1,
+                    character: 8,
+                },
+                end: Position {
+                    line: 1,
+                    character: 10,
+                },
+            },
+        },
+        op: "|",
+        rhs: ChoiceTag {
+            expr: Data::Identifier(
+                "e2",
+            ),
+            tag: None,
+            mode: None,
+            ty: None,
+            range: Range {
+                start: Position {
+                    line: 1,
+                    character: 13,
+                },
+                end: Position {
+                    line: 1,
+                    character: 15,
+                },
+            },
+        },
+    },
 }
 AssignStatement {
     id: "test2",
     eq: "=",
-    rhs: Unary::Suffix(
-        Data::Identifier(
-            "e1",
-        ),
-        "+",
-    ),
+    rhs: ChoiceExpression {
+        lhs: ChoiceTag {
+            expr: Data::Identifier(
+                "e1",
+            ),
+            tag: None,
+            mode: None,
+            ty: None,
+            range: Range {
+                start: Position {
+                    line: 3,
+                    character: 6,
+                },
+                end: Position {
+                    line: 3,
+                    character: 8,
+                },
+            },
+        },
+        op: "|",
+        rhs: ChoiceTag {
+            expr: Data::Identifier(
+                "e2",
+            ),
+            tag: None,
+            mode: None,
+            ty: None,
+            range: Range {
+                start: Position {
+                    line: 4,
+                    character: 6,
+                },
+                end: Position {
+                    line: 4,
+                    character: 8,
+                },
+            },
+        },
+    },
 }
 AssignStatement {
     id: "test3",
     eq: "=",
-    rhs: Unary::Suffix(
-        Data::Identifier(
-            "e1",
-        ),
-        "*",
-    ),
+    rhs: ChoiceExpression {
+        lhs: ChoiceTag {
+            expr: ChoiceExpression {
+                lhs: ChoiceTag {
+                    expr: ChoiceExpression {
+                        lhs: ChoiceTag {
+                            expr: Data::Identifier(
+                                "e1",
+                            ),
+                            tag: None,
+                            mode: None,
+                            ty: None,
+                            range: Range {
+                                start: Position {
+                                    line: 5,
+                                    character: 8,
+                                },
+                                end: Position {
+                                    line: 5,
+                                    character: 10,
+                                },
+                            },
+                        },
+                        op: "|",
+                        rhs: ChoiceTag {
+                            expr: Data::Identifier(
+                                "e2",
+                            ),
+                            tag: None,
+                            mode: None,
+                            ty: None,
+                            range: Range {
+                                start: Position {
+                                    line: 5,
+                                    character: 13,
+                                },
+                                end: Position {
+                                    line: 5,
+                                    character: 15,
+                                },
+                            },
+                        },
+                    },
+                    tag: None,
+                    mode: None,
+                    ty: None,
+                    range: Range {
+                        start: Position {
+                            line: 5,
+                            character: 8,
+                        },
+                        end: Position {
+                            line: 5,
+                            character: 15,
+                        },
+                    },
+                },
+                op: "|",
+                rhs: ChoiceTag {
+                    expr: Data::Identifier(
+                        "e3",
+                    ),
+                    tag: None,
+                    mode: None,
+                    ty: None,
+                    range: Range {
+                        start: Position {
+                            line: 5,
+                            character: 18,
+                        },
+                        end: Position {
+                            line: 5,
+                            character: 20,
+                        },
+                    },
+                },
+            },
+            tag: None,
+            mode: None,
+            ty: None,
+            range: Range {
+                start: Position {
+                    line: 5,
+                    character: 8,
+                },
+                end: Position {
+                    line: 5,
+                    character: 20,
+                },
+            },
+        },
+        op: "|",
+        rhs: ChoiceTag {
+            expr: Data::Identifier(
+                "e4",
+            ),
+            tag: None,
+            mode: None,
+            ty: None,
+            range: Range {
+                start: Position {
+                    line: 5,
+                    character: 23,
+                },
+                end: Position {
+                    line: 5,
+                    character: 25,
+                },
+            },
+        },
+    },
 }
 AssignStatement {
     id: "test4",
     eq: "=",
-    rhs: Unary::Prefix(
-        "^",
-        Data::Identifier(
-            "e1",
-        ),
-    ),
+    rhs: ChoiceExpression {
+        lhs: ChoiceTag {
+            expr: Data::Identifier(
+                "e1",
+            ),
+            tag: None,
+            mode: None,
+            ty: None,
+            range: Range {
+                start: Position {
+                    line: 7,
+                    character: 6,
+                },
+                end: Position {
+                    line: 7,
+                    character: 8,
+                },
+            },
+        },
+        op: "|",
+        rhs: ChoiceTag {
+            expr: ChoiceExpression {
+                lhs: ChoiceTag {
+                    expr: ChoiceExpression {
+                        lhs: ChoiceTag {
+                            expr: Data::Identifier(
+                                "e2",
+                            ),
+                            tag: None,
+                            mode: None,
+                            ty: None,
+                            range: Range {
+                                start: Position {
+                                    line: 8,
+                                    character: 8,
+                                },
+                                end: Position {
+                                    line: 8,
+                                    character: 10,
+                                },
+                            },
+                        },
+                        op: "|",
+                        rhs: ChoiceTag {
+                            expr: Data::Identifier(
+                                "e3",
+                            ),
+                            tag: None,
+                            mode: None,
+                            ty: None,
+                            range: Range {
+                                start: Position {
+                                    line: 8,
+                                    character: 13,
+                                },
+                                end: Position {
+                                    line: 8,
+                                    character: 15,
+                                },
+                            },
+                        },
+                    },
+                    tag: None,
+                    mode: None,
+                    ty: None,
+                    range: Range {
+                        start: Position {
+                            line: 8,
+                            character: 7,
+                        },
+                        end: Position {
+                            line: 8,
+                            character: 16,
+                        },
+                    },
+                },
+                op: "|",
+                rhs: ChoiceTag {
+                    expr: Data::Identifier(
+                        "e4",
+                    ),
+                    tag: None,
+                    mode: None,
+                    ty: None,
+                    range: Range {
+                        start: Position {
+                            line: 8,
+                            character: 19,
+                        },
+                        end: Position {
+                            line: 8,
+                            character: 21,
+                        },
+                    },
+                },
+            },
+            tag: None,
+            mode: None,
+            ty: None,
+            range: Range {
+                start: Position {
+                    line: 8,
+                    character: 6,
+                },
+                end: Position {
+                    line: 8,
+                    character: 22,
+                },
+            },
+        },
+    },
+}
+AssignStatement {
+    id: "test5",
+    eq: "=",
+    rhs: ChoiceExpression {
+        lhs: ChoiceTag {
+            expr: ChoiceExpression {
+                lhs: ChoiceTag {
+                    expr: Data::Identifier(
+                        "e1",
+                    ),
+                    tag: None,
+                    mode: None,
+                    ty: None,
+                    range: Range {
+                        start: Position {
+                            line: 10,
+                            character: 7,
+                        },
+                        end: Position {
+                            line: 10,
+                            character: 9,
+                        },
+                    },
+                },
+                op: "|",
+                rhs: ChoiceTag {
+                    expr: Data::Identifier(
+                        "e2",
+                    ),
+                    tag: None,
+                    mode: None,
+                    ty: None,
+                    range: Range {
+                        start: Position {
+                            line: 10,
+                            character: 12,
+                        },
+                        end: Position {
+                            line: 10,
+                            character: 14,
+                        },
+                    },
+                },
+            },
+            tag: None,
+            mode: None,
+            ty: None,
+            range: Range {
+                start: Position {
+                    line: 10,
+                    character: 6,
+                },
+                end: Position {
+                    line: 10,
+                    character: 15,
+                },
+            },
+        },
+        op: "|",
+        rhs: ChoiceTag {
+            expr: ChoiceExpression {
+                lhs: ChoiceTag {
+                    expr: Data::Identifier(
+                        "e3",
+                    ),
+                    tag: None,
+                    mode: None,
+                    ty: None,
+                    range: Range {
+                        start: Position {
+                            line: 11,
+                            character: 7,
+                        },
+                        end: Position {
+                            line: 11,
+                            character: 9,
+                        },
+                    },
+                },
+                op: "|",
+                rhs: ChoiceTag {
+                    expr: Data::Identifier(
+                        "e4",
+                    ),
+                    tag: None,
+                    mode: None,
+                    ty: None,
+                    range: Range {
+                        start: Position {
+                            line: 11,
+                            character: 12,
+                        },
+                        end: Position {
+                            line: 11,
+                            character: 14,
+                        },
+                    },
+                },
+            },
+            tag: None,
+            mode: None,
+            ty: None,
+            range: Range {
+                start: Position {
+                    line: 11,
+                    character: 6,
+                },
+                end: Position {
+                    line: 11,
+                    character: 15,
+                },
+            },
+        },
+    },
 }
