@@ -1,13 +1,10 @@
-use lsp_types::{Diagnostic, DocumentSymbolResponse, Range, Url};
-use rkyv::{Archive, Deserialize, Serialize};
-use tree_sitter_cli::generate::grammars::InputGrammar;
-use crate::{ast::StringRanged, manager::HintItems, Result};
+use lsp_types::{ Range, Url};
+use crate::{ast::StringRanged, Result};
 use crate::ast::Identifier;
-use super::*;
-pub use self::expression::*;
+pub use self::node::*;
 use self::remap::{Values,Keys,Map};
 
-mod expression;
+mod node;
 mod from_ast;
 mod hints;
 mod input_grammar;
@@ -61,7 +58,7 @@ pub struct YGGRule {
     /// ```
     eliminate_unnamed: bool,
     ///
-    expression: RefinedExpression,
+    expression: ExpressionNode,
 }
 
 impl GrammarState {

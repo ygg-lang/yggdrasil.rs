@@ -1,22 +1,18 @@
-use std::{collections::HashSet, ops::AddAssign};
+
 use convert_case::{Case, Casing};
-use lsp_types::{CodeDescription, CodeLens, Url};
-use serde_json::Value;
+use lsp_types::{ Url};
+
 
 use super::{
     hints::{duplicate_declaration_error, name_missing, top_area_error},
     *,
 };
 use crate::{
-    ast::{AssignStatement, ChoiceExpression, ChoiceTag, Data, Expression, Program, Statement},
+    ast::{AssignStatement, Data, Expression, Program, Statement},
     manager::HintItems,
-    ygg::{ast::ConcatExpression, YGGError},
     Result,
 };
 use crate::ast::{UnaryPrefix, UnarySuffix};
-
-mod choice;
-mod concat;
 
 impl Program {
     pub fn build_grammar(self, url: Url) -> Result<(GrammarState, HintItems)> {
@@ -164,7 +160,7 @@ impl From<AssignStatement> for YGGRule {
             "^=" => eliminate_unmarked = true,
             _ => (),
         }
-        let expression = RefinedExpression::from(s.rhs);
+        let expression = ExpressionNode::from(s.rhs);
         Self {
             name: Identifier {
                 data: name,
@@ -177,62 +173,6 @@ impl From<AssignStatement> for YGGRule {
             eliminate_unnamed,
             expression,
             range: s.range,
-        }
-    }
-}
-
-impl From<Expression> for RefinedExpression {
-    fn from(raw: Expression) -> Self {
-        match raw {
-            Expression::Data(e) => Self::Data(box RefinedData::from(*e)),
-            Expression::UnarySuffix(e) => {
-                Self::Unary(box RefinedUnary::from(*e))
-            }
-            Expression::UnaryPrefix(e) => {
-                Self::Unary(box RefinedUnary::from(*e))
-            }
-            Expression::ConcatExpression(e) => Self::Concat(box RefinedConcat::from(*e)),
-            Expression::ChoiceExpression(e) => Self::Choice(box RefinedChoice::from(*e)),
-            Expression::FieldExpression(_) => {
-                unimplemented!()
-            }
-        }
-    }
-}
-
-
-
-
-
-impl From<UnaryPrefix> for RefinedUnary {
-    fn from(e: UnaryPrefix) -> Self {
-        Self {
-            base: RefinedExpression::from(e.base),
-            prefix: vec![e.prefix],
-            suffix: vec![]
-        }
-    }
-}
-
-impl From<UnarySuffix> for RefinedUnary {
-    fn from(e: UnarySuffix) -> Self {
-        Self {
-            base: RefinedExpression::from(e.base),
-            prefix: vec![],
-            suffix: vec![e.suffix]
-        }
-    }
-}
-
-impl From<Data> for RefinedData {
-    fn from(data: Data) -> Self {
-        match data {
-            Data::Identifier(atom) => Self::Identifier(*atom),
-            Data::Integer(atom) => Self::Integer(atom.data),
-            Data::String(atom) => Self::String(atom.data),
-            Data::Regex => {
-                unimplemented!()
-            }
         }
     }
 }

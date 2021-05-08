@@ -8,7 +8,7 @@
 
 use super::*;
 
-use std::path::PathBuf;
+
 use tree_sitter_cli::generate::{
     generate_parser_for_grammar,
     grammars::{InputGrammar, Variable, VariableType, VariableType::Named},
@@ -41,13 +41,13 @@ impl YGGRule {
     }
 }
 
-impl From<RefinedExpression> for Rule {
-    fn from(e: RefinedExpression) -> Self {
+impl From<ExpressionNode> for Rule {
+    fn from(e: ExpressionNode) -> Self {
         match e {
-            RefinedExpression::Data(r) => Self::from(*r),
-            RefinedExpression::Choice(r) => Self::from(*r),
-            RefinedExpression::Concat(r) => Self::from(*r),
-            RefinedExpression::Unary(r) => Self::from(*r),
+            ExpressionNode::Data(r) => Self::from(*r),
+            ExpressionNode::Choice(r) => Self::from(*r),
+            ExpressionNode::Concat(r) => Self::from(*r),
+            ExpressionNode::Unary(r) => Self::from(*r),
         }
     }
 }

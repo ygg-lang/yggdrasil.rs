@@ -4,8 +4,6 @@
 #![feature(trivial_bounds)]
 #![feature(async_closure)]
 
-#[allow(dead_code)]
-#[allow(unused)]
 pub mod codegen;
 #[allow(dead_code)]
 #[allow(unused)]
