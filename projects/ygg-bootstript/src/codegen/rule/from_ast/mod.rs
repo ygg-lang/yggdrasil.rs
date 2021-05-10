@@ -20,7 +20,6 @@ impl Program {
         let mut rule_map = Map::<String, YGGRule>::default();
         let mut extensions = vec![];
         let mut ignores = vec![];
-        let mut ignores_pos = None;
         let mut diag = vec![];
         let mut lens = vec![];
         for stmt in self.statement {
@@ -93,7 +92,6 @@ impl Program {
                     }
                     else {
                         ignores = s.rules;
-                        ignores_pos = Some(s.range)
                     }
                 }
                 Statement::AssignStatement(s) => {
@@ -138,11 +136,11 @@ impl Program {
 impl From<AssignStatement> for YGGRule {
     fn from(s: AssignStatement) -> Self {
         let mut name = s.id.data;
-        let mut structure = None;
+        let mut ty = Identifier { data: name.to_case(Case::UpperCamel), range: s.id.range };
         let force_inline = name.starts_with("_");
-        if !force_inline {
-            structure = Some(name.to_case(Case::UpperCamel))
-        }
+        // if !force_inline {
+        //     ty = Some(Identifier { data: name.to_case(Case::UpperCamel), range: s.id.range })
+        // }
         let mut eliminate_unmarked = false;
         let mut eliminate_unnamed = false;
         match s.eq.as_str() {
@@ -153,7 +151,7 @@ impl From<AssignStatement> for YGGRule {
         let expression = ExpressionNode::from(s.rhs);
         Self {
             name: Identifier { data: name, range: s.id.range },
-            structure_name: structure,
+            ty,
             force_inline,
             already_inline: false,
             eliminate_unmarked,

@@ -38,10 +38,8 @@ pub struct GrammarState {
 pub struct YGGRule {
     ///
     name: Identifier,
-    /// position of all parts
-    range: Range,
     ///
-    structure_name: Option<String>,
+    ty: Identifier,
     ///
     force_inline: bool,
     /// Eliminate unnamed nodes
@@ -61,6 +59,8 @@ pub struct YGGRule {
     eliminate_unnamed: bool,
     ///
     expression: ExpressionNode,
+    /// position of all parts
+    range: Range,
 }
 
 impl GrammarState {

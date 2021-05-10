@@ -8,7 +8,7 @@ HintItems {
                 },
                 end: Position {
                     line: 3,
-                    character: 4,
+                    character: 12,
                 },
             },
             severity: Some(

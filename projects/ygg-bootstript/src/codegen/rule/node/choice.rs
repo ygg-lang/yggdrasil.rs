@@ -16,6 +16,15 @@ impl From<ChoiceExpression> for RefinedChoice {
     }
 }
 
+impl From<ExpressionNode> for RefinedChoice {
+    fn from(e: ExpressionNode) -> Self {
+        match e.get_choice() {
+            Some(s) => Self { inner: s.inner },
+            None => Self { inner: vec![e] },
+        }
+    }
+}
+
 impl From<ChoiceTag> for ExpressionNode {
     fn from(e: ChoiceTag) -> Self {
         ExpressionNode {
@@ -27,9 +36,11 @@ impl From<ChoiceTag> for ExpressionNode {
     }
 }
 
-impl From<ExpressionNode> for RefinedChoice {
-    fn from(_: ExpressionNode) -> Self {
-        todo!()
+impl From<ChoiceTag> for RefinedChoice {
+    fn from(e: ChoiceTag) -> Self {
+        Self {
+            inner: vec![ExpressionNode::from(e)]
+        }
     }
 }
 
