@@ -1,3 +1,4 @@
+use std::fmt::{Debug};
 pub use self::node::*;
 use self::remap::{Keys, Map, Values};
 use crate::{
@@ -34,7 +35,7 @@ pub struct GrammarState {
     rule_map: Map<String, YGGRule>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct YGGRule {
     ///
     name: Identifier,

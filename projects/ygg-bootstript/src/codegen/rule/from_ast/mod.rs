@@ -135,7 +135,7 @@ impl Program {
 
 impl From<AssignStatement> for YGGRule {
     fn from(s: AssignStatement) -> Self {
-        let mut name = s.id.data;
+        let name = &s.id.data;
         let mut ty = Identifier { data: name.to_case(Case::UpperCamel), range: s.id.range };
         let force_inline = name.starts_with("_");
         // if !force_inline {
@@ -150,7 +150,7 @@ impl From<AssignStatement> for YGGRule {
         }
         let expression = ExpressionNode::from(s.rhs);
         Self {
-            name: Identifier { data: name, range: s.id.range },
+            name: s.id,
             ty,
             force_inline,
             already_inline: false,

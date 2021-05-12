@@ -1,25 +1,29 @@
 use crate::ast::*;
 use std::ops::AddAssign;
+use std::fmt::{Debug, Formatter};
+use crate::codegen::rule::YGGRule;
 
 mod choice;
 mod concat;
 mod expr;
+mod debug;
 mod unary;
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct ExpressionNode {
     pub tag: Option<ExpressionTag>,
     pub ty: Option<Identifier>,
     pub field: Option<Identifier>,
     pub node: RefinedExpression,
 }
-#[derive(Clone, Debug)]
-pub struct ExpressionTag {
-    tag: Identifier,
-    mode: String,
-}
 
 #[derive(Clone, Debug)]
+pub struct ExpressionTag {
+   pub tag: Identifier,
+    pub mode: String,
+}
+
+#[derive(Clone)]
 pub enum RefinedExpression {
     Data(Box<RefinedData>),
     Unary(Box<RefinedUnary>),
@@ -27,12 +31,12 @@ pub enum RefinedExpression {
     Concat(Box<RefinedConcat>),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct RefinedChoice {
     pub inner: Vec<ExpressionNode>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct RefinedConcat {
     pub inner: Vec<ExpressionNode>,
 }
@@ -44,7 +48,7 @@ pub struct RefinedUnary {
     suffix: Vec<String>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub enum RefinedData {
     Identifier(Identifier),
     String(String),

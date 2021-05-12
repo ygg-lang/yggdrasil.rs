@@ -1,81 +1,40 @@
-YGGRule {
-    name: Identifier {
-        data: "program",
-        range: Range {
-            start: Position {
-                line: 2,
-                character: 0,
-            },
-            end: Position {
-                line: 2,
-                character: 7,
-            },
-        },
-    },
-    ty: Identifier {
-        data: "Program",
-        range: Range {
-            start: Position {
-                line: 2,
-                character: 0,
-            },
-            end: Position {
-                line: 2,
-                character: 7,
-            },
-        },
-    },
+Rule {
+    name: "program",
+    type: "Program",
     force_inline: false,
     already_inline: false,
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
-        tag: None,
-        ty: None,
-        field: None,
-        node: Unary(
-            RefinedUnary {
-                base: ExpressionNode {
-                    tag: None,
-                    ty: None,
-                    field: None,
-                    node: Unary(
-                        RefinedUnary {
-                            base: ExpressionNode {
-                                tag: None,
-                                ty: None,
-                                field: None,
-                                node: Data(
-                                    Identifier(
-                                        Identifier {
-                                            data: "statement",
-                                            range: Range {
-                                                start: Position {
-                                                    line: 2,
-                                                    character: 11,
-                                                },
-                                                end: Position {
-                                                    line: 2,
-                                                    character: 20,
-                                                },
-                                            },
-                                        },
-                                    ),
-                                ),
+        node: RefinedUnary {
+            base: ExpressionNode {
+                node: RefinedUnary {
+                    base: ExpressionNode {
+                        node: Identifier {
+                            data: "statement",
+                            range: Range {
+                                start: Position {
+                                    line: 2,
+                                    character: 11,
+                                },
+                                end: Position {
+                                    line: 2,
+                                    character: 20,
+                                },
                             },
-                            prefix: [],
-                            suffix: [
-                                "*",
-                            ],
                         },
-                    ),
+                    },
+                    prefix: [],
+                    suffix: [
+                        "*",
+                    ],
                 },
-                prefix: [
-                    "^",
-                ],
-                suffix: [],
             },
-        ),
+            prefix: [
+                "^",
+            ],
+            suffix: [],
+        },
     },
     range: Range {
         start: Position {
@@ -88,124 +47,65 @@ YGGRule {
         },
     },
 }
-YGGRule {
-    name: Identifier {
-        data: "statement",
-        range: Range {
-            start: Position {
-                line: 4,
-                character: 0,
-            },
-            end: Position {
-                line: 4,
-                character: 9,
-            },
-        },
-    },
-    ty: Identifier {
-        data: "Statement",
-        range: Range {
-            start: Position {
-                line: 4,
-                character: 0,
-            },
-            end: Position {
-                line: 4,
-                character: 9,
-            },
-        },
-    },
+Rule {
+    name: "statement",
+    type: "Statement",
     force_inline: false,
     already_inline: false,
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
-        tag: None,
-        ty: None,
-        field: None,
-        node: Choice(
-            RefinedChoice {
-                inner: [
+        node: ChoiceExpression[
+            ExpressionNode {
+                node: ChoiceExpression[
                     ExpressionNode {
-                        tag: None,
-                        ty: None,
-                        field: None,
-                        node: Choice(
-                            RefinedChoice {
-                                inner: [
-                                    ExpressionNode {
-                                        tag: None,
-                                        ty: None,
-                                        field: None,
-                                        node: Data(
-                                            Identifier(
-                                                Identifier {
-                                                    data: "grammar_statement",
-                                                    range: Range {
-                                                        start: Position {
-                                                            line: 5,
-                                                            character: 6,
-                                                        },
-                                                        end: Position {
-                                                            line: 5,
-                                                            character: 23,
-                                                        },
-                                                    },
-                                                },
-                                            ),
-                                        ),
-                                    },
-                                    ExpressionNode {
-                                        tag: None,
-                                        ty: None,
-                                        field: None,
-                                        node: Data(
-                                            Identifier(
-                                                Identifier {
-                                                    data: "fragment_statement",
-                                                    range: Range {
-                                                        start: Position {
-                                                            line: 6,
-                                                            character: 6,
-                                                        },
-                                                        end: Position {
-                                                            line: 6,
-                                                            character: 24,
-                                                        },
-                                                    },
-                                                },
-                                            ),
-                                        ),
-                                    },
-                                ],
+                        node: Identifier {
+                            data: "grammar_statement",
+                            range: Range {
+                                start: Position {
+                                    line: 5,
+                                    character: 6,
+                                },
+                                end: Position {
+                                    line: 5,
+                                    character: 23,
+                                },
                             },
-                        ),
+                        },
                     },
                     ExpressionNode {
-                        tag: None,
-                        ty: None,
-                        field: None,
-                        node: Data(
-                            Identifier(
-                                Identifier {
-                                    data: "assign_statement",
-                                    range: Range {
-                                        start: Position {
-                                            line: 7,
-                                            character: 6,
-                                        },
-                                        end: Position {
-                                            line: 7,
-                                            character: 22,
-                                        },
-                                    },
+                        node: Identifier {
+                            data: "fragment_statement",
+                            range: Range {
+                                start: Position {
+                                    line: 6,
+                                    character: 6,
                                 },
-                            ),
-                        ),
+                                end: Position {
+                                    line: 6,
+                                    character: 24,
+                                },
+                            },
+                        },
                     },
                 ],
             },
-        ),
+            ExpressionNode {
+                node: Identifier {
+                    data: "assign_statement",
+                    range: Range {
+                        start: Position {
+                            line: 7,
+                            character: 6,
+                        },
+                        end: Position {
+                            line: 7,
+                            character: 22,
+                        },
+                    },
+                },
+            },
+        ],
     },
     range: Range {
         start: Position {
