@@ -1,3 +1,4 @@
+use std::fmt::Write;
 use super::*;
 
 impl Debug for YGGRule {
@@ -36,35 +37,56 @@ impl Debug for ExpressionNode {
 impl Debug for RefinedExpression {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            RefinedExpression::Data(e) => {e.fmt(f)}
-            RefinedExpression::Unary(e) => {e.fmt(f)}
-            RefinedExpression::Choice(e) => {e.fmt(f)}
-            RefinedExpression::Concat(e) => {e.fmt(f)}
+            Self::Data(e) => {e.fmt(f)}
+            Self::Unary(e) => {e.fmt(f)}
+            Self::Choice(e) => {e.fmt(f)}
+            Self::Concat(e) => {e.fmt(f)}
         }
     }
 }
 
 impl Debug for RefinedChoice {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.write_str("ChoiceExpression")?;
+        f.write_str("Choice")?;
         f.debug_list().entries(self.inner.iter()).finish()
     }
 }
 
 impl Debug for RefinedConcat {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.write_str("ConcatExpression")?;
+        f.write_str("Concat")?;
         f.debug_list().entries(self.inner.iter()).finish()
+    }
+}
+
+impl Debug for RefinedUnary {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Unary")
+            .field("base", &self.base)
+            .field("operations", &self.ops)
+            .finish()
     }
 }
 
 impl Debug for RefinedData {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            RefinedData::Identifier(e) => {e.fmt(f)}
-            RefinedData::String(e) => {e.fmt(f)}
-            RefinedData::Regex(e) => {e.fmt(f)}
-            RefinedData::Integer(e) => {e.fmt(f)}
+            Self::Identifier(e) => {e.fmt(f)}
+            Self::Regex(e) => {e.fmt(f)}
+            Self::String(e) => {f.write_str(e)}
+            Self::Integer(e) => {f.write_str(&e.to_string())}
+        }
+    }
+}
+
+impl Debug for Operator {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Optional => {f.write_str("Optional?")}
+            Self::Repeats => {f.write_str("Repeats*")}
+            Self::Repeats1 => {f.write_str("RepeatsNonnull+")}
+            Self::Mark => {f.write_str("^MarkSymbol")}
+            Self::Recursive => {f.write_str("*RecursiveSymbol")}
         }
     }
 }

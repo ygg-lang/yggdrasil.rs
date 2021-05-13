@@ -6,34 +6,26 @@ Rule {
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
-        node: RefinedUnary {
+        base: Unary {
             base: ExpressionNode {
-                node: RefinedUnary {
-                    base: ExpressionNode {
-                        node: Identifier {
-                            data: "statement",
-                            range: Range {
-                                start: Position {
-                                    line: 2,
-                                    character: 11,
-                                },
-                                end: Position {
-                                    line: 2,
-                                    character: 20,
-                                },
-                            },
+                base: Identifier {
+                    data: "statement",
+                    range: Range {
+                        start: Position {
+                            line: 2,
+                            character: 11,
+                        },
+                        end: Position {
+                            line: 2,
+                            character: 20,
                         },
                     },
-                    prefix: [],
-                    suffix: [
-                        "*",
-                    ],
                 },
             },
-            prefix: [
-                "^",
+            operations: [
+                RepeatsNonnull+,
+                ^MarkSymbol,
             ],
-            suffix: [],
         },
     },
     range: Range {
@@ -55,11 +47,11 @@ Rule {
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
-        node: ChoiceExpression[
+        base: Choice[
             ExpressionNode {
-                node: ChoiceExpression[
+                base: Choice[
                     ExpressionNode {
-                        node: Identifier {
+                        base: Identifier {
                             data: "grammar_statement",
                             range: Range {
                                 start: Position {
@@ -74,7 +66,7 @@ Rule {
                         },
                     },
                     ExpressionNode {
-                        node: Identifier {
+                        base: Identifier {
                             data: "fragment_statement",
                             range: Range {
                                 start: Position {
@@ -91,7 +83,7 @@ Rule {
                 ],
             },
             ExpressionNode {
-                node: Identifier {
+                base: Identifier {
                     data: "assign_statement",
                     range: Range {
                         start: Position {

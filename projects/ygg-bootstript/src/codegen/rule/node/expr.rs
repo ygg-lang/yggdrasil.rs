@@ -10,7 +10,11 @@ impl ExpressionNode {
     pub fn is_concat(&self) -> bool {
         matches!(self.node, RefinedExpression::Concat(_))
     }
+    pub fn is_unary(&self) -> bool {
+        matches!(self.node, RefinedExpression::Unary(_))
+    }
 }
+
 
 impl ExpressionNode {
     pub fn get_concat(&self) -> Option<RefinedConcat> {
@@ -22,6 +26,12 @@ impl ExpressionNode {
     pub fn get_choice(&self) -> Option<RefinedChoice> {
         match self.to_owned().node {
             RefinedExpression::Choice(c) => Some(*c),
+            _ => None,
+        }
+    }
+    pub fn get_unary(&self) -> Option<RefinedUnary> {
+        match self.to_owned().node {
+            RefinedExpression::Unary(c) => Some(*c),
             _ => None,
         }
     }
@@ -72,3 +82,4 @@ impl From<Data> for RefinedData {
         }
     }
 }
+

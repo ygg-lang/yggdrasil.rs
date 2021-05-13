@@ -1,0 +1,516 @@
+Rule {
+    name: "test1",
+    type: "Test1",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Unary {
+            base: ExpressionNode {
+                base: Identifier {
+                    data: "e1",
+                    range: Range {
+                        start: Position {
+                            line: 2,
+                            character: 8,
+                        },
+                        end: Position {
+                            line: 2,
+                            character: 10,
+                        },
+                    },
+                },
+            },
+            operations: [
+                Optional?,
+            ],
+        },
+    },
+    range: Range {
+        start: Position {
+            line: 2,
+            character: 0,
+        },
+        end: Position {
+            line: 2,
+            character: 12,
+        },
+    },
+}
+Rule {
+    name: "test2",
+    type: "Test2",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Unary {
+            base: ExpressionNode {
+                base: Identifier {
+                    data: "e1",
+                    range: Range {
+                        start: Position {
+                            line: 3,
+                            character: 8,
+                        },
+                        end: Position {
+                            line: 3,
+                            character: 10,
+                        },
+                    },
+                },
+            },
+            operations: [
+                Repeats*,
+            ],
+        },
+    },
+    range: Range {
+        start: Position {
+            line: 3,
+            character: 0,
+        },
+        end: Position {
+            line: 3,
+            character: 12,
+        },
+    },
+}
+Rule {
+    name: "test3",
+    type: "Test3",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Unary {
+            base: ExpressionNode {
+                base: Identifier {
+                    data: "e1",
+                    range: Range {
+                        start: Position {
+                            line: 4,
+                            character: 8,
+                        },
+                        end: Position {
+                            line: 4,
+                            character: 10,
+                        },
+                    },
+                },
+            },
+            operations: [
+                RepeatsNonnull+,
+            ],
+        },
+    },
+    range: Range {
+        start: Position {
+            line: 4,
+            character: 0,
+        },
+        end: Position {
+            line: 4,
+            character: 12,
+        },
+    },
+}
+Rule {
+    name: "test4",
+    type: "Test4",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Unary {
+            base: ExpressionNode {
+                base: Identifier {
+                    data: "e1",
+                    range: Range {
+                        start: Position {
+                            line: 5,
+                            character: 9,
+                        },
+                        end: Position {
+                            line: 5,
+                            character: 11,
+                        },
+                    },
+                },
+            },
+            operations: [
+                ^MarkSymbol,
+            ],
+        },
+    },
+    range: Range {
+        start: Position {
+            line: 5,
+            character: 0,
+        },
+        end: Position {
+            line: 5,
+            character: 12,
+        },
+    },
+}
+Rule {
+    name: "test5",
+    type: "Test5",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Unary {
+            base: ExpressionNode {
+                base: Identifier {
+                    data: "e1",
+                    range: Range {
+                        start: Position {
+                            line: 6,
+                            character: 9,
+                        },
+                        end: Position {
+                            line: 6,
+                            character: 11,
+                        },
+                    },
+                },
+            },
+            operations: [
+                Repeats*,
+                ^MarkSymbol,
+            ],
+        },
+    },
+    range: Range {
+        start: Position {
+            line: 6,
+            character: 0,
+        },
+        end: Position {
+            line: 6,
+            character: 13,
+        },
+    },
+}
+Rule {
+    name: "test6",
+    type: "Test6",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Unary {
+            base: ExpressionNode {
+                base: Identifier {
+                    data: "e1",
+                    range: Range {
+                        start: Position {
+                            line: 8,
+                            character: 8,
+                        },
+                        end: Position {
+                            line: 8,
+                            character: 10,
+                        },
+                    },
+                },
+            },
+            operations: [
+                Repeats*,
+                Optional?,
+            ],
+        },
+    },
+    range: Range {
+        start: Position {
+            line: 8,
+            character: 0,
+        },
+        end: Position {
+            line: 8,
+            character: 13,
+        },
+    },
+}
+Rule {
+    name: "test7",
+    type: "Test7",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Unary {
+            base: ExpressionNode {
+                base: Identifier {
+                    data: "e1",
+                    range: Range {
+                        start: Position {
+                            line: 9,
+                            character: 8,
+                        },
+                        end: Position {
+                            line: 9,
+                            character: 10,
+                        },
+                    },
+                },
+            },
+            operations: [
+                Repeats*,
+                RepeatsNonnull+,
+            ],
+        },
+    },
+    range: Range {
+        start: Position {
+            line: 9,
+            character: 0,
+        },
+        end: Position {
+            line: 9,
+            character: 13,
+        },
+    },
+}
+Rule {
+    name: "test8",
+    type: "Test8",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Unary {
+            base: ExpressionNode {
+                base: Identifier {
+                    data: "e1",
+                    range: Range {
+                        start: Position {
+                            line: 10,
+                            character: 8,
+                        },
+                        end: Position {
+                            line: 10,
+                            character: 10,
+                        },
+                    },
+                },
+            },
+            operations: [
+                Optional?,
+                Repeats*,
+            ],
+        },
+    },
+    range: Range {
+        start: Position {
+            line: 10,
+            character: 0,
+        },
+        end: Position {
+            line: 10,
+            character: 13,
+        },
+    },
+}
+Rule {
+    name: "test9",
+    type: "Test9",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Unary {
+            base: ExpressionNode {
+                base: Identifier {
+                    data: "e1",
+                    range: Range {
+                        start: Position {
+                            line: 11,
+                            character: 10,
+                        },
+                        end: Position {
+                            line: 11,
+                            character: 12,
+                        },
+                    },
+                },
+            },
+            operations: [
+                Optional?,
+                ^MarkSymbol,
+                Repeats*,
+            ],
+        },
+    },
+    range: Range {
+        start: Position {
+            line: 11,
+            character: 0,
+        },
+        end: Position {
+            line: 11,
+            character: 16,
+        },
+    },
+}
+Rule {
+    name: "test10",
+    type: "Test10",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Unary {
+            base: ExpressionNode {
+                base: Concat[
+                    ExpressionNode {
+                        base: Unary {
+                            base: ExpressionNode {
+                                base: Identifier {
+                                    data: "e1",
+                                    range: Range {
+                                        start: Position {
+                                            line: 13,
+                                            character: 11,
+                                        },
+                                        end: Position {
+                                            line: 13,
+                                            character: 13,
+                                        },
+                                    },
+                                },
+                            },
+                            operations: [
+                                Optional?,
+                                ^MarkSymbol,
+                            ],
+                        },
+                    },
+                    ExpressionNode {
+                        base: Unary {
+                            base: ExpressionNode {
+                                base: Identifier {
+                                    data: "e2",
+                                    range: Range {
+                                        start: Position {
+                                            line: 13,
+                                            character: 18,
+                                        },
+                                        end: Position {
+                                            line: 13,
+                                            character: 20,
+                                        },
+                                    },
+                                },
+                            },
+                            operations: [
+                                RepeatsNonnull+,
+                                ^MarkSymbol,
+                            ],
+                        },
+                    },
+                ],
+            },
+            operations: [
+                Repeats*,
+            ],
+        },
+    },
+    range: Range {
+        start: Position {
+            line: 13,
+            character: 0,
+        },
+        end: Position {
+            line: 13,
+            character: 23,
+        },
+    },
+}
+Rule {
+    name: "test11",
+    type: "Test11",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Unary {
+            base: ExpressionNode {
+                base: Concat[
+                    ExpressionNode {
+                        base: Unary {
+                            base: ExpressionNode {
+                                base: Identifier {
+                                    data: "e1",
+                                    range: Range {
+                                        start: Position {
+                                            line: 14,
+                                            character: 11,
+                                        },
+                                        end: Position {
+                                            line: 14,
+                                            character: 13,
+                                        },
+                                    },
+                                },
+                            },
+                            operations: [
+                                Optional?,
+                                ^MarkSymbol,
+                            ],
+                        },
+                    },
+                    ExpressionNode {
+                        base: Unary {
+                            base: ExpressionNode {
+                                base: Identifier {
+                                    data: "e2",
+                                    range: Range {
+                                        start: Position {
+                                            line: 14,
+                                            character: 18,
+                                        },
+                                        end: Position {
+                                            line: 14,
+                                            character: 20,
+                                        },
+                                    },
+                                },
+                            },
+                            operations: [
+                                Repeats*,
+                                ^MarkSymbol,
+                            ],
+                        },
+                    },
+                ],
+            },
+            operations: [
+                RepeatsNonnull+,
+            ],
+        },
+    },
+    range: Range {
+        start: Position {
+            line: 14,
+            character: 0,
+        },
+        end: Position {
+            line: 14,
+            character: 23,
+        },
+    },
+}

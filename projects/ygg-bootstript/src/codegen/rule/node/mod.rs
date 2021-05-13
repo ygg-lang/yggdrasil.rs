@@ -41,11 +41,24 @@ pub struct RefinedConcat {
     pub inner: Vec<ExpressionNode>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct RefinedUnary {
     base: ExpressionNode,
-    prefix: Vec<String>,
-    suffix: Vec<String>,
+    ops: Vec<Operator>,
+}
+
+#[derive(Copy, Clone)]
+pub enum Operator {
+    /// e?
+    Optional,
+    /// e*
+    Repeats,
+    /// e+
+    Repeats1,
+    /// ^e
+    Mark,
+    /// *e
+    Recursive
 }
 
 #[derive(Clone)]

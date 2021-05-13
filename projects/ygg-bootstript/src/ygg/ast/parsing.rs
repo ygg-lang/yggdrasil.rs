@@ -184,6 +184,7 @@ impl Parsed for Data {
             let out = match SyntaxKind::from(&node) {
                 SyntaxKind::sym_id => Self::Identifier(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unsigned => Self::Integer(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_string => Self::String(Box::new(Parsed::parse(state, node)?)),
                 _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node)),
             };
             return Ok(out);
@@ -194,7 +195,7 @@ impl Parsed for Data {
 
 parsed_wrap!(Identifier: data << parse);
 parsed_wrap!(Unsigned: data << parse);
-parsed_wrap!(StringRanged: data << parse);
+parsed_wrap!(StringLiteral: data << parse);
 
 impl Parsed for usize {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {

@@ -21,7 +21,7 @@ pub enum Statement {
 #[derive(Clone, Debug)]
 pub struct GrammarStatement {
     pub id: Identifier,
-    pub ext: Vec<StringRanged>,
+    pub ext: Vec<StringLiteral>,
     #[cfg(feature = "lsp")]
     pub range: lsp_types::Range,
     #[cfg(not(feature = "lsp"))]
@@ -50,7 +50,7 @@ pub struct AssignStatement {
 
 #[derive(Clone, Debug)]
 pub struct IgnoreStatement {
-    pub rules: Vec<StringRanged>,
+    pub rules: Vec<StringLiteral>,
     #[cfg(feature = "lsp")]
     pub range: lsp_types::Range,
     #[cfg(not(feature = "lsp"))]
@@ -162,15 +162,6 @@ pub struct Unsigned {
 
 #[derive(Clone, Debug)]
 pub struct StringLiteral {
-    pub data: String,
-    #[cfg(feature = "lsp")]
-    pub range: lsp_types::Range,
-    #[cfg(not(feature = "lsp"))]
-    pub range: tree_sitter::Range,
-}
-
-#[derive(Clone, Debug)]
-pub struct StringRanged {
     pub data: String,
     #[cfg(feature = "lsp")]
     pub range: lsp_types::Range,

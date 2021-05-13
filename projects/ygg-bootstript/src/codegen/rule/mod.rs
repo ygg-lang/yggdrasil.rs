@@ -2,7 +2,7 @@ use std::fmt::{Debug};
 pub use self::node::*;
 use self::remap::{Keys, Map, Values};
 use crate::{
-    ast::{Identifier, StringRanged},
+    ast::{Identifier, StringLiteral},
     Result,
 };
 use lsp_types::{Range, Url};
@@ -30,8 +30,8 @@ pub struct GrammarState {
     url: Url,
     is_grammar: bool,
     name: Identifier,
-    extensions: Vec<StringRanged>,
-    ignores: Vec<StringRanged>,
+    extensions: Vec<StringLiteral>,
+    ignores: Vec<StringLiteral>,
     rule_map: Map<String, YGGRule>,
 }
 
