@@ -1,6 +1,5 @@
 [package]
-name = "yggdrasil-bootstript"
-publish = false
+name = "yggdrasil-core"
 description = "Yggdrasil grammar for the tree-sitter parsing library"
 version = "0.1.1"
 authors = ["Aster <192608617@qq.com>"]

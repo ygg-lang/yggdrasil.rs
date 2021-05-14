@@ -9,7 +9,7 @@ license = "MPL-2.0"
 edition = "2018"
 
 [dependencies]
-yggdrasil-bootstript = { version = "0.1", path = "../ygg-bootstript" }
+yggdrasil-core = { version = "0.1", path = "../ygg-core" }
 futures = { version = "0.3", features = ["compat"] }
 # jsonrpc-core = "14.0"
 # jsonrpc-derive = "14.0"

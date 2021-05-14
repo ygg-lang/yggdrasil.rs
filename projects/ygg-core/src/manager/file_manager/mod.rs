@@ -45,6 +45,15 @@ impl FileManager {
         self.store.insert(url, file);
         Ok(())
     }
+    pub fn update_url_text(&self, url: Url, text: String) -> Result<()> {
+        let new = FileFingerprint::new(&url)?;
+        match self.store.get(&url) {
+            Some(old) if old.eq(&new) => return Ok(()),
+            _ => (),
+        }
+        self.store.insert(url, file);
+        Ok(())
+    }
     #[inline]
     pub fn get_file(&self, url: &Url) -> Option<Ref<'_, Url, FileStore>> {
         self.store.get(&url)

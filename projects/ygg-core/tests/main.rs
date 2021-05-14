@@ -3,7 +3,7 @@
 
 use lsp_types::Url;
 use std::{fmt::Write, lazy::SyncLazy, str::FromStr};
-use yggdrasil_bootstript::{ast::YGGBuilder, Result};
+use yggdrasil_core::{ast::YGGBuilder, Result};
 
 pub mod basic;
 pub mod codegen;
