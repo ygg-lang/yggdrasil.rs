@@ -11,6 +11,7 @@ mod unary;
 
 #[derive(Clone)]
 pub struct ExpressionNode {
+    pub inline_token: bool,
     pub tag: Option<ExpressionTag>,
     pub ty: Option<Identifier>,
     pub field: Option<Identifier>,
@@ -43,8 +44,8 @@ pub struct RefinedConcat {
 
 #[derive(Clone)]
 pub struct RefinedUnary {
-    base: ExpressionNode,
-    ops: Vec<Operator>,
+  pub  base: ExpressionNode,
+    pub  ops: Vec<Operator>,
 }
 
 #[derive(Copy, Clone)]

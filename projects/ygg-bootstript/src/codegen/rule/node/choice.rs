@@ -2,7 +2,7 @@ use super::*;
 
 impl From<ChoiceExpression> for ExpressionNode {
     fn from(e: ChoiceExpression) -> Self {
-        Self { tag: None, ty: None, field: None, node: RefinedExpression::Choice(box RefinedChoice::from(e)) }
+        Self { inline_token: false, tag: None, ty: None, field: None, node: RefinedExpression::Choice(box RefinedChoice::from(e)) }
     }
 }
 
@@ -28,6 +28,7 @@ impl From<ExpressionNode> for RefinedChoice {
 impl From<ChoiceTag> for ExpressionNode {
     fn from(e: ChoiceTag) -> Self {
         ExpressionNode {
+            inline_token: false,
             tag: ExpressionTag::new_optional(e.tag, e.mode),
             ty: e.ty,
             field: None,

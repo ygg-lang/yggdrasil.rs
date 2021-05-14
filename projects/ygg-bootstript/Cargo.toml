@@ -20,8 +20,8 @@ include = [
 lsp-types = { version = "0.89", features = ["proposed"], optional = true }
 tokio = { version = "1.12", features = ["io-std", "rt-multi-thread", "macros", "test-util"] }
 tree-sitter = "0.20"
-# tree-sitter-cli = { version = "0.20", git = "https://github.com/ygg-lang/tree-sitter" }
-tree-sitter-cli = { version = "0.20", path = "../../../tree-sitter/cli"}
+tree-sitter-cli = { version = "0.20", git = "https://github.com/ygg-lang/tree-sitter" }
+# tree-sitter-cli = { version = "0.20", path = "../../../tree-sitter/cli"}
 tree-sitter-ygg = { version = "0.2", path = "../tree-sitter-ygg"}
 serde_json = "1.0"
 indexmap = "1.7"

@@ -34,7 +34,7 @@ impl Operator {
 
 impl From<UnaryPrefix> for ExpressionNode {
     fn from(e: UnaryPrefix) -> Self {
-        Self { tag: None, ty: None, field: None, node: RefinedExpression::Unary(box RefinedUnary::from(e)) }
+        Self { inline_token: false, tag: None, ty: None, field: None, node: RefinedExpression::Unary(box RefinedUnary::from(e)) }
     }
 }
 
@@ -54,7 +54,7 @@ impl From<ExpressionNode> for RefinedUnary {
 
 impl From<UnarySuffix> for ExpressionNode {
     fn from(e: UnarySuffix) -> Self {
-        Self { tag: None, ty: None, field: None, node: RefinedExpression::Unary(box RefinedUnary::from(e)) }
+        Self { inline_token: false, tag: None, ty: None, field: None, node: RefinedExpression::Unary(box RefinedUnary::from(e)) }
     }
 }
 

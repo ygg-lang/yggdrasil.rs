@@ -1,4 +1,5 @@
 #![feature(once_cell)]
+#![feature(allow_fail)]
 
 use lsp_types::Url;
 use std::{fmt::Write, lazy::SyncLazy, str::FromStr};

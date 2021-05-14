@@ -1,11 +1,1335 @@
 InputGrammar {
     name: "ygg",
-    variables: [],
-    extra_symbols: [],
+    variables: [
+        Variable {
+            name: "program",
+            kind: Named,
+            rule: Choice(
+                [
+                    Repeat(
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "statement",
+                                ),
+                            },
+                            rule: NamedSymbol(
+                                "statement",
+                            ),
+                        },
+                    ),
+                    Blank,
+                ],
+            ),
+        },
+        Variable {
+            name: "statement",
+            kind: Named,
+            rule: Choice(
+                [
+                    NamedSymbol(
+                        "grammar_statement",
+                    ),
+                    NamedSymbol(
+                        "fragment_statement",
+                    ),
+                    NamedSymbol(
+                        "assign_statement",
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "grammar_statement",
+            kind: Named,
+            rule: Seq(
+                [
+                    NamedSymbol(
+                        "grammar",
+                    ),
+                    Metadata {
+                        params: MetadataParams {
+                            precedence: None,
+                            dynamic_precedence: 0,
+                            associativity: None,
+                            is_token: false,
+                            is_string: false,
+                            is_active: false,
+                            is_main_token: false,
+                            alias: None,
+                            field_name: Some(
+                                "id",
+                            ),
+                        },
+                        rule: NamedSymbol(
+                            "id",
+                        ),
+                    },
+                    Choice(
+                        [
+                            NamedSymbol(
+                                "_grammar_exts",
+                            ),
+                            Blank,
+                        ],
+                    ),
+                    Choice(
+                        [
+                            NamedSymbol(
+                                "eos",
+                            ),
+                            Blank,
+                        ],
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "_grammar_exts",
+            kind: Named,
+            rule: Seq(
+                [
+                    String(
+                        "{",
+                    ),
+                    Choice(
+                        [
+                            Seq(
+                                [
+                                    Metadata {
+                                        params: MetadataParams {
+                                            precedence: None,
+                                            dynamic_precedence: 0,
+                                            associativity: None,
+                                            is_token: false,
+                                            is_string: false,
+                                            is_active: false,
+                                            is_main_token: false,
+                                            alias: None,
+                                            field_name: Some(
+                                                "ext",
+                                            ),
+                                        },
+                                        rule: NamedSymbol(
+                                            "string",
+                                        ),
+                                    },
+                                    Choice(
+                                        [
+                                            Repeat(
+                                                Seq(
+                                                    [
+                                                        String(
+                                                            ",",
+                                                        ),
+                                                        Metadata {
+                                                            params: MetadataParams {
+                                                                precedence: None,
+                                                                dynamic_precedence: 0,
+                                                                associativity: None,
+                                                                is_token: false,
+                                                                is_string: false,
+                                                                is_active: false,
+                                                                is_main_token: false,
+                                                                alias: None,
+                                                                field_name: Some(
+                                                                    "ext",
+                                                                ),
+                                                            },
+                                                            rule: NamedSymbol(
+                                                                "string",
+                                                            ),
+                                                        },
+                                                    ],
+                                                ),
+                                            ),
+                                            Blank,
+                                        ],
+                                    ),
+                                    String(
+                                        ",",
+                                    ),
+                                ],
+                            ),
+                            Blank,
+                        ],
+                    ),
+                    String(
+                        "}",
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "grammar",
+            kind: Named,
+            rule: String(
+                "grammar!",
+            ),
+        },
+        Variable {
+            name: "fragment_statement",
+            kind: Named,
+            rule: Seq(
+                [
+                    NamedSymbol(
+                        "fragment",
+                    ),
+                    Metadata {
+                        params: MetadataParams {
+                            precedence: None,
+                            dynamic_precedence: 0,
+                            associativity: None,
+                            is_token: false,
+                            is_string: false,
+                            is_active: false,
+                            is_main_token: false,
+                            alias: None,
+                            field_name: Some(
+                                "id",
+                            ),
+                        },
+                        rule: NamedSymbol(
+                            "id",
+                        ),
+                    },
+                    Choice(
+                        [
+                            NamedSymbol(
+                                "eos",
+                            ),
+                            Blank,
+                        ],
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "fragment",
+            kind: Named,
+            rule: String(
+                "fragment!",
+            ),
+        },
+        Variable {
+            name: "ignore",
+            kind: Named,
+            rule: String(
+                "ignore!",
+            ),
+        },
+        Variable {
+            name: "assign_statement",
+            kind: Named,
+            rule: Seq(
+                [
+                    Metadata {
+                        params: MetadataParams {
+                            precedence: None,
+                            dynamic_precedence: 0,
+                            associativity: None,
+                            is_token: false,
+                            is_string: false,
+                            is_active: false,
+                            is_main_token: false,
+                            alias: None,
+                            field_name: Some(
+                                "id",
+                            ),
+                        },
+                        rule: NamedSymbol(
+                            "id",
+                        ),
+                    },
+                    Metadata {
+                        params: MetadataParams {
+                            precedence: None,
+                            dynamic_precedence: 0,
+                            associativity: None,
+                            is_token: false,
+                            is_string: false,
+                            is_active: false,
+                            is_main_token: false,
+                            alias: None,
+                            field_name: Some(
+                                "eq",
+                            ),
+                        },
+                        rule: NamedSymbol(
+                            "eq",
+                        ),
+                    },
+                    Choice(
+                        [
+                            String(
+                                "|",
+                            ),
+                            Blank,
+                        ],
+                    ),
+                    Metadata {
+                        params: MetadataParams {
+                            precedence: None,
+                            dynamic_precedence: 0,
+                            associativity: None,
+                            is_token: false,
+                            is_string: false,
+                            is_active: false,
+                            is_main_token: false,
+                            alias: None,
+                            field_name: Some(
+                                "rhs",
+                            ),
+                        },
+                        rule: NamedSymbol(
+                            "expression",
+                        ),
+                    },
+                    Choice(
+                        [
+                            NamedSymbol(
+                                "eos",
+                            ),
+                            Blank,
+                        ],
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "eq",
+            kind: Named,
+            rule: Choice(
+                [
+                    String(
+                        "=",
+                    ),
+                    String(
+                        "_=",
+                    ),
+                    String(
+                        "@=",
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "expression",
+            kind: Named,
+            rule: Choice(
+                [
+                    Seq(
+                        [
+                            String(
+                                "(",
+                            ),
+                            Choice(
+                                [
+                                    String(
+                                        "|",
+                                    ),
+                                    Blank,
+                                ],
+                            ),
+                            NamedSymbol(
+                                "expression",
+                            ),
+                            String(
+                                ")",
+                            ),
+                        ],
+                    ),
+                    NamedSymbol(
+                        "data",
+                    ),
+                    NamedSymbol(
+                        "unary_suffix",
+                    ),
+                    NamedSymbol(
+                        "unary_prefix",
+                    ),
+                    NamedSymbol(
+                        "concat_expression",
+                    ),
+                    NamedSymbol(
+                        "choice_expression",
+                    ),
+                    NamedSymbol(
+                        "field_expr",
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "unary_prefix",
+            kind: Named,
+            rule: Metadata {
+                params: MetadataParams {
+                    precedence: Integer(
+                        200,
+                    ),
+                    dynamic_precedence: 0,
+                    associativity: Some(
+                        Left,
+                    ),
+                    is_token: false,
+                    is_string: false,
+                    is_active: false,
+                    is_main_token: false,
+                    alias: None,
+                    field_name: None,
+                },
+                rule: Choice(
+                    [
+                        Seq(
+                            [
+                                Metadata {
+                                    params: MetadataParams {
+                                        precedence: None,
+                                        dynamic_precedence: 0,
+                                        associativity: None,
+                                        is_token: false,
+                                        is_string: false,
+                                        is_active: false,
+                                        is_main_token: false,
+                                        alias: None,
+                                        field_name: Some(
+                                            "prefix",
+                                        ),
+                                    },
+                                    rule: NamedSymbol(
+                                        "_prefix_op",
+                                    ),
+                                },
+                                Metadata {
+                                    params: MetadataParams {
+                                        precedence: None,
+                                        dynamic_precedence: 0,
+                                        associativity: None,
+                                        is_token: false,
+                                        is_string: false,
+                                        is_active: false,
+                                        is_main_token: false,
+                                        alias: None,
+                                        field_name: Some(
+                                            "base",
+                                        ),
+                                    },
+                                    rule: NamedSymbol(
+                                        "expression",
+                                    ),
+                                },
+                            ],
+                        ),
+                    ],
+                ),
+            },
+        },
+        Variable {
+            name: "unary_suffix",
+            kind: Named,
+            rule: Metadata {
+                params: MetadataParams {
+                    precedence: Integer(
+                        210,
+                    ),
+                    dynamic_precedence: 0,
+                    associativity: Some(
+                        Right,
+                    ),
+                    is_token: false,
+                    is_string: false,
+                    is_active: false,
+                    is_main_token: false,
+                    alias: None,
+                    field_name: None,
+                },
+                rule: Seq(
+                    [
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "base",
+                                ),
+                            },
+                            rule: NamedSymbol(
+                                "expression",
+                            ),
+                        },
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "suffix",
+                                ),
+                            },
+                            rule: NamedSymbol(
+                                "_suffix_op",
+                            ),
+                        },
+                    ],
+                ),
+            },
+        },
+        Variable {
+            name: "_prefix_op",
+            kind: Named,
+            rule: Choice(
+                [
+                    String(
+                        "^",
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "_suffix_op",
+            kind: Named,
+            rule: Choice(
+                [
+                    String(
+                        "?",
+                    ),
+                    String(
+                        "*",
+                    ),
+                    String(
+                        "+",
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "concat_expression",
+            kind: Named,
+            rule: Metadata {
+                params: MetadataParams {
+                    precedence: Integer(
+                        30,
+                    ),
+                    dynamic_precedence: 0,
+                    associativity: Some(
+                        Left,
+                    ),
+                    is_token: false,
+                    is_string: false,
+                    is_active: false,
+                    is_main_token: false,
+                    alias: None,
+                    field_name: None,
+                },
+                rule: Seq(
+                    [
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "lhs",
+                                ),
+                            },
+                            rule: NamedSymbol(
+                                "expression",
+                            ),
+                        },
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "op",
+                                ),
+                            },
+                            rule: String(
+                                "~",
+                            ),
+                        },
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "rhs",
+                                ),
+                            },
+                            rule: NamedSymbol(
+                                "expression",
+                            ),
+                        },
+                    ],
+                ),
+            },
+        },
+        Variable {
+            name: "choice_expression",
+            kind: Named,
+            rule: Metadata {
+                params: MetadataParams {
+                    precedence: Integer(
+                        20,
+                    ),
+                    dynamic_precedence: 0,
+                    associativity: Some(
+                        Left,
+                    ),
+                    is_token: false,
+                    is_string: false,
+                    is_active: false,
+                    is_main_token: false,
+                    alias: None,
+                    field_name: None,
+                },
+                rule: Seq(
+                    [
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "lhs",
+                                ),
+                            },
+                            rule: NamedSymbol(
+                                "choice_tag",
+                            ),
+                        },
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "op",
+                                ),
+                            },
+                            rule: String(
+                                "|",
+                            ),
+                        },
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "rhs",
+                                ),
+                            },
+                            rule: NamedSymbol(
+                                "choice_tag",
+                            ),
+                        },
+                    ],
+                ),
+            },
+        },
+        Variable {
+            name: "field_expr",
+            kind: Named,
+            rule: Metadata {
+                params: MetadataParams {
+                    precedence: Integer(
+                        10,
+                    ),
+                    dynamic_precedence: 0,
+                    associativity: Some(
+                        Left,
+                    ),
+                    is_token: false,
+                    is_string: false,
+                    is_active: false,
+                    is_main_token: false,
+                    alias: None,
+                    field_name: None,
+                },
+                rule: Seq(
+                    [
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "lhs",
+                                ),
+                            },
+                            rule: NamedSymbol(
+                                "expression",
+                            ),
+                        },
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "op",
+                                ),
+                            },
+                            rule: String(
+                                "<-",
+                            ),
+                        },
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "rhs",
+                                ),
+                            },
+                            rule: NamedSymbol(
+                                "expression",
+                            ),
+                        },
+                    ],
+                ),
+            },
+        },
+        Variable {
+            name: "data",
+            kind: Named,
+            rule: Choice(
+                [
+                    NamedSymbol(
+                        "id",
+                    ),
+                    NamedSymbol(
+                        "string",
+                    ),
+                    NamedSymbol(
+                        "unsigned",
+                    ),
+                    NamedSymbol(
+                        "macro_call",
+                    ),
+                    NamedSymbol(
+                        "regex_long",
+                    ),
+                    NamedSymbol(
+                        "regex_range",
+                    ),
+                    NamedSymbol(
+                        "regex_set",
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "choice_tag",
+            kind: Named,
+            rule: Metadata {
+                params: MetadataParams {
+                    precedence: Integer(
+                        100,
+                    ),
+                    dynamic_precedence: 0,
+                    associativity: Some(
+                        Left,
+                    ),
+                    is_token: false,
+                    is_string: false,
+                    is_active: false,
+                    is_main_token: false,
+                    alias: None,
+                    field_name: None,
+                },
+                rule: Seq(
+                    [
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "expression",
+                                ),
+                            },
+                            rule: NamedSymbol(
+                                "expression",
+                            ),
+                        },
+                        Choice(
+                            [
+                                Seq(
+                                    [
+                                        String(
+                                            "#",
+                                        ),
+                                        Metadata {
+                                            params: MetadataParams {
+                                                precedence: None,
+                                                dynamic_precedence: 0,
+                                                associativity: None,
+                                                is_token: false,
+                                                is_string: false,
+                                                is_active: false,
+                                                is_main_token: false,
+                                                alias: None,
+                                                field_name: Some(
+                                                    "tag",
+                                                ),
+                                            },
+                                            rule: NamedSymbol(
+                                                "id",
+                                            ),
+                                        },
+                                        Choice(
+                                            [
+                                                Metadata {
+                                                    params: MetadataParams {
+                                                        precedence: None,
+                                                        dynamic_precedence: 0,
+                                                        associativity: None,
+                                                        is_token: false,
+                                                        is_string: false,
+                                                        is_active: false,
+                                                        is_main_token: false,
+                                                        alias: None,
+                                                        field_name: Some(
+                                                            "mode",
+                                                        ),
+                                                    },
+                                                    rule: Pattern(
+                                                        "[!^]",
+                                                    ),
+                                                },
+                                                Blank,
+                                            ],
+                                        ),
+                                        Choice(
+                                            [
+                                                Seq(
+                                                    [
+                                                        String(
+                                                            ":",
+                                                        ),
+                                                        Metadata {
+                                                            params: MetadataParams {
+                                                                precedence: None,
+                                                                dynamic_precedence: 0,
+                                                                associativity: None,
+                                                                is_token: false,
+                                                                is_string: false,
+                                                                is_active: false,
+                                                                is_main_token: false,
+                                                                alias: None,
+                                                                field_name: Some(
+                                                                    "ty",
+                                                                ),
+                                                            },
+                                                            rule: NamedSymbol(
+                                                                "id",
+                                                            ),
+                                                        },
+                                                    ],
+                                                ),
+                                                Blank,
+                                            ],
+                                        ),
+                                    ],
+                                ),
+                                Blank,
+                            ],
+                        ),
+                    ],
+                ),
+            },
+        },
+        Variable {
+            name: "macro_call",
+            kind: Named,
+            rule: Seq(
+                [
+                    String(
+                        "@",
+                    ),
+                    Metadata {
+                        params: MetadataParams {
+                            precedence: None,
+                            dynamic_precedence: 0,
+                            associativity: None,
+                            is_token: false,
+                            is_string: false,
+                            is_active: false,
+                            is_main_token: false,
+                            alias: None,
+                            field_name: Some(
+                                "name",
+                            ),
+                        },
+                        rule: NamedSymbol(
+                            "id",
+                        ),
+                    },
+                    Choice(
+                        [
+                            Seq(
+                                [
+                                    String(
+                                        ".",
+                                    ),
+                                    Metadata {
+                                        params: MetadataParams {
+                                            precedence: None,
+                                            dynamic_precedence: 0,
+                                            associativity: None,
+                                            is_token: false,
+                                            is_string: false,
+                                            is_active: false,
+                                            is_main_token: false,
+                                            alias: None,
+                                            field_name: Some(
+                                                "dot",
+                                            ),
+                                        },
+                                        rule: NamedSymbol(
+                                            "id",
+                                        ),
+                                    },
+                                ],
+                            ),
+                            Blank,
+                        ],
+                    ),
+                    String(
+                        "(",
+                    ),
+                    Seq(
+                        [
+                            NamedSymbol(
+                                "expression",
+                            ),
+                            Choice(
+                                [
+                                    Repeat(
+                                        Seq(
+                                            [
+                                                String(
+                                                    ",",
+                                                ),
+                                                NamedSymbol(
+                                                    "expression",
+                                                ),
+                                            ],
+                                        ),
+                                    ),
+                                    Blank,
+                                ],
+                            ),
+                            String(
+                                ",",
+                            ),
+                        ],
+                    ),
+                    String(
+                        ")",
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "id",
+            kind: Named,
+            rule: Pattern(
+                "[_\\p{XID_Start}][\\p{XID_Continue}]*",
+            ),
+        },
+        Variable {
+            name: "integer",
+            kind: Named,
+            rule: Seq(
+                [
+                    Choice(
+                        [
+                            NamedSymbol(
+                                "_sign",
+                            ),
+                            Blank,
+                        ],
+                    ),
+                    NamedSymbol(
+                        "unsigned",
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "unsigned",
+            kind: Named,
+            rule: Metadata {
+                params: MetadataParams {
+                    precedence: None,
+                    dynamic_precedence: 0,
+                    associativity: None,
+                    is_token: true,
+                    is_string: false,
+                    is_active: false,
+                    is_main_token: false,
+                    alias: None,
+                    field_name: None,
+                },
+                rule: Pattern(
+                    "0|[1-9][0-9]*",
+                ),
+            },
+        },
+        Variable {
+            name: "_sign",
+            kind: Named,
+            rule: Pattern(
+                "[+-]",
+            ),
+        },
+        Variable {
+            name: "string",
+            kind: Named,
+            rule: Choice(
+                [
+                    Seq(
+                        [
+                            String(
+                                "'",
+                            ),
+                            Pattern(
+                                "[^'\\\\]*(\\\\.[^'\\\\]*)*",
+                            ),
+                            String(
+                                "'",
+                            ),
+                        ],
+                    ),
+                    Seq(
+                        [
+                            String(
+                                "\"",
+                            ),
+                            Pattern(
+                                "[^\"\\\\]*(\\\\.[^\"\\\\]*)*",
+                            ),
+                            String(
+                                "\"",
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "regex_long",
+            kind: Named,
+            rule: Seq(
+                [
+                    String(
+                        "/",
+                    ),
+                    String(
+                        "/",
+                    ),
+                    Choice(
+                        [
+                            Pattern(
+                                "i|g",
+                            ),
+                            Blank,
+                        ],
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "regex_range",
+            kind: Named,
+            rule: Seq(
+                [
+                    Metadata {
+                        params: MetadataParams {
+                            precedence: None,
+                            dynamic_precedence: 0,
+                            associativity: None,
+                            is_token: false,
+                            is_string: false,
+                            is_active: false,
+                            is_main_token: false,
+                            alias: None,
+                            field_name: Some(
+                                "is_neg",
+                            ),
+                        },
+                        rule: Choice(
+                            [
+                                String(
+                                    "[^",
+                                ),
+                                String(
+                                    "[",
+                                ),
+                            ],
+                        ),
+                    },
+                    Choice(
+                        [
+                            Repeat(
+                                NamedSymbol(
+                                    "regex_range_item",
+                                ),
+                            ),
+                            Blank,
+                        ],
+                    ),
+                    String(
+                        "]",
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "regex_range_item",
+            kind: Named,
+            rule: Choice(
+                [
+                    NamedSymbol(
+                        "regex_set",
+                    ),
+                    NamedSymbol(
+                        "regex_range_item_group",
+                    ),
+                    Pattern(
+                        "[^\\]]",
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "regex_range_item_group",
+            kind: Named,
+            rule: Metadata {
+                params: MetadataParams {
+                    precedence: Integer(
+                        10,
+                    ),
+                    dynamic_precedence: 0,
+                    associativity: Some(
+                        Left,
+                    ),
+                    is_token: false,
+                    is_string: false,
+                    is_active: false,
+                    is_main_token: false,
+                    alias: None,
+                    field_name: None,
+                },
+                rule: Seq(
+                    [
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "lhs",
+                                ),
+                            },
+                            rule: NamedSymbol(
+                                "regex_range_item",
+                            ),
+                        },
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "op",
+                                ),
+                            },
+                            rule: String(
+                                "-",
+                            ),
+                        },
+                        Metadata {
+                            params: MetadataParams {
+                                precedence: None,
+                                dynamic_precedence: 0,
+                                associativity: None,
+                                is_token: false,
+                                is_string: false,
+                                is_active: false,
+                                is_main_token: false,
+                                alias: None,
+                                field_name: Some(
+                                    "rhs",
+                                ),
+                            },
+                            rule: NamedSymbol(
+                                "regex_range_item",
+                            ),
+                        },
+                    ],
+                ),
+            },
+        },
+        Variable {
+            name: "regex_set",
+            kind: Named,
+            rule: Seq(
+                [
+                    String(
+                        "\\p",
+                    ),
+                    String(
+                        "{",
+                    ),
+                    Metadata {
+                        params: MetadataParams {
+                            precedence: None,
+                            dynamic_precedence: 0,
+                            associativity: None,
+                            is_token: false,
+                            is_string: false,
+                            is_active: false,
+                            is_main_token: false,
+                            alias: None,
+                            field_name: Some(
+                                "set",
+                            ),
+                        },
+                        rule: Pattern(
+                            "[_0-9a-zA-Z]+",
+                        ),
+                    },
+                    String(
+                        "}",
+                    ),
+                ],
+            ),
+        },
+        Variable {
+            name: "eos",
+            kind: Named,
+            rule: String(
+                ";",
+            ),
+        },
+        Variable {
+            name: "NEWLINE",
+            kind: Named,
+            rule: Pattern(
+                "\\r|\\r|\\n\\r",
+            ),
+        },
+        Variable {
+            name: "WHITESPACE",
+            kind: Named,
+            rule: Pattern(
+                "\\s",
+            ),
+        },
+    ],
+    extra_symbols: [
+        NamedSymbol(
+            "NEWLINE",
+        ),
+        NamedSymbol(
+            "WHITESPACE",
+        ),
+    ],
     expected_conflicts: [],
     precedence_orderings: [],
     external_tokens: [],
-    variables_to_inline: [],
+    variables_to_inline: [
+        "_grammar_exts",
+    ],
     supertype_symbols: [],
-    word_token: None,
+    word_token: Some(
+        "id",
+    ),
 }

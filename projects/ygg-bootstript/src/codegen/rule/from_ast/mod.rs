@@ -141,14 +141,19 @@ impl From<AssignStatement> for YGGRule {
         // if !force_inline {
         //     ty = Some(Identifier { data: name.to_case(Case::UpperCamel), range: s.id.range })
         // }
+        let mut try_inline_token = false;
         let mut eliminate_unmarked = false;
         let mut eliminate_unnamed = false;
-        match s.eq.as_str() {
-            "_=" => eliminate_unnamed = true,
-            "^=" => eliminate_unmarked = true,
-            _ => (),
+        for char in s.eq.chars() {
+            match char {
+                '_' => eliminate_unnamed = true,
+                '^' => eliminate_unmarked = true,
+                '@' => try_inline_token = true,
+                _ => (),
+            }
         }
-        let expression = ExpressionNode::from(s.rhs);
+        let mut expression = ExpressionNode::from(s.rhs);
+        expression.inline_token = try_inline_token;
         Self {
             name: s.id,
             ty,

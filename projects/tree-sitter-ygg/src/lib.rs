@@ -7,12 +7,10 @@
 //! use tree_sitter::Parser;
 //!
 //! let code = r#"
-//!     fn double(x: i32) -> i32 {
-//!         x * 2
-//!     }
+//!     grammar! test
 //! "#;
 //! let mut parser = Parser::new();
-//! parser.set_language(tree_sitter_ygg::language()).expect("Error loading Rust grammar");
+//! parser.set_language(tree_sitter_ygg::language()).expect("Error loading Ygg grammar");
 //! let parsed = parser.parse(code, None);
 //! # let parsed = parsed.unwrap();
 //! # let root = parsed.root_node();

@@ -66,7 +66,7 @@ impl From<Expression> for ExpressionNode {
 
 impl From<Data> for ExpressionNode {
     fn from(e: Data) -> Self {
-        Self { tag: None, ty: None, field: None, node: RefinedExpression::Data(box RefinedData::from(e)) }
+        Self { inline_token: false, tag: None, ty: None, field: None, node: RefinedExpression::Data(box RefinedData::from(e)) }
     }
 }
 

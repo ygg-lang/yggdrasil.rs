@@ -110,3 +110,91 @@ Rule {
         },
     },
 }
+Rule {
+    name: "grammar",
+    type: "Grammar",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        inline_token: true,
+        base: "grammar!",
+    },
+    range: Range {
+        start: Position {
+            line: 11,
+            character: 0,
+        },
+        end: Position {
+            line: 11,
+            character: 22,
+        },
+    },
+}
+Rule {
+    name: "fragment",
+    type: "Fragment",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        inline_token: true,
+        base: "fragment",
+    },
+    range: Range {
+        start: Position {
+            line: 12,
+            character: 0,
+        },
+        end: Position {
+            line: 12,
+            character: 22,
+        },
+    },
+}
+Rule {
+    name: "import",
+    type: "Import",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        inline_token: true,
+        base: "import!",
+    },
+    range: Range {
+        start: Position {
+            line: 13,
+            character: 0,
+        },
+        end: Position {
+            line: 13,
+            character: 21,
+        },
+    },
+}
+Rule {
+    name: "ignore",
+    type: "Ignore",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        inline_token: true,
+        base: "ignore!",
+    },
+    range: Range {
+        start: Position {
+            line: 14,
+            character: 0,
+        },
+        end: Position {
+            line: 14,
+            character: 21,
+        },
+    },
+}

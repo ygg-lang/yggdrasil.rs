@@ -2,7 +2,7 @@ use super::*;
 
 impl From<ConcatExpression> for ExpressionNode {
     fn from(e: ConcatExpression) -> Self {
-        Self { tag: None, ty: None, field: None, node: RefinedExpression::Concat(box RefinedConcat::from(e)) }
+        Self { inline_token: false, tag: None, ty: None, field: None, node: RefinedExpression::Concat(box RefinedConcat::from(e)) }
     }
 }
 

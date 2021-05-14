@@ -1,4 +1,3 @@
-use std::fmt::Write;
 use super::*;
 
 impl Debug for YGGRule {
@@ -18,7 +17,7 @@ impl Debug for YGGRule {
 
 impl Debug for ExpressionNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let mut w = &mut f.debug_struct("ExpressionNode");
+        let w = &mut f.debug_struct("ExpressionNode");
         if let Some(s) = &self.tag {
             w.field("tag", &s.tag.data);
             w.field("tag_mode", &s.mode);
@@ -28,6 +27,9 @@ impl Debug for ExpressionNode {
         }
         if let Some(s) = &self.ty {
             w.field("type", &s.data);
+        }
+        if self.inline_token {
+            w.field("inline_token", &true);
         }
         w.field("base", &self.node);
         w.finish()

@@ -1,11 +1,48 @@
 InputGrammar {
     name: "unary",
-    variables: [],
+    variables: [
+        Variable {
+            name: "test1",
+            kind: Named,
+            rule: Repeat(
+                NamedSymbol(
+                    "e1",
+                ),
+            ),
+        },
+        Variable {
+            name: "test2",
+            kind: Named,
+            rule: Repeat(
+                NamedSymbol(
+                    "e1",
+                ),
+            ),
+        },
+        Variable {
+            name: "test3",
+            kind: Named,
+            rule: Repeat(
+                NamedSymbol(
+                    "e1",
+                ),
+            ),
+        },
+        Variable {
+            name: "test4",
+            kind: Named,
+            rule: NamedSymbol(
+                "e1",
+            ),
+        },
+    ],
     extra_symbols: [],
     expected_conflicts: [],
     precedence_orderings: [],
     external_tokens: [],
     variables_to_inline: [],
     supertype_symbols: [],
-    word_token: None,
+    word_token: Some(
+        "id",
+    ),
 }

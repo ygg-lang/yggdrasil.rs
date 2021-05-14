@@ -9,3 +9,7 @@ statement =
 
 
 
+grammar  @= "grammar!"
+fragment @= "fragment"
+import   @= "import!"
+ignore   @= "ignore!"
