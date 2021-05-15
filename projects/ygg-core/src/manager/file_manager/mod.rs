@@ -51,6 +51,11 @@ impl FileManager {
             Some(old) if old.eq(&new) => return Ok(()),
             _ => (),
         }
+        let file = match url.to_file_path()?.extension().and_then(|e| e.to_str()) {
+            Some("toml") => Ok(FileStore::new_type(new.fingerprint, text)),
+            Some("ygg") | Some("yg") => Ok(FileStore::new_grammar(new.fingerprint, text)),
+            _ => Err(YGGError::language_error("Unsupported file extension")),
+        }?;
         self.store.insert(url, file);
         Ok(())
     }

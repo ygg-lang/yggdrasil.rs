@@ -39,10 +39,10 @@ impl Debug for ExpressionNode {
 impl Debug for RefinedExpression {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Data(e) => {e.fmt(f)}
-            Self::Unary(e) => {e.fmt(f)}
-            Self::Choice(e) => {e.fmt(f)}
-            Self::Concat(e) => {e.fmt(f)}
+            Self::Data(e) => e.fmt(f),
+            Self::Unary(e) => e.fmt(f),
+            Self::Choice(e) => e.fmt(f),
+            Self::Concat(e) => e.fmt(f),
         }
     }
 }
@@ -63,20 +63,17 @@ impl Debug for RefinedConcat {
 
 impl Debug for RefinedUnary {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Unary")
-            .field("base", &self.base)
-            .field("operations", &self.ops)
-            .finish()
+        f.debug_struct("Unary").field("base", &self.base).field("operations", &self.ops).finish()
     }
 }
 
 impl Debug for RefinedData {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Identifier(e) => {e.fmt(f)}
-            Self::Regex(e) => {e.fmt(f)}
-            Self::String(e) => {f.write_str(e)}
-            Self::Integer(e) => {f.write_str(&e.to_string())}
+            Self::Identifier(e) => e.fmt(f),
+            Self::Regex(e) => e.fmt(f),
+            Self::String(e) => f.write_str(e),
+            Self::Integer(e) => f.write_str(&e.to_string()),
         }
     }
 }
@@ -84,11 +81,11 @@ impl Debug for RefinedData {
 impl Debug for Operator {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Optional => {f.write_str("Optional?")}
-            Self::Repeats => {f.write_str("Repeats*")}
-            Self::Repeats1 => {f.write_str("RepeatsNonnull+")}
-            Self::Mark => {f.write_str("^MarkSymbol")}
-            Self::Recursive => {f.write_str("*RecursiveSymbol")}
+            Self::Optional => f.write_str("Optional?"),
+            Self::Repeats => f.write_str("Repeats*"),
+            Self::Repeats1 => f.write_str("RepeatsNonnull+"),
+            Self::Mark => f.write_str("^MarkSymbol"),
+            Self::Recursive => f.write_str("*RecursiveSymbol"),
         }
     }
 }

@@ -50,7 +50,7 @@ pub struct AssignStatement {
 
 #[derive(Clone, Debug)]
 pub struct IgnoreStatement {
-    pub rules: Vec<StringLiteral>,
+    pub rules: Vec<Identifier>,
     #[cfg(feature = "lsp")]
     pub range: lsp_types::Range,
     #[cfg(not(feature = "lsp"))]

@@ -1,12 +1,13 @@
-use crate::ast::*;
-use std::ops::AddAssign;
-use std::fmt::{Debug, Formatter};
-use crate::codegen::rule::YGGRule;
+use crate::{ast::*, codegen::rule::YGGRule};
+use std::{
+    fmt::{Debug, Formatter},
+    ops::AddAssign,
+};
 
 mod choice;
 mod concat;
-mod expr;
 mod debug;
+mod expr;
 mod unary;
 
 #[derive(Clone)]
@@ -20,7 +21,7 @@ pub struct ExpressionNode {
 
 #[derive(Clone, Debug)]
 pub struct ExpressionTag {
-   pub tag: Identifier,
+    pub tag: Identifier,
     pub mode: String,
 }
 
@@ -44,8 +45,8 @@ pub struct RefinedConcat {
 
 #[derive(Clone)]
 pub struct RefinedUnary {
-  pub  base: ExpressionNode,
-    pub  ops: Vec<Operator>,
+    pub base: ExpressionNode,
+    pub ops: Vec<Operator>,
 }
 
 #[derive(Copy, Clone)]
@@ -59,7 +60,7 @@ pub enum Operator {
     /// ^e
     Mark,
     /// *e
-    Recursive
+    Recursive,
 }
 
 #[derive(Clone)]

@@ -96,6 +96,7 @@ impl Parsed for Statement {
                 SyntaxKind::sym_grammar_statement => Self::GrammarStatement(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_assign_statement => Self::AssignStatement(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_fragment_statement => Self::FragmentStatement(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_ignore_statement => Self::IgnoreStatement(Box::new(Parsed::parse(state, node)?)),
                 _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node)),
             };
             return Ok(out);
@@ -117,6 +118,10 @@ parsed_wrap!(GrammarStatement:
 
 parsed_wrap!(FragmentStatement:
     id << (named_one, "id")
+);
+
+parsed_wrap!(IgnoreStatement:
+    rules << (named_many, "item")
 );
 
 impl Parsed for Expression {

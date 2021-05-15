@@ -16,45 +16,51 @@ impl RefinedUnary {
 impl Operator {
     pub fn prefix(o: &str) -> Operator {
         match o {
-            "*" => { Self::Recursive }
-            "^" => { Self::Mark }
-            _ => unreachable!()
+            "*" => Self::Recursive,
+            "^" => Self::Mark,
+            _ => unreachable!(),
         }
     }
     pub fn suffix(o: &str) -> Operator {
         match o {
-            "?" => { Self::Optional }
-            "+" => { Self::Repeats }
-            "*" => { Self::Repeats1 }
-            _ => unreachable!()
+            "?" => Self::Optional,
+            "+" => Self::Repeats,
+            "*" => Self::Repeats1,
+            _ => unreachable!(),
         }
     }
 }
 
-
 impl From<UnaryPrefix> for ExpressionNode {
     fn from(e: UnaryPrefix) -> Self {
-        Self { inline_token: false, tag: None, ty: None, field: None, node: RefinedExpression::Unary(box RefinedUnary::from(e)) }
+        Self {
+            inline_token: false,
+            tag: None,
+            ty: None,
+            field: None,
+            node: RefinedExpression::Unary(box RefinedUnary::from(e)),
+        }
     }
 }
 
 impl From<ExpressionNode> for RefinedUnary {
     fn from(e: ExpressionNode) -> Self {
         match e.get_unary() {
-            Some(s) => { s }
-            None => {
-                Self {
-                    base: e,
-                    ops: vec![],
-                }
-            }
+            Some(s) => s,
+            None => Self { base: e, ops: vec![] },
         }
     }
 }
 
 impl From<UnarySuffix> for ExpressionNode {
     fn from(e: UnarySuffix) -> Self {
-        Self { inline_token: false, tag: None, ty: None, field: None, node: RefinedExpression::Unary(box RefinedUnary::from(e)) }
+        Self {
+            inline_token: false,
+            tag: None,
+            ty: None,
+            field: None,
+            node: RefinedExpression::Unary(box RefinedUnary::from(e)),
+        }
     }
 }
 

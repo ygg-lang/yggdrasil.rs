@@ -8,7 +8,6 @@ test3 = e1*;
 test4 = ^e1;
 "#;
 
-
 #[test]
 fn test_unary() -> Result<()> {
     assert_codegen(UNARY, include_str!("unary.yaml"))

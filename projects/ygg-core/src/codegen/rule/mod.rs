@@ -1,4 +1,3 @@
-use std::fmt::{Debug};
 pub use self::node::*;
 use self::remap::{Keys, Map, Values};
 use crate::{
@@ -6,6 +5,7 @@ use crate::{
     Result,
 };
 use lsp_types::{Range, Url};
+use std::fmt::Debug;
 
 mod build;
 mod from_ast;
@@ -31,7 +31,7 @@ pub struct GrammarState {
     is_grammar: bool,
     name: Identifier,
     extensions: Vec<StringLiteral>,
-    ignores: Vec<StringLiteral>,
+    ignores: Vec<Identifier>,
     rule_map: Map<String, YGGRule>,
 }
 

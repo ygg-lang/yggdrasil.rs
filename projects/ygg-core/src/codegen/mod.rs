@@ -1,5 +1,5 @@
+mod debug;
 mod rule;
 mod typing;
 
-pub use self::rule::GrammarState;
-pub use typing::GrammarType;
+pub use self::{rule::GrammarState, typing::GrammarType};

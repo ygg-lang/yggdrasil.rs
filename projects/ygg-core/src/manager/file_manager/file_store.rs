@@ -7,6 +7,12 @@ pub struct FileStore {
 }
 
 impl FileStore {
+    pub fn new_grammar(key: u128, value: String) -> Self {
+        Self { fingerprint: key, data: FileType::GrammarString(value) }
+    }
+    pub fn new_type(key: u128, value: String) -> Self {
+        Self { fingerprint: key, data: FileType::TypeString(value) }
+    }
     pub fn load_url(url: &Url, f: FileFingerprint) -> Result<Self> {
         let FileFingerprint { fingerprint, text } = f;
         let path = url.to_file_path()?;

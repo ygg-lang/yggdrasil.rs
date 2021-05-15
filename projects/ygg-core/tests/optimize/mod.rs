@@ -22,7 +22,6 @@ fn test_unary() -> Result<()> {
     assert_optimize(UNARY_FUSION, include_str!("unary_fusion.yaml"))
 }
 
-
 const OR_FUSION: &str = r#"
 grammar! or
 test1 = a | a

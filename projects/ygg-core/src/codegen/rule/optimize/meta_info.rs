@@ -20,7 +20,7 @@ impl GrammarState {
         if self.is_grammar {
             terms.push(self.extension())
         }
-        terms.push(self.ignores());
+        terms.push(self.ignore());
         DocumentSymbol {
             name: name.to_string(),
             detail: Some(self.name.data.to_owned()),
@@ -65,9 +65,10 @@ impl GrammarState {
         }
     }
     fn extension_item(&self, index: usize, ext: String, range: Range) -> DocumentSymbol {
+        let detail = &ext[1..ext.len()-1];
         DocumentSymbol {
-            name: ext.to_owned(),
-            detail: Some((index + 1).to_string()),
+            name: format!("{}: ", index + 1),
+            detail: Some(detail.to_string()),
             kind: SymbolKind::Key,
             tags: None,
             deprecated: None,
@@ -76,21 +77,11 @@ impl GrammarState {
             children: None,
         }
     }
-    fn ignores(&self) -> DocumentSymbol {
+    fn ignore(&self) -> DocumentSymbol {
         let n = self.ignores.len();
         let children = match n {
             0 => None,
-            _ => {
-                let mut out = vec![];
-                for r in &self.ignores {
-                    if let Some(s) = self.get(&r.data) {
-                        let mut s = s.symbol_item();
-                        s.range = r.range;
-                        out.push(s)
-                    }
-                }
-                Some(out)
-            }
+            _ => Some(self.ignores.iter().map(|e| self.ignore_item(e)).collect()),
         };
         DocumentSymbol {
             name: "Ignores".to_string(),
@@ -101,6 +92,26 @@ impl GrammarState {
             range: Default::default(),
             selection_range: Default::default(),
             children,
+        }
+    }
+    fn ignore_item(&self, id: &Identifier) -> DocumentSymbol {
+        match self.get(&id.data) {
+            Some(s) => {
+                let mut s = s.symbol_item();
+                s.range = id.range;
+                s.kind = SymbolKind::Number;
+                s
+            }
+            None => DocumentSymbol {
+                name: id.data.to_owned(),
+                detail: None,
+                kind: SymbolKind::Number,
+                tags: None,
+                deprecated: None,
+                range: id.range,
+                selection_range: id.range,
+                children: None,
+            },
         }
     }
 }
@@ -114,13 +125,30 @@ impl YGGRule {
             kind,
             tags: None,
             deprecated: None,
-            range: Default::default(),
-            selection_range: Default::default(),
+            range: self.range,
+            selection_range: self.name.range,
             children: None,
         }
     }
     fn symbol_detail(&self) -> (Option<String>, SymbolKind) {
-        if self.force_inline { (Some("inlined".to_string()), SymbolKind::Variable) } else { (None, SymbolKind::Field) }
+        if self.force_inline {
+            (Some("inlined".to_string()), SymbolKind::Variable)
+        }
+        else if self.expression.inline_token {
+            (Some("token".to_string()), SymbolKind::String)
+        }
+        else if self.eliminate_unnamed {
+            (Some("no unnamed".to_string()), SymbolKind::EnumMember)
+        }
+        else if self.eliminate_unmarked {
+            (Some("no unmarked".to_string()), SymbolKind::Enum)
+        }
+        else if self.expression.is_choice() {
+            (None, SymbolKind::Class)
+        }
+        else {
+            (None, SymbolKind::Field)
+        }
     }
 }
 

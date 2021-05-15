@@ -6,15 +6,9 @@ module.exports = grammar({
         $.WHITESPACE,
     ],
 
-    supertypes: $ => [
-
-    ],
-    conflict: $ => [
-
-    ],
-    inline: $ => [
-        $._grammar_exts
-    ],
+    supertypes: $ => [],
+    conflict: $ => [],
+    inline: $ => [],
     word: $ => $.id,
 
     rules: {
@@ -23,6 +17,7 @@ module.exports = grammar({
         statement: $ => choice(
             $.grammar_statement,
             $.fragment_statement,
+            $.ignore_statement,
             $.assign_statement
         ),
 
@@ -30,13 +25,12 @@ module.exports = grammar({
         grammar_statement: $ => seq(
             $.grammar,
             field("id", $.id),
-            optional($._grammar_exts),
+            optional(choice(
+                field("ext", $.string),
+                seq("{", optional(join(field("ext", $.string), ",", 0)), "}"),
+                seq("[", optional(join(field("ext", $.string), ",", 0)), "]")
+            )),
             optional($.eos)
-        ),
-        _grammar_exts: $ => seq(
-            "{",
-            optional(interleave(field("ext", $.string), ",", 1)),
-            "}"
         ),
         grammar: $ => "grammar!",
 
@@ -51,6 +45,15 @@ module.exports = grammar({
 
 
         // IgnoresStatement
+        ignore_statement: $ => seq(
+            $.ignore,
+            choice(
+                field("item", $.id),
+                seq("{", optional(join(field("item", $.id), ",", 0)), "}"),
+                seq("[", optional(join(field("item", $.id), ",", 0)), "]"),
+            ),
+            optional($.eos)
+        ),
         ignore: $ => "ignore!",
 
 
@@ -65,7 +68,8 @@ module.exports = grammar({
         eq: $ => choice(
             "=",
             "_=",
-            "@="
+            "@=",
+            "^="
         ),
         // Unhide top level expression
         expression: $ => choice(
@@ -125,7 +129,7 @@ module.exports = grammar({
             field("name", $.id),
             optional(seq(".", field("dot", $.id))),
             "(",
-            interleave($.expression, ",", 1),
+            join($.expression, ",", 0),
             ")"
         ),
 
@@ -181,23 +185,21 @@ module.exports = grammar({
     }
 });
 
-function interleave(rule, sep, trailing) {
+function join (rule, sep, trailing) {
     if (trailing > 0) {
         // must add trailing separator
         return seq(rule, repeat(seq(sep, rule)), sep)
-    }
-    else if (trailing < 0) {
+    } else if (trailing < 0) {
         // disallow add trailing separator
         return seq(rule, repeat(seq(sep, rule)))
-    }
-    else {
+    } else {
         // trailing separator is optional
         return seq(rule, repeat(seq(sep, rule)), optional(sep))
     }
 }
 
 
-function variadic_left(p, op, expr) {
+function variadic_left (p, op, expr) {
     return prec.left(
         p,
         seq(
@@ -210,7 +212,7 @@ function variadic_left(p, op, expr) {
     )
 }
 
-function ternary_left(p, lhs, op1, mid, op2, rhs) {
+function ternary_left (p, lhs, op1, mid, op2, rhs) {
     return prec.left(
         p,
         seq(
@@ -224,7 +226,7 @@ function ternary_left(p, lhs, op1, mid, op2, rhs) {
 }
 
 
-function binary_left(p, lhs, op, rhs) {
+function binary_left (p, lhs, op, rhs) {
     return prec.left(
         p,
         seq(
@@ -235,14 +237,14 @@ function binary_left(p, lhs, op, rhs) {
     )
 }
 
-function unary_prefix(p, op, base) {
+function unary_prefix (p, op, base) {
     return prec.right(p, seq(
         field("prefix", op),
         field("expr", base),
     ))
 }
 
-function unary_suffix(p, expr, op) {
+function unary_suffix (p, expr, op) {
     return prec.right(p, seq(
         field("expr", base),
         field("suffix", op)

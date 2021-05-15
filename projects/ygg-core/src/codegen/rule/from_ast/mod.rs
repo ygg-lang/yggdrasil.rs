@@ -6,7 +6,7 @@ use super::{
     *,
 };
 use crate::{
-    ast::{AssignStatement,  Program, Statement},
+    ast::{AssignStatement, Program, Statement},
     manager::HintItems,
     Result,
 };

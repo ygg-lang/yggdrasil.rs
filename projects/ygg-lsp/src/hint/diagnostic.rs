@@ -9,4 +9,5 @@ impl Backend {
         };
         self.client.publish_diagnostics(url.to_owned(), diag, None).await
     }
+    pub async fn save_cache(&self) {}
 }

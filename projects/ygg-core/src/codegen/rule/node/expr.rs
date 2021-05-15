@@ -15,7 +15,6 @@ impl ExpressionNode {
     }
 }
 
-
 impl ExpressionNode {
     pub fn get_concat(&self) -> Option<RefinedConcat> {
         match self.to_owned().node {
@@ -82,4 +81,3 @@ impl From<Data> for RefinedData {
         }
     }
 }
-

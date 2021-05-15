@@ -16,7 +16,9 @@ statement =
     (grammar_statement
       (grammar)
       (WHITESPACE)
-      (id)))
+      (id)
+      (WHITESPACE)
+      (string)))
   (WHITESPACE)
   (WHITESPACE)
   (statement

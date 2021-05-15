@@ -3,11 +3,13 @@
 
 use lspower::{jsonrpc::Result, lsp::*, Client, LanguageServer, LspService, Server};
 use serde_json::Value;
+use yggdrasil_core::FILE_MANAGER;
 
 use crate::{
     commands::{command_provider, server_commands},
     completion::{completion_provider, COMPLETION_OPTIONS},
     hint::{code_action_provider, code_lens_provider, document_symbol_provider, hover_provider},
+    io::FileStateUpdate,
 };
 
 mod commands;
@@ -85,13 +87,24 @@ impl LanguageServer for Backend {
         self.diagnostics_provider(&params.text_document.uri).await;
     }
     async fn did_change(&self, params: DidChangeTextDocumentParams) {
-        self.client.log_message(MessageType::Info, format!("{:#?}", params)).await;
+        // TODO: Incremental update
+        let url = params.text_document.uri;
+        params
+            .content_changes
+            .into_iter()
+            .rev()
+            .nth(0)
+            .map(|e| e.text)
+            .and_then(|text| FILE_MANAGER.update_url_text(url.to_owned(), text).ok());
+        self.diagnostics_provider(&url).await;
     }
     async fn did_save(&self, params: DidSaveTextDocumentParams) {
         self.diagnostics_provider(&params.text_document.uri).await;
+        self.save_cache().await
     }
     async fn did_close(&self, params: DidCloseTextDocumentParams) {
         self.diagnostics_provider(&params.text_document.uri).await;
+        self.save_cache().await
     }
     async fn completion(&self, params: CompletionParams) -> Result<Option<CompletionResponse>> {
         // completion_resolve was closed
@@ -116,10 +129,7 @@ impl LanguageServer for Backend {
 
     #[rustfmt::skip]
     async fn document_symbol(&self, params: DocumentSymbolParams) -> Result<Option<DocumentSymbolResponse>> {
-        self.client.log_message(MessageType::Info, "Call document_symbol").await;
-        let out = document_symbol_provider(params).await?;
-        self.client.log_message(MessageType::Info, format!("{:#?}", out)).await;
-        Ok(out)
+        document_symbol_provider(params).await
     }
 
     /// Alt 键列出可执行的命令
