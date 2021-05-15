@@ -4,10 +4,11 @@ module.exports = grammar({
     extras: $ => [
         $.NEWLINE,
         $.WHITESPACE,
+        $.COMMENT,
     ],
 
     supertypes: $ => [],
-    conflict: $ => [],
+    conflicts: $ => [],
     inline: $ => [],
     word: $ => $.id,
 
@@ -18,7 +19,8 @@ module.exports = grammar({
             $.grammar_statement,
             $.fragment_statement,
             $.ignore_statement,
-            $.assign_statement
+            $.assign_statement,
+            $.comment_doc,
         ),
 
         // GrammarStatement
@@ -143,12 +145,12 @@ module.exports = grammar({
         string: $ => choice(
             seq(
                 "'",
-                /[^'\\]*(\\.[^'\\]*)*/,
+                field("text", /[^'\\]*(\\.[^'\\]*)*/),
                 "'",
             ),
             seq(
                 '"',
-                /[^"\\]*(\\.[^"\\]*)*/,
+                field("text", /[^"\\]*(\\.[^"\\]*)*/),
                 '"',
             )
         ),
@@ -180,12 +182,26 @@ module.exports = grammar({
 
         eos: $ => ";",
 
+        comment_doc: $ => token(seq(
+            choice("//!", "//?", "//*"),
+            /[^\n\r]*/
+        )),
+
+        COMMENT: $ => token(choice(
+            seq('//', /[^\n\r]*/),
+            seq(
+                '/*',
+                /[^*]*\*+([^/*][^*]*\*+)*/,
+                '/'
+            )
+        )),
+
         NEWLINE: $ => /\r|\r|\n\r/,
         WHITESPACE: $ => /\s/,
     }
 });
 
-function join (rule, sep, trailing) {
+function join(rule, sep, trailing) {
     if (trailing > 0) {
         // must add trailing separator
         return seq(rule, repeat(seq(sep, rule)), sep)
@@ -199,7 +215,7 @@ function join (rule, sep, trailing) {
 }
 
 
-function variadic_left (p, op, expr) {
+function variadic_left(p, op, expr) {
     return prec.left(
         p,
         seq(
@@ -212,7 +228,7 @@ function variadic_left (p, op, expr) {
     )
 }
 
-function ternary_left (p, lhs, op1, mid, op2, rhs) {
+function ternary_left(p, lhs, op1, mid, op2, rhs) {
     return prec.left(
         p,
         seq(
@@ -226,7 +242,7 @@ function ternary_left (p, lhs, op1, mid, op2, rhs) {
 }
 
 
-function binary_left (p, lhs, op, rhs) {
+function binary_left(p, lhs, op, rhs) {
     return prec.left(
         p,
         seq(
@@ -237,14 +253,14 @@ function binary_left (p, lhs, op, rhs) {
     )
 }
 
-function unary_prefix (p, op, base) {
+function unary_prefix(p, op, base) {
     return prec.right(p, seq(
         field("prefix", op),
         field("expr", base),
     ))
 }
 
-function unary_suffix (p, expr, op) {
+function unary_suffix(p, expr, op) {
     return prec.right(p, seq(
         field("expr", base),
         field("suffix", op)

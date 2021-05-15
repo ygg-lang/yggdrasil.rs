@@ -1,8 +1,8 @@
 use super::*;
 use tree_sitter::{Parser, Tree, TreeCursor};
 use tree_sitter_ygg::language;
-
 use std::{borrow::Borrow, ops::AddAssign};
+use std::num::ParseIntError;
 
 macro_rules! parsed_wrap {
     ($t:ty: $($i:ident << $method:tt),+) => {
@@ -22,8 +22,8 @@ macro_rules! parsed_wrap {
 }
 
 pub trait Parsed
-where
-    Self: Sized,
+    where
+        Self: Sized,
 {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self>;
     fn named_one(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Self> {
@@ -97,6 +97,7 @@ impl Parsed for Statement {
                 SyntaxKind::sym_assign_statement => Self::AssignStatement(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_fragment_statement => Self::FragmentStatement(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_ignore_statement => Self::IgnoreStatement(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_comment_doc => Self::CommentDocument(Box::new(Parsed::parse(state, node)?)),
                 _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node)),
             };
             return Ok(out);
@@ -173,6 +174,19 @@ parsed_wrap!(FieldExpression:
     rhs << (named_one, "rhs")
 );
 
+
+impl Parsed for CommentDocument {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        let doc = String::parse(state, this)?;
+        println!("{}", doc);
+        #[cfg(feature = "lsp")]
+            let range = convert_range(this.range());
+        #[cfg(not(feature = "lsp"))]
+            let range = this.range();
+        Ok(Self { doc, range })
+    }
+}
+
 parsed_wrap!(UnarySuffix:
     suffix << (named_one, "suffix"),
     base << (named_one, "base")
@@ -190,6 +204,8 @@ impl Parsed for Data {
                 SyntaxKind::sym_id => Self::Identifier(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_unsigned => Self::Integer(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_string => Self::String(Box::new(Parsed::parse(state, node)?)),
+                SyntaxKind::sym_regex_long => Self::Regex,
+                SyntaxKind::sym_macro_call => Self::Macro,
                 _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node)),
             };
             return Ok(out);
@@ -200,7 +216,43 @@ impl Parsed for Data {
 
 parsed_wrap!(Identifier: data << parse);
 parsed_wrap!(Unsigned: data << parse);
-parsed_wrap!(StringLiteral: data << parse);
+
+impl Parsed for StringLiteral {
+    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
+        use std::collections::VecDeque;
+        fn unescape_unicode(queue: &mut VecDeque<char>) -> Option<char> {
+            let mut s = String::new();
+            for _ in 0..4 {
+                queue.pop_front().map(|c| s.push(c));
+            }
+            u32::from_str_radix(&s, 16).ok().and_then(|c| char::from_u32(c))
+        }
+        let s = this.utf8_text(state.text.as_bytes())?;
+        let mut data = String::with_capacity(s.len());
+        let mut queue: VecDeque<_> = String::from(&s[1..s.len() - 1]).chars().collect();
+        while let Some(c) = queue.pop_front() {
+            if c != '\\' {
+                data.push(c);
+                continue;
+            }
+            match queue.pop_front() {
+                Some('b') => data.push('\u{0008}'),
+                Some('f') => data.push('\u{000C}'),
+                Some('n') => data.push('\n'),
+                Some('r') => data.push('\r'),
+                Some('t') => data.push('\t'),
+                Some('\'') => data.push('\''),
+                Some('\"') => data.push('\"'),
+                Some('\\') => data.push('\\'),
+                Some('u') => unescape_unicode(&mut queue).map(|c| data.push(c)).unwrap_or_default(),
+                _ => ()
+            };
+        }
+        #[cfg(feature = "lsp")] let range = convert_range(this.range());
+        #[cfg(not(feature = "lsp"))] let range = this.range();
+        Ok(Self { data, range })
+    }
+}
 
 impl Parsed for usize {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {

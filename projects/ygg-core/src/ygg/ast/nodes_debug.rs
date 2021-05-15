@@ -32,7 +32,7 @@ impl Debug for Statement {
                 .debug_struct("IgnoreStatement") //
                 .field("rules", &v.rules)
                 .finish(),
-            Self::EmptyStatement(_) => f.write_str("EmptyStatement"),
+            Statement::CommentDocument(_) => Ok(()),
         }
     }
 }
@@ -103,6 +103,7 @@ impl Debug for Data {
             Data::Integer(v) => f.debug_tuple("Integer").field(&v.data).finish(),
             Data::String(v) => f.debug_tuple("String").field(&v.data).finish(),
             Data::Regex => f.debug_tuple("Regex").finish(),
+            Data::Macro => f.debug_tuple("Macro").finish(),
         }
     }
 }

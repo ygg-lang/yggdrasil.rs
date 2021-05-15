@@ -1,5 +1,6 @@
 use convert_case::{Case, Casing};
 use lsp_types::Url;
+use std::mem::swap;
 
 use super::{
     hints::{duplicate_declaration_error, name_missing, top_area_error},
@@ -22,6 +23,7 @@ impl Program {
         let mut ignores = vec![];
         let mut diag = vec![];
         let mut lens = vec![];
+        let mut doc_buffer = String::new();
         for stmt in self.statement {
             match stmt {
                 Statement::GrammarStatement(s) => {
@@ -96,7 +98,8 @@ impl Program {
                 }
                 Statement::AssignStatement(s) => {
                     is_top_area = false;
-                    let rule = YGGRule::from(*s);
+                    let mut rule = YGGRule::from(*s);
+                    swap(&mut rule.doc, &mut doc_buffer);
                     match rule_map.get(&rule.name.data) {
                         Some(old) => diag.push(duplicate_declaration_error(
                             "Rule",
@@ -110,7 +113,7 @@ impl Program {
                         }
                     }
                 }
-                Statement::EmptyStatement(_) => continue,
+                Statement::CommentDocument(text) => doc_buffer.extend(text.doc.chars().chain("\n".chars())),
             }
         }
 
@@ -157,6 +160,7 @@ impl From<AssignStatement> for YGGRule {
         Self {
             name: s.id,
             ty,
+            doc: "".to_string(),
             force_inline,
             already_inline: false,
             eliminate_unmarked,

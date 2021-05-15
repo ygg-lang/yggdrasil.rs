@@ -42,6 +42,8 @@ pub struct YGGRule {
     ///
     ty: Identifier,
     ///
+    doc: String,
+    ///
     force_inline: bool,
     /// Eliminate unnamed nodes
     /// ```ygg

@@ -65,7 +65,7 @@ impl GrammarState {
         }
     }
     fn extension_item(&self, index: usize, ext: String, range: Range) -> DocumentSymbol {
-        let detail = &ext[1..ext.len()-1];
+        let detail = &ext[1..ext.len() - 1];
         DocumentSymbol {
             name: format!("{}: ", index + 1),
             detail: Some(detail.to_string()),

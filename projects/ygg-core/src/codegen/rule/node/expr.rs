@@ -78,6 +78,9 @@ impl From<Data> for RefinedData {
             Data::Regex => {
                 unimplemented!()
             }
+            Data::Macro => {
+                unimplemented!()
+            }
         }
     }
 }

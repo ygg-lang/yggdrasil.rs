@@ -15,7 +15,7 @@ pub enum Statement {
     FragmentStatement(Box<FragmentStatement>),
     AssignStatement(Box<AssignStatement>),
     IgnoreStatement(Box<IgnoreStatement>),
-    EmptyStatement(Box<Eos>),
+    CommentDocument(Box<CommentDocument>),
 }
 
 #[derive(Clone, Debug)]
@@ -92,6 +92,15 @@ pub struct ChoiceExpression {
 }
 
 #[derive(Clone, Debug)]
+pub struct CommentDocument {
+    pub doc: String,
+    #[cfg(feature = "lsp")]
+    pub range: lsp_types::Range,
+    #[cfg(not(feature = "lsp"))]
+    pub range: tree_sitter::Range,
+}
+
+#[derive(Clone, Debug)]
 pub struct ChoiceTag {
     pub expr: Expression,
     pub tag: Option<Identifier>,
@@ -139,6 +148,7 @@ pub enum Data {
     Identifier(Box<Identifier>),
     Integer(Box<Unsigned>),
     String(Box<StringLiteral>),
+    Macro,
     Regex,
 }
 
