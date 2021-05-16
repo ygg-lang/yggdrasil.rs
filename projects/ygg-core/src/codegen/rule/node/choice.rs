@@ -26,34 +26,45 @@ impl From<ExpressionNode> for RefinedChoice {
     fn from(e: ExpressionNode) -> Self {
         match e.get_choice() {
             Some(s) => Self { inner: s.inner },
-            None => Self { inner: vec![e] },
+            None => {
+                let mut inner = Set::new();
+                inner.insert(e);
+                Self { inner } },
         }
     }
 }
 
 impl From<ChoiceTag> for ExpressionNode {
     fn from(e: ChoiceTag) -> Self {
+        let mut inner = Set::new();
+        inner.insert(ExpressionNode::from(e.expr));
         ExpressionNode {
             inline_token: false,
             tag: ExpressionTag::new_optional(e.tag, e.mode),
             ty: e.ty,
             field: None,
-            node: RefinedExpression::Choice(box RefinedChoice { inner: vec![ExpressionNode::from(e.expr)] }),
+            node: RefinedExpression::Choice(box RefinedChoice { inner }),
         }
     }
 }
 
 impl From<ChoiceTag> for RefinedChoice {
     fn from(e: ChoiceTag) -> Self {
-        Self { inner: vec![ExpressionNode::from(e)] }
+        let mut inner = Set::new();
+        inner.insert(ExpressionNode::from(e));
+        Self { inner }
     }
 }
 
 impl AddAssign<ExpressionNode> for RefinedChoice {
     fn add_assign(&mut self, rhs: ExpressionNode) {
         match rhs.get_choice() {
-            Some(c) => self.inner.extend(c.inner),
-            None => self.inner.push(rhs),
+            Some(c) => {
+                c.inner.into_iter().for_each(|e|{self.inner.insert(e);})
+            },
+            None => {
+                self.inner.insert(rhs);
+            },
         }
     }
 }

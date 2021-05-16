@@ -10,7 +10,11 @@ mod debug;
 mod expr;
 mod unary;
 
-#[derive(Clone)]
+// pub type Set<V> = std::collections::HashSet<V>;
+pub type Set<V> = indexmap::IndexSet<V>;
+
+
+#[derive(Clone, Eq, PartialEq, Hash)]
 pub struct ExpressionNode {
     pub inline_token: bool,
     pub tag: Option<ExpressionTag>,
@@ -19,13 +23,13 @@ pub struct ExpressionNode {
     pub node: RefinedExpression,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug,Eq, PartialEq, Hash)]
 pub struct ExpressionTag {
     pub tag: Identifier,
     pub mode: String,
 }
 
-#[derive(Clone)]
+#[derive(Clone,Eq, PartialEq, Hash)]
 pub enum RefinedExpression {
     Data(Box<RefinedData>),
     Unary(Box<RefinedUnary>),
@@ -33,23 +37,23 @@ pub enum RefinedExpression {
     Concat(Box<RefinedConcat>),
 }
 
-#[derive(Clone)]
+#[derive(Clone,Eq, PartialEq)]
 pub struct RefinedChoice {
-    pub inner: Vec<ExpressionNode>,
+    pub inner: Set<ExpressionNode>,
 }
 
-#[derive(Clone)]
+#[derive(Clone,Eq, PartialEq, Hash)]
 pub struct RefinedConcat {
     pub inner: Vec<ExpressionNode>,
 }
 
-#[derive(Clone)]
+#[derive(Clone,Eq, PartialEq, Hash)]
 pub struct RefinedUnary {
     pub base: ExpressionNode,
     pub ops: Vec<Operator>,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone,Eq, PartialEq, Hash)]
 pub enum Operator {
     /// e?
     Optional,

@@ -3,6 +3,7 @@ use std::{
     fmt::{Debug, Formatter},
     ops::{AddAssign, Deref, DerefMut},
 };
+use std::hash::{Hash, Hasher};
 
 impl Debug for Program {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -85,5 +86,30 @@ impl Debug for Data {
             Data::Regex => f.debug_tuple("Regex").finish(),
             Data::Macro => f.debug_tuple("Macro").finish(),
         }
+    }
+}
+
+
+impl Eq for Identifier { }
+impl PartialEq<Self> for Identifier {
+    fn eq(&self, other: &Self) -> bool {
+        self.data == other.data
+    }
+}
+impl Hash for Identifier {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.data.hash(state)
+    }
+}
+
+impl Eq for StringLiteral { }
+impl PartialEq<Self> for StringLiteral {
+    fn eq(&self, other: &Self) -> bool {
+        self.data == other.data
+    }
+}
+impl Hash for StringLiteral {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.data.hash(state)
     }
 }

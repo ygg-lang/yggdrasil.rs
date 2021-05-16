@@ -12,11 +12,11 @@ Rule {
                     data: "statement",
                     range: Range {
                         start: Position {
-                            line: 2,
+                            line: 9,
                             character: 11,
                         },
                         end: Position {
-                            line: 2,
+                            line: 9,
                             character: 20,
                         },
                     },
@@ -30,11 +30,11 @@ Rule {
     },
     range: Range {
         start: Position {
-            line: 2,
+            line: 9,
             character: 0,
         },
         end: Position {
-            line: 2,
+            line: 9,
             character: 21,
         },
     },
@@ -47,35 +47,283 @@ Rule {
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
-        base: Choice[
+        base: Concat[
             ExpressionNode {
-                base: Choice[
-                    ExpressionNode {
+                base: Identifier {
+                    data: "grammar",
+                    range: Range {
+                        start: Position {
+                            line: 27,
+                            character: 21,
+                        },
+                        end: Position {
+                            line: 27,
+                            character: 28,
+                        },
+                    },
+                },
+            },
+            ExpressionNode {
+                base: Unary {
+                    base: ExpressionNode {
                         base: Identifier {
-                            data: "grammar_statement",
+                            data: "id",
                             range: Range {
                                 start: Position {
-                                    line: 5,
-                                    character: 6,
+                                    line: 27,
+                                    character: 32,
                                 },
                                 end: Position {
-                                    line: 5,
-                                    character: 23,
+                                    line: 27,
+                                    character: 34,
                                 },
                             },
                         },
                     },
-                    ExpressionNode {
+                    operations: [
+                        ^MarkSymbol,
+                    ],
+                },
+            },
+            ExpressionNode {
+                base: Unary {
+                    base: ExpressionNode {
                         base: Identifier {
-                            data: "fragment_statement",
+                            data: "_grammar_exts",
                             range: Range {
                                 start: Position {
-                                    line: 6,
+                                    line: 27,
+                                    character: 37,
+                                },
+                                end: Position {
+                                    line: 27,
+                                    character: 50,
+                                },
+                            },
+                        },
+                    },
+                    operations: [
+                        Optional?,
+                    ],
+                },
+            },
+            ExpressionNode {
+                base: Unary {
+                    base: ExpressionNode {
+                        base: Identifier {
+                            data: "eos",
+                            range: Range {
+                                start: Position {
+                                    line: 27,
+                                    character: 54,
+                                },
+                                end: Position {
+                                    line: 27,
+                                    character: 57,
+                                },
+                            },
+                        },
+                    },
+                    operations: [
+                        Optional?,
+                    ],
+                },
+            },
+        ],
+    },
+    range: Range {
+        start: Position {
+            line: 16,
+            character: 0,
+        },
+        end: Position {
+            line: 27,
+            character: 58,
+        },
+    },
+}
+Rule {
+    name: "fragment_statement",
+    type: "FragmentStatement",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: true,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Concat[
+            ExpressionNode {
+                base: Identifier {
+                    data: "fragment",
+                    range: Range {
+                        start: Position {
+                            line: 34,
+                            character: 22,
+                        },
+                        end: Position {
+                            line: 34,
+                            character: 30,
+                        },
+                    },
+                },
+            },
+            ExpressionNode {
+                base: Unary {
+                    base: ExpressionNode {
+                        base: Identifier {
+                            data: "id",
+                            range: Range {
+                                start: Position {
+                                    line: 34,
+                                    character: 34,
+                                },
+                                end: Position {
+                                    line: 34,
+                                    character: 36,
+                                },
+                            },
+                        },
+                    },
+                    operations: [
+                        ^MarkSymbol,
+                    ],
+                },
+            },
+            ExpressionNode {
+                base: Unary {
+                    base: ExpressionNode {
+                        base: Identifier {
+                            data: "eos",
+                            range: Range {
+                                start: Position {
+                                    line: 34,
+                                    character: 39,
+                                },
+                                end: Position {
+                                    line: 34,
+                                    character: 42,
+                                },
+                            },
+                        },
+                    },
+                    operations: [
+                        Optional?,
+                    ],
+                },
+            },
+        ],
+    },
+    range: Range {
+        start: Position {
+            line: 34,
+            character: 0,
+        },
+        end: Position {
+            line: 34,
+            character: 43,
+        },
+    },
+}
+Rule {
+    name: "import_statement",
+    type: "ImportStatement",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: true,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Concat[
+            ExpressionNode {
+                base: Identifier {
+                    data: "import",
+                    range: Range {
+                        start: Position {
+                            line: 39,
+                            character: 6,
+                        },
+                        end: Position {
+                            line: 39,
+                            character: 12,
+                        },
+                    },
+                },
+            },
+            ExpressionNode {
+                field: "path",
+                base: Identifier {
+                    data: "string",
+                    range: Range {
+                        start: Position {
+                            line: 39,
+                            character: 24,
+                        },
+                        end: Position {
+                            line: 39,
+                            character: 30,
+                        },
+                    },
+                },
+            },
+            ExpressionNode {
+                base: Choice[
+                    ExpressionNode {
+                        base: Unary {
+                            base: ExpressionNode {
+                                base: Concat[
+                                    ExpressionNode {
+                                        base: Identifier {
+                                            data: "as",
+                                            range: Range {
+                                                start: Position {
+                                                    line: 39,
+                                                    character: 35,
+                                                },
+                                                end: Position {
+                                                    line: 39,
+                                                    character: 37,
+                                                },
+                                            },
+                                        },
+                                    },
+                                    ExpressionNode {
+                                        base: Unary {
+                                            base: ExpressionNode {
+                                                base: Identifier {
+                                                    data: "id",
+                                                    range: Range {
+                                                        start: Position {
+                                                            line: 39,
+                                                            character: 41,
+                                                        },
+                                                        end: Position {
+                                                            line: 39,
+                                                            character: 43,
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                            operations: [
+                                                ^MarkSymbol,
+                                            ],
+                                        },
+                                    },
+                                ],
+                            },
+                            operations: [
+                                Optional?,
+                            ],
+                        },
+                    },
+                    ExpressionNode {
+                        base: Identifier {
+                            data: "import",
+                            range: Range {
+                                start: Position {
+                                    line: 40,
                                     character: 6,
                                 },
                                 end: Position {
-                                    line: 6,
-                                    character: 24,
+                                    line: 40,
+                                    character: 12,
                                 },
                             },
                         },
@@ -83,16 +331,102 @@ Rule {
                 ],
             },
             ExpressionNode {
+                field: "path",
                 base: Identifier {
-                    data: "assign_statement",
+                    data: "string",
                     range: Range {
                         start: Position {
-                            line: 7,
-                            character: 6,
+                            line: 40,
+                            character: 24,
                         },
                         end: Position {
-                            line: 7,
-                            character: 22,
+                            line: 40,
+                            character: 30,
+                        },
+                    },
+                },
+            },
+            ExpressionNode {
+                base: {,
+            },
+            ExpressionNode {
+                base: Unary {
+                    base: ExpressionNode {
+                        base: 0,
+                    },
+                    operations: [
+                        Optional?,
+                    ],
+                },
+            },
+            ExpressionNode {
+                base: },
+            },
+        ],
+    },
+    range: Range {
+        start: Position {
+            line: 38,
+            character: 0,
+        },
+        end: Position {
+            line: 41,
+            character: 84,
+        },
+    },
+}
+Rule {
+    name: "import_item",
+    type: "ImportItem",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Concat[
+            ExpressionNode {
+                field: "id",
+                base: Identifier {
+                    data: "id",
+                    range: Range {
+                        start: Position {
+                            line: 42,
+                            character: 27,
+                        },
+                        end: Position {
+                            line: 42,
+                            character: 29,
+                        },
+                    },
+                },
+            },
+            ExpressionNode {
+                base: Identifier {
+                    data: "as",
+                    range: Range {
+                        start: Position {
+                            line: 42,
+                            character: 33,
+                        },
+                        end: Position {
+                            line: 42,
+                            character: 35,
+                        },
+                    },
+                },
+            },
+            ExpressionNode {
+                field: "alias",
+                base: Identifier {
+                    data: "id",
+                    range: Range {
+                        start: Position {
+                            line: 42,
+                            character: 48,
+                        },
+                        end: Position {
+                            line: 42,
+                            character: 50,
                         },
                     },
                 },
@@ -101,100 +435,591 @@ Rule {
     },
     range: Range {
         start: Position {
-            line: 4,
+            line: 42,
             character: 0,
         },
         end: Position {
-            line: 7,
-            character: 22,
+            line: 42,
+            character: 51,
         },
     },
 }
 Rule {
-    name: "grammar",
-    type: "Grammar",
+    name: "ignores_statement",
+    type: "IgnoresStatement",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: true,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Concat[
+            ExpressionNode {
+                base: Identifier {
+                    data: "ignores",
+                    range: Range {
+                        start: Position {
+                            line: 49,
+                            character: 6,
+                        },
+                        end: Position {
+                            line: 49,
+                            character: 13,
+                        },
+                    },
+                },
+            },
+            ExpressionNode {
+                base: Choice[
+                    ExpressionNode {
+                        base: Unary {
+                            base: ExpressionNode {
+                                base: Identifier {
+                                    data: "id",
+                                    range: Range {
+                                        start: Position {
+                                            line: 49,
+                                            character: 17,
+                                        },
+                                        end: Position {
+                                            line: 49,
+                                            character: 19,
+                                        },
+                                    },
+                                },
+                            },
+                            operations: [
+                                ^MarkSymbol,
+                            ],
+                        },
+                    },
+                    ExpressionNode {
+                        base: Identifier {
+                            data: "ignores",
+                            range: Range {
+                                start: Position {
+                                    line: 50,
+                                    character: 6,
+                                },
+                                end: Position {
+                                    line: 50,
+                                    character: 13,
+                                },
+                            },
+                        },
+                    },
+                ],
+            },
+            ExpressionNode {
+                base: {,
+            },
+            ExpressionNode {
+                base: Unary {
+                    base: ExpressionNode {
+                        base: 0,
+                    },
+                    operations: [
+                        Optional?,
+                    ],
+                },
+            },
+            ExpressionNode {
+                base: },
+            },
+        ],
+    },
+    range: Range {
+        start: Position {
+            line: 48,
+            character: 0,
+        },
+        end: Position {
+            line: 50,
+            character: 64,
+        },
+    },
+}
+Rule {
+    name: "expression",
+    type: "Expression",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: true,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Concat[
+            ExpressionNode {
+                base: (,
+            },
+            ExpressionNode {
+                base: Unary {
+                    base: ExpressionNode {
+                        base: |,
+                    },
+                    operations: [
+                        Optional?,
+                    ],
+                },
+            },
+            ExpressionNode {
+                base: Identifier {
+                    data: "expression",
+                    range: Range {
+                        start: Position {
+                            line: 60,
+                            character: 26,
+                        },
+                        end: Position {
+                            line: 60,
+                            character: 36,
+                        },
+                    },
+                },
+            },
+            ExpressionNode {
+                base: ),
+            },
+        ],
+    },
+    range: Range {
+        start: Position {
+            line: 53,
+            character: 0,
+        },
+        end: Position {
+            line: 60,
+            character: 42,
+        },
+    },
+}
+Rule {
+    name: "unary_suffix",
+    type: "UnarySuffix",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: 0,
+    },
+    range: Range {
+        start: Position {
+            line: 61,
+            character: 0,
+        },
+        end: Position {
+            line: 62,
+            character: 49,
+        },
+    },
+}
+Rule {
+    name: "unary_prefix",
+    type: "UnaryPrefix",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: 0,
+    },
+    range: Range {
+        start: Position {
+            line: 63,
+            character: 0,
+        },
+        end: Position {
+            line: 64,
+            character: 49,
+        },
+    },
+}
+Rule {
+    name: "concat_expression",
+    type: "ConcatExpression",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: 0,
+    },
+    range: Range {
+        start: Position {
+            line: 66,
+            character: 0,
+        },
+        end: Position {
+            line: 67,
+            character: 41,
+        },
+    },
+}
+Rule {
+    name: "or_expression",
+    type: "OrExpression",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: 0,
+    },
+    range: Range {
+        start: Position {
+            line: 69,
+            character: 0,
+        },
+        end: Position {
+            line: 70,
+            character: 42,
+        },
+    },
+}
+Rule {
+    name: "variant_tag",
+    type: "VariantTag",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: 0,
+    },
+    range: Range {
+        start: Position {
+            line: 71,
+            character: 0,
+        },
+        end: Position {
+            line: 71,
+            character: 62,
+        },
+    },
+}
+Rule {
+    name: "label_expression",
+    type: "LabelExpression",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: 0,
+    },
+    range: Range {
+        start: Position {
+            line: 74,
+            character: 0,
+        },
+        end: Position {
+            line: 75,
+            character: 44,
+        },
+    },
+}
+Rule {
+    name: "b",
+    type: "B",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Choice[
+            ExpressionNode {
+                base: *,
+            },
+            ExpressionNode {
+                base: +,
+            },
+        ],
+    },
+    range: Range {
+        start: Position {
+            line: 79,
+            character: 9,
+        },
+        end: Position {
+            line: 81,
+            character: 9,
+        },
+    },
+}
+Rule {
+    name: "data",
+    type: "Data",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Identifier {
+            data: "_atom",
+            range: Range {
+                start: Position {
+                    line: 85,
+                    character: 7,
+                },
+                end: Position {
+                    line: 85,
+                    character: 12,
+                },
+            },
+        },
+    },
+    range: Range {
+        start: Position {
+            line: 85,
+            character: 0,
+        },
+        end: Position {
+            line: 85,
+            character: 12,
+        },
+    },
+}
+Rule {
+    name: "atom",
+    type: "Atom",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Choice[
+            ExpressionNode {
+                base: Choice[
+                    ExpressionNode {
+                        base: Choice[
+                            ExpressionNode {
+                                base: Choice[
+                                    ExpressionNode {
+                                        base: Identifier {
+                                            data: "id",
+                                            range: Range {
+                                                start: Position {
+                                                    line: 87,
+                                                    character: 6,
+                                                },
+                                                end: Position {
+                                                    line: 87,
+                                                    character: 8,
+                                                },
+                                            },
+                                        },
+                                    },
+                                    ExpressionNode {
+                                        base: Identifier {
+                                            data: "string",
+                                            range: Range {
+                                                start: Position {
+                                                    line: 88,
+                                                    character: 6,
+                                                },
+                                                end: Position {
+                                                    line: 88,
+                                                    character: 12,
+                                                },
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                            ExpressionNode {
+                                base: Identifier {
+                                    data: "unsigned",
+                                    range: Range {
+                                        start: Position {
+                                            line: 89,
+                                            character: 6,
+                                        },
+                                        end: Position {
+                                            line: 89,
+                                            character: 14,
+                                        },
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                    ExpressionNode {
+                        base: Identifier {
+                            data: "regex",
+                            range: Range {
+                                start: Position {
+                                    line: 90,
+                                    character: 6,
+                                },
+                                end: Position {
+                                    line: 90,
+                                    character: 11,
+                                },
+                            },
+                        },
+                    },
+                ],
+            },
+            ExpressionNode {
+                base: Identifier {
+                    data: "macro_call",
+                    range: Range {
+                        start: Position {
+                            line: 91,
+                            character: 6,
+                        },
+                        end: Position {
+                            line: 91,
+                            character: 16,
+                        },
+                    },
+                },
+            },
+        ],
+    },
+    range: Range {
+        start: Position {
+            line: 86,
+            character: 0,
+        },
+        end: Position {
+            line: 91,
+            character: 16,
+        },
+    },
+}
+Rule {
+    name: "macro_call",
+    type: "MacroCall",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Concat[
+            ExpressionNode {
+                field: "name",
+                base: 0,
+            },
+            ExpressionNode {
+                base: (,
+            },
+            ExpressionNode {
+                base: 0,
+            },
+            ExpressionNode {
+                base: 0,
+            },
+        ],
+    },
+    range: Range {
+        start: Position {
+            line: 97,
+            character: 0,
+        },
+        end: Position {
+            line: 104,
+            character: 24,
+        },
+    },
+}
+Rule {
+    name: "identifier",
+    type: "Identifier",
     force_inline: false,
     already_inline: false,
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
         inline_token: true,
-        base: "grammar!",
+        base: Concat[
+            ExpressionNode {
+                base: Choice[
+                    ExpressionNode {
+                        base: _,
+                    },
+                    ExpressionNode {
+                        base: Identifier {
+                            data: "XID_START",
+                            range: Range {
+                                start: Position {
+                                    line: 105,
+                                    character: 21,
+                                },
+                                end: Position {
+                                    line: 105,
+                                    character: 30,
+                                },
+                            },
+                        },
+                    },
+                ],
+            },
+            ExpressionNode {
+                base: Identifier {
+                    data: "XID_CONTINUE",
+                    range: Range {
+                        start: Position {
+                            line: 105,
+                            character: 34,
+                        },
+                        end: Position {
+                            line: 105,
+                            character: 46,
+                        },
+                    },
+                },
+            },
+        ],
     },
     range: Range {
         start: Position {
-            line: 11,
+            line: 105,
             character: 0,
         },
         end: Position {
-            line: 11,
-            character: 22,
+            line: 105,
+            character: 46,
         },
     },
 }
 Rule {
-    name: "fragment",
-    type: "Fragment",
+    name: "integer",
+    type: "Integer",
     force_inline: false,
     already_inline: false,
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
         inline_token: true,
-        base: "fragment",
+        base: Unary {
+            base: ExpressionNode {
+                base: Identifier {
+                    data: "_sign",
+                    range: Range {
+                        start: Position {
+                            line: 107,
+                            character: 14,
+                        },
+                        end: Position {
+                            line: 107,
+                            character: 19,
+                        },
+                    },
+                },
+            },
+            operations: [
+                Optional?,
+            ],
+        },
     },
     range: Range {
         start: Position {
-            line: 12,
+            line: 107,
             character: 0,
         },
         end: Position {
-            line: 12,
-            character: 22,
-        },
-    },
-}
-Rule {
-    name: "import",
-    type: "Import",
-    force_inline: false,
-    already_inline: false,
-    eliminate_unmarked: false,
-    eliminate_unnamed: false,
-    expression: ExpressionNode {
-        inline_token: true,
-        base: "import!",
-    },
-    range: Range {
-        start: Position {
-            line: 13,
-            character: 0,
-        },
-        end: Position {
-            line: 13,
-            character: 21,
-        },
-    },
-}
-Rule {
-    name: "ignore",
-    type: "Ignore",
-    force_inline: false,
-    already_inline: false,
-    eliminate_unmarked: false,
-    eliminate_unnamed: false,
-    expression: ExpressionNode {
-        inline_token: true,
-        base: "ignore!",
-    },
-    range: Range {
-        start: Position {
-            line: 14,
-            character: 0,
-        },
-        end: Position {
-            line: 14,
-            character: 21,
+            line: 107,
+            character: 20,
         },
     },
 }

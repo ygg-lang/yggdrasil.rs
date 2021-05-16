@@ -22,21 +22,6 @@ Rule {
                     },
                 },
             },
-            ExpressionNode {
-                base: Identifier {
-                    data: "a",
-                    range: Range {
-                        start: Position {
-                            line: 2,
-                            character: 12,
-                        },
-                        end: Position {
-                            line: 2,
-                            character: 13,
-                        },
-                    },
-                },
-            },
         ],
     },
     range: Range {
@@ -133,9 +118,6 @@ Rule {
             ExpressionNode {
                 base: 0,
             },
-            ExpressionNode {
-                base: 0,
-            },
         ],
     },
     range: Range {
@@ -194,10 +176,7 @@ Rule {
     expression: ExpressionNode {
         base: Choice[
             ExpressionNode {
-                base: "a",
-            },
-            ExpressionNode {
-                base: "a",
+                base: a,
             },
         ],
     },
@@ -224,15 +203,12 @@ Rule {
             ExpressionNode {
                 base: Choice[
                     ExpressionNode {
-                        base: "a",
-                    },
-                    ExpressionNode {
-                        base: "a",
+                        base: a,
                     },
                 ],
             },
             ExpressionNode {
-                base: "b",
+                base: b,
             },
         ],
     },

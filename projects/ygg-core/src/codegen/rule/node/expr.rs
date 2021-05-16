@@ -1,3 +1,4 @@
+use std::hash::{Hash, Hasher};
 use super::*;
 
 impl ExpressionNode {
@@ -87,6 +88,53 @@ impl From<Data> for RefinedData {
             Data::String(atom) => Self::String(atom.data),
             Data::Regex => Self::Integer(0),
             Data::Macro => Self::Integer(0),
+        }
+    }
+}
+
+impl Hash for RefinedChoice {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.inner.iter().for_each(|e| e.hash(state))
+    }
+}
+
+impl Eq for RefinedData {
+
+}
+impl PartialEq for RefinedData {
+    fn eq(&self, other: &RefinedData) -> bool {
+        match (self, other) {
+            (Self::Identifier(lhs) , Self::Identifier(rhs)) => {
+                lhs == rhs
+            }
+
+            (Self::Regex(lhs) , Self::Regex(rhs)) => {
+                lhs == rhs
+            }
+            (Self::String(lhs) , Self::String(rhs)) => {
+                lhs == rhs
+            }
+            (Self::Integer(lhs) , Self::Integer(rhs)) => {
+                lhs == rhs
+            }
+            (Self::String(lhs) , Self::Integer(rhs))
+            |(Self::Integer(rhs) , Self::String(lhs))=> {
+                rhs.to_string().eq(lhs)
+            }
+            _=>{
+                false
+            }
+        }
+    }
+}
+
+impl Hash for RefinedData {
+    fn hash<H: Hasher>(&self, state: &mut H) -> () {
+        match self {
+            RefinedData::Identifier(e) => {e.hash(state)}
+            RefinedData::String(e) => {e.hash(state)}
+            RefinedData::Regex(e) => {e.hash(state)}
+            RefinedData::Integer(e) => {e.to_string().hash(state)}
         }
     }
 }
