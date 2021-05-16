@@ -37,7 +37,7 @@ fragment_statement ^= fragment ~ ^id ~ eos?
 
 
 import_statement ^=
-    | import ~ (path <- string) ~ (as ^id)?         #FromPath
+    | import ~ (path <- string) ~ (as ~ ^id)?       #FromPath
     | import ~ (path <- string) ~ _import_selected  #FromPathItems
 _import_selected  = "{" ~ @interleave(item <- import_item, ",", trailing = 1)? ~ "}"
 import_item       = (id <- id) ~ as ~ (alias <- id)

@@ -56,9 +56,19 @@ impl From<Expression> for ExpressionNode {
             Expression::UnaryPrefix(e) => Self::from(*e),
             Expression::ConcatExpression(e) => Self::from(*e),
             Expression::ChoiceExpression(e) => Self::from(*e),
-            Expression::FieldExpression(_) => {
-                unimplemented!()
-            }
+            Expression::FieldExpression(e) => Self::from(*e),
+        }
+    }
+}
+
+impl From<FieldExpression> for ExpressionNode {
+    fn from(e: FieldExpression) -> Self {
+        Self {
+            inline_token: false,
+            tag: None,
+            ty: None,
+            field: Some(e.lhs),
+            node: Self::from(e.rhs).node
         }
     }
 }
@@ -75,12 +85,8 @@ impl From<Data> for RefinedData {
             Data::Identifier(atom) => Self::Identifier(*atom),
             Data::Integer(atom) => Self::Integer(atom.data),
             Data::String(atom) => Self::String(atom.data),
-            Data::Regex => {
-                unimplemented!()
-            }
-            Data::Macro => {
-                unimplemented!()
-            }
+            Data::Regex => Self::Integer(0),
+            Data::Macro => Self::Integer(0),
         }
     }
 }

@@ -4,7 +4,21 @@ GrammarStatement {
 }
 GrammarStatement {
     id: "test2",
-    ext: [],
+    ext: [
+        StringLiteral {
+            data: "a",
+            range: Range {
+                start: Position {
+                    line: 3,
+                    character: 16,
+                },
+                end: Position {
+                    line: 3,
+                    character: 19,
+                },
+            },
+        },
+    ],
 }
 AssignStatement {
     id: "rule1",

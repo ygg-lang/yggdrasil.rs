@@ -174,18 +174,7 @@ parsed_wrap!(FieldExpression:
     rhs << (named_one, "rhs")
 );
 
-
-impl Parsed for CommentDocument {
-    fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self> {
-        let doc = String::parse(state, this)?;
-        println!("{}", doc);
-        #[cfg(feature = "lsp")]
-            let range = convert_range(this.range());
-        #[cfg(not(feature = "lsp"))]
-            let range = this.range();
-        Ok(Self { doc, range })
-    }
-}
+parsed_wrap!(CommentDocument: doc << parse);
 
 parsed_wrap!(UnarySuffix:
     suffix << (named_one, "suffix"),
@@ -205,6 +194,7 @@ impl Parsed for Data {
                 SyntaxKind::sym_unsigned => Self::Integer(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_string => Self::String(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_regex_long => Self::Regex,
+                SyntaxKind::sym_regex_range=> Self::Regex,
                 SyntaxKind::sym_macro_call => Self::Macro,
                 _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node)),
             };
