@@ -1,9 +1,9 @@
 use super::*;
 use std::{
     fmt::{Debug, Formatter},
+    hash::{Hash, Hasher},
     ops::{AddAssign, Deref, DerefMut},
 };
-use std::hash::{Hash, Hasher};
 
 impl Debug for Program {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -89,8 +89,7 @@ impl Debug for Data {
     }
 }
 
-
-impl Eq for Identifier { }
+impl Eq for Identifier {}
 impl PartialEq<Self> for Identifier {
     fn eq(&self, other: &Self) -> bool {
         self.data == other.data
@@ -102,7 +101,7 @@ impl Hash for Identifier {
     }
 }
 
-impl Eq for StringLiteral { }
+impl Eq for StringLiteral {}
 impl PartialEq<Self> for StringLiteral {
     fn eq(&self, other: &Self) -> bool {
         self.data == other.data

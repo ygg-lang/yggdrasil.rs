@@ -1,5 +1,5 @@
-use std::hash::{Hash, Hasher};
 use super::*;
+use std::hash::{Hash, Hasher};
 
 impl ExpressionNode {
     pub fn has_meta(&self) -> bool {
@@ -64,13 +64,7 @@ impl From<Expression> for ExpressionNode {
 
 impl From<FieldExpression> for ExpressionNode {
     fn from(e: FieldExpression) -> Self {
-        Self {
-            inline_token: false,
-            tag: None,
-            ty: None,
-            field: Some(e.lhs),
-            node: Self::from(e.rhs).node
-        }
+        Self { inline_token: false, tag: None, ty: None, field: Some(e.lhs), node: Self::from(e.rhs).node }
     }
 }
 
@@ -98,32 +92,16 @@ impl Hash for RefinedChoice {
     }
 }
 
-impl Eq for RefinedData {
-
-}
+impl Eq for RefinedData {}
 impl PartialEq for RefinedData {
     fn eq(&self, other: &RefinedData) -> bool {
         match (self, other) {
-            (Self::Identifier(lhs) , Self::Identifier(rhs)) => {
-                lhs == rhs
-            }
-
-            (Self::Regex(lhs) , Self::Regex(rhs)) => {
-                lhs == rhs
-            }
-            (Self::String(lhs) , Self::String(rhs)) => {
-                lhs == rhs
-            }
-            (Self::Integer(lhs) , Self::Integer(rhs)) => {
-                lhs == rhs
-            }
-            (Self::String(lhs) , Self::Integer(rhs))
-            |(Self::Integer(rhs) , Self::String(lhs))=> {
-                rhs.to_string().eq(lhs)
-            }
-            _=>{
-                false
-            }
+            (Self::Identifier(lhs), Self::Identifier(rhs)) => lhs == rhs,
+            (Self::String(lhs), Self::String(rhs)) => lhs == rhs,
+            (Self::Integer(lhs), Self::Integer(rhs)) => lhs == rhs,
+            (Self::String(lhs), Self::Integer(rhs)) | (Self::Integer(rhs), Self::String(lhs)) => rhs.to_string().eq(lhs),
+            (Self::Regex(lhs), Self::Regex(rhs)) => lhs == rhs,
+            _ => false,
         }
     }
 }
@@ -131,10 +109,10 @@ impl PartialEq for RefinedData {
 impl Hash for RefinedData {
     fn hash<H: Hasher>(&self, state: &mut H) -> () {
         match self {
-            RefinedData::Identifier(e) => {e.hash(state)}
-            RefinedData::String(e) => {e.hash(state)}
-            RefinedData::Regex(e) => {e.hash(state)}
-            RefinedData::Integer(e) => {e.to_string().hash(state)}
+            RefinedData::Identifier(e) => e.hash(state),
+            RefinedData::String(e) => e.hash(state),
+            RefinedData::Regex(e) => e.hash(state),
+            RefinedData::Integer(e) => e.to_string().hash(state),
         }
     }
 }

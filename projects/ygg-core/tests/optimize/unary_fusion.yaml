@@ -8,19 +8,7 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: Identifier {
-                    data: "e1",
-                    range: Range {
-                        start: Position {
-                            line: 2,
-                            character: 8,
-                        },
-                        end: Position {
-                            line: 2,
-                            character: 10,
-                        },
-                    },
-                },
+                base: e1,
             },
             operations: [
                 Optional?,
@@ -48,19 +36,7 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: Identifier {
-                    data: "e1",
-                    range: Range {
-                        start: Position {
-                            line: 3,
-                            character: 8,
-                        },
-                        end: Position {
-                            line: 3,
-                            character: 10,
-                        },
-                    },
-                },
+                base: e1,
             },
             operations: [
                 Repeats*,
@@ -88,19 +64,7 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: Identifier {
-                    data: "e1",
-                    range: Range {
-                        start: Position {
-                            line: 4,
-                            character: 8,
-                        },
-                        end: Position {
-                            line: 4,
-                            character: 10,
-                        },
-                    },
-                },
+                base: e1,
             },
             operations: [
                 RepeatsNonnull+,
@@ -128,19 +92,7 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: Identifier {
-                    data: "e1",
-                    range: Range {
-                        start: Position {
-                            line: 5,
-                            character: 9,
-                        },
-                        end: Position {
-                            line: 5,
-                            character: 11,
-                        },
-                    },
-                },
+                base: e1,
             },
             operations: [
                 ^MarkSymbol,
@@ -168,19 +120,7 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: Identifier {
-                    data: "e1",
-                    range: Range {
-                        start: Position {
-                            line: 6,
-                            character: 9,
-                        },
-                        end: Position {
-                            line: 6,
-                            character: 11,
-                        },
-                    },
-                },
+                base: e1,
             },
             operations: [
                 Repeats*,
@@ -209,19 +149,7 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: Identifier {
-                    data: "e1",
-                    range: Range {
-                        start: Position {
-                            line: 8,
-                            character: 8,
-                        },
-                        end: Position {
-                            line: 8,
-                            character: 10,
-                        },
-                    },
-                },
+                base: e1,
             },
             operations: [
                 Repeats*,
@@ -250,19 +178,7 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: Identifier {
-                    data: "e1",
-                    range: Range {
-                        start: Position {
-                            line: 9,
-                            character: 8,
-                        },
-                        end: Position {
-                            line: 9,
-                            character: 10,
-                        },
-                    },
-                },
+                base: e1,
             },
             operations: [
                 Repeats*,
@@ -291,19 +207,7 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: Identifier {
-                    data: "e1",
-                    range: Range {
-                        start: Position {
-                            line: 10,
-                            character: 8,
-                        },
-                        end: Position {
-                            line: 10,
-                            character: 10,
-                        },
-                    },
-                },
+                base: e1,
             },
             operations: [
                 Optional?,
@@ -332,19 +236,7 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: Identifier {
-                    data: "e1",
-                    range: Range {
-                        start: Position {
-                            line: 11,
-                            character: 10,
-                        },
-                        end: Position {
-                            line: 11,
-                            character: 12,
-                        },
-                    },
-                },
+                base: e1,
             },
             operations: [
                 Optional?,
@@ -378,19 +270,7 @@ Rule {
                     ExpressionNode {
                         base: Unary {
                             base: ExpressionNode {
-                                base: Identifier {
-                                    data: "e1",
-                                    range: Range {
-                                        start: Position {
-                                            line: 13,
-                                            character: 11,
-                                        },
-                                        end: Position {
-                                            line: 13,
-                                            character: 13,
-                                        },
-                                    },
-                                },
+                                base: e1,
                             },
                             operations: [
                                 Optional?,
@@ -401,19 +281,7 @@ Rule {
                     ExpressionNode {
                         base: Unary {
                             base: ExpressionNode {
-                                base: Identifier {
-                                    data: "e2",
-                                    range: Range {
-                                        start: Position {
-                                            line: 13,
-                                            character: 18,
-                                        },
-                                        end: Position {
-                                            line: 13,
-                                            character: 20,
-                                        },
-                                    },
-                                },
+                                base: e2,
                             },
                             operations: [
                                 RepeatsNonnull+,
@@ -453,19 +321,7 @@ Rule {
                     ExpressionNode {
                         base: Unary {
                             base: ExpressionNode {
-                                base: Identifier {
-                                    data: "e1",
-                                    range: Range {
-                                        start: Position {
-                                            line: 14,
-                                            character: 11,
-                                        },
-                                        end: Position {
-                                            line: 14,
-                                            character: 13,
-                                        },
-                                    },
-                                },
+                                base: e1,
                             },
                             operations: [
                                 Optional?,
@@ -476,19 +332,7 @@ Rule {
                     ExpressionNode {
                         base: Unary {
                             base: ExpressionNode {
-                                base: Identifier {
-                                    data: "e2",
-                                    range: Range {
-                                        start: Position {
-                                            line: 14,
-                                            character: 18,
-                                        },
-                                        end: Position {
-                                            line: 14,
-                                            character: 20,
-                                        },
-                                    },
-                                },
+                                base: e2,
                             },
                             operations: [
                                 Repeats*,

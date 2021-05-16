@@ -15,7 +15,7 @@ Rule {
                 ],
             },
             ExpressionNode {
-                base: 1,
+                base: "1",
             },
         ],
     },
@@ -42,12 +42,12 @@ Rule {
             ExpressionNode {
                 base: Choice[
                     ExpressionNode {
-                        base: a,
+                        base: "a",
                     },
                 ],
             },
             ExpressionNode {
-                base: b,
+                base: "b",
             },
         ],
     },

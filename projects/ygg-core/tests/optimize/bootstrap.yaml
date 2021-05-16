@@ -8,19 +8,7 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: Identifier {
-                    data: "statement",
-                    range: Range {
-                        start: Position {
-                            line: 9,
-                            character: 11,
-                        },
-                        end: Position {
-                            line: 9,
-                            character: 20,
-                        },
-                    },
-                },
+                base: statement,
             },
             operations: [
                 RepeatsNonnull+,
@@ -49,36 +37,12 @@ Rule {
     expression: ExpressionNode {
         base: Concat[
             ExpressionNode {
-                base: Identifier {
-                    data: "grammar",
-                    range: Range {
-                        start: Position {
-                            line: 27,
-                            character: 21,
-                        },
-                        end: Position {
-                            line: 27,
-                            character: 28,
-                        },
-                    },
-                },
+                base: grammar,
             },
             ExpressionNode {
                 base: Unary {
                     base: ExpressionNode {
-                        base: Identifier {
-                            data: "id",
-                            range: Range {
-                                start: Position {
-                                    line: 27,
-                                    character: 32,
-                                },
-                                end: Position {
-                                    line: 27,
-                                    character: 34,
-                                },
-                            },
-                        },
+                        base: id,
                     },
                     operations: [
                         ^MarkSymbol,
@@ -88,19 +52,7 @@ Rule {
             ExpressionNode {
                 base: Unary {
                     base: ExpressionNode {
-                        base: Identifier {
-                            data: "_grammar_exts",
-                            range: Range {
-                                start: Position {
-                                    line: 27,
-                                    character: 37,
-                                },
-                                end: Position {
-                                    line: 27,
-                                    character: 50,
-                                },
-                            },
-                        },
+                        base: _grammar_exts,
                     },
                     operations: [
                         Optional?,
@@ -110,19 +62,7 @@ Rule {
             ExpressionNode {
                 base: Unary {
                     base: ExpressionNode {
-                        base: Identifier {
-                            data: "eos",
-                            range: Range {
-                                start: Position {
-                                    line: 27,
-                                    character: 54,
-                                },
-                                end: Position {
-                                    line: 27,
-                                    character: 57,
-                                },
-                            },
-                        },
+                        base: eos,
                     },
                     operations: [
                         Optional?,
@@ -152,36 +92,12 @@ Rule {
     expression: ExpressionNode {
         base: Concat[
             ExpressionNode {
-                base: Identifier {
-                    data: "fragment",
-                    range: Range {
-                        start: Position {
-                            line: 34,
-                            character: 22,
-                        },
-                        end: Position {
-                            line: 34,
-                            character: 30,
-                        },
-                    },
-                },
+                base: fragment,
             },
             ExpressionNode {
                 base: Unary {
                     base: ExpressionNode {
-                        base: Identifier {
-                            data: "id",
-                            range: Range {
-                                start: Position {
-                                    line: 34,
-                                    character: 34,
-                                },
-                                end: Position {
-                                    line: 34,
-                                    character: 36,
-                                },
-                            },
-                        },
+                        base: id,
                     },
                     operations: [
                         ^MarkSymbol,
@@ -191,19 +107,7 @@ Rule {
             ExpressionNode {
                 base: Unary {
                     base: ExpressionNode {
-                        base: Identifier {
-                            data: "eos",
-                            range: Range {
-                                start: Position {
-                                    line: 34,
-                                    character: 39,
-                                },
-                                end: Position {
-                                    line: 34,
-                                    character: 42,
-                                },
-                            },
-                        },
+                        base: eos,
                     },
                     operations: [
                         Optional?,
@@ -233,35 +137,11 @@ Rule {
     expression: ExpressionNode {
         base: Concat[
             ExpressionNode {
-                base: Identifier {
-                    data: "import",
-                    range: Range {
-                        start: Position {
-                            line: 39,
-                            character: 6,
-                        },
-                        end: Position {
-                            line: 39,
-                            character: 12,
-                        },
-                    },
-                },
+                base: import,
             },
             ExpressionNode {
                 field: "path",
-                base: Identifier {
-                    data: "string",
-                    range: Range {
-                        start: Position {
-                            line: 39,
-                            character: 24,
-                        },
-                        end: Position {
-                            line: 39,
-                            character: 30,
-                        },
-                    },
-                },
+                base: string,
             },
             ExpressionNode {
                 base: Choice[
@@ -270,36 +150,12 @@ Rule {
                             base: ExpressionNode {
                                 base: Concat[
                                     ExpressionNode {
-                                        base: Identifier {
-                                            data: "as",
-                                            range: Range {
-                                                start: Position {
-                                                    line: 39,
-                                                    character: 35,
-                                                },
-                                                end: Position {
-                                                    line: 39,
-                                                    character: 37,
-                                                },
-                                            },
-                                        },
+                                        base: as,
                                     },
                                     ExpressionNode {
                                         base: Unary {
                                             base: ExpressionNode {
-                                                base: Identifier {
-                                                    data: "id",
-                                                    range: Range {
-                                                        start: Position {
-                                                            line: 39,
-                                                            character: 41,
-                                                        },
-                                                        end: Position {
-                                                            line: 39,
-                                                            character: 43,
-                                                        },
-                                                    },
-                                                },
+                                                base: id,
                                             },
                                             operations: [
                                                 ^MarkSymbol,
@@ -314,40 +170,16 @@ Rule {
                         },
                     },
                     ExpressionNode {
-                        base: Identifier {
-                            data: "import",
-                            range: Range {
-                                start: Position {
-                                    line: 40,
-                                    character: 6,
-                                },
-                                end: Position {
-                                    line: 40,
-                                    character: 12,
-                                },
-                            },
-                        },
+                        base: import,
                     },
                 ],
             },
             ExpressionNode {
                 field: "path",
-                base: Identifier {
-                    data: "string",
-                    range: Range {
-                        start: Position {
-                            line: 40,
-                            character: 24,
-                        },
-                        end: Position {
-                            line: 40,
-                            character: 30,
-                        },
-                    },
-                },
+                base: string,
             },
             ExpressionNode {
-                base: {,
+                base: "{",
             },
             ExpressionNode {
                 base: Unary {
@@ -360,7 +192,7 @@ Rule {
                 },
             },
             ExpressionNode {
-                base: },
+                base: "}",
             },
         ],
     },
@@ -386,50 +218,14 @@ Rule {
         base: Concat[
             ExpressionNode {
                 field: "id",
-                base: Identifier {
-                    data: "id",
-                    range: Range {
-                        start: Position {
-                            line: 42,
-                            character: 27,
-                        },
-                        end: Position {
-                            line: 42,
-                            character: 29,
-                        },
-                    },
-                },
+                base: id,
             },
             ExpressionNode {
-                base: Identifier {
-                    data: "as",
-                    range: Range {
-                        start: Position {
-                            line: 42,
-                            character: 33,
-                        },
-                        end: Position {
-                            line: 42,
-                            character: 35,
-                        },
-                    },
-                },
+                base: as,
             },
             ExpressionNode {
                 field: "alias",
-                base: Identifier {
-                    data: "id",
-                    range: Range {
-                        start: Position {
-                            line: 42,
-                            character: 48,
-                        },
-                        end: Position {
-                            line: 42,
-                            character: 50,
-                        },
-                    },
-                },
+                base: id,
             },
         ],
     },
@@ -454,38 +250,14 @@ Rule {
     expression: ExpressionNode {
         base: Concat[
             ExpressionNode {
-                base: Identifier {
-                    data: "ignores",
-                    range: Range {
-                        start: Position {
-                            line: 49,
-                            character: 6,
-                        },
-                        end: Position {
-                            line: 49,
-                            character: 13,
-                        },
-                    },
-                },
+                base: ignores,
             },
             ExpressionNode {
                 base: Choice[
                     ExpressionNode {
                         base: Unary {
                             base: ExpressionNode {
-                                base: Identifier {
-                                    data: "id",
-                                    range: Range {
-                                        start: Position {
-                                            line: 49,
-                                            character: 17,
-                                        },
-                                        end: Position {
-                                            line: 49,
-                                            character: 19,
-                                        },
-                                    },
-                                },
+                                base: id,
                             },
                             operations: [
                                 ^MarkSymbol,
@@ -493,24 +265,12 @@ Rule {
                         },
                     },
                     ExpressionNode {
-                        base: Identifier {
-                            data: "ignores",
-                            range: Range {
-                                start: Position {
-                                    line: 50,
-                                    character: 6,
-                                },
-                                end: Position {
-                                    line: 50,
-                                    character: 13,
-                                },
-                            },
-                        },
+                        base: ignores,
                     },
                 ],
             },
             ExpressionNode {
-                base: {,
+                base: "{",
             },
             ExpressionNode {
                 base: Unary {
@@ -523,7 +283,7 @@ Rule {
                 },
             },
             ExpressionNode {
-                base: },
+                base: "}",
             },
         ],
     },
@@ -548,12 +308,12 @@ Rule {
     expression: ExpressionNode {
         base: Concat[
             ExpressionNode {
-                base: (,
+                base: "(",
             },
             ExpressionNode {
                 base: Unary {
                     base: ExpressionNode {
-                        base: |,
+                        base: "|",
                     },
                     operations: [
                         Optional?,
@@ -561,22 +321,10 @@ Rule {
                 },
             },
             ExpressionNode {
-                base: Identifier {
-                    data: "expression",
-                    range: Range {
-                        start: Position {
-                            line: 60,
-                            character: 26,
-                        },
-                        end: Position {
-                            line: 60,
-                            character: 36,
-                        },
-                    },
-                },
+                base: expression,
             },
             ExpressionNode {
-                base: ),
+                base: ")",
             },
         ],
     },
@@ -727,10 +475,10 @@ Rule {
     expression: ExpressionNode {
         base: Choice[
             ExpressionNode {
-                base: *,
+                base: "*",
             },
             ExpressionNode {
-                base: +,
+                base: "+",
             },
         ],
     },
@@ -753,19 +501,7 @@ Rule {
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
-        base: Identifier {
-            data: "_atom",
-            range: Range {
-                start: Position {
-                    line: 85,
-                    character: 7,
-                },
-                end: Position {
-                    line: 85,
-                    character: 12,
-                },
-            },
-        },
+        base: _atom,
     },
     range: Range {
         start: Position {
@@ -794,85 +530,25 @@ Rule {
                             ExpressionNode {
                                 base: Choice[
                                     ExpressionNode {
-                                        base: Identifier {
-                                            data: "id",
-                                            range: Range {
-                                                start: Position {
-                                                    line: 87,
-                                                    character: 6,
-                                                },
-                                                end: Position {
-                                                    line: 87,
-                                                    character: 8,
-                                                },
-                                            },
-                                        },
+                                        base: id,
                                     },
                                     ExpressionNode {
-                                        base: Identifier {
-                                            data: "string",
-                                            range: Range {
-                                                start: Position {
-                                                    line: 88,
-                                                    character: 6,
-                                                },
-                                                end: Position {
-                                                    line: 88,
-                                                    character: 12,
-                                                },
-                                            },
-                                        },
+                                        base: string,
                                     },
                                 ],
                             },
                             ExpressionNode {
-                                base: Identifier {
-                                    data: "unsigned",
-                                    range: Range {
-                                        start: Position {
-                                            line: 89,
-                                            character: 6,
-                                        },
-                                        end: Position {
-                                            line: 89,
-                                            character: 14,
-                                        },
-                                    },
-                                },
+                                base: unsigned,
                             },
                         ],
                     },
                     ExpressionNode {
-                        base: Identifier {
-                            data: "regex",
-                            range: Range {
-                                start: Position {
-                                    line: 90,
-                                    character: 6,
-                                },
-                                end: Position {
-                                    line: 90,
-                                    character: 11,
-                                },
-                            },
-                        },
+                        base: regex,
                     },
                 ],
             },
             ExpressionNode {
-                base: Identifier {
-                    data: "macro_call",
-                    range: Range {
-                        start: Position {
-                            line: 91,
-                            character: 6,
-                        },
-                        end: Position {
-                            line: 91,
-                            character: 16,
-                        },
-                    },
-                },
+                base: macro_call,
             },
         ],
     },
@@ -901,7 +577,7 @@ Rule {
                 base: 0,
             },
             ExpressionNode {
-                base: (,
+                base: "(",
             },
             ExpressionNode {
                 base: 0,
@@ -935,39 +611,15 @@ Rule {
             ExpressionNode {
                 base: Choice[
                     ExpressionNode {
-                        base: _,
+                        base: "_",
                     },
                     ExpressionNode {
-                        base: Identifier {
-                            data: "XID_START",
-                            range: Range {
-                                start: Position {
-                                    line: 105,
-                                    character: 21,
-                                },
-                                end: Position {
-                                    line: 105,
-                                    character: 30,
-                                },
-                            },
-                        },
+                        base: XID_START,
                     },
                 ],
             },
             ExpressionNode {
-                base: Identifier {
-                    data: "XID_CONTINUE",
-                    range: Range {
-                        start: Position {
-                            line: 105,
-                            character: 34,
-                        },
-                        end: Position {
-                            line: 105,
-                            character: 46,
-                        },
-                    },
-                },
+                base: XID_CONTINUE,
             },
         ],
     },
@@ -993,19 +645,7 @@ Rule {
         inline_token: true,
         base: Unary {
             base: ExpressionNode {
-                base: Identifier {
-                    data: "_sign",
-                    range: Range {
-                        start: Position {
-                            line: 107,
-                            character: 14,
-                        },
-                        end: Position {
-                            line: 107,
-                            character: 19,
-                        },
-                    },
-                },
+                base: _sign,
             },
             operations: [
                 Optional?,

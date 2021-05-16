@@ -70,9 +70,9 @@ impl Debug for RefinedUnary {
 impl Debug for RefinedData {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Identifier(e) => e.fmt(f),
+            Self::Identifier(e) => f.write_str(&e.data),
             Self::Regex(e) => e.fmt(f),
-            Self::String(e) => f.write_str(e),
+            Self::String(e) => e.fmt(f),
             Self::Integer(e) => f.write_str(&e.to_string()),
         }
     }

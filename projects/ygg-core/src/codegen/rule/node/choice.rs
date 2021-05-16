@@ -29,7 +29,8 @@ impl From<ExpressionNode> for RefinedChoice {
             None => {
                 let mut inner = Set::new();
                 inner.insert(e);
-                Self { inner } },
+                Self { inner }
+            }
         }
     }
 }
@@ -59,12 +60,12 @@ impl From<ChoiceTag> for RefinedChoice {
 impl AddAssign<ExpressionNode> for RefinedChoice {
     fn add_assign(&mut self, rhs: ExpressionNode) {
         match rhs.get_choice() {
-            Some(c) => {
-                c.inner.into_iter().for_each(|e|{self.inner.insert(e);})
-            },
+            Some(c) => c.inner.into_iter().for_each(|e| {
+                self.inner.insert(e);
+            }),
             None => {
                 self.inner.insert(rhs);
-            },
+            }
         }
     }
 }

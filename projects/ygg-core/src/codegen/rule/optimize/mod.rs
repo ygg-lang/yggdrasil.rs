@@ -3,6 +3,7 @@ use crate::{codegen::GrammarState, manager::HintItems};
 use lsp_types::{DocumentSymbol, SymbolKind};
 use std::mem::transmute;
 
+mod fuse;
 mod inline;
 #[allow(deprecated)]
 mod meta_info;
@@ -11,14 +12,14 @@ impl GrammarState {
     pub async fn optimize(&mut self) -> Result<HintItems> {
         let mut hint = HintItems::default();
         self.link_external().await?;
-        hint += self.merge_regex()?;
+        hint += self.fusion()?;
         hint += self.inline()?;
         Ok(hint)
     }
     /// optimize without import
     pub fn optimize_local(&mut self) -> Result<HintItems> {
         let mut hint = HintItems::default();
-        hint += self.merge_regex()?;
+        hint += self.fusion()?;
         hint += self.inline()?;
         Ok(hint)
     }
@@ -28,7 +29,8 @@ impl GrammarState {
     fn inline(&mut self) -> Result<HintItems> {
         Ok(HintItems::default())
     }
-    fn merge_regex(&mut self) -> Result<HintItems> {
+    fn fusion(&mut self) -> Result<HintItems> {
+        self.rule_map.values_mut().for_each(|e| e.fuse());
         Ok(HintItems::default())
     }
 }

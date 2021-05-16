@@ -49,7 +49,7 @@ impl From<RefinedData> for Rule {
             RefinedData::String(s) => Self::String(s),
             RefinedData::Integer(s) => Self::String(s.to_string()),
             RefinedData::Identifier(s) => Self::NamedSymbol(s.data),
-            _ => unimplemented!()
+            _ => unimplemented!(),
         }
     }
 }

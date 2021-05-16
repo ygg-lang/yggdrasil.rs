@@ -1,8 +1,7 @@
 use super::*;
+use std::{borrow::Borrow, num::ParseIntError, ops::AddAssign};
 use tree_sitter::{Parser, Tree, TreeCursor};
 use tree_sitter_ygg::language;
-use std::{borrow::Borrow, ops::AddAssign};
-use std::num::ParseIntError;
 
 macro_rules! parsed_wrap {
     ($t:ty: $($i:ident << $method:tt),+) => {
@@ -22,8 +21,8 @@ macro_rules! parsed_wrap {
 }
 
 pub trait Parsed
-    where
-        Self: Sized,
+where
+    Self: Sized,
 {
     fn parse(state: &mut YGGBuilder, this: Node) -> Result<Self>;
     fn named_one(state: &mut YGGBuilder, this: Node, field: &str) -> Result<Self> {
@@ -194,7 +193,7 @@ impl Parsed for Data {
                 SyntaxKind::sym_unsigned => Self::Integer(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_string => Self::String(Box::new(Parsed::parse(state, node)?)),
                 SyntaxKind::sym_regex_long => Self::Regex,
-                SyntaxKind::sym_regex_range=> Self::Regex,
+                SyntaxKind::sym_regex_range => Self::Regex,
                 SyntaxKind::sym_macro_call => Self::Macro,
                 _ => unimplemented!("SyntaxKind::{:#?}=>{{}}", SyntaxKind::from(&node)),
             };
@@ -235,11 +234,13 @@ impl Parsed for StringLiteral {
                 Some('\"') => data.push('\"'),
                 Some('\\') => data.push('\\'),
                 Some('u') => unescape_unicode(&mut queue).map(|c| data.push(c)).unwrap_or_default(),
-                _ => ()
+                _ => (),
             };
         }
-        #[cfg(feature = "lsp")] let range = convert_range(this.range());
-        #[cfg(not(feature = "lsp"))] let range = this.range();
+        #[cfg(feature = "lsp")]
+        let range = convert_range(this.range());
+        #[cfg(not(feature = "lsp"))]
+        let range = this.range();
         Ok(Self { data, range })
     }
 }
