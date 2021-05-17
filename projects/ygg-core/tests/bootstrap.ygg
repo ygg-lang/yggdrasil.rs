@@ -20,13 +20,12 @@ statement =
     | ignore_statement    #Ignore
     | import_statement    #Import
     | assign_statement    #Assign
-    | eos                 #Empty
 
 
 //* grammar tsg
 //* grammar tsg {"*.tsg", }
 grammar_statement ^= grammar ~ ^id ~ _grammar_exts? ~ eos?
-_grammar_exts      = "{" ~ @interleave(extensions <- string, ",", trailing = true)? ~ "}"
+_grammar_exts      = "{" ~ @join(extensions <- string, ",", trailing = true)? ~ "}"
 
 
 //? `fragment` means that this file cannot build as grammar, it can only be imported.
@@ -39,7 +38,7 @@ fragment_statement ^= fragment ~ ^id ~ eos?
 import_statement ^=
     | import ~ (path <- string) ~ (as ~ ^id)?       #FromPath
     | import ~ (path <- string) ~ _import_selected  #FromPathItems
-_import_selected  = "{" ~ @interleave(item <- import_item, ",", trailing = 1)? ~ "}"
+_import_selected  = "{" ~ @join(item <- import_item, ",", trailing = 1)? ~ "}"
 import_item       = (id <- id) ~ as ~ (alias <- id)
 
 
@@ -48,11 +47,11 @@ import_item       = (id <- id) ~ as ~ (alias <- id)
 //* ignores [comment, comment_inline]
 ignores_statement ^=
     | ignores ~ ^id
-    | ignores ~ "{" ~ @interleave(^id, ",", trailing = 1)? ~ "}"
+    | ignores ~ "{" ~ @join(^id, ",", trailing = 1)? ~ "}"
 
 
-expression ^=
-    | _priority         #Priority!
+expression =
+    | *priority         #Priority
     | data              #Data
     | unary_suffix      #Suffix
     | unary_prefix      #Prefix
@@ -77,7 +76,7 @@ label_expression =
 _prefix_ops @=
     | "^"
 _suffix_ops @=
-    | "?"b
+    | "?"
     | "*"
     | "+"
 
@@ -97,7 +96,7 @@ atom =
 // `f!(a, b)` vs `f ~ !(a | b)`
 macro_call =
       (name <- @token("@", id))
-    ~ "(" ~ @interleave(Expression, ",", trailing = 1) ~ ")"
+    ~ "(" ~ @join(Expression, ",", trailing = 1) ~ ")"
 
 
 // Identifier

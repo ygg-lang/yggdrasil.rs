@@ -26,12 +26,12 @@ impl GrammarState {
             name: self.name.data.to_owned(),
             variables: self.variables(),
             extra_symbols: self.extra_symbols(),
-            expected_conflicts: vec![],
+            expected_conflicts: self.expected_conflicts(),
             precedence_orderings: vec![],
             external_tokens: vec![],
             variables_to_inline: vec![],
-            supertype_symbols: vec![],
-            word_token: Some(String::from("id")),
+            supertype_symbols: self.supertype_symbols(),
+            word_token: self.word_token(),
         }
     }
     fn variables(&self) -> Vec<Variable> {
@@ -40,5 +40,15 @@ impl GrammarState {
 
     fn extra_symbols(&self) -> Vec<Rule> {
         self.ignores.iter().cloned().map(|e| Rule::NamedSymbol(e.data)).collect()
+    }
+    fn expected_conflicts(&self) -> Vec<Vec<String>> {
+        vec![]
+    }
+    fn supertype_symbols(&self) -> Vec<String> {
+        vec![]
+    }
+
+    fn word_token(&self) -> Option<String> {
+        Some(String::from("id"))
     }
 }

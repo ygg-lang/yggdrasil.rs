@@ -163,3 +163,124 @@ Rule {
         },
     },
 }
+Rule {
+    name: "test7",
+    type: "Test7",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Choice[
+            ExpressionNode {
+                base: Choice[
+                    ExpressionNode {
+                        base: Choice[
+                            ExpressionNode {
+                                base: 0,
+                            },
+                            ExpressionNode {
+                                base: 1,
+                            },
+                        ],
+                    },
+                    ExpressionNode {
+                        base: 1,
+                    },
+                ],
+            },
+            ExpressionNode {
+                base: 2,
+            },
+        ],
+    },
+    range: Range {
+        start: Position {
+            line: 9,
+            character: 0,
+        },
+        end: Position {
+            line: 9,
+            character: 21,
+        },
+    },
+}
+Rule {
+    name: "test8",
+    type: "Test8",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Choice[
+            ExpressionNode {
+                base: Choice[
+                    ExpressionNode {
+                        base: 0,
+                    },
+                    ExpressionNode {
+                        base: 1,
+                    },
+                ],
+            },
+            ExpressionNode {
+                base: Choice[
+                    ExpressionNode {
+                        base: 1,
+                    },
+                    ExpressionNode {
+                        base: 2,
+                    },
+                ],
+            },
+        ],
+    },
+    range: Range {
+        start: Position {
+            line: 10,
+            character: 0,
+        },
+        end: Position {
+            line: 10,
+            character: 25,
+        },
+    },
+}
+Rule {
+    name: "test9",
+    type: "Test9",
+    force_inline: false,
+    already_inline: false,
+    eliminate_unmarked: false,
+    eliminate_unnamed: false,
+    expression: ExpressionNode {
+        base: Choice[
+            ExpressionNode {
+                field: "0 | a",
+                base: 1,
+            },
+            ExpressionNode {
+                field: "b",
+                base: Choice[
+                    ExpressionNode {
+                        base: 1,
+                    },
+                    ExpressionNode {
+                        base: 2,
+                    },
+                ],
+            },
+        ],
+    },
+    range: Range {
+        start: Position {
+            line: 11,
+            character: 0,
+        },
+        end: Position {
+            line: 11,
+            character: 35,
+        },
+    },
+}

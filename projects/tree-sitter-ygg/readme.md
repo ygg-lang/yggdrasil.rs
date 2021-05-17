@@ -1,10 +1,26 @@
-# tree-sitter-rust
+# tree-sitter-ygg
 
 This crate provides a Rust grammar for the [tree-sitter][] parsing library.  To
 use this crate, add it to the `[dependencies]` section of your `Cargo.toml`
 file.  (Note that you will probably also need to depend on the
 [`tree-sitter`][tree-sitter crate] crate to use the parsed result in any useful
 way.)
+
+
+```yaml
+- root/
+  - src/
+    - tree_sitter/
+      - parser.h
+      - grammar.json
+      - node-types.json
+    - lib.rs
+    - build.rs
+    - parser.c
+    - scanner.c
+  - cargo.toml
+  - readme.md
+```
 
 ``` toml
 [dependencies]
