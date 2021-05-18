@@ -1,27 +1,24 @@
-#![allow(non_snake_case, unused_variables)]
-
 use super::*;
 
 #[inline]
 pub fn program(state: RuleState) -> RuleResult {
     state.sequence(|state| {
         self::SOI(state)
-            .and_then(|state| super::hidden::skip(state))
+            .and_then(|state| skip(state))
             .and_then(|state| {
                 state.sequence(|state| {
                     state.optional(|state| {
                         self::statement(state).and_then(|state| {
                             state.repeat(|state| {
                                 state.sequence(|state| {
-                                    super::hidden::skip(state)
-                                        .and_then(|state| self::statement(state))
+                                    skip(state).and_then(|state| self::statement(state))
                                 })
                             })
                         })
                     })
                 })
             })
-            .and_then(|state| super::hidden::skip(state))
+            .and_then(|state| skip(state))
             .and_then(|state| self::EOI(state))
     })
 }
@@ -33,14 +30,14 @@ pub fn statement(state: RuleState) -> RuleResult {
             .or_else(|state| {
                 state.sequence(|state| {
                     self::grammar_statement(state)
-                        .and_then(|state| super::hidden::skip(state))
+                        .and_then(|state| skip(state))
                         .and_then(|state| state.optional(|state| self::eos(state)))
                 })
             })
             .or_else(|state| {
                 state.sequence(|state| {
                     self::import_statement(state)
-                        .and_then(|state| super::hidden::skip(state))
+                        .and_then(|state| skip(state))
                         .and_then(|state| state.optional(|state| self::eos(state)))
                 })
             })
@@ -55,7 +52,7 @@ pub fn empty_statement(state: RuleState) -> RuleResult {
 #[inline]
 pub fn eos(state: RuleState) -> RuleResult {
     state.rule(Rule::eos, |state| {
-        state.atomic(::pest::Atomicity::Atomic, |state| state.match_string(";"))
+        state.atomic(Atomic, |state| state.match_string(";"))
     })
 }
 
@@ -84,15 +81,14 @@ pub fn SYMBOL(state: RuleState) -> RuleResult {
     state.rule(Rule::SYMBOL, |state| {
         state.sequence(|state| {
             self::XID_START(state)
-                .and_then(|state| super::hidden::skip(state))
+                .and_then(|state| skip(state))
                 .and_then(|state| {
                     state.sequence(|state| {
                         state.optional(|state| {
                             self::XID_CONTINUE(state).and_then(|state| {
                                 state.repeat(|state| {
                                     state.sequence(|state| {
-                                        super::hidden::skip(state)
-                                            .and_then(|state| self::XID_CONTINUE(state))
+                                        skip(state).and_then(|state| self::XID_CONTINUE(state))
                                     })
                                 })
                             })
@@ -121,4 +117,9 @@ fn XID_CONTINUE(state: RuleState) -> RuleResult {
 #[inline]
 fn XID_START(state: RuleState) -> RuleResult {
     state.match_char_by(pest::unicode::XID_START)
+}
+
+#[inline]
+pub fn skip(state: RuleState) -> RuleResult {
+    Ok(state)
 }

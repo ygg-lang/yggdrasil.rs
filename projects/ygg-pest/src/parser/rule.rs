@@ -1,4 +1,3 @@
-#![allow(dead_code, non_camel_case_types)]
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum Rule {
     EOI,
@@ -11,4 +10,9 @@ pub enum Rule {
     import_statement,
     import,
     SYMBOL,
+}
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+pub struct MetaRule {
+    pub rule: Rule,
+    pub mark: Option<String>
 }
