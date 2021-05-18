@@ -3,6 +3,7 @@ pub struct YGGParser;
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum Rule {
     EOI,
+    program_inner,
     program,
     statement,
     empty_statement,
@@ -12,6 +13,7 @@ pub enum Rule {
     import_statement,
     import,
     SYMBOL,
+    WHITESPACE,
 }
 #[allow(clippy::all)]
 impl ::pest::Parser<Rule> for YGGParser {
@@ -27,14 +29,18 @@ impl ::pest::Parser<Rule> for YGGParser {
                 pub fn skip(
                     state: Box<::pest::ParserState<Rule>>,
                 ) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    Ok(state)
+                    if state.atomicity() == ::pest::Atomicity::NonAtomic {
+                        state.repeat(|state| super::visible::WHITESPACE(state))
+                    } else {
+                        Ok(state)
+                    }
                 }
             }
             pub mod visible {
                 use super::super::Rule;
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
-                pub fn program(
+                pub fn program_inner(
                     state: Box<::pest::ParserState<Rule>>,
                 ) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
                     state.sequence(|state| {
@@ -56,6 +62,26 @@ impl ::pest::Parser<Rule> for YGGParser {
                             })
                             .and_then(|state| super::hidden::skip(state))
                             .and_then(|state| self::EOI(state))
+                    })
+                }
+                #[inline]
+                #[allow(non_snake_case, unused_variables)]
+                pub fn program(
+                    state: Box<::pest::ParserState<Rule>>,
+                ) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.rule(Rule::program, |state| {
+                        state.sequence(|state| {
+                            state.optional(|state| {
+                                self::statement(state).and_then(|state| {
+                                    state.repeat(|state| {
+                                        state.sequence(|state| {
+                                            super::hidden::skip(state)
+                                                .and_then(|state| self::statement(state))
+                                        })
+                                    })
+                                })
+                            })
+                        })
                     })
                 }
                 #[inline]
@@ -102,7 +128,13 @@ impl ::pest::Parser<Rule> for YGGParser {
                 pub fn grammar_statement(
                     state: Box<::pest::ParserState<Rule>>,
                 ) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.rule(Rule::grammar_statement, |state| self::grammar(state))
+                    state.rule(Rule::grammar_statement, |state| {
+                        state.sequence(|state| {
+                            self::grammar(state)
+                                .and_then(|state| super::hidden::skip(state))
+                                .and_then(|state| self::SYMBOL(state))
+                        })
+                    })
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
@@ -116,7 +148,13 @@ impl ::pest::Parser<Rule> for YGGParser {
                 pub fn import_statement(
                     state: Box<::pest::ParserState<Rule>>,
                 ) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.rule(Rule::import_statement, |state| self::import(state))
+                    state.rule(Rule::import_statement, |state| {
+                        state.sequence(|state| {
+                            self::import(state)
+                                .and_then(|state| super::hidden::skip(state))
+                                .and_then(|state| self::SYMBOL(state))
+                        })
+                    })
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
@@ -153,6 +191,17 @@ impl ::pest::Parser<Rule> for YGGParser {
                     })
                 }
                 #[inline]
+                #[allow(non_snake_case, unused_variables)]
+                pub fn WHITESPACE(
+                    state: Box<::pest::ParserState<Rule>>,
+                ) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.rule(Rule::WHITESPACE, |state| {
+                        state.atomic(::pest::Atomicity::Atomic, |state| {
+                            self::NEWLINE(state).or_else(|state| self::WHITE_SPACE(state))
+                        })
+                    })
+                }
+                #[inline]
                 #[allow(dead_code, non_snake_case, unused_variables)]
                 pub fn EOI(
                     state: Box<::pest::ParserState<Rule>>,
@@ -165,6 +214,23 @@ impl ::pest::Parser<Rule> for YGGParser {
                     state: Box<::pest::ParserState<Rule>>,
                 ) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
                     state.start_of_input()
+                }
+                #[inline]
+                #[allow(dead_code, non_snake_case, unused_variables)]
+                pub fn NEWLINE(
+                    state: Box<::pest::ParserState<Rule>>,
+                ) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state
+                        .match_string("\n")
+                        .or_else(|state| state.match_string("\r\n"))
+                        .or_else(|state| state.match_string("\r"))
+                }
+                #[inline]
+                #[allow(dead_code, non_snake_case, unused_variables)]
+                fn WHITE_SPACE(
+                    state: Box<::pest::ParserState<Rule>>,
+                ) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.match_char_by(::pest::unicode::WHITE_SPACE)
                 }
                 #[inline]
                 #[allow(dead_code, non_snake_case, unused_variables)]
@@ -184,6 +250,7 @@ impl ::pest::Parser<Rule> for YGGParser {
             pub use self::visible::*;
         }
         ::pest::state(input, |state| match rule {
+            Rule::program_inner => rules::program_inner(state),
             Rule::program => rules::program(state),
             Rule::statement => rules::statement(state),
             Rule::empty_statement => rules::empty_statement(state),
@@ -193,6 +260,7 @@ impl ::pest::Parser<Rule> for YGGParser {
             Rule::import_statement => rules::import_statement(state),
             Rule::import => rules::import(state),
             Rule::SYMBOL => rules::SYMBOL(state),
+            Rule::WHITESPACE => rules::WHITESPACE(state),
             Rule::EOI => rules::EOI(state),
         })
     }

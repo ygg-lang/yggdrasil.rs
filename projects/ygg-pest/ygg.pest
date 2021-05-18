@@ -1,24 +1,80 @@
-program = _{SOI ~ statement* ~ EOI}
+program_inner = _{SOI ~ statement* ~ EOI}
+
+program = {statement*}
 
 statement = {
     empty_statement
   | grammar_statement ~ eos?
-  | import_statement ~ eos?
+  | fragment_statement ~ eos?
+  | ignore_statement ~ eos?
+  | assign_statement ~ eos?
+  | comment_doc
 }
-/*====================================================================================================================*/
 empty_statement = {eos}
 eos = @{";"}
 /*====================================================================================================================*/
 grammar_statement = {
-    grammar
+    grammar ~ SYMBOL ~ string
+  | grammar ~ SYMBOL ~ "{" ~ string* ~ "}"
+  | grammar ~ SYMBOL ~ "[" ~ string* ~ "]"
 }
 grammar = _{"grammar!"}
 /*====================================================================================================================*/
+fragment_statement = {
+    fragment ~ SYMBOL
+  | fragment ~ SYMBOL ~ "{" ~ SYMBOL* ~ "}"
+}
+fragment_pair = _{
+    SYMBOL ~ ":" ~ SYMBOL
+  | SYMBOL ~ ":" ~ "[" ~ SYMBOL* ~ "]"
+}
+fragment = _{"fragment!"}
+/*====================================================================================================================*/
 import_statement = {
-    import
+    import ~ string
+  | import ~ string ~ "{" ~ SYMBOL ~ "}"
 }
 import = _{"import!"}
 /*====================================================================================================================*/
-SYMBOL = {
-    XID_START ~ XID_CONTINUE*
+ignore_statement = {
+    ignore ~ SYMBOL
+  | ignore ~ "{" ~ SYMBOL* ~ "}"
+  | ignore ~ "[" ~ SYMBOL* ~ "]"
 }
+ignore = _{"ignore!"}
+/*====================================================================================================================*/
+assign_statement = {
+    SYMBOL ~ assign_kind ~ "|"? ~ expression
+}
+assign_kind = @{("^"|"_"|"@")* ~ "=" }
+/*====================================================================================================================*/
+expression =  {expr ~ eos?}
+expr       = !{term ~ (infix ~ term)*}
+term       =  {prefix* ~ ("(" ~ expr ~ ")"|data) ~ (suffix|slice|apply|dot_call)*}
+dot_call   = !{"." ~ ("+"|"-")? ~ integer|"." ~ SYMBOL ~ apply?}
+// cmp     = !{("<"|">") ~ expr}
+apply      = !{"(" ~ ")" | "(" ~ apply_kv ~ ("," ~ apply_kv)* ~ ","? ~")"}
+apply_kv   =  {SYMBOL ~ ":" ~ expr|expr}
+/*====================================================================================================================*/
+data = {SYMBOL}
+slice = {"S"}
+/*====================================================================================================================*/
+string = {""}
+integer = {""}
+
+infix = @{
+    "~"
+}
+prefix = @{
+    "*"
+}
+suffix = @{
+    "*"
+}
+comment_doc = {""}
+
+
+SYMBOL = {
+    ("_" | XID_START) ~ XID_CONTINUE*
+}
+WHITESPACE = {NEWLINE|WHITE_SPACE}
