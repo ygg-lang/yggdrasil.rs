@@ -12,8 +12,3 @@ pub enum Rule {
     import,
     SYMBOL,
 }
-#[derive(Copy, Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub struct MetaRule {
-    pub rule: Rule,
-    pub mark: Option<&'static str>,
-}

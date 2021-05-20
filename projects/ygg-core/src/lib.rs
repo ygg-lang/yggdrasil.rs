@@ -9,6 +9,8 @@ pub mod codegen;
 #[allow(unused)]
 mod ygg;
 
+mod target_pest;
+
 pub mod manager;
 
 pub use self::{

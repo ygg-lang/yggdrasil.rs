@@ -1,6 +1,6 @@
 version = "Two"
 edition = "2018"
-# max_width = 128000
+max_width = 400
 
 # merge_imports = true
 # use_small_heuristics = "Max"

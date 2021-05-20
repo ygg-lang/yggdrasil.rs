@@ -21,11 +21,10 @@ pub struct ParserConfig {}
 
 impl ParserConfig {
     pub fn parse_program<'a>(&mut self, input: &'a str) -> Result<CSTNode<'a>, Error<Rule>> {
-        let parsed = YGGParser::parse(crate::ygg::Rule::program_inner, input)?;
+        let parsed = YGGParser::parse(crate::ygg::Rule::program, input)?;
         self.parse_program_inner(parsed)
     }
     fn parse_program_inner<'a>(&self, pairs: Pairs<'a, Rule>) -> Result<CSTNode<'a>, Error<Rule>> {
-
         let mut node = CSTNode {
             text: pairs.as_str(),
             mark: None,

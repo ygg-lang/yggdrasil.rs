@@ -12,7 +12,7 @@ fn ready() {
 
 #[test]
 #[ignore]
-pub fn gen_sdl_lexer() {
+pub fn gen_ygg_lexer() {
     let pest = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "./ygg.pest"));
     let rs = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "./src/ygg.rs"));
 

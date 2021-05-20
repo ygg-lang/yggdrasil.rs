@@ -1,6 +1,4 @@
-program_inner = _{SOI ~ statement* ~ EOI}
-
-program = {statement*}
+program = {SOI ~ statement* ~ EOI}
 
 statement = {
     empty_statement
@@ -59,8 +57,8 @@ apply_kv   =  {SYMBOL ~ ":" ~ expr|expr}
 data = {SYMBOL}
 slice = {"S"}
 /*====================================================================================================================*/
-string = {""}
-integer = {""}
+string = {"S"}
+integer = {"S"}
 
 infix = @{
     "~"
@@ -71,10 +69,11 @@ prefix = @{
 suffix = @{
     "*"
 }
-comment_doc = {""}
-
-
+comment_doc = {"S"}
+COMMENT = @ {
+    "//" ~ !(NEWLINE ~ ANY)*
+}
 SYMBOL = {
     ("_" | XID_START) ~ XID_CONTINUE*
 }
-WHITESPACE = {NEWLINE|WHITE_SPACE}
+WHITESPACE = {NEWLINE|WHITE_SPACE|COMMENT}
