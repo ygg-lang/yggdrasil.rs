@@ -34,6 +34,10 @@ pub enum Rule {
     comment_doc,
     COMMENT,
     SYMBOL,
+    a,
+    b,
+    skip,
+    skip2,
     WHITESPACE,
 }
 #[allow(clippy::all)]
@@ -410,20 +414,34 @@ impl ::pest::Parser<Rule> for YGGParser {
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
                 pub fn SYMBOL(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.rule(Rule::SYMBOL, |state| {
-                        state.sequence(|state| {
-                            state
-                                .match_string("_")
-                                .or_else(|state| self::XID_START(state))
-                                .and_then(|state| super::hidden::skip(state))
-                                .and_then(|state| state.sequence(|state| state.optional(|state| self::XID_CONTINUE(state).and_then(|state| state.repeat(|state| state.sequence(|state| super::hidden::skip(state).and_then(|state| self::XID_CONTINUE(state))))))))
-                        })
+                    state.rule(Rule::SYMBOL, |state| state.atomic(::pest::Atomicity::Atomic, |state| state.sequence(|state| state.match_string("_").or_else(|state| self::XID_START(state)).and_then(|state| state.repeat(|state| self::XID_CONTINUE(state))))))
+                }
+                #[inline]
+                #[allow(non_snake_case, unused_variables)]
+                pub fn a(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.rule(Rule::a, |state| state.match_string("a"))
+                }
+                #[inline]
+                #[allow(non_snake_case, unused_variables)]
+                pub fn b(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.rule(Rule::b, |state| state.match_string("b"))
+                }
+                #[inline]
+                #[allow(non_snake_case, unused_variables)]
+                pub fn skip(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.rule(Rule::skip, |state| state.atomic(::pest::Atomicity::Atomic, |state| state.sequence(|state| self::a(state).and_then(|state| state.repeat(|state| self::WHITESPACE(state))).and_then(|state| self::b(state)))))
+                }
+                #[inline]
+                #[allow(non_snake_case, unused_variables)]
+                pub fn skip2(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.rule(Rule::skip2, |state| {
+                        state.atomic(::pest::Atomicity::Atomic, |state| state.sequence(|state| self::a(state).and_then(|state| state.repeat(|state| self::WHITESPACE(state).or_else(|state| self::COMMENT(state)))).and_then(|state| self::b(state))))
                     })
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
                 pub fn WHITESPACE(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.rule(Rule::WHITESPACE, |state| state.atomic(::pest::Atomicity::Atomic, |state| self::NEWLINE(state).or_else(|state| self::WHITE_SPACE(state)).or_else(|state| self::COMMENT(state))))
+                    state.rule(Rule::WHITESPACE, |state| state.atomic(::pest::Atomicity::Atomic, |state| self::WHITE_SPACE(state).or_else(|state| self::NEWLINE(state)).or_else(|state| self::COMMENT(state))))
                 }
                 #[inline]
                 #[allow(dead_code, non_snake_case, unused_variables)]
@@ -495,6 +513,10 @@ impl ::pest::Parser<Rule> for YGGParser {
             Rule::comment_doc => rules::comment_doc(state),
             Rule::COMMENT => rules::COMMENT(state),
             Rule::SYMBOL => rules::SYMBOL(state),
+            Rule::a => rules::a(state),
+            Rule::b => rules::b(state),
+            Rule::skip => rules::skip(state),
+            Rule::skip2 => rules::skip2(state),
             Rule::WHITESPACE => rules::WHITESPACE(state),
             Rule::EOI => rules::EOI(state),
         })

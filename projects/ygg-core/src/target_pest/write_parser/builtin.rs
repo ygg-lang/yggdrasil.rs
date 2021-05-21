@@ -1,7 +1,6 @@
 use super::*;
 
-
-pub fn sealed_unicode(f: impl Write, fn_name: &str) -> std::fmt::Result {
+pub fn sealed_unicode(f: &mut impl Write, fn_name: &str) -> std::fmt::Result {
     writeln!(
         f,
         r#"
@@ -14,10 +13,24 @@ fn {name}(state: RuleState) -> RuleResult {{
     )
 }
 
-pub fn sealed_final(f: impl Write) -> std::fmt::Result {
+pub fn sealed_skip(f: &mut impl Write) -> std::fmt::Result {
     writeln!(
         f,
         r#"
+
+"#,
+    )
+}
+
+pub fn sealed_final(f: &mut impl Write) -> std::fmt::Result {
+    writeln!(
+        f,
+        r#"
+#[inline]
+pub fn ANY(state: RuleState) -> RuleResult {{
+    state.skip(1)
+}}
+
 #[inline]
 pub fn EOI(state: RuleState) -> RuleResult {{
     state.rule(Rule::EOI, |state| state.end_of_input())

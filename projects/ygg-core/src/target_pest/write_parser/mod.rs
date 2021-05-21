@@ -1,13 +1,20 @@
-use super::*;
 use self::builtin::*;
+use super::*;
 
 mod builtin;
 
-
+#[test]
 pub fn write_symbol() -> std::fmt::Result {
-    let mut s = String::new();
+    let buffer = &mut String::new();
+    writeln!(buffer, "use super::*;")?;
+    writeln!(buffer)?;
 
-    sealed_unicode(s, "XID_START")?;
-    sealed_final()
-
+    sealed_unicode(buffer, "XID_START")?;
+    sealed_unicode(buffer, "XID_CONTINUE")?;
+    writeln!(buffer)?;
+    sealed_skip(buffer)?;
+    writeln!(buffer)?;
+    sealed_final(buffer)?;
+    println!("{}", buffer);
+    Ok(())
 }

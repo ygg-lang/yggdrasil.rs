@@ -70,10 +70,18 @@ suffix = @{
     "*"
 }
 comment_doc = {"S"}
-COMMENT = @ {
+COMMENT = @{
     "//" ~ !(NEWLINE ~ ANY)*
 }
-SYMBOL = {
+SYMBOL = @{
     ("_" | XID_START) ~ XID_CONTINUE*
 }
-WHITESPACE = {NEWLINE|WHITE_SPACE|COMMENT}
+a = {"a"}
+b = {"b"}
+skip = @{
+    a ~ WHITESPACE* ~b
+}
+skip2 = @{
+    a ~ (WHITESPACE|COMMENT)* ~b
+}
+WHITESPACE = @{WHITE_SPACE|NEWLINE|COMMENT}

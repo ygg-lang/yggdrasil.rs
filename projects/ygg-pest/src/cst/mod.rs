@@ -1,5 +1,6 @@
-use crate::ygg::{Rule, YGGParser};
+// use crate::ygg::{Rule, YGGParser};
 use crate::{Pair, Pairs};
+use crate::{Rule, YGGParser};
 use pest::error::Error;
 use pest::Parser;
 
@@ -21,7 +22,7 @@ pub struct ParserConfig {}
 
 impl ParserConfig {
     pub fn parse_program<'a>(&mut self, input: &'a str) -> Result<CSTNode<'a>, Error<Rule>> {
-        let parsed = YGGParser::parse(crate::ygg::Rule::program, input)?;
+        let parsed = YGGParser::parse(Rule::program, input)?;
         self.parse_program_inner(parsed)
     }
     fn parse_program_inner<'a>(&self, pairs: Pairs<'a, Rule>) -> Result<CSTNode<'a>, Error<Rule>> {

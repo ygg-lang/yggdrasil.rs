@@ -1,15 +1,4 @@
 use super::*;
-use crate::pest::ParseResult;
-
-pub fn program_entry_point(state: RuleState) -> RuleResult {
-    state.sequence(|state| {
-        self::SOI(state)
-            .and_then(|state| SKIP(state))
-            .and_then(|state| state.sequence(|state| state.optional(|state| self::statement(state).and_then(|state| state.repeat(|state| state.sequence(|state| SKIP(state).and_then(|state| self::statement(state))))))))
-            .and_then(|state| SKIP(state))
-            .and_then(|state| self::EOI(state))
-    })
-}
 
 #[inline]
 pub fn program(state: RuleState) -> RuleResult {
@@ -81,19 +70,28 @@ pub fn SKIP(state: RuleState) -> RuleResult {
     Ok(state)
 }
 
-pub fn skip(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-    if state.atomicity() == ::pest::Atomicity::NonAtomic {
+pub fn skip(state: RuleState) -> RuleResult {
+    if state.atomicity() == NonAtomic {
         state.sequence(|state|
-            state.repeat(|state| super::visible::WHITESPACE(state))
+            state.repeat(|state| self::WHITESPACE(state))
                 .and_then(|state|
                     state.repeat(|state|
                         state.sequence(|state|
-                            super::visible::COMMENT(state).and_then(|state|
-                                state.repeat(|state|
-                                    super::visible::WHITESPACE(state)))))))
-    } else {
+                            state.repeat(|state| self::WHITESPACE(state))))))
+    }
+    else {
         Ok(state)
     }
+}
+
+#[inline]
+pub fn WHITESPACE(state: RuleState) -> RuleResult {
+    state.skip(1)
+}
+
+#[inline]
+pub fn ANY(state: RuleState) -> RuleResult {
+    state.skip(1)
 }
 
 #[inline]
