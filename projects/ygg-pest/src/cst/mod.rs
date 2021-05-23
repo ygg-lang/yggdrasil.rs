@@ -4,16 +4,16 @@ use crate::{Pair, Pairs};
 use pest::error::Error;
 use pest::Parser;
 
+use yggdrasil_cst_shared::position_system::{get_position, OffsetRange};
+
 mod marker;
 
-
-
 #[derive(Debug)]
-pub struct CSTNode<'a> {
-    pub text: &'a str,
+pub struct CSTNode<'input> {
+    pub text: &'input str,
     pub mark: Option<&'static str>,
-    pub range: OffsetRange,
-    pub children: Vec<CSTNode<'a>>,
+    pub position: OffsetRange,
+    pub children: Vec<CSTNode<'input>>,
 }
 
 pub type RuleResult<T> = Result<T, Error<Rule>>;
@@ -21,7 +21,7 @@ pub type RuleResult<T> = Result<T, Error<Rule>>;
 pub struct YGGMarker {}
 
 impl YGGMarker {
-    pub fn parse_program<'a>(&mut self, input: &'a str) -> RuleResult<CSTNode<'a>>  {
+    pub fn parse_program<'i>(&mut self, input: &'i str) -> RuleResult<CSTNode<'i>> {
         let parsed = YGGParser::parse(Rule::program, input)?;
         marker::mark_program(parsed)
     }

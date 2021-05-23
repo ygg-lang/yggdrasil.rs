@@ -1,10 +1,11 @@
 use pest::iterators::Pair;
 
 mod offset;
+pub use offset::OffsetRange;
 
 
-pub fn get_position<R>(pair:&Pair<R>) -> Self
-    where R:PositionSystem<R>{
+pub fn get_position<T, R>(pair:&Pair<R>) -> T
+    where T:PositionSystem<R>{
     PositionSystem::from(pair)
 }
 
