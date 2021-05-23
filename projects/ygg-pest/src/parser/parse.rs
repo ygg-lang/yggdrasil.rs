@@ -67,20 +67,9 @@ fn XID_START(state: RuleState) -> RuleResult {
 
 #[inline]
 pub fn SKIP(state: RuleState) -> RuleResult {
-    Ok(state)
-}
-
-pub fn skip(state: RuleState) -> RuleResult {
-    if state.atomicity() == NonAtomic {
-        state.sequence(|state|
-            state.repeat(|state| self::WHITESPACE(state))
-                .and_then(|state|
-                    state.repeat(|state|
-                        state.sequence(|state|
-                            state.repeat(|state| self::WHITESPACE(state))))))
-    }
-    else {
-        Ok(state)
+    match state.atomicity() == NonAtomic {
+        true => state.sequence(|state| state.repeat(|state| self::WHITESPACE(state))),
+        false => Ok(state)
     }
 }
 

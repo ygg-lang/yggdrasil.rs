@@ -1,14 +1,12 @@
-// use crate::ygg::{Rule, YGGParser};
+use crate::ygg::{Rule, YGGParser};
 use crate::{Pair, Pairs};
-use crate::{Rule, YGGParser};
+// use crate::{Rule, YGGParser};
 use pest::error::Error;
 use pest::Parser;
 
-#[derive(Debug)]
-pub struct OffsetRange {
-    pub start: usize,
-    pub end: usize,
-}
+mod marker;
+
+
 
 #[derive(Debug)]
 pub struct CSTNode<'a> {
@@ -18,29 +16,25 @@ pub struct CSTNode<'a> {
     pub children: Vec<CSTNode<'a>>,
 }
 
-pub struct ParserConfig {}
+pub type RuleResult<T> = Result<T, Error<Rule>>;
 
-impl ParserConfig {
-    pub fn parse_program<'a>(&mut self, input: &'a str) -> Result<CSTNode<'a>, Error<Rule>> {
+pub struct YGGMarker {}
+
+impl YGGMarker {
+    pub fn parse_program<'a>(&mut self, input: &'a str) -> RuleResult<CSTNode<'a>>  {
         let parsed = YGGParser::parse(Rule::program, input)?;
-        self.parse_program_inner(parsed)
-    }
-    fn parse_program_inner<'a>(&self, pairs: Pairs<'a, Rule>) -> Result<CSTNode<'a>, Error<Rule>> {
-        let mut node = CSTNode {
-            text: pairs.as_str(),
-            mark: None,
-            range: OffsetRange { start: 0, end: 0 },
-            children: vec![],
-        };
-        for pair in pairs.into_iter() {
-            println!("{:#?}", pair)
-        }
-        return Ok(node);
+        marker::mark_program(parsed)
     }
 }
 
+
+
 #[test]
 fn test() {
-    let mut parser = ParserConfig {};
-    println!("{:#?}", parser.parse_program("grammar! s; import! k;"))
+    let mut parser = YGGMarker {};
+    let out = parser.parse_program(r#"
+    ignore! k; ///2
+    ignore! [ s ];
+    "#);
+    println!("{:#?}", out.unwrap());
 }

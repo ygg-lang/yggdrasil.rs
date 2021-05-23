@@ -1,0 +1,17 @@
+[package]
+name = "yggdrasil-cst-shared"
+version = "0.1.0"
+authors = ["Aster <192607617@qq.com>"]
+description = "AWSL Window Structure Language"
+repository = "https://github.com/GalAster/awsl-rs"
+readme = "Readme.md"
+license = "MPL-2.0"
+edition = "2018"
+
+[dependencies]
+pest = "2.1"
+lsp-types = { version = "0.89", features = ["proposed"], optional = true }
+
+[features]
+default = ["lsp"]
+lsp = ["lsp-types"]

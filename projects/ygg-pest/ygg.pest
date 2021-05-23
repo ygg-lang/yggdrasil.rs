@@ -48,16 +48,18 @@ assign_kind = @{("^"|"_"|"@")* ~ "=" }
 /*====================================================================================================================*/
 expression =  {expr ~ eos?}
 expr       = !{term ~ (infix ~ term)*}
-term       =  {prefix* ~ ("(" ~ expr ~ ")"|data) ~ (suffix|slice|apply|dot_call)*}
-dot_call   = !{"." ~ ("+"|"-")? ~ integer|"." ~ SYMBOL ~ apply?}
+term       =  {prefix* ~ ("(" ~ expr ~ ")"|data) ~ (suffix|slice|apply)*}
 // cmp     = !{("<"|">") ~ expr}
 apply      = !{"(" ~ ")" | "(" ~ apply_kv ~ ("," ~ apply_kv)* ~ ","? ~")"}
 apply_kv   =  {SYMBOL ~ ":" ~ expr|expr}
 /*====================================================================================================================*/
-data = {SYMBOL}
+data = {symbol_path}
 slice = {"S"}
 /*====================================================================================================================*/
-string = {"S"}
+string = @{
+    "'" ~ (!"\'" ~ ANY | "\\" ~ ANY)* ~ "'"
+  | "\"" ~ (!"\"" ~ ANY | "\\" ~ ANY)* ~ "\""
+}
 integer = {"S"}
 
 infix = @{
@@ -70,18 +72,15 @@ suffix = @{
     "*"
 }
 comment_doc = {"S"}
-COMMENT = @{
-    "//" ~ !(NEWLINE ~ ANY)*
+COMMENT = @{comment_s_l | comment_m_l}
+comment_s_l = @{"//" ~ (!NEWLINE ~ ANY)*}
+comment_m_l = @{"/*" ~ (comment_m_l | !"*/" ~ ANY)* ~ "*/"}
+symbol_path = {
+    SYMBOL ~ (("::"|".") ~ SYMBOL)*
 }
 SYMBOL = @{
     ("_" | XID_START) ~ XID_CONTINUE*
 }
-a = {"a"}
-b = {"b"}
-skip = @{
-    a ~ WHITESPACE* ~b
-}
-skip2 = @{
-    a ~ (WHITESPACE|COMMENT)* ~b
-}
-WHITESPACE = @{WHITE_SPACE|NEWLINE|COMMENT}
+WHITESPACE = ${COMMENT|WHITE_SPACE|NEWLINE}
+WHITE_SPACE = @{(" "|"\t")+}
+NEWLINE = @{("\r\n"|"\r"|"\n")+}
