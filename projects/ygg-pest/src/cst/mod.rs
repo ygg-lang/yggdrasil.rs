@@ -23,7 +23,50 @@ pub struct YGGMarker {}
 impl YGGMarker {
     pub fn parse_program<'i>(&mut self, input: &'i str) -> RuleResult<CSTNode<'i>> {
         let parsed = YGGParser::parse(Rule::program, input)?;
-        marker::mark_program(parsed)
+        match parsed.into_iter().next() {
+            None => {unimplemented!()}
+            Some(p) => {self.mark_program(p,None)}
+        }
+    }
+    pub fn mark_program<'i>(&self, pairs: Pair<'i, Rule>, mark: Option<&'static str>) -> RuleResult<CSTNode<'i>> {
+        let position = get_position(&pairs);
+        let mut node = CSTNode {
+            text: pairs.as_str(),
+            mark,
+            position,
+            children: vec![],
+        };
+        for pair in pairs.into_inner() {
+            match pair.as_rule() {
+                Rule::WHITESPACE => self.split_whitespace(&mut node.children, pair)?,
+                Rule::statement => node.children.push(self.mark_statement(pair, Some("statement"))?),
+                _ => {
+                    println!("mark_program");
+                    println!("{:#?}", pair)
+                }
+            }
+        }
+        return Ok(node);
+    }
+
+    pub fn mark_statement<'i>(&self,pairs: Pair<'i,Rule>, mark: Option<&'static str>) -> RuleResult<CSTNode<'i>> {
+        let position = get_position(&pairs);
+        let mut node = CSTNode {
+            text: pairs.as_str(),
+            mark,
+            position,
+            children: vec![],
+        };
+        for pair in pairs.into_inner() {
+            match pair.as_rule() {
+                Rule::WHITESPACE => self.split_whitespace(&mut node.children, pair)?,
+                _ => {
+                    println!("mark_statement");
+                    println!("{:#?}", pair)
+                }
+            }
+        }
+        return Ok(node);
     }
 }
 
