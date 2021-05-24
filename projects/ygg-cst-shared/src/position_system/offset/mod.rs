@@ -1,5 +1,5 @@
-use pest::RuleType;
 use super::*;
+use pest::RuleType;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 pub struct OffsetRange {
@@ -8,12 +8,11 @@ pub struct OffsetRange {
 }
 
 impl<R> PositionSystem<R> for OffsetRange
-where R:RuleType {
+where
+    R: RuleType,
+{
     fn from(pair: &Pair<R>) -> Self {
         let s = pair.as_span();
-        Self {
-            start: s.start(),
-            end: s.end(),
-        }
+        Self { start: s.start(), end: s.end() }
     }
 }
