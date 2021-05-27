@@ -12,6 +12,9 @@ edition = "2018"
 [dependencies]
 pest = "2.1"
 yggdrasil-cst-shared = { version = "0.1", path = "../ygg-cst-shared" }
+thiserror = "1.0"
+anyhow = "1.0"
+
 
 [dev-dependencies]
 pest_generator = "2.1"

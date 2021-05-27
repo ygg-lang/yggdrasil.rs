@@ -21,15 +21,17 @@ pub enum Rule {
     expression,
     expr,
     term,
+    infix,
+    prefix,
+    suffix,
     apply,
     apply_kv,
     data,
     slice,
+    list,
     string,
     integer,
-    infix,
-    prefix,
-    suffix,
+    SpecialValue,
     comment_doc,
     COMMENT,
     comment_s_l,
@@ -310,6 +312,21 @@ impl ::pest::Parser<Rule> for YGGParser {
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
+                pub fn infix(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.rule(Rule::infix, |state| state.atomic(::pest::Atomicity::Atomic, |state| state.match_string("~")))
+                }
+                #[inline]
+                #[allow(non_snake_case, unused_variables)]
+                pub fn prefix(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.rule(Rule::prefix, |state| state.atomic(::pest::Atomicity::Atomic, |state| state.match_string("!").or_else(|state| state.match_string("^"))))
+                }
+                #[inline]
+                #[allow(non_snake_case, unused_variables)]
+                pub fn suffix(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.rule(Rule::suffix, |state| state.atomic(::pest::Atomicity::Atomic, |state| state.match_string("?").or_else(|state| state.match_string("+")).or_else(|state| state.match_string("*"))))
+                }
+                #[inline]
+                #[allow(non_snake_case, unused_variables)]
                 pub fn apply(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
                     state.atomic(::pest::Atomicity::NonAtomic, |state| {
                         state.rule(Rule::apply, |state| {
@@ -360,6 +377,11 @@ impl ::pest::Parser<Rule> for YGGParser {
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
+                pub fn list(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.rule(Rule::list, |state| state.match_string("{"))
+                }
+                #[inline]
+                #[allow(non_snake_case, unused_variables)]
                 pub fn string(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
                     state.rule(Rule::string, |state| {
                         state.atomic(::pest::Atomicity::Atomic, |state| {
@@ -384,27 +406,32 @@ impl ::pest::Parser<Rule> for YGGParser {
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
                 pub fn integer(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.rule(Rule::integer, |state| state.match_string("S"))
+                    state.rule(Rule::integer, |state| {
+                        state.atomic(::pest::Atomicity::Atomic, |state| {
+                            state
+                                .match_string("0")
+                                .or_else(|state| state.sequence(|state| self::ASCII_NONZERO_DIGIT(state).and_then(|state| state.repeat(|state| state.sequence(|state| state.optional(|state| state.match_string("_")).and_then(|state| self::ASCII_DIGIT(state)))))))
+                        })
+                    })
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
-                pub fn infix(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.rule(Rule::infix, |state| state.atomic(::pest::Atomicity::Atomic, |state| state.match_string("~")))
-                }
-                #[inline]
-                #[allow(non_snake_case, unused_variables)]
-                pub fn prefix(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.rule(Rule::prefix, |state| state.atomic(::pest::Atomicity::Atomic, |state| state.match_string("*")))
-                }
-                #[inline]
-                #[allow(non_snake_case, unused_variables)]
-                pub fn suffix(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.rule(Rule::suffix, |state| state.atomic(::pest::Atomicity::Atomic, |state| state.match_string("*")))
+                pub fn SpecialValue(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.rule(Rule::SpecialValue, |state| state.atomic(::pest::Atomicity::Atomic, |state| state.match_string("true").or_else(|state| state.match_string("false")).or_else(|state| state.match_string("null"))))
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
                 pub fn comment_doc(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.rule(Rule::comment_doc, |state| state.match_string("S"))
+                    state.rule(Rule::comment_doc, |state| {
+                        state.atomic(::pest::Atomicity::Atomic, |state| {
+                            state.sequence(|state| {
+                                state
+                                    .match_string("//")
+                                    .and_then(|state| state.match_string("!").or_else(|state| state.match_string("?")).or_else(|state| state.match_string("*")))
+                                    .and_then(|state| state.repeat(|state| state.sequence(|state| state.lookahead(false, |state| self::NEWLINE(state)).and_then(|state| self::ANY(state)))))
+                            })
+                        })
+                    })
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
@@ -498,6 +525,16 @@ impl ::pest::Parser<Rule> for YGGParser {
                 }
                 #[inline]
                 #[allow(dead_code, non_snake_case, unused_variables)]
+                pub fn ASCII_DIGIT(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.match_range('0'..'9')
+                }
+                #[inline]
+                #[allow(dead_code, non_snake_case, unused_variables)]
+                pub fn ASCII_NONZERO_DIGIT(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.match_range('1'..'9')
+                }
+                #[inline]
+                #[allow(dead_code, non_snake_case, unused_variables)]
                 fn XID_CONTINUE(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
                     state.match_char_by(::pest::unicode::XID_CONTINUE)
                 }
@@ -528,15 +565,17 @@ impl ::pest::Parser<Rule> for YGGParser {
             Rule::expression => rules::expression(state),
             Rule::expr => rules::expr(state),
             Rule::term => rules::term(state),
+            Rule::infix => rules::infix(state),
+            Rule::prefix => rules::prefix(state),
+            Rule::suffix => rules::suffix(state),
             Rule::apply => rules::apply(state),
             Rule::apply_kv => rules::apply_kv(state),
             Rule::data => rules::data(state),
             Rule::slice => rules::slice(state),
+            Rule::list => rules::list(state),
             Rule::string => rules::string(state),
             Rule::integer => rules::integer(state),
-            Rule::infix => rules::infix(state),
-            Rule::prefix => rules::prefix(state),
-            Rule::suffix => rules::suffix(state),
+            Rule::SpecialValue => rules::SpecialValue(state),
             Rule::comment_doc => rules::comment_doc(state),
             Rule::COMMENT => rules::COMMENT(state),
             Rule::comment_s_l => rules::comment_s_l(state),
