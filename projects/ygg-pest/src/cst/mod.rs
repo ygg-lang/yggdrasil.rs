@@ -1,4 +1,5 @@
 use crate::ygg::{Rule, YGGParser};
+use std::fmt::{Debug, Formatter};
 // use crate::{Rule, YGGParser};
 use pest::error::{Error, ErrorVariant};
 use pest::iterators::Pair;
@@ -8,17 +9,17 @@ use yggdrasil_cst_shared::position_system::{get_position, OffsetRange};
 
 mod marker;
 
-#[derive(Debug)]
+pub type RuleResult<T> = Result<T, Error<Rule>>;
+
+pub struct YGGMarker {}
+
 pub struct CSTNode<'input> {
+    pub rule: Rule,
     pub text: &'input str,
     pub mark: Option<&'static str>,
     pub position: OffsetRange,
     pub children: Vec<CSTNode<'input>>,
 }
-
-pub type RuleResult<T> = Result<T, Error<Rule>>;
-
-pub struct YGGMarker {}
 
 impl YGGMarker {
     pub fn parse_program<'i>(&mut self, input: &'i str) -> RuleResult<CSTNode<'i>> {
@@ -66,6 +67,22 @@ impl YGGMarker {
             }
         }
         return Ok(node);
+    }
+}
+
+impl<'i> Debug for CSTNode<'i> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let node = &mut f.debug_struct("Node");
+        node.field("rule", &self.rule);
+        if let Some(s) = self.mark {
+            node.field("mark", &s);
+        }
+        match self.children.len() {
+            0 => node.field("text", &self.text),
+            _ => node.field("children", &self.children),
+        };
+        node.field("position", &self.position);
+        node.finish()
     }
 }
 

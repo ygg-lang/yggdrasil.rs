@@ -15,11 +15,7 @@ include = [
 ]
 
 [dependencies]
-# same as tower-lsp = "0.14"
-lsp-types = { version = "0.89", features = ["proposed"], optional = true }
 tokio = { version = "1.12", features = ["io-std", "rt-multi-thread", "macros", "test-util"] }
-tree-sitter = "0.20"
-tree-sitter-cli = { version = "0.20", git = "https://github.com/ygg-lang/tree-sitter" }
 # tree-sitter-cli = { version = "0.20", path = "../../../tree-sitter/cli"}
 tree-sitter-ygg = { version = "0.2", path = "../tree-sitter-ygg"}
 serde_json = "1.0"
@@ -30,9 +26,15 @@ rkyv = "0.7"
 toml = "0.5"
 dashmap = "4.0"
 
+# same as tower-lsp = "0.14"
+lsp-types = { version = "0.89", features = ["proposed"], optional = true }
+tree-sitter = { version = "0.20", optional = true }
+tree-sitter-cli = { version = "0.20", optional = true }
+
 [features]
 default = ["lsp"]
 lsp = ["lsp-types"]
+tree-sitter-support = ["tree-sitter", "tree-sitter-cli"]
 
 [dev-dependencies]
 

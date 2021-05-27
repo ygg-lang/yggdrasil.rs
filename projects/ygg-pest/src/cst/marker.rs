@@ -3,7 +3,13 @@ use super::*;
 impl YGGMarker {
     pub fn new_node<'i>(pairs: &Pair<'i, Rule>, mark: Option<&'static str>) -> CSTNode<'i> {
         let position = get_position(pairs);
-        CSTNode { text: pairs.as_str(), mark, position, children: vec![] }
+        CSTNode {
+            rule: pairs.as_rule(),
+            text: pairs.as_str(),
+            mark,
+            position,
+            children: vec![],
+        }
     }
 
     pub fn unreachable(pairs: &Pair<Rule>) -> RuleResult<()> {
@@ -23,6 +29,6 @@ impl YGGMarker {
     pub fn atomic<'i>(&self, pairs: Pair<'i, Rule>, mark: Option<&'static str>) -> RuleResult<CSTNode<'i>> {
         let position = get_position(&pairs);
         let text = pairs.as_str();
-        Ok(CSTNode { text, mark, position, children: vec![] })
+        Ok(CSTNode { rule: pairs.as_rule(), text, mark, position, children: vec![] })
     }
 }

@@ -10,6 +10,7 @@ pub mod codegen;
 mod ygg;
 
 mod target_pest;
+mod target_tree_sitter;
 
 pub mod manager;
 

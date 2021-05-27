@@ -127,7 +127,7 @@ impl ::pest::Parser<Rule> for YGGParser {
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
                 pub fn grammar(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.match_string("grammar!")
+                    state.rule(Rule::grammar, |state| state.match_string("grammar!"))
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
@@ -171,7 +171,7 @@ impl ::pest::Parser<Rule> for YGGParser {
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
                 pub fn fragment(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.match_string("fragment!")
+                    state.rule(Rule::fragment, |state| state.match_string("fragment!"))
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
@@ -197,7 +197,7 @@ impl ::pest::Parser<Rule> for YGGParser {
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
                 pub fn import(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.match_string("import!")
+                    state.rule(Rule::import, |state| state.match_string("import!"))
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
@@ -233,7 +233,7 @@ impl ::pest::Parser<Rule> for YGGParser {
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
                 pub fn ignore(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.match_string("ignore!")
+                    state.rule(Rule::ignore, |state| state.match_string("ignore!"))
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
