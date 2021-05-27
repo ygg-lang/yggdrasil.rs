@@ -16,7 +16,7 @@ grammar_statement = {
   | grammar ~ SYMBOL ~ "{" ~ string* ~ "}"
   | grammar ~ SYMBOL ~ "[" ~ string* ~ "]"
 }
-grammar = _{"grammar!"}
+grammar = {"grammar!"}
 /*====================================================================================================================*/
 fragment_statement = {
     fragment ~ SYMBOL
@@ -26,20 +26,20 @@ fragment_pair = _{
     SYMBOL ~ ":" ~ SYMBOL
   | SYMBOL ~ ":" ~ "[" ~ SYMBOL* ~ "]"
 }
-fragment = _{"fragment!"}
+fragment = {"fragment!"}
 /*====================================================================================================================*/
 import_statement = {
     import ~ string
   | import ~ string ~ "{" ~ SYMBOL ~ "}"
 }
-import = _{"import!"}
+import = {"import!"}
 /*====================================================================================================================*/
 ignore_statement = {
     ignore ~ SYMBOL
   | ignore ~ "{" ~ SYMBOL* ~ "}"
   | ignore ~ "[" ~ SYMBOL* ~ "]"
 }
-ignore = _{"ignore!"}
+ignore = {"ignore!"}
 /*====================================================================================================================*/
 assign_statement = {
     SYMBOL ~ assign_kind ~ "|"? ~ expression
