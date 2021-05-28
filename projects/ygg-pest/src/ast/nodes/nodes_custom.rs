@@ -2,7 +2,6 @@ use super::*;
 use std::{
     fmt::{Debug, Formatter},
     hash::{Hash, Hasher},
-    ops::{AddAssign, Deref, DerefMut},
 };
 
 impl Debug for Program {

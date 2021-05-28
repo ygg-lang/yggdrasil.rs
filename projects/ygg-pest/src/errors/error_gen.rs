@@ -1,19 +1,19 @@
-use super::YGGError as ThisError;
+use super::Error;
 
-impl From<std::str::Utf8Error> for ThisError {
+impl From<std::str::Utf8Error> for Error {
     fn from(e: std::str::Utf8Error) -> Self {
-        Self::FormatError { error: e.to_string() }
+        Self::AstError { error: e.to_string() }
     }
 }
 
-impl From<std::num::ParseIntError> for ThisError {
+impl From<std::num::ParseIntError> for Error {
     fn from(e: std::num::ParseIntError) -> Self {
-        Self::FormatError { error: e.to_string() }
+        Self::AstError { error: e.to_string() }
     }
 }
 
-impl From<()> for ThisError {
+impl From<()> for Error {
     fn from(_: ()) -> Self {
-        Self::UnknownError
+        Self::Unreachable
     }
 }
