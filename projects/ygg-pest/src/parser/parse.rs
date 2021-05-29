@@ -6,7 +6,7 @@ pub fn program(state: RuleState) -> RuleResult {
 }
 
 #[inline]
-pub fn statement(state: RuleState) -> RuleResult {
+pub fn statement(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
     state.rule(Rule::statement, |state| {
         self::empty_statement(state)
             .or_else(|state| state.sequence(|state| self::grammar_statement(state).and_then(|state| SKIP(state)).and_then(|state| state.optional(|state| self::eos(state, false)))))
@@ -20,7 +20,7 @@ pub fn empty_statement(state: RuleState) -> RuleResult {
 }
 
 #[inline]
-pub fn eos(state: RuleState, mark: bool) -> RuleResult {
+pub fn eos(state: RuleState) -> RuleResult {
     state.rule(Rule::eos, |state| state.atomic(Atomic, |state| state.match_string(";")))
 }
 
@@ -42,6 +42,11 @@ pub fn import_statement(state: RuleState) -> RuleResult {
 #[inline]
 pub fn import(state: RuleState) -> RuleResult {
     state.match_string("import!")
+}
+
+#[inline]
+pub fn prefix(state: RuleState) -> RuleResult {
+    state.rule(Rule::prefix, |state| state.match_char_by(|c| matches!(c, '!'|'^') ))
 }
 
 #[inline]

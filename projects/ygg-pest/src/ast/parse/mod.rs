@@ -8,11 +8,8 @@ impl ASTParser for Program {
         let mut statement = vec![];
         for pair in pairs.into_inner() {
             match pair.as_rule() {
-                Rule::EOI | Rule::WHITESPACE=> continue,
                 Rule::statement => Statement::try_many(pair, &mut statement, errors),
-                _ => {
-                    unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
-                }
+                _ => continue,
             }
         }
         return Ok(Self { statement, position });
@@ -28,7 +25,7 @@ impl ASTParser for Statement {
                 Rule::EOI => continue,
                 Rule::ignore_statement => {
                     let variant = IgnoreStatement::parse(pair, errors)?;
-                    return Ok(Self::IgnoreStatement(Box::new(variant)))
+                    return Ok(Self::IgnoreStatement(Box::new(variant)));
                 }
                 _ => {
                     unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
@@ -39,23 +36,17 @@ impl ASTParser for Statement {
     }
 }
 
-impl ASTParser for IgnoreStatement   {
+impl ASTParser for IgnoreStatement {
     fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
         let mut rules = vec![];
         for pair in pairs.into_inner() {
             match pair.as_rule() {
-                Rule::EOI|Rule::ignore|Rule::WHITESPACE => continue,
-                Rule::SYMBOL=>{Identifier::try_many(pair, &mut rules, errors)}
-                _ => {
-                    unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
-                }
+                Rule::SYMBOL => Identifier::try_many(pair, &mut rules, errors),
+                _ => continue,
             }
         }
-       Ok(Self {
-           rules,
-           position,
-       })
+        Ok(Self { rules, position })
     }
 }
 
@@ -63,10 +54,7 @@ impl ASTParser for Identifier {
     fn parse(pairs: Pair<Rule>, _: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
         let data = pairs.as_str().to_string();
-        Ok(Self {
-            data,
-            position,
-        })
+        Ok(Self { data, position })
     }
 }
 

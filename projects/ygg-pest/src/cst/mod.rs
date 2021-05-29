@@ -40,7 +40,6 @@ impl YGGMarker {
                 Rule::statement => node.children.push(self.mark_statement(pair, Some("statement"))?),
                 _ => {
                     unreachable!("{:#?}", pair);
-
                 }
             }
         }

@@ -8,6 +8,7 @@ pub enum Rule {
     statement,
     empty_statement,
     eos,
+    prefix,
     grammar_statement,
     grammar,
     import_statement,

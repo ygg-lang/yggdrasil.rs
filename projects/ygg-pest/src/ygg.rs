@@ -33,9 +33,9 @@ pub enum Rule {
     integer,
     SpecialValue,
     comment_doc,
-    COMMENT,
     comment_s_l,
     comment_m_l,
+    COMMENT,
     symbol_path,
     SYMBOL,
     WHITESPACE,
@@ -179,19 +179,35 @@ impl ::pest::Parser<Rule> for YGGParser {
                 #[allow(non_snake_case, unused_variables)]
                 pub fn import_statement(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
                     state.rule(Rule::import_statement, |state| {
-                        state.sequence(|state| {
-                            self::import(state).and_then(|state| super::hidden::skip(state)).and_then(|state| {
-                                self::string(state).or_else(|state| {
-                                    state.sequence(|state| {
-                                        self::string(state)
-                                            .and_then(|state| super::hidden::skip(state))
-                                            .and_then(|state| state.match_string("{"))
-                                            .and_then(|state| super::hidden::skip(state))
-                                            .and_then(|state| self::SYMBOL(state))
-                                            .and_then(|state| super::hidden::skip(state))
-                                            .and_then(|state| state.match_string("}"))
+                        state.sequence(|state| self::import(state).and_then(|state| super::hidden::skip(state)).and_then(|state| self::string(state))).or_else(|state| {
+                            state.sequence(|state| {
+                                self::import(state)
+                                    .and_then(|state| super::hidden::skip(state))
+                                    .and_then(|state| self::string(state))
+                                    .and_then(|state| super::hidden::skip(state))
+                                    .and_then(|state| state.match_string("{"))
+                                    .and_then(|state| super::hidden::skip(state))
+                                    .and_then(|state| {
+                                        state.match_string("}").or_else(|state| {
+                                            state.sequence(|state| {
+                                                self::SYMBOL(state)
+                                                    .and_then(|state| super::hidden::skip(state))
+                                                    .and_then(|state| {
+                                                        state.sequence(|state| {
+                                                            state.optional(|state| {
+                                                                state
+                                                                    .sequence(|state| state.match_string(",").and_then(|state| super::hidden::skip(state)).and_then(|state| self::SYMBOL(state)))
+                                                                    .and_then(|state| state.repeat(|state| state.sequence(|state| super::hidden::skip(state).and_then(|state| state.sequence(|state| state.match_string(",").and_then(|state| super::hidden::skip(state)).and_then(|state| self::SYMBOL(state)))))))
+                                                            })
+                                                        })
+                                                    })
+                                                    .and_then(|state| super::hidden::skip(state))
+                                                    .and_then(|state| state.optional(|state| state.match_string(",")))
+                                                    .and_then(|state| super::hidden::skip(state))
+                                                    .and_then(|state| state.match_string("}"))
+                                            })
+                                        })
                                     })
-                                })
                             })
                         })
                     })
@@ -205,31 +221,57 @@ impl ::pest::Parser<Rule> for YGGParser {
                 #[allow(non_snake_case, unused_variables)]
                 pub fn ignore_statement(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
                     state.rule(Rule::ignore_statement, |state| {
-                        state.sequence(|state| self::ignore(state).and_then(|state| super::hidden::skip(state)).and_then(|state| self::SYMBOL(state))).or_else(|state| {
-                            state.sequence(|state| {
-                                self::ignore(state).and_then(|state| super::hidden::skip(state)).and_then(|state| {
-                                    state
-                                        .sequence(|state| {
-                                            state
-                                                .match_string("{")
-                                                .and_then(|state| super::hidden::skip(state))
-                                                .and_then(|state| state.sequence(|state| state.optional(|state| self::SYMBOL(state).and_then(|state| state.repeat(|state| state.sequence(|state| super::hidden::skip(state).and_then(|state| self::SYMBOL(state))))))))
-                                                .and_then(|state| super::hidden::skip(state))
-                                                .and_then(|state| state.match_string("}"))
-                                        })
-                                        .or_else(|state| {
+                        state
+                            .sequence(|state| self::ignore(state).and_then(|state| super::hidden::skip(state)).and_then(|state| self::SYMBOL(state)))
+                            .or_else(|state| state.sequence(|state| self::ignore(state).and_then(|state| super::hidden::skip(state)).and_then(|state| state.match_string("{")).and_then(|state| super::hidden::skip(state)).and_then(|state| state.match_string("}"))))
+                            .or_else(|state| {
+                                state.sequence(|state| {
+                                    self::ignore(state)
+                                        .and_then(|state| super::hidden::skip(state))
+                                        .and_then(|state| state.match_string("{"))
+                                        .and_then(|state| super::hidden::skip(state))
+                                        .and_then(|state| self::SYMBOL(state))
+                                        .and_then(|state| super::hidden::skip(state))
+                                        .and_then(|state| {
                                             state.sequence(|state| {
-                                                state
-                                                    .match_string("[")
+                                                state.optional(|state| {
+                                                    state
+                                                        .sequence(|state| state.match_string(",").and_then(|state| super::hidden::skip(state)).and_then(|state| self::SYMBOL(state)))
+                                                        .and_then(|state| state.repeat(|state| state.sequence(|state| super::hidden::skip(state).and_then(|state| state.sequence(|state| state.match_string(",").and_then(|state| super::hidden::skip(state)).and_then(|state| self::SYMBOL(state)))))))
+                                                })
+                                            })
+                                        })
+                                        .and_then(|state| super::hidden::skip(state))
+                                        .and_then(|state| state.optional(|state| state.match_string(",")))
+                                        .and_then(|state| super::hidden::skip(state))
+                                        .and_then(|state| state.match_string("}"))
+                                })
+                            })
+                            .or_else(|state| {
+                                state.sequence(|state| {
+                                    self::ignore(state).and_then(|state| super::hidden::skip(state)).and_then(|state| state.match_string("[")).and_then(|state| super::hidden::skip(state)).and_then(|state| {
+                                        state.match_string("]").or_else(|state| {
+                                            state.sequence(|state| {
+                                                self::SYMBOL(state)
                                                     .and_then(|state| super::hidden::skip(state))
-                                                    .and_then(|state| state.sequence(|state| state.optional(|state| self::SYMBOL(state).and_then(|state| state.repeat(|state| state.sequence(|state| super::hidden::skip(state).and_then(|state| self::SYMBOL(state))))))))
+                                                    .and_then(|state| {
+                                                        state.sequence(|state| {
+                                                            state.optional(|state| {
+                                                                state
+                                                                    .sequence(|state| state.match_string(",").and_then(|state| super::hidden::skip(state)).and_then(|state| self::SYMBOL(state)))
+                                                                    .and_then(|state| state.repeat(|state| state.sequence(|state| super::hidden::skip(state).and_then(|state| state.sequence(|state| state.match_string(",").and_then(|state| super::hidden::skip(state)).and_then(|state| self::SYMBOL(state)))))))
+                                                            })
+                                                        })
+                                                    })
+                                                    .and_then(|state| super::hidden::skip(state))
+                                                    .and_then(|state| state.optional(|state| state.match_string(",")))
                                                     .and_then(|state| super::hidden::skip(state))
                                                     .and_then(|state| state.match_string("]"))
                                             })
                                         })
+                                    })
                                 })
                             })
-                        })
                     })
                 }
                 #[inline]
@@ -330,27 +372,26 @@ impl ::pest::Parser<Rule> for YGGParser {
                 pub fn apply(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
                     state.atomic(::pest::Atomicity::NonAtomic, |state| {
                         state.rule(Rule::apply, |state| {
-                            state.sequence(|state| {
-                                state.match_string("(").and_then(|state| super::hidden::skip(state)).and_then(|state| {
-                                    state.match_string(")").or_else(|state| {
-                                        state.sequence(|state| {
-                                            self::apply_kv(state)
-                                                .and_then(|state| super::hidden::skip(state))
-                                                .and_then(|state| {
-                                                    state.sequence(|state| {
-                                                        state.optional(|state| {
-                                                            state
-                                                                .sequence(|state| state.match_string(",").and_then(|state| super::hidden::skip(state)).and_then(|state| self::apply_kv(state)))
-                                                                .and_then(|state| state.repeat(|state| state.sequence(|state| super::hidden::skip(state).and_then(|state| state.sequence(|state| state.match_string(",").and_then(|state| super::hidden::skip(state)).and_then(|state| self::apply_kv(state)))))))
-                                                        })
-                                                    })
+                            state.sequence(|state| state.match_string("@").and_then(|state| super::hidden::skip(state)).and_then(|state| state.match_string("(")).and_then(|state| super::hidden::skip(state)).and_then(|state| state.match_string(")"))).or_else(|state| {
+                                state.sequence(|state| {
+                                    state
+                                        .match_string("(")
+                                        .and_then(|state| super::hidden::skip(state))
+                                        .and_then(|state| self::apply_kv(state))
+                                        .and_then(|state| super::hidden::skip(state))
+                                        .and_then(|state| {
+                                            state.sequence(|state| {
+                                                state.optional(|state| {
+                                                    state
+                                                        .sequence(|state| state.match_string(",").and_then(|state| super::hidden::skip(state)).and_then(|state| self::apply_kv(state)))
+                                                        .and_then(|state| state.repeat(|state| state.sequence(|state| super::hidden::skip(state).and_then(|state| state.sequence(|state| state.match_string(",").and_then(|state| super::hidden::skip(state)).and_then(|state| self::apply_kv(state)))))))
                                                 })
-                                                .and_then(|state| super::hidden::skip(state))
-                                                .and_then(|state| state.optional(|state| state.match_string(",")))
-                                                .and_then(|state| super::hidden::skip(state))
-                                                .and_then(|state| state.match_string(")"))
+                                            })
                                         })
-                                    })
+                                        .and_then(|state| super::hidden::skip(state))
+                                        .and_then(|state| state.optional(|state| state.match_string(",")))
+                                        .and_then(|state| super::hidden::skip(state))
+                                        .and_then(|state| state.match_string(")"))
                                 })
                             })
                         })
@@ -368,17 +409,41 @@ impl ::pest::Parser<Rule> for YGGParser {
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
                 pub fn data(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.rule(Rule::data, |state| self::symbol_path(state))
+                    state.rule(Rule::data, |state| self::symbol_path(state).or_else(|state| self::list(state)))
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
                 pub fn slice(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.rule(Rule::slice, |state| state.match_string("S"))
+                    state.rule(Rule::slice, |state| state.sequence(|state| state.match_string("{").and_then(|state| super::hidden::skip(state)).and_then(|state| state.match_string("}"))))
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
                 pub fn list(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.rule(Rule::list, |state| state.match_string("{"))
+                    state.rule(Rule::list, |state| {
+                        state.sequence(|state| {
+                            state.match_string("[").and_then(|state| super::hidden::skip(state)).and_then(|state| {
+                                state.match_string("]").or_else(|state| {
+                                    state.sequence(|state| {
+                                        self::data(state)
+                                            .and_then(|state| super::hidden::skip(state))
+                                            .and_then(|state| {
+                                                state.sequence(|state| {
+                                                    state.optional(|state| {
+                                                        state
+                                                            .sequence(|state| state.match_string(",").and_then(|state| super::hidden::skip(state)).and_then(|state| self::data(state)))
+                                                            .and_then(|state| state.repeat(|state| state.sequence(|state| super::hidden::skip(state).and_then(|state| state.sequence(|state| state.match_string(",").and_then(|state| super::hidden::skip(state)).and_then(|state| self::data(state)))))))
+                                                    })
+                                                })
+                                            })
+                                            .and_then(|state| super::hidden::skip(state))
+                                            .and_then(|state| state.optional(|state| state.match_string(",")))
+                                            .and_then(|state| super::hidden::skip(state))
+                                            .and_then(|state| state.match_string("]"))
+                                    })
+                                })
+                            })
+                        })
+                    })
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
@@ -435,11 +500,6 @@ impl ::pest::Parser<Rule> for YGGParser {
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
-                pub fn COMMENT(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-                    state.rule(Rule::COMMENT, |state| state.atomic(::pest::Atomicity::Atomic, |state| self::comment_s_l(state).or_else(|state| self::comment_m_l(state))))
-                }
-                #[inline]
-                #[allow(non_snake_case, unused_variables)]
                 pub fn comment_s_l(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
                     state.rule(Rule::comment_s_l, |state| {
                         state.atomic(::pest::Atomicity::Atomic, |state| state.sequence(|state| state.match_string("//").and_then(|state| state.repeat(|state| state.sequence(|state| state.lookahead(false, |state| self::NEWLINE(state)).and_then(|state| self::ANY(state)))))))
@@ -458,6 +518,11 @@ impl ::pest::Parser<Rule> for YGGParser {
                             })
                         })
                     })
+                }
+                #[inline]
+                #[allow(non_snake_case, unused_variables)]
+                pub fn COMMENT(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+                    state.rule(Rule::COMMENT, |state| state.atomic(::pest::Atomicity::Atomic, |state| self::comment_s_l(state).or_else(|state| self::comment_m_l(state))))
                 }
                 #[inline]
                 #[allow(non_snake_case, unused_variables)]
@@ -577,9 +642,9 @@ impl ::pest::Parser<Rule> for YGGParser {
             Rule::integer => rules::integer(state),
             Rule::SpecialValue => rules::SpecialValue(state),
             Rule::comment_doc => rules::comment_doc(state),
-            Rule::COMMENT => rules::COMMENT(state),
             Rule::comment_s_l => rules::comment_s_l(state),
             Rule::comment_m_l => rules::comment_m_l(state),
+            Rule::COMMENT => rules::COMMENT(state),
             Rule::symbol_path => rules::symbol_path(state),
             Rule::SYMBOL => rules::SYMBOL(state),
             Rule::WHITESPACE => rules::WHITESPACE(state),

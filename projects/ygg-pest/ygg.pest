@@ -1,12 +1,12 @@
 program = {SOI ~ statement* ~ EOI}
 
 statement = {
-    empty_statement
+    comment_doc
+  | empty_statement
   | grammar_statement ~ eos?
   | fragment_statement ~ eos?
   | ignore_statement ~ eos?
   | assign_statement ~ eos?
-  | comment_doc
 }
 empty_statement = {eos}
 eos = @{";"}
@@ -14,14 +14,10 @@ eos = @{";"}
 grammar_statement = {
     grammar ~ SYMBOL ~ string
   | grammar ~ SYMBOL ~ "{" ~ string* ~ "}"
-  | grammar ~ SYMBOL ~ "[" ~ string* ~ "]"
 }
 grammar = {"grammar!"}
 /*====================================================================================================================*/
-fragment_statement = {
-    fragment ~ SYMBOL
-  | fragment ~ SYMBOL ~ "{" ~ SYMBOL* ~ "}"
-}
+fragment_statement = {fragment ~ SYMBOL}
 fragment_pair = _{
     SYMBOL ~ ":" ~ SYMBOL
   | SYMBOL ~ ":" ~ "[" ~ SYMBOL* ~ "]"
@@ -30,14 +26,15 @@ fragment = {"fragment!"}
 /*====================================================================================================================*/
 import_statement = {
     import ~ string
-  | import ~ string ~ "{" ~ SYMBOL ~ "}"
+  | import ~ string ~ "{" ~ "}"
+  | import ~ string ~ "{" ~ symbol_alias ~ ("," ~ symbol_alias)* ~ ","? ~"}"
 }
 import = {"import!"}
 /*====================================================================================================================*/
 ignore_statement = {
     ignore ~ SYMBOL
-  | ignore ~ "{" ~ SYMBOL* ~ "}"
-  | ignore ~ "[" ~ SYMBOL* ~ "]"
+  | ignore ~ "{" ~ "}"
+  | ignore ~ "{" ~ SYMBOL ~ ("," ~ SYMBOL)* ~ ","? ~"}"
 }
 ignore = {"ignore!"}
 /*====================================================================================================================*/
@@ -48,7 +45,7 @@ assign_kind = @{("^"|"_"|"@")* ~ "=" }
 /*====================================================================================================================*/
 expression =  {expr ~ eos?}
 expr       = !{term ~ (infix ~ term)*}
-term       =  {prefix* ~ ("(" ~ expr ~ ")"|data) ~ (suffix|slice|apply)*}
+term       =  {prefix* ~ ("(" ~ expr ~ ")"|data) ~ (suffix|slice)*}
 infix = @{
     "~"
 }
@@ -60,12 +57,17 @@ suffix = @{
 }
 /*====================================================================================================================*/
 // cmp     = !{("<"|">") ~ expr}
-apply      = !{"(" ~ ")" | "(" ~ apply_kv ~ ("," ~ apply_kv)* ~ ","? ~")"}
-apply_kv   =  {SYMBOL ~ ":" ~ expr|expr}
+
 /*====================================================================================================================*/
-data = {symbol_path}
-slice = {"S"}
-list = {"{"}
+macro_   = {
+    "@" ~ symbol_path ~ "(" ~ ")"
+  | "@" ~ symbol_path ~ "(" ~ macro_kv ~ ("," ~ macro_kv)* ~ ","? ~")"
+}
+macro_kv =  {SYMBOL ~ "=" ~ expr|expr}
+/*====================================================================================================================*/
+data = {symbol_path|list}
+slice = {"{" ~ "}"}
+list = {"{" ~ "}"| "{" ~ data ~ ("," ~ data)* ~ ","? ~"}"}
 /*====================================================================================================================*/
 string = @{
     "'" ~ (!"\'" ~ ANY | "\\" ~ ANY)* ~ "'"
@@ -74,16 +76,19 @@ string = @{
 ///#D19A66
 integer    = @{"0"|ASCII_NONZERO_DIGIT ~ ("_"? ~ ASCII_DIGIT)*}
 ///#D19A66
-SpecialValue = @{"true"|"false"|"null"}
-/*====================================================================================================================*/
+special = @{"true"|"false"|"null"}
+
 
 /*====================================================================================================================*/
 comment_doc = @{"//" ~ ("!"|"?"|"*") ~ (!NEWLINE ~ ANY)*}
-COMMENT = @{comment_s_l | comment_m_l}
 comment_s_l = @{"//" ~ (!NEWLINE ~ ANY)*}
 comment_m_l = @{"/*" ~ (comment_m_l | !"*/" ~ ANY)* ~ "*/"}
+COMMENT = @{comment_s_l | comment_m_l}
 symbol_path = {
     SYMBOL ~ (("::"|".") ~ SYMBOL)*
+}
+symbol_alias = {
+    SYMBOL ~ ("as" ~ SYMBOL)?
 }
 SYMBOL = @{
     ("_" | XID_START) ~ XID_CONTINUE*

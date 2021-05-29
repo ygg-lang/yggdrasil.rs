@@ -17,7 +17,7 @@ pub enum Error {
     NodeMissing { error: String },
     InfoMissing { error: String },
     /// Some nodes failed to resolve and are being rolled back
-    Unrolling,
+    Unwinding,
     /// A forbidden node encountered
     Unreachable,
     #[error(transparent)]
@@ -26,9 +26,7 @@ pub enum Error {
 
 impl Error {
     pub fn node_missing(msg: impl Into<String>) -> Error {
-        Self::NodeMissing {
-            error: msg.into()
-        }
+        Self::NodeMissing { error: msg.into() }
     }
 }
 
