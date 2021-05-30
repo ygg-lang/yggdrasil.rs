@@ -27,6 +27,10 @@ impl ASTParser for Statement {
                     let variant = IgnoreStatement::parse(pair, errors)?;
                     return Ok(Self::IgnoreStatement(Box::new(variant)));
                 }
+                Rule::assign_statement=>{
+                    let variant = AssignStatement::parse(pair, errors)?;
+                    return Ok(Self::AssignStatement(Box::new(variant)));
+                }
                 _ => {
                     unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
                 }
@@ -50,6 +54,21 @@ impl ASTParser for IgnoreStatement {
     }
 }
 
+impl ASTParser for AssignStatement {
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+        let position = get_position(&pairs);
+        //let mut rules = vec![];
+        for pair in pairs.into_inner() {
+            match pair.as_rule() {
+               // Rule::SYMBOL => Identifier::try_many(pair, &mut rules, errors),
+                _ => continue,
+            }
+        }
+        unreachable!()
+        Ok(Self { id: Identifier { data: "".to_string(), position }, eq: "".to_string(), rules, position, rhs: () })
+    }
+}
+
 impl ASTParser for Identifier {
     fn parse(pairs: Pair<Rule>, _: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
@@ -59,11 +78,17 @@ impl ASTParser for Identifier {
 }
 
 #[test]
+fn test1() {
+    let mut parser = ASTBuilder::default();
+    let out = parser.parse_program("x = a ~ b ~ c | d");
+    println!("{:#?}", out.unwrap());
+    println!("{:#?}", parser.errors);
+}
+
+#[test]
 fn test() {
     let mut parser = ASTBuilder::default();
-    let out = parser.parse_program(
-        include_str!("bootstrap.ygg"),
-    );
+    let out = parser.parse_program(include_str!("bootstrap.ygg"));
     println!("{:#?}", out.unwrap());
     println!("{:#?}", parser.errors);
 }
