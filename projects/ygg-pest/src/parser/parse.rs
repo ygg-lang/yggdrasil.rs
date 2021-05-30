@@ -9,14 +9,14 @@ pub fn program(state: RuleState) -> RuleResult {
 pub fn statement(state: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
     state.rule(Rule::statement, |state| {
         self::empty_statement(state)
-            .or_else(|state| state.sequence(|state| self::grammar_statement(state).and_then(|state| SKIP(state)).and_then(|state| state.optional(|state| self::eos(state, false)))))
-            .or_else(|state| state.sequence(|state| self::import_statement(state).and_then(|state| SKIP(state)).and_then(|state| state.optional(|state| self::eos(state, false)))))
+            .or_else(|state| state.sequence(|state| self::grammar_statement(state).and_then(|state| SKIP(state)).and_then(|state| state.optional(|state| self::eos(state)))))
+            .or_else(|state| state.sequence(|state| self::import_statement(state).and_then(|state| SKIP(state)).and_then(|state| state.optional(|state| self::eos(state)))))
     })
 }
 
 #[inline]
 pub fn empty_statement(state: RuleState) -> RuleResult {
-    state.rule(Rule::empty_statement, |state| self::eos(state, false))
+    state.rule(Rule::empty_statement, |state| self::eos(state))
 }
 
 #[inline]
@@ -46,7 +46,7 @@ pub fn import(state: RuleState) -> RuleResult {
 
 #[inline]
 pub fn prefix(state: RuleState) -> RuleResult {
-    state.rule(Rule::prefix, |state| state.match_char_by(|c| matches!(c, '!'|'^') ))
+    state.rule(Rule::prefix, |state| state.match_char_by(|c| matches!(c, '!' | '^')))
 }
 
 #[inline]

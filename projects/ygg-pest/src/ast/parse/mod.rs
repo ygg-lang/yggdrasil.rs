@@ -62,10 +62,7 @@ impl ASTParser for Identifier {
 fn test() {
     let mut parser = ASTBuilder::default();
     let out = parser.parse_program(
-        r#"
-    ignore! k; ///2
-    ignore! [ s ];
-    "#,
+        include_str!("bootstrap.ygg"),
     );
     println!("{:#?}", out.unwrap());
     println!("{:#?}", parser.errors);

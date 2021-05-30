@@ -1,5 +1,6 @@
 use super::*;
 
+
 #[derive(Copy, Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum Rule {
     EOI,
@@ -25,13 +26,16 @@ impl Parser<Rule> for CSTBuilder {
             Rule::program => parse::program(state),
             Rule::statement => parse::statement(state),
             Rule::empty_statement => parse::empty_statement(state),
-            Rule::eos => parse::eos(state, false),
+            Rule::eos => parse::eos(state),
             Rule::grammar_statement => parse::grammar_statement(state),
             Rule::grammar => parse::grammar(state),
             Rule::import_statement => parse::import_statement(state),
             Rule::import => parse::import(state),
             Rule::SYMBOL => parse::SYMBOL(state),
             Rule::EOI => parse::EOI(state),
+            Rule::prefix => {
+                unimplemented!()
+            }
         })
     }
 }
