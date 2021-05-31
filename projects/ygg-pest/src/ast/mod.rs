@@ -46,7 +46,17 @@ where
             }
         }
     }
-    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self>;
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+        let _ = errors;
+        for pair in pairs.into_inner() {
+            match pair.as_rule() {
+                _ => {
+                    unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
+                }
+            }
+        }
+        unreachable!()
+    }
 }
 
 impl Default for ASTBuilder {
