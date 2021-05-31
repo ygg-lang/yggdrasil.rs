@@ -13,7 +13,7 @@ pub enum Statement {
     GrammarStatement(Box<GrammarStatement>),
     FragmentStatement(Box<FragmentStatement>),
     AssignStatement(Box<AssignStatement>),
-    IgnoreStatement(Box<IgnoreStatement>),
+    Ignore(Box<IgnoreStatement>),
     CommentDocument(Box<CommentDocument>),
 }
 

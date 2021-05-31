@@ -1,4 +1,4 @@
-use crate::ygg::{Rule, YGGParser};
+use crate::parser::{Rule, CSTBuilder};
 use std::fmt::{Debug, Formatter};
 // use crate::{Rule, YGGParser};
 use pest::error::{Error, ErrorVariant};
@@ -23,7 +23,7 @@ pub struct CSTNode<'input> {
 
 impl YGGMarker {
     pub fn parse_program<'i>(&mut self, input: &'i str) -> RuleResult<CSTNode<'i>> {
-        let parsed = YGGParser::parse(Rule::program, input)?;
+        let parsed = CSTBuilder::parse(Rule::program, input)?;
         match parsed.into_iter().next() {
             None => {
                 unimplemented!()

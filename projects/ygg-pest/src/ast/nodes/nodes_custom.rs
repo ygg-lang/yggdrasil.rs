@@ -28,7 +28,7 @@ impl Debug for Statement {
                 .field("eq", &v.eq)
                 .field("rhs", &v.rhs)
                 .finish(),
-            Self::IgnoreStatement(v) => f
+            Self::Ignore(v) => f
                 .debug_struct("IgnoreStatement") //
                 .field("rules", &v.rules)
                 .finish(),

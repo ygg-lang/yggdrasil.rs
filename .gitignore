@@ -24,6 +24,7 @@ package-lock.json
 projects/tree-sitter-ygg/bindings/**/*
 projects/tree-sitter-ygg/src/grammar.json
 projects/tree-sitter-ygg/src/node-types.json
+projects/ygg-pest/src/ygg.rs
 binding.gyp
 parser.exp
 parser.lib

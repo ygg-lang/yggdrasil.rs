@@ -38,13 +38,16 @@ assign_statement = {SYMBOL ~ assign_kind ~ "|"? ~ expr}
 assign_kind = @{("^"|"_"|"@")* ~ "=" }
 /*====================================================================================================================*/
 expr  = {
-    term ~ ((":" ~ SYMBOL)? ~ ("<-") ~ expr)+
-  | term ~ (("|"|"/") ~ expr ~ ("#" ~ SYMBOL)? ~ (":" ~ SYMBOL)?)+
-  | term ~ ("~" ~ expr)+
-  | term
+    "(" ~ "|"? ~ expr ~ ")"
+  | data ~ (":" ~ SYMBOL)? ~ "<-" ~ expr
+  | data ~ ("|"|"/") ~ expr ~ ("#" ~ SYMBOL)? ~ (":" ~ SYMBOL)?
+  | data ~ "~" ~ expr
+  | data ~ slice
+  | data ~ suffix
+  | prefix ~ expr
+  | data
 }
-///Red
-term  =  {prefix* ~ ("(" ~ "|"? ~ expr ~ ")"|data) ~ (suffix|slice)*}
+
 // infix = @{
 //     "~" | "|" | "<-" | "#" | ":" | "/"
 // }
@@ -52,10 +55,10 @@ prefix = @{
     "!" | "&" | "^" | "*" | "%"
 }
 suffix = @{
-    "?" | "+" | "*"
+    "?" | "+" | "-"| "*"
 }
 /*====================================================================================================================*/
-data  = {macro_call|regex_range|list|symbol_path}
+data  = {macro_call|regex_range|list|symbol_path|integer}
 list  = {"{" ~ (data ~ ("," ~ data)* ~ ","?)? ~"}"}
 slice = {"{" ~ integer ~ "," ~ integer ~ "}"}
 /*====================================================================================================================*/
@@ -81,7 +84,7 @@ integer = @{"0"|ASCII_NONZERO_DIGIT ~ ("_"? ~ ASCII_DIGIT)*}
 ///#D19A66
 special = @{"true"|"false"|"null"}
 /*====================================================================================================================*/
-comment_doc = @{"//" ~ ("!"|"?"|"*") ~ (!NEWLINE ~ ANY)*}
+comment_doc = @{"///" ~ (!NEWLINE ~ ANY)*}
 comment_s_l = @{"//" ~ (!NEWLINE ~ ANY)*}
 comment_m_l = @{"/*" ~ (comment_m_l | !"*/" ~ ANY)* ~ "*/"}
 COMMENT = @{comment_s_l | comment_m_l}

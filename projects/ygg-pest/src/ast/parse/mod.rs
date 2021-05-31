@@ -20,12 +20,20 @@ impl ASTParser for Statement {
     fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         // let position = get_position(&pairs);
         // let mut statement = vec![];
+        // match pairs.as_branch_tag() {
+        //     Some("Ignore") => {
+        //         let variant = IgnoreStatement::parse(pair, errors)?;
+        //         return Ok(Self::Ignore(Box::new(variant)));
+        //     },
+        //     _ => Err(Error::node_missing("statement"))
+        // }
+
         for pair in pairs.into_inner() {
             match pair.as_rule() {
                 Rule::EOI => continue,
                 Rule::ignore_statement => {
                     let variant = IgnoreStatement::parse(pair, errors)?;
-                    return Ok(Self::IgnoreStatement(Box::new(variant)));
+                    return Ok(Self::Ignore(Box::new(variant)));
                 }
                 Rule::assign_statement => {
                     let variant = AssignStatement::parse(pair, errors)?;
@@ -62,13 +70,10 @@ impl ASTParser for AssignStatement {
         let mut rhs: Option<Expression> = None;
         for pair in pairs.into_inner() {
             match pair.as_rule() {
-                Rule::WHITESPACE=>{}
                 Rule::SYMBOL => Identifier::try_one(pair, &mut id, errors)?,
                 Rule::assign_kind => String::try_one(pair, &mut eq, errors)?,
                 Rule::expr => Expression::try_one(pair, &mut rhs, errors)?,
-                _ => {
-                    unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
-                }
+                _ => continue
             }
         }
         let id = id.ok_or(Error::node_missing("id"))?;
@@ -85,9 +90,11 @@ impl ASTParser for AssignStatement {
 
 impl ASTParser for Expression {
     fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        let _ = errors;
         for pair in pairs.into_inner() {
             match pair.as_rule() {
+                Rule::WHITESPACE=>{}
+                //Rule::term=>{}
+                Rule::expr=>{}
                 _ => {
                     unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
                 }

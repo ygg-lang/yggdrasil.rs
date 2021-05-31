@@ -1,9 +1,8 @@
 mod nodes;
 mod parse;
 
-use crate::ygg::Rule;
-use crate::ygg::YGGParser;
-use crate::CSTBuilder;
+use crate::parser::Rule;
+use crate::parser::CSTBuilder;
 use crate::{Error, Result};
 use pest::iterators::Pair;
 use pest::Parser;
@@ -46,17 +45,7 @@ where
             }
         }
     }
-    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        let _ = errors;
-        for pair in pairs.into_inner() {
-            match pair.as_rule() {
-                _ => {
-                    unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
-                }
-            }
-        }
-        unreachable!()
-    }
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self>;
 }
 
 impl Default for ASTBuilder {
@@ -69,7 +58,7 @@ impl ASTBuilder {
     /// parse_program
     pub fn parse_program(&mut self, input: &str) -> Result<Program> {
         self.errors.clear();
-        let parsed = YGGParser::parse(Rule::program, input)?;
+        let parsed = CSTBuilder::parse(Rule::program, input)?;
         let pairs = parsed.into_iter().next().ok_or(Error::node_missing("program not found"))?;
         let program = Program::parse(pairs, &mut self.errors)?;
         Ok(program)

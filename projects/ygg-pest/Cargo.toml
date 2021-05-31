@@ -10,7 +10,7 @@ edition = "2018"
 
 
 [dependencies]
-pest = "2.1"
+pest = { version = "2.1", git = "https://github.com/ygg-lang/pest" }
 yggdrasil-cst-shared = { version = "0.1", path = "../ygg-cst-shared" }
 thiserror = "1.0"
 anyhow = "1.0"
