@@ -73,18 +73,13 @@ impl ASTParser for AssignStatement {
                 Rule::SYMBOL => Identifier::try_one(pair, &mut id, errors)?,
                 Rule::assign_kind => String::try_one(pair, &mut eq, errors)?,
                 Rule::expr => Expression::try_one(pair, &mut rhs, errors)?,
-                _ => continue
+                _ => continue,
             }
         }
         let id = id.ok_or(Error::node_missing("id"))?;
         let eq = eq.ok_or(Error::node_missing("eq"))?;
         let rhs = rhs.ok_or(Error::node_missing("eq"))?;
-        Ok(Self {
-            id,
-            eq,
-            rhs,
-            position,
-        })
+        Ok(Self { id, eq, rhs, position })
     }
 }
 
@@ -92,9 +87,9 @@ impl ASTParser for Expression {
     fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         for pair in pairs.into_inner() {
             match pair.as_rule() {
-                Rule::WHITESPACE=>{}
+                Rule::WHITESPACE => {}
                 //Rule::term=>{}
-                Rule::expr=>{}
+                Rule::expr => {}
                 _ => {
                     unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
                 }

@@ -1,3 +1,4 @@
+
 use super::*;
 
 #[inline]
@@ -19,7 +20,7 @@ pub fn empty_statement(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn eos(s: RuleState) -> RuleResult {
-    s.rule(Rule::eos, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { s.match_string(";") }) })
+    s.rule(Rule::eos, |s| { s.atomic(Atomicity::Atomic, |s| { s.match_string(";") }) })
 }
 
 #[inline]
@@ -76,7 +77,7 @@ pub fn import(s: RuleState) -> RuleResult {
 pub fn ignore_statement(s: RuleState) -> RuleResult {
     s.rule(Rule::ignore_statement, |s| {
         s.sequence(|s| {
-            self::ignore(s).and_then(|s| { self::SKIP(s) }).and_then(|s| {
+            self::UNNAMED(s, "ignore!").and_then(|s| { self::SKIP(s) }).and_then(|s| {
                 self::SYMBOL(s).or_else(|s| {
                     s.sequence(|s| {
                         s.match_string("{").and_then(|s| { self::SKIP(s) }).and_then(|s| { s.optional(|s| { s.sequence(|s| { self::SYMBOL(s).and_then(|s| { self::SKIP(s) }).and_then(|s| { s.sequence(|s| { s.optional(|s| { s.sequence(|s| { s.match_string(",").and_then(|s| { self::SKIP(s) }).and_then(|s| { self::SYMBOL(s) }) }).and_then(|s| { s.repeat(|s| { s.sequence(|s| { self::SKIP(s).and_then(|s| { s.sequence(|s| { s.match_string(",").and_then(|s| { self::SKIP(s) }).and_then(|s| { self::SYMBOL(s) }) }) }) }) }) }) }) }) }).and_then(|s| { self::SKIP(s) }).and_then(|s| { s.optional(|s| { s.match_string(",") }) }) }) }) }).and_then(|s| { self::SKIP(s) }).and_then(|s| { s.match_string("}") })
@@ -89,8 +90,19 @@ pub fn ignore_statement(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn ignore(s: RuleState) -> RuleResult {
-    s.match_string("ignore!")
+    self::UNNAMED(s, "ignore!")
 }
+
+#[inline]
+pub fn UNNAMED<'i>(s: RuleState<'i>, input: &'i str) -> RuleResult<'i> {
+    s.rule(Rule::UNNAMED, |s| s.match_string(input))
+}
+
+#[inline]
+pub fn UNNAMED2<'i>(s: RuleState<'i>, input: &'i str) -> RuleResult<'i> {
+    s.match_string(input)
+}
+
 
 #[inline]
 pub fn assign_statement(s: RuleState) -> RuleResult {
@@ -99,7 +111,7 @@ pub fn assign_statement(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn assign_kind(s: RuleState) -> RuleResult {
-    s.rule(Rule::assign_kind, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { s.sequence(|s| { s.repeat(|s| { s.match_string("^").or_else(|s| { s.match_string("_") }).or_else(|s| { s.match_string("@") }) }).and_then(|s| { s.match_string("=") }) }) }) })
+    s.rule(Rule::assign_kind, |s| { s.atomic(Atomicity::Atomic, |s| { s.sequence(|s| { s.repeat(|s| { s.match_string("^").or_else(|s| { s.match_string("_") }).or_else(|s| { s.match_string("@") }) }).and_then(|s| { s.match_string("=") }) }) }) })
 }
 
 #[inline]
@@ -111,12 +123,17 @@ pub fn expr(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn prefix(s: RuleState) -> RuleResult {
-    s.rule(Rule::prefix, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { s.match_string("!").or_else(|s| { s.match_string("&") }).or_else(|s| { s.match_string("^") }).or_else(|s| { s.match_string("*") }).or_else(|s| { s.match_string("%") }) }) })
+    s.rule(Rule::prefix,
+           |s|
+               {
+                   s.atomic(Atomicity::Atomic, |s| {
+                       s.match_string("!").or_else(|s| { s.match_string("&") }).or_else(|s| { s.match_string("^") }).or_else(|s| { s.match_string("*") }).or_else(|s| { s.match_string("%") }) })
+               })
 }
 
 #[inline]
 pub fn suffix(s: RuleState) -> RuleResult {
-    s.rule(Rule::suffix, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { s.match_string("?").or_else(|s| { s.match_string("+") }).or_else(|s| { s.match_string("-") }).or_else(|s| { s.match_string("*") }) }) })
+    s.rule(Rule::suffix, |s| { s.atomic(Atomicity::Atomic, |s| { s.match_string("?").or_else(|s| { s.match_string("+") }).or_else(|s| { s.match_string("-") }).or_else(|s| { s.match_string("*") }) }) })
 }
 
 #[inline]
@@ -140,7 +157,7 @@ pub fn slice(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn regex_range(s: RuleState) -> RuleResult {
-    s.rule(Rule::regex_range, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("[").and_then(|s| { s.repeat(|s| { s.sequence(|s| { s.lookahead(false, |s| { s.match_string("]") }).and_then(|s| { self::ANY(s) }) }).or_else(|s| { s.sequence(|s| { s.match_string("\\").and_then(|s| { self::ANY(s) }) }) }) }) }).and_then(|s| { s.match_string("]") }) }) }) })
+    s.rule(Rule::regex_range, |s| { s.atomic(Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("[").and_then(|s| { s.repeat(|s| { s.sequence(|s| { s.lookahead(false, |s| { s.match_string("]") }).and_then(|s| { self::ANY(s) }) }).or_else(|s| { s.sequence(|s| { s.match_string("\\").and_then(|s| { self::ANY(s) }) }) }) }) }).and_then(|s| { s.match_string("]") }) }) }) })
 }
 
 #[inline]
@@ -179,38 +196,38 @@ pub fn block(s: RuleState) -> RuleResult {
 #[inline]
 pub fn string(s: RuleState) -> RuleResult {
     s.rule(Rule::string, |s| {
-        s.atomic(::pest::Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("'").and_then(|s| { s.repeat(|s| { s.sequence(|s| { s.lookahead(false, |s| { s.match_string("'") }).and_then(|s| { self::ANY(s) }) }).or_else(|s| { s.sequence(|s| { s.match_string("\\").and_then(|s| { self::ANY(s) }) }) }) }) }).and_then(|s| { s.match_string("'") }) }).or_else(|s| { s.sequence(|s| { s.match_string("\"").and_then(|s| { s.repeat(|s| { s.sequence(|s| { s.lookahead(false, |s| { s.match_string("\"") }).and_then(|s| { self::ANY(s) }) }).or_else(|s| { s.sequence(|s| { s.match_string("\\").and_then(|s| { self::ANY(s) }) }) }) }) }).and_then(|s| { s.match_string("\"") }) }) }) })
+        s.atomic(Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("'").and_then(|s| { s.repeat(|s| { s.sequence(|s| { s.lookahead(false, |s| { s.match_string("'") }).and_then(|s| { self::ANY(s) }) }).or_else(|s| { s.sequence(|s| { s.match_string("\\").and_then(|s| { self::ANY(s) }) }) }) }) }).and_then(|s| { s.match_string("'") }) }).or_else(|s| { s.sequence(|s| { s.match_string("\"").and_then(|s| { s.repeat(|s| { s.sequence(|s| { s.lookahead(false, |s| { s.match_string("\"") }).and_then(|s| { self::ANY(s) }) }).or_else(|s| { s.sequence(|s| { s.match_string("\\").and_then(|s| { self::ANY(s) }) }) }) }) }).and_then(|s| { s.match_string("\"") }) }) }) })
     })
 }
 
 #[inline]
 pub fn integer(s: RuleState) -> RuleResult {
-    s.rule(Rule::integer, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { s.match_string("0").or_else(|s| { s.sequence(|s| { self::ASCII_NONZERO_DIGIT(s).and_then(|s| { s.repeat(|s| { s.sequence(|s| { s.optional(|s| { s.match_string("_") }).and_then(|s| { self::ASCII_DIGIT(s) }) }) }) }) }) }) }) })
+    s.rule(Rule::integer, |s| { s.atomic(Atomicity::Atomic, |s| { s.match_string("0").or_else(|s| { s.sequence(|s| { self::ASCII_NONZERO_DIGIT(s).and_then(|s| { s.repeat(|s| { s.sequence(|s| { s.optional(|s| { s.match_string("_") }).and_then(|s| { self::ASCII_DIGIT(s) }) }) }) }) }) }) }) })
 }
 
 #[inline]
 pub fn special(s: RuleState) -> RuleResult {
-    s.rule(Rule::special, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { s.match_string("true").or_else(|s| { s.match_string("false") }).or_else(|s| { s.match_string("null") }) }) })
+    s.rule(Rule::special, |s| { s.atomic(Atomicity::Atomic, |s| { s.match_string("true").or_else(|s| { s.match_string("false") }).or_else(|s| { s.match_string("null") }) }) })
 }
 
 #[inline]
 pub fn comment_doc(s: RuleState) -> RuleResult {
-    s.rule(Rule::comment_doc, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("///").and_then(|s| { s.repeat(|s| { s.sequence(|s| { s.lookahead(false, |s| { self::NEWLINE(s) }).and_then(|s| { self::ANY(s) }) }) }) }) }) }) })
+    s.rule(Rule::comment_doc, |s| { s.atomic(Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("///").and_then(|s| { s.repeat(|s| { s.sequence(|s| { s.lookahead(false, |s| { self::NEWLINE(s) }).and_then(|s| { self::ANY(s) }) }) }) }) }) }) })
 }
 
 #[inline]
 pub fn comment_s_l(s: RuleState) -> RuleResult {
-    s.rule(Rule::comment_s_l, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("//").and_then(|s| { s.repeat(|s| { s.sequence(|s| { s.lookahead(false, |s| { self::NEWLINE(s) }).and_then(|s| { self::ANY(s) }) }) }) }) }) }) })
+    s.rule(Rule::comment_s_l, |s| { s.atomic(Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("//").and_then(|s| { s.repeat(|s| { s.sequence(|s| { s.lookahead(false, |s| { self::NEWLINE(s) }).and_then(|s| { self::ANY(s) }) }) }) }) }) }) })
 }
 
 #[inline]
 pub fn comment_m_l(s: RuleState) -> RuleResult {
-    s.rule(Rule::comment_m_l, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("/*").and_then(|s| { s.repeat(|s| { self::comment_m_l(s).or_else(|s| { s.sequence(|s| { s.lookahead(false, |s| { s.match_string("*/") }).and_then(|s| { self::ANY(s) }) }) }) }) }).and_then(|s| { s.match_string("*/") }) }) }) })
+    s.rule(Rule::comment_m_l, |s| { s.atomic(Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("/*").and_then(|s| { s.repeat(|s| { self::comment_m_l(s).or_else(|s| { s.sequence(|s| { s.lookahead(false, |s| { s.match_string("*/") }).and_then(|s| { self::ANY(s) }) }) }) }) }).and_then(|s| { s.match_string("*/") }) }) }) })
 }
 
 #[inline]
 pub fn COMMENT(s: RuleState) -> RuleResult {
-    s.rule(Rule::COMMENT, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { self::comment_s_l(s).or_else(|s| { self::comment_m_l(s) }) }) })
+    s.rule(Rule::COMMENT, |s| { s.atomic(Atomicity::Atomic, |s| { self::comment_s_l(s).or_else(|s| { self::comment_m_l(s) }) }) })
 }
 
 #[inline]
@@ -225,22 +242,22 @@ pub fn symbol_alias(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn SYMBOL(s: RuleState) -> RuleResult {
-    s.rule(Rule::SYMBOL, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("_").or_else(|s| { self::XID_START(s) }).and_then(|s| { s.repeat(|s| { self::XID_CONTINUE(s) }) }) }) }) })
+    s.rule(Rule::SYMBOL, |s| { s.atomic(Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("_").or_else(|s| { self::XID_START(s) }).and_then(|s| { s.repeat(|s| { self::XID_CONTINUE(s) }) }) }) }) })
 }
 
 #[inline]
 pub fn WHITESPACE(s: RuleState) -> RuleResult {
-    s.atomic(::pest::Atomicity::CompoundAtomic, |s| { s.rule(Rule::WHITESPACE, |s| { self::COMMENT(s).or_else(|s| { self::WHITE_SPACE(s) }).or_else(|s| { self::NEWLINE(s) }) }) })
+    s.atomic(Atomicity::CompoundAtomic, |s| { s.rule(Rule::WHITESPACE, |s| { self::COMMENT(s).or_else(|s| { self::WHITE_SPACE(s) }).or_else(|s| { self::NEWLINE(s) }) }) })
 }
 
 #[inline]
 pub fn WHITE_SPACE(s: RuleState) -> RuleResult {
-    s.rule(Rule::WHITE_SPACE, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string(" ").or_else(|s| { s.match_string("\t") }).and_then(|s| { s.repeat(|s| { s.match_string(" ").or_else(|s| { s.match_string("\t") }) }) }) }) }) })
+    s.rule(Rule::WHITE_SPACE, |s| { s.atomic(Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string(" ").or_else(|s| { s.match_string("\t") }).and_then(|s| { s.repeat(|s| { s.match_string(" ").or_else(|s| { s.match_string("\t") }) }) }) }) }) })
 }
 
 #[inline]
 pub fn NEWLINE(s: RuleState) -> RuleResult {
-    s.rule(Rule::NEWLINE, |s| { s.atomic(::pest::Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("\r\n").or_else(|s| { s.match_string("\r") }).or_else(|s| { s.match_string("\n") }).and_then(|s| { s.repeat(|s| { s.match_string("\r\n").or_else(|s| { s.match_string("\r") }).or_else(|s| { s.match_string("\n") }) }) }) }) }) })
+    s.rule(Rule::NEWLINE, |s| { s.atomic(Atomicity::Atomic, |s| { s.sequence(|s| { s.match_string("\r\n").or_else(|s| { s.match_string("\r") }).or_else(|s| { s.match_string("\n") }).and_then(|s| { s.repeat(|s| { s.match_string("\r\n").or_else(|s| { s.match_string("\r") }).or_else(|s| { s.match_string("\n") }) }) }) }) }) })
 }
 
 

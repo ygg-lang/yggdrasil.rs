@@ -60,12 +60,12 @@ impl YGGBuilder {
     pub fn new() -> Result<Self> {
         let mut parser = Parser::new();
         parser.set_language(language())?;
-        // test if parser can work
+        // test if cst can work
         let tree = parser.parse("", None).ok_or(YGGError::init_fail())?;
         Ok(Self { parser, tree, text: String::new() })
     }
     pub fn update_by_text(&mut self, text: &str) -> Result<()> {
-        // let tree = self.parser.parse(text, Some(&self.tree));
+        // let tree = self.cst.parse(text, Some(&self.tree));
         match self.parser.parse(text.as_bytes(), None) {
             Some(s) => {
                 self.text = String::from(text);

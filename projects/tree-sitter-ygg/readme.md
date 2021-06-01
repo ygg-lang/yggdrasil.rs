@@ -11,12 +11,12 @@ way.)
 - root/
   - src/
     - tree_sitter/
-      - parser.h
+      - cst.h
       - grammar.json
       - node-types.json
     - lib.rs
     - build.rs
-    - parser.c
+    - cst.c
     - scanner.c
   - cargo.toml
   - readme.md

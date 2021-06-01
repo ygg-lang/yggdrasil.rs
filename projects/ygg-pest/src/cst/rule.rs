@@ -2,7 +2,6 @@ use super::*;
 
 #[derive(Copy, Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum Rule {
-    EOI,
     program,
     statement,
     empty_statement,
@@ -42,6 +41,9 @@ pub enum Rule {
     WHITESPACE,
     WHITE_SPACE,
     NEWLINE,
+    UNMARKED,
+    UNNAMED,
+    EOI,
 }
 
 
@@ -59,7 +61,6 @@ impl Parser<Rule> for CSTBuilder {
             Rule::import_statement => parse::import_statement(state),
             Rule::import => parse::import(state),
             Rule::ignore_statement => parse::ignore_statement(state),
-            Rule::ignore => parse::ignore(state),
             Rule::assign_statement => parse::assign_statement(state),
             Rule::assign_kind => parse::assign_kind(state),
             Rule::expr => parse::expr(state),
@@ -87,7 +88,9 @@ impl Parser<Rule> for CSTBuilder {
             Rule::WHITESPACE => parse::WHITESPACE(state),
             Rule::WHITE_SPACE => parse::WHITE_SPACE(state),
             Rule::NEWLINE => parse::NEWLINE(state),
-            Rule::EOI => parse::EOI(state)
+            _ => {
+                unreachable!("cannot start with such rule {:?}", rule)
+            }
         })
     }
 }

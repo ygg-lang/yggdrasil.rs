@@ -2,8 +2,8 @@ pub mod ast;
 mod cst;
 mod errors;
 #[allow(clippy::all)]
-mod parser;
+mod cst;
 // mod ygg;
 
 pub use errors::{Error, Result};
-pub use parser::{CSTBuilder, Rule};
+pub use cst::{CSTBuilder, Rule};

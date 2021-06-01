@@ -11,7 +11,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
     IOError { #[from] source: std::io::Error },
     FormatError { #[from] source: std::fmt::Error },
-    PestError { #[from] source: pest::error::Error<crate::parser::Rule> },
+    PestError { #[from] source: pest::error::Error<crate::cst::Rule> },
     AstError { error: String },
     LanguageError { error: String },
     NodeMissing { error: String },

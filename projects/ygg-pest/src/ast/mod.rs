@@ -1,8 +1,8 @@
 mod nodes;
 mod parse;
 
-use crate::parser::Rule;
-use crate::parser::CSTBuilder;
+use crate::cst::CSTBuilder;
+use crate::cst::Rule;
 use crate::{Error, Result};
 use pest::iterators::Pair;
 use pest::Parser;

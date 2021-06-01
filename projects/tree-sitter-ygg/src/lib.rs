@@ -1,7 +1,7 @@
 //! This crate provides a Rust grammar for the [tree-sitter][] parsing library.
 //!
 //! Typically, you will use the [language][language func] function to add this grammar to a
-//! tree-sitter [Parser][], and then use the parser to parse some code:
+//! tree-sitter [Parser][], and then use the cst to parse some code:
 //!
 //! ```
 //! use tree_sitter::Parser;
@@ -9,9 +9,9 @@
 //! let code = r#"
 //!     grammar! test
 //! "#;
-//! let mut parser = Parser::new();
-//! parser.set_language(tree_sitter_ygg::language()).expect("Error loading Ygg grammar");
-//! let parsed = parser.parse(code, None);
+//! let mut cst = Parser::new();
+//! cst.set_language(tree_sitter_ygg::language()).expect("Error loading Ygg grammar");
+//! let parsed = cst.parse(code, None);
 //! # let parsed = parsed.unwrap();
 //! # let root = parsed.root_node();
 //! # assert!(!root.has_error());
