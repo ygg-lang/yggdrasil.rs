@@ -1,9 +1,14 @@
-
 use super::*;
 
 #[inline]
 pub fn program(s: RuleState) -> RuleResult {
-    s.rule(Rule::program, |s| { s.sequence(|s| { self::SOI(s).and_then(|s| { self::SKIP(s) }).and_then(|s| { s.sequence(|s| { s.optional(|s| { self::statement(s).and_then(|s| { s.repeat(|s| { s.sequence(|s| { self::SKIP(s).and_then(|s| { self::statement(s) }) }) }) }) }) }) }).and_then(|s| { self::SKIP(s) }).and_then(|s| { self::EOI(s) }) }) })
+    s.rule(Rule::program, |s| {
+        s.sequence(|s| {
+            self::SOI(s).and_then(|s| {
+                self::SKIP(s)
+            }).and_then(|s| { s.sequence(|s| { s.optional(|s| { self::statement(s).and_then(|s| { s.repeat(|s| { s.sequence(|s| { self::SKIP(s).and_then(|s| { self::statement(s) }) }) }) }) }) }) }).and_then(|s| { self::SKIP(s) }).and_then(|s| { self::EOI(s) })
+        })
+    })
 }
 
 #[inline]
@@ -127,7 +132,8 @@ pub fn prefix(s: RuleState) -> RuleResult {
            |s|
                {
                    s.atomic(Atomicity::Atomic, |s| {
-                       s.match_string("!").or_else(|s| { s.match_string("&") }).or_else(|s| { s.match_string("^") }).or_else(|s| { s.match_string("*") }).or_else(|s| { s.match_string("%") }) })
+                       s.match_string("!").or_else(|s| { s.match_string("&") }).or_else(|s| { s.match_string("^") }).or_else(|s| { s.match_string("*") }).or_else(|s| { s.match_string("%") })
+                   })
                })
 }
 
@@ -283,7 +289,7 @@ fn XID_START(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn SKIP(state: RuleState) -> RuleResult {
-    match state.atomicity() == NonAtomic {
+    match state.atomicity() == Atomicity::NonAtomic {
         true => state.repeat(|state| self::WHITESPACE(state)),
         false => Ok(state)
     }

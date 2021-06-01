@@ -7,9 +7,9 @@ mod rule;
 
 use pest::error::Error;
 use pest::iterators::Pairs;
+use pest::Atomicity;
 use pest::Parser;
 use pest::ParserState;
-use pest::Atomicity;
 
 pub use self::rule::Rule;
 

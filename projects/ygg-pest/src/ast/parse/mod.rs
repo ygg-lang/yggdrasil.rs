@@ -88,8 +88,21 @@ impl ASTParser for Expression {
         for pair in pairs.into_inner() {
             match pair.as_rule() {
                 Rule::WHITESPACE => {}
-                //Rule::term=>{}
+                Rule::data => {}
                 Rule::expr => {}
+                _ => {
+                    unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
+                }
+            }
+        }
+        unreachable!()
+    }
+}
+
+impl ASTParser for Data {
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+        for pair in pairs.into_inner() {
+            match pair.as_rule() {
                 _ => {
                     unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
                 }

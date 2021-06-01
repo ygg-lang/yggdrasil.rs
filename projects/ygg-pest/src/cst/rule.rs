@@ -46,7 +46,6 @@ pub enum Rule {
     EOI,
 }
 
-
 impl Parser<Rule> for CSTBuilder {
     fn parse(rule: Rule, input: &str) -> Result<Pairs<Rule>, Error<Rule>> {
         pest::state(input, |state| match rule {
