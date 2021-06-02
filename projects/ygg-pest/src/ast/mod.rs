@@ -6,8 +6,7 @@ use crate::cst::Rule;
 use crate::{Error, Result};
 use pest::iterators::Pair;
 use pest::Parser;
-use yggdrasil_cst_shared::position_system::get_position;
-use yggdrasil_cst_shared::position_system::OffsetRange;
+use yggdrasil_cst_shared::position_system::{get_position, OffsetRange};
 
 pub use self::nodes::*;
 

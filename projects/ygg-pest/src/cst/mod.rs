@@ -1,7 +1,7 @@
 #![allow(non_snake_case, non_camel_case_types)]
 #![allow(unused_variables, dead_code)]
 
-#[rustfmt::skip]
+// #[rustfmt::skip]
 mod parse;
 mod rule;
 
