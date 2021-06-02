@@ -38,8 +38,8 @@ pub enum Rule {
     symbol_path,
     symbol_alias,
     SYMBOL,
+    IGNORE,
     WHITESPACE,
-    WHITE_SPACE,
     NEWLINE,
     UNMARKED,
     UNNAMED,
@@ -83,9 +83,9 @@ impl Parser<Rule> for CSTBuilder {
             Rule::COMMENT => parse::COMMENT(state),
             Rule::symbol_path => parse::symbol_path(state),
             Rule::symbol_alias => parse::symbol_alias(state),
-            Rule::SYMBOL => parse::SYMBOL(state),
+            Rule::SYMBOL => parse::id(state),
+            Rule::IGNORE => parse::IGNORE(state),
             Rule::WHITESPACE => parse::WHITESPACE(state),
-            Rule::WHITE_SPACE => parse::WHITE_SPACE(state),
             Rule::NEWLINE => parse::NEWLINE(state),
             _ => {
                 unreachable!("cannot start with such rule {:?}", rule)

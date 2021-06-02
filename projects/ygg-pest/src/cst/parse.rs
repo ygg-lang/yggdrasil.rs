@@ -1,4 +1,5 @@
 use super::*;
+use pest::ParseResult;
 
 #[inline]
 pub fn program(s: RuleState) -> RuleResult {
@@ -41,7 +42,7 @@ pub fn eos(s: RuleState) -> RuleResult {
 pub fn grammar_statement(s: RuleState) -> RuleResult {
     s.rule(Rule::grammar_statement, |s| {
         s.sequence(|s| {
-            self::grammar(s).and_then(|s| self::SKIP(s)).and_then(|s| self::SYMBOL(s)).and_then(|s| self::SKIP(s)).and_then(|s| {
+            self::grammar(s).and_then(|s| self::SKIP(s)).and_then(|s| self::id(s)).and_then(|s| self::SKIP(s)).and_then(|s| {
                 self::string(s).or_else(|s| {
                     s.sequence(|s| {
                         s.match_string("{")
@@ -80,7 +81,7 @@ pub fn grammar(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn fragment_statement(s: RuleState) -> RuleResult {
-    s.rule(Rule::fragment_statement, |s| s.sequence(|s| self::fragment(s).and_then(|s| self::SKIP(s)).and_then(|s| self::SYMBOL(s))))
+    s.rule(Rule::fragment_statement, |s| s.sequence(|s| self::fragment(s).and_then(|s| self::SKIP(s)).and_then(|s| self::id(s))))
 }
 
 #[inline]
@@ -136,20 +137,20 @@ pub fn ignore_statement(s: RuleState) -> RuleResult {
     s.rule(Rule::ignore_statement, |s| {
         s.sequence(|s| {
             self::UNNAMED(s, "ignore!").and_then(|s| self::SKIP(s)).and_then(|s| {
-                self::SYMBOL(s).or_else(|s| {
+                self::id(s).or_else(|s| {
                     s.sequence(|s| {
                         s.match_string("{")
                             .and_then(|s| self::SKIP(s))
                             .and_then(|s| {
                                 s.optional(|s| {
                                     s.sequence(|s| {
-                                        self::SYMBOL(s)
+                                        self::id(s)
                                             .and_then(|s| self::SKIP(s))
                                             .and_then(|s| {
                                                 s.sequence(|s| {
                                                     s.optional(|s| {
-                                                        s.sequence(|s| s.match_string(",").and_then(|s| self::SKIP(s)).and_then(|s| self::SYMBOL(s)))
-                                                            .and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| s.sequence(|s| s.match_string(",").and_then(|s| self::SKIP(s)).and_then(|s| self::SYMBOL(s)))))))
+                                                        s.sequence(|s| s.match_string(",").and_then(|s| self::SKIP(s)).and_then(|s| self::id(s)))
+                                                            .and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| s.sequence(|s| s.match_string(",").and_then(|s| self::SKIP(s)).and_then(|s| self::id(s)))))))
                                                     })
                                                 })
                                             })
@@ -173,19 +174,9 @@ pub fn ignore(s: RuleState) -> RuleResult {
 }
 
 #[inline]
-pub fn UNNAMED<'i>(s: RuleState<'i>, input: &'i str) -> RuleResult<'i> {
-    s.rule(Rule::UNNAMED, |s| s.match_string(input))
-}
-
-#[inline]
-pub fn UNNAMED2<'i>(s: RuleState<'i>, input: &'i str) -> RuleResult<'i> {
-    s.match_string(input)
-}
-
-#[inline]
 pub fn assign_statement(s: RuleState) -> RuleResult {
     s.rule(Rule::assign_statement, |s| {
-        s.sequence(|s| self::SYMBOL(s).and_then(|s| self::SKIP(s)).and_then(|s| self::assign_kind(s)).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| s.match_string("|"))).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)))
+        s.sequence(|s| self::id(s).and_then(|s| self::SKIP(s)).and_then(|s| self::assign_kind(s)).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| s.match_string("|"))).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)))
     })
 }
 
@@ -197,25 +188,85 @@ pub fn assign_kind(s: RuleState) -> RuleResult {
 #[inline]
 #[rustfmt::skip]
 pub fn expr(s: RuleState) -> RuleResult {
+    __aux_expr_priority(s).and_then(|s| s.tag_branch("Priority"))
+        .or_else(__aux_expr_mark).and_then(|s| s.tag_branch("Mark"))
+        .or_else(__aux_expr_choice).and_then(|s| s.tag_branch("Choice"))
+        .or_else(__aux_expr_concat).and_then(|s| s.tag_branch("Concat"))
+        .or_else(__aux_expr_slice).and_then(|s| s.tag_branch("Slice"))
+        .or_else(__aux_expr_suffix).and_then(|s| s.tag_branch("Suffix"))
+        .or_else(__aux_expr_prefix).and_then(|s| s.tag_branch("Prefix"))
+        .or_else(__aux_expr_data).and_then(|s| s.tag_branch("Data"))
+}
+
+#[inline]
+fn __aux_expr_priority(s: RuleState) -> RuleResult {
     s.rule(Rule::expr, |s| {
-        s.sequence(|s|
-            s.match_string("(").and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| s.match_string("|"))).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)).and_then(|s| self::SKIP(s)).and_then(|s| s.match_string(")")))
-            .and_then(|s| s.tag_branch("Priority"))
-            .or_else(|s| { s.sequence(|s| { self::data(s).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").and_then(|s| self::SKIP(s)).and_then(|s| self::SYMBOL(s))))).and_then(|s| self::SKIP(s)).and_then(|s| s.match_string("<-")).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)) }) })
-            .and_then(|s| s.tag_branch("Mark"))
-            .or_else(|s| { s.sequence(|s| { self::data(s).and_then(|s| self::SKIP(s)).and_then(|s| s.match_string("|").or_else(|s| s.match_string("/"))).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| s.sequence(|s| s.match_string("#").and_then(|s| self::SKIP(s)).and_then(|s| self::SYMBOL(s))))).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").and_then(|s| self::SKIP(s)).and_then(|s| self::SYMBOL(s))))) }) })
-            .and_then(|s| s.tag_branch("Choice"))
-            .or_else(|s| s.sequence(|s| self::data(s).and_then(|s| self::SKIP(s)).and_then(|s| s.match_string("~")).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s))))
-            .and_then(|s| s.tag_branch("Concat"))
-            .or_else(|s| s.sequence(|s| self::data(s).and_then(|s| self::SKIP(s)).and_then(|s| self::slice(s))))
-            .and_then(|s| s.tag_branch("Slice"))
-            .or_else(|s| s.sequence(|s| self::data(s).and_then(|s| self::SKIP(s)).and_then(|s| self::suffix(s))))
-            .and_then(|s| s.tag_branch("Suffix"))
-            .or_else(|s| s.sequence(|s| self::prefix(s).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s))))
-            .and_then(|s| s.tag_branch("Prefix"))
-            .or_else(|s| self::data(s))
-            .and_then(|s| s.tag_branch("Data"))
+        s.sequence(|s| {
+            s.match_string("(")
+                .and_then(|s| self::SKIP(s))
+                .and_then(|s| s.optional(|s| s.match_string("|")))
+                .and_then(|s| self::SKIP(s))
+                .and_then(|s| self::expr(s))
+                .and_then(|s| s.tag_node("expr"))
+                .and_then(|s| self::SKIP(s))
+                .and_then(|s| s.match_string(")"))
+        })
     })
+}
+
+#[inline]
+fn __aux_expr_mark(s: RuleState) -> RuleResult {
+    s.rule(Rule::expr, |s| {
+        s.sequence(|s| {
+            self::data(s)
+                .and_then(|s| self::SKIP(s))
+                .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").and_then(|s| self::SKIP(s)).and_then(|s| self::id(s)))))
+                .and_then(|s| self::SKIP(s))
+                .and_then(|s| s.match_string("<-"))
+                .and_then(|s| self::SKIP(s))
+                .and_then(|s| self::expr(s))
+        })
+    })
+}
+
+#[inline]
+fn __aux_expr_choice(s: RuleState) -> RuleResult {
+    s.rule(Rule::expr, |s| {
+        s.sequence(|s| {
+            self::data(s)
+                .and_then(|s| self::SKIP(s))
+                .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").and_then(|s| self::SKIP(s)).and_then(|s| self::id(s)))))
+                .and_then(|s| self::SKIP(s))
+                .and_then(|s| s.match_string("<-"))
+                .and_then(|s| self::SKIP(s))
+                .and_then(|s| self::expr(s))
+        })
+    })
+}
+
+#[inline]
+fn __aux_expr_concat(s: RuleState) -> RuleResult {
+    s.rule(Rule::expr, |s| s.sequence(|s| self::data(s).and_then(|s| self::SKIP(s)).and_then(|s| s.match_string("~")).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s))))
+}
+
+#[inline]
+fn __aux_expr_slice(s: RuleState) -> RuleResult {
+    s.rule(Rule::expr, |s| s.sequence(|s| self::data(s).and_then(|s| self::SKIP(s)).and_then(|s| self::slice(s))))
+}
+
+#[inline]
+fn __aux_expr_suffix(s: RuleState) -> RuleResult {
+    s.rule(Rule::expr, |s| s.sequence(|s| self::data(s).and_then(|s| self::SKIP(s)).and_then(|s| self::suffix(s))))
+}
+
+#[inline]
+fn __aux_expr_prefix(s: RuleState) -> RuleResult {
+    s.rule(Rule::expr, |s| s.sequence(|s| self::prefix(s).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s))))
+}
+
+#[inline]
+fn __aux_expr_data(s: RuleState) -> RuleResult {
+    s.rule(Rule::expr, |s| self::data(s))
 }
 
 #[inline]
@@ -229,8 +280,20 @@ pub fn suffix(s: RuleState) -> RuleResult {
 }
 
 #[inline]
+#[rustfmt::skip]
 pub fn data(s: RuleState) -> RuleResult {
-    s.rule(Rule::data, |s| self::macro_call(s).or_else(|s| self::regex_range(s)).or_else(|s| self::list(s)).or_else(|s| self::symbol_path(s)).or_else(|s| self::integer(s)))
+    s.rule(Rule::data, |s|
+        self::macro_call(s)
+            .and_then(|s| s.tag_branch("MacroCall"))
+            .or_else(|s| self::regex_range(s))
+            .and_then(|s| s.tag_branch("RegexRange"))
+            .or_else(|s| self::list(s))
+            .and_then(|s| s.tag_branch("List"))
+            .or_else(|s| self::symbol_path(s))
+            .and_then(|s| s.tag_branch("SymbolPath"))
+            .or_else(|s| self::integer(s))
+            .and_then(|s| s.tag_branch("Integer")),
+    )
 }
 
 #[inline]
@@ -365,16 +428,16 @@ pub fn macro_define(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn macro_kv(s: RuleState) -> RuleResult {
-    s.rule(Rule::macro_kv, |s| s.sequence(|s| self::SYMBOL(s).and_then(|s| self::SKIP(s)).and_then(|s| s.match_string("=")).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s))).or_else(|s| self::expr(s)))
+    s.rule(Rule::macro_kv, |s| s.sequence(|s| self::id(s).and_then(|s| self::SKIP(s)).and_then(|s| s.match_string("=")).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s))).or_else(|s| self::expr(s)))
 }
 
 #[inline]
 pub fn macro_arg(s: RuleState) -> RuleResult {
     s.rule(Rule::macro_arg, |s| {
         s.sequence(|s| {
-            self::SYMBOL(s)
+            self::id(s)
                 .and_then(|s| self::SKIP(s))
-                .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").and_then(|s| self::SKIP(s)).and_then(|s| self::SYMBOL(s)))))
+                .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").and_then(|s| self::SKIP(s)).and_then(|s| self::id(s)))))
                 .and_then(|s| self::SKIP(s))
                 .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string("=").and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)))))
         })
@@ -440,19 +503,14 @@ pub fn comment_m_l(s: RuleState) -> RuleResult {
 }
 
 #[inline]
-pub fn COMMENT(s: RuleState) -> RuleResult {
-    s.rule(Rule::COMMENT, |s| s.atomic(Atomicity::Atomic, |s| self::comment_s_l(s).or_else(|s| self::comment_m_l(s))))
-}
-
-#[inline]
 pub fn symbol_path(s: RuleState) -> RuleResult {
     s.rule(Rule::symbol_path, |s| {
         s.sequence(|s| {
-            self::SYMBOL(s).and_then(|s| self::SKIP(s)).and_then(|s| {
+            self::id(s).and_then(|s| self::SKIP(s)).and_then(|s| {
                 s.sequence(|s| {
                     s.optional(|s| {
-                        s.sequence(|s| s.match_string("::").or_else(|s| s.match_string(".")).and_then(|s| self::SKIP(s)).and_then(|s| self::SYMBOL(s)))
-                            .and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| s.sequence(|s| s.match_string("::").or_else(|s| s.match_string(".")).and_then(|s| self::SKIP(s)).and_then(|s| self::SYMBOL(s)))))))
+                        s.sequence(|s| s.match_string("::").or_else(|s| s.match_string(".")).and_then(|s| self::SKIP(s)).and_then(|s| self::id(s)))
+                            .and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| s.sequence(|s| s.match_string("::").or_else(|s| s.match_string(".")).and_then(|s| self::SKIP(s)).and_then(|s| self::id(s)))))))
                     })
                 })
             })
@@ -462,22 +520,24 @@ pub fn symbol_path(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn symbol_alias(s: RuleState) -> RuleResult {
-    s.rule(Rule::symbol_alias, |s| s.sequence(|s| self::SYMBOL(s).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| s.sequence(|s| s.match_string("as").and_then(|s| self::SKIP(s)).and_then(|s| self::SYMBOL(s)))))))
+    s.rule(Rule::symbol_alias, |s| s.sequence(|s| self::id(s).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| s.sequence(|s| s.match_string("as").and_then(|s| self::SKIP(s)).and_then(|s| self::id(s)))))))
 }
 
 #[inline]
-pub fn SYMBOL(s: RuleState) -> RuleResult {
+pub fn id(s: RuleState) -> RuleResult {
     s.rule(Rule::SYMBOL, |s| s.atomic(Atomicity::Atomic, |s| s.sequence(|s| s.match_string("_").or_else(|s| self::XID_START(s)).and_then(|s| s.repeat(|s| self::XID_CONTINUE(s))))))
+}
+
+////-----------------------------------------------------------------------------------------------------
+
+#[inline]
+pub fn COMMENT(s: RuleState) -> RuleResult {
+    s.rule(Rule::COMMENT, |s| s.atomic(Atomicity::Atomic, |s| self::comment_s_l(s).or_else(|s| self::comment_m_l(s))))
 }
 
 #[inline]
 pub fn WHITESPACE(s: RuleState) -> RuleResult {
-    s.atomic(Atomicity::CompoundAtomic, |s| s.rule(Rule::WHITESPACE, |s| self::COMMENT(s).or_else(|s| self::WHITE_SPACE(s)).or_else(|s| self::NEWLINE(s))))
-}
-
-#[inline]
-pub fn WHITE_SPACE(s: RuleState) -> RuleResult {
-    s.rule(Rule::WHITE_SPACE, |s| s.atomic(Atomicity::Atomic, |s| s.sequence(|s| s.match_string(" ").or_else(|s| s.match_string("\t")).and_then(|s| s.repeat(|s| s.match_string(" ").or_else(|s| s.match_string("\t")))))))
+    s.rule(Rule::WHITESPACE, |s| s.atomic(Atomicity::Atomic, |s| s.sequence(|s| s.match_string(" ").or_else(|s| s.match_string("\t")).and_then(|s| s.repeat(|s| s.match_string(" ").or_else(|s| s.match_string("\t")))))))
 }
 
 #[inline]
@@ -509,10 +569,36 @@ fn XID_START(s: RuleState) -> RuleResult {
     s.match_char_by(::pest::unicode::XID_START)
 }
 
+/////---------------------------------------------------------------------------------------------
+
+#[inline]
+pub fn UNNAMED<'i>(s: RuleState<'i>, input: &'i str) -> RuleResult<'i> {
+    match cfg!(feature = "no-unnamed") {
+        true => s.match_string(input),
+        false => s.rule(Rule::UNNAMED, |s| s.match_string(input)),
+    }
+}
+
+#[inline]
+pub fn IGNORE(s: RuleState) -> RuleResult {
+    match cfg!(feature = "no-ignored") {
+        true => s.atomic(Atomicity::CompoundAtomic, IGNORE_TERMS),
+        false => s.atomic(Atomicity::CompoundAtomic, |s| s.rule(Rule::IGNORE, IGNORE_TERMS)),
+    }
+}
+
+#[inline]
+#[rustfmt::skip]
+pub fn IGNORE_TERMS(s: RuleState) -> RuleResult {
+    self::COMMENT(s)
+        .or_else(|s| self::WHITESPACE(s))
+        .or_else(|s| self::NEWLINE(s))
+}
+
 #[inline]
 pub fn SKIP(state: RuleState) -> RuleResult {
     match state.atomicity() == Atomicity::NonAtomic {
-        true => state.repeat(|state| self::WHITESPACE(state)),
+        true => state.repeat(|state| self::IGNORE(state)),
         false => Ok(state),
     }
 }

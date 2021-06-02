@@ -85,17 +85,13 @@ impl ASTParser for AssignStatement {
 
 impl ASTParser for Expression {
     fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        for pair in pairs.into_inner() {
-            match pair.as_rule() {
-                Rule::WHITESPACE => {}
-                Rule::data => {}
-                Rule::expr => {}
-                _ => {
-                    unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
-                }
+        unreachable!("{:#?}", pairs);
+        match pairs.as_branch_tag() {
+            Some(s) => {
+                unreachable!("{:#?}", pairs);
             }
+            _ => return Err(Error::node_missing("Expression")),
         }
-        unreachable!()
     }
 }
 
@@ -129,7 +125,7 @@ impl ASTParser for String {
 #[test]
 fn test1() {
     let mut parser = ASTBuilder::default();
-    let out = parser.parse_program("x = a ~ b ~ c | d");
+    let out = parser.parse_program("x = a ~ 0");
     println!("{:#?}", out.unwrap());
     println!("{:#?}", parser.errors);
 }
