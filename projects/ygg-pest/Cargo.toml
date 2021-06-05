@@ -22,6 +22,6 @@ pest_generator = "2.1"
 quote = "1.0"
 
 [features]
-default = []
+default = ["no-unnamed", "no-ignored"]
 no-unnamed = []
 no-ignored = []

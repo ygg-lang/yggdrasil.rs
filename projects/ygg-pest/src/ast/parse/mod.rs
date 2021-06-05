@@ -125,7 +125,7 @@ impl ASTParser for String {
 #[test]
 fn test1() {
     let mut parser = ASTBuilder::default();
-    let out = parser.parse_program("x = a ~ 0");
+    let out = parser.parse_program("x=a~0");
     println!("{:#?}", out.unwrap());
     println!("{:#?}", parser.errors);
 }
