@@ -1,12 +1,14 @@
 mod nodes;
 mod parse;
 
+use std::collections::HashMap;
 use crate::cst::CSTBuilder;
 use crate::cst::Rule;
 use crate::{Error, Result};
 use pest::iterators::Pair;
 use pest::Parser;
 use yggdrasil_cst_shared::position_system::{get_position, OffsetRange};
+use crate::errors::Error::NodeMissing;
 
 pub use self::nodes::*;
 
@@ -44,6 +46,38 @@ where
             }
         }
     }
+
+    fn try_named_some(map: &mut HashMap<String, Vec<Pair<Rule>>>, tag: &str, errors: &mut Vec<Error>) -> Result<Option<Self>> {
+        let pair = match map.remove(tag).as_mut().map(|v| v.remove(0)) {
+            Some(s) => s,
+            _ => return Ok(None)
+        };
+        match Self::parse(pair, errors) {
+            Ok(o) => Ok(Some(o)),
+            Err(Error::Unwinding) => Err(Error::Unwinding),
+            Err(e) => {
+                errors.push(e);
+                Err(Error::Unwinding)
+            }
+        }
+    }
+
+    fn try_named_one(map: &mut HashMap<String, Vec<Pair<Rule>>>, tag: &str, errors: &mut Vec<Error>) -> Result<Self> {
+        let pair = match map.remove(tag).as_mut().map(|v| v.remove(0)) {
+            Some(s) => s,
+            _ => return Err(Error::node_missing(tag))
+        };
+        match Self::parse(pair, errors) {
+            Ok(o) => Ok(o),
+            Err(Error::Unwinding) => Err(Error::Unwinding),
+            Err(e) => {
+                errors.push(e);
+                Err(Error::Unwinding)
+            }
+        }
+    }
+
+
     fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self>;
 }
 

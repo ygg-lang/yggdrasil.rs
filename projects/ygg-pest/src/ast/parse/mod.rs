@@ -1,6 +1,9 @@
 mod parse_custom;
 
+use std::collections::HashMap;
 use super::*;
+
+
 
 impl ASTParser for Program {
     fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
@@ -83,12 +86,35 @@ impl ASTParser for AssignStatement {
     }
 }
 
+fn collect_tag_map<'a>(pairs: &'a Pair<Rule>) -> HashMap<String, Vec<Pair<'a,Rule>>> {
+    let mut out: HashMap<String, Vec<Pair<Rule>>>  = HashMap::new();
+    for pair in pairs.clone().into_inner() {
+        if let Some(s) = pair.as_node_tag() {
+            match out.get_mut(s) {
+                Some(s) => { s.push(pair) },
+                None =>{
+                    out.insert(s.to_string(), vec![pair]);
+                },
+            }
+        }
+    }
+    return out
+}
+
 impl ASTParser for Expression {
     fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        unreachable!("{:#?}", pairs);
+        let mut map = collect_tag_map(&pairs);
         match pairs.as_branch_tag() {
+            Some("Concat") => {
+                let branch = ConcatExpression {
+                    lhs: Expression::Data(Box::new(Data::try_named_one(&mut map, "lhs", errors)?)),
+                    rhs: Expression::try_named_one(&mut map, "rhs", errors)?,
+                    position: OffsetRange { start: 0, end: 0 }
+                };
+                Ok(Self::ConcatExpression(Box::new(branch)))
+            }
             Some(s) => {
-                unreachable!("{:#?}", pairs);
+                unreachable!("{:#?}", s);
             }
             _ => return Err(Error::node_missing("Expression")),
         }
@@ -125,7 +151,7 @@ impl ASTParser for String {
 #[test]
 fn test1() {
     let mut parser = ASTBuilder::default();
-    let out = parser.parse_program("x=a~0");
+    let out = parser.parse_program("x = a ~ 0");
     println!("{:#?}", out.unwrap());
     println!("{:#?}", parser.errors);
 }

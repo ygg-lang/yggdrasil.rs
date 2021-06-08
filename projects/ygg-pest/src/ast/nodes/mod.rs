@@ -58,7 +58,6 @@ pub enum Expression {
 #[derive(Clone, Debug)]
 pub struct ConcatExpression {
     pub lhs: Expression,
-    pub op: String,
     pub rhs: Expression,
     pub position: OffsetRange,
 }

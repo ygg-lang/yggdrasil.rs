@@ -63,7 +63,6 @@ impl Debug for Expression {
             Expression::ConcatExpression(v) => f
                 .debug_struct("ConcatExpression") //
                 .field("lhs", &v.lhs)
-                .field("op", &v.op)
                 .field("rhs", &v.rhs)
                 .finish(),
             Expression::ChoiceExpression(v) => f
