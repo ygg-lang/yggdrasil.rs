@@ -1,7 +1,8 @@
 [workspace]
 members = ["projects/*"]
 default-members = [
-    "projects/tree-sitter-ygg",
+    "projects/ygg-cst-shared",
+    "projects/ygg-pest",
 ]
 exclude = [
     "projects/.DS_Store",

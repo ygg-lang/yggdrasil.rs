@@ -1,5 +1,10 @@
 use super::*;
-use pest::ParseResult;
+
+macro_rules! tag_node {
+    ($id:ident, $name:literal) => {
+        |s| self::$id(s).and_then(|s|s.tag_node($name))
+    };
+}
 
 #[inline]
 pub fn program(s: RuleState) -> RuleResult {
@@ -216,7 +221,7 @@ pub fn expr(s: RuleState) -> RuleResult {
         Ok(o) => return o.tag_branch("Prefix"),
         Err(e) => e
     };
-    let s = match s.rule(Rule::expr, self::data) {
+    let s = match s.rule(Rule::expr, tag_node!(data, "data")) {
         Ok(o) => return o.tag_branch("Data"),
         Err(e) => e
     };
@@ -264,15 +269,7 @@ fn __aux_expr_choice(s: RuleState) -> RuleResult {
 
 #[inline]
 fn __aux_expr_concat(s: RuleState) -> RuleResult {
-    s.sequence(|s|
-        self::data(s)
-            .and_then(|s| s.tag_node("lhs"))
-            .and_then(|s| self::SKIP(s))
-            .and_then(|s| s.match_string("~"))
-            .and_then(|s| self::SKIP(s))
-            .and_then(|s| self::expr(s))
-            .and_then(|s| s.tag_node("rhs"))
-    )
+    s.sequence(|s| self::data(s).and_then(|s| s.tag_node("lhs")).and_then(|s| self::SKIP(s)).and_then(|s| s.match_string("~")).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)).and_then(|s| s.tag_node("rhs")))
 }
 
 #[inline]
@@ -319,7 +316,7 @@ pub fn data(s: RuleState) -> RuleResult {
         Ok(o) => return o.tag_branch("SymbolPath"),
         Err(e) => e
     };
-    let s = match s.rule(Rule::data, self::integer) {
+    let s = match s.rule(Rule::data, tag_node!(integer, "integer")) {
         Ok(o) => return o.tag_branch("Integer"),
         Err(e) => e
     };

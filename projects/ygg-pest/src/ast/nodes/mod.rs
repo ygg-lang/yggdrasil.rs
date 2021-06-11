@@ -19,20 +19,20 @@ pub enum Statement {
 
 #[derive(Clone, Debug)]
 pub struct GrammarStatement {
-    pub id: Identifier,
+    pub id: Symbol,
     pub ext: Vec<StringLiteral>,
     pub position: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
 pub struct FragmentStatement {
-    pub id: Identifier,
+    pub id: Symbol,
     pub position: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
 pub struct AssignStatement {
-    pub id: Identifier,
+    pub id: Symbol,
     pub eq: String,
     pub rhs: Expression,
     pub position: OffsetRange,
@@ -40,7 +40,7 @@ pub struct AssignStatement {
 
 #[derive(Clone, Debug)]
 pub struct IgnoreStatement {
-    pub rules: Vec<Identifier>,
+    pub rules: Vec<Symbol>,
     pub position: OffsetRange,
 }
 
@@ -79,15 +79,15 @@ pub struct CommentDocument {
 #[derive(Clone, Debug)]
 pub struct ChoiceTag {
     pub expr: Expression,
-    pub tag: Option<Identifier>,
+    pub tag: Option<Symbol>,
     pub mode: Option<String>,
-    pub ty: Option<Identifier>,
+    pub ty: Option<Symbol>,
     pub position: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
 pub struct FieldExpression {
-    pub lhs: Identifier,
+    pub lhs: Symbol,
     pub op: String,
     pub rhs: Expression,
     pub position: OffsetRange,
@@ -109,22 +109,28 @@ pub struct UnaryPrefix {
 
 #[derive(Clone)]
 pub enum Data {
-    Identifier(Box<Identifier>),
-    Integer(Box<Unsigned>),
+    SymbolPath(Box<SymbolPath>),
+    Integer(Box<Integer>),
     String(Box<StringLiteral>),
     Macro,
     Regex,
 }
 
 #[derive(Clone, Debug)]
-pub struct Identifier {
+pub struct SymbolPath {
+    pub data: Vec<Symbol>,
+    pub position: OffsetRange,
+}
+
+#[derive(Clone, Debug)]
+pub struct Symbol {
     pub data: String,
     pub position: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
-pub struct Unsigned {
-    pub data: usize,
+pub struct Integer {
+    pub data: isize,
     pub position: OffsetRange,
 }
 

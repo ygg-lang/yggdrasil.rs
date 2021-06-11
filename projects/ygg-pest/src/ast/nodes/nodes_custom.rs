@@ -78,7 +78,7 @@ impl Debug for Expression {
 impl Debug for Data {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Data::Identifier(v) => f.debug_tuple("Identifier").field(&v.data).finish(),
+            Data::SymbolPath(v) => f.debug_tuple("Identifier").field(&v.data).finish(),
             Data::Integer(v) => f.debug_tuple("Integer").field(&v.data).finish(),
             Data::String(v) => f.debug_tuple("String").field(&v.data).finish(),
             Data::Regex => f.debug_tuple("Regex").finish(),
@@ -87,13 +87,13 @@ impl Debug for Data {
     }
 }
 
-impl Eq for Identifier {}
-impl PartialEq<Self> for Identifier {
+impl Eq for Symbol {}
+impl PartialEq<Self> for Symbol {
     fn eq(&self, other: &Self) -> bool {
         self.data == other.data
     }
 }
-impl Hash for Identifier {
+impl Hash for Symbol {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.data.hash(state)
     }

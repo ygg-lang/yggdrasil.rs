@@ -1,14 +1,13 @@
 mod nodes;
 mod parse;
 
-use std::collections::HashMap;
 use crate::cst::CSTBuilder;
 use crate::cst::Rule;
 use crate::{Error, Result};
 use pest::iterators::Pair;
 use pest::Parser;
+use std::collections::HashMap;
 use yggdrasil_cst_shared::position_system::{get_position, OffsetRange};
-use crate::errors::Error::NodeMissing;
 
 pub use self::nodes::*;
 
@@ -22,22 +21,22 @@ pub trait ASTParser
 where
     Self: Sized,
 {
-    fn try_many(pairs: Pair<Rule>, buffer: &mut Vec<Self>, errors: &mut Vec<Error>) {
-        match Self::parse(pairs, errors) {
+    fn many(pairs: Pair<Rule>, buffer: &mut Vec<Self>, errors: &mut Vec<Error>) {
+        match Self::parse_pair(pairs, errors) {
             Ok(o) => buffer.push(o),
             Err(Error::Unwinding) => (),
             Err(e) => errors.push(e),
         }
     }
-    fn try_some(pairs: Pair<Rule>, buffer: &mut Option<Self>, errors: &mut Vec<Error>) {
-        match Self::parse(pairs, errors) {
+    fn some(pairs: Pair<Rule>, buffer: &mut Option<Self>, errors: &mut Vec<Error>) {
+        match Self::parse_pair(pairs, errors) {
             Ok(o) => *buffer = Some(o),
             Err(Error::Unwinding) => (),
             Err(e) => errors.push(e),
         }
     }
     fn try_one(pairs: Pair<Rule>, buffer: &mut Option<Self>, errors: &mut Vec<Error>) -> Result<()> {
-        match Self::parse(pairs, errors) {
+        match Self::parse_pair(pairs, errors) {
             Ok(o) => Ok(*buffer = Some(o)),
             Err(Error::Unwinding) => Err(Error::Unwinding),
             Err(e) => {
@@ -47,17 +46,33 @@ where
         }
     }
 
-    fn try_named_some(map: &mut HashMap<String, Vec<Pair<Rule>>>, tag: &str, errors: &mut Vec<Error>) -> Result<Option<Self>> {
+    fn named_many(map: &mut HashMap<String, Vec<Pair<Rule>>>, tag: &str, errors: &mut Vec<Error>) -> Vec<Self> {
+        let pairs = match map.remove(tag) {
+            Some(s) => s,
+            _ => return vec![],
+        };
+        let mut out = Vec::with_capacity(pairs.len());
+        for pair in pairs {
+            match Self::parse_pair(pair, errors) {
+                Ok(o) => out.push(o),
+                Err(Error::Unwinding) => (),
+                Err(e) => errors.push(e),
+            }
+        }
+        return out;
+    }
+
+    fn named_some(map: &mut HashMap<String, Vec<Pair<Rule>>>, tag: &str, errors: &mut Vec<Error>) -> Option<Self> {
         let pair = match map.remove(tag).as_mut().map(|v| v.remove(0)) {
             Some(s) => s,
-            _ => return Ok(None)
+            _ => return None,
         };
-        match Self::parse(pair, errors) {
-            Ok(o) => Ok(Some(o)),
-            Err(Error::Unwinding) => Err(Error::Unwinding),
+        match Self::parse_pair(pair, errors) {
+            Ok(o) => Some(o),
+            Err(Error::Unwinding) => None,
             Err(e) => {
                 errors.push(e);
-                Err(Error::Unwinding)
+                None
             }
         }
     }
@@ -65,9 +80,9 @@ where
     fn try_named_one(map: &mut HashMap<String, Vec<Pair<Rule>>>, tag: &str, errors: &mut Vec<Error>) -> Result<Self> {
         let pair = match map.remove(tag).as_mut().map(|v| v.remove(0)) {
             Some(s) => s,
-            _ => return Err(Error::node_missing(tag))
+            _ => return Err(Error::node_missing(tag)),
         };
-        match Self::parse(pair, errors) {
+        match Self::parse_pair(pair, errors) {
             Ok(o) => Ok(o),
             Err(Error::Unwinding) => Err(Error::Unwinding),
             Err(e) => {
@@ -77,8 +92,7 @@ where
         }
     }
 
-
-    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self>;
+    fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self>;
 }
 
 impl Default for ASTBuilder {
@@ -93,7 +107,7 @@ impl ASTBuilder {
         self.errors.clear();
         let parsed = CSTBuilder::parse(Rule::program, input)?;
         let pairs = parsed.into_iter().next().ok_or(Error::node_missing("program not found"))?;
-        let program = Program::parse(pairs, &mut self.errors)?;
+        let program = Program::parse_pair(pairs, &mut self.errors)?;
         Ok(program)
     }
 }
