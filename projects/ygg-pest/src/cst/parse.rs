@@ -6,6 +6,15 @@ macro_rules! tag_node {
     };
 }
 
+macro_rules! tag_branch {
+    ($id:ident, $rule:ident, $name:literal, $e:expr) => {
+        let $id = match $id.rule(Rule::$rule, $e) {
+            Ok(o) => return o.tag_branch($name),
+            Err(e) => e
+        };
+    };
+}
+
 #[inline]
 pub fn program(s: RuleState) -> RuleResult {
     s.rule(Rule::program, |s| {
@@ -213,18 +222,9 @@ pub fn expr(s: RuleState) -> RuleResult {
         Ok(o) => return o.tag_branch("Slice"),
         Err(e) => e
     };
-    let s = match s.rule(Rule::expr, self::__aux_expr_suffix) {
-        Ok(o) => return o.tag_branch("Suffix"),
-        Err(e) => e
-    };
-    let s = match s.rule(Rule::expr, self::__aux_expr_prefix) {
-        Ok(o) => return o.tag_branch("Prefix"),
-        Err(e) => e
-    };
-    let s = match s.rule(Rule::expr, tag_node!(data, "data")) {
-        Ok(o) => return o.tag_branch("Data"),
-        Err(e) => e
-    };
+    tag_branch!(s, expr, "Suffix", self::__aux_expr_suffix);
+    tag_branch!(s, expr, "Prefix", self::__aux_expr_prefix);
+    tag_branch!(s, expr, "Data", tag_node!(data, "data"));
     return Err(s);
 }
 
@@ -297,29 +297,16 @@ pub fn suffix(s: RuleState) -> RuleResult {
     s.rule(Rule::suffix, |s| s.atomic(Atomicity::Atomic, |s| s.match_string("?").or_else(|s| s.match_string("+")).or_else(|s| s.match_string("-")).or_else(|s| s.match_string("*"))))
 }
 
+
+
 #[inline]
 #[rustfmt::skip]
 pub fn data(s: RuleState) -> RuleResult {
-    let s = match s.rule(Rule::data, self::macro_call) {
-        Ok(o) => return o.tag_branch("MacroCall"),
-        Err(e) => e
-    };
-    let s = match s.rule(Rule::data, self::regex_range) {
-        Ok(o) => return o.tag_branch("RegexRange"),
-        Err(e) => e
-    };
-    let s = match s.rule(Rule::data, self::list) {
-        Ok(o) => return o.tag_branch("List"),
-        Err(e) => e
-    };
-    let s = match s.rule(Rule::data, self::symbol_path) {
-        Ok(o) => return o.tag_branch("SymbolPath"),
-        Err(e) => e
-    };
-    let s = match s.rule(Rule::data, tag_node!(integer, "integer")) {
-        Ok(o) => return o.tag_branch("Integer"),
-        Err(e) => e
-    };
+    tag_branch!(s, data, "MacroCall", tag_node!(macro_call, "macro_call"));
+    tag_branch!(s, data, "RegexRange", tag_node!(regex_range, "regex_range"));
+    tag_branch!(s, data, "List", tag_node!(list, "list"));
+    tag_branch!(s, data, "SymbolPath", tag_node!(symbol_path, "symbol_path"));
+    tag_branch!(s, data, "Integer", tag_node!(integer, "integer"));
     return Err(s);
 }
 

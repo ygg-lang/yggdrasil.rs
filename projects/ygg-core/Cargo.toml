@@ -26,13 +26,10 @@ dashmap = "4.0"
 
 # same as tower-lsp = "0.14"
 lsp-types = { version = "0.89", features = ["proposed"], optional = true }
-tree-sitter = { version = "0.20", optional = true }
-tree-sitter-cli = { version = "0.20", optional = true }
 
 [features]
 default = ["lsp"]
 lsp = ["lsp-types"]
-tree-sitter-support = ["tree-sitter", "tree-sitter-cli"]
 
 [dev-dependencies]
 

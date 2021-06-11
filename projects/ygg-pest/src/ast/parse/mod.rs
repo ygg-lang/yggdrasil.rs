@@ -144,8 +144,9 @@ impl ASTParser for Integer {
 
 impl ASTParser for SymbolPath {
     fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        let data = ASTParser::parse_pair(pairs, errors)?;
-        Ok(Self::SymbolPath(Box::new(SymbolPath { data, position })))
+        let position = get_position(&pairs);
+        let data = ASTParser::many(pairs, errors)?;
+        Ok(SymbolPath { data, position })
     }
 }
 

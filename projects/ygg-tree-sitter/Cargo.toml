@@ -1,0 +1,16 @@
+[package]
+name = "yggdrasil-tree-sitter-codegen"
+version = "0.1.0"
+authors = ["Aster <192607617@qq.com>"]
+description = "AWSL Window Structure Language"
+repository = "https://github.com/GalAster/awsl-rs"
+readme = "Readme.md"
+license = "MPL-2.0"
+edition = "2018"
+
+[dependencies]
+tree-sitter = { version = "0.20"}
+tree-sitter-cli = { version = "0.20"}
+
+[features]
+default = []
