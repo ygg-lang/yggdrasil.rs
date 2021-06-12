@@ -1,0 +1,27 @@
+[package]
+name = "yggdrasil-bootstrap"
+version = "0.1.0"
+authors = ["Aster <192607617@qq.com>"]
+description = "AWSL Window Structure Language"
+repository = "https://github.com/GalAster/awsl-rs"
+readme = "Readme.md"
+license = "MPL-2.0"
+edition = "2018"
+
+
+[dependencies]
+pest = { version = "2.1", git = "https://github.com/ygg-lang/pest" }
+yggdrasil-cst-shared = { version = "0.1", path = "../ygg-cst-shared" }
+thiserror = "1.0"
+anyhow = "1.0"
+
+
+
+[dev-dependencies]
+pest_generator = "2.1"
+quote = "1.0"
+
+[features]
+default = ["no-unnamed", "no-ignored"]
+no-unnamed = []
+no-ignored = []

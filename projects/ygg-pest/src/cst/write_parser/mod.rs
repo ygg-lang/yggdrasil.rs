@@ -1,5 +1,5 @@
 use self::builtin::*;
-use super::*;
+use yggdrasil_core::codegen::target_pest::*;
 
 mod builtin;
 

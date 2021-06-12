@@ -1,32 +1,5 @@
 use super::*;
 
-macro_rules! tag_node {
-    ($id:ident, $name:literal) => {
-        |s| self::$id(s).and_then(|s| s.tag_node($name))
-    };
-    ($i:ident, $id:ident, $name:literal) => {
-        self::$id($i).and_then(|s| s.tag_node($name))
-    };
-}
-
-macro_rules! tag_branch {
-    ($id:ident, $rule:ident, $name:literal, $e:expr) => {
-        let $id = match $id.rule(Rule::$rule, $e) {
-            Ok(o) => return o.tag_branch($name),
-            Err(e) => e,
-        };
-    };
-}
-
-macro_rules! match_charset {
-    ($i:ident, $($p:tt)+) => {
-        $i.match_char_by(|s| matches!(s, $($p)+))
-    };
-    ($($p:tt)+) => {
-        |s| s.match_char_by(|s| matches!(s, $($p)+))
-    };
-}
-
 #[inline]
 pub fn program(s: RuleState) -> RuleResult {
     s.rule(Rule::program, |s| {
@@ -487,13 +460,13 @@ pub fn string(s: RuleState) -> RuleResult {
                     .and_then(|s| s.repeat(|s| s.sequence(|s| s.lookahead(false, |s| s.match_string("'")).and_then(|s| self::ANY(s))).or_else(|s| s.sequence(|s| s.match_string("\\").and_then(|s| self::ANY(s))))))
                     .and_then(|s| s.match_string("'"))
             })
-            .or_else(|s| {
-                s.sequence(|s| {
-                    s.match_string("\"")
-                        .and_then(|s| s.repeat(|s| s.sequence(|s| s.lookahead(false, |s| s.match_string("\"")).and_then(|s| self::ANY(s))).or_else(|s| s.sequence(|s| s.match_string("\\").and_then(|s| self::ANY(s))))))
-                        .and_then(|s| s.match_string("\""))
+                .or_else(|s| {
+                    s.sequence(|s| {
+                        s.match_string("\"")
+                            .and_then(|s| s.repeat(|s| s.sequence(|s| s.lookahead(false, |s| s.match_string("\"")).and_then(|s| self::ANY(s))).or_else(|s| s.sequence(|s| s.match_string("\\").and_then(|s| self::ANY(s))))))
+                            .and_then(|s| s.match_string("\""))
+                    })
                 })
-            })
         })
     })
 }
@@ -629,17 +602,9 @@ pub fn UNNAMED<'i>(s: RuleState<'i>, input: &'i str) -> RuleResult<'i> {
 #[inline]
 pub fn IGNORE(s: RuleState) -> RuleResult {
     match cfg!(feature = "no-ignored") {
-        true => s.atomic(Atomicity::CompoundAtomic, IGNORE_TERMS),
-        false => s.atomic(Atomicity::CompoundAtomic, |s| s.rule(Rule::IGNORE, IGNORE_TERMS)),
+        true => s.atomic(Atomicity::CompoundAtomic, ignore_terms!(COMMENT,WHITESPACE, NEWLINE)),
+        false => s.atomic(Atomicity::CompoundAtomic, |s| s.rule(Rule::IGNORE, ignore_terms!(COMMENT,WHITESPACE, NEWLINE))),
     }
-}
-
-#[inline]
-#[rustfmt::skip]
-pub fn IGNORE_TERMS(s: RuleState) -> RuleResult {
-    self::COMMENT(s)
-        .or_else(|s| self::WHITESPACE(s))
-        .or_else(|s| self::NEWLINE(s))
 }
 
 #[inline]
