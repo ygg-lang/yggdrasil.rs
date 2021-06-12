@@ -21,12 +21,16 @@ pub trait ASTParser
 where
     Self: Sized,
 {
-    fn many(pairs: Pair<Rule>, buffer: &mut Vec<Self>, errors: &mut Vec<Error>) {
-        match Self::parse_pair(pairs, errors) {
-            Ok(o) => buffer.push(o),
-            Err(Error::Unwinding) => (),
-            Err(e) => errors.push(e),
+    fn many(pairs: Vec<Pair<Rule>>, errors: &mut Vec<Error>) -> Vec<Self> {
+        let mut out = Vec::with_capacity(pairs.len());
+        for pair in pairs {
+            match Self::parse_pair(pair, errors) {
+                Ok(o) => out.push(o),
+                Err(Error::Unwinding) => (),
+                Err(e) => errors.push(e),
+            }
         }
+        return out;
     }
     fn some(pairs: Pair<Rule>, buffer: &mut Option<Self>, errors: &mut Vec<Error>) {
         match Self::parse_pair(pairs, errors) {
@@ -51,15 +55,7 @@ where
             Some(s) => s,
             _ => return vec![],
         };
-        let mut out = Vec::with_capacity(pairs.len());
-        for pair in pairs {
-            match Self::parse_pair(pair, errors) {
-                Ok(o) => out.push(o),
-                Err(Error::Unwinding) => (),
-                Err(e) => errors.push(e),
-            }
-        }
-        return out;
+        return Self::many(pairs, errors);
     }
 
     fn named_some(map: &mut HashMap<String, Vec<Pair<Rule>>>, tag: &str, errors: &mut Vec<Error>) -> Option<Self> {

@@ -6,13 +6,8 @@ use std::collections::HashMap;
 impl ASTParser for Program {
     fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
-        let mut statement = vec![];
-        for pair in pairs.into_inner() {
-            match pair.as_rule() {
-                Rule::statement => Statement::many(pair, &mut statement, errors),
-                _ => continue,
-            }
-        }
+        let mut map = collect_tag_map(&pairs);
+        let statement = ASTParser::named_many(&mut map, "statement", errors);
         return Ok(Self { statement, position });
     }
 }
@@ -52,14 +47,9 @@ impl ASTParser for Statement {
 impl ASTParser for IgnoreStatement {
     fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
-        let mut rules = vec![];
-        for pair in pairs.into_inner() {
-            match pair.as_rule() {
-                Rule::SYMBOL => Symbol::many(pair, &mut rules, errors),
-                _ => continue,
-            }
-        }
-        Ok(Self { rules, position })
+        let mut map = collect_tag_map(&pairs);
+        let rules = ASTParser::named_many(&mut map, "rules", errors);
+        return Ok(Self { rules, position });
     }
 }
 
@@ -84,21 +74,6 @@ impl ASTParser for AssignStatement {
     }
 }
 
-fn collect_tag_map<'a>(pairs: &'a Pair<Rule>) -> HashMap<String, Vec<Pair<'a, Rule>>> {
-    let mut out: HashMap<String, Vec<Pair<Rule>>> = HashMap::new();
-    for pair in pairs.clone().into_inner() {
-        if let Some(s) = pair.as_node_tag() {
-            match out.get_mut(s) {
-                Some(s) => s.push(pair),
-                None => {
-                    out.insert(s.to_string(), vec![pair]);
-                }
-            }
-        }
-    }
-    return out;
-}
-
 impl ASTParser for Expression {
     fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
@@ -109,9 +84,7 @@ impl ASTParser for Expression {
                 let rhs = ASTParser::try_named_one(&mut map, "rhs", errors)?;
                 Ok(Self::ConcatExpression(Box::new(ConcatExpression { lhs, rhs, position })))
             }
-            Some("Data") => {
-                Ok(Self::Data(Box::new(ASTParser::try_named_one(&mut map, "data", errors)?)))
-            }
+            Some("Data") => Ok(Self::Data(Box::new(ASTParser::try_named_one(&mut map, "data", errors)?))),
             Some(s) => {
                 unreachable!("{:#?}", s);
             }
@@ -125,7 +98,7 @@ impl ASTParser for Data {
         let mut map = collect_tag_map(&pairs);
         match pairs.as_branch_tag() {
             Some("SymbolPath") => Ok(Self::SymbolPath(Box::new(ASTParser::try_named_one(&mut map, "symbol_path", errors)?))),
-            Some("Integer") =>  Ok(Self::Integer(Box::new(ASTParser::try_named_one(&mut map, "integer", errors)?))),
+            Some("Integer") => Ok(Self::Integer(Box::new(ASTParser::try_named_one(&mut map, "integer", errors)?))),
             Some(s) => {
                 unreachable!("{:#?}", s);
             }
@@ -145,8 +118,9 @@ impl ASTParser for Integer {
 impl ASTParser for SymbolPath {
     fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
-        let data = ASTParser::many(pairs, errors)?;
-        Ok(SymbolPath { data, position })
+        let mut map = collect_tag_map(&pairs);
+        let data = ASTParser::named_many(&mut map, "symbol", errors);
+        Ok(SymbolPath { symbol: data, position })
     }
 }
 
@@ -158,16 +132,13 @@ impl ASTParser for Symbol {
     }
 }
 
-
 ///---------------------------------------------------------------------------------------------------
-
 
 impl ASTParser for isize {
     fn parse_pair(pairs: Pair<Rule>, _: &mut Vec<Error>) -> Result<Self> {
-       Ok(pairs.as_str().parse::<isize>()?)
+        Ok(pairs.as_str().parse::<isize>()?)
     }
 }
-
 
 impl ASTParser for String {
     fn parse_pair(pairs: Pair<Rule>, _: &mut Vec<Error>) -> Result<Self> {
@@ -190,3 +161,22 @@ fn test() {
     println!("{:#?}", out.unwrap());
     println!("{:#?}", parser.errors);
 }
+
+//region utility functions
+
+fn collect_tag_map<'a>(pairs: &'a Pair<Rule>) -> HashMap<String, Vec<Pair<'a, Rule>>> {
+    let mut out: HashMap<String, Vec<Pair<Rule>>> = HashMap::new();
+    for pair in pairs.clone().into_inner() {
+        if let Some(s) = pair.as_node_tag() {
+            match out.get_mut(s) {
+                Some(s) => s.push(pair),
+                None => {
+                    out.insert(s.to_string(), vec![pair]);
+                }
+            }
+        }
+    }
+    return out;
+}
+
+//endregion

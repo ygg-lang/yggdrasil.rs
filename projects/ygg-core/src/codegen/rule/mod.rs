@@ -7,7 +7,6 @@ use crate::{
 use lsp_types::{Range, Url};
 use std::fmt::Debug;
 
-mod build;
 mod from_ast;
 mod hints;
 mod node;

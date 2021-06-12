@@ -58,7 +58,6 @@ impl Parser<Rule> for CSTBuilder {
             Rule::fragment_statement => parse::fragment_statement(state),
             Rule::fragment => parse::fragment(state),
             Rule::import_statement => parse::import_statement(state),
-            Rule::import => parse::import(state),
             Rule::ignore_statement => parse::ignore_statement(state),
             Rule::assign_statement => parse::assign_statement(state),
             Rule::assign_kind => parse::assign_kind(state),

@@ -118,7 +118,7 @@ pub enum Data {
 
 #[derive(Clone, Debug)]
 pub struct SymbolPath {
-    pub data: Vec<Symbol>,
+    pub symbol: Vec<Symbol>,
     pub position: OffsetRange,
 }
 
