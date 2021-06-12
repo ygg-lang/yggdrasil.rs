@@ -1,9 +1,3 @@
-
-
-
-
-
-
 #[macro_export]
 macro_rules! ignore_terms {
     ($r:ident, $($rule:ident),*) => {
@@ -40,4 +34,3 @@ macro_rules! match_charset {
         |s| s.match_char_by(|s| matches!(s, $($p)+))
     };
 }
-

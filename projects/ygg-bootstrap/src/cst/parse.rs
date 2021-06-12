@@ -460,13 +460,13 @@ pub fn string(s: RuleState) -> RuleResult {
                     .and_then(|s| s.repeat(|s| s.sequence(|s| s.lookahead(false, |s| s.match_string("'")).and_then(|s| self::ANY(s))).or_else(|s| s.sequence(|s| s.match_string("\\").and_then(|s| self::ANY(s))))))
                     .and_then(|s| s.match_string("'"))
             })
-                .or_else(|s| {
-                    s.sequence(|s| {
-                        s.match_string("\"")
-                            .and_then(|s| s.repeat(|s| s.sequence(|s| s.lookahead(false, |s| s.match_string("\"")).and_then(|s| self::ANY(s))).or_else(|s| s.sequence(|s| s.match_string("\\").and_then(|s| self::ANY(s))))))
-                            .and_then(|s| s.match_string("\""))
-                    })
+            .or_else(|s| {
+                s.sequence(|s| {
+                    s.match_string("\"")
+                        .and_then(|s| s.repeat(|s| s.sequence(|s| s.lookahead(false, |s| s.match_string("\"")).and_then(|s| self::ANY(s))).or_else(|s| s.sequence(|s| s.match_string("\\").and_then(|s| self::ANY(s))))))
+                        .and_then(|s| s.match_string("\""))
                 })
+            })
         })
     })
 }
@@ -589,29 +589,29 @@ fn XID_START(s: RuleState) -> RuleResult {
     s.match_char_by(::pest::unicode::XID_START)
 }
 
-/////---------------------------------------------------------------------------------------------
-
-#[inline]
-pub fn UNNAMED<'i>(s: RuleState<'i>, input: &'i str) -> RuleResult<'i> {
-    match cfg!(feature = "no-unnamed") {
-        true => s.match_string(input),
-        false => s.rule(Rule::UNNAMED, |s| s.match_string(input)),
-    }
-}
-
-#[inline]
-pub fn IGNORE(s: RuleState) -> RuleResult {
-    match cfg!(feature = "no-ignored") {
-        true => s.atomic(Atomicity::CompoundAtomic, ignore_terms!(COMMENT,WHITESPACE, NEWLINE)),
-        false => s.atomic(Atomicity::CompoundAtomic, |s| s.rule(Rule::IGNORE, ignore_terms!(COMMENT,WHITESPACE, NEWLINE))),
-    }
-}
+// region Final
 
 #[inline]
 pub fn SKIP(state: RuleState) -> RuleResult {
     match state.atomicity() == Atomicity::NonAtomic {
         true => state.repeat(|state| self::IGNORE(state)),
         false => Ok(state),
+    }
+}
+
+#[inline]
+pub fn IGNORE(s: RuleState) -> RuleResult {
+    match cfg!(feature = "no-ignored") {
+        true => s.atomic(Atomicity::CompoundAtomic, ignore_terms!(COMMENT, WHITESPACE, NEWLINE)),
+        false => s.atomic(Atomicity::CompoundAtomic, |s| s.rule(Rule::IGNORE, ignore_terms!(COMMENT, WHITESPACE, NEWLINE))),
+    }
+}
+
+#[inline]
+pub fn UNNAMED<'i>(s: RuleState<'i>, input: &'i str) -> RuleResult<'i> {
+    match cfg!(feature = "no-unnamed") {
+        true => s.match_string(input),
+        false => s.rule(Rule::UNNAMED, |s| s.match_string(input)),
     }
 }
 
@@ -629,3 +629,5 @@ pub fn EOI(s: RuleState) -> RuleResult {
 pub fn SOI(s: RuleState) -> RuleResult {
     s.start_of_input()
 }
+
+// endregion

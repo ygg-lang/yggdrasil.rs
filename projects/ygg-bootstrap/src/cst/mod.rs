@@ -10,7 +10,7 @@ use pest::iterators::Pairs;
 use pest::Atomicity;
 use pest::Parser;
 use pest::ParserState;
-use yggdrasil_cst_shared::{tag_node, tag_branch, match_charset,ignore_terms};
+use yggdrasil_cst_shared::{ignore_terms, match_charset, tag_branch, tag_node};
 
 pub use self::rule::Rule;
 
