@@ -14,10 +14,7 @@ impl PestCSTW {
 
 #[test]
 fn test() {
-    let c = PestCSTW { rules: vec![
-        String::from("WS"),
-        String::from("WS")
-    ], ignores: vec![String::from("WS")] };
+    let c = PestCSTW { rules: vec![String::from("WS"), String::from("WS")], ignores: vec![String::from("WS")] };
     let buffer = &mut String::new();
     c.write_parse(buffer).ok();
     println!("{}", buffer);

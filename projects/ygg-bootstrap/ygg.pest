@@ -14,7 +14,7 @@ empty_statement = {eos}
 eos = @{";"}
 /*====================================================================================================================*/
 grammar_statement = {
-    grammar ~ SYMBOL ~ string
+    grammar ~ SYMBOL ~ string?
   | grammar ~ SYMBOL ~ "{" ~ (string ~ ("," ~ string)* ~ ","?)? ~"}"
 }
 grammar = _{"grammar!"}
@@ -39,7 +39,7 @@ assign_kind = @{("^"|"_"|"@")* ~ "=" }
 /*====================================================================================================================*/
 expr  = {
     "(" ~ "|"? ~ expr ~ ")"
-  | data ~ (":" ~ SYMBOL)? ~ "<-" ~ expr
+  | SYMBOL ~ (":" ~ SYMBOL)? ~ "<-" ~ expr
   | data ~ ("|"|"/") ~ expr ~ ("#" ~ SYMBOL)? ~ (":" ~ SYMBOL)?
   | data ~ "~" ~ expr
   | data ~ slice

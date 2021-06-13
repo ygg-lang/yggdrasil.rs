@@ -28,7 +28,7 @@ impl Parser<Rule> for CSTBuilder {{
         )?;
         for rule in self.rules {
             f.write_str(&" ".repeat(12))?;
-            writeln!(f, "Rule::{rule} => parse::{rule}(state),", rule= rule)?;
+            writeln!(f, "Rule::{rule} => parse::{rule}(state),", rule = rule)?;
         }
         writeln!(
             f,

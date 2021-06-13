@@ -14,17 +14,17 @@ pub fn program(s: RuleState) -> RuleResult {
 }
 
 #[inline]
+#[rustfmt::skip]
 pub fn statement(s: RuleState) -> RuleResult {
-    s.rule(Rule::statement, |s| {
-        self::comment_doc(s)
-            .or_else(|s| self::macro_call(s))
-            .or_else(|s| self::macro_define(s))
-            .or_else(|s| self::empty_statement(s))
-            .or_else(|s| s.sequence(|s| self::grammar_statement(s).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| self::eos(s)))))
-            .or_else(|s| s.sequence(|s| self::fragment_statement(s).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| self::eos(s)))))
-            .or_else(|s| s.sequence(|s| self::ignore_statement(s).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| self::eos(s)))))
-            .or_else(|s| s.sequence(|s| self::assign_statement(s).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| self::eos(s)))))
-    })
+    tag_branch!(s, statement, "MacroCall", tag_node!(macro_call, "macro_call"));
+    tag_branch!(s, statement, "MacroDefine", tag_node!(macro_define, "macro_define"));
+    tag_branch!(s, statement, "CommentDoc", tag_node!(comment_doc, "comment_doc"));
+    tag_branch!(s, statement, "Grammar", |s| s.sequence(|s| tag_node!(s,grammar_statement, "grammar_statement").and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| self::eos(s)))));
+    tag_branch!(s, statement, "Fragment", |s| s.sequence(|s| tag_node!(s,fragment_statement, "fragment_statement").and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| self::eos(s)))));
+    tag_branch!(s, statement, "Ignore", |s| s.sequence(|s| tag_node!(s,ignore_statement, "ignore_statement").and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| self::eos(s)))));
+    tag_branch!(s, statement, "Assign", |s| s.sequence(|s| tag_node!(s,assign_statement, "assign_statement").and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| self::eos(s)))));
+    tag_branch!(s, statement, "Empty", tag_node!(empty_statement, "empty_statement"));
+    return Err(s);
 }
 
 #[inline]
@@ -188,7 +188,7 @@ pub fn assign_kind(s: RuleState) -> RuleResult {
 pub fn expr(s: RuleState) -> RuleResult {
     tag_branch!(s, expr, "Priority", self::__aux_expr_priority);
     tag_branch!(s, expr, "Mark", self::__aux_expr_mark);
-    tag_branch!(s, expr, "Choice", self::__aux_expr_choice);
+    //tag_branch!(s, expr, "Choice", self::__aux_expr_choice);
     tag_branch!(s, expr, "Concat", self::__aux_expr_concat);
     tag_branch!(s, expr, "Slice", self::__aux_expr_slice);
     tag_branch!(s, expr, "Suffix", self::__aux_expr_suffix);
@@ -214,38 +214,48 @@ fn __aux_expr_priority(s: RuleState) -> RuleResult {
 #[inline]
 fn __aux_expr_mark(s: RuleState) -> RuleResult {
     s.sequence(|s| {
-        self::data(s)
+        tag_node!(s, symbol, "lhs")
             .and_then(|s| self::SKIP(s))
-            .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").and_then(|s| self::SKIP(s)).and_then(|s| self::symbol(s)))))
+            .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").and_then(|s| self::SKIP(s)).and_then(tag_node!(symbol_path, "ty")))))
             .and_then(|s| self::SKIP(s))
             .and_then(|s| s.match_string("<-"))
             .and_then(|s| self::SKIP(s))
-            .and_then(|s| self::expr(s))
+            .and_then(tag_node!(expr, "rhs"))
     })
 }
 
 #[inline]
 #[rustfmt::skip]
 fn __aux_expr_choice(s: RuleState) -> RuleResult {
-    s.sequence(|s| self::data(s)
-        .and_then(|s| self::SKIP(s))
-        .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").and_then(|s| self::SKIP(s)).and_then(|s| self::symbol(s)))))
-        .and_then(|s| self::SKIP(s))
-        .and_then(|s| s.match_string("<-"))
-        .and_then(|s| self::SKIP(s))
-        .and_then(|s| self::expr(s)))
+    s.sequence(|s|
+        s.recursive(Rule::expr, |s|
+            self::expr(s).
+                and_then(|s| self::SKIP(s)).
+                and_then(|s| s.match_string("|").or_else(|s| s.match_string("/"))).
+                and_then(|s| self::SKIP(s)).
+                and_then(|s| self::expr(s)).
+                and_then(|s| self::SKIP(s)).
+                and_then(|s| s.optional(|s| s.sequence(|s| s.match_string("#").
+                    and_then(|s| { self::SKIP(s) }).
+                    and_then(|s| self::symbol(s))))).
+                and_then(|s| { self::SKIP(s) }).
+                and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").
+                    and_then(|s| self::SKIP(s)).
+                    and_then(|s| self::symbol(s))))),
+        )
+    )
 }
 
 #[inline]
 fn __aux_expr_concat(s: RuleState) -> RuleResult {
     s.sequence(|s| {
-        self::data(s)
-            .and_then(|s| s.tag_node("lhs"))
-            .and_then(|s| self::SKIP(s))
-            .and_then(|s| s.match_string("~"))
-            .and_then(|s| self::SKIP(s))
-            .and_then(|s| self::expr(s))
-            .and_then(|s| s.tag_node("rhs"))
+        s.recursive(Rule::expr, |s| {
+            tag_node!(s, expr, "lhs")
+                .and_then(|s| self::SKIP(s))
+                .and_then(|s| s.match_string("~"))
+                .and_then(|s| self::SKIP(s))
+                .and_then(tag_node!(expr, "rhs"))
+        })
     })
 }
 
@@ -271,7 +281,7 @@ pub fn prefix(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn suffix(s: RuleState) -> RuleResult {
-    s.rule(Rule::suffix, |s| s.atomic(Atomicity::Atomic, match_charset!('?' | '+' | '-'| '*')))
+    s.rule(Rule::suffix, |s| s.atomic(Atomicity::Atomic, match_charset!('?' | '+' | '-' | '*')))
 }
 
 #[inline]
@@ -459,13 +469,13 @@ pub fn string(s: RuleState) -> RuleResult {
                     .and_then(|s| s.repeat(|s| s.sequence(|s| s.lookahead(false, |s| s.match_string("'")).and_then(|s| self::ANY(s))).or_else(|s| s.sequence(|s| s.match_string("\\").and_then(|s| self::ANY(s))))))
                     .and_then(|s| s.match_string("'"))
             })
-            .or_else(|s| {
-                s.sequence(|s| {
-                    s.match_string("\"")
-                        .and_then(|s| s.repeat(|s| s.sequence(|s| s.lookahead(false, |s| s.match_string("\"")).and_then(|s| self::ANY(s))).or_else(|s| s.sequence(|s| s.match_string("\\").and_then(|s| self::ANY(s))))))
-                        .and_then(|s| s.match_string("\""))
+                .or_else(|s| {
+                    s.sequence(|s| {
+                        s.match_string("\"")
+                            .and_then(|s| s.repeat(|s| s.sequence(|s| s.lookahead(false, |s| s.match_string("\"")).and_then(|s| self::ANY(s))).or_else(|s| s.sequence(|s| s.match_string("\\").and_then(|s| self::ANY(s))))))
+                            .and_then(|s| s.match_string("\""))
+                    })
                 })
-            })
         })
     })
 }
@@ -591,10 +601,10 @@ fn XID_START(s: RuleState) -> RuleResult {
 // region Final
 
 #[inline]
-pub fn SKIP(state: RuleState) -> RuleResult {
-    match state.atomicity() == Atomicity::NonAtomic {
-        true => state.repeat(|state| self::IGNORE(state)),
-        false => Ok(state),
+pub fn SKIP(s: RuleState) -> RuleResult {
+    match s.atomicity() == Atomicity::NonAtomic {
+        true => s.repeat(|s| self::IGNORE(s)),
+        false => Ok(s),
     }
 }
 

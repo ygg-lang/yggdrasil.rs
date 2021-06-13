@@ -2,13 +2,13 @@ use super::*;
 
 impl PestCSTW {
     pub(super) fn write_final(&self, f: &mut impl Write) -> std::fmt::Result {
-        writeln!(f,"// region Final")?;
+        writeln!(f, "// region Final")?;
         writeln!(f)?;
         self.write_skip(f)?;
         writeln!(f)?;
         sealed_final(f)?;
         writeln!(f)?;
-        writeln!(f,"// endregion")?;
+        writeln!(f, "// endregion")?;
         Ok(())
     }
     fn write_skip(&self, f: &mut impl Write) -> std::fmt::Result {

@@ -15,32 +15,25 @@ impl ASTParser for Program {
 impl ASTParser for Statement {
     fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         // let position = get_position(&pairs);
-        // let mut statement = vec![];
-        // match pairs.as_branch_tag() {
-        //     Some("Ignore") => {
-        //         let variant = IgnoreStatement::parse(pair, errors)?;
-        //         return Ok(Self::Ignore(Box::new(variant)));
-        //     },
-        //     _ => Err(Error::node_missing("statement"))
-        // }
-
-        for pair in pairs.into_inner() {
-            match pair.as_rule() {
-                Rule::EOI => continue,
-                Rule::ignore_statement => {
-                    let variant = IgnoreStatement::parse_pair(pair, errors)?;
-                    return Ok(Self::Ignore(Box::new(variant)));
-                }
-                Rule::assign_statement => {
-                    let variant = AssignStatement::parse_pair(pair, errors)?;
-                    return Ok(Self::AssignStatement(Box::new(variant)));
-                }
-                _ => {
-                    unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
-                }
+        let mut map = collect_tag_map(&pairs);
+        match pairs.as_branch_tag() {
+            Some("Grammar") => unimplemented!(),
+            Some("Fragment") => Ok(Self::Ignore(Box::new(ASTParser::try_named_one(&mut map,"fragment_statement", errors)?))),
+            Some("Ignore") => Ok(Self::Ignore(Box::new(ASTParser::try_named_one(&mut map,"ignore_statement", errors)?))),
+            Some("Assign") => Ok(Self::Ignore(Box::new(ASTParser::try_named_one(&mut map,"assign_statement", errors)?))),
+            _ => {
+                unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
             }
         }
-        unreachable!()
+    }
+}
+
+impl ASTParser for FragmentStatement {
+    fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+        let position = get_position(&pairs);
+        let mut map = collect_tag_map(&pairs);
+        let id = ASTParser::try_named_one(&mut map, "id", errors)?;
+        return Ok(Self { id, position, });
     }
 }
 
@@ -80,9 +73,12 @@ impl ASTParser for Expression {
         let mut map = collect_tag_map(&pairs);
         match pairs.as_branch_tag() {
             Some("Concat") => {
-                let lhs = Expression::Data(Box::new(Data::try_named_one(&mut map, "lhs", errors)?));
+                let lhs = ASTParser::try_named_one(&mut map, "lhs", errors)?;
                 let rhs = ASTParser::try_named_one(&mut map, "rhs", errors)?;
                 Ok(Self::ConcatExpression(Box::new(ConcatExpression { lhs, rhs, position })))
+            }
+            Some("Suffix") => {
+                unimplemented!("{:#?}", map);
             }
             Some("Data") => Ok(Self::Data(Box::new(ASTParser::try_named_one(&mut map, "data", errors)?))),
             Some(s) => {
@@ -149,7 +145,7 @@ impl ASTParser for String {
 #[test]
 fn test1() {
     let mut parser = ASTBuilder::default();
-    let out = parser.parse_program("x = a ~ 0 | b ~ 1");
+    let out = parser.parse_program("fragment! x; x = a ~ b");
     println!("{:#?}", out.unwrap());
     println!("{:#?}", parser.errors);
 }
