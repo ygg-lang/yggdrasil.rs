@@ -185,7 +185,6 @@ pub fn assign_kind(s: RuleState) -> RuleResult {
 }
 
 #[inline]
-#[rustfmt::skip]
 pub fn expr(s: RuleState) -> RuleResult {
     tag_branch!(s, expr, "Priority", self::__aux_expr_priority);
     tag_branch!(s, expr, "Mark", self::__aux_expr_mark);
@@ -272,14 +271,14 @@ pub fn prefix(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn suffix(s: RuleState) -> RuleResult {
-    s.rule(Rule::suffix, |s| s.atomic(Atomicity::Atomic, |s| s.match_string("?").or_else(|s| s.match_string("+")).or_else(|s| s.match_string("-")).or_else(|s| s.match_string("*"))))
+    s.rule(Rule::suffix, |s| s.atomic(Atomicity::Atomic, match_charset!('?' | '+' | '-'| '*')))
 }
 
 #[inline]
 #[rustfmt::skip]
 pub fn data(s: RuleState) -> RuleResult {
-    tag_branch!(s, data, "MacroCall", tag_node!( macro_call, "macro_call"));
-    tag_branch!(s, data, "RegexRange", tag_node!( regex_range, "regex_range"));
+    tag_branch!(s, data, "MacroCall", tag_node!(macro_call, "macro_call"));
+    tag_branch!(s, data, "RegexRange", tag_node!(regex_range, "regex_range"));
     tag_branch!(s, data, "List", tag_node!(list, "list"));
     tag_branch!(s, data, "SymbolPath",tag_node!(symbol_path, "symbol_path"));
     tag_branch!(s, data, "Integer", tag_node!(integer, "integer"));

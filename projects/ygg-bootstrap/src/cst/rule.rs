@@ -86,9 +86,7 @@ impl Parser<Rule> for CSTBuilder {
             Rule::IGNORE => parse::IGNORE(state),
             Rule::WHITESPACE => parse::WHITESPACE(state),
             Rule::NEWLINE => parse::NEWLINE(state),
-            _ => {
-                unreachable!("cannot start with such rule {:?}", rule)
-            }
+            _ => unreachable!("cannot start with such rule {:?}", rule),
         })
     }
 }

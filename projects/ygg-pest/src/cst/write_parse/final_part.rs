@@ -1,6 +1,6 @@
 use super::*;
 
-impl PestCST {
+impl PestCSTW {
     pub(super) fn write_final(&self, f: &mut impl Write) -> std::fmt::Result {
         writeln!(f,"// region Final")?;
         writeln!(f)?;
