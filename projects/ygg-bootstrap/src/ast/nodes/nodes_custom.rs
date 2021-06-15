@@ -18,11 +18,11 @@ impl Debug for Statement {
                 .field("id", &v.id.data)
                 .field("ext", &v.ext)
                 .finish(),
-            Self::FragmentStatement(v) => f
+            Self::Fragment(v) => f
                 .debug_struct("FragmentStatement") //
                 .field("id", &v.id.data)
                 .finish(),
-            Self::AssignStatement(v) => f
+            Self::Assign(v) => f
                 .debug_struct("AssignStatement") //
                 .field("id", &v.id.data)
                 .field("eq", &v.eq)
@@ -54,18 +54,18 @@ impl Debug for Expression {
                 .field(&v.prefix)
                 .field(&v.base)
                 .finish(),
-            Expression::FieldExpression(v) => f
+            Expression::Mark(v) => f
                 .debug_struct("FieldExpression") //
                 .field("lhs", &v.lhs)
-                .field("op", &v.op)
+                .field("op", &v.ty)
                 .field("rhs", &v.rhs)
                 .finish(),
-            Expression::ConcatExpression(v) => f
+            Expression::Concat(v) => f
                 .debug_struct("ConcatExpression") //
                 .field("lhs", &v.lhs)
                 .field("rhs", &v.rhs)
                 .finish(),
-            Expression::ChoiceExpression(v) => f
+            Expression::Choice(v) => f
                 .debug_struct("ChoiceExpression") //
                 .field("lhs", &v.lhs)
                 .field("op", &v.op)

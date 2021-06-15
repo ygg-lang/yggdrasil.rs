@@ -17,6 +17,7 @@ pub enum Rule {
     assign_statement,
     assign_kind,
     expr,
+    __aux_expr,
     prefix,
     suffix,
     data,

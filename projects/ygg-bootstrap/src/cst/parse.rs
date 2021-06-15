@@ -6,7 +6,7 @@ pub fn program(s: RuleState) -> RuleResult {
         s.sequence(|s| {
             self::SOI(s)
                 .and_then(|s| self::SKIP(s))
-                .and_then(|s| s.sequence(|s| s.optional(|s| tag_node!(s, statement, "statement").and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| self::statement(s))))))))
+                .and_then(|s| s.sequence(|s| s.optional(|s| tag_node!(s, statement, "statement").and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(tag_node!(statement, "statement"))))))))
                 .and_then(|s| self::SKIP(s))
                 .and_then(|s| self::EOI(s))
         })
@@ -80,7 +80,7 @@ pub fn grammar(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn fragment_statement(s: RuleState) -> RuleResult {
-    s.rule(Rule::fragment_statement, |s| s.sequence(|s| self::fragment(s).and_then(|s| self::SKIP(s)).and_then(|s| self::symbol(s))))
+    s.rule(Rule::fragment_statement, |s| s.sequence(|s| self::fragment(s).and_then(|s| self::SKIP(s)).and_then(tag_node!(symbol,"id"))))
 }
 
 #[inline]
@@ -166,13 +166,13 @@ pub fn ignore_statement(s: RuleState) -> RuleResult {
 pub fn assign_statement(s: RuleState) -> RuleResult {
     s.rule(Rule::assign_statement, |s| {
         s.sequence(|s| {
-            self::symbol(s)
+            tag_node!(s, symbol, "id")
                 .and_then(|s| self::SKIP(s))
-                .and_then(|s| self::assign_kind(s))
+                .and_then(tag_node!(assign_kind, "eq"))
                 .and_then(|s| self::SKIP(s))
                 .and_then(|s| s.optional(|s| s.match_string("|")))
                 .and_then(|s| self::SKIP(s))
-                .and_then(|s| self::expr(s))
+                .and_then(tag_node!(expr, "rhs"))
         })
     })
 }
@@ -186,14 +186,14 @@ pub fn assign_kind(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn expr(s: RuleState) -> RuleResult {
-    tag_branch!(s, expr, "Priority", self::__aux_expr_priority);
-    tag_branch!(s, expr, "Mark", self::__aux_expr_mark);
-    //tag_branch!(s, expr, "Choice", self::__aux_expr_choice);
-    tag_branch!(s, expr, "Concat", self::__aux_expr_concat);
-    tag_branch!(s, expr, "Slice", self::__aux_expr_slice);
-    tag_branch!(s, expr, "Suffix", self::__aux_expr_suffix);
-    tag_branch!(s, expr, "Prefix", self::__aux_expr_prefix);
-    tag_branch!(s, expr, "Data", tag_node!(data, "data"));
+    tag_branch!(s, __aux_expr, "Priority", self::__aux_expr_priority);
+    tag_branch!(s, __aux_expr, "Mark", self::__aux_expr_mark);
+    tag_branch!(s, __aux_expr, "Choice", self::__aux_expr_choice);
+    tag_branch!(s, __aux_expr, "Concat", self::__aux_expr_concat);
+    tag_branch!(s, __aux_expr, "Slice", self::__aux_expr_slice);
+    tag_branch!(s, __aux_expr, "Suffix", self::__aux_expr_suffix);
+    tag_branch!(s, __aux_expr, "Prefix", self::__aux_expr_prefix);
+    tag_branch!(s, __aux_expr, "Data", tag_node!(data, "data"));
     return Err(s);
 }
 
@@ -213,15 +213,14 @@ fn __aux_expr_priority(s: RuleState) -> RuleResult {
 
 #[inline]
 fn __aux_expr_mark(s: RuleState) -> RuleResult {
-    s.sequence(|s| {
-        tag_node!(s, symbol, "lhs")
-            .and_then(|s| self::SKIP(s))
-            .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").and_then(|s| self::SKIP(s)).and_then(tag_node!(symbol_path, "ty")))))
-            .and_then(|s| self::SKIP(s))
-            .and_then(|s| s.match_string("<-"))
-            .and_then(|s| self::SKIP(s))
-            .and_then(tag_node!(expr, "rhs"))
-    })
+    s.sequence(|s| tag_node!(s, symbol, "lhs")
+        .and_then(|s| self::SKIP(s))
+        .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").and_then(|s| self::SKIP(s)).and_then(tag_node!(symbol_path, "ty")))))
+        .and_then(|s| self::SKIP(s))
+        .and_then(|s| s.match_string("<-"))
+        .and_then(|s| self::SKIP(s))
+        .and_then(tag_node!(expr, "rhs")),
+    )
 }
 
 #[inline]
@@ -249,13 +248,12 @@ fn __aux_expr_choice(s: RuleState) -> RuleResult {
 #[inline]
 fn __aux_expr_concat(s: RuleState) -> RuleResult {
     s.sequence(|s| {
-        s.recursive(Rule::expr, |s| {
+        s.recursive(Rule::expr, |s|
             tag_node!(s, expr, "lhs")
                 .and_then(|s| self::SKIP(s))
                 .and_then(|s| s.match_string("~"))
                 .and_then(|s| self::SKIP(s))
-                .and_then(tag_node!(expr, "rhs"))
-        })
+                .and_then(tag_node!(expr, "rhs")))
     })
 }
 
@@ -281,7 +279,7 @@ pub fn prefix(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn suffix(s: RuleState) -> RuleResult {
-    s.rule(Rule::suffix, |s| s.atomic(Atomicity::Atomic, match_charset!('?' | '+' | '-' | '*')))
+    s.rule(Rule::suffix, |s| s.atomic(Atomicity::Atomic, match_charset!('?' | '+' | '*')))
 }
 
 #[inline]

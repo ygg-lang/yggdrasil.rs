@@ -11,8 +11,8 @@ pub struct Program {
 #[derive(Clone)]
 pub enum Statement {
     GrammarStatement(Box<GrammarStatement>),
-    FragmentStatement(Box<FragmentStatement>),
-    AssignStatement(Box<AssignStatement>),
+    Fragment(Box<FragmentStatement>),
+    Assign(Box<AssignStatement>),
     Ignore(Box<IgnoreStatement>),
     CommentDocument(Box<CommentDocument>),
 }
@@ -50,9 +50,9 @@ pub enum Expression {
     // Priority(Box<Expression>),
     UnarySuffix(Box<UnarySuffix>),
     UnaryPrefix(Box<UnaryPrefix>),
-    ConcatExpression(Box<ConcatExpression>),
-    ChoiceExpression(Box<ChoiceExpression>),
-    FieldExpression(Box<FieldExpression>),
+    Concat(Box<ConcatExpression>),
+    Choice(Box<ChoiceExpression>),
+    Mark(Box<MarkExpression>),
 }
 
 #[derive(Clone, Debug)]
@@ -86,9 +86,9 @@ pub struct ChoiceTag {
 }
 
 #[derive(Clone, Debug)]
-pub struct FieldExpression {
+pub struct MarkExpression {
     pub lhs: Symbol,
-    pub op: String,
+    pub ty: Option<SymbolPath>,
     pub rhs: Expression,
     pub position: OffsetRange,
 }

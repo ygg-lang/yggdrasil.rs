@@ -14,15 +14,14 @@ impl ASTParser for Program {
 
 impl ASTParser for Statement {
     fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        // let position = get_position(&pairs);
         let mut map = collect_tag_map(&pairs);
         match pairs.as_branch_tag() {
             Some("Grammar") => unimplemented!(),
-            Some("Fragment") => Ok(Self::Ignore(Box::new(ASTParser::try_named_one(&mut map,"fragment_statement", errors)?))),
+            Some("Fragment") => Ok(Self::Fragment(Box::new(ASTParser::try_named_one(&mut map, "fragment_statement", errors)?))),
             Some("Ignore") => Ok(Self::Ignore(Box::new(ASTParser::try_named_one(&mut map,"ignore_statement", errors)?))),
-            Some("Assign") => Ok(Self::Ignore(Box::new(ASTParser::try_named_one(&mut map,"assign_statement", errors)?))),
+            Some("Assign") => Ok(Self::Assign(Box::new(ASTParser::try_named_one(&mut map, "assign_statement", errors)?))),
             _ => {
-                unreachable!("Rule::{:#?}=>{{}}", pair.as_rule());
+                unreachable!("{:#?}", map);
             }
         }
     }
@@ -49,20 +48,10 @@ impl ASTParser for IgnoreStatement {
 impl ASTParser for AssignStatement {
     fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
-        let mut id: Option<Symbol> = None;
-        let mut eq: Option<String> = None;
-        let mut rhs: Option<Expression> = None;
-        for pair in pairs.into_inner() {
-            match pair.as_rule() {
-                Rule::SYMBOL => Symbol::try_one(pair, &mut id, errors)?,
-                Rule::assign_kind => String::try_one(pair, &mut eq, errors)?,
-                Rule::expr => Expression::try_one(pair, &mut rhs, errors)?,
-                _ => continue,
-            }
-        }
-        let id = id.ok_or(Error::node_missing("id"))?;
-        let eq = eq.ok_or(Error::node_missing("eq"))?;
-        let rhs = rhs.ok_or(Error::node_missing("eq"))?;
+        let mut map = collect_tag_map(&pairs);
+        let id = ASTParser::try_named_one(&mut map, "id", errors )?;
+        let eq  = ASTParser::try_named_one(&mut map, "eq", errors )?;
+        let rhs  = ASTParser::try_named_one(&mut map, "rhs", errors )?;
         Ok(Self { id, eq, rhs, position })
     }
 }
@@ -72,17 +61,24 @@ impl ASTParser for Expression {
         let position = get_position(&pairs);
         let mut map = collect_tag_map(&pairs);
         match pairs.as_branch_tag() {
+            Some("Priority")=> Self::try_named_one(&mut map, "expr", errors),
             Some("Concat") => {
                 let lhs = ASTParser::try_named_one(&mut map, "lhs", errors)?;
                 let rhs = ASTParser::try_named_one(&mut map, "rhs", errors)?;
-                Ok(Self::ConcatExpression(Box::new(ConcatExpression { lhs, rhs, position })))
+                Ok(Self::Concat(Box::new(ConcatExpression { lhs, rhs, position })))
+            }
+            Some("Mark")=>{
+                let lhs = ASTParser::try_named_one(&mut map, "lhs", errors)?;
+                let ty = ASTParser::named_some(&mut map, "ty", errors);
+                let rhs = ASTParser::try_named_one(&mut map, "rhs", errors)?;
+                Ok(Self::Mark(Box::new(MarkExpression { lhs, ty, rhs, position })))
             }
             Some("Suffix") => {
                 unimplemented!("{:#?}", map);
             }
             Some("Data") => Ok(Self::Data(Box::new(ASTParser::try_named_one(&mut map, "data", errors)?))),
             Some(s) => {
-                unreachable!("{:#?}", s);
+                unreachable!("Some({:#?})=>{{}}", s);
             }
             _ => return Err(Error::node_missing("Expression")),
         }
@@ -145,7 +141,7 @@ impl ASTParser for String {
 #[test]
 fn test1() {
     let mut parser = ASTBuilder::default();
-    let out = parser.parse_program("fragment! x; x = a ~ b");
+    let out = parser.parse_program("x = a | b");
     println!("{:#?}", out.unwrap());
     println!("{:#?}", parser.errors);
 }
