@@ -1,6 +1,7 @@
 use super::*;
 
 mod nodes_custom;
+mod nodes_resolver;
 
 #[derive(Clone)]
 pub struct Program {

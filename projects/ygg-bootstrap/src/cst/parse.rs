@@ -186,14 +186,14 @@ pub fn assign_kind(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn expr(s: RuleState) -> RuleResult {
-    tag_branch!(s, __aux_expr, "Priority", self::__aux_expr_priority);
-    tag_branch!(s, __aux_expr, "Mark", self::__aux_expr_mark);
-    tag_branch!(s, __aux_expr, "Choice", self::__aux_expr_choice);
-    tag_branch!(s, __aux_expr, "Concat", self::__aux_expr_concat);
-    tag_branch!(s, __aux_expr, "Slice", self::__aux_expr_slice);
-    tag_branch!(s, __aux_expr, "Suffix", self::__aux_expr_suffix);
-    tag_branch!(s, __aux_expr, "Prefix", self::__aux_expr_prefix);
-    tag_branch!(s, __aux_expr, "Data", tag_node!(data, "data"));
+    tag_branch!(s, BRANCH, "Priority", self::__aux_expr_priority);
+    tag_branch!(s, BRANCH, "Mark", self::__aux_expr_mark);
+    tag_branch!(s, BRANCH, "Choice", self::__aux_expr_choice);
+    tag_branch!(s, BRANCH, "Concat", self::__aux_expr_concat);
+    tag_branch!(s, BRANCH, "Slice", self::__aux_expr_slice);
+    tag_branch!(s, BRANCH, "Suffix", self::__aux_expr_suffix);
+    tag_branch!(s, BRANCH, "Prefix", self::__aux_expr_prefix);
+    tag_branch!(s, BRANCH, "Data", tag_node!(data, "data"));
     return Err(s);
 }
 
@@ -227,94 +227,24 @@ fn __aux_expr_mark(s: RuleState) -> RuleResult {
 #[inline]
 #[rustfmt::skip]
 fn __aux_expr_choice(s: RuleState) -> RuleResult {
-    s.sequence(|s|
-        s.match_string("|")
-            .or_else(|s| s.match_string("/"))
-            .and_then(|s| self::SKIP(s))
-            .and_then(|s| self::expr(s))
-            .and_then(|s| self::SKIP(s))
-            .and_then(|s|
-                s.optional(|s|
-                    s.sequence(|s|
-                        self::branch_tag(s)
-                            .and_then(|s| self::SKIP(s))
-                            .and_then(|s| self::symbol(s))
-                    )
-                )
-            )
-    )
-    .and_then(|s| self::SKIP(s))
-        .and_then(|s|
-            s.sequence(|s|
-                s.optional(|s|
-                    s.sequence(|s|
-                        s.match_string("|")
-                            .or_else(|s| s.match_string("/"))
-                            .and_then(|s| self::SKIP(s))
-                            .and_then(|s| self::expr(s))
-                            .and_then(|s| self::SKIP(s))
-                            .and_then(|s|
-                                s.optional(|s|
-                                    s.sequence(|s|
-                                        self::branch_tag(s)
-                                            .and_then(|s| self::SKIP(s))
-                                            .and_then(|s| self::symbol(s))
-                                    )
-                                )
-                            )
-                    )
-                        .and_then(|s|
-                            s.repeat(|s|
-                                s.sequence(|s|
-                                    self::SKIP(s)
-                                        .and_then(|s|
-                                            s.sequence(|s|
-                                                s.match_string("|")
-                                                    .or_else(|s| s.match_string("/"))
-                                                    .and_then(|s| self::SKIP(s))
-                                                    .and_then(|s| self::expr(s))
-                                                    .and_then(|s| self::SKIP(s))
-                                                    .and_then(|s|
-                                                        s.optional(|s|
-                                                            s.sequence(|s|
-                                                                self::branch_tag(s)
-                                                                    .and_then(|s| self::SKIP(s))
-                                                                    .and_then(|s| self::symbol(s))
-                                                            )
-                                                        )
-                                                    )
-                                            )
-                                        )
-                                )
-                            )
-                        )
-                )
-            )
-        )
+s.sequence(|s| self::__rec_choice(s).and_then(|s| self::SKIP(s)).and_then(|s| self::__rec_expr_choice(s)).and_then(|s| self::SKIP(s)).and_then(|s| s.sequence(|s| s.optional(|s| self::__rec_expr_choice(s).and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| self::__rec_expr_choice(s)))))))))
 }
 
 #[inline]
 fn __aux_expr_concat(s: RuleState) -> RuleResult {
     s.sequence(|s| {
-        self::expr_rec(s)
+        tag_node!(s,__rec_expr,"__rec_expr")
             .and_then(|s| self::SKIP(s))
-            .and_then(|s| s.sequence(|s| s.match_string("~").and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s))))
+            .and_then(|s| self::__rec_expr_concat(s))
             .and_then(|s| self::SKIP(s))
-            .and_then(|s| {
-                s.sequence(|s| {
-                    s.optional(|s| {
-                        s.sequence(|s| s.match_string("~").and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)))
-                            .and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| s.sequence(|s| s.match_string("~").and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)))))))
-                    })
-                })
-            })
+            .and_then(|s| s.sequence(|s| s.optional(|s| self::__rec_expr_concat(s).and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| self::__rec_expr_concat(s))))))))
     })
 }
 
 #[inline]
 fn __aux_expr_slice(s: RuleState) -> RuleResult {
     s.sequence(|s| {
-        self::expr_rec(s)
+        self::data(s)
             .and_then(|s| self::SKIP(s))
             .and_then(|s| self::slice(s))
             .and_then(|s| self::SKIP(s))
@@ -325,7 +255,7 @@ fn __aux_expr_slice(s: RuleState) -> RuleResult {
 #[inline]
 fn __aux_expr_suffix(s: RuleState) -> RuleResult {
     s.sequence(|s| {
-        self::expr_rec(s)
+        self::data(s)
             .and_then(|s| self::SKIP(s))
             .and_then(|s| self::suffix(s))
             .and_then(|s| self::SKIP(s))
@@ -338,15 +268,44 @@ fn __aux_expr_prefix(s: RuleState) -> RuleResult {
     s.sequence(|s| self::prefix(s).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)))
 }
 
-
 #[inline]
-pub fn expr_rec(s: RuleState) -> RuleResult {
-    s.rule(Rule::expr, self::data)
+#[allow(non_snake_case, unused_variables)]
+pub fn __rec_expr(s: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+    s.rule(Rule::__rec_expr, |s| self::data(s))
 }
 
 #[inline]
-pub fn branch_tag(s: RuleState) -> RuleResult {
-    s.rule(Rule::prefix, |s| s.atomic(Atomicity::Atomic, match_charset!('#')))
+#[allow(non_snake_case, unused_variables)]
+pub fn __rec_expr_concat(s: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+    s.rule(Rule::__rec_expr_concat, |s| s.sequence(|s| s.match_string("~").and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s))))
+}
+
+#[inline]
+#[allow(non_snake_case, unused_variables)]
+pub fn choice(s: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+    s.rule(Rule::choice, |s| {
+        s.sequence(|s| self::expr(s).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| s.sequence(|s| self::branch_tag(s).and_then(|s| self::SKIP(s)).and_then(|s| self::symbol(s))))))
+    })
+}
+
+#[inline]
+#[allow(non_snake_case, unused_variables)]
+pub fn __rec_choice(s: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+    s.rule(Rule::__rec_choice, |s| {
+        s.sequence(|s| self::__rec_expr(s).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| s.sequence(|s| self::branch_tag(s).and_then(|s| self::SKIP(s)).and_then(|s| self::symbol(s))))))
+    })
+}
+
+#[inline]
+pub fn __rec_expr_choice(s: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+    s.rule(Rule::__rec_expr_choice, |s| s.sequence(|s| s.match_string("|").or_else(|s| s.match_string("/")).and_then(|s| self::SKIP(s)).and_then(|s| self::choice(s))))
+}
+
+#[inline]
+pub fn branch_tag(s: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
+    s.rule(Rule::branch_tag, |s| {
+        s.atomic(::pest::Atomicity::Atomic, |s| s.sequence(|s| s.optional(|s| s.match_string("^").or_else(|s| s.match_string("!"))).and_then(|s| s.match_string("#"))))
+    })
 }
 
 #[inline]
@@ -362,11 +321,11 @@ pub fn suffix(s: RuleState) -> RuleResult {
 #[inline]
 #[rustfmt::skip]
 pub fn data(s: RuleState) -> RuleResult {
-    tag_branch!(s, data, "MacroCall", tag_node!(macro_call, "macro_call"));
-    tag_branch!(s, data, "RegexRange", tag_node!(regex_range, "regex_range"));
-    tag_branch!(s, data, "List", tag_node!(list, "list"));
-    tag_branch!(s, data, "SymbolPath",tag_node!(symbol_path, "symbol_path"));
-    tag_branch!(s, data, "Integer", tag_node!(integer, "integer"));
+    tag_branch!(s, BRANCH, "MacroCall", tag_node!(macro_call, "macro_call"));
+    tag_branch!(s, BRANCH, "RegexRange", tag_node!(regex_range, "regex_range"));
+    tag_branch!(s, BRANCH, "List", tag_node!(list, "list"));
+    tag_branch!(s, BRANCH, "SymbolPath",tag_node!(symbol_path, "symbol_path"));
+    tag_branch!(s, BRANCH, "Integer", tag_node!(integer, "integer"));
     return Err(s);
 }
 

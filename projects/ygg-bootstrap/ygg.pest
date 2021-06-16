@@ -40,14 +40,26 @@ assign_kind = @{("^"|"_"|"@")* ~ "=" }
 expr  = {
     "(" ~ "|"? ~ expr ~ ")"
   | SYMBOL ~ (":" ~ SYMBOL)? ~ "<-" ~ expr
-  | expr_rec ~ (branch_tag ~ SYMBOL)? ~ (("|"|"/") ~ expr ~ (branch_tag ~ SYMBOL)?)+
-  | expr_rec ~ ("~" ~ expr)+
-  | expr_rec ~ slice+
-  | expr_rec ~ suffix+
+  | __rec_choice ~ __rec_expr_choice+
+  | __rec_expr ~ __rec_expr_concat+
+  | __rec_expr ~ slice+
+  | __rec_expr ~ suffix+
   | prefix ~ expr
   | data
 }
-expr_rec = {data}
+// __rec_expr: Expression = data
+__rec_expr = {data}
+//
+__rec_expr_concat = {"~" ~ expr}
+choice = {
+    expr ~ (branch_tag ~ SYMBOL)?
+}
+__rec_choice = {
+    __rec_expr ~ (branch_tag ~ SYMBOL)?
+}
+__rec_expr_choice = {
+    ("|"|"/") ~ choice
+}
 branch_tag = @{
     ("^"| "!")? ~ "#"
 }
