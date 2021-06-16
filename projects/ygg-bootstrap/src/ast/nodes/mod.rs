@@ -64,9 +64,12 @@ pub struct ConcatExpression {
 
 #[derive(Clone, Debug)]
 pub struct ChoiceExpression {
-    pub lhs: ChoiceTag,
-    pub op: String,
-    pub rhs: ChoiceTag,
+    pub lhs: Expression,
+    pub lhs_tag: Option<Symbol>,
+    pub lhs_ty: Option<SymbolPath>,
+    pub rhs: Expression,
+    pub rhs_tag: Option<Symbol>,
+    pub rhs_ty: Option<SymbolPath>,
     pub position: OffsetRange,
 }
 

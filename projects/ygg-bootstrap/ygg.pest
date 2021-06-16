@@ -40,14 +40,17 @@ assign_kind = @{("^"|"_"|"@")* ~ "=" }
 expr  = {
     "(" ~ "|"? ~ expr ~ ")"
   | SYMBOL ~ (":" ~ SYMBOL)? ~ "<-" ~ expr
-  | data ~ ("|"|"/") ~ expr ~ ("#" ~ SYMBOL)? ~ (":" ~ SYMBOL)?
-  | data ~ "~" ~ expr
-  | data ~ slice
-  | data ~ suffix
+  | expr_rec ~ (branch_tag ~ SYMBOL)? ~ (("|"|"/") ~ expr ~ (branch_tag ~ SYMBOL)?)+
+  | expr_rec ~ ("~" ~ expr)+
+  | expr_rec ~ slice+
+  | expr_rec ~ suffix+
   | prefix ~ expr
   | data
 }
-
+expr_rec = {data}
+branch_tag = @{
+    ("^"| "!")? ~ "#"
+}
 prefix = @{
     "!" | "&" | "^" | "*" | "%"
 }

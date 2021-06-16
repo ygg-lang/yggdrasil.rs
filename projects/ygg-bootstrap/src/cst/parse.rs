@@ -80,7 +80,7 @@ pub fn grammar(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn fragment_statement(s: RuleState) -> RuleResult {
-    s.rule(Rule::fragment_statement, |s| s.sequence(|s| self::fragment(s).and_then(|s| self::SKIP(s)).and_then(tag_node!(symbol,"id"))))
+    s.rule(Rule::fragment_statement, |s| s.sequence(|s| self::fragment(s).and_then(|s| self::SKIP(s)).and_then(tag_node!(symbol, "id"))))
 }
 
 #[inline]
@@ -213,63 +213,140 @@ fn __aux_expr_priority(s: RuleState) -> RuleResult {
 
 #[inline]
 fn __aux_expr_mark(s: RuleState) -> RuleResult {
-    s.sequence(|s| tag_node!(s, symbol, "lhs")
-        .and_then(|s| self::SKIP(s))
-        .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").and_then(|s| self::SKIP(s)).and_then(tag_node!(symbol_path, "ty")))))
-        .and_then(|s| self::SKIP(s))
-        .and_then(|s| s.match_string("<-"))
-        .and_then(|s| self::SKIP(s))
-        .and_then(tag_node!(expr, "rhs")),
-    )
+    s.sequence(|s| {
+        tag_node!(s, symbol, "lhs")
+            .and_then(|s| self::SKIP(s))
+            .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").and_then(|s| self::SKIP(s)).and_then(tag_node!(symbol_path, "ty")))))
+            .and_then(|s| self::SKIP(s))
+            .and_then(|s| s.match_string("<-"))
+            .and_then(|s| self::SKIP(s))
+            .and_then(tag_node!(expr, "rhs"))
+    })
 }
 
 #[inline]
 #[rustfmt::skip]
 fn __aux_expr_choice(s: RuleState) -> RuleResult {
     s.sequence(|s|
-        s.recursive(Rule::expr, |s|
-            self::expr(s).
-                and_then(|s| self::SKIP(s)).
-                and_then(|s| s.match_string("|").or_else(|s| s.match_string("/"))).
-                and_then(|s| self::SKIP(s)).
-                and_then(|s| self::expr(s)).
-                and_then(|s| self::SKIP(s)).
-                and_then(|s| s.optional(|s| s.sequence(|s| s.match_string("#").
-                    and_then(|s| { self::SKIP(s) }).
-                    and_then(|s| self::symbol(s))))).
-                and_then(|s| { self::SKIP(s) }).
-                and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(":").
-                    and_then(|s| self::SKIP(s)).
-                    and_then(|s| self::symbol(s))))),
-        )
+        s.match_string("|")
+            .or_else(|s| s.match_string("/"))
+            .and_then(|s| self::SKIP(s))
+            .and_then(|s| self::expr(s))
+            .and_then(|s| self::SKIP(s))
+            .and_then(|s|
+                s.optional(|s|
+                    s.sequence(|s|
+                        self::branch_tag(s)
+                            .and_then(|s| self::SKIP(s))
+                            .and_then(|s| self::symbol(s))
+                    )
+                )
+            )
     )
+    .and_then(|s| self::SKIP(s))
+        .and_then(|s|
+            s.sequence(|s|
+                s.optional(|s|
+                    s.sequence(|s|
+                        s.match_string("|")
+                            .or_else(|s| s.match_string("/"))
+                            .and_then(|s| self::SKIP(s))
+                            .and_then(|s| self::expr(s))
+                            .and_then(|s| self::SKIP(s))
+                            .and_then(|s|
+                                s.optional(|s|
+                                    s.sequence(|s|
+                                        self::branch_tag(s)
+                                            .and_then(|s| self::SKIP(s))
+                                            .and_then(|s| self::symbol(s))
+                                    )
+                                )
+                            )
+                    )
+                        .and_then(|s|
+                            s.repeat(|s|
+                                s.sequence(|s|
+                                    self::SKIP(s)
+                                        .and_then(|s|
+                                            s.sequence(|s|
+                                                s.match_string("|")
+                                                    .or_else(|s| s.match_string("/"))
+                                                    .and_then(|s| self::SKIP(s))
+                                                    .and_then(|s| self::expr(s))
+                                                    .and_then(|s| self::SKIP(s))
+                                                    .and_then(|s|
+                                                        s.optional(|s|
+                                                            s.sequence(|s|
+                                                                self::branch_tag(s)
+                                                                    .and_then(|s| self::SKIP(s))
+                                                                    .and_then(|s| self::symbol(s))
+                                                            )
+                                                        )
+                                                    )
+                                            )
+                                        )
+                                )
+                            )
+                        )
+                )
+            )
+        )
 }
 
 #[inline]
 fn __aux_expr_concat(s: RuleState) -> RuleResult {
     s.sequence(|s| {
-        s.recursive(Rule::expr, |s|
-            tag_node!(s, expr, "lhs")
-                .and_then(|s| self::SKIP(s))
-                .and_then(|s| s.match_string("~"))
-                .and_then(|s| self::SKIP(s))
-                .and_then(tag_node!(expr, "rhs")))
+        self::expr_rec(s)
+            .and_then(|s| self::SKIP(s))
+            .and_then(|s| s.sequence(|s| s.match_string("~").and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s))))
+            .and_then(|s| self::SKIP(s))
+            .and_then(|s| {
+                s.sequence(|s| {
+                    s.optional(|s| {
+                        s.sequence(|s| s.match_string("~").and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)))
+                            .and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| s.sequence(|s| s.match_string("~").and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)))))))
+                    })
+                })
+            })
     })
 }
 
 #[inline]
 fn __aux_expr_slice(s: RuleState) -> RuleResult {
-    s.sequence(|s| self::data(s).and_then(|s| self::SKIP(s)).and_then(|s| self::slice(s)))
+    s.sequence(|s| {
+        self::expr_rec(s)
+            .and_then(|s| self::SKIP(s))
+            .and_then(|s| self::slice(s))
+            .and_then(|s| self::SKIP(s))
+            .and_then(|s| s.sequence(|s| s.optional(|s| self::slice(s).and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| self::slice(s))))))))
+    })
 }
 
 #[inline]
 fn __aux_expr_suffix(s: RuleState) -> RuleResult {
-    s.sequence(|s| self::data(s).and_then(|s| self::SKIP(s)).and_then(|s| self::suffix(s)))
+    s.sequence(|s| {
+        self::expr_rec(s)
+            .and_then(|s| self::SKIP(s))
+            .and_then(|s| self::suffix(s))
+            .and_then(|s| self::SKIP(s))
+            .and_then(|s| s.sequence(|s| s.optional(|s| self::suffix(s).and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| self::suffix(s))))))))
+    })
 }
 
 #[inline]
 fn __aux_expr_prefix(s: RuleState) -> RuleResult {
     s.sequence(|s| self::prefix(s).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)))
+}
+
+
+#[inline]
+pub fn expr_rec(s: RuleState) -> RuleResult {
+    s.rule(Rule::expr, self::data)
+}
+
+#[inline]
+pub fn branch_tag(s: RuleState) -> RuleResult {
+    s.rule(Rule::prefix, |s| s.atomic(Atomicity::Atomic, match_charset!('#')))
 }
 
 #[inline]
@@ -467,13 +544,13 @@ pub fn string(s: RuleState) -> RuleResult {
                     .and_then(|s| s.repeat(|s| s.sequence(|s| s.lookahead(false, |s| s.match_string("'")).and_then(|s| self::ANY(s))).or_else(|s| s.sequence(|s| s.match_string("\\").and_then(|s| self::ANY(s))))))
                     .and_then(|s| s.match_string("'"))
             })
-                .or_else(|s| {
-                    s.sequence(|s| {
-                        s.match_string("\"")
-                            .and_then(|s| s.repeat(|s| s.sequence(|s| s.lookahead(false, |s| s.match_string("\"")).and_then(|s| self::ANY(s))).or_else(|s| s.sequence(|s| s.match_string("\\").and_then(|s| self::ANY(s))))))
-                            .and_then(|s| s.match_string("\""))
-                    })
+            .or_else(|s| {
+                s.sequence(|s| {
+                    s.match_string("\"")
+                        .and_then(|s| s.repeat(|s| s.sequence(|s| s.lookahead(false, |s| s.match_string("\"")).and_then(|s| self::ANY(s))).or_else(|s| s.sequence(|s| s.match_string("\\").and_then(|s| self::ANY(s))))))
+                        .and_then(|s| s.match_string("\""))
                 })
+            })
         })
     })
 }

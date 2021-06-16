@@ -68,7 +68,6 @@ impl Debug for Expression {
             Expression::Choice(v) => f
                 .debug_struct("ChoiceExpression") //
                 .field("lhs", &v.lhs)
-                .field("op", &v.op)
                 .field("rhs", &v.rhs)
                 .finish(),
         }
