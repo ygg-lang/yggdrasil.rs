@@ -227,17 +227,17 @@ fn __aux_expr_mark(s: RuleState) -> RuleResult {
 #[inline]
 #[rustfmt::skip]
 fn __aux_expr_choice(s: RuleState) -> RuleResult {
-s.sequence(|s| self::__rec_choice(s).and_then(|s| self::SKIP(s)).and_then(|s| self::__rec_expr_choice(s)).and_then(|s| self::SKIP(s)).and_then(|s| s.sequence(|s| s.optional(|s| self::__rec_expr_choice(s).and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| self::__rec_expr_choice(s)))))))))
+    s.sequence(|s| self::__rec_choice(s).and_then(|s| self::SKIP(s)).and_then(|s| self::__rec_expr_choice(s)).and_then(|s| self::SKIP(s)).and_then(|s| s.sequence(|s| s.optional(|s| self::__rec_expr_choice(s).and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| self::__rec_expr_choice(s)))))))))
 }
 
 #[inline]
 fn __aux_expr_concat(s: RuleState) -> RuleResult {
     s.sequence(|s| {
-        tag_node!(s,__rec_expr,"__rec_expr")
+        tag_node!(s, __rec_expr, "base")
             .and_then(|s| self::SKIP(s))
-            .and_then(|s| self::__rec_expr_concat(s))
+            .and_then(tag_node!(__rec_expr_concat, "rest"))
             .and_then(|s| self::SKIP(s))
-            .and_then(|s| s.sequence(|s| s.optional(|s| self::__rec_expr_concat(s).and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(|s| self::__rec_expr_concat(s))))))))
+            .and_then(|s| s.sequence(|s| s.optional(tag_node!(__rec_expr, "rest").and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(tag_node!(__rec_expr, "rest"))))))))
     })
 }
 
