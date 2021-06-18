@@ -1,5 +1,5 @@
 [package]
-name = "yggdrasil-cst-shared"
+name = "yggdrasil-shared"
 version = "0.1.0"
 authors = ["Aster <192607617@qq.com>"]
 description = "AWSL Window Structure Language"

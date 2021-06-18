@@ -1,7 +1,7 @@
 [workspace]
 members = ["projects/*"]
 default-members = [
-    "projects/ygg-cst-shared",
+    "projects/ygg-shared",
     "projects/ygg-pest",
 ]
 exclude = [

@@ -6,8 +6,8 @@ use super::*;
 ///
 /// [`Span::lines()`]: struct.Span.html#method.lines
 pub struct Lines<'i> {
-    span: &'i Span<'i>,
-    pos: usize,
+  pub(crate)  span: &'i Span<'i>,
+    pub(crate) pos: usize,
 }
 
 impl<'i> Iterator for Lines<'i> {

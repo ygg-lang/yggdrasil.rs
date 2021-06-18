@@ -121,11 +121,11 @@ fn skip_until() {
 fn match_range() {
     let input = "b";
 
-    assert_eq!(Position::new(input, 0).unwrap().match_range('a'..'c'), true);
-    assert_eq!(Position::new(input, 0).unwrap().match_range('b'..'b'), true);
-    assert_eq!(!Position::new(input, 0).unwrap().match_range('a'..'a'), true);
-    assert_eq!(!Position::new(input, 0).unwrap().match_range('c'..'c'), true);
-    assert_eq!(Position::new(input, 0).unwrap().match_range('a'..'嗨'), true);
+    assert_eq!(Position::new(input, 0).unwrap().match_char_range('a'..'c'), true);
+    assert_eq!(Position::new(input, 0).unwrap().match_char_range('b'..'b'), true);
+    assert_eq!(!Position::new(input, 0).unwrap().match_char_range('a'..'a'), true);
+    assert_eq!(!Position::new(input, 0).unwrap().match_char_range('c'..'c'), true);
+    assert_eq!(Position::new(input, 0).unwrap().match_char_range('a'..'嗨'), true);
 }
 
 #[test]

@@ -6,6 +6,7 @@ use core::{
     ops::Range,
     ptr, str,
 };
+use std::str::pattern::Pattern;
 
 #[cfg(test)]
 mod tests;
@@ -26,7 +27,7 @@ impl<'i> Position<'i> {
     /// # Safety:
     ///
     /// `input[pos..]` must be a valid codepoint boundary (should not panic when indexing thus).
-    pub(crate) unsafe fn new_unchecked(input: &str, pos: usize) -> Position {
+    pub unsafe fn new_unchecked(input: &str, pos: usize) -> Position {
         debug_assert!(input.get(pos..).is_some());
         Position { input, pos }
     }
@@ -199,7 +200,7 @@ impl<'i> Position<'i> {
         &self.input[self.find_line_start()..self.find_line_end()]
     }
 
-    pub(crate) fn find_line_start(&self) -> usize {
+    pub fn find_line_start(&self) -> usize {
         if self.input.is_empty() {
             return 0;
         };
@@ -211,7 +212,7 @@ impl<'i> Position<'i> {
         }
     }
 
-    pub(crate) fn find_line_end(&self) -> usize {
+    pub fn find_line_end(&self) -> usize {
         if self.input.is_empty() {
             0
         }
@@ -230,20 +231,20 @@ impl<'i> Position<'i> {
 
     /// Returns `true` when the `Position` points to the start of the input `&str`.
     #[inline]
-    pub(crate) fn at_start(&self) -> bool {
+    pub fn at_start(&self) -> bool {
         self.pos == 0
     }
 
     /// Returns `true` when the `Position` points to the end of the input `&str`.
     #[inline]
-    pub(crate) fn at_end(&self) -> bool {
+    pub fn at_end(&self) -> bool {
         self.pos == self.input.len()
     }
 
     /// Skips `n` `char`s from the `Position` and returns `true` if the skip was possible or `false`
     /// otherwise. If the return value is `false`, `pos` will not be updated.
     #[inline]
-    pub(crate) fn skip(&mut self, n: usize) -> bool {
+    pub fn skip(&mut self, n: usize) -> bool {
         let skipped = {
             let mut len = 0;
             // Position's pos is always a UTF-8 border.
@@ -266,7 +267,7 @@ impl<'i> Position<'i> {
     /// Goes back `n` `char`s from the `Position` and returns `true` if the skip was possible or `false`
     /// otherwise. If the return value is `false`, `pos` will not be updated.
     #[inline]
-    pub(crate) fn skip_back(&mut self, n: usize) -> bool {
+    pub fn skip_back(&mut self, n: usize) -> bool {
         let skipped = {
             let mut len = 0;
             // Position's pos is always a UTF-8 border.
@@ -289,7 +290,7 @@ impl<'i> Position<'i> {
     /// Skips until one of the given `strings` is found. If none of the `strings` can be found,
     /// this function will return `false` but its `pos` will *still* be updated.
     #[inline]
-    pub(crate) fn skip_until(&mut self, strings: &[&str]) -> bool {
+    pub fn skip_until(&mut self, strings: &[&str]) -> bool {
         for from in self.pos..self.input.len() {
             let bytes = if let Some(string) = self.input.get(from..) {
                 string.as_bytes()
@@ -311,31 +312,42 @@ impl<'i> Position<'i> {
         false
     }
 
+
+    #[inline]
+    pub fn match_char_set<'a, P: Pattern<'a>>(&mut self, set: P) -> bool
+    {
+        let s =&self.input[self.pos..];
+        match  set.is_contained_in(s) {
+            true => {               
+                self.pos += c.len_utf8();
+                true
+            }
+            false => {false}
+        }
+    }
+
     /// Matches the char at the `Position` against a filter function and returns `true` if a match
     /// was made. If no match was made, returns `false` and `pos` will not be updated.
     #[inline]
-    pub(crate) fn match_char_by<F>(&mut self, f: F) -> bool
+    pub fn match_char_by<F>(&mut self, f: F) -> bool
     where
         F: FnOnce(char) -> bool,
     {
         if let Some(c) = (&self.input[self.pos..]).chars().next() {
             if f(c) {
                 self.pos += c.len_utf8();
-                true
-            }
-            else {
-                false
+                return true
             }
         }
-        else {
-            false
-        }
+        return false
     }
+
+
 
     /// Matches `string` from the `Position` and returns `true` if a match was made or `false`
     /// otherwise. If no match was made, `pos` will not be updated.
     #[inline]
-    pub(crate) fn match_string(&mut self, string: &str) -> bool {
+    pub fn match_string(&mut self, string: &str) -> bool {
         let to = self.pos + string.len();
 
         if Some(string.as_bytes()) == self.input.as_bytes().get(self.pos..to) {
@@ -347,10 +359,14 @@ impl<'i> Position<'i> {
         }
     }
 
+    pub fn match_string_set(&mut self, _string: &str) -> bool {
+        unimplemented!()
+    }
+
     /// Case-insensitively matches `string` from the `Position` and returns `true` if a match was
     /// made or `false` otherwise. If no match was made, `pos` will not be updated.
     #[inline]
-    pub(crate) fn match_insensitive(&mut self, string: &str) -> bool {
+    pub fn match_insensitive(&mut self, string: &str) -> bool {
         let matched = {
             let slice = &self.input[self.pos..];
             if let Some(slice) = slice.get(0..string.len()) { slice.eq_ignore_ascii_case(string) } else { false }
@@ -365,17 +381,20 @@ impl<'i> Position<'i> {
         }
     }
 
+    pub fn match_string_set_insensitive(&mut self, _string: &str) -> bool {
+        unimplemented!()
+    }
+
     /// Matches `char` `range` from the `Position` and returns `true` if a match was made or `false`
     /// otherwise. If no match was made, `pos` will not be updated.
     #[inline]
-    pub(crate) fn match_range(&mut self, range: Range<char>) -> bool {
+    pub fn match_char_range(&mut self, range: Range<char>) -> bool {
         if let Some(c) = (&self.input[self.pos..]).chars().next() {
             if range.start <= c && c <= range.end {
                 self.pos += c.len_utf8();
                 return true;
             }
         }
-
         false
     }
 }
