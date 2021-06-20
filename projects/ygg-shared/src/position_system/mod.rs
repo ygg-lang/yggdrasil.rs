@@ -10,7 +10,15 @@ where
     PositionSystem::from(pair)
 }
 
+pub fn join_position<T,R>(lhs: T, rhs: T) -> T
+where
+    T: PositionSystem<R>,
+{
+    lhs.join(rhs)
+}
+
 pub trait PositionSystem<R> {
     /// The middle way to avoid the orphan rule
     fn from(pair: &Pair<R>) -> Self;
+    fn join(self, rhs: Self) -> Self;
 }

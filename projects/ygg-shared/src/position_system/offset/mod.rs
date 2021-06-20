@@ -16,6 +16,16 @@ where
         let s = pair.as_span();
         Self { start: s.start(), end: s.end() }
     }
+
+    fn join(self, rhs: Self) -> Self {
+        Self { start: self.start, end: rhs.end }
+    }
+}
+
+impl Default for OffsetRange {
+    fn default() -> Self {
+        Self { start: 0, end: 0 }
+    }
 }
 
 impl Debug for OffsetRange {

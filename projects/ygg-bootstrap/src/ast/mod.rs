@@ -7,7 +7,7 @@ use crate::{Error, Result};
 use pest::iterators::Pair;
 use pest::Parser;
 use std::collections::HashMap;
-use yggdrasil_cst_shared::position_system::{get_position, OffsetRange};
+use yggdrasil_shared::position_system::{get_position, OffsetRange};
 
 pub use self::nodes::*;
 

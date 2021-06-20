@@ -11,7 +11,6 @@ fn empty() {
 #[test]
 fn parts() {
     let input = "asdasdf";
-
     assert_eq!(Position::new(input, 0).unwrap().match_string("asd"), true);
     assert_eq!(Position::new(input, 3).unwrap().match_string("asdf"), true);
 }
@@ -19,7 +18,6 @@ fn parts() {
 #[test]
 fn line_col() {
     let input = "a\rb\nc\r\nd嗨";
-
     assert_eq!(Position::new(input, 0).unwrap().line_col(), (1, 1));
     assert_eq!(Position::new(input, 1).unwrap().line_col(), (1, 2));
     assert_eq!(Position::new(input, 2).unwrap().line_col(), (1, 3));
@@ -35,7 +33,6 @@ fn line_col() {
 #[test]
 fn line_of() {
     let input = "a\rb\nc\r\nd嗨";
-
     assert_eq!(Position::new(input, 0).unwrap().line_of(), "a\rb\n");
     assert_eq!(Position::new(input, 1).unwrap().line_of(), "a\rb\n");
     assert_eq!(Position::new(input, 2).unwrap().line_of(), "a\rb\n");
@@ -51,21 +48,18 @@ fn line_of() {
 #[test]
 fn line_of_empty() {
     let input = "";
-
     assert_eq!(Position::new(input, 0).unwrap().line_of(), "");
 }
 
 #[test]
 fn line_of_new_line() {
     let input = "\n";
-
     assert_eq!(Position::new(input, 0).unwrap().line_of(), "\n");
 }
 
 #[test]
 fn line_of_between_new_line() {
     let input = "\n\n";
-
     assert_eq!(Position::new(input, 1).unwrap().line_of(), "\n");
 }
 
@@ -77,7 +71,6 @@ fn measure_skip(input: &str, pos: usize, n: usize) -> Option<usize> {
 #[test]
 fn skip_empty() {
     let input = "";
-
     assert_eq!(measure_skip(input, 0, 0), Some(0));
     assert_eq!(measure_skip(input, 0, 1), None);
 }
@@ -85,7 +78,6 @@ fn skip_empty() {
 #[test]
 fn skip() {
     let input = "d嗨";
-
     assert_eq!(measure_skip(input, 0, 0), Some(0));
     assert_eq!(measure_skip(input, 0, 1), Some(1));
     assert_eq!(measure_skip(input, 1, 1), Some(3));
@@ -134,6 +126,14 @@ fn match_insensitive() {
 
     assert_eq!(Position::new(input, 0).unwrap().match_insensitive("asd"), true);
     assert_eq!(Position::new(input, 3).unwrap().match_insensitive("asdf"), true);
+}
+
+#[test]
+fn match_char_set() {
+    let input = "ad";
+
+    assert_eq!(Position::new(input, 0).unwrap().match_char_set('a'| 'b'|'c'), true);
+    assert_eq!(Position::new(input, 3).unwrap().match_char_set('a'| 'b'|'c'), false);
 }
 
 #[test]

@@ -1,7 +1,6 @@
 mod parse_custom;
 
 use super::*;
-use std::collections::HashMap;
 
 impl ASTParser for Program {
     fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
@@ -63,9 +62,13 @@ impl ASTParser for Expression {
         match pairs.as_branch_tag() {
             Some("Priority") => Self::try_named_one(&mut map, "expr", errors),
             Some("Concat") => {
-                let lhs = ASTParser::try_named_one(&mut map, "lhs", errors)?;
-                let rhs = ASTParser::try_named_one(&mut map, "rhs", errors)?;
-                Ok(Self::Concat(Box::new(ConcatExpression { lhs, rhs, position })))
+                let base = ASTParser::try_named_one(&mut map, "base", errors)?;
+                let rest = ASTParser::named_many(&mut map, "rest", errors);
+                let resolver = ConcatExpressionResolver {
+                    base: Expression::Data(Box::new(base)),
+                    rest,
+                };
+                Ok(Self::Concat(Box::new(resolver.left_associative())))
             }
             Some("Mark") => {
                 let lhs = ASTParser::try_named_one(&mut map, "lhs", errors)?;
@@ -89,8 +92,22 @@ impl ASTParser for Expression {
             Some(s) => {
                 unreachable!("Some({:#?})=>{{}}", s);
             }
-            _ => return Err(Error::node_missing("Expression")),
+            _ => {
+                return Err(Error::node_missing("Expression"))
+            },
         }
+    }
+}
+
+impl ASTParser for ConcatExpressionRest {
+    fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+        let position = get_position(&pairs);
+        let mut map = collect_tag_map(&pairs);
+        let expr = ASTParser::try_named_one(&mut map, "expr", errors)?;
+        Ok(Self {
+            expr,
+            position,
+        })
     }
 }
 
@@ -150,7 +167,7 @@ impl ASTParser for String {
 #[test]
 fn test1() {
     let mut parser = ASTBuilder::default();
-    let out = parser.parse_program("x = a ~ b");
+    let out = parser.parse_program("x = a ~ 0 ~ c ~ 1");
     println!("{:#?}", out.unwrap());
     println!("{:#?}", parser.errors);
 }

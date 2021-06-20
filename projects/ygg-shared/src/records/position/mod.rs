@@ -319,7 +319,7 @@ impl<'i> Position<'i> {
         let s =&self.input[self.pos..];
         match  set.is_contained_in(s) {
             true => {               
-                self.pos += c.len_utf8();
+                self.pos += s.len_utf8();
                 true
             }
             false => {false}

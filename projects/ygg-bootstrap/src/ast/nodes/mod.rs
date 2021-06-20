@@ -3,6 +3,8 @@ use super::*;
 mod nodes_custom;
 mod nodes_resolver;
 
+pub use self::nodes_resolver::*;
+
 #[derive(Clone)]
 pub struct Program {
     pub statement: Vec<Statement>,

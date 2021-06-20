@@ -233,11 +233,11 @@ fn __aux_expr_choice(s: RuleState) -> RuleResult {
 #[inline]
 fn __aux_expr_concat(s: RuleState) -> RuleResult {
     s.sequence(|s| {
-        tag_node!(s, __rec_expr, "base")
+        tag_node!(s, data, "base")
             .and_then(|s| self::SKIP(s))
             .and_then(tag_node!(__rec_expr_concat, "rest"))
             .and_then(|s| self::SKIP(s))
-            .and_then(|s| s.sequence(|s| s.optional(tag_node!(__rec_expr, "rest").and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(tag_node!(__rec_expr, "rest"))))))))
+            .and_then(|s| s.sequence(|s| s.optional(|s| tag_node!(s, __rec_expr, "rest").and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(tag_node!(__rec_expr, "rest"))))))))
     })
 }
 
@@ -277,7 +277,7 @@ pub fn __rec_expr(s: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<
 #[inline]
 #[allow(non_snake_case, unused_variables)]
 pub fn __rec_expr_concat(s: Box<::pest::ParserState<Rule>>) -> ::pest::ParseResult<Box<::pest::ParserState<Rule>>> {
-    s.rule(Rule::__rec_expr_concat, |s| s.sequence(|s| s.match_string("~").and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s))))
+    s.rule(Rule::__rec_expr_concat, |s| s.sequence(|s| s.match_string("~").and_then(|s| self::SKIP(s)).and_then(tag_node!(expr, "expr"))))
 }
 
 #[inline]
