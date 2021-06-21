@@ -43,6 +43,27 @@ pub struct ConcatExpressionRest {
 }
 
 impl ExpressionResolver {
+    pub fn flat<'a, 'b>(pair: Pair<'a, Rule>, rest: &'b mut Vec<Pair<'a, Rule>>) {
+        if pair.as_node_tag() == Some("__rec_expr_rest") {
+            for level in pair.into_inner() {
+                Self::flat(level, rest)
+            }
+        } else {
+            rest.push(pair);
+        }
+    }
+
+    pub fn build(head: Pair<Rule>, rest_nested: Vec<Pair<Rule>>, errors: &mut Vec<Error>) -> Result<Self> {
+        // println!("{:#?}",rest_nested);
+        let mut rest = vec![];
+        for level in rest_nested {
+            Self::flat(level, &mut rest)
+        }
+
+        println!("{:#?}", rest);
+        unreachable!()
+    }
+
     // pub fn left_associative(self) -> ConcatExpression {
     //     let mut rest = self.rest.into_iter();
     //     let rhs = rest.next().unwrap();

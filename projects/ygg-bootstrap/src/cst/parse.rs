@@ -186,13 +186,11 @@ pub fn assign_kind(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn expr(s: RuleState) -> RuleResult {
-    s.rule(Rule::expr, |s| {
-        s.sequence(|s| {
-            tag_node!(s,__rec_expr_left,"__rec_expr_left")
+    s.rule(Rule::expr, |s|
+        s.sequence(|s|
+            tag_node!(s, __rec_expr_left, "__rec_expr")
                 .and_then(|s| self::SKIP(s))
-                .and_then(|s| s.sequence(|s| s.optional(|s| tag_node!(s,__rec_expr_rest,"__rec_expr_rest").and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(tag_node!(__rec_expr_rest,"__rec_expr_rest"))))))))
-        })
-    })
+                .and_then(|s| s.optional(|s| s.repeat(|s| self::SKIP(s).and_then(tag_node!(__rec_expr_rest, "__rec_expr")))))))
 }
 
 #[inline]
@@ -236,25 +234,33 @@ pub fn __aux_expr_prefix(s: RuleState) -> RuleResult {
 pub fn __rec_expr_rest(s: RuleState) -> RuleResult {
     tag_branch!(s, BRANCH, "Choice", self::__aux_expr_choice);
     tag_branch!(s, BRANCH, "Concat", self::__aux_expr_concat);
-    tag_branch!(s, BRANCH, "Slice", self::__aux_expr_slice);
-    tag_branch!(s, BRANCH, "Suffix", self::__aux_expr_suffix);
+    tag_branch!(s, BRANCH, "Slice", tag_node!(slice, "slice"));
+    tag_branch!(s, BRANCH, "Suffix", tag_node!(suffix, "suffix"));
+    return Err(s);
+}
 
-    s.rule(Rule::__rec_expr_rest, |s| {
-        s.sequence(|s| s.match_string("~").and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)))
-            .or_else(|s| {
-                s.sequence(|s| {
-                    s.optional(|s| s.sequence(|s| self::mark_branch(s).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| self::mark_type(s)))))
-                        .and_then(|s| self::SKIP(s))
-                        .and_then(|s| s.match_string("|"))
-                        .and_then(|s| self::SKIP(s))
-                        .and_then(|s| self::expr(s))
-                        .and_then(|s| self::SKIP(s))
-                        .and_then(|s| s.optional(|s| s.sequence(|s| self::mark_branch(s).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| self::mark_type(s))))))
-                })
-            })
-            .or_else(|s| self::slice(s))
-            .or_else(|s| self::suffix(s))
+pub fn __aux_expr_choice(s: RuleState) -> RuleResult {
+    s.sequence(|s| {
+        s.optional(|s| s.sequence(|s| self::mark_branch(s).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| self::mark_type(s)))))
+            .and_then(|s| self::SKIP(s))
+            .and_then(|s| s.match_string("|"))
+            .and_then(|s| self::SKIP(s))
+            .and_then(|s| self::expr(s))
+            .and_then(|s| self::SKIP(s))
+            .and_then(|s| s.optional(|s| s.sequence(|s| self::mark_branch(s).and_then(|s| self::SKIP(s)).and_then(|s| s.optional(|s| self::mark_type(s))))))
     })
+}
+
+pub fn __aux_expr_concat(s: RuleState) -> RuleResult {
+    s.sequence(|s| s.match_string("~").and_then(|s| self::SKIP(s)).and_then(tag_node!(expr, "rhs")))
+}
+
+pub fn __aux_expr_slice(s: RuleState) -> RuleResult {
+    s.sequence(|s| self::prefix(s).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)))
+}
+
+pub fn __aux_expr_suffix(s: RuleState) -> RuleResult {
+    s.sequence(|s| self::prefix(s).and_then(|s| self::SKIP(s)).and_then(|s| self::expr(s)))
 }
 
 #[inline]
@@ -549,14 +555,20 @@ pub fn symbol(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn COMMENT(s: RuleState) -> RuleResult {
-    s.rule(Rule::COMMENT, |s| s.atomic(Atomicity::Atomic, |s| self::comment_s_l(s).or_else(|s| self::comment_m_l(s))))
+    match cfg!(feature = "no-ignored") {
+        true => s.rule(Rule::COMMENT, |s| s.atomic(Atomicity::Atomic, |s| self::comment_s_l(s).or_else(|s| self::comment_m_l(s)))),
+        false => s.atomic(Atomicity::Atomic, |s| self::comment_s_l(s).or_else(|s| self::comment_m_l(s))),
+    }
 }
 
 #[inline]
 pub fn WHITESPACE(s: RuleState) -> RuleResult {
-    s.rule(Rule::WHITESPACE, |s| {
-        s.atomic(Atomicity::Atomic, |s| s.sequence(|s| s.match_string(" ").or_else(|s| s.match_string("\t")).and_then(|s| s.repeat(|s| s.match_string(" ").or_else(|s| s.match_string("\t"))))))
-    })
+    match cfg!(feature = "no-ignored") {
+        true => s.atomic(Atomicity::Atomic, |s| s.sequence(|s| s.match_string(" ").or_else(|s| s.match_string("\t")).and_then(|s| s.repeat(|s| s.match_string(" ").or_else(|s| s.match_string("\t")))))),
+        false => s.rule(Rule::WHITESPACE, |s| {
+            s.atomic(Atomicity::Atomic, |s| s.sequence(|s| s.match_string(" ").or_else(|s| s.match_string("\t")).and_then(|s| s.repeat(|s| s.match_string(" ").or_else(|s| s.match_string("\t"))))))
+        }),
+    }
 }
 
 #[inline]

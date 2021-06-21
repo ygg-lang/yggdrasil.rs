@@ -59,12 +59,12 @@ impl ASTParser for Expression {
     fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
         let mut map = collect_tag_map(&pairs);
-
-        let left = ASTParser::try_named_one(&mut map, "__rec_expr_left", errors)?;
-        let rest = ASTParser::named_many(&mut map, "__rec_expr_rest", errors);
-        let resolver = ExpressionResolver { base: Expression::Data(Box::new(base)), rest };
-
-
+        let head = map.remove("__rec_expr_left").as_mut().map(|s| s.remove(0));
+        let rest = map.remove("__rec_expr_rest").unwrap_or_default();
+        if let Some(s) = head {
+            ExpressionResolver::build(s, rest, errors)?;
+            unreachable!()
+        };
         match pairs.as_branch_tag() {
             Some("Priority") => Self::try_named_one(&mut map, "expr", errors),
             Some("Concat") => {
@@ -165,7 +165,7 @@ impl ASTParser for String {
 #[test]
 fn test1() {
     let mut parser = ASTBuilder::default();
-    let out = parser.parse_program("x = ((a ~ 0) ~ c )~ 1");
+    let out = parser.parse_program("x = a ~ 0 | c ~ 1");
     println!("{:#?}", out.unwrap());
     println!("{:#?}", parser.errors);
 }
