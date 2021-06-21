@@ -68,7 +68,7 @@ impl ASTParser for Expression {
                     base: Expression::Data(Box::new(base)),
                     rest,
                 };
-                Ok(Self::Concat(Box::new(resolver.left_associative())))
+                Ok(Self::Concat(Box::new(resolver.dyn_associative())))
             }
             Some("Mark") => {
                 let lhs = ASTParser::try_named_one(&mut map, "lhs", errors)?;
@@ -167,7 +167,7 @@ impl ASTParser for String {
 #[test]
 fn test1() {
     let mut parser = ASTBuilder::default();
-    let out = parser.parse_program("x = a ~ 0 ~ c ~ 1");
+    let out = parser.parse_program("x = ((a ~ 0) ~ c )~ 1");
     println!("{:#?}", out.unwrap());
     println!("{:#?}", parser.errors);
 }

@@ -232,13 +232,14 @@ fn __aux_expr_choice(s: RuleState) -> RuleResult {
 
 #[inline]
 fn __aux_expr_concat(s: RuleState) -> RuleResult {
-    s.sequence(|s| {
+    // data ~ expr ~ expr*
+    s.sequence(|s|
         tag_node!(s, data, "base")
             .and_then(|s| self::SKIP(s))
             .and_then(tag_node!(__rec_expr_concat, "rest"))
             .and_then(|s| self::SKIP(s))
-            .and_then(|s| s.sequence(|s| s.optional(|s| tag_node!(s, __rec_expr, "rest").and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(tag_node!(__rec_expr, "rest"))))))))
-    })
+            .and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(tag_node!(__rec_expr_concat, "rest")))))
+    )
 }
 
 #[inline]

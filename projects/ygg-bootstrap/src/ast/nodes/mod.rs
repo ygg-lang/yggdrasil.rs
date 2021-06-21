@@ -60,8 +60,8 @@ pub enum Expression {
 
 #[derive(Clone, Debug)]
 pub struct ConcatExpression {
-    pub lhs: Expression,
-    pub rhs: Expression,
+    pub base: Expression,
+    pub rest: Vec<Expression>,
     pub position: OffsetRange,
 }
 

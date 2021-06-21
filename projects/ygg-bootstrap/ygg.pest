@@ -37,38 +37,23 @@ ignore = _{"ignore!"}
 assign_statement = {SYMBOL ~ assign_kind ~ "|"? ~ expr}
 assign_kind = @{("^"|"_"|"@")* ~ "=" }
 /*====================================================================================================================*/
-expr  = {
+expr  = {__rec_expr_left ~ __rec_expr_rest*}
+__rec_expr_left = {
     "(" ~ "|"? ~ expr ~ ")"
-  | SYMBOL ~ (":" ~ SYMBOL)? ~ "<-" ~ expr
-  | __rec_choice ~ __rec_expr_choice+
-  | __rec_expr ~ __rec_expr_concat+
-  | __rec_expr ~ slice+
-  | __rec_expr ~ suffix+
+  | SYMBOL ~ mark_type? ~ "<-" ~ expr
   | prefix ~ expr
   | data
 }
-// __rec_expr: Expression = data
-__rec_expr = {data}
-//
-__rec_expr_concat = {"~" ~ expr}
-choice = {
-    expr ~ (branch_tag ~ SYMBOL)?
+__rec_expr_rest = {
+    "~" ~ expr
+  | (mark_branch ~ mark_type?)? ~ "|" ~ expr ~ (mark_branch ~ mark_type?)?
+  | slice
+  | suffix
 }
-__rec_choice = {
-    __rec_expr ~ (branch_tag ~ SYMBOL)?
-}
-__rec_expr_choice = {
-    ("|"|"/") ~ choice
-}
-branch_tag = @{
-    ("^"| "!")? ~ "#"
-}
-prefix = @{
-    "!" | "&" | "^" | "*" | "%"
-}
-suffix = @{
-    "?" | "+" | "-"| "*"
-}
+mark_branch = ${("^"| "!")? ~ "#" ~ SYMBOL}
+mark_type = {":" ~ SYMBOL}
+prefix = @{"!" | "&" | "^" | "*" | "%"}
+suffix = @{"?" | "+" | "-"| "*"}
 /*====================================================================================================================*/
 data  = {macro_call|regex_range|list|symbol_path|integer}
 list  = {"{" ~ (data ~ ("," ~ data)* ~ ","?)? ~"}"}
