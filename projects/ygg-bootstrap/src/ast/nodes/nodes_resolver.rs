@@ -31,7 +31,7 @@ impl Expression {
 }
 
 #[derive(Clone, Debug)]
-pub struct ConcatExpressionResolver {
+pub struct ExpressionResolver {
     pub base: Expression,
     pub rest: Vec<ConcatExpressionRest>,
 }
@@ -42,7 +42,7 @@ pub struct ConcatExpressionRest {
     pub position: OffsetRange,
 }
 
-impl ConcatExpressionResolver {
+impl ExpressionResolver {
     // pub fn left_associative(self) -> ConcatExpression {
     //     let mut rest = self.rest.into_iter();
     //     let rhs = rest.next().unwrap();
@@ -60,12 +60,11 @@ impl ConcatExpressionResolver {
     // }
     pub fn dyn_associative(self) -> ConcatExpression {
         let start = self.base.position();
-        let end = self.rest.last().map(|p|p.position).unwrap_or_default();
+        let end = self.rest.last().map(|p| p.position).unwrap_or_default();
         ConcatExpression {
             base: self.base,
             rest: self.rest.into_iter().map(|i| i.expr).collect(),
-            position: join_position::<_, Rule>(start, end)
+            position: join_position::<_, Rule>(start, end),
         }
-
     }
 }

@@ -59,15 +59,18 @@ impl ASTParser for Expression {
     fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
         let mut map = collect_tag_map(&pairs);
+
+        let left = ASTParser::try_named_one(&mut map, "__rec_expr_left", errors)?;
+        let rest = ASTParser::named_many(&mut map, "__rec_expr_rest", errors);
+        let resolver = ExpressionResolver { base: Expression::Data(Box::new(base)), rest };
+
+
         match pairs.as_branch_tag() {
             Some("Priority") => Self::try_named_one(&mut map, "expr", errors),
             Some("Concat") => {
                 let base = ASTParser::try_named_one(&mut map, "base", errors)?;
                 let rest = ASTParser::named_many(&mut map, "rest", errors);
-                let resolver = ConcatExpressionResolver {
-                    base: Expression::Data(Box::new(base)),
-                    rest,
-                };
+                let resolver = ExpressionResolver { base: Expression::Data(Box::new(base)), rest };
                 Ok(Self::Concat(Box::new(resolver.dyn_associative())))
             }
             Some("Mark") => {
@@ -92,9 +95,7 @@ impl ASTParser for Expression {
             Some(s) => {
                 unreachable!("Some({:#?})=>{{}}", s);
             }
-            _ => {
-                return Err(Error::node_missing("Expression"))
-            },
+            _ => return Err(Error::node_missing("Expression")),
         }
     }
 }
@@ -104,10 +105,7 @@ impl ASTParser for ConcatExpressionRest {
         let position = get_position(&pairs);
         let mut map = collect_tag_map(&pairs);
         let expr = ASTParser::try_named_one(&mut map, "expr", errors)?;
-        Ok(Self {
-            expr,
-            position,
-        })
+        Ok(Self { expr, position })
     }
 }
 

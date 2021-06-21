@@ -10,7 +10,7 @@ where
     PositionSystem::from(pair)
 }
 
-pub fn join_position<T,R>(lhs: T, rhs: T) -> T
+pub fn join_position<T, R>(lhs: T, rhs: T) -> T
 where
     T: PositionSystem<R>,
 {
