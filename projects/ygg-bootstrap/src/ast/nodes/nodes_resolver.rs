@@ -1,6 +1,6 @@
 use pest::prec_climber::{Assoc, Operator};
 use super::*;
-use yggdrasil_shared::records::position_system::join_position;
+use yggdrasil_shared::records::join_position;
 
 impl Data {
     pub fn position(&self) -> OffsetRange {

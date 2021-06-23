@@ -26,9 +26,13 @@ pub enum Error {
 }
 
 impl Error {
+    ///
     pub fn node_missing(msg: impl Into<String>) -> Error {
         Self::NodeMissing { error: msg.into() }
     }
+    ///
+    ///
+    ///
     pub fn node_tag_missing(msg: impl Into<String>) -> Error {
         Self::NodeTagMissing { error: msg.into() }
     }

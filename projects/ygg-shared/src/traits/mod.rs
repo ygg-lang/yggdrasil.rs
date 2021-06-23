@@ -14,9 +14,9 @@ pub trait CSTNode where Self: Sized {
 pub trait ASTNode<N>
     where N: CSTNode, Self: Sized {
     /// many
-    fn many(pairs: Vec<N>, errors: &mut Vec<Error>) -> Vec<Self> {
-        let mut out = Vec::with_capacity(pairs.len());
-        for pair in pairs {
+    fn many(node: Vec<N>, errors: &mut Vec<Error>) -> Vec<Self> {
+        let mut out = Vec::with_capacity(node.len());
+        for pair in node {
             match Self::parse(pair, errors) {
                 Ok(o) => out.push(o),
                 Err(Error::Unwinding) => (),
@@ -26,8 +26,8 @@ pub trait ASTNode<N>
         return out;
     }
     /// some
-    fn some(pairs: N, errors: &mut Vec<Error>) -> Option<Self>{
-        match Self::parse(pairs, errors) {
+    fn some(node: N, errors: &mut Vec<Error>) -> Option<Self>{
+        match Self::parse(node, errors) {
             Ok(o) => return Some(o),
             Err(Error::Unwinding) => (),
             Err(e) => errors.push(e)
@@ -35,8 +35,8 @@ pub trait ASTNode<N>
         return None
     }
     /// one
-    fn one(pairs: N, errors: &mut Vec<Error>) -> Result<Self> {
-        match Self::parse(pairs, errors) {
+    fn one(node: N, errors: &mut Vec<Error>) -> Result<Self> {
+        match Self::parse(node, errors) {
             Ok(o) => Ok(o),
             Err(Error::Unwinding) => Err(Error::Unwinding),
             Err(e) => {
@@ -47,27 +47,24 @@ pub trait ASTNode<N>
     }
     /// many
     fn named_many(map: &mut HashMap<String, Vec<N>>, tag: &str, errors: &mut Vec<Error>) -> Vec<Self> {
-        let pairs = match map.remove(tag) {
-            Some(s) => s,
-            _ => return vec![],
-        };
-        return Self::many(pairs, errors);
+        match map.remove(tag) {
+            Some(s) => Self::many(s, errors),
+            _ => vec![],
+        }
     }
     /// some
     fn named_some(map: &mut HashMap<String, Vec<N>>, tag: &str, errors: &mut Vec<Error>) -> Option<Self> {
-        let pair = match map.remove(tag).as_mut().map(|v| v.remove(0)) {
-            Some(s) => s,
-            _ => return None,
-        };
-        Self::some(pair,errors)
+        match map.remove(tag).as_mut().map(|v| v.remove(0)) {
+            Some(s) => Self::some(s,errors),
+            _ => None,
+        }
     }
     /// one
     fn named_one(map: &mut HashMap<String, Vec<N>>, tag: &str, errors: &mut Vec<Error>) -> Result<Self> {
-        let pair = match map.remove(tag).as_mut().map(|v| v.remove(0)) {
-            Some(s) => s,
-            _ => return Err(Error::node_tag_missing(tag)),
-        };
-        Self::one(pair, errors)
+        match map.remove(tag).as_mut().map(|v| v.remove(0)) {
+            Some(s) => Self::one(s, errors),
+            _ => Err(Error::node_tag_missing(tag)),
+        }
     }
     /// parse
     fn parse(pairs: N, errors: &mut Vec<Error>) -> Result<Self>;
