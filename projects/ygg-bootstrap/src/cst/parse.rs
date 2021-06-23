@@ -188,15 +188,15 @@ pub fn assign_kind(s: RuleState) -> RuleResult {
 pub fn expr(s: RuleState) -> RuleResult {
     s.rule(Rule::expr, |s|
         s.sequence(|s|
-            tag_node!(s, __rec_expr_left, "__rec_expr")
+            tag_node!(s,__rec_expr_left,"__rec_expr_left")
                 .and_then(|s| self::SKIP(s))
-                .and_then(|s| s.optional(|s| s.repeat(|s| self::SKIP(s).and_then(tag_node!(__rec_expr_rest, "__rec_expr")))))))
+                .and_then(|s| s.sequence(|s| s.optional(|s| tag_node!(s,__rec_expr_rest,"__rec_expr_rest").and_then(|s| s.repeat(|s| s.sequence(|s| self::SKIP(s).and_then(tag_node!(__rec_expr_rest,"__rec_expr_rest"))))))))))
 }
 
 #[inline]
 pub fn __rec_expr_left(s: RuleState) -> RuleResult {
     tag_branch!(s, BRANCH, "Priority", self::__aux_expr_priority);
-    tag_branch!(s, BRANCH, "Mark", self::__aux_expr_mark);
+    tag_branch!(s, __aux_expr_mark, "Mark", self::__aux_expr_mark);
     tag_branch!(s, BRANCH, "Prefix", self::__aux_expr_prefix);
     tag_branch!(s, BRANCH, "Data", tag_node!(data, "data"));
     return Err(s);
@@ -232,8 +232,8 @@ pub fn __aux_expr_prefix(s: RuleState) -> RuleResult {
 
 #[inline]
 pub fn __rec_expr_rest(s: RuleState) -> RuleResult {
-    tag_branch!(s, BRANCH, "Choice", self::__aux_expr_choice);
-    tag_branch!(s, BRANCH, "Concat", self::__aux_expr_concat);
+    tag_branch!(s, __aux_expr_choice, "Choice", self::__aux_expr_choice);
+    tag_branch!(s, __aux_expr_concat, "Concat", self::__aux_expr_concat);
     tag_branch!(s, BRANCH, "Slice", tag_node!(slice, "slice"));
     tag_branch!(s, BRANCH, "Suffix", tag_node!(suffix, "suffix"));
     return Err(s);

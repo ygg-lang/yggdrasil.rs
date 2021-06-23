@@ -1,6 +1,6 @@
 use super::*;
 
-impl YGGRule {
+impl Rule {
     pub(super) fn fuse(&mut self) {
         self.expression.fuse()
     }

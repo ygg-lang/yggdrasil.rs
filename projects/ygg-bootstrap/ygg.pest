@@ -37,19 +37,17 @@ ignore = _{"ignore!"}
 assign_statement = {SYMBOL ~ assign_kind ~ "|"? ~ expr}
 assign_kind = @{("^"|"_"|"@")* ~ "=" }
 /*====================================================================================================================*/
-expr  = {__rec_expr_left ~ __rec_expr_rest*}
-__rec_expr_left = {
+expr = {
     "(" ~ "|"? ~ expr ~ ")"
   | SYMBOL ~ mark_type? ~ "<-" ~ expr
+  | choice_expr ~ ("|"|"/") ~ expr ~ choice_expr
+  | expr ~ "~" ~ expr
+  | expr ~ slice
+  | expr ~ suffix
   | prefix ~ expr
   | data
 }
-__rec_expr_rest = {
-    "~" ~ expr
-  | (mark_branch ~ mark_type?)? ~ "|" ~ expr ~ (mark_branch ~ mark_type?)?
-  | slice
-  | suffix
-}
+choice_expr = {expr ~(mark_branch ~ mark_type?)?}
 mark_branch = ${("^"| "!")? ~ "#" ~ SYMBOL}
 mark_type = {":" ~ SYMBOL}
 prefix = @{"!" | "&" | "^" | "*" | "%"}

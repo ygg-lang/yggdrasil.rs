@@ -6,19 +6,25 @@ use super::{
     hints::{duplicate_declaration_error, name_missing, top_area_error},
     *,
 };
+use yggdrasil_bootstrap::ast::{AssignStatement, Program, Statement};
 use crate::{
-    ast::{AssignStatement, Program, Statement},
     manager::HintItems,
     Result,
 };
 
-impl Program {
-    pub fn build_grammar(self, url: Url) -> Result<(GrammarState, HintItems)> {
+pub trait Translator {
+    fn translate(self, url: Url) -> Result<(GrammarState, HintItems)>;
+}
+
+
+
+impl Translator for Program {
+    fn translate(self, url: Url) -> Result<(GrammarState, HintItems)> {
         let mut is_top_area = true;
         let mut is_grammar = None;
         let mut name_position = Default::default();
         let mut name = None;
-        let mut rule_map = Map::<String, YGGRule>::default();
+        let mut rule_map = Map::<String, Rule>::default();
         let mut extensions = vec![];
         let mut ignores = vec![];
         let mut diag = vec![];
@@ -98,7 +104,7 @@ impl Program {
                 }
                 Statement::AssignStatement(s) => {
                     is_top_area = false;
-                    let mut rule = YGGRule::from(*s);
+                    let mut rule = Rule::from(*s);
                     swap(&mut rule.doc, &mut doc_buffer);
                     match rule_map.get(&rule.name.data) {
                         Some(old) => diag.push(duplicate_declaration_error(
@@ -136,7 +142,7 @@ impl Program {
     }
 }
 
-impl From<AssignStatement> for YGGRule {
+impl From<AssignStatement> for Rule {
     fn from(s: AssignStatement) -> Self {
         let name = &s.id.data;
         let mut ty = Identifier { data: name.to_case(Case::UpperCamel), range: s.id.range };

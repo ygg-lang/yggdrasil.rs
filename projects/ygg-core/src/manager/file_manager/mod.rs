@@ -2,7 +2,7 @@ pub use self::{file_store::FileStore, file_wrap::FileType, finger_print::FileFin
 use crate::{
     codegen::{GrammarState, GrammarType},
     manager::HintItems,
-    Result, YGGError,
+    Result, Error,
 };
 use dashmap::{mapref::one::Ref, DashMap};
 use lsp_types::Url;

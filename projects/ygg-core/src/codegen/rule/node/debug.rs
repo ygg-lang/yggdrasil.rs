@@ -1,6 +1,6 @@
 use super::*;
 
-impl Debug for YGGRule {
+impl Debug for Rule {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Rule")
             .field("name", &self.name.data)

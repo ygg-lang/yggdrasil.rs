@@ -1,4 +1,5 @@
-use crate::{ast::*, codegen::rule::YGGRule};
+use crate::{codegen::rule::Rule};
+use yggdrasil_bootstrap::ast::*;
 use std::{
     fmt::{Debug, Formatter},
     ops::AddAssign,

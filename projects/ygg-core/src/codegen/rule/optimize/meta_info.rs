@@ -116,7 +116,7 @@ impl GrammarState {
     }
 }
 
-impl YGGRule {
+impl Rule {
     fn symbol_item(&self) -> DocumentSymbol {
         let (detail, kind) = self.symbol_detail();
         DocumentSymbol {

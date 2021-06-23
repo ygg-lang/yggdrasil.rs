@@ -1,7 +1,7 @@
 use super::*;
 
-impl YGGRule {
-    fn is_inline_symbol(&self, rhs: &YGGRule) -> bool {
+impl Rule {
+    fn is_inline_symbol(&self, rhs: &Rule) -> bool {
         rhs.name.data.starts_with("_")
     }
 

@@ -15,6 +15,7 @@ include = [
 ]
 
 [dependencies]
+yggdrasil-bootstrap = { version = "0.1", path = "../ygg-bootstrap" }
 tokio = { version = "1.12", features = ["io-std", "rt-multi-thread", "macros", "test-util"] }
 serde_json = "1.0"
 indexmap = "1.7"

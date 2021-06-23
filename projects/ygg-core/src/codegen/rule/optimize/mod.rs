@@ -35,6 +35,6 @@ impl GrammarState {
     }
 }
 
-impl YGGRule {
+impl Rule {
     fn merge_regex(&mut self) {}
 }
