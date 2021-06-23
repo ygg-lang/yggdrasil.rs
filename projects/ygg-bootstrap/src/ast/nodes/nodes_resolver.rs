@@ -1,13 +1,13 @@
 use pest::prec_climber::{Assoc, Operator};
 use super::*;
-use yggdrasil_shared::position_system::join_position;
+use yggdrasil_shared::records::position_system::join_position;
 
 impl Data {
     pub fn position(&self) -> OffsetRange {
         match self {
-            Data::SymbolPath(v) => v.position,
-            Data::Integer(v) => v.position,
-            Data::String(v) => v.position,
+            Data::SymbolPath(v) => v.range,
+            Data::Integer(v) => v.range,
+            Data::String(v) => v.range,
             Data::Macro => {
                 unimplemented!()
             }
@@ -22,11 +22,11 @@ impl Expression {
     pub fn position(&self) -> OffsetRange {
         match self {
             Expression::Data(v) => v.position(),
-            Expression::UnarySuffix(v) => v.position,
-            Expression::UnaryPrefix(v) => v.position,
-            Expression::Concat(v) => v.position,
-            Expression::Choice(v) => v.position,
-            Expression::Mark(v) => v.position,
+            Expression::UnarySuffix(v) => v.range,
+            Expression::UnaryPrefix(v) => v.range,
+            Expression::Concat(v) => v.range,
+            Expression::Choice(v) => v.range,
+            Expression::Mark(v) => v.range,
         }
     }
 }
@@ -65,7 +65,7 @@ impl ExpressionResolver {
         ]);
 
         let primary = |lhs: Pair<Rule>| {
-            Expression::parse_pair(lhs, errors)
+            Expression::parse(lhs, errors)
         };
         let infix = |lhs: Result<Expression>, op: Pair<Rule>, rhs: Result<Expression>| {
             println!("{:#?}", lhs);
@@ -123,7 +123,7 @@ impl ExpressionResolver {
         ConcatExpression {
             base: self.base,
             rest: self.rest.into_iter().map(|i| i.expr).collect(),
-            position: join_position::<_, Rule>(start, end),
+            range: join_position::<_, Rule>(start, end),
         }
     }
 }

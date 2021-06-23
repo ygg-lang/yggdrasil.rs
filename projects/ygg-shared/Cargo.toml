@@ -9,8 +9,9 @@ license = "MPL-2.0"
 edition = "2018"
 
 [dependencies]
-pest = { version = "2.1", git = "https://github.com/oovm/pest" }
 lsp-types = { version = "0.89", features = ["proposed"], optional = true }
+thiserror = "1.0"
+anyhow = "1.0"
 
 [features]
 default = ["lsp"]

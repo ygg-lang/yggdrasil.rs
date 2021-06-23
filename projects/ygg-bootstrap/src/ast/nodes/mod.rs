@@ -8,7 +8,7 @@ pub use self::nodes_resolver::*;
 #[derive(Clone)]
 pub struct Program {
     pub statement: Vec<Statement>,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone)]
@@ -24,13 +24,13 @@ pub enum Statement {
 pub struct GrammarStatement {
     pub id: Symbol,
     pub ext: Vec<StringLiteral>,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
 pub struct FragmentStatement {
     pub id: Symbol,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
@@ -38,13 +38,13 @@ pub struct AssignStatement {
     pub id: Symbol,
     pub eq: String,
     pub rhs: Expression,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
 pub struct IgnoreStatement {
     pub rules: Vec<Symbol>,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone)]
@@ -62,7 +62,7 @@ pub enum Expression {
 pub struct ConcatExpression {
     pub base: Expression,
     pub rest: Vec<Expression>,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
@@ -73,14 +73,9 @@ pub struct ChoiceExpression {
     pub rhs: Expression,
     pub rhs_tag: Option<Symbol>,
     pub rhs_ty: Option<SymbolPath>,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
-#[derive(Clone, Debug)]
-pub struct CommentDocument {
-    pub doc: String,
-    pub position: OffsetRange,
-}
 
 #[derive(Clone, Debug)]
 pub struct ChoiceTag {
@@ -88,7 +83,7 @@ pub struct ChoiceTag {
     pub tag: Option<Symbol>,
     pub mode: Option<String>,
     pub ty: Option<Symbol>,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
@@ -96,21 +91,21 @@ pub struct MarkExpression {
     pub lhs: Symbol,
     pub ty: Option<SymbolPath>,
     pub rhs: Expression,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
 pub struct UnarySuffix {
     pub suffix: String,
     pub base: Expression,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
 pub struct UnaryPrefix {
     pub prefix: String,
     pub base: Expression,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone)]
@@ -125,29 +120,35 @@ pub enum Data {
 #[derive(Clone, Debug)]
 pub struct SymbolPath {
     pub symbol: Vec<Symbol>,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
 pub struct Symbol {
     pub data: String,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
 pub struct Integer {
     pub data: isize,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
 pub struct StringLiteral {
     pub data: String,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
 }
 
 #[derive(Clone, Debug)]
 pub struct Eos {
     pub data: bool,
-    pub position: OffsetRange,
+    pub range: OffsetRange,
+}
+
+#[derive(Clone, Debug)]
+pub struct CommentDocument {
+    pub doc: String,
+    pub range: OffsetRange,
 }

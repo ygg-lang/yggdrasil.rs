@@ -1,24 +1,25 @@
 mod parse_custom;
 
+
 use super::*;
 
 impl ASTParser for Program {
-    fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
         let mut map = collect_tag_map(&pairs);
         let statement = ASTParser::named_many(&mut map, "statement", errors);
-        return Ok(Self { statement, position });
+        return Ok(Self { statement, range: position });
     }
 }
 
 impl ASTParser for Statement {
-    fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let mut map = collect_tag_map(&pairs);
         match pairs.as_branch_tag() {
             Some("Grammar") => unimplemented!(),
-            Some("Fragment") => Ok(Self::Fragment(Box::new(ASTParser::try_named_one(&mut map, "fragment_statement", errors)?))),
-            Some("Ignore") => Ok(Self::Ignore(Box::new(ASTParser::try_named_one(&mut map, "ignore_statement", errors)?))),
-            Some("Assign") => Ok(Self::Assign(Box::new(ASTParser::try_named_one(&mut map, "assign_statement", errors)?))),
+            Some("Fragment") => Ok(Self::Fragment(Box::new(ASTParser::named_one(&mut map, "fragment_statement", errors)?))),
+            Some("Ignore") => Ok(Self::Ignore(Box::new(ASTParser::named_one(&mut map, "ignore_statement", errors)?))),
+            Some("Assign") => Ok(Self::Assign(Box::new(ASTParser::named_one(&mut map, "assign_statement", errors)?))),
             _ => {
                 unreachable!("{:#?}", map);
             }
@@ -27,36 +28,36 @@ impl ASTParser for Statement {
 }
 
 impl ASTParser for FragmentStatement {
-    fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
         let mut map = collect_tag_map(&pairs);
-        let id = ASTParser::try_named_one(&mut map, "id", errors)?;
-        return Ok(Self { id, position });
+        let id = ASTParser::named_one(&mut map, "id", errors)?;
+        return Ok(Self { id, range: position });
     }
 }
 
 impl ASTParser for IgnoreStatement {
-    fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
         let mut map = collect_tag_map(&pairs);
         let rules = ASTParser::named_many(&mut map, "rules", errors);
-        return Ok(Self { rules, position });
+        return Ok(Self { rules, range: position });
     }
 }
 
 impl ASTParser for AssignStatement {
-    fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
         let mut map = collect_tag_map(&pairs);
-        let id = ASTParser::try_named_one(&mut map, "id", errors)?;
-        let eq = ASTParser::try_named_one(&mut map, "eq", errors)?;
-        let rhs = ASTParser::try_named_one(&mut map, "rhs", errors)?;
-        Ok(Self { id, eq, rhs, position })
+        let id = ASTParser::named_one(&mut map, "id", errors)?;
+        let eq = ASTParser::named_one(&mut map, "eq", errors)?;
+        let rhs = ASTParser::named_one(&mut map, "rhs", errors)?;
+        Ok(Self { id, eq, rhs, range: position })
     }
 }
 
 impl ASTParser for Expression {
-    fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
         let mut map = collect_tag_map(&pairs);
         let head = map.remove("__rec_expr_left").as_mut().map(|s| s.remove(0));
@@ -66,32 +67,32 @@ impl ASTParser for Expression {
             unreachable!()
         };
         match pairs.as_branch_tag() {
-            Some("Priority") => Self::try_named_one(&mut map, "expr", errors),
+            Some("Priority") => Self::named_one(&mut map, "expr", errors),
             Some("Concat") => {
-                let base = ASTParser::try_named_one(&mut map, "base", errors)?;
+                let base = ASTParser::named_one(&mut map, "base", errors)?;
                 let rest = ASTParser::named_many(&mut map, "rest", errors);
                 let resolver = ExpressionResolver { base: Expression::Data(Box::new(base)), rest };
                 Ok(Self::Concat(Box::new(resolver.dyn_associative())))
             }
             Some("Mark") => {
-                let lhs = ASTParser::try_named_one(&mut map, "lhs", errors)?;
+                let lhs = ASTParser::named_one(&mut map, "lhs", errors)?;
                 let ty = ASTParser::named_some(&mut map, "ty", errors);
-                let rhs = ASTParser::try_named_one(&mut map, "rhs", errors)?;
-                Ok(Self::Mark(Box::new(MarkExpression { lhs, ty, rhs, position })))
+                let rhs = ASTParser::named_one(&mut map, "rhs", errors)?;
+                Ok(Self::Mark(Box::new(MarkExpression { lhs, ty, rhs, range: position })))
             }
             Some("Choice") => {
-                let lhs = ASTParser::try_named_one(&mut map, "lhs", errors)?;
+                let lhs = ASTParser::named_one(&mut map, "lhs", errors)?;
                 let lhs_tag = ASTParser::named_some(&mut map, "lhs_tag", errors);
                 let lhs_ty = ASTParser::named_some(&mut map, "lhs_ty", errors);
-                let rhs = ASTParser::try_named_one(&mut map, "rhs", errors)?;
+                let rhs = ASTParser::named_one(&mut map, "rhs", errors)?;
                 let rhs_tag = ASTParser::named_some(&mut map, "rhs_tag", errors);
                 let rhs_ty = ASTParser::named_some(&mut map, "rhs_ty", errors);
-                Ok(Self::Choice(Box::new(ChoiceExpression { lhs, lhs_tag, lhs_ty, rhs, rhs_tag, rhs_ty, position })))
+                Ok(Self::Choice(Box::new(ChoiceExpression { lhs, lhs_tag, lhs_ty, rhs, rhs_tag, rhs_ty, range: position })))
             }
             Some("Suffix") => {
                 unimplemented!("{:#?}", map);
             }
-            Some("Data") => Ok(Self::Data(Box::new(ASTParser::try_named_one(&mut map, "data", errors)?))),
+            Some("Data") => Ok(Self::Data(Box::new(ASTParser::named_one(&mut map, "data", errors)?))),
             Some(s) => {
                 unreachable!("Some({:#?})=>{{}}", s);
             }
@@ -101,20 +102,20 @@ impl ASTParser for Expression {
 }
 
 impl ASTParser for ConcatExpressionRest {
-    fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
         let mut map = collect_tag_map(&pairs);
-        let expr = ASTParser::try_named_one(&mut map, "expr", errors)?;
+        let expr = ASTParser::named_one(&mut map, "expr", errors)?;
         Ok(Self { expr, position })
     }
 }
 
 impl ASTParser for Data {
-    fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let mut map = collect_tag_map(&pairs);
         match pairs.as_branch_tag() {
-            Some("SymbolPath") => Ok(Self::SymbolPath(Box::new(ASTParser::try_named_one(&mut map, "symbol_path", errors)?))),
-            Some("Integer") => Ok(Self::Integer(Box::new(ASTParser::try_named_one(&mut map, "integer", errors)?))),
+            Some("SymbolPath") => Ok(Self::SymbolPath(Box::new(ASTParser::named_one(&mut map, "symbol_path", errors)?))),
+            Some("Integer") => Ok(Self::Integer(Box::new(ASTParser::named_one(&mut map, "integer", errors)?))),
             Some(s) => {
                 unreachable!("{:#?}", s);
             }
@@ -124,43 +125,38 @@ impl ASTParser for Data {
 }
 
 impl ASTParser for Integer {
-    fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
-        let data = ASTParser::parse_pair(pairs, errors)?;
-        Ok(Self { data, position })
+        let data = ASTParser::parse(pairs, errors)?;
+        Ok(Self { data, range: position })
     }
 }
 
 impl ASTParser for SymbolPath {
-    fn parse_pair(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
+    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
         let mut map = collect_tag_map(&pairs);
         let data = ASTParser::named_many(&mut map, "symbol", errors);
-        Ok(SymbolPath { symbol: data, position })
+        Ok(Self { symbol: data, range: position })
     }
 }
 
 impl ASTParser for Symbol {
-    fn parse_pair(pairs: Pair<Rule>, _: &mut Vec<Error>) -> Result<Self> {
+    fn parse(pairs: Pair<Rule>, _: &mut Vec<Error>) -> Result<Self> {
         let position = get_position(&pairs);
         let data = pairs.as_str().to_string();
-        Ok(Self { data, position })
+        Ok(Self { data, range: position })
     }
 }
 
-///---------------------------------------------------------------------------------------------------
-
-impl ASTParser for isize {
-    fn parse_pair(pairs: Pair<Rule>, _: &mut Vec<Error>) -> Result<Self> {
-        Ok(pairs.as_str().parse::<isize>()?)
+impl ASTNode<Pair<Rule>> for Symbol {
+    fn parse(pairs: Pair<Rule>, error: &mut Vec<Error>) -> Result<Self> {
+        let position = get_position(&pairs);
+        let data = ASTNode::one(pairs, error)?;
+        Ok(Self { data, range: position })
     }
 }
 
-impl ASTParser for String {
-    fn parse_pair(pairs: Pair<Rule>, _: &mut Vec<Error>) -> Result<Self> {
-        Ok(pairs.as_str().to_string())
-    }
-}
 
 #[test]
 fn test1() {

@@ -59,7 +59,7 @@ impl Translator for Program {
                         }
                     }
                 }
-                Statement::FragmentStatement(s) => {
+                Statement::Fragment(s) => {
                     if !is_top_area {
                         diag.push(top_area_error("Fragment", "Fragment statement must be declared at the top", s.range))
                     }
@@ -85,7 +85,7 @@ impl Translator for Program {
                         }
                     }
                 }
-                Statement::IgnoreStatement(s) => {
+                Statement::Ignore(s) => {
                     if !is_top_area {
                         diag.push(top_area_error("Ignore", "Ignore statement must be declared at the top", s.range))
                     }
@@ -102,7 +102,7 @@ impl Translator for Program {
                         ignores = s.rules;
                     }
                 }
-                Statement::AssignStatement(s) => {
+                Statement::Assign(s) => {
                     is_top_area = false;
                     let mut rule = Rule::from(*s);
                     swap(&mut rule.doc, &mut doc_buffer);
@@ -123,7 +123,7 @@ impl Translator for Program {
             }
         }
 
-        let name = Identifier {
+        let name = Symbol {
             data: match name {
                 Some(s) => s,
                 None => {
@@ -145,10 +145,10 @@ impl Translator for Program {
 impl From<AssignStatement> for Rule {
     fn from(s: AssignStatement) -> Self {
         let name = &s.id.data;
-        let mut ty = Identifier { data: name.to_case(Case::UpperCamel), range: s.id.range };
+        let mut ty = Symbol { data: name.to_case(Case::UpperCamel), range: s.id.range };
         let force_inline = name.starts_with("_");
         // if !force_inline {
-        //     ty = Some(Identifier { data: name.to_case(Case::UpperCamel), range: s.id.range })
+        //     ty = Some(Symbol { data: name.to_case(Case::UpperCamel), range: s.id.range })
         // }
         let mut try_inline_token = false;
         let mut eliminate_unmarked = false;

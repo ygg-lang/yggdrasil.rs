@@ -1,6 +1,4 @@
 use super::*;
-use pest::RuleType;
-use std::fmt::{Debug, Formatter};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct OffsetRange {
@@ -9,8 +7,8 @@ pub struct OffsetRange {
 }
 
 impl<R> PositionSystem<R> for OffsetRange
-where
-    R: RuleType,
+    where
+        R: RuleType,
 {
     fn from(pair: &Pair<R>) -> Self {
         let s = pair.as_span();

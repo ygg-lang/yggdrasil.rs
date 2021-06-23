@@ -24,6 +24,8 @@ xxhash-rust = { version = "0.8", features = ["xxh3"] }
 rkyv = "0.7"
 toml = "0.5"
 dashmap = "4.0"
+thiserror = "1.0"
+anyhow = "1.0"
 
 # same as tower-lsp = "0.14"
 lsp-types = { version = "0.89", features = ["proposed"], optional = true }

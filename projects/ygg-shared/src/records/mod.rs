@@ -1,6 +1,3 @@
-pub use position::Position;
-pub use span::{Lines, Span};
+mod position_system;
 
-mod position;
-mod span;
-
+pub use self::position_system::{join_position,get_position,OffsetRange,PositionSystem};

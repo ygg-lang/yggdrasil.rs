@@ -18,14 +18,14 @@ pub type Set<V> = indexmap::IndexSet<V>;
 pub struct ExpressionNode {
     pub inline_token: bool,
     pub tag: Option<ExpressionTag>,
-    pub ty: Option<Identifier>,
-    pub field: Option<Identifier>,
+    pub ty: Option<Symbol>,
+    pub field: Option<Symbol>,
     pub node: RefinedExpression,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct ExpressionTag {
-    pub tag: Identifier,
+    pub tag: Symbol,
     pub mode: String,
 }
 
@@ -69,7 +69,7 @@ pub enum Operator {
 
 #[derive(Clone)]
 pub enum RefinedData {
-    Identifier(Identifier),
+    Symbol(Symbol),
     String(String),
     Regex(String),
     Integer(usize),

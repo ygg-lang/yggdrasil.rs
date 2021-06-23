@@ -38,10 +38,10 @@ impl ExpressionNode {
 }
 
 impl ExpressionTag {
-    pub fn new(tag: Identifier, mode: Option<String>) -> Self {
+    pub fn new(tag: Symbol, mode: Option<String>) -> Self {
         Self { tag, mode: mode.unwrap_or_default() }
     }
-    pub fn new_optional(tag: Option<Identifier>, mode: Option<String>) -> Option<Self> {
+    pub fn new_optional(tag: Option<Symbol>, mode: Option<String>) -> Option<Self> {
         match tag {
             Some(s) => Some(Self::new(s, mode)),
             None => None,
@@ -77,7 +77,7 @@ impl From<Data> for ExpressionNode {
 impl From<Data> for RefinedData {
     fn from(data: Data) -> Self {
         match data {
-            Data::Identifier(atom) => Self::Identifier(*atom),
+            Data::Symbol(atom) => Self::Symbol(*atom),
             Data::Integer(atom) => Self::Integer(atom.data),
             Data::String(atom) => Self::String(atom.data),
             Data::Regex => Self::Integer(0),
@@ -96,7 +96,7 @@ impl Eq for RefinedData {}
 impl PartialEq for RefinedData {
     fn eq(&self, other: &RefinedData) -> bool {
         match (self, other) {
-            (Self::Identifier(lhs), Self::Identifier(rhs)) => lhs == rhs,
+            (Self::Symbol(lhs), Self::Symbol(rhs)) => lhs == rhs,
             (Self::String(lhs), Self::String(rhs)) => lhs == rhs,
             (Self::Integer(lhs), Self::Integer(rhs)) => lhs == rhs,
             (Self::String(lhs), Self::Integer(rhs)) | (Self::Integer(rhs), Self::String(lhs)) => rhs.to_string().eq(lhs),
@@ -109,7 +109,7 @@ impl PartialEq for RefinedData {
 impl Hash for RefinedData {
     fn hash<H: Hasher>(&self, state: &mut H) -> () {
         match self {
-            RefinedData::Identifier(e) => e.hash(state),
+            RefinedData::Symbol(e) => e.hash(state),
             RefinedData::String(e) => e.hash(state),
             RefinedData::Regex(e) => e.hash(state),
             RefinedData::Integer(e) => e.to_string().hash(state),
