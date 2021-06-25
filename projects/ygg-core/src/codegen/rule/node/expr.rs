@@ -63,7 +63,7 @@ impl From<Expression> for ExpressionNode {
 }
 
 impl From<MarkExpression> for ExpressionNode {
-    fn from(e: FieldExpression) -> Self {
+    fn from(e: MarkExpression) -> Self {
         Self { inline_token: false, tag: None, ty: None, field: Some(e.lhs), node: Self::from(e.rhs).node }
     }
 }

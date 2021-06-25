@@ -1,6 +1,10 @@
 mod offset;
+#[cfg(feature = "lsp")]
+mod lsp_range;
 
 pub use self::offset::OffsetRange;
+#[cfg(feature = "lsp")]
+pub use lsp_types::Range as LSPRange;
 
 use std::fmt::{Debug, Formatter};
 use crate::traits::{CSTNode, PositionSystem};

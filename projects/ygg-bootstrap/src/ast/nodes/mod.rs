@@ -1,4 +1,4 @@
-use yggdrasil_shared::records::OffsetRange;
+
 use super::*;
 
 mod nodes_custom;
@@ -9,7 +9,7 @@ mod nodes_custom;
 #[derive(Clone)]
 pub struct Program {
     pub statement: Vec<Statement>,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone)]
@@ -25,13 +25,13 @@ pub enum Statement {
 pub struct GrammarStatement {
     pub id: Symbol,
     pub ext: Vec<StringLiteral>,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
 pub struct FragmentStatement {
     pub id: Symbol,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
@@ -39,13 +39,13 @@ pub struct AssignStatement {
     pub id: Symbol,
     pub eq: String,
     pub rhs: Expression,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
 pub struct IgnoreStatement {
     pub rules: Vec<Symbol>,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone)]
@@ -63,14 +63,14 @@ pub enum Expression {
 pub struct ConcatExpression {
     pub base: Expression,
     pub rest: Vec<Expression>,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
 pub struct ChoiceExpression {
     pub lhs: ChoiceTag,
     pub rhs: ChoiceTag,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 
@@ -80,7 +80,7 @@ pub struct ChoiceTag {
     pub tag: Option<Symbol>,
     pub mode: Option<String>,
     pub ty: Option<Symbol>,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
@@ -88,21 +88,21 @@ pub struct MarkExpression {
     pub lhs: Symbol,
     pub ty: Option<SymbolPath>,
     pub rhs: Expression,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
 pub struct UnarySuffix {
     pub suffix: String,
     pub base: Expression,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
 pub struct UnaryPrefix {
     pub prefix: String,
     pub base: Expression,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone)]
@@ -117,35 +117,35 @@ pub enum Data {
 #[derive(Clone, Debug)]
 pub struct SymbolPath {
     pub symbol: Vec<Symbol>,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
 pub struct Symbol {
     pub data: String,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
 pub struct Integer {
     pub data: isize,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
 pub struct StringLiteral {
     pub data: String,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
 pub struct Eos {
     pub data: bool,
-    pub range: OffsetRange,
+    pub range: Range,
 }
 
 #[derive(Clone, Debug)]
 pub struct CommentDocument {
     pub doc: String,
-    pub range: OffsetRange,
+    pub range: Range,
 }
