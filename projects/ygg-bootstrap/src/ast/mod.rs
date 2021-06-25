@@ -1,8 +1,9 @@
 mod nodes;
-mod parse;
 
-use crate::cst::CSTBuilder;
-use crate::cst::Rule;
+// mod parse;
+
+// use crate::cst::CSTBuilder;
+// use crate::cst::Rule;
 use yggdrasil_shared::{Error, Result};
 use pest::iterators::Pair;
 use pest::Parser;
@@ -23,7 +24,7 @@ impl Default for ASTBuilder {
         Self { errors: vec![] }
     }
 }
-
+/*
 impl ASTBuilder {
     /// parse_program
     pub fn parse_program(&mut self, input: &str) -> Result<Program> {
@@ -34,3 +35,4 @@ impl ASTBuilder {
         Ok(program)
     }
 }
+*/

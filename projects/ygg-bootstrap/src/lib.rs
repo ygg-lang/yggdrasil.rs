@@ -1,5 +1,5 @@
 pub mod ast;
-pub mod cst;
-mod errors;
+// pub mod cst;
 
-pub use errors::{Error, Result};
+
+pub use yggdrasil_shared::{Result,Error};

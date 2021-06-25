@@ -94,7 +94,7 @@ impl GrammarState {
             children,
         }
     }
-    fn ignore_item(&self, id: &Identifier) -> DocumentSymbol {
+    fn ignore_item(&self, id: &Symbol) -> DocumentSymbol {
         match self.get(&id.data) {
             Some(s) => {
                 let mut s = s.symbol_item();

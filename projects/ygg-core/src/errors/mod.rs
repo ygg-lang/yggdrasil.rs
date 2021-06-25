@@ -11,10 +11,10 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
     IOError { #[from] source: std::io::Error },
     FormatError { #[from] source: std::fmt::Error },
-    PestError { #[from] source: pest::error::Error<crate::cst::Rule> },
-    AstError { error: String },
+    ParsingError { error: String },
     LanguageError { error: String },
     NodeMissing { error: String },
+    NodeTagMissing { error: String },
     InfoMissing { error: String },
     /// Some nodes failed to resolve and are being rolled back
     Unwinding,
@@ -28,6 +28,14 @@ impl Error {
     pub fn node_missing(msg: impl Into<String>) -> Error {
         Self::NodeMissing { error: msg.into() }
     }
+    pub fn node_tag_missing(msg: impl Into<String>) -> Error {
+        Self::NodeTagMissing { error: msg.into() }
+    }
+    pub fn language_error(msg: impl Into<String>) -> Error {
+        Self::LanguageError { error: msg.into() }
+    }
+
+
 }
 
 impl Display for Error {

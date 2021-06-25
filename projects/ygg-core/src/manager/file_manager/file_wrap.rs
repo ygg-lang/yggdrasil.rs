@@ -38,7 +38,7 @@ impl FileType {
                 HINT_MANAGER.set(url, hints);
                 Ok(grammar)
             }
-            _ => Err(YGGError::language_error("Not a grammar file")),
+            _ => Err(Error::language_error("Not a grammar file")),
         }
     }
 }

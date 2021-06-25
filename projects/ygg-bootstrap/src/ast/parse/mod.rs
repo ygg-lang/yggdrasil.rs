@@ -166,7 +166,7 @@ fn test() {
 
 //region utility functions
 
-fn collect_tag_map<'a>(pairs:  Pair<'a, Rule>) -> HashMap<String, Vec<Pair<'a, Rule>>> {
+fn collect_tag_map<'a>(pairs:  &'a Pair<Rule>) -> HashMap<String, Vec<Pair<'a, Rule>>> {
     let mut out: HashMap<String, Vec<Pair<Rule>>> = HashMap::new();
     for pair in pairs.clone().into_inner() {
         if let Some(s) = pair.as_node_tag() {

@@ -1,5 +1,5 @@
 pub use self::item::HintItems;
-use crate::{Result, YGGError, FILE_MANAGER};
+use crate::{Result, Error, FILE_MANAGER};
 use dashmap::{
     mapref::one::{Ref, RefMut},
     DashMap,
@@ -42,7 +42,7 @@ impl HintManager {
     }
     pub async fn update(&self, url: &Url) -> Result<HintRef<'_>> {
         FILE_MANAGER.parse_file(&url).await?;
-        HINT_MANAGER.hint_store.get(url).ok_or(YGGError::Unreachable)
+        HINT_MANAGER.hint_store.get(url).ok_or(Error::Unreachable)
 
         // if let Some(s) = FILE_MANAGER.parse_file(&url).await? {
         //     self.hint_store.insert(url.to_owned(), s);

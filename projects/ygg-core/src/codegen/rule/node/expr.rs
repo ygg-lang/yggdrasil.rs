@@ -55,14 +55,14 @@ impl From<Expression> for ExpressionNode {
             Expression::Data(e) => Self::from(*e),
             Expression::UnarySuffix(e) => Self::from(*e),
             Expression::UnaryPrefix(e) => Self::from(*e),
-            Expression::ConcatExpression(e) => Self::from(*e),
-            Expression::ChoiceExpression(e) => Self::from(*e),
-            Expression::FieldExpression(e) => Self::from(*e),
+            Expression::Concat(e) => Self::from(*e),
+            Expression::Choice(e) => Self::from(*e),
+            Expression::Mark(e) => Self::from(*e),
         }
     }
 }
 
-impl From<FieldExpression> for ExpressionNode {
+impl From<MarkExpression> for ExpressionNode {
     fn from(e: FieldExpression) -> Self {
         Self { inline_token: false, tag: None, ty: None, field: Some(e.lhs), node: Self::from(e.rhs).node }
     }

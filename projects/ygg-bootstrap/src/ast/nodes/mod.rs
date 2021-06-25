@@ -1,9 +1,10 @@
+use yggdrasil_shared::records::OffsetRange;
 use super::*;
 
 mod nodes_custom;
-mod nodes_resolver;
+// mod nodes_resolver;
 
-pub use self::nodes_resolver::*;
+// pub use self::nodes_resolver::*;
 
 #[derive(Clone)]
 pub struct Program {
@@ -67,12 +68,8 @@ pub struct ConcatExpression {
 
 #[derive(Clone, Debug)]
 pub struct ChoiceExpression {
-    pub lhs: Expression,
-    pub lhs_tag: Option<Symbol>,
-    pub lhs_ty: Option<SymbolPath>,
-    pub rhs: Expression,
-    pub rhs_tag: Option<Symbol>,
-    pub rhs_ty: Option<SymbolPath>,
+    pub lhs: ChoiceTag,
+    pub rhs: ChoiceTag,
     pub range: OffsetRange,
 }
 

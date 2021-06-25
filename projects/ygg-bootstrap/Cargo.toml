@@ -10,7 +10,7 @@ edition = "2018"
 
 
 [dependencies]
-pest = { version = "2.1", git = "https://github.com/oovm/pest" }
+pest = { version = "2.1"}
 yggdrasil-shared = { version = "0.1", path = "../ygg-shared" }
 
 

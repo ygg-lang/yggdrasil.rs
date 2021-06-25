@@ -54,7 +54,7 @@ impl FileManager {
         let file = match url.to_file_path()?.extension().and_then(|e| e.to_str()) {
             Some("toml") => Ok(FileStore::new_type(new.fingerprint, text)),
             Some("ygg") | Some("yg") => Ok(FileStore::new_grammar(new.fingerprint, text)),
-            _ => Err(YGGError::language_error("Unsupported file extension")),
+            _ => Err(Error::language_error("Unsupported file extension")),
         }?;
         self.store.insert(url, file);
         Ok(())
@@ -83,11 +83,11 @@ impl FileManager {
                 self.parse_grammar(url).await?;
                 Ok(())
             }
-            _ => Err(YGGError::language_error("Unsupported file extension")),
+            _ => Err(Error::language_error("Unsupported file extension")),
         }?;
         match self.get_file(url) {
             Some(s) => Ok(s),
-            None => Err(YGGError::Unreachable),
+            None => Err(Error::Unreachable),
         }
     }
 
@@ -99,7 +99,7 @@ impl FileManager {
         self.update_url(url.to_owned())?;
         self.store
             .get_mut(url)
-            .ok_or(YGGError::language_error("Grammar not found"))?
+            .ok_or(Error::language_error("Grammar not found"))?
             .value_mut()
             .parse_ygg(url.to_owned())
             .await
