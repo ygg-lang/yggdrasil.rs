@@ -1,0 +1,116 @@
+Node {
+    rule: program,
+    start: 0,
+    end: 11,
+    children: [
+        Node {
+            rule: statement,
+            start: 0,
+            end: 11,
+            children: [
+                Node {
+                    rule: assign_statement,
+                    start: 0,
+                    end: 11,
+                    children: [
+                        Node {
+                            rule: symbol,
+                            start: 0,
+                            end: 1,
+                            children: [
+                                Node {
+                                    rule: XID_IDENTIFIER,
+                                    start: 0,
+                                    end: 1,
+                                    children: [],
+                                    alternative: None,
+                                },
+                            ],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: assign_kind,
+                            start: 2,
+                            end: 3,
+                            children: [],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: expr,
+                            start: 6,
+                            end: 11,
+                            children: [
+                                Node {
+                                    rule: expr,
+                                    start: 6,
+                                    end: 7,
+                                    children: [
+                                        Node {
+                                            rule: data,
+                                            start: 6,
+                                            end: 7,
+                                            children: [
+                                                Node {
+                                                    rule: integer,
+                                                    start: 6,
+                                                    end: 7,
+                                                    children: [],
+                                                    alternative: Some(
+                                                        1,
+                                                    ),
+                                                },
+                                            ],
+                                            alternative: Some(
+                                                4,
+                                            ),
+                                        },
+                                    ],
+                                    alternative: Some(
+                                        7,
+                                    ),
+                                },
+                                Node {
+                                    rule: expr,
+                                    start: 10,
+                                    end: 11,
+                                    children: [
+                                        Node {
+                                            rule: data,
+                                            start: 10,
+                                            end: 11,
+                                            children: [
+                                                Node {
+                                                    rule: integer,
+                                                    start: 10,
+                                                    end: 11,
+                                                    children: [],
+                                                    alternative: Some(
+                                                        1,
+                                                    ),
+                                                },
+                                            ],
+                                            alternative: Some(
+                                                4,
+                                            ),
+                                        },
+                                    ],
+                                    alternative: Some(
+                                        7,
+                                    ),
+                                },
+                            ],
+                            alternative: Some(
+                                3,
+                            ),
+                        },
+                    ],
+                    alternative: None,
+                },
+            ],
+            alternative: Some(
+                5,
+            ),
+        },
+    ],
+    alternative: None,
+}

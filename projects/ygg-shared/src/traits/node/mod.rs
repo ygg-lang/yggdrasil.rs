@@ -19,7 +19,7 @@ pub trait CSTNode where Self: Sized {
     /// Get the tag of the current branch
     fn get_branch_tag(&self) -> Option<&'static str>;
     /// Find node tags in all of the children
-    /// Then collect then into the vec, and store in hashmap with tag name
+    /// Then collect them into a vec, and store in hashmap with the tag name
     fn get_tag_map(&self) -> HashMap<String, Vec<Self>>;
 }
 

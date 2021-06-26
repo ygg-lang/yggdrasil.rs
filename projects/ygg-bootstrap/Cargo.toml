@@ -11,6 +11,9 @@ edition = "2018"
 
 [dependencies]
 pest = { version = "2.1"}
+lrpeg = { version = "0.4", git = "https://github.com/seanyoung/lrpeg" }
+regex = "*"
+unicode-xid = "*"
 
 [dependencies.yggdrasil-shared]
 version = "0.1"
@@ -21,6 +24,9 @@ features = ["lsp"]
 [dev-dependencies]
 pest_generator = "2.1"
 quote = "1.0"
+
+[build-dependencies]
+lrpeg = { version = "0.4", git = "https://github.com/seanyoung/lrpeg" }
 
 [features]
 default = ["no-unnamed", "no-ignored"]
