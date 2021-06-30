@@ -15,7 +15,7 @@ eos  <- ";";
 
 
 grammar_statement  <-
-    grammar IGNORE symbol IGNORE "{" IGNORE (string IGNORE ("," IGNORE string IGNORE)* IGNORE ","?)? IGNORE "}"
+    grammar IGNORE symbol IGNORE "{" IGNORE (string IGNORE ("," IGNORE string)* IGNORE ","?)? IGNORE "}"
   / grammar IGNORE symbol IGNORE string?
 ;
 grammar  <- "grammar!";
@@ -25,13 +25,12 @@ fragment <- "fragment!";
 
 
 import_statement  <-
-    import IGNORE string
-  / import IGNORE string IGNORE "{" IGNORE (symbol_alias IGNORE ("," IGNORE symbol_alias)* IGNORE ","?)? IGNORE "}"
+    import IGNORE string IGNORE "{" IGNORE (symbol_alias IGNORE ("," IGNORE symbol_alias)* IGNORE ","?)? IGNORE "}"
+  / import IGNORE string
 ;
 import  <- "import!";
 
-symbol_alias <- symbol IGNORE "as" IGNORE symbol;
-
+symbol_alias <- (symbol IGNORE "as" IGNORE)? symbol;
 
 ignore_statement  <-
     ignore IGNORE symbol
@@ -47,7 +46,7 @@ assign_kind  <- ("^"/"_"/"@")*  "=";
 expr  <- expr0;
 expr0 <- symbol IGNORE mark_type? IGNORE "<-" IGNORE expr1
     / expr1;
-expr1 <- choice_expr IGNORE ("|"/"/") IGNORE expr1 IGNORE choice_expr
+expr1 <- choice_expr IGNORE ("|"/"/") IGNORE choice_expr
     / expr2;
 expr2 <- expr2 IGNORE "~" IGNORE expr3
     / expr3;
@@ -60,8 +59,8 @@ expr5 <- prefix IGNORE expr5
 expr6 <- "(" IGNORE "/"? IGNORE expr IGNORE ")"
     / data;
 
-choice_expr  <- expr1 IGNORE(mark_branch IGNORE mark_type?)?;
-mark_branch  <- ("^"/ "!")? IGNORE "#" IGNORE symbol;
+choice_expr  <- expr1 IGNORE (mark_branch IGNORE mark_type?)?;
+mark_branch  <- ("^"/"!"/"<"/">")? "#" symbol;
 mark_type  <- ":" IGNORE symbol;
 prefix  <- "!" / "&" / "^" / "*" / "%";
 suffix  <- "?" / "+" / "-"/ "*";

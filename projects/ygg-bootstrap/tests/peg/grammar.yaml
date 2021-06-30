@@ -1,7 +1,7 @@
 Node {
     rule: program,
     start: 0,
-    end: 78,
+    end: 96,
     children: [
         Node {
             rule: statement,
@@ -201,6 +201,53 @@ Node {
             ],
             alternative: Some(
                 1,
+            ),
+        },
+        Node {
+            rule: statement,
+            start: 78,
+            end: 95,
+            children: [
+                Node {
+                    rule: fragment_statement,
+                    start: 78,
+                    end: 94,
+                    children: [
+                        Node {
+                            rule: fragment,
+                            start: 78,
+                            end: 87,
+                            children: [],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: symbol,
+                            start: 88,
+                            end: 94,
+                            children: [
+                                Node {
+                                    rule: XID_IDENTIFIER,
+                                    start: 88,
+                                    end: 94,
+                                    children: [],
+                                    alternative: None,
+                                },
+                            ],
+                            alternative: None,
+                        },
+                    ],
+                    alternative: None,
+                },
+                Node {
+                    rule: eos,
+                    start: 94,
+                    end: 95,
+                    children: [],
+                    alternative: None,
+                },
+            ],
+            alternative: Some(
+                2,
             ),
         },
     ],

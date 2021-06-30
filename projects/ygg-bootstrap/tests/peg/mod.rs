@@ -13,6 +13,7 @@ grammar! ygg
 grammar! ygg "*.ygg";
 grammar! ygg { }
 grammar! ygg {"*.ygg",};
+fragment! ygg_ex;
 "#;
     peg_assert(input, include_str!("grammar.yaml"))
 }
@@ -26,18 +27,24 @@ ignore! {a, b, c};
     peg_assert(input, include_str!("ignore.yaml"))
 }
 
-#[test]
-fn assign() {
-    peg_assert("x = | 1 ~ 2 | 3", include_str!("assign.yaml"))
-}
-// a | b ~ c | d <- e
 
 
 #[test]
 fn import() {
     let input = r#"
 import! ">root/"
-import! ">root/" {a, b as c, d}
+import! "@root/" {a, b as c, d}
 "#;
     peg_assert(input, include_str!("import.yaml"))
 }
+
+#[test]
+fn assign() {
+    let input = r#"
+x = a
+x = | 1 ~ 2
+x = a <- 2
+"#;
+    peg_assert(input, include_str!("assign.yaml"))
+}
+// a | b ~ c | d <- e
