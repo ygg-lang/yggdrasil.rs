@@ -1,0 +1,208 @@
+Node {
+    rule: program,
+    start: 0,
+    end: 78,
+    children: [
+        Node {
+            rule: statement,
+            start: 1,
+            end: 14,
+            children: [
+                Node {
+                    rule: grammar_statement,
+                    start: 1,
+                    end: 14,
+                    children: [
+                        Node {
+                            rule: grammar,
+                            start: 1,
+                            end: 9,
+                            children: [],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: symbol,
+                            start: 10,
+                            end: 13,
+                            children: [
+                                Node {
+                                    rule: XID_IDENTIFIER,
+                                    start: 10,
+                                    end: 13,
+                                    children: [],
+                                    alternative: None,
+                                },
+                            ],
+                            alternative: None,
+                        },
+                    ],
+                    alternative: Some(
+                        1,
+                    ),
+                },
+            ],
+            alternative: Some(
+                1,
+            ),
+        },
+        Node {
+            rule: statement,
+            start: 14,
+            end: 35,
+            children: [
+                Node {
+                    rule: grammar_statement,
+                    start: 14,
+                    end: 34,
+                    children: [
+                        Node {
+                            rule: grammar,
+                            start: 14,
+                            end: 22,
+                            children: [],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: symbol,
+                            start: 23,
+                            end: 26,
+                            children: [
+                                Node {
+                                    rule: XID_IDENTIFIER,
+                                    start: 23,
+                                    end: 26,
+                                    children: [],
+                                    alternative: None,
+                                },
+                            ],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: string,
+                            start: 27,
+                            end: 34,
+                            children: [],
+                            alternative: Some(
+                                1,
+                            ),
+                        },
+                    ],
+                    alternative: Some(
+                        1,
+                    ),
+                },
+                Node {
+                    rule: eos,
+                    start: 34,
+                    end: 35,
+                    children: [],
+                    alternative: None,
+                },
+            ],
+            alternative: Some(
+                1,
+            ),
+        },
+        Node {
+            rule: statement,
+            start: 36,
+            end: 53,
+            children: [
+                Node {
+                    rule: grammar_statement,
+                    start: 36,
+                    end: 52,
+                    children: [
+                        Node {
+                            rule: grammar,
+                            start: 36,
+                            end: 44,
+                            children: [],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: symbol,
+                            start: 45,
+                            end: 48,
+                            children: [
+                                Node {
+                                    rule: XID_IDENTIFIER,
+                                    start: 45,
+                                    end: 48,
+                                    children: [],
+                                    alternative: None,
+                                },
+                            ],
+                            alternative: None,
+                        },
+                    ],
+                    alternative: Some(
+                        0,
+                    ),
+                },
+            ],
+            alternative: Some(
+                1,
+            ),
+        },
+        Node {
+            rule: statement,
+            start: 53,
+            end: 77,
+            children: [
+                Node {
+                    rule: grammar_statement,
+                    start: 53,
+                    end: 76,
+                    children: [
+                        Node {
+                            rule: grammar,
+                            start: 53,
+                            end: 61,
+                            children: [],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: symbol,
+                            start: 62,
+                            end: 65,
+                            children: [
+                                Node {
+                                    rule: XID_IDENTIFIER,
+                                    start: 62,
+                                    end: 65,
+                                    children: [],
+                                    alternative: None,
+                                },
+                            ],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: string,
+                            start: 67,
+                            end: 74,
+                            children: [],
+                            alternative: Some(
+                                1,
+                            ),
+                        },
+                    ],
+                    alternative: Some(
+                        0,
+                    ),
+                },
+                Node {
+                    rule: eos,
+                    start: 76,
+                    end: 77,
+                    children: [],
+                    alternative: None,
+                },
+            ],
+            alternative: Some(
+                1,
+            ),
+        },
+    ],
+    alternative: None,
+}

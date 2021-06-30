@@ -15,8 +15,8 @@ eos  <- ";";
 
 
 grammar_statement  <-
-    grammar IGNORE symbol IGNORE string?
-  / grammar IGNORE symbol IGNORE "{" IGNORE (string IGNORE ("," IGNORE string)* IGNORE ","?)? IGNORE "}"
+    grammar IGNORE symbol IGNORE "{" IGNORE (string IGNORE ("," IGNORE string IGNORE)* IGNORE ","?)? IGNORE "}"
+  / grammar IGNORE symbol IGNORE string?
 ;
 grammar  <- "grammar!";
 
@@ -109,8 +109,9 @@ symbol_path  <-
 symbol  <- XID_IDENTIFIER;
 
 
-IGNORE <-  WHITESPACE / NEWLINE / COMMENT;
+IGNORE <-  (SPACE / NEWLINE / COMMENT)?;
 
+SPACE <- re#[\s]+#;
 NEWLINE <- re#[\r\n]+#;
 
 COMMENT <- "//" re#[^\r\n]*#

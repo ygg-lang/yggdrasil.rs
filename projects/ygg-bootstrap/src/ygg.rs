@@ -39,6 +39,8 @@ pub fn flatten_rec(node: Node, buffer: &mut Vec<Node>) {
         //         _ => buffer.push(flatten(node))
         //     }
         // }
+        Rule::IGNORE|Rule::Terminal => {}
+        /*
         #[cfg(feature = "no-ignored")]
         Rule::IGNORE => {}
         #[cfg(not(feature = "no-ignored"))]
@@ -47,6 +49,7 @@ pub fn flatten_rec(node: Node, buffer: &mut Vec<Node>) {
         Rule::Terminal => {}
         #[cfg(not(feature = "no-unnamed"))]
         Rule::Terminal if node.start == node.end => {}
+        */
         _ => buffer.push(flatten(node)),
     }
 }
