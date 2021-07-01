@@ -1,0 +1,156 @@
+Node {
+    rule: program,
+    start: 0,
+    end: 23,
+    children: [
+        Node {
+            rule: statement,
+            start: 1,
+            end: 12,
+            children: [
+                Node {
+                    rule: assign_statement,
+                    start: 1,
+                    end: 12,
+                    children: [
+                        Node {
+                            rule: symbol,
+                            start: 1,
+                            end: 2,
+                            children: [
+                                Node {
+                                    rule: XID_IDENTIFIER,
+                                    start: 1,
+                                    end: 2,
+                                    children: [],
+                                    alternative: None,
+                                },
+                            ],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: assign_kind,
+                            start: 3,
+                            end: 4,
+                            children: [],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: expr,
+                            start: 5,
+                            end: 12,
+                            children: [
+                                Node {
+                                    rule: data,
+                                    start: 5,
+                                    end: 12,
+                                    children: [
+                                        Node {
+                                            rule: symbol_path,
+                                            start: 5,
+                                            end: 12,
+                                            children: [
+                                                Node {
+                                                    rule: symbol,
+                                                    start: 5,
+                                                    end: 11,
+                                                    children: [
+                                                        Node {
+                                                            rule: XID_IDENTIFIER,
+                                                            start: 5,
+                                                            end: 11,
+                                                            children: [],
+                                                            alternative: None,
+                                                        },
+                                                    ],
+                                                    alternative: None,
+                                                },
+                                            ],
+                                            alternative: None,
+                                        },
+                                    ],
+                                    alternative: Some(
+                                        3,
+                                    ),
+                                },
+                            ],
+                            alternative: None,
+                        },
+                    ],
+                    alternative: None,
+                },
+            ],
+            alternative: Some(
+                5,
+            ),
+        },
+        Node {
+            rule: statement,
+            start: 12,
+            end: 23,
+            children: [
+                Node {
+                    rule: assign_statement,
+                    start: 12,
+                    end: 21,
+                    children: [
+                        Node {
+                            rule: symbol,
+                            start: 12,
+                            end: 13,
+                            children: [
+                                Node {
+                                    rule: XID_IDENTIFIER,
+                                    start: 12,
+                                    end: 13,
+                                    children: [],
+                                    alternative: None,
+                                },
+                            ],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: assign_kind,
+                            start: 14,
+                            end: 15,
+                            children: [],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: expr,
+                            start: 16,
+                            end: 21,
+                            children: [
+                                Node {
+                                    rule: data,
+                                    start: 16,
+                                    end: 21,
+                                    children: [
+                                        Node {
+                                            rule: integer,
+                                            start: 16,
+                                            end: 21,
+                                            children: [],
+                                            alternative: Some(
+                                                1,
+                                            ),
+                                        },
+                                    ],
+                                    alternative: Some(
+                                        4,
+                                    ),
+                                },
+                            ],
+                            alternative: None,
+                        },
+                    ],
+                    alternative: None,
+                },
+            ],
+            alternative: Some(
+                5,
+            ),
+        },
+    ],
+    alternative: None,
+}

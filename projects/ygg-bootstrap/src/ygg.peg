@@ -46,15 +46,15 @@ assign_kind  <- ("^"/"_"/"@")*  "=";
 expr  <- expr0;
 expr0 <- symbol IGNORE mark_type? IGNORE "<-" IGNORE expr1
     / expr1;
-expr1 <- choice_expr IGNORE ("|"/"/") IGNORE choice_expr
+expr1 <- expr1 IGNORE (mark_branch IGNORE mark_type?)? IGNORE ("|"/"/") IGNORE choice_expr
     / expr2;
 expr2 <- expr2 IGNORE "~" IGNORE expr3
     / expr3;
-expr3 <- expr3 IGNORE slice
+expr3 <- expr3 slice
     / expr4;
-expr4 <- expr4 IGNORE suffix
+expr4 <- expr4 suffix
     / expr5;
-expr5 <- prefix IGNORE expr5
+expr5 <- prefix expr5
     / expr6;
 expr6 <- "(" IGNORE "/"? IGNORE expr IGNORE ")"
     / data;

@@ -39,12 +39,24 @@ import! "@root/" {a, b as c, d}
 }
 
 #[test]
+fn atom() {
+    let input = r#"
+x = symbol
+x = 12345
+x = "\"string"
+x = '"string"'
+"#;
+    peg_assert(input, include_str!("atom.yaml"))
+}
+
+
+#[test]
 fn assign() {
     let input = r#"
-x = a
-x = | 1 ~ 2
-x = a <- 2
+x = / 1 ~ 2 ~ 3
+x = a: T <- x
+x = a | b | c
+x = ^!field*?
 "#;
     peg_assert(input, include_str!("assign.yaml"))
 }
-// a | b ~ c | d <- e
