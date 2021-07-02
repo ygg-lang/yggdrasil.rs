@@ -55,7 +55,7 @@ expr3 <- expr3 slice
 expr4 <- expr4 suffix
     / expr5;
 expr5 <- prefix expr5
-    / expr6;
+    / expr6 (IGNORE expr6)?;
 expr6 <- "(" IGNORE "/"? IGNORE expr IGNORE ")"
     / data;
 
@@ -109,6 +109,6 @@ symbol  <- XID_IDENTIFIER;
 IGNORE <-  (SPACE / NEWLINE / COMMENT)?;
 
 SPACE <- re#[\s]+#;
-INDENT <- (" " / "\t")+;
+
 NEWLINE <- re#[\r\n]+#;
 COMMENT <- "//" re#[^\r\n]*#
