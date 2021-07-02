@@ -70,7 +70,7 @@ data   <- macro_call
   / list
   / symbol_path
   / integer
-  / special
+  / string
   ;
 
 list   <- "{" IGNORE (data IGNORE ("," IGNORE data)* IGNORE ","?)? IGNORE "}";
@@ -100,8 +100,6 @@ string  <-
 
 integer  <- "0" / re#[1-9]# ("_"? re#[0-9]#)*;
 
-special  <- "true"/"false"/"null";
-
 symbol_path  <-
     symbol IGNORE (("::"/".") IGNORE symbol)*
 ;
@@ -111,6 +109,6 @@ symbol  <- XID_IDENTIFIER;
 IGNORE <-  (SPACE / NEWLINE / COMMENT)?;
 
 SPACE <- re#[\s]+#;
+INDENT <- (" " / "\t")+;
 NEWLINE <- re#[\r\n]+#;
-
 COMMENT <- "//" re#[^\r\n]*#

@@ -60,3 +60,11 @@ x = ^!field*?
 "#;
     peg_assert(input, include_str!("assign.yaml"))
 }
+
+#[test]
+fn space() {
+    let input = r#"
+x = a b | c d
+"#;
+    peg_assert(input, include_str!("space.yaml"))
+}

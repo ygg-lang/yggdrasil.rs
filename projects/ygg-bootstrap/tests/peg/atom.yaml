@@ -1,7 +1,7 @@
 Node {
     rule: program,
     start: 0,
-    end: 23,
+    end: 52,
     children: [
         Node {
             rule: statement,
@@ -87,7 +87,7 @@ Node {
         Node {
             rule: statement,
             start: 12,
-            end: 23,
+            end: 22,
             children: [
                 Node {
                     rule: assign_statement,
@@ -138,6 +138,140 @@ Node {
                                     ],
                                     alternative: Some(
                                         4,
+                                    ),
+                                },
+                            ],
+                            alternative: None,
+                        },
+                    ],
+                    alternative: None,
+                },
+            ],
+            alternative: Some(
+                5,
+            ),
+        },
+        Node {
+            rule: statement,
+            start: 22,
+            end: 37,
+            children: [
+                Node {
+                    rule: assign_statement,
+                    start: 22,
+                    end: 36,
+                    children: [
+                        Node {
+                            rule: symbol,
+                            start: 22,
+                            end: 23,
+                            children: [
+                                Node {
+                                    rule: XID_IDENTIFIER,
+                                    start: 22,
+                                    end: 23,
+                                    children: [],
+                                    alternative: None,
+                                },
+                            ],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: assign_kind,
+                            start: 24,
+                            end: 25,
+                            children: [],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: expr,
+                            start: 26,
+                            end: 36,
+                            children: [
+                                Node {
+                                    rule: data,
+                                    start: 26,
+                                    end: 36,
+                                    children: [
+                                        Node {
+                                            rule: string,
+                                            start: 26,
+                                            end: 36,
+                                            children: [],
+                                            alternative: Some(
+                                                1,
+                                            ),
+                                        },
+                                    ],
+                                    alternative: Some(
+                                        5,
+                                    ),
+                                },
+                            ],
+                            alternative: None,
+                        },
+                    ],
+                    alternative: None,
+                },
+            ],
+            alternative: Some(
+                5,
+            ),
+        },
+        Node {
+            rule: statement,
+            start: 37,
+            end: 52,
+            children: [
+                Node {
+                    rule: assign_statement,
+                    start: 37,
+                    end: 51,
+                    children: [
+                        Node {
+                            rule: symbol,
+                            start: 37,
+                            end: 38,
+                            children: [
+                                Node {
+                                    rule: XID_IDENTIFIER,
+                                    start: 37,
+                                    end: 38,
+                                    children: [],
+                                    alternative: None,
+                                },
+                            ],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: assign_kind,
+                            start: 39,
+                            end: 40,
+                            children: [],
+                            alternative: None,
+                        },
+                        Node {
+                            rule: expr,
+                            start: 41,
+                            end: 51,
+                            children: [
+                                Node {
+                                    rule: data,
+                                    start: 41,
+                                    end: 51,
+                                    children: [
+                                        Node {
+                                            rule: string,
+                                            start: 41,
+                                            end: 51,
+                                            children: [],
+                                            alternative: Some(
+                                                0,
+                                            ),
+                                        },
+                                    ],
+                                    alternative: Some(
+                                        5,
                                     ),
                                 },
                             ],
