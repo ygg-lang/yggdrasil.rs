@@ -1,0 +1,114 @@
+program  <- IGNORE (statement IGNORE)* EOI;
+
+statement  <- empty_statement
+  / grammar_statement IGNORE eos?
+  / fragment_statement IGNORE eos?
+  / import_statement IGNORE eos?
+  / ignore_statement IGNORE eos?
+  / assign_statement IGNORE eos?
+  / macro_define IGNORE eos?
+;
+
+empty_statement <- eos;
+
+eos  <- ";";
+
+
+grammar_statement  <-
+    grammar IGNORE symbol IGNORE "{" IGNORE (string IGNORE ("," IGNORE string)* IGNORE ","?)? IGNORE "}"
+  / grammar IGNORE symbol IGNORE string?
+;
+grammar  <- "grammar!";
+
+fragment_statement <- fragment IGNORE symbol;
+fragment <- "fragment!";
+
+
+import_statement  <-
+    import IGNORE string IGNORE "{" IGNORE (symbol_alias IGNORE ("," IGNORE symbol_alias)* IGNORE ","?)? IGNORE "}"
+  / import IGNORE string
+;
+import  <- "import!";
+
+symbol_alias <- (symbol IGNORE "as" IGNORE)? symbol;
+
+ignore_statement  <-
+    ignore IGNORE symbol
+  / ignore IGNORE "{" IGNORE (symbol IGNORE ("," IGNORE symbol)* IGNORE ","?)? IGNORE "}"
+;
+ignore  <- "ignore!";
+
+
+
+assign_statement  <- symbol IGNORE assign_kind IGNORE ("|"/"/")? IGNORE expr;
+assign_kind  <- ("^"/"_"/"@")*  "=";
+
+expr  <- expr0;
+expr0 <- symbol IGNORE mark_type? IGNORE "<-" IGNORE expr1
+    / expr1;
+expr1 <- expr1 IGNORE (mark_branch IGNORE mark_type?)? IGNORE ("|"/"/") IGNORE choice_expr
+    / expr2;
+expr2 <- expr2 IGNORE "~" IGNORE expr3
+    / expr3;
+expr3 <- expr3 slice
+    / expr4;
+expr4 <- expr4 suffix
+    / expr5;
+expr5 <- prefix expr5
+    / expr6 (IGNORE expr6)?;
+expr6 <- "(" IGNORE "/"? IGNORE expr IGNORE ")"
+    / data;
+
+choice_expr  <- expr1 IGNORE (mark_branch IGNORE mark_type?)?;
+mark_branch  <- ("^"/"!"/"<"/">")? "#" symbol;
+mark_type  <- ":" IGNORE symbol;
+prefix  <- "!" / "&" / "^" / "*" / "%";
+suffix  <- "?" / "+" / "-"/ "*";
+
+data   <- macro_call
+  / regex_range
+  / list
+  / symbol_path
+  / integer
+  / string
+  ;
+
+list   <- "{" IGNORE (data IGNORE ("," IGNORE data)* IGNORE ","?)? IGNORE "}";
+slice  <- "{" IGNORE integer IGNORE "," IGNORE integer IGNORE  "}";
+
+regex_range  <- "[" IGNORE (!"]" IGNORE . / "\\" IGNORE .)* IGNORE "]";
+
+
+macro_call  <-
+    "@" symbol_path IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE")"
+;
+macro_kv  <-  symbol IGNORE " <-" IGNORE expr / expr;
+
+
+
+macro_define  <-
+    "macro!" IGNORE symbol IGNORE  "(" IGNORE(macro_arg IGNORE ("," IGNORE macro_arg)* IGNORE ","?)? IGNORE ")" IGNORE block
+;
+macro_arg  <- symbol IGNORE (":" IGNORE symbol)? IGNORE ("=" IGNORE expr)?;
+block  <- "{" IGNORE "return"? IGNORE expr IGNORE "}";
+
+
+string  <-
+    re#'([^\\']|\\.)*'#
+  / re#"([^\\"]|\\.)*"#
+;
+
+integer  <- "0" / re#[1-9]# ("_"? re#[0-9]#)*;
+
+symbol_path  <-
+    symbol IGNORE (("::"/".") IGNORE symbol)*
+;
+symbol  <- XID_IDENTIFIER;
+
+
+IGNORE <-  (SPACE / NEWLINE / COMMENT)?;
+
+SPACE <- re#[\s]+#;
+
+NEWLINE <- re#[\r\n]+#;
+COMMENT <- "//" re#[^\r\n]*#

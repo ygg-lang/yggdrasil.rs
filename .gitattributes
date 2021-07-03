@@ -1,3 +1,7 @@
 * text=auto eol=lf
 /src/** linguist-vendored
 /examples/* linguist-vendored
+
+*.g4 linguist-language=yggdrasil
+*.peg linguist-language=yggdrasil
+*.pest linguist-language=yggdrasil

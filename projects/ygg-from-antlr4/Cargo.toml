@@ -1,5 +1,5 @@
 [package]
-name = "ygg-from-pest"
+name = "ygg-from-antlr4"
 version = "0.1.0"
 authors = ["Aster <192607617@qq.com>"]
 description = "AWSL Window Structure Language"
@@ -9,9 +9,14 @@ license = "MPL-2.0"
 edition = "2018"
 
 [dependencies]
-pest_meta = "2.1"
+lrpeg = { version = "0.4", git = "https://github.com/seanyoung/lrpeg" }
+regex = "*"
+unicode-xid = "*"
 anyhow = "1.0"
 
 [dev-dependencies]
+
+[build-dependencies]
+lrpeg = { version = "0.4", git = "https://github.com/seanyoung/lrpeg" }
 
 [features]
