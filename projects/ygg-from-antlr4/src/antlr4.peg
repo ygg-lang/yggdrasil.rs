@@ -1,12 +1,11 @@
 program  <- IGNORE (statement IGNORE)* EOI;
 
 statement  <- empty_statement
-  / grammar_statement IGNORE eos?
+  / grammar_statement
+  / lexer_statement
   / fragment_statement IGNORE eos?
   / import_statement IGNORE eos?
-  / ignore_statement IGNORE eos?
   / assign_statement IGNORE eos?
-  / macro_define IGNORE eos?
 ;
 
 empty_statement <- eos;
@@ -14,11 +13,10 @@ empty_statement <- eos;
 eos  <- ";";
 
 
-grammar_statement  <-
-    grammar IGNORE symbol IGNORE "{" IGNORE (string IGNORE ("," IGNORE string)* IGNORE ","?)? IGNORE "}"
-  / grammar IGNORE symbol IGNORE string?
-;
-grammar  <- "grammar!";
+grammar_statement  <- grammar IGNORE symbol IGNORE eos;
+lexer_statement  <- grammar IGNORE symbol IGNORE eos;
+
+grammar <- "grammar";
 
 fragment_statement <- fragment IGNORE symbol;
 fragment <- "fragment!";
@@ -32,21 +30,12 @@ import  <- "import!";
 
 symbol_alias <- (symbol IGNORE "as" IGNORE)? symbol;
 
-ignore_statement  <-
-    ignore IGNORE symbol
-  / ignore IGNORE "{" IGNORE (symbol IGNORE ("," IGNORE symbol)* IGNORE ","?)? IGNORE "}"
-;
-ignore  <- "ignore!";
-
-
-
-assign_statement  <- symbol IGNORE assign_kind IGNORE ("|"/"/")? IGNORE expr;
-assign_kind  <- ("^"/"_"/"@")*  "=";
+assign_statement  <- symbol IGNORE ":" IGNORE ("|"/"/")? IGNORE expr;
 
 expr  <- expr0;
-expr0 <- symbol IGNORE mark_type? IGNORE "<-" IGNORE expr1
+expr0 <- symbol IGNORE mark_type? IGNORE "->" IGNORE channel
     / expr1;
-expr1 <- expr1 IGNORE (mark_branch IGNORE mark_type?)? IGNORE ("|"/"/") IGNORE choice_expr
+expr1 <- expr1 IGNORE mark_branch? IGNORE "|" IGNORE expr1 IGNORE mark_branch?
     / expr2;
 expr2 <- expr2 IGNORE "~" IGNORE expr3
     / expr3;
@@ -59,7 +48,8 @@ expr5 <- prefix expr5
 expr6 <- "(" IGNORE "/"? IGNORE expr IGNORE ")"
     / data;
 
-choice_expr  <- expr1 IGNORE (mark_branch IGNORE mark_type?)?;
+channel <- "skip";
+
 mark_branch  <- ("^"/"!"/"<"/">")? "#" symbol;
 mark_type  <- ":" IGNORE symbol;
 prefix  <- "!" / "&" / "^" / "*" / "%";
@@ -85,14 +75,6 @@ macro_call  <-
 macro_kv  <-  symbol IGNORE " <-" IGNORE expr / expr;
 
 
-
-macro_define  <-
-    "macro!" IGNORE symbol IGNORE  "(" IGNORE(macro_arg IGNORE ("," IGNORE macro_arg)* IGNORE ","?)? IGNORE ")" IGNORE block
-;
-macro_arg  <- symbol IGNORE (":" IGNORE symbol)? IGNORE ("=" IGNORE expr)?;
-block  <- "{" IGNORE "return"? IGNORE expr IGNORE "}";
-
-
 string  <-
     re#'([^\\']|\\.)*'#
   / re#"([^\\"]|\\.)*"#
@@ -106,9 +88,11 @@ symbol_path  <-
 symbol  <- XID_IDENTIFIER;
 
 
-IGNORE <-  (SPACE / NEWLINE / COMMENT)?;
+IGNORE <- (SKIP/SPACE / NEWLINE / COMMENT)?;
+
+SKIP <- skip_java;
+skip_java <- "{"  (skip_java / !"}" .)*  "}" ;
 
 SPACE <- re#[\s]+#;
-
 NEWLINE <- re#[\r\n]+#;
 COMMENT <- "//" re#[^\r\n]*#

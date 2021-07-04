@@ -1,87 +1,56 @@
-use std::fmt::{Debug, Formatter, Write};
-use pest_meta::ast::{Expr, Rule, RuleType};
-use pest_meta::{parser::{parse,self},};
+use std::env;
 
-pub trait FromPest {
-    fn build_ygg(&self, f: impl Write, soft: bool) -> std::fmt::Result {
-        let _ = soft;
-        let _ = f;
-        unimplemented!()
+include!(concat!(env!("OUT_DIR"), "/antlr4.rs"));
+
+pub use antlr4::{Node, Rule, PEG};
+
+pub fn flatten(node: Node) -> Node {
+    let mut buffer = vec![];
+    for node in node.children {
+        flatten_rec(node, &mut buffer)
+    }
+    Node {
+        rule: node.rule,
+        start: node.start,
+        end: node.end,
+        children: buffer,
+        alternative: node.alternative,
     }
 }
 
-pub fn convert_pest(input: &str) -> std::fmt::Result {
-    parse(parser::Rule )
+pub fn flatten_rec(node: Node, buffer: &mut Vec<Node>) {
+    match node.rule {
+        // flatten these nodes
+        Rule::Any | Rule::List => {
+            for node in node.children {
+                flatten_rec(node, buffer)
+            }
+        }
+        // not important
+        Rule::EOI => {}
+        Rule::expr0|Rule::expr1|Rule::expr2|Rule::expr3|Rule::expr4|Rule::expr5|Rule::expr6 => {
+            let len = node.children.len();
+            match len {
+                0 => {  },
+                1 => {
+                    let mut children = node.children;
+                    flatten_rec(children.remove(0), buffer)
+                },
+                _ => buffer.push(flatten(node))
+            }
+        }
+        Rule::IGNORE|Rule::Terminal => {}
+        /*
+        #[cfg(feature = "no-ignored")]
+        Rule::IGNORE => {}
+        #[cfg(not(feature = "no-ignored"))]
+        Rule::IGNORE if node.start == node.end => {}
+        #[cfg(feature = "no-unnamed")]
+        Rule::Terminal => {}
+        #[cfg(not(feature = "no-unnamed"))]
+        Rule::Terminal if node.start == node.end => {}
+        */
+        _ => buffer.push(flatten(node)),
+    }
 }
 
-
-//
-// impl FromPest for Rule {
-//     fn build_ygg(&self, f: impl Write, _: bool) -> std::fmt::Result {
-//         let mut soft_concat = false;
-//         let kind = match self.ty {
-//             RuleType::Normal => {
-//                 soft_concat = true;
-//                 ""
-//             }
-//             RuleType::Silent => {
-//                 soft_concat = true;
-//                 "_"
-//             }
-//             RuleType::Atomic => { "" }
-//             RuleType::CompoundAtomic => { "" }
-//             RuleType::NonAtomic => {
-//                 soft_concat = true;
-//                 ""
-//             }
-//         };
-//         write!(f, "{name} {kind}= ", name = self.name, kind = kind)?;
-//         FromPest::build_ygg(&self.expr, f, soft_concat);
-//         write!(f, ";")
-//     }
-// }
-//
-// impl FromPest for Expr {
-//     fn build_ygg(&self, f: impl Write, soft: bool) -> std::fmt::Result {
-//         match self {
-//             Expr::Str(s) => {
-//                 f.write_str(s)
-//             }
-//             Expr::Insens(s) => {
-//                 write!(f, "/{}/i", s)
-//             }
-//             Expr::Range(a, b) => {
-//                 write!(f, "[{}-{}]", a, b)
-//             }
-//             Expr::Ident(v) => {
-//                 f.write_str(v)
-//             }
-//             Expr::PeekSlice(a, b) => {write!(f, "unimplemented!")}
-//             Expr::PosPred(a) => {write!(f, "unimplemented!")}
-//             Expr::NegPred(a) => {write!(f, "unimplemented!")}
-//             Expr::Seq(a, b) => {
-//                 a.build_ygg(f, soft)?
-//             }
-//             Expr::Choice(a, b) => {write!(f, "unimplemented!")}
-//             Expr::Opt(a) => {write!(f, "unimplemented!")}
-//             Expr::Rep(a) => {write!(f, "unimplemented!")}
-//             Expr::RepOnce(a) => {write!(f, "unimplemented!")}
-//             Expr::RepExact(a, b) => {write!(f, "unimplemented!")}
-//             Expr::RepMin(a, b) => {write!(f, "unimplemented!")}
-//             Expr::RepMax(a, b) => {write!(f, "unimplemented!")}
-//             Expr::RepMinMax(e, a, b) => {
-//                 e.build_ygg(f,soft)?;
-//                 write!(f, "{{{},{}}}", a,b )
-//             }
-//             Expr::Skip(a) => {
-//                 write!(f, "unimplemented!")
-//             }
-//             Expr::Push(push) => {
-//                 write!(f, "@push(")?;
-//                 push.build_ygg(f, soft)?;
-//                 write!(f, ")")?
-//             }
-//         }
-//         Ok(())
-//     }
-// }
