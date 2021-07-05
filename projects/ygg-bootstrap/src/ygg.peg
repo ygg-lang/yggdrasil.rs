@@ -98,7 +98,7 @@ string  <-
   / re#"([^\\"]|\\.)*"#
 ;
 
-integer  <- "0" / re#[1-9]# ("_"? re#[0-9]#)*;
+integer  <- re#0|[1-9](_?[0-9])*#;
 
 symbol_path  <-
     symbol IGNORE (("::"/".") IGNORE symbol)*

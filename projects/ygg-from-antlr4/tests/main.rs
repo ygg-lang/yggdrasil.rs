@@ -7,14 +7,22 @@ fn ready() {
 }
 
 
-pub fn peg_assert(input: &str, target: &str) {
+pub fn peg_assert(input: &str) {
     let mut p = PEG::new();
     let out = flatten(p.parse(input).unwrap());
-    assert_eq!(format!("{:#?}", out), target)
+    println!("{:#?}", out)
 }
 
 #[test]
-fn grammar() {
-    let input = include_str!("csv.g4");
-    peg_assert(input, include_str!("csv.ygg"))
+fn csv() {
+    peg_assert(include_str!("CSV.g4"));
+}
+#[test]
+fn calc() {
+    peg_assert(include_str!("Calc.g4"));
+}
+
+#[test]
+fn rows() {
+    peg_assert(include_str!("Rows.g4"));
 }

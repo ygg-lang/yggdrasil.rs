@@ -3,6 +3,7 @@ program  <- IGNORE (statement IGNORE)* EOI;
 statement  <- empty_statement
   / grammar_statement
   / lexer_statement
+  / macro_call
   / fragment_statement IGNORE eos?
   / import_statement IGNORE eos?
   / assign_statement IGNORE eos?
@@ -33,26 +34,28 @@ symbol_alias <- (symbol IGNORE "as" IGNORE)? symbol;
 assign_statement  <- symbol IGNORE ":" IGNORE ("|"/"/")? IGNORE expr;
 
 expr  <- expr0;
-expr0 <- symbol IGNORE mark_type? IGNORE "->" IGNORE channel
+expr0 <- symbol IGNORE "->" IGNORE channel
     / expr1;
 expr1 <- expr1 IGNORE mark_branch? IGNORE "|" IGNORE expr1 IGNORE mark_branch?
     / expr2;
 expr2 <- expr2 IGNORE "~" IGNORE expr3
     / expr3;
-expr3 <- expr3 slice
-    / expr4;
-expr4 <- expr4 suffix
+expr3 <- expr4 (IGNORE expr4)*;
+expr4 <- expr4 (slice/suffix)
     / expr5;
 expr5 <- prefix expr5
     / expr6 (IGNORE expr6)?;
 expr6 <- "(" IGNORE "/"? IGNORE expr IGNORE ")"
     / data;
 
-channel <- "skip";
+channel <- "skip"
+    / "CHANEL"
+    / "popMode"
+    / "pushMode" "(" symbol ")"
+    ;
 
 mark_branch  <- ("^"/"!"/"<"/">")? "#" symbol;
-mark_type  <- ":" IGNORE symbol;
-prefix  <- "!" / "&" / "^" / "*" / "%";
+prefix  <- "~" / "&" / "^" / "*" / "%";
 suffix  <- "?" / "+" / "-"/ "*";
 
 data   <- macro_call
@@ -66,21 +69,16 @@ data   <- macro_call
 list   <- "{" IGNORE (data IGNORE ("," IGNORE data)* IGNORE ","?)? IGNORE "}";
 slice  <- "{" IGNORE integer IGNORE "," IGNORE integer IGNORE  "}";
 
-regex_range  <- "[" IGNORE (!"]" IGNORE . / "\\" IGNORE .)* IGNORE "]";
+regex_range  <- re#\[([^\\]]|\\.)*\]#;
 
-
-macro_call  <-
-    "@" symbol_path IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE")"
-;
-macro_kv  <-  symbol IGNORE " <-" IGNORE expr / expr;
-
+macro_call  <- "@" symbol_path;
 
 string  <-
     re#'([^\\']|\\.)*'#
   / re#"([^\\"]|\\.)*"#
 ;
 
-integer  <- "0" / re#[1-9]# ("_"? re#[0-9]#)*;
+integer  <- re#0|[1-9](_?[0-9])*#;
 
 symbol_path  <-
     symbol IGNORE (("::"/".") IGNORE symbol)*
@@ -88,11 +86,11 @@ symbol_path  <-
 symbol  <- XID_IDENTIFIER;
 
 
-IGNORE <- (SKIP/SPACE / NEWLINE / COMMENT)?;
+IGNORE <- (SKIP / SPACE / NEWLINE / COMMENT)?;
 
 SKIP <- skip_java;
 skip_java <- "{"  (skip_java / !"}" .)*  "}" ;
 
 SPACE <- re#[\s]+#;
 NEWLINE <- re#[\r\n]+#;
-COMMENT <- "//" re#[^\r\n]*#
+COMMENT <- re#//[^\r\n]*#

@@ -12,7 +12,6 @@ row : field (',' field)* '\r'? '\n';
 field
     : TEXT
     | STRING
-    |
     ;
 
 WS     : [ ]+ -> channel(HIDDEN);
