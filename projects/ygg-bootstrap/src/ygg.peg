@@ -1,12 +1,12 @@
 program  <- IGNORE (statement IGNORE)* EOI;
 
 statement  <- empty_statement
-  / grammar_statement IGNORE eos?
-  / fragment_statement IGNORE eos?
-  / import_statement IGNORE eos?
-  / ignore_statement IGNORE eos?
-  / assign_statement IGNORE eos?
-  / macro_define IGNORE eos?
+    grammar:/ grammar_statement IGNORE eos?
+    fragment:/ fragment_statement IGNORE eos?
+    import:/ import_statement IGNORE eos?
+    ignore:/ ignore_statement IGNORE eos?
+    assign:/ assign_statement IGNORE eos?
+    macro_def:/ macro_define IGNORE eos?
 ;
 
 empty_statement <- eos;
@@ -43,35 +43,43 @@ ignore  <- "ignore!";
 assign_statement  <- symbol IGNORE assign_kind IGNORE ("|"/"/")? IGNORE expr;
 assign_kind  <- ("^"/"_"/"@")*  "=";
 
-expr  <- expr0;
-expr0 <- symbol IGNORE mark_type? IGNORE "<-" IGNORE expr1
-    / expr1;
-expr1 <- expr1 IGNORE (mark_branch IGNORE mark_type?)? IGNORE ("|"/"/") IGNORE choice_expr
-    / expr2;
-expr2 <- expr2 IGNORE "~" IGNORE expr3
-    / expr3;
-expr3 <- expr3 slice
-    / expr4;
-expr4 <- expr4 suffix
-    / expr5;
-expr5 <- prefix expr5
-    / expr6 (IGNORE expr6)?;
-expr6 <- "(" IGNORE "/"? IGNORE expr IGNORE ")"
-    / data;
+expr  <- _expr0;
+_expr0 <-
+    mark:/symbol IGNORE mark_type? IGNORE "<-" IGNORE _expr1
+    / _expr1;
+_expr1 <-
+    choice:/choice_expr IGNORE ("|"/"/") IGNORE choice_expr
+    / _expr2;
+_expr2 <-
+    soft_concat:/_expr2 IGNORE "~" IGNORE _expr3
+    / _expr3;
+_expr3 <-
+    slice:/_expr3 slice
+    / _expr4;
+_expr4 <-
+    suffix:/_expr4 suffix
+    / _expr5;
+_expr5 <-
+    prefix:/prefix _expr5
+    concat:/ _expr6 (IGNORE _expr6)*;
+_expr6 <-
+    priority:/"(" IGNORE "/"? IGNORE expr IGNORE ")"
+    atom:/ data IGNORE !"=";
 
-choice_expr  <- expr1 IGNORE (mark_branch IGNORE mark_type?)?;
-mark_branch  <- ("^"/"!"/"<"/">")? "#" symbol;
+choice_expr  <- _expr1 IGNORE (mark_branch IGNORE mark_type?)?;
+mark_branch  <- ("_"/"^"/"!"/"<"/">")? "#" symbol;
 mark_type  <- ":" IGNORE symbol;
 prefix  <- "!" / "&" / "^" / "*" / "%";
 suffix  <- "?" / "+" / "-"/ "*";
 
-data   <- macro_call
-  / regex_range
-  / list
-  / symbol_path
-  / integer
-  / string
-  ;
+data   <-
+    macro:/macro_call
+    regex:/ regex_range
+    list:/ list
+    symbol:/ symbol_path
+    integer:/ integer
+    string:/ string
+;
 
 list   <- "{" IGNORE (data IGNORE ("," IGNORE data)* IGNORE ","?)? IGNORE "}";
 slice  <- "{" IGNORE integer IGNORE "," IGNORE integer IGNORE  "}";

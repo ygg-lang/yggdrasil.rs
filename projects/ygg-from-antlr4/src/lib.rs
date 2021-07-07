@@ -28,7 +28,7 @@ pub fn flatten_rec(node: Node, buffer: &mut Vec<Node>) {
         }
         // not important
         Rule::EOI => {}
-        Rule::expr0|Rule::expr1|Rule::expr2|Rule::expr3|Rule::expr4|Rule::expr5|Rule::expr6 => {
+        Rule::expr0|Rule::expr1|Rule::expr2|Rule::expr3|Rule::expr4|Rule::expr5 => {
             let len = node.children.len();
             match len {
                 0 => {  },

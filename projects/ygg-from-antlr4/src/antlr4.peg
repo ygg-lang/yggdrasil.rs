@@ -38,14 +38,12 @@ expr0 <- symbol IGNORE ("->" IGNORE channel)?
     / expr1;
 expr1 <- expr1 IGNORE mark_branch? IGNORE "|" IGNORE expr1 IGNORE mark_branch?
     / expr2;
-expr2 <- expr2 IGNORE "~" IGNORE expr3
-    / expr3;
-expr3 <- expr4 (IGNORE expr4)*;
-expr4 <- expr4 IGNORE (slice/suffix)
+expr2 <- expr3 (IGNORE expr3)*;
+expr3 <- expr3 IGNORE suffix
+    / expr4;
+expr4 <- prefix IGNORE expr4
     / expr5;
-expr5 <- prefix IGNORE expr5
-    / expr6;
-expr6 <- "(" IGNORE "/"? IGNORE expr IGNORE ")"
+expr5 <- "(" IGNORE "/"? IGNORE expr IGNORE ")"
     / data;
 
 channel <- "skip"
@@ -67,7 +65,7 @@ data   <- macro_call
   ;
 
 list   <- "{" IGNORE (data IGNORE ("," IGNORE data)* IGNORE ","?)? IGNORE "}";
-slice  <- "{" IGNORE integer IGNORE "," IGNORE integer IGNORE  "}";
+// slice  <- "{" IGNORE integer IGNORE "," IGNORE integer IGNORE  "}";
 
 regex_range  <- re#\[([^\\\]]|\\.)*\]#;
 

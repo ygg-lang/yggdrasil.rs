@@ -12,8 +12,8 @@ edition = "2018"
 [dependencies]
 pest = { version = "2.1"}
 lrpeg = { version = "0.4", git = "https://github.com/seanyoung/lrpeg" }
-regex = "*"
-unicode-xid = "*"
+regex = "1.5"
+unicode-xid = "0.2"
 
 [dependencies.yggdrasil-shared]
 version = "0.1"
