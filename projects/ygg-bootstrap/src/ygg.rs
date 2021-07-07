@@ -29,7 +29,7 @@ pub fn flatten_rec(node: Node, buffer: &mut Vec<Node>) {
         }
         // not important
         Rule::EOI => {}
-        // Rule::expr0|Rule::expr1|Rule::expr2|Rule::expr3|Rule::expr4|Rule::expr5|Rule::expr6 => {
+        // Rule::_expr0|Rule::_expr1|Rule::_expr2|Rule::_expr3|Rule::_expr4|Rule::_expr5|Rule::_expr6 => {
         //     let len = node.children.len();
         //     match len {
         //         0 => {  },
@@ -40,7 +40,7 @@ pub fn flatten_rec(node: Node, buffer: &mut Vec<Node>) {
         //         _ => buffer.push(flatten(node))
         //     }
         // }
-        Rule::IGNORE|Rule::Terminal => {}
+        Rule::IGNORE|Rule::Terminal|Rule::MustNotMatch => {}
         /*
         #[cfg(feature = "no-ignored")]
         Rule::IGNORE => {}

@@ -23,9 +23,11 @@ Node {
                                     start: 1,
                                     end: 2,
                                     children: [],
+                                    label: None,
                                     alternative: None,
                                 },
                             ],
+                            label: None,
                             alternative: None,
                         },
                         Node {
@@ -33,6 +35,7 @@ Node {
                             start: 3,
                             end: 4,
                             children: [],
+                            label: None,
                             alternative: None,
                         },
                         Node {
@@ -41,47 +44,65 @@ Node {
                             end: 12,
                             children: [
                                 Node {
-                                    rule: data,
+                                    rule: term,
                                     start: 5,
                                     end: 12,
                                     children: [
                                         Node {
-                                            rule: symbol_path,
+                                            rule: data,
                                             start: 5,
                                             end: 12,
                                             children: [
                                                 Node {
-                                                    rule: symbol,
+                                                    rule: symbol_path,
                                                     start: 5,
-                                                    end: 11,
+                                                    end: 12,
                                                     children: [
                                                         Node {
-                                                            rule: XID_IDENTIFIER,
+                                                            rule: symbol,
                                                             start: 5,
                                                             end: 11,
-                                                            children: [],
+                                                            children: [
+                                                                Node {
+                                                                    rule: XID_IDENTIFIER,
+                                                                    start: 5,
+                                                                    end: 11,
+                                                                    children: [],
+                                                                    label: None,
+                                                                    alternative: None,
+                                                                },
+                                                            ],
+                                                            label: None,
                                                             alternative: None,
                                                         },
                                                     ],
+                                                    label: None,
                                                     alternative: None,
                                                 },
                                             ],
-                                            alternative: None,
+                                            label: None,
+                                            alternative: Some(
+                                                "symbol",
+                                            ),
                                         },
                                     ],
+                                    label: None,
                                     alternative: Some(
-                                        3,
+                                        "atom",
                                     ),
                                 },
                             ],
+                            label: None,
                             alternative: None,
                         },
                     ],
+                    label: None,
                     alternative: None,
                 },
             ],
+            label: None,
             alternative: Some(
-                5,
+                "assign",
             ),
         },
         Node {
@@ -92,7 +113,7 @@ Node {
                 Node {
                     rule: assign_statement,
                     start: 12,
-                    end: 21,
+                    end: 22,
                     children: [
                         Node {
                             rule: symbol,
@@ -104,9 +125,11 @@ Node {
                                     start: 12,
                                     end: 13,
                                     children: [],
+                                    label: None,
                                     alternative: None,
                                 },
                             ],
+                            label: None,
                             alternative: None,
                         },
                         Node {
@@ -114,41 +137,56 @@ Node {
                             start: 14,
                             end: 15,
                             children: [],
+                            label: None,
                             alternative: None,
                         },
                         Node {
                             rule: expr,
                             start: 16,
-                            end: 21,
+                            end: 22,
                             children: [
                                 Node {
-                                    rule: data,
+                                    rule: term,
                                     start: 16,
-                                    end: 21,
+                                    end: 22,
                                     children: [
                                         Node {
-                                            rule: integer,
+                                            rule: data,
                                             start: 16,
                                             end: 21,
-                                            children: [],
+                                            children: [
+                                                Node {
+                                                    rule: integer,
+                                                    start: 16,
+                                                    end: 21,
+                                                    children: [],
+                                                    label: None,
+                                                    alternative: None,
+                                                },
+                                            ],
+                                            label: None,
                                             alternative: Some(
-                                                1,
+                                                "integer",
                                             ),
                                         },
                                     ],
+                                    label: None,
                                     alternative: Some(
-                                        4,
+                                        "atom",
                                     ),
                                 },
                             ],
+                            label: None,
                             alternative: None,
                         },
                     ],
+                    label: None,
                     alternative: None,
                 },
             ],
+            label: None,
             alternative: Some(
-                5,
+                "assign",
             ),
         },
         Node {
@@ -159,7 +197,7 @@ Node {
                 Node {
                     rule: assign_statement,
                     start: 22,
-                    end: 36,
+                    end: 37,
                     children: [
                         Node {
                             rule: symbol,
@@ -171,9 +209,11 @@ Node {
                                     start: 22,
                                     end: 23,
                                     children: [],
+                                    label: None,
                                     alternative: None,
                                 },
                             ],
+                            label: None,
                             alternative: None,
                         },
                         Node {
@@ -181,41 +221,56 @@ Node {
                             start: 24,
                             end: 25,
                             children: [],
+                            label: None,
                             alternative: None,
                         },
                         Node {
                             rule: expr,
                             start: 26,
-                            end: 36,
+                            end: 37,
                             children: [
                                 Node {
-                                    rule: data,
+                                    rule: term,
                                     start: 26,
-                                    end: 36,
+                                    end: 37,
                                     children: [
                                         Node {
-                                            rule: string,
+                                            rule: data,
                                             start: 26,
                                             end: 36,
-                                            children: [],
+                                            children: [
+                                                Node {
+                                                    rule: string,
+                                                    start: 26,
+                                                    end: 36,
+                                                    children: [],
+                                                    label: None,
+                                                    alternative: None,
+                                                },
+                                            ],
+                                            label: None,
                                             alternative: Some(
-                                                1,
+                                                "string",
                                             ),
                                         },
                                     ],
+                                    label: None,
                                     alternative: Some(
-                                        5,
+                                        "atom",
                                     ),
                                 },
                             ],
+                            label: None,
                             alternative: None,
                         },
                     ],
+                    label: None,
                     alternative: None,
                 },
             ],
+            label: None,
             alternative: Some(
-                5,
+                "assign",
             ),
         },
         Node {
@@ -226,7 +281,7 @@ Node {
                 Node {
                     rule: assign_statement,
                     start: 37,
-                    end: 51,
+                    end: 52,
                     children: [
                         Node {
                             rule: symbol,
@@ -238,9 +293,11 @@ Node {
                                     start: 37,
                                     end: 38,
                                     children: [],
+                                    label: None,
                                     alternative: None,
                                 },
                             ],
+                            label: None,
                             alternative: None,
                         },
                         Node {
@@ -248,43 +305,59 @@ Node {
                             start: 39,
                             end: 40,
                             children: [],
+                            label: None,
                             alternative: None,
                         },
                         Node {
                             rule: expr,
                             start: 41,
-                            end: 51,
+                            end: 52,
                             children: [
                                 Node {
-                                    rule: data,
+                                    rule: term,
                                     start: 41,
-                                    end: 51,
+                                    end: 52,
                                     children: [
                                         Node {
-                                            rule: string,
+                                            rule: data,
                                             start: 41,
                                             end: 51,
-                                            children: [],
+                                            children: [
+                                                Node {
+                                                    rule: string,
+                                                    start: 41,
+                                                    end: 51,
+                                                    children: [],
+                                                    label: None,
+                                                    alternative: None,
+                                                },
+                                            ],
+                                            label: None,
                                             alternative: Some(
-                                                0,
+                                                "string",
                                             ),
                                         },
                                     ],
+                                    label: None,
                                     alternative: Some(
-                                        5,
+                                        "atom",
                                     ),
                                 },
                             ],
+                            label: None,
                             alternative: None,
                         },
                     ],
+                    label: None,
                     alternative: None,
                 },
             ],
+            label: None,
             alternative: Some(
-                5,
+                "assign",
             ),
         },
     ],
+    label: None,
     alternative: None,
 }

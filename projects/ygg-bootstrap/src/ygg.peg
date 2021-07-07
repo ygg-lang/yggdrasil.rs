@@ -41,34 +41,16 @@ ignore  <- "ignore!";
 
 
 assign_statement  <- symbol IGNORE assign_kind IGNORE ("|"/"/")? IGNORE expr;
-assign_kind  <- ("^"/"_"/"@")*  "=";
+assign_kind  <- ("^"/"_"/"@")* "=";
 
-expr  <- _expr0;
-_expr0 <-
-    mark:/symbol IGNORE mark_type? IGNORE "<-" IGNORE _expr1
-    / _expr1;
-_expr1 <-
-    choice:/choice_expr IGNORE ("|"/"/") IGNORE choice_expr
-    / _expr2;
-_expr2 <-
-    soft_concat:/_expr2 IGNORE "~" IGNORE _expr3
-    / _expr3;
-_expr3 <-
-    slice:/_expr3 slice
-    / _expr4;
-_expr4 <-
-    suffix:/_expr4 suffix
-    / _expr5;
-_expr5 <-
-    prefix:/prefix _expr5
-    concat:/ _expr6 (IGNORE _expr6)*;
-_expr6 <-
+expr  <- term IGNORE (infix IGNORE term IGNORE)*;
+term <-
     priority:/"(" IGNORE "/"? IGNORE expr IGNORE ")"
-    atom:/ data IGNORE !"=";
+    atom:/ prefix* IGNORE data IGNORE (!"=" suffix/slice/mark_branch)*;
 
-choice_expr  <- _expr1 IGNORE (mark_branch IGNORE mark_type?)?;
 mark_branch  <- ("_"/"^"/"!"/"<"/">")? "#" symbol;
-mark_type  <- ":" IGNORE symbol;
+//mark_type  <- ":" IGNORE symbol;
+infix   <- "|" / "/" / "~" / "<-"/ ":";
 prefix  <- "!" / "&" / "^" / "*" / "%";
 suffix  <- "?" / "+" / "-"/ "*";
 
