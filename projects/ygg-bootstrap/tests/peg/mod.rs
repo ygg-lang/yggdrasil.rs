@@ -27,8 +27,6 @@ ignore! {a, b, c};
     peg_assert(input, include_str!("ignore.yaml"))
 }
 
-
-
 #[test]
 fn import() {
     let input = r#"
@@ -48,7 +46,6 @@ x = '"string"'
 "#;
     peg_assert(input, include_str!("atom.yaml"))
 }
-
 
 #[test]
 fn assign() {

@@ -74,79 +74,101 @@ Node {
                                     ),
                                 },
                                 Node {
-                                    rule: infix,
+                                    rule: expr_next,
                                     start: 9,
-                                    end: 10,
-                                    children: [],
-                                    label: None,
-                                    alternative: None,
-                                },
-                                Node {
-                                    rule: term,
-                                    start: 11,
                                     end: 13,
                                     children: [
                                         Node {
-                                            rule: data,
+                                            rule: infix,
+                                            start: 9,
+                                            end: 10,
+                                            children: [],
+                                            label: None,
+                                            alternative: None,
+                                        },
+                                        Node {
+                                            rule: term,
                                             start: 11,
-                                            end: 12,
+                                            end: 13,
                                             children: [
                                                 Node {
-                                                    rule: integer,
+                                                    rule: data,
                                                     start: 11,
                                                     end: 12,
-                                                    children: [],
+                                                    children: [
+                                                        Node {
+                                                            rule: integer,
+                                                            start: 11,
+                                                            end: 12,
+                                                            children: [],
+                                                            label: None,
+                                                            alternative: None,
+                                                        },
+                                                    ],
                                                     label: None,
-                                                    alternative: None,
+                                                    alternative: Some(
+                                                        "integer",
+                                                    ),
                                                 },
                                             ],
                                             label: None,
                                             alternative: Some(
-                                                "integer",
+                                                "atom",
                                             ),
                                         },
                                     ],
                                     label: None,
                                     alternative: Some(
-                                        "atom",
+                                        "infix",
                                     ),
                                 },
                                 Node {
-                                    rule: infix,
+                                    rule: expr_next,
                                     start: 13,
-                                    end: 14,
-                                    children: [],
-                                    label: None,
-                                    alternative: None,
-                                },
-                                Node {
-                                    rule: term,
-                                    start: 15,
                                     end: 17,
                                     children: [
                                         Node {
-                                            rule: data,
+                                            rule: infix,
+                                            start: 13,
+                                            end: 14,
+                                            children: [],
+                                            label: None,
+                                            alternative: None,
+                                        },
+                                        Node {
+                                            rule: term,
                                             start: 15,
-                                            end: 16,
+                                            end: 17,
                                             children: [
                                                 Node {
-                                                    rule: integer,
+                                                    rule: data,
                                                     start: 15,
                                                     end: 16,
-                                                    children: [],
+                                                    children: [
+                                                        Node {
+                                                            rule: integer,
+                                                            start: 15,
+                                                            end: 16,
+                                                            children: [],
+                                                            label: None,
+                                                            alternative: None,
+                                                        },
+                                                    ],
                                                     label: None,
-                                                    alternative: None,
+                                                    alternative: Some(
+                                                        "integer",
+                                                    ),
                                                 },
                                             ],
                                             label: None,
                                             alternative: Some(
-                                                "integer",
+                                                "atom",
                                             ),
                                         },
                                     ],
                                     label: None,
                                     alternative: Some(
-                                        "atom",
+                                        "infix",
                                     ),
                                 },
                             ],
@@ -252,38 +274,47 @@ Node {
                                     ),
                                 },
                                 Node {
-                                    rule: infix,
+                                    rule: expr_next,
                                     start: 22,
-                                    end: 23,
-                                    children: [],
-                                    label: None,
-                                    alternative: None,
-                                },
-                                Node {
-                                    rule: term,
-                                    start: 24,
                                     end: 26,
                                     children: [
                                         Node {
-                                            rule: data,
+                                            rule: infix,
+                                            start: 22,
+                                            end: 23,
+                                            children: [],
+                                            label: None,
+                                            alternative: None,
+                                        },
+                                        Node {
+                                            rule: term,
                                             start: 24,
                                             end: 26,
                                             children: [
                                                 Node {
-                                                    rule: symbol_path,
+                                                    rule: data,
                                                     start: 24,
                                                     end: 26,
                                                     children: [
                                                         Node {
-                                                            rule: symbol,
+                                                            rule: symbol_path,
                                                             start: 24,
-                                                            end: 25,
+                                                            end: 26,
                                                             children: [
                                                                 Node {
-                                                                    rule: XID_IDENTIFIER,
+                                                                    rule: symbol,
                                                                     start: 24,
                                                                     end: 25,
-                                                                    children: [],
+                                                                    children: [
+                                                                        Node {
+                                                                            rule: XID_IDENTIFIER,
+                                                                            start: 24,
+                                                                            end: 25,
+                                                                            children: [],
+                                                                            label: None,
+                                                                            alternative: None,
+                                                                        },
+                                                                    ],
                                                                     label: None,
                                                                     alternative: None,
                                                                 },
@@ -293,53 +324,64 @@ Node {
                                                         },
                                                     ],
                                                     label: None,
-                                                    alternative: None,
+                                                    alternative: Some(
+                                                        "symbol",
+                                                    ),
                                                 },
                                             ],
                                             label: None,
                                             alternative: Some(
-                                                "symbol",
+                                                "atom",
                                             ),
                                         },
                                     ],
                                     label: None,
                                     alternative: Some(
-                                        "atom",
+                                        "infix",
                                     ),
                                 },
                                 Node {
-                                    rule: infix,
+                                    rule: expr_next,
                                     start: 26,
-                                    end: 28,
-                                    children: [],
-                                    label: None,
-                                    alternative: None,
-                                },
-                                Node {
-                                    rule: term,
-                                    start: 29,
                                     end: 31,
                                     children: [
                                         Node {
-                                            rule: data,
+                                            rule: infix,
+                                            start: 26,
+                                            end: 28,
+                                            children: [],
+                                            label: None,
+                                            alternative: None,
+                                        },
+                                        Node {
+                                            rule: term,
                                             start: 29,
                                             end: 31,
                                             children: [
                                                 Node {
-                                                    rule: symbol_path,
+                                                    rule: data,
                                                     start: 29,
                                                     end: 31,
                                                     children: [
                                                         Node {
-                                                            rule: symbol,
+                                                            rule: symbol_path,
                                                             start: 29,
-                                                            end: 30,
+                                                            end: 31,
                                                             children: [
                                                                 Node {
-                                                                    rule: XID_IDENTIFIER,
+                                                                    rule: symbol,
                                                                     start: 29,
                                                                     end: 30,
-                                                                    children: [],
+                                                                    children: [
+                                                                        Node {
+                                                                            rule: XID_IDENTIFIER,
+                                                                            start: 29,
+                                                                            end: 30,
+                                                                            children: [],
+                                                                            label: None,
+                                                                            alternative: None,
+                                                                        },
+                                                                    ],
                                                                     label: None,
                                                                     alternative: None,
                                                                 },
@@ -349,18 +391,20 @@ Node {
                                                         },
                                                     ],
                                                     label: None,
-                                                    alternative: None,
+                                                    alternative: Some(
+                                                        "symbol",
+                                                    ),
                                                 },
                                             ],
                                             label: None,
                                             alternative: Some(
-                                                "symbol",
+                                                "atom",
                                             ),
                                         },
                                     ],
                                     label: None,
                                     alternative: Some(
-                                        "atom",
+                                        "infix",
                                     ),
                                 },
                             ],
@@ -466,38 +510,47 @@ Node {
                                     ),
                                 },
                                 Node {
-                                    rule: infix,
+                                    rule: expr_next,
                                     start: 37,
-                                    end: 38,
-                                    children: [],
-                                    label: None,
-                                    alternative: None,
-                                },
-                                Node {
-                                    rule: term,
-                                    start: 39,
                                     end: 41,
                                     children: [
                                         Node {
-                                            rule: data,
+                                            rule: infix,
+                                            start: 37,
+                                            end: 38,
+                                            children: [],
+                                            label: None,
+                                            alternative: None,
+                                        },
+                                        Node {
+                                            rule: term,
                                             start: 39,
                                             end: 41,
                                             children: [
                                                 Node {
-                                                    rule: symbol_path,
+                                                    rule: data,
                                                     start: 39,
                                                     end: 41,
                                                     children: [
                                                         Node {
-                                                            rule: symbol,
+                                                            rule: symbol_path,
                                                             start: 39,
-                                                            end: 40,
+                                                            end: 41,
                                                             children: [
                                                                 Node {
-                                                                    rule: XID_IDENTIFIER,
+                                                                    rule: symbol,
                                                                     start: 39,
                                                                     end: 40,
-                                                                    children: [],
+                                                                    children: [
+                                                                        Node {
+                                                                            rule: XID_IDENTIFIER,
+                                                                            start: 39,
+                                                                            end: 40,
+                                                                            children: [],
+                                                                            label: None,
+                                                                            alternative: None,
+                                                                        },
+                                                                    ],
                                                                     label: None,
                                                                     alternative: None,
                                                                 },
@@ -507,53 +560,64 @@ Node {
                                                         },
                                                     ],
                                                     label: None,
-                                                    alternative: None,
+                                                    alternative: Some(
+                                                        "symbol",
+                                                    ),
                                                 },
                                             ],
                                             label: None,
                                             alternative: Some(
-                                                "symbol",
+                                                "atom",
                                             ),
                                         },
                                     ],
                                     label: None,
                                     alternative: Some(
-                                        "atom",
+                                        "infix",
                                     ),
                                 },
                                 Node {
-                                    rule: infix,
+                                    rule: expr_next,
                                     start: 41,
-                                    end: 42,
-                                    children: [],
-                                    label: None,
-                                    alternative: None,
-                                },
-                                Node {
-                                    rule: term,
-                                    start: 43,
                                     end: 45,
                                     children: [
                                         Node {
-                                            rule: data,
+                                            rule: infix,
+                                            start: 41,
+                                            end: 42,
+                                            children: [],
+                                            label: None,
+                                            alternative: None,
+                                        },
+                                        Node {
+                                            rule: term,
                                             start: 43,
                                             end: 45,
                                             children: [
                                                 Node {
-                                                    rule: symbol_path,
+                                                    rule: data,
                                                     start: 43,
                                                     end: 45,
                                                     children: [
                                                         Node {
-                                                            rule: symbol,
+                                                            rule: symbol_path,
                                                             start: 43,
-                                                            end: 44,
+                                                            end: 45,
                                                             children: [
                                                                 Node {
-                                                                    rule: XID_IDENTIFIER,
+                                                                    rule: symbol,
                                                                     start: 43,
                                                                     end: 44,
-                                                                    children: [],
+                                                                    children: [
+                                                                        Node {
+                                                                            rule: XID_IDENTIFIER,
+                                                                            start: 43,
+                                                                            end: 44,
+                                                                            children: [],
+                                                                            label: None,
+                                                                            alternative: None,
+                                                                        },
+                                                                    ],
                                                                     label: None,
                                                                     alternative: None,
                                                                 },
@@ -563,18 +627,20 @@ Node {
                                                         },
                                                     ],
                                                     label: None,
-                                                    alternative: None,
+                                                    alternative: Some(
+                                                        "symbol",
+                                                    ),
                                                 },
                                             ],
                                             label: None,
                                             alternative: Some(
-                                                "symbol",
+                                                "atom",
                                             ),
                                         },
                                     ],
                                     label: None,
                                     alternative: Some(
-                                        "atom",
+                                        "infix",
                                     ),
                                 },
                             ],

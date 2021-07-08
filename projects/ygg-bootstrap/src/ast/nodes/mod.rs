@@ -1,4 +1,3 @@
-
 use super::*;
 
 mod nodes_custom;
@@ -72,7 +71,6 @@ pub struct ChoiceExpression {
     pub rhs: ChoiceTag,
     pub range: Range,
 }
-
 
 #[derive(Clone, Debug)]
 pub struct ChoiceTag {

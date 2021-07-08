@@ -6,6 +6,7 @@ statement  <- empty_statement
     import:/ import_statement IGNORE eos?
     ignore:/ ignore_statement IGNORE eos?
     assign:/ assign_statement IGNORE eos?
+    macro_call:/ macro_then IGNORE eos?
     macro_def:/ macro_define IGNORE eos?
 ;
 
@@ -43,16 +44,18 @@ ignore  <- "ignore!";
 assign_statement  <- symbol IGNORE assign_kind IGNORE ("|"/"/")? IGNORE expr;
 assign_kind  <- ("^"/"_"/"@")* "=";
 
-expr  <- term IGNORE (infix IGNORE term IGNORE)*;
+expr  <- term IGNORE (expr_next IGNORE)*;
+expr_next <-
+    infix:/ infix IGNORE term
+    other:/ term IGNORE !"=";
 term <-
     priority:/"(" IGNORE "/"? IGNORE expr IGNORE ")"
-    atom:/ prefix* IGNORE data IGNORE (!"=" suffix/slice/mark_branch)*;
+    atom:/ prefix* IGNORE data IGNORE (!assign_kind suffix/slice/mark_branch)*;
 
-mark_branch  <- ("_"/"^"/"!"/"<"/">")? "#" symbol;
-//mark_type  <- ":" IGNORE symbol;
-infix   <- "|" / "/" / "~" / "<-"/ ":";
-prefix  <- "!" / "&" / "^" / "*" / "%";
-suffix  <- "?" / "+" / "-"/ "*";
+mark_branch  <- ("_"/"^"/"!"/"<"/">")? "$" symbol;
+infix   <- "|" / "/" / "~" / "<-" / ":";
+prefix  <- "!" / "&" / "^" / "%";
+suffix  <- "?" / "+" / "-" / "*";
 
 data   <-
     macro:/macro_call
@@ -71,6 +74,9 @@ regex_range  <- "[" IGNORE (!"]" IGNORE . / "\\" IGNORE .)* IGNORE "]";
 
 macro_call  <-
     "@" symbol_path IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE")"
+;
+macro_then  <-
+    "#" symbol_path (IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE")")?
 ;
 macro_kv  <-  symbol IGNORE " <-" IGNORE expr / expr;
 
