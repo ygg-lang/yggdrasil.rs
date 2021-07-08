@@ -3,22 +3,28 @@
 
 // #[rustfmt::skip]
 mod parse;
-mod rule;
 
-use crate::cst::parse::Node;
-use pest::error::Error;
-use pest::iterators::Pairs;
-use pest::Atomicity;
-use pest::Parser;
-use pest::ParserState;
+use std::fmt::{Debug, Formatter};
+pub use self::parse::{Node,Rule,PEG};
 use yggdrasil_shared::{ignore_terms, match_charset, tag_branch, tag_node};
 
-pub use self::rule::Rule;
-
-pub type RuleState<'a> = Box<ParserState<'a, Rule>>;
-pub type RuleResult<'a> = Result<RuleState<'a>, RuleState<'a>>;
-
 pub struct CSTBuilder {}
+
+impl Debug for Node {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let w = &mut f.debug_struct("Node");
+        w.field("rule", &self.rule);
+        w.field("range", &format!("{}-{}", self.start, self.end));
+        if let Some(s) = self.label {
+            w.field("label", &s);
+        };
+        if let Some(s) = self.alternative {
+            w.field("alternative", &s);
+        };
+        w.field("children", &self.children);
+        w.finish()
+    }
+}
 
 pub fn flatten(node: Node) -> Node {
     let mut buffer = vec![];

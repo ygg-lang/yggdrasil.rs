@@ -2,7 +2,7 @@ use regex::Regex;
 use std::collections::HashMap;
 use unicode_xid::UnicodeXID;
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct Node {
     pub rule: Rule,
     pub start: usize,

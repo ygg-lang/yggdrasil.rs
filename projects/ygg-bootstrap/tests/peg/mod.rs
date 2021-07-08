@@ -1,4 +1,4 @@
-use yggdrasil_bootstrap::{flatten, PEG};
+use yggdrasil_bootstrap::cst::{flatten, PEG};
 
 pub fn peg_assert(input: &str, target: &str) {
     let mut p = PEG::new();
