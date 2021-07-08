@@ -6,7 +6,6 @@ fn ready() {
     println!("it, works!")
 }
 
-
 pub fn peg_assert(input: &str) {
     let mut p = PEG::new();
     let out = flatten(p.parse(input).unwrap());

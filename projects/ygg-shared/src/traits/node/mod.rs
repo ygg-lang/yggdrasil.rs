@@ -1,11 +1,14 @@
+use crate::{Error, Result};
 use std::collections::HashMap;
-use crate::{Error,Result};
 
 /// It's a node contained in the Lossless Concrete Syntax Tree
 /// All subsequent required information will be retained
 /// Including spaces, line breaks, and comments or other semantically irrelevant content.
 /// Macros and formatting can start at this level
-pub trait CSTNode where Self: Sized {
+pub trait CSTNode
+where
+    Self: Sized,
+{
     /// get str of the node
     fn get_str(&self) -> &str;
     /// Provide basic location information
@@ -23,11 +26,13 @@ pub trait CSTNode where Self: Sized {
     fn get_tag_map(&self) -> HashMap<String, Vec<Self>>;
 }
 
-
-pub trait CSTNode2 where Self: Sized {
-    fn get_str<'i>(&self,input: &'i str) -> &'i str;
-    fn get_span(&self, input:&str) -> (usize, usize);
-    fn get_range(&self, input:&str) -> (usize, usize, usize, usize);
+pub trait CSTNode2
+where
+    Self: Sized,
+{
+    fn get_str<'i>(&self, input: &'i str) -> &'i str;
+    fn get_span(&self, input: &str) -> (usize, usize);
+    fn get_range(&self, input: &str) -> (usize, usize, usize, usize);
     fn get_node_tag(&self) -> Option<&'static str>;
     fn get_branch_tag(&self) -> Option<&'static str>;
     fn get_tag_map(&self) -> HashMap<String, Vec<Self>>;
@@ -37,7 +42,10 @@ pub trait CSTNode2 where Self: Sized {
 /// Implement the `parse` method to express how to become a typed node
 /// Semantic analysis, interpreter, LSP can start at this level
 pub trait ASTNode<N>
-    where N: CSTNode, Self: Sized {
+where
+    N: CSTNode,
+    Self: Sized,
+{
     /// This node will appear multiple times
     /// If the child node fails, it will be abandoned
     fn many(node: Vec<N>, errors: &mut Vec<Error>) -> Vec<Self> {
@@ -53,13 +61,13 @@ pub trait ASTNode<N>
     }
     /// This node is optional
     /// If the parsing fails, it will be abandoned and return null
-    fn some(node: N, errors: &mut Vec<Error>) -> Option<Self>{
+    fn some(node: N, errors: &mut Vec<Error>) -> Option<Self> {
         match Self::parse(node, errors) {
             Ok(o) => return Some(o),
             Err(Error::Unwinding) => (),
-            Err(e) => errors.push(e)
+            Err(e) => errors.push(e),
         }
-        return None
+        return None;
     }
     /// This node is required
     /// If it fails, it will start to roll back
@@ -84,7 +92,7 @@ pub trait ASTNode<N>
     /// some
     fn named_some(map: &mut HashMap<String, Vec<N>>, tag: &str, errors: &mut Vec<Error>) -> Option<Self> {
         match map.remove(tag).as_mut().map(|v| v.remove(0)) {
-            Some(s) => Self::some(s,errors),
+            Some(s) => Self::some(s, errors),
             _ => None,
         }
     }
@@ -99,7 +107,6 @@ pub trait ASTNode<N>
     fn parse(pairs: N, errors: &mut Vec<Error>) -> Result<Self>;
 }
 
-
 macro_rules! ast_node_num {
     ($t:ty) => {
         impl<N: CSTNode> ASTNode<N> for $t {
@@ -113,15 +120,12 @@ macro_rules! ast_node_num {
     };
 }
 
-ast_node_num![u8,u16,u32,u64,u128,usize];
-ast_node_num![i8,i16,i32,i64,i128,isize];
-ast_node_num![f32,f64];
+ast_node_num![u8, u16, u32, u64, u128, usize];
+ast_node_num![i8, i16, i32, i64, i128, isize];
+ast_node_num![f32, f64];
 
-
-impl<N: CSTNode> ASTNode<N> for String
-{
+impl<N: CSTNode> ASTNode<N> for String {
     fn parse(node: N, _: &mut Vec<Error>) -> Result<Self> {
         Ok(node.get_str().to_string())
     }
 }
-

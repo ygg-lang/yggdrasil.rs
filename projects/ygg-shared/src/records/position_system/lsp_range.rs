@@ -1,18 +1,12 @@
 use super::*;
-use lsp_types::{Range,Position};
+use lsp_types::{Position, Range};
 
-impl<N:CSTNode> PositionSystem<N> for Range {
+impl<N: CSTNode> PositionSystem<N> for Range {
     fn from(node: N) -> Self {
         let s = node.get_range();
         Self {
-            start: Position {
-                line: s.0 as u32,
-                character: s.1 as u32
-            },
-            end: Position {
-                line: s.2 as u32,
-                character: s.3 as u32
-            }
+            start: Position { line: s.0 as u32, character: s.1 as u32 },
+            end: Position { line: s.2 as u32, character: s.3 as u32 },
         }
     }
 
@@ -20,4 +14,3 @@ impl<N:CSTNode> PositionSystem<N> for Range {
         Self { start: self.start, end: rhs.end }
     }
 }
-

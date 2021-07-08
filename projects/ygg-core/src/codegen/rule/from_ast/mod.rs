@@ -6,17 +6,12 @@ use super::{
     hints::{duplicate_declaration_error, name_missing, top_area_error},
     *,
 };
+use crate::{manager::HintItems, Result};
 use yggdrasil_bootstrap::ast::{AssignStatement, Program, Statement};
-use crate::{
-    manager::HintItems,
-    Result,
-};
 
 pub trait Translator {
     fn translate(self, url: Url) -> Result<(GrammarState, HintItems)>;
 }
-
-
 
 impl Translator for Program {
     fn translate(self, url: Url) -> Result<(GrammarState, HintItems)> {

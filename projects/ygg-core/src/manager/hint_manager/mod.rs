@@ -1,5 +1,5 @@
 pub use self::item::HintItems;
-use crate::{Result, Error, FILE_MANAGER};
+use crate::{Error, Result, FILE_MANAGER};
 use dashmap::{
     mapref::one::{Ref, RefMut},
     DashMap,

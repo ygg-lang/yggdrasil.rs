@@ -1,5 +1,3 @@
-
-
 mod node;
 
 pub trait PositionSystem<N> {
@@ -8,4 +6,4 @@ pub trait PositionSystem<N> {
     fn join(self, rhs: Self) -> Self;
 }
 
-pub use self::node::{CSTNode, ASTNode};
+pub use self::node::{ASTNode, CSTNode};

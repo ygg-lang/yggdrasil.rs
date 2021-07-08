@@ -1,5 +1,5 @@
-use crate::traits::CSTNode;
 use super::*;
+use crate::traits::CSTNode;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct OffsetRange {
@@ -7,7 +7,7 @@ pub struct OffsetRange {
     pub end: usize,
 }
 
-impl<N:CSTNode> PositionSystem<N> for OffsetRange {
+impl<N: CSTNode> PositionSystem<N> for OffsetRange {
     fn from(node: N) -> Self {
         let s = node.get_span();
         Self { start: s.0, end: s.1 }

@@ -1,11 +1,11 @@
 pub use self::node::*;
 use self::remap::{Keys, Map, Values};
-use yggdrasil_bootstrap::{
-    ast::{Symbol, StringLiteral},
-    Result,
-};
 use lsp_types::{Range, Url};
 use std::fmt::Debug;
+use yggdrasil_bootstrap::{
+    ast::{StringLiteral, Symbol},
+    Result,
+};
 
 mod from_ast;
 mod hints;

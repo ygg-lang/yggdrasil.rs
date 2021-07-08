@@ -1,6 +1,8 @@
+use pest_meta::{
+    ast::{Expr, Rule, RuleType},
+    parser::{self, parse},
+};
 use std::fmt::{Debug, Formatter, Write};
-use pest_meta::ast::{Expr, Rule, RuleType};
-use pest_meta::{parser::{parse,self},};
 
 pub trait FromPest {
     fn build_ygg(&self, f: impl Write, soft: bool) -> std::fmt::Result {
@@ -11,11 +13,9 @@ pub trait FromPest {
 }
 
 pub fn convert_pest(input: &str) -> std::fmt::Result {
-    parse(parser::Rule )
+    parse(parser::Rule)
 }
 
-
-//
 // impl FromPest for Rule {
 //     fn build_ygg(&self, f: impl Write, _: bool) -> std::fmt::Result {
 //         let mut soft_concat = false;

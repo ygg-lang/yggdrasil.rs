@@ -2,7 +2,7 @@ pub use self::{file_store::FileStore, file_wrap::FileType, finger_print::FileFin
 use crate::{
     codegen::{GrammarState, GrammarType},
     manager::HintItems,
-    Result, Error,
+    Error, Result,
 };
 use dashmap::{mapref::one::Ref, DashMap};
 use lsp_types::Url;
@@ -97,11 +97,6 @@ impl FileManager {
 
     pub async fn parse_grammar(&self, url: &Url) -> Result<GrammarState> {
         self.update_url(url.to_owned())?;
-        self.store
-            .get_mut(url)
-            .ok_or(Error::language_error("Grammar not found"))?
-            .value_mut()
-            .parse_ygg(url.to_owned())
-            .await
+        self.store.get_mut(url).ok_or(Error::language_error("Grammar not found"))?.value_mut().parse_ygg(url.to_owned()).await
     }
 }

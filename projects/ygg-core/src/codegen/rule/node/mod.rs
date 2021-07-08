@@ -1,9 +1,9 @@
-use crate::{codegen::rule::Rule};
-use yggdrasil_bootstrap::ast::*;
+use crate::codegen::rule::Rule;
 use std::{
     fmt::{Debug, Formatter},
     ops::AddAssign,
 };
+use yggdrasil_bootstrap::ast::*;
 
 mod choice;
 mod concat;

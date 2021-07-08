@@ -1,3 +1,3 @@
 mod position_system;
 
-pub use self::position_system::{join_position,get_position,OffsetRange,LSPRange};
+pub use self::position_system::{get_position, join_position, LSPRange, OffsetRange};

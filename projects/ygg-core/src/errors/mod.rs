@@ -34,8 +34,6 @@ impl Error {
     pub fn language_error(msg: impl Into<String>) -> Error {
         Self::LanguageError { error: msg.into() }
     }
-
-
 }
 
 impl Display for Error {

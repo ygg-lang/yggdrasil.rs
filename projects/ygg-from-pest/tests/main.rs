@@ -6,7 +6,5 @@ fn ready() {
 }
 
 pub fn convert(input: &str) -> anyhow::Result<()> {
-
-
     Ok(())
 }
