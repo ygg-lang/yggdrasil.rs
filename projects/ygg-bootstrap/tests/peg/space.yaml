@@ -1,296 +1,191 @@
 Node {
     rule: program,
-    start: 0,
-    end: 15,
+    range: "0-15",
     children: [
         Node {
             rule: statement,
-            start: 1,
-            end: 15,
+            range: "1-15",
+            branch: "assign",
             children: [
                 Node {
                     rule: assign_statement,
-                    start: 1,
-                    end: 15,
+                    range: "1-15",
                     children: [
                         Node {
                             rule: symbol,
-                            start: 1,
-                            end: 2,
+                            range: "1-2",
                             children: [
                                 Node {
                                     rule: XID_IDENTIFIER,
-                                    start: 1,
-                                    end: 2,
+                                    range: "1-2",
                                     children: [],
-                                    label: None,
-                                    alternative: None,
                                 },
                             ],
-                            label: None,
-                            alternative: None,
                         },
                         Node {
                             rule: assign_kind,
-                            start: 3,
-                            end: 4,
+                            range: "3-4",
                             children: [],
-                            label: None,
-                            alternative: None,
                         },
                         Node {
                             rule: expr,
-                            start: 5,
-                            end: 15,
+                            range: "5-15",
                             children: [
                                 Node {
                                     rule: term,
-                                    start: 5,
-                                    end: 7,
+                                    range: "5-7",
+                                    branch: "atom",
                                     children: [
                                         Node {
                                             rule: data,
-                                            start: 5,
-                                            end: 7,
+                                            range: "5-7",
+                                            branch: "symbol",
                                             children: [
                                                 Node {
                                                     rule: symbol_path,
-                                                    start: 5,
-                                                    end: 7,
+                                                    range: "5-7",
                                                     children: [
                                                         Node {
                                                             rule: symbol,
-                                                            start: 5,
-                                                            end: 6,
+                                                            range: "5-6",
                                                             children: [
                                                                 Node {
                                                                     rule: XID_IDENTIFIER,
-                                                                    start: 5,
-                                                                    end: 6,
+                                                                    range: "5-6",
                                                                     children: [],
-                                                                    label: None,
-                                                                    alternative: None,
                                                                 },
                                                             ],
-                                                            label: None,
-                                                            alternative: None,
                                                         },
                                                     ],
-                                                    label: None,
-                                                    alternative: None,
                                                 },
                                             ],
-                                            label: None,
-                                            alternative: Some(
-                                                "symbol",
-                                            ),
                                         },
                                     ],
-                                    label: None,
-                                    alternative: Some(
-                                        "atom",
-                                    ),
                                 },
                                 Node {
                                     rule: expr_next,
-                                    start: 7,
-                                    end: 9,
+                                    range: "7-9",
+                                    branch: "other",
                                     children: [
                                         Node {
                                             rule: term,
-                                            start: 7,
-                                            end: 9,
+                                            range: "7-9",
+                                            branch: "atom",
                                             children: [
                                                 Node {
                                                     rule: data,
-                                                    start: 7,
-                                                    end: 9,
+                                                    range: "7-9",
+                                                    branch: "symbol",
                                                     children: [
                                                         Node {
                                                             rule: symbol_path,
-                                                            start: 7,
-                                                            end: 9,
+                                                            range: "7-9",
                                                             children: [
                                                                 Node {
                                                                     rule: symbol,
-                                                                    start: 7,
-                                                                    end: 8,
+                                                                    range: "7-8",
                                                                     children: [
                                                                         Node {
                                                                             rule: XID_IDENTIFIER,
-                                                                            start: 7,
-                                                                            end: 8,
+                                                                            range: "7-8",
                                                                             children: [],
-                                                                            label: None,
-                                                                            alternative: None,
                                                                         },
                                                                     ],
-                                                                    label: None,
-                                                                    alternative: None,
                                                                 },
                                                             ],
-                                                            label: None,
-                                                            alternative: None,
                                                         },
                                                     ],
-                                                    label: None,
-                                                    alternative: Some(
-                                                        "symbol",
-                                                    ),
                                                 },
                                             ],
-                                            label: None,
-                                            alternative: Some(
-                                                "atom",
-                                            ),
                                         },
                                     ],
-                                    label: None,
-                                    alternative: Some(
-                                        "other",
-                                    ),
                                 },
                                 Node {
                                     rule: expr_next,
-                                    start: 9,
-                                    end: 13,
+                                    range: "9-13",
+                                    branch: "infix",
                                     children: [
                                         Node {
                                             rule: infix,
-                                            start: 9,
-                                            end: 10,
+                                            range: "9-10",
                                             children: [],
-                                            label: None,
-                                            alternative: None,
                                         },
                                         Node {
                                             rule: term,
-                                            start: 11,
-                                            end: 13,
+                                            range: "11-13",
+                                            branch: "atom",
                                             children: [
                                                 Node {
                                                     rule: data,
-                                                    start: 11,
-                                                    end: 13,
+                                                    range: "11-13",
+                                                    branch: "symbol",
                                                     children: [
                                                         Node {
                                                             rule: symbol_path,
-                                                            start: 11,
-                                                            end: 13,
+                                                            range: "11-13",
                                                             children: [
                                                                 Node {
                                                                     rule: symbol,
-                                                                    start: 11,
-                                                                    end: 12,
+                                                                    range: "11-12",
                                                                     children: [
                                                                         Node {
                                                                             rule: XID_IDENTIFIER,
-                                                                            start: 11,
-                                                                            end: 12,
+                                                                            range: "11-12",
                                                                             children: [],
-                                                                            label: None,
-                                                                            alternative: None,
                                                                         },
                                                                     ],
-                                                                    label: None,
-                                                                    alternative: None,
                                                                 },
                                                             ],
-                                                            label: None,
-                                                            alternative: None,
                                                         },
                                                     ],
-                                                    label: None,
-                                                    alternative: Some(
-                                                        "symbol",
-                                                    ),
                                                 },
                                             ],
-                                            label: None,
-                                            alternative: Some(
-                                                "atom",
-                                            ),
                                         },
                                     ],
-                                    label: None,
-                                    alternative: Some(
-                                        "infix",
-                                    ),
                                 },
                                 Node {
                                     rule: expr_next,
-                                    start: 13,
-                                    end: 15,
+                                    range: "13-15",
+                                    branch: "other",
                                     children: [
                                         Node {
                                             rule: term,
-                                            start: 13,
-                                            end: 15,
+                                            range: "13-15",
+                                            branch: "atom",
                                             children: [
                                                 Node {
                                                     rule: data,
-                                                    start: 13,
-                                                    end: 15,
+                                                    range: "13-15",
+                                                    branch: "symbol",
                                                     children: [
                                                         Node {
                                                             rule: symbol_path,
-                                                            start: 13,
-                                                            end: 15,
+                                                            range: "13-15",
                                                             children: [
                                                                 Node {
                                                                     rule: symbol,
-                                                                    start: 13,
-                                                                    end: 14,
+                                                                    range: "13-14",
                                                                     children: [
                                                                         Node {
                                                                             rule: XID_IDENTIFIER,
-                                                                            start: 13,
-                                                                            end: 14,
+                                                                            range: "13-14",
                                                                             children: [],
-                                                                            label: None,
-                                                                            alternative: None,
                                                                         },
                                                                     ],
-                                                                    label: None,
-                                                                    alternative: None,
                                                                 },
                                                             ],
-                                                            label: None,
-                                                            alternative: None,
                                                         },
                                                     ],
-                                                    label: None,
-                                                    alternative: Some(
-                                                        "symbol",
-                                                    ),
                                                 },
                                             ],
-                                            label: None,
-                                            alternative: Some(
-                                                "atom",
-                                            ),
                                         },
                                     ],
-                                    label: None,
-                                    alternative: Some(
-                                        "other",
-                                    ),
                                 },
                             ],
-                            label: None,
-                            alternative: None,
                         },
                     ],
-                    label: None,
-                    alternative: None,
                 },
             ],
-            label: None,
-            alternative: Some(
-                "assign",
-            ),
         },
     ],
-    label: None,
-    alternative: None,
 }

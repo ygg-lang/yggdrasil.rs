@@ -23,7 +23,7 @@ where
     fn get_branch_tag(&self) -> Option<&'static str>;
     /// Find node tags in all of the children
     /// Then collect them into a vec, and store in hashmap with the tag name
-    fn get_tag_map(&self) -> HashMap<String, Vec<Self>>;
+    fn get_tag_map(&self) -> HashMap<&'static str, Vec<Self>>;
 }
 
 pub trait CSTNode2
@@ -83,21 +83,21 @@ where
         }
     }
     /// many
-    fn named_many(map: &mut HashMap<String, Vec<N>>, tag: &str, errors: &mut Vec<Error>) -> Vec<Self> {
+    fn named_many(map: &mut HashMap<&'static str, Vec<N>>, tag: &str, errors: &mut Vec<Error>) -> Vec<Self> {
         match map.remove(tag) {
             Some(s) => Self::many(s, errors),
             _ => vec![],
         }
     }
     /// some
-    fn named_some(map: &mut HashMap<String, Vec<N>>, tag: &str, errors: &mut Vec<Error>) -> Option<Self> {
+    fn named_some(map: &mut HashMap<&'static str, Vec<N>>, tag: &str, errors: &mut Vec<Error>) -> Option<Self> {
         match map.remove(tag).as_mut().map(|v| v.remove(0)) {
             Some(s) => Self::some(s, errors),
             _ => None,
         }
     }
     /// one
-    fn named_one(map: &mut HashMap<String, Vec<N>>, tag: &str, errors: &mut Vec<Error>) -> Result<Self> {
+    fn named_one(map: &mut HashMap<&'static str, Vec<N>>, tag: &str, errors: &mut Vec<Error>) -> Result<Self> {
         match map.remove(tag).as_mut().map(|v| v.remove(0)) {
             Some(s) => Self::one(s, errors),
             _ => Err(Error::node_tag_missing(tag)),

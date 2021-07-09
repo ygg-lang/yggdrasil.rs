@@ -2,19 +2,19 @@ mod parse_custom;
 
 use super::*;
 
-impl<'i> ASTNode<Pair<'i, Rule>> for Program {
-    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        let position = get_position(&pairs);
-        let mut map = collect_tag_map(&pairs);
+impl ASTNode<Node> for Program {
+    fn parse(node: Node, errors: &mut Vec<Error>) -> Result<Self> {
+        let range = node.get_span();
+        let mut map = node.get_tag_map();
         let statement = ASTNode::named_many(&mut map, "statement", errors);
-        return Ok(Self { statement, range: position });
+        return Ok(Self { statement, range });
     }
 }
 
-impl<'i> ASTNode<Pair<'i, Rule>> for Statement {
-    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        let mut map = collect_tag_map(&pairs);
-        match pairs.as_branch_tag() {
+impl ASTNode<Node> for Statement {
+    fn parse(node: Node, errors: &mut Vec<Error>) -> Result<Self> {
+        let mut map = node.get_tag_map();
+        match node.get_branch_tag() {
             Some("Grammar") => unimplemented!(),
             Some("Fragment") => Ok(Self::Fragment(Box::new(ASTNode::named_one(&mut map, "fragment_statement", errors)?))),
             Some("Ignore") => Ok(Self::Ignore(Box::new(ASTNode::named_one(&mut map, "ignore_statement", errors)?))),
@@ -26,28 +26,28 @@ impl<'i> ASTNode<Pair<'i, Rule>> for Statement {
     }
 }
 
-impl<'i> ASTNode<Pair<'i, Rule>> for FragmentStatement {
-    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        let position = get_position(&pairs);
-        let mut map = collect_tag_map(&pairs);
+impl ASTNode<Node> for FragmentStatement {
+    fn parse(node: Node, errors: &mut Vec<Error>) -> Result<Self> {
+        let range = node.get_span();
+        let mut map = node.get_tag_map();
         let id = ASTNode::named_one(&mut map, "id", errors)?;
-        return Ok(Self { id, range: position });
+        return Ok(Self { id, range });
     }
 }
 
-impl<'i> ASTNode<Pair<'i, Rule>> for IgnoreStatement {
-    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        let position = get_position(&pairs);
-        let mut map = collect_tag_map(&pairs);
+impl ASTNode<Node> for IgnoreStatement {
+    fn parse(node: Node, errors: &mut Vec<Error>) -> Result<Self> {
+        let position = get_position(node);
+        let mut map = node.get_tag_map();
         let rules = ASTNode::named_many(&mut map, "rules", errors);
         return Ok(Self { rules, range: position });
     }
 }
 
-impl<'i> ASTNode<Pair<'i, Rule>> for AssignStatement {
-    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        let position = get_position(&pairs);
-        let mut map = collect_tag_map(&pairs);
+impl ASTNode<Node> for AssignStatement {
+    fn parse(node: Node, errors: &mut Vec<Error>) -> Result<Self> {
+        let position = get_position(node);
+        let mut map = node.get_tag_map();
         let id = ASTNode::named_one(&mut map, "id", errors)?;
         let eq = ASTNode::named_one(&mut map, "eq", errors)?;
         let rhs = ASTNode::named_one(&mut map, "rhs", errors)?;
@@ -55,17 +55,16 @@ impl<'i> ASTNode<Pair<'i, Rule>> for AssignStatement {
     }
 }
 
-impl<'i> ASTNode<Pair<'i, Rule>> for Expression {
-    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        let position = get_position(&pairs);
-        let mut map = collect_tag_map(&pairs);
+impl ASTNode<Node> for Expression {
+    fn parse(node: Node, errors: &mut Vec<Error>) -> Result<Self> {
+        let position = get_position(node);
+        let mut map = node.get_tag_map();
         let head = map.remove("__rec_expr_left").as_mut().map(|s| s.remove(0));
         let rest = map.remove("__rec_expr_rest").unwrap_or_default();
         if let Some(s) = head {
-            ExpressionResolver::build(s, rest, errors)?;
             unreachable!()
         };
-        match pairs.as_branch_tag() {
+        match node.get_branch_tag() {
             Some("Priority") => Self::named_one(&mut map, "expr", errors),
             Some("Concat") => {
                 let base = ASTNode::named_one(&mut map, "base", errors)?;
@@ -86,7 +85,15 @@ impl<'i> ASTNode<Pair<'i, Rule>> for Expression {
                 let rhs = ASTNode::named_one(&mut map, "rhs", errors)?;
                 let rhs_tag = ASTNode::named_some(&mut map, "rhs_tag", errors);
                 let rhs_ty = ASTNode::named_some(&mut map, "rhs_ty", errors);
-                Ok(Self::Choice(Box::new(ChoiceExpression { lhs, lhs_tag, lhs_ty, rhs, rhs_tag, rhs_ty, range: position })))
+                Ok(Self::Choice(Box::new(ChoiceExpression {
+                    lhs,
+                    lhs_tag,
+                    lhs_ty,
+                    rhs,
+                    rhs_tag,
+                    rhs_ty,
+                    range: position,
+                })))
             }
             Some("Suffix") => {
                 unimplemented!("{:#?}", map);
@@ -100,19 +107,19 @@ impl<'i> ASTNode<Pair<'i, Rule>> for Expression {
     }
 }
 
-impl<'i> ASTNode<Pair<'i, Rule>> for ConcatExpressionRest {
-    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        let position = get_position(&pairs);
-        let mut map = collect_tag_map(&pairs);
+impl ASTNode<Node> for ConcatExpressionRest {
+    fn parse(node: Node, errors: &mut Vec<Error>) -> Result<Self> {
+        let position = get_position(node);
+        let mut map = node.get_tag_map();
         let expr = ASTNode::named_one(&mut map, "expr", errors)?;
         Ok(Self { expr, position })
     }
 }
 
-impl<'i> ASTNode<Pair<'i, Rule>> for Data {
-    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        let mut map = collect_tag_map(&pairs);
-        match pairs.as_branch_tag() {
+impl ASTNode<Node> for Data {
+    fn parse(node: Node, errors: &mut Vec<Error>) -> Result<Self> {
+        let mut map = node.get_tag_map();
+        match node.get_branch_tag() {
             Some("SymbolPath") => Ok(Self::SymbolPath(Box::new(ASTNode::named_one(&mut map, "symbol_path", errors)?))),
             Some("Integer") => Ok(Self::Integer(Box::new(ASTNode::named_one(&mut map, "integer", errors)?))),
             Some(s) => {
@@ -123,26 +130,26 @@ impl<'i> ASTNode<Pair<'i, Rule>> for Data {
     }
 }
 
-impl<'i> ASTNode<Pair<'i, Rule>> for Integer {
-    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        let position = get_position(&pairs);
-        let data = ASTNode::parse(pairs, errors)?;
+impl ASTNode<Node> for Integer {
+    fn parse(node: Node, errors: &mut Vec<Error>) -> Result<Self> {
+        let position = get_position(&node);
+        let data = ASTNode::parse(node, errors)?;
         Ok(Self { data, range: position })
     }
 }
 
-impl<'i> ASTNode<Pair<'i, Rule>> for SymbolPath {
-    fn parse(pairs: Pair<Rule>, errors: &mut Vec<Error>) -> Result<Self> {
-        let position = get_position(&pairs);
-        let mut map = collect_tag_map(&pairs);
+impl ASTNode<Node> for SymbolPath {
+    fn parse(node: Node, errors: &mut Vec<Error>) -> Result<Self> {
+        let position = get_position(node);
+        let mut map = node.get_tag_map();
         let data = ASTNode::named_many(&mut map, "symbol", errors);
         Ok(Self { symbol: data, range: position })
     }
 }
 
-impl<'i> ASTNode<Pair<'i, Rule>> for Symbol {
-    fn parse(pairs: Pair<Rule>, _: &mut Vec<Error>) -> Result<Self> {
-        let position = get_position(&pairs);
+impl ASTNode<Node> for Symbol {
+    fn parse(node: Node, _: &mut Vec<Error>) -> Result<Self> {
+        let position = get_position(node);
         let data = pairs.as_str().to_string();
         Ok(Self { data, range: position })
     }
@@ -163,22 +170,3 @@ fn test() {
     println!("{:#?}", out.unwrap());
     println!("{:#?}", parser.errors);
 }
-
-//region utility functions
-
-fn collect_tag_map<'a>(pairs:  &'a Pair<Rule>) -> HashMap<String, Vec<Pair<'a, Rule>>> {
-    let mut out: HashMap<String, Vec<Pair<Rule>>> = HashMap::new();
-    for pair in pairs.clone().into_inner() {
-        if let Some(s) = pair.as_node_tag() {
-            match out.get_mut(s) {
-                Some(s) => s.push(pair),
-                None => {
-                    out.insert(s.to_string(), vec![pair]);
-                }
-            }
-        }
-    }
-    return out;
-}
-
-//endregion
