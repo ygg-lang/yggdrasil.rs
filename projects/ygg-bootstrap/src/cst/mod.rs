@@ -1,17 +1,28 @@
 #![allow(non_snake_case, non_camel_case_types)]
 #![allow(unused_variables, dead_code)]
 
-// #[rustfmt::skip]
-mod parse;
+include!(concat!(env!("OUT_DIR"), "/ygg.rs"));
 
-pub use self::parse::{Node, Rule, PEG};
+mod parse;
+pub use self::ygg::{Node, Rule, PEG};
+//pub use self::parse::{Node, Rule, PEG};
 use yggdrasil_shared::records::CSTNode;
-use yggdrasil_shared::traits::CSTParser;
 use yggdrasil_shared::{Error, Result};
 
-impl CSTParser<Rule> for PEG {
-    fn parse(&mut self, input: &str) -> Result<CSTNode<Rule>> {
-        match self.parse(input) {
+pub struct CSTBuilder {
+    pub peg: PEG,
+    pub error: Vec<Error>,
+}
+
+impl Default for CSTBuilder {
+    fn default() -> Self {
+        Self { peg: PEG::new(), error: vec![] }
+    }
+}
+
+impl CSTBuilder {
+    pub fn parse(&mut self, input: &str) -> Result<CSTNode<Rule>> {
+        match self.peg.parse(input) {
             Ok(o) => Ok(flatten(o)),
             Err(e) => Err(Error::node_missing("E")),
         }
@@ -27,9 +38,9 @@ fn flatten(node: Node) -> CSTNode<Rule> {
         rule: node.rule,
         start: node.start,
         end: node.end,
-        children: vec![],
-        node_tag: None,
-        branch_tag: None,
+        children: buffer,
+        node_tag: node.label,
+        branch_tag: node.alternative,
     }
 }
 

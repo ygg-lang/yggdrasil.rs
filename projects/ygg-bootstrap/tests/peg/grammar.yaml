@@ -1,176 +1,20 @@
-Node {
-    rule: program,
-    range: "0-96",
-    children: [
-        Node {
-            rule: statement,
-            range: "1-14",
-            branch: "grammar",
-            children: [
-                Node {
-                    rule: grammar_statement,
-                    range: "1-14",
-                    children: [
-                        Node {
-                            rule: grammar,
-                            range: "1-9",
-                            children: [],
-                        },
-                        Node {
-                            rule: symbol,
-                            range: "10-13",
-                            children: [
-                                Node {
-                                    rule: XID_IDENTIFIER,
-                                    range: "10-13",
-                                    children: [],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        Node {
-            rule: statement,
-            range: "14-35",
-            branch: "grammar",
-            children: [
-                Node {
-                    rule: grammar_statement,
-                    range: "14-34",
-                    children: [
-                        Node {
-                            rule: grammar,
-                            range: "14-22",
-                            children: [],
-                        },
-                        Node {
-                            rule: symbol,
-                            range: "23-26",
-                            children: [
-                                Node {
-                                    rule: XID_IDENTIFIER,
-                                    range: "23-26",
-                                    children: [],
-                                },
-                            ],
-                        },
-                        Node {
-                            rule: string,
-                            range: "27-34",
-                            children: [],
-                        },
-                    ],
-                },
-                Node {
-                    rule: eos,
-                    range: "34-35",
-                    children: [],
-                },
-            ],
-        },
-        Node {
-            rule: statement,
-            range: "36-53",
-            branch: "grammar",
-            children: [
-                Node {
-                    rule: grammar_statement,
-                    range: "36-52",
-                    children: [
-                        Node {
-                            rule: grammar,
-                            range: "36-44",
-                            children: [],
-                        },
-                        Node {
-                            rule: symbol,
-                            range: "45-48",
-                            children: [
-                                Node {
-                                    rule: XID_IDENTIFIER,
-                                    range: "45-48",
-                                    children: [],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        Node {
-            rule: statement,
-            range: "53-77",
-            branch: "grammar",
-            children: [
-                Node {
-                    rule: grammar_statement,
-                    range: "53-76",
-                    children: [
-                        Node {
-                            rule: grammar,
-                            range: "53-61",
-                            children: [],
-                        },
-                        Node {
-                            rule: symbol,
-                            range: "62-65",
-                            children: [
-                                Node {
-                                    rule: XID_IDENTIFIER,
-                                    range: "62-65",
-                                    children: [],
-                                },
-                            ],
-                        },
-                        Node {
-                            rule: string,
-                            range: "67-74",
-                            children: [],
-                        },
-                    ],
-                },
-                Node {
-                    rule: eos,
-                    range: "76-77",
-                    children: [],
-                },
-            ],
-        },
-        Node {
-            rule: statement,
-            range: "78-95",
-            branch: "fragment",
-            children: [
-                Node {
-                    rule: fragment_statement,
-                    range: "78-94",
-                    children: [
-                        Node {
-                            rule: fragment,
-                            range: "78-87",
-                            children: [],
-                        },
-                        Node {
-                            rule: symbol,
-                            range: "88-94",
-                            children: [
-                                Node {
-                                    rule: XID_IDENTIFIER,
-                                    range: "88-94",
-                                    children: [],
-                                },
-                            ],
-                        },
-                    ],
-                },
-                Node {
-                    rule: eos,
-                    range: "94-95",
-                    children: [],
-                },
-            ],
-        },
-    ],
-}
+[
+    GrammarStatement {
+        id: "ygg",
+        ext: [],
+    },
+    GrammarStatement {
+        id: "ygg",
+        ext: [],
+    },
+    GrammarStatement {
+        id: "ygg",
+        ext: [],
+    },
+    GrammarStatement {
+        id: "ygg",
+        ext: [
+            StringLiteral("*.ygg"),
+        ],
+    },
+]

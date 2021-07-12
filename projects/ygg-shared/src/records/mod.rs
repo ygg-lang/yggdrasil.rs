@@ -3,7 +3,7 @@ mod node;
 mod position_system;
 
 pub use self::{
-    builder::{ASTBuilder, CSTBuilder},
+    builder::ASTBuilder,
     node::CSTNode,
     position_system::{LSPRange, OffsetRange},
 };

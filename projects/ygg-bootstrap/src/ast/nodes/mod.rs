@@ -128,7 +128,7 @@ pub struct Integer {
     pub range: (usize, usize),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct StringLiteral {
     pub data: String,
     pub range: (usize, usize),

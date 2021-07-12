@@ -69,14 +69,14 @@ where
         }
     }
     /// parse
-    fn parse(pairs: N, builder: &mut ASTBuilder) -> Result<Self>;
+    fn parse(node: N, builder: &mut ASTBuilder) -> Result<Self>;
 }
 
 macro_rules! ast_node_num {
     ($t:ty) => {
         impl<R> ASTNode<CSTNode<R>> for $t {
             fn parse(node: CSTNode<R>, builder: &mut ASTBuilder) -> Result<Self> {
-                Ok(node.get_string(&builder.input).parse::<$t>()?)
+                Ok(node.get_str(&builder.input).parse::<$t>()?)
             }
         }
     };
@@ -91,6 +91,6 @@ ast_node_num![f32, f64];
 
 impl<R> ASTNode<CSTNode<R>> for String {
     fn parse(node: CSTNode<R>, builder: &mut ASTBuilder) -> Result<Self> {
-        Ok(node.get_string(&builder.input).to_string())
+        Ok(node.get_str(&builder.input).to_string())
     }
 }

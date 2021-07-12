@@ -20,7 +20,7 @@ impl ASTNode<Node> for Statement {
         let branch = node.branch_tag;
         let mut map = node.get_tag_map();
         match branch {
-            Some("Grammar") => unimplemented!(),
+            Some("Grammar") => Ok(Self::GrammarStatement(Box::new(ASTNode::named_one(&mut map, "grammar_statement", builder)?))),
             Some("Fragment") => Ok(Self::Fragment(Box::new(ASTNode::named_one(&mut map, "fragment_statement", builder)?))),
             Some("Ignore") => Ok(Self::Ignore(Box::new(ASTNode::named_one(&mut map, "ignore_statement", builder)?))),
             Some("Assign") => Ok(Self::Assign(Box::new(ASTNode::named_one(&mut map, "assign_statement", builder)?))),
@@ -28,6 +28,16 @@ impl ASTNode<Node> for Statement {
                 unreachable!("{:#?}", map);
             }
         }
+    }
+}
+
+impl ASTNode<Node> for GrammarStatement {
+    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
+        let range = node.get_span();
+        let mut map = node.get_tag_map();
+        let id = ASTNode::named_one(&mut map, "id", builder)?;
+        let ext = ASTNode::named_many(&mut map, "ext", builder);
+        return Ok(Self { id, ext, range });
     }
 }
 
@@ -65,7 +75,6 @@ impl ASTNode<Node> for Expression {
         let range = node.get_span();
         let branch = node.branch_tag;
         let mut map = node.get_tag_map();
-        let head = map.remove("__rec_expr_left").as_mut().map(|s| s.remove(0));
         match branch {
             Some("Priority") => Self::named_one(&mut map, "expr", builder),
             Some("Concat") => {
@@ -107,6 +116,52 @@ impl ASTNode<Node> for Data {
     }
 }
 
+impl ASTNode<Node> for StringLiteral {
+    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
+        let range = node.get_span();
+        let raw = unsafe { (&builder.input).get_unchecked((range.0 + 1)..(range.1 - 1)) };
+        let data = unescape(raw)?;
+        Ok(Self { data, range })
+    }
+}
+
+fn unescape(raw: &str) -> Result<String> {
+    let mut out = String::with_capacity(raw.len());
+    let mut chars = raw.chars();
+    while let Some(c) = chars.next() {
+        if c != '\\' {
+            out.push(c);
+            continue;
+        };
+        let c = chars.next().ok_or(Error::node_missing("???"))?;
+        match c {
+            'b' => out.push('\u{08}'),
+            't' => out.push('\t'),
+            'n' => out.push('\n'),
+            'f' => out.push('\u{0C}'),
+            'r' => out.push('\r'),
+            'u' => out.push(parse_unicode(&mut chars)?),
+            _ => out.push(c),
+        }
+    }
+    return Ok(out);
+}
+
+fn parse_unicode<I>(chars: &mut I) -> Result<char>
+where
+    I: Iterator<Item = char>,
+{
+    match chars.next() {
+        Some('{') => {}
+        _ => {
+            return Err(Error::node_missing("???"));
+        }
+    }
+    let unicode_seq: String = chars.take_while(|&c| c != '}').collect();
+    let n = u32::from_str_radix(&unicode_seq, 16)?;
+    Ok(char::from_u32(n).ok_or(Error::node_missing("???"))?)
+}
+
 impl ASTNode<Node> for Integer {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let range = node.get_span();
@@ -127,7 +182,7 @@ impl ASTNode<Node> for SymbolPath {
 impl ASTNode<Node> for Symbol {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let range = node.get_span();
-        let data = node.get_string(&builder.input);
+        let data = node.get_str(&builder.input).to_string();
         Ok(Self { data, range })
     }
 }

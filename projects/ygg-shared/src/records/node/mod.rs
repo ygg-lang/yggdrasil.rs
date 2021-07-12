@@ -34,8 +34,8 @@ impl<R: Debug + Clone> Debug for CSTNode<R> {
 
 impl<R> CSTNode<R> {
     /// get str of the node
-    pub fn get_string(&self, input: &str) -> String {
-        unsafe { input.get_unchecked(self.start..self.end).to_string() }
+    pub fn get_str<'i>(&self, input: &'i str) -> &'i str {
+        unsafe { input.get_unchecked(self.start..self.end) }
     }
     /// Provide basic location information
     /// (start_offset, end_offset)

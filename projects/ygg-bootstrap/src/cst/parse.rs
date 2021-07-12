@@ -607,8 +607,9 @@ impl PEG {
                     list.push(node);
                     self.rule_symbol(pos, input)
                 })
-                .and_then(|node| {
+                .and_then(|mut node| {
                     let pos = node.end;
+                    node.label = Some("symbol");
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })
@@ -630,8 +631,9 @@ impl PEG {
                         let start = pos;
 
                         self.rule_string(pos, input)
-                            .and_then(|node| {
+                            .and_then(|mut node| {
                                 let pos = node.end;
+                                node.label = Some("string");
                                 list.push(node);
                                 self.rule_IGNORE(pos, input)
                             })
@@ -660,8 +662,9 @@ impl PEG {
                                                 list.push(node);
                                                 self.rule_string(pos, input)
                                             })
-                                            .map(|node| {
+                                            .map(|mut node| {
                                                 let end = node.end;
+                                                node.label = Some("string");
                                                 list.push(node);
 
                                                 Node {
@@ -760,15 +763,16 @@ impl PEG {
                     list.push(node);
                     self.rule_symbol(pos, input)
                 })
-                .and_then(|node| {
+                .and_then(|mut node| {
                     let pos = node.end;
+                    node.label = Some("symbol");
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })
                 .and_then(|node| {
                     let pos = node.end;
                     list.push(node);
-                    self.rule_string(pos, input).or_else(|_| Ok(Node::new(Rule::Terminal, pos, pos, None, None)))
+                    self.rule_string(pos, input).or_else(|_| Ok(Node::new(Rule::Terminal, pos, pos, Some("string"), None)))
                 })
                 .map(|node| {
                     let end = node.end;
@@ -890,8 +894,9 @@ impl PEG {
                     list.push(node);
                     self.rule_string(pos, input)
                 })
-                .and_then(|node| {
+                .and_then(|mut node| {
                     let pos = node.end;
+                    node.label = Some("string");
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })
@@ -1043,8 +1048,9 @@ impl PEG {
                     list.push(node);
                     self.rule_string(pos, input)
                 })
-                .map(|node| {
+                .map(|mut node| {
                     let end = node.end;
+                    node.label = Some("string");
                     list.push(node);
 
                     Node {
@@ -1176,8 +1182,9 @@ impl PEG {
                     list.push(node);
                     self.rule_symbol(pos, input)
                 })
-                .map(|node| {
+                .map(|mut node| {
                     let end = node.end;
+                    node.label = Some("symbol");
                     list.push(node);
 
                     Node {
@@ -1218,8 +1225,9 @@ impl PEG {
                         let start = pos;
 
                         self.rule_symbol(pos, input)
-                            .and_then(|node| {
+                            .and_then(|mut node| {
                                 let pos = node.end;
+                                node.label = Some("symbol");
                                 list.push(node);
                                 self.rule_IGNORE(pos, input)
                             })
@@ -1248,8 +1256,9 @@ impl PEG {
                                                 list.push(node);
                                                 self.rule_symbol(pos, input)
                                             })
-                                            .map(|node| {
+                                            .map(|mut node| {
                                                 let end = node.end;
+                                                node.label = Some("symbol");
                                                 list.push(node);
 
                                                 Node {
@@ -1369,8 +1378,9 @@ impl PEG {
             let start = pos;
 
             self.rule_symbol(pos, input)
-                .and_then(|node| {
+                .and_then(|mut node| {
                     let pos = node.end;
+                    node.label = Some("symbol");
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })
@@ -1379,8 +1389,9 @@ impl PEG {
                     list.push(node);
                     self.rule_assign_kind(pos, input)
                 })
-                .and_then(|node| {
+                .and_then(|mut node| {
                     let pos = node.end;
+                    node.label = Some("assign_kind");
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })

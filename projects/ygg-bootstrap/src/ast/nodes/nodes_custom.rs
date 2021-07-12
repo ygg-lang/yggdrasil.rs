@@ -109,3 +109,11 @@ impl Hash for StringLiteral {
         self.data.hash(state)
     }
 }
+
+impl Debug for StringLiteral {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.write_str("StringLiteral(")?;
+        write!(f, "{:?}", self.data)?;
+        f.write_str(")")
+    }
+}

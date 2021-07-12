@@ -2,8 +2,9 @@ use yggdrasil_bootstrap::ast::Ygg;
 
 pub fn peg_assert(input: &str, target: &str) {
     let mut parser = Ygg::default();
-    let out = parser.parse_program(input).unwrap().0;
-    assert_eq!(format!("{:#?}", out), target)
+    let out = parser.parse_program(input).unwrap();
+    println!("{:#?}", out.1);
+    assert_eq!(format!("{:#?}", out.0), target)
 }
 
 #[test]

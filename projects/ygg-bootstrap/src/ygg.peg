@@ -1,13 +1,13 @@
 program  <- IGNORE (<statement:statement> IGNORE)* EOI;
 
 statement  <- empty_statement
-    grammar:/ grammar_statement IGNORE eos?
-    fragment:/ fragment_statement IGNORE eos?
-    import:/ import_statement IGNORE eos?
-    ignore:/ ignore_statement IGNORE eos?
-    assign:/ assign_statement IGNORE eos?
-    macro_call:/ macro_then IGNORE eos?
-    macro_def:/ macro_define IGNORE eos?
+    Grammar:/ <grammar_statement:grammar_statement> IGNORE eos?
+    Fragment:/ <fragment_statement:fragment_statement> IGNORE eos?
+    Import:/ <import_statement:import_statement> IGNORE eos?
+    Ignore:/ <ignore_statement:ignore_statement> IGNORE eos?
+    Assign:/ <assign_statement:assign_statement> IGNORE eos?
+    MacroCall:/ <macro_then:macro_then> IGNORE eos?
+    MacroDef:/ <macro_define:macro_define> IGNORE eos?
 ;
 
 empty_statement <- eos;
@@ -16,8 +16,8 @@ eos  <- ";";
 
 
 grammar_statement  <-
-    grammar IGNORE symbol IGNORE "{" IGNORE (string IGNORE ("," IGNORE string)* IGNORE ","?)? IGNORE "}"
-  / grammar IGNORE symbol IGNORE string?
+    grammar IGNORE <id:symbol> IGNORE "{" IGNORE (<ext:string> IGNORE ("," IGNORE <ext:string>)* IGNORE ","?)? IGNORE "}"
+  / grammar IGNORE <id:symbol> IGNORE <ext:string>?
 ;
 grammar  <- "grammar!";
 
@@ -26,22 +26,22 @@ fragment <- "fragment!";
 
 
 import_statement  <-
-    import IGNORE string IGNORE "{" IGNORE (symbol_alias IGNORE ("," IGNORE symbol_alias)* IGNORE ","?)? IGNORE "}"
-  / import IGNORE string
+    import IGNORE <string:string> IGNORE "{" IGNORE (symbol_alias IGNORE ("," IGNORE symbol_alias)* IGNORE ","?)? IGNORE "}"
+  / import IGNORE <string:string>
 ;
 import  <- "import!";
 
 symbol_alias <- (symbol IGNORE "as" IGNORE)? symbol;
 
 ignore_statement  <-
-    ignore IGNORE symbol
-  / ignore IGNORE "{" IGNORE (symbol IGNORE ("," IGNORE symbol)* IGNORE ","?)? IGNORE "}"
+    ignore IGNORE <symbol:symbol>
+  / ignore IGNORE "{" IGNORE (<symbol:symbol> IGNORE ("," IGNORE <symbol:symbol>)* IGNORE ","?)? IGNORE "}"
 ;
 ignore  <- "ignore!";
 
 
 
-assign_statement  <- symbol IGNORE assign_kind IGNORE ("|"/"/")? IGNORE expr;
+assign_statement  <- <symbol:symbol> IGNORE <assign_kind:assign_kind> IGNORE ("|"/"/")? IGNORE expr;
 assign_kind  <- ("^"/"_"/"@")* "=";
 
 expr  <- term IGNORE (expr_next IGNORE)*;
@@ -73,10 +73,10 @@ regex_range  <- "[" IGNORE (!"]" IGNORE . / "\\" IGNORE .)* IGNORE "]";
 
 
 macro_call  <-
-    "@" symbol_path IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE")"
+    "@" <symbol_path:symbol_path> IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE")"
 ;
 macro_then  <-
-    "#" symbol_path (IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE")")?
+    "#" <symbol_path:symbol_path> (IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE")")?
 ;
 macro_kv  <-  symbol IGNORE " <-" IGNORE expr / expr;
 
@@ -86,7 +86,7 @@ macro_define  <-
     "macro!" IGNORE symbol IGNORE  "(" IGNORE(macro_arg IGNORE ("," IGNORE macro_arg)* IGNORE ","?)? IGNORE ")" IGNORE block
 ;
 macro_arg  <- symbol IGNORE (":" IGNORE symbol)? IGNORE ("=" IGNORE expr)?;
-block  <- "{" IGNORE "return"? IGNORE expr IGNORE "}";
+block  <- "{" IGNORE expr IGNORE "}";
 
 
 string  <-
@@ -97,7 +97,7 @@ string  <-
 integer  <- re#0|[1-9](_?[0-9])*#;
 
 symbol_path  <-
-    symbol IGNORE (("::"/".") IGNORE symbol)*
+    <symbol:symbol> IGNORE (("::"/".") IGNORE <symbol:symbol>)*
 ;
 symbol  <- XID_IDENTIFIER;
 
@@ -105,6 +105,5 @@ symbol  <- XID_IDENTIFIER;
 IGNORE <-  (SPACE / NEWLINE / COMMENT)?;
 
 SPACE <- re#[\s]+#;
-
 NEWLINE <- re#[\r\n]+#;
 COMMENT <- "//" re#[^\r\n]*#
