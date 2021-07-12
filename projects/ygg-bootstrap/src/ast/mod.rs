@@ -2,45 +2,23 @@ mod nodes;
 mod parse;
 
 use std::collections::HashMap;
-use crate::cst::{CSTBuilder, Node};
-use yggdrasil_shared::records::get_position;
-use yggdrasil_shared::records::LSPRange as Range;
+use crate::cst::{Node, PEG};
+use yggdrasil_shared::records::{CSTBuilder,ASTBuilder};
 use yggdrasil_shared::traits::{ASTNode, CSTNode};
 use yggdrasil_shared::Error;
 use yggdrasil_shared::Result;
 
 pub use self::nodes::*;
 
-/// ASTBuilder
-pub struct ASTBuilder {
-    cst: CSTBuilder,
-    /// input text
-    pub input: String,
-    /// errors report in this parsing
-    pub errors: Vec<Error>,
-}
-
-impl Default for ASTBuilder {
-    fn default() -> Self {
-        Self {
-            cst: Default::default(),
-            input: String::new(),
-            errors: vec![],
-        }
-    }
-}
-
 impl CSTNode for Node {
-    fn get_str(&self) -> &str {
-        todo!()
+    fn get_string(&self, input:&str) -> String {
+        unsafe {
+            input.get_unchecked(self.start..self.end).to_string()
+        }
     }
 
     fn get_span(&self) -> (usize, usize) {
         (self.start, self.end)
-    }
-
-    fn get_range(&self) -> (usize, usize, usize, usize) {
-        todo!()
     }
 
     fn get_node_tag(&self) -> Option<&'static str> {
@@ -56,9 +34,9 @@ impl CSTNode for Node {
         for node in self.children {
             if let Some(s) = node.get_node_tag() {
                 match out.get_mut(s) {
-                    Some(s) => s.push(pair),
+                    Some(s) => s.push(node),
                     None => {
-                        out.insert(s, vec![pair]);
+                        out.insert(s, vec![node]);
                     }
                 }
             }
@@ -67,13 +45,37 @@ impl CSTNode for Node {
     }
 }
 
-impl ASTBuilder {
+pub struct Ygg {
+    peg: PEG,
+    cst: CSTBuilder,
+    ast: ASTBuilder,
+}
+
+impl Default for Ygg {
+    fn default() -> Self {
+        Self {
+            peg: PEG::new(),
+            cst: Default::default(),
+            ast: Default::default()
+        }
+    }
+}
+
+impl Ygg {
     /// parse_program
-    pub fn parse_program(&mut self, input: &str) -> Result<Program> {
-        self.errors.clear();
-        self.input = String::from(input);
-        let cst = self.cst.parse(&self.input)?;
-        let program = Program::parse(cst, &mut self.errors)?;
-        Ok(program)
+    pub fn parse_program(&mut self, input: &str) -> Result<(Program, Vec<Error>)> {
+        self.init(input);
+        let cst = self.cst.parse(&self.ast.input)?;
+        let program = Program::parse(cst, &mut self.ast)?;
+        let mut error = Vec::with_capacity(self.ast.error.len() + self.cst.error.len());
+        error.extend()
+
+
+        Ok((program))
+    }
+    fn init(&mut self, input: &str) {
+        self.cst.error.clear();
+        self.ast.error.clear();
+        self.ast.input = String::from(input)
     }
 }

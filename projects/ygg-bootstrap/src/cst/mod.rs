@@ -8,47 +8,8 @@ pub use self::parse::{Node, Rule, PEG};
 use std::fmt::{Debug, Formatter};
 use yggdrasil_shared::Result;
 
-pub struct CSTBuilder {
-    peg: PEG,
-}
 
-impl Default for CSTBuilder {
-    fn default() -> Self {
-        Self { peg: PEG::new() }
-    }
-}
 
-impl Debug for Node {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let w = &mut f.debug_struct("Node");
-        w.field("rule", &self.rule);
-        w.field("range", &format!("{}-{}", self.start, self.end));
-        if let Some(s) = self.label {
-            w.field("label", &s);
-        };
-        if let Some(s) = self.alternative {
-            w.field("branch", &s);
-        };
-        w.field("children", &self.children);
-        w.finish()
-    }
-}
-
-impl Debug for CSTBuilder {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let w = &mut f.debug_struct("CSTBuilder");
-        w.field("input", &self.input);
-        w.finish()
-    }
-}
-
-impl CSTBuilder {
-    pub fn parse(&mut self, input: &str) -> Result<Node> {
-        let p = &mut self.peg;
-        let out = flatten(p.parse(&input).unwrap());
-        return Ok(out);
-    }
-}
 
 fn flatten(node: Node) -> Node {
     let mut buffer = vec![];
