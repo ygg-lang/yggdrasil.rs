@@ -1,36 +1,15 @@
-use crate::{Error, Result};
+use crate::{
+    records::{ASTBuilder, CSTNode},
+    Error, Result,
+};
 use std::collections::HashMap;
-use crate::records::ASTBuilder;
-
-/// It's a node contained in the Lossless Concrete Syntax Tree
-/// All subsequent required information will be retained
-/// Including spaces, line breaks, and comments or other semantically irrelevant content.
-/// Macros and formatting can start at this level
-pub trait CSTNode
-    where
-        Self: Sized,
-{
-    /// get str of the node
-    fn get_string(&self, input: &str) -> String;
-    /// Provide basic location information
-    /// (start_offset, end_offset)
-    fn get_span(&self) -> (usize, usize);
-    /// Get the tag of the current node
-    fn get_node_tag(&self) -> Option<&'static str>;
-    /// Get the tag of the current branch
-    fn get_branch_tag(&self) -> Option<&'static str>;
-    /// Find node tags in all of the children
-    /// Then collect them into a vec, and store in hashmap with the tag name
-    fn get_tag_map(&self) -> HashMap<&'static str, Vec<Self>>;
-}
 
 /// It's a node contained in the Strongly Typed Abstract Syntax Tree
 /// Implement the `parse` method to express how to become a typed node
 /// Semantic analysis, interpreter, LSP can start at this level
 pub trait ASTNode<N>
-    where
-        N: CSTNode,
-        Self: Sized,
+where
+    Self: Sized,
 {
     /// This node will appear multiple times
     /// If the child node fails, it will be abandoned
@@ -95,8 +74,8 @@ pub trait ASTNode<N>
 
 macro_rules! ast_node_num {
     ($t:ty) => {
-        impl<N: CSTNode> ASTNode<N> for $t {
-            fn parse(node: N, builder: &mut ASTBuilder) -> Result<Self> {
+        impl<R> ASTNode<CSTNode<R>> for $t {
+            fn parse(node: CSTNode<R>, builder: &mut ASTBuilder) -> Result<Self> {
                 Ok(node.get_string(&builder.input).parse::<$t>()?)
             }
         }
@@ -110,8 +89,8 @@ ast_node_num![u8, u16, u32, u64, u128, usize];
 ast_node_num![i8, i16, i32, i64, i128, isize];
 ast_node_num![f32, f64];
 
-impl<N: CSTNode> ASTNode<N> for String {
-    fn parse(node: N, builder: &mut ASTBuilder) -> Result<Self> {
+impl<R> ASTNode<CSTNode<R>> for String {
+    fn parse(node: CSTNode<R>, builder: &mut ASTBuilder) -> Result<Self> {
         Ok(node.get_string(&builder.input).to_string())
     }
 }

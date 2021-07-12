@@ -5,28 +5,35 @@
 mod parse;
 
 pub use self::parse::{Node, Rule, PEG};
-use std::fmt::{Debug, Formatter};
-use yggdrasil_shared::Result;
+use yggdrasil_shared::records::CSTNode;
+use yggdrasil_shared::traits::CSTParser;
+use yggdrasil_shared::{Error, Result};
 
+impl CSTParser<Rule> for PEG {
+    fn parse(&mut self, input: &str) -> Result<CSTNode<Rule>> {
+        match self.parse(input) {
+            Ok(o) => Ok(flatten(o)),
+            Err(e) => Err(Error::node_missing("E")),
+        }
+    }
+}
 
-
-
-fn flatten(node: Node) -> Node {
+fn flatten(node: Node) -> CSTNode<Rule> {
     let mut buffer = vec![];
     for node in node.children {
         flatten_rec(node, &mut buffer)
     }
-    Node {
+    CSTNode {
         rule: node.rule,
         start: node.start,
         end: node.end,
-        children: buffer,
-        label: node.label,
-        alternative: node.alternative,
+        children: vec![],
+        node_tag: None,
+        branch_tag: None,
     }
 }
 
-fn flatten_rec(node: Node, buffer: &mut Vec<Node>) {
+fn flatten_rec(node: Node, buffer: &mut Vec<CSTNode<Rule>>) {
     match node.rule {
         // flatten these nodes
         Rule::Any | Rule::List => {

@@ -1,6 +1,9 @@
-mod position_system;
 mod builder;
 mod node;
+mod position_system;
 
-pub use self::position_system::{get_position, join_position, LSPRange, OffsetRange};
-pub use self::builder::{CSTBuilder, ASTBuilder};
+pub use self::{
+    builder::{ASTBuilder, CSTBuilder},
+    node::CSTNode,
+    position_system::{LSPRange, OffsetRange},
+};

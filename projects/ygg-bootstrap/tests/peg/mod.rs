@@ -1,8 +1,8 @@
-use yggdrasil_bootstrap::cst::CSTBuilder;
+use yggdrasil_bootstrap::ast::Ygg;
 
 pub fn peg_assert(input: &str, target: &str) {
-    let mut parser = CSTBuilder::default();
-    let out = parser.parse(input).unwrap();
+    let mut parser = Ygg::default();
+    let out = parser.parse_program(input).unwrap().0;
     assert_eq!(format!("{:#?}", out), target)
 }
 

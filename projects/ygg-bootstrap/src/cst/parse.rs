@@ -1,8 +1,9 @@
+#![allow(unused_imports, dead_code, clippy::all)]
 use regex::Regex;
 use std::collections::HashMap;
 use unicode_xid::UnicodeXID;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Node {
     pub rule: Rule,
     pub start: usize,
@@ -252,8 +253,9 @@ impl PEG {
                             let start = pos;
 
                             self.rule_statement(pos, input)
-                                .and_then(|node| {
+                                .and_then(|mut node| {
                                     let pos = node.end;
+                                    node.label = Some("statement");
                                     list.push(node);
                                     self.rule_IGNORE(pos, input)
                                 })

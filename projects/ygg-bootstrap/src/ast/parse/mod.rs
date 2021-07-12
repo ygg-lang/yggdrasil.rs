@@ -1,7 +1,10 @@
 mod parse_custom;
 
-
 use super::*;
+use crate::cst::Rule;
+use yggdrasil_shared::records::CSTNode;
+
+pub type Node = CSTNode<Rule>;
 
 impl ASTNode<Node> for Program {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
@@ -14,8 +17,9 @@ impl ASTNode<Node> for Program {
 
 impl ASTNode<Node> for Statement {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
+        let branch = node.branch_tag;
         let mut map = node.get_tag_map();
-        match node.get_branch_tag() {
+        match branch {
             Some("Grammar") => unimplemented!(),
             Some("Fragment") => Ok(Self::Fragment(Box::new(ASTNode::named_one(&mut map, "fragment_statement", builder)?))),
             Some("Ignore") => Ok(Self::Ignore(Box::new(ASTNode::named_one(&mut map, "ignore_statement", builder)?))),
@@ -59,13 +63,10 @@ impl ASTNode<Node> for AssignStatement {
 impl ASTNode<Node> for Expression {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let range = node.get_span();
+        let branch = node.branch_tag;
         let mut map = node.get_tag_map();
         let head = map.remove("__rec_expr_left").as_mut().map(|s| s.remove(0));
-        let rest = map.remove("__rec_expr_rest").unwrap_or_default();
-        if let Some(s) = head {
-            unreachable!()
-        };
-        match node.get_branch_tag() {
+        match branch {
             Some("Priority") => Self::named_one(&mut map, "expr", builder),
             Some("Concat") => {
                 unimplemented!()
@@ -91,11 +92,11 @@ impl ASTNode<Node> for Expression {
     }
 }
 
-
 impl ASTNode<Node> for Data {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
+        let branch = node.branch_tag;
         let mut map = node.get_tag_map();
-        match node.get_branch_tag() {
+        match branch {
             Some("SymbolPath") => Ok(Self::SymbolPath(Box::new(ASTNode::named_one(&mut map, "symbol_path", builder)?))),
             Some("Integer") => Ok(Self::Integer(Box::new(ASTNode::named_one(&mut map, "integer", builder)?))),
             Some(s) => {

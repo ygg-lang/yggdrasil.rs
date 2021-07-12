@@ -1,4 +1,4 @@
-program  <- IGNORE (statement IGNORE)* EOI;
+program  <- IGNORE (<statement:statement> IGNORE)* EOI;
 
 statement  <- empty_statement
     grammar:/ grammar_statement IGNORE eos?
