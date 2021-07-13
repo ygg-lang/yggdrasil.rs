@@ -27,7 +27,7 @@ impl Translator for Program {
         let mut doc_buffer = String::new();
         for stmt in self.statement {
             match stmt {
-                Statement::GrammarStatement(s) => {
+                Statement::Grammar(s) => {
                     if !is_top_area {
                         diag.push(top_area_error("Grammar", "Grammar statement must be declared at the top", s.range))
                     }

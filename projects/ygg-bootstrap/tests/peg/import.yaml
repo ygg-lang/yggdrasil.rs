@@ -1,114 +1,12 @@
-Node {
-    rule: program,
-    range: "0-50",
-    children: [
-        Node {
-            rule: statement,
-            range: "1-18",
-            branch: "import",
-            children: [
-                Node {
-                    rule: import_statement,
-                    range: "1-17",
-                    children: [
-                        Node {
-                            rule: import,
-                            range: "1-8",
-                            children: [],
-                        },
-                        Node {
-                            rule: string,
-                            range: "9-17",
-                            children: [],
-                        },
-                    ],
-                },
-            ],
-        },
-        Node {
-            rule: statement,
-            range: "18-50",
-            branch: "import",
-            children: [
-                Node {
-                    rule: import_statement,
-                    range: "18-49",
-                    children: [
-                        Node {
-                            rule: import,
-                            range: "18-25",
-                            children: [],
-                        },
-                        Node {
-                            rule: string,
-                            range: "26-34",
-                            children: [],
-                        },
-                        Node {
-                            rule: symbol_alias,
-                            range: "36-37",
-                            children: [
-                                Node {
-                                    rule: symbol,
-                                    range: "36-37",
-                                    children: [
-                                        Node {
-                                            rule: XID_IDENTIFIER,
-                                            range: "36-37",
-                                            children: [],
-                                        },
-                                    ],
-                                },
-                            ],
-                        },
-                        Node {
-                            rule: symbol_alias,
-                            range: "39-45",
-                            children: [
-                                Node {
-                                    rule: symbol,
-                                    range: "39-40",
-                                    children: [
-                                        Node {
-                                            rule: XID_IDENTIFIER,
-                                            range: "39-40",
-                                            children: [],
-                                        },
-                                    ],
-                                },
-                                Node {
-                                    rule: symbol,
-                                    range: "44-45",
-                                    children: [
-                                        Node {
-                                            rule: XID_IDENTIFIER,
-                                            range: "44-45",
-                                            children: [],
-                                        },
-                                    ],
-                                },
-                            ],
-                        },
-                        Node {
-                            rule: symbol_alias,
-                            range: "47-48",
-                            children: [
-                                Node {
-                                    rule: symbol,
-                                    range: "47-48",
-                                    children: [
-                                        Node {
-                                            rule: XID_IDENTIFIER,
-                                            range: "47-48",
-                                            children: [],
-                                        },
-                                    ],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-    ],
-}
+[
+    ImportStatement {
+        id: StringLiteral(">root/"),
+        symbol_alias: [],
+    },
+    ImportStatement {
+        id: StringLiteral("@root/"),
+        symbol_alias: [
+            SymbolAlias(b as c),
+        ],
+    },
+]

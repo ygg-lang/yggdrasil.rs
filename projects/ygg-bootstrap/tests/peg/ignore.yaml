@@ -1,96 +1,14 @@
-Node {
-    rule: program,
-    range: "0-31",
-    children: [
-        Node {
-            rule: statement,
-            range: "1-11",
-            branch: "ignore",
-            children: [
-                Node {
-                    rule: ignore_statement,
-                    range: "1-10",
-                    children: [
-                        Node {
-                            rule: ignore,
-                            range: "1-8",
-                            children: [],
-                        },
-                        Node {
-                            rule: symbol,
-                            range: "9-10",
-                            children: [
-                                Node {
-                                    rule: XID_IDENTIFIER,
-                                    range: "9-10",
-                                    children: [],
-                                },
-                            ],
-                        },
-                    ],
-                },
-                Node {
-                    rule: eos,
-                    range: "10-11",
-                    children: [],
-                },
-            ],
-        },
-        Node {
-            rule: statement,
-            range: "12-30",
-            branch: "ignore",
-            children: [
-                Node {
-                    rule: ignore_statement,
-                    range: "12-29",
-                    children: [
-                        Node {
-                            rule: ignore,
-                            range: "12-19",
-                            children: [],
-                        },
-                        Node {
-                            rule: symbol,
-                            range: "21-22",
-                            children: [
-                                Node {
-                                    rule: XID_IDENTIFIER,
-                                    range: "21-22",
-                                    children: [],
-                                },
-                            ],
-                        },
-                        Node {
-                            rule: symbol,
-                            range: "24-25",
-                            children: [
-                                Node {
-                                    rule: XID_IDENTIFIER,
-                                    range: "24-25",
-                                    children: [],
-                                },
-                            ],
-                        },
-                        Node {
-                            rule: symbol,
-                            range: "27-28",
-                            children: [
-                                Node {
-                                    rule: XID_IDENTIFIER,
-                                    range: "27-28",
-                                    children: [],
-                                },
-                            ],
-                        },
-                    ],
-                },
-                Node {
-                    rule: eos,
-                    range: "29-30",
-                    children: [],
-                },
-            ],
-        },
-    ],
-}
+[
+    IgnoreStatement {
+        rules: [
+            Symbol(a),
+        ],
+    },
+    IgnoreStatement {
+        rules: [
+            Symbol(a),
+            Symbol(b),
+            Symbol(c),
+        ],
+    },
+]

@@ -20,9 +20,10 @@ impl ASTNode<Node> for Statement {
         let branch = node.branch_tag;
         let mut map = node.get_tag_map();
         match branch {
-            Some("Grammar") => Ok(Self::GrammarStatement(Box::new(ASTNode::named_one(&mut map, "grammar_statement", builder)?))),
+            Some("Grammar") => Ok(Self::Grammar(Box::new(ASTNode::named_one(&mut map, "grammar_statement", builder)?))),
             Some("Fragment") => Ok(Self::Fragment(Box::new(ASTNode::named_one(&mut map, "fragment_statement", builder)?))),
             Some("Ignore") => Ok(Self::Ignore(Box::new(ASTNode::named_one(&mut map, "ignore_statement", builder)?))),
+            Some("Import") => Ok(Self::Import(Box::new(ASTNode::named_one(&mut map, "import_statement", builder)?))),
             Some("Assign") => Ok(Self::Assign(Box::new(ASTNode::named_one(&mut map, "assign_statement", builder)?))),
             _ => {
                 unreachable!("{:#?}", map);
@@ -47,6 +48,20 @@ impl ASTNode<Node> for FragmentStatement {
         let mut map = node.get_tag_map();
         let id = ASTNode::named_one(&mut map, "id", builder)?;
         return Ok(Self { id, range });
+    }
+}
+
+impl ASTNode<Node> for ImportStatement {
+    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
+        let range = node.get_span();
+        let mut map = node.get_tag_map();
+        let path = ASTNode::named_one(&mut map, "path", builder)?;
+        let symbol_alias = ASTNode::named_many(&mut map, "symbol_alias", builder);
+        return Ok(Self {
+            path,
+            symbol_alias,
+            range
+        });
     }
 }
 
@@ -176,6 +191,20 @@ impl ASTNode<Node> for SymbolPath {
         let mut map = node.get_tag_map();
         let data = ASTNode::named_many(&mut map, "symbol", builder);
         Ok(Self { symbol: data, range })
+    }
+}
+
+impl ASTNode<Node> for SymbolAlias {
+    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
+        let range = node.get_span();
+        let mut map = node.get_tag_map();
+        let from = ASTNode::named_one(&mut map, "from", builder)?;
+        let into = ASTNode::named_some(&mut map, "into", builder);
+        Ok(Self {
+            from,
+            into,
+            range
+        })
     }
 }
 

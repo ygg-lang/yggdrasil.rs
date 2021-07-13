@@ -26,16 +26,18 @@ fragment <- "fragment!";
 
 
 import_statement  <-
-    import IGNORE <string:string> IGNORE "{" IGNORE (symbol_alias IGNORE ("," IGNORE symbol_alias)* IGNORE ","?)? IGNORE "}"
-  / import IGNORE <string:string>
+    import IGNORE <path:string> IGNORE "{" IGNORE (<symbol_alias:symbol_alias> IGNORE ("," IGNORE <symbol_alias:symbol_alias>)* IGNORE ","?)? IGNORE "}"
+  / import IGNORE <path:string>
 ;
 import  <- "import!";
 
-symbol_alias <- (symbol IGNORE "as" IGNORE)? symbol;
+symbol_alias <-
+    <from:symbol> IGNORE "as" IGNORE <into:symbol>
+  / <from:symbol>;
 
 ignore_statement  <-
-    ignore IGNORE <symbol:symbol>
-  / ignore IGNORE "{" IGNORE (<symbol:symbol> IGNORE ("," IGNORE <symbol:symbol>)* IGNORE ","?)? IGNORE "}"
+    ignore IGNORE <rules:symbol>
+  / ignore IGNORE "{" IGNORE (<rules:symbol> IGNORE ("," IGNORE <rules:symbol>)* IGNORE ","?)? IGNORE "}"
 ;
 ignore  <- "ignore!";
 

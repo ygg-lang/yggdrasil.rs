@@ -1,18 +1,18 @@
 [
     GrammarStatement {
-        id: "ygg",
+        id: Symbol(ygg),
         ext: [],
     },
     GrammarStatement {
-        id: "ygg",
+        id: Symbol(ygg),
         ext: [],
     },
     GrammarStatement {
-        id: "ygg",
+        id: Symbol(ygg),
         ext: [],
     },
     GrammarStatement {
-        id: "ygg",
+        id: Symbol(ygg),
         ext: [
             StringLiteral("*.ygg"),
         ],

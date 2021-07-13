@@ -11,8 +11,9 @@ pub struct Program {
 
 #[derive(Clone)]
 pub enum Statement {
-    GrammarStatement(Box<GrammarStatement>),
+    Grammar(Box<GrammarStatement>),
     Fragment(Box<FragmentStatement>),
+    Import(Box<ImportStatement>),
     Assign(Box<AssignStatement>),
     Ignore(Box<IgnoreStatement>),
     CommentDocument(Box<CommentDocument>),
@@ -42,6 +43,20 @@ pub struct AssignStatement {
 #[derive(Clone, Debug)]
 pub struct IgnoreStatement {
     pub rules: Vec<Symbol>,
+    pub range: (usize, usize),
+}
+
+#[derive(Clone, Debug)]
+pub struct ImportStatement {
+    pub path: StringLiteral,
+    pub symbol_alias: Vec<SymbolAlias>,
+    pub range: (usize, usize),
+}
+
+#[derive(Clone)]
+pub struct SymbolAlias {
+    pub from: Symbol,
+    pub into: Option<Symbol>,
     pub range: (usize, usize),
 }
 
@@ -110,13 +125,13 @@ pub enum Data {
     Regex,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct SymbolPath {
     pub symbol: Vec<Symbol>,
     pub range: (usize, usize),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct Symbol {
     pub data: String,
     pub range: (usize, usize),
