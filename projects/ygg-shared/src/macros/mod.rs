@@ -1,7 +1,13 @@
 #[macro_export]
-macro_rules! ignore_terms {
-    ($r:ident, $($rule:ident),*) => {
-       |s| self::$r(s) $(.or_else(|s| self::$rule(s)))*
+macro_rules! string_node {
+    ($node:ty, $kind:ty) => {
+        impl ASTNode<$node> for $kind {
+            fn parse(node: $node, builder: &mut ASTBuilder) -> Result<Self> {
+                let range = node.get_span();
+                let data = ASTNode::parse(node, builder)?;
+                Ok(Self { data, range })
+            }
+        }
     };
 }
 

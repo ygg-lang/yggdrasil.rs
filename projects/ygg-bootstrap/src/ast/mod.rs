@@ -2,7 +2,10 @@ mod nodes;
 mod parse;
 
 use crate::cst::CSTBuilder;
+use crate::cst::Rule;
 use yggdrasil_shared::records::ASTBuilder;
+use yggdrasil_shared::records::CSTNode;
+use yggdrasil_shared::string_node;
 use yggdrasil_shared::traits::ASTNode;
 use yggdrasil_shared::Error;
 use yggdrasil_shared::Result;

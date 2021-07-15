@@ -65,45 +65,44 @@ fn escape_string(str: &str) -> String {
 #[allow(non_camel_case_types)]
 enum Terminal {
     Literal_28,
-    Literal_11,
+    Literal_13,
     Literal_27,
-    Literal_14,
+    Literal_12,
     Literal_19,
     Literal_18,
-    Literal_9,
     Literal_10,
+    Literal_11,
     Literal_23,
     Literal_21,
     Literal_1,
     Literal_22,
     Literal_30,
-    Literal_4,
+    Literal_5,
     Literal_31,
-    Literal_17,
+    Literal_3,
     Literal_29,
     Literal,
-    Literal_12,
-    Literal_16,
-    Literal_8,
-    Literal_13,
+    Literal_14,
+    Literal_17,
+    Literal_9,
+    Literal_15,
     Literal_20,
-    Literal_7,
+    Literal_8,
     Literal_24,
     Literal_26,
     Literal_25,
-    Literal_5,
     Literal_6,
+    Literal_7,
     _as,
     fragment_0,
     grammar_0,
     ignore_0,
     import_0,
     _macro,
-    _return,
     Literal_0,
-    Literal_3,
+    Literal_4,
     Literal_2,
-    Literal_15,
+    Literal_16,
     Regex_0,
     Regex,
     Regex_1,
@@ -138,7 +137,8 @@ pub enum Rule {
     expr,
     expr_next,
     term,
-    mark_branch,
+    term_next,
+    branch_kind,
     infix,
     prefix,
     suffix,
@@ -340,8 +340,9 @@ impl PEG {
                 let start = pos;
 
                 self.rule_grammar_statement(pos, input)
-                    .and_then(|node| {
+                    .and_then(|mut node| {
                         let pos = node.end;
+                        node.label = Some("grammar_statement");
                         list.push(node);
                         self.rule_IGNORE(pos, input)
                     })
@@ -360,7 +361,7 @@ impl PEG {
                             end,
                             children: list,
                             label: None,
-                            alternative: Some("grammar"),
+                            alternative: Some("Grammar"),
                         }
                     })
             })
@@ -369,8 +370,9 @@ impl PEG {
                 let start = pos;
 
                 self.rule_fragment_statement(pos, input)
-                    .and_then(|node| {
+                    .and_then(|mut node| {
                         let pos = node.end;
+                        node.label = Some("fragment_statement");
                         list.push(node);
                         self.rule_IGNORE(pos, input)
                     })
@@ -389,7 +391,7 @@ impl PEG {
                             end,
                             children: list,
                             label: None,
-                            alternative: Some("fragment"),
+                            alternative: Some("Fragment"),
                         }
                     })
             })
@@ -398,8 +400,9 @@ impl PEG {
                 let start = pos;
 
                 self.rule_import_statement(pos, input)
-                    .and_then(|node| {
+                    .and_then(|mut node| {
                         let pos = node.end;
+                        node.label = Some("import_statement");
                         list.push(node);
                         self.rule_IGNORE(pos, input)
                     })
@@ -418,7 +421,7 @@ impl PEG {
                             end,
                             children: list,
                             label: None,
-                            alternative: Some("import"),
+                            alternative: Some("Import"),
                         }
                     })
             })
@@ -427,8 +430,9 @@ impl PEG {
                 let start = pos;
 
                 self.rule_ignore_statement(pos, input)
-                    .and_then(|node| {
+                    .and_then(|mut node| {
                         let pos = node.end;
+                        node.label = Some("ignore_statement");
                         list.push(node);
                         self.rule_IGNORE(pos, input)
                     })
@@ -447,7 +451,7 @@ impl PEG {
                             end,
                             children: list,
                             label: None,
-                            alternative: Some("ignore"),
+                            alternative: Some("Ignore"),
                         }
                     })
             })
@@ -456,8 +460,9 @@ impl PEG {
                 let start = pos;
 
                 self.rule_assign_statement(pos, input)
-                    .and_then(|node| {
+                    .and_then(|mut node| {
                         let pos = node.end;
+                        node.label = Some("assign_statement");
                         list.push(node);
                         self.rule_IGNORE(pos, input)
                     })
@@ -476,7 +481,7 @@ impl PEG {
                             end,
                             children: list,
                             label: None,
-                            alternative: Some("assign"),
+                            alternative: Some("Assign"),
                         }
                     })
             })
@@ -485,8 +490,9 @@ impl PEG {
                 let start = pos;
 
                 self.rule_macro_then(pos, input)
-                    .and_then(|node| {
+                    .and_then(|mut node| {
                         let pos = node.end;
+                        node.label = Some("macro_then");
                         list.push(node);
                         self.rule_IGNORE(pos, input)
                     })
@@ -505,7 +511,7 @@ impl PEG {
                             end,
                             children: list,
                             label: None,
-                            alternative: Some("macro_call"),
+                            alternative: Some("MacroCall"),
                         }
                     })
             })
@@ -514,8 +520,9 @@ impl PEG {
                 let start = pos;
 
                 self.rule_macro_define(pos, input)
-                    .and_then(|node| {
+                    .and_then(|mut node| {
                         let pos = node.end;
+                        node.label = Some("macro_define");
                         list.push(node);
                         self.rule_IGNORE(pos, input)
                     })
@@ -534,7 +541,7 @@ impl PEG {
                             end,
                             children: list,
                             label: None,
-                            alternative: Some("macro_def"),
+                            alternative: Some("MacroDef"),
                         }
                     })
             });
@@ -609,7 +616,7 @@ impl PEG {
                 })
                 .and_then(|mut node| {
                     let pos = node.end;
-                    node.label = Some("symbol");
+                    node.label = Some("id");
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })
@@ -633,7 +640,7 @@ impl PEG {
                         self.rule_string(pos, input)
                             .and_then(|mut node| {
                                 let pos = node.end;
-                                node.label = Some("string");
+                                node.label = Some("ext");
                                 list.push(node);
                                 self.rule_IGNORE(pos, input)
                             })
@@ -664,7 +671,7 @@ impl PEG {
                                             })
                                             .map(|mut node| {
                                                 let end = node.end;
-                                                node.label = Some("string");
+                                                node.label = Some("ext");
                                                 list.push(node);
 
                                                 Node {
@@ -765,14 +772,14 @@ impl PEG {
                 })
                 .and_then(|mut node| {
                     let pos = node.end;
-                    node.label = Some("symbol");
+                    node.label = Some("id");
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })
                 .and_then(|node| {
                     let pos = node.end;
                     list.push(node);
-                    self.rule_string(pos, input).or_else(|_| Ok(Node::new(Rule::Terminal, pos, pos, Some("string"), None)))
+                    self.rule_string(pos, input).or_else(|_| Ok(Node::new(Rule::Terminal, pos, pos, Some("ext"), None)))
                 })
                 .map(|node| {
                     let end = node.end;
@@ -896,7 +903,7 @@ impl PEG {
                 })
                 .and_then(|mut node| {
                     let pos = node.end;
-                    node.label = Some("string");
+                    node.label = Some("path");
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })
@@ -918,8 +925,9 @@ impl PEG {
                         let start = pos;
 
                         self.rule_symbol_alias(pos, input)
-                            .and_then(|node| {
+                            .and_then(|mut node| {
                                 let pos = node.end;
+                                node.label = Some("symbol_alias");
                                 list.push(node);
                                 self.rule_IGNORE(pos, input)
                             })
@@ -948,8 +956,9 @@ impl PEG {
                                                 list.push(node);
                                                 self.rule_symbol_alias(pos, input)
                                             })
-                                            .map(|node| {
+                                            .map(|mut node| {
                                                 let end = node.end;
+                                                node.label = Some("symbol_alias");
                                                 list.push(node);
 
                                                 Node {
@@ -1050,7 +1059,7 @@ impl PEG {
                 })
                 .map(|mut node| {
                     let end = node.end;
-                    node.label = Some("string");
+                    node.label = Some("path");
                     list.push(node);
 
                     Node {
@@ -1098,60 +1107,53 @@ impl PEG {
             let mut list = Vec::new();
             let start = pos;
 
-            {
-                let mut list = Vec::new();
-                let start = pos;
+            self.rule_symbol(pos, input)
+                .and_then(|mut node| {
+                    let pos = node.end;
+                    node.label = Some("from");
+                    list.push(node);
+                    self.rule_IGNORE(pos, input)
+                })
+                .and_then(|node| {
+                    let pos = node.end;
+                    list.push(node);
+                    self.match_terminal(pos, input, Terminal::_as).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
+                })
+                .and_then(|node| {
+                    let pos = node.end;
+                    list.push(node);
+                    self.rule_IGNORE(pos, input)
+                })
+                .and_then(|node| {
+                    let pos = node.end;
+                    list.push(node);
+                    self.rule_symbol(pos, input)
+                })
+                .map(|mut node| {
+                    let end = node.end;
+                    node.label = Some("into");
+                    list.push(node);
 
-                self.rule_symbol(pos, input)
-                    .and_then(|node| {
-                        let pos = node.end;
-                        list.push(node);
-                        self.rule_IGNORE(pos, input)
-                    })
-                    .and_then(|node| {
-                        let pos = node.end;
-                        list.push(node);
-                        self.match_terminal(pos, input, Terminal::_as).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
-                    })
-                    .and_then(|node| {
-                        let pos = node.end;
-                        list.push(node);
-                        self.rule_IGNORE(pos, input)
-                    })
-                    .map(|node| {
-                        let end = node.end;
-                        list.push(node);
-
-                        Node {
-                            rule: Rule::List,
-                            start,
-                            end,
-                            children: list,
-                            label: None,
-                            alternative: None,
-                        }
-                    })
-            }
-            .or_else(|_| Ok(Node::new(Rule::Terminal, pos, pos, None, None)))
-            .and_then(|node| {
-                let pos = node.end;
-                list.push(node);
-                self.rule_symbol(pos, input)
+                    Node {
+                        rule: Rule::symbol_alias,
+                        start,
+                        end,
+                        children: list,
+                        label: None,
+                        alternative: None,
+                    }
+                })
+        }
+        .or_else(|_| {
+            self.rule_symbol(pos, input).map(|node| Node {
+                rule: Rule::symbol_alias,
+                start: node.start,
+                end: node.end,
+                children: vec![node],
+                label: Some("from"),
+                alternative: None,
             })
-            .map(|node| {
-                let end = node.end;
-                list.push(node);
-
-                Node {
-                    rule: Rule::symbol_alias,
-                    start,
-                    end,
-                    children: list,
-                    label: None,
-                    alternative: None,
-                }
-            })
-        };
+        });
 
         // Note that failure to match is also cached using Err()
         self.rule_memo.insert(key, res.clone());
@@ -1184,7 +1186,7 @@ impl PEG {
                 })
                 .map(|mut node| {
                     let end = node.end;
-                    node.label = Some("symbol");
+                    node.label = Some("rules");
                     list.push(node);
 
                     Node {
@@ -1227,7 +1229,7 @@ impl PEG {
                         self.rule_symbol(pos, input)
                             .and_then(|mut node| {
                                 let pos = node.end;
-                                node.label = Some("symbol");
+                                node.label = Some("rules");
                                 list.push(node);
                                 self.rule_IGNORE(pos, input)
                             })
@@ -1258,7 +1260,7 @@ impl PEG {
                                             })
                                             .map(|mut node| {
                                                 let end = node.end;
-                                                node.label = Some("symbol");
+                                                node.label = Some("rules");
                                                 list.push(node);
 
                                                 Node {
@@ -1380,7 +1382,39 @@ impl PEG {
             self.rule_symbol(pos, input)
                 .and_then(|mut node| {
                     let pos = node.end;
-                    node.label = Some("symbol");
+                    node.label = Some("id");
+                    list.push(node);
+                    {
+                        let mut list = Vec::new();
+                        let start = pos;
+
+                        self.match_terminal(pos, input, Terminal::Literal_3)
+                            .map(|end| Node::new(Rule::Terminal, pos, end, None, None))
+                            .ok_or(pos)
+                            .and_then(|node| {
+                                let pos = node.end;
+                                list.push(node);
+                                self.rule_symbol(pos, input)
+                            })
+                            .map(|mut node| {
+                                let end = node.end;
+                                node.label = Some("ty");
+                                list.push(node);
+
+                                Node {
+                                    rule: Rule::List,
+                                    start,
+                                    end,
+                                    children: list,
+                                    label: None,
+                                    alternative: None,
+                                }
+                            })
+                    }
+                    .or_else(|_| Ok(Node::new(Rule::Terminal, pos, pos, None, None)))
+                })
+                .and_then(|node| {
+                    let pos = node.end;
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })
@@ -1391,17 +1425,17 @@ impl PEG {
                 })
                 .and_then(|mut node| {
                     let pos = node.end;
-                    node.label = Some("assign_kind");
+                    node.label = Some("eq");
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })
                 .and_then(|node| {
                     let pos = node.end;
                     list.push(node);
-                    self.match_terminal(pos, input, Terminal::Literal_3)
+                    self.match_terminal(pos, input, Terminal::Literal_4)
                         .map(|end| Node::new(Rule::Terminal, pos, end, None, None))
                         .ok_or(pos)
-                        .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_4).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos))
+                        .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_5).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos))
                         .or_else(|_| Ok(Node::new(Rule::Terminal, pos, pos, None, None)))
                 })
                 .and_then(|node| {
@@ -1414,8 +1448,9 @@ impl PEG {
                     list.push(node);
                     self.rule_expr(pos, input)
                 })
-                .map(|node| {
+                .map(|mut node| {
                     let end = node.end;
+                    node.label = Some("rhs");
                     list.push(node);
 
                     Node {
@@ -1453,11 +1488,11 @@ impl PEG {
                 let mut pos = pos;
 
                 while let Ok(node) = self
-                    .match_terminal(pos, input, Terminal::Literal_5)
+                    .match_terminal(pos, input, Terminal::Literal_6)
                     .map(|end| Node::new(Rule::Terminal, pos, end, None, None))
                     .ok_or(pos)
-                    .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_6).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos))
                     .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_7).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos))
+                    .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_8).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos))
                 {
                     if pos == node.end {
                         // must be making progress
@@ -1479,7 +1514,7 @@ impl PEG {
             .and_then(|node| {
                 let pos = node.end;
                 list.push(node);
-                self.match_terminal(pos, input, Terminal::Literal_8).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
+                self.match_terminal(pos, input, Terminal::Literal_9).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
             })
             .map(|node| {
                 let end = node.end;
@@ -1515,8 +1550,9 @@ impl PEG {
             let start = pos;
 
             self.rule_term(pos, input)
-                .and_then(|node| {
+                .and_then(|mut node| {
                     let pos = node.end;
+                    node.label = Some("term");
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })
@@ -1533,8 +1569,9 @@ impl PEG {
                             let start = pos;
 
                             self.rule_expr_next(pos, input)
-                                .and_then(|node| {
+                                .and_then(|mut node| {
                                     let pos = node.end;
+                                    node.label = Some("expr_next");
                                     list.push(node);
                                     self.rule_IGNORE(pos, input)
                                 })
@@ -1641,7 +1678,7 @@ impl PEG {
                 .and_then(|node| {
                     let pos = node.end;
                     list.push(node);
-                    match self.match_terminal(pos, input, Terminal::Literal_8).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos) {
+                    match self.match_terminal(pos, input, Terminal::Literal_9).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos) {
                         Ok(_) => Err(pos),
                         Err(_) => Ok(Node::new(Rule::MustNotMatch, pos, pos, None, None)),
                     }
@@ -1679,7 +1716,7 @@ impl PEG {
             let mut list = Vec::new();
             let start = pos;
 
-            self.match_terminal(pos, input, Terminal::Literal_9)
+            self.match_terminal(pos, input, Terminal::Literal_10)
                 .map(|end| Node::new(Rule::Terminal, pos, end, None, None))
                 .ok_or(pos)
                 .and_then(|node| {
@@ -1690,7 +1727,7 @@ impl PEG {
                 .and_then(|node| {
                     let pos = node.end;
                     list.push(node);
-                    self.match_terminal(pos, input, Terminal::Literal_4)
+                    self.match_terminal(pos, input, Terminal::Literal_5)
                         .map(|end| Node::new(Rule::Terminal, pos, end, None, None))
                         .ok_or(pos)
                         .or_else(|_| Ok(Node::new(Rule::Terminal, pos, pos, None, None)))
@@ -1705,15 +1742,16 @@ impl PEG {
                     list.push(node);
                     self.rule_expr(pos, input)
                 })
-                .and_then(|node| {
+                .and_then(|mut node| {
                     let pos = node.end;
+                    node.label = Some("expr");
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })
                 .and_then(|node| {
                     let pos = node.end;
                     list.push(node);
-                    self.match_terminal(pos, input, Terminal::Literal_10).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
+                    self.match_terminal(pos, input, Terminal::Literal_11).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
                 })
                 .map(|node| {
                     let end = node.end;
@@ -1752,27 +1790,18 @@ impl PEG {
                     start,
                     end: pos,
                     children: list,
-                    label: None,
+                    label: Some("prefix"),
                     alternative: None,
                 })
             }
             .and_then(|node| {
                 let pos = node.end;
                 list.push(node);
-                self.rule_IGNORE(pos, input)
-            })
-            .and_then(|node| {
-                let pos = node.end;
-                list.push(node);
                 self.rule_data(pos, input)
             })
-            .and_then(|node| {
+            .and_then(|mut node| {
                 let pos = node.end;
-                list.push(node);
-                self.rule_IGNORE(pos, input)
-            })
-            .and_then(|node| {
-                let pos = node.end;
+                node.label = Some("data");
                 list.push(node);
                 {
                     let mut list = Vec::new();
@@ -1790,10 +1819,11 @@ impl PEG {
                         .and_then(|node| {
                             let pos = node.end;
                             list.push(node);
-                            self.rule_suffix(pos, input)
+                            self.rule_term_next(pos, input)
                         })
-                        .map(|node| {
+                        .map(|mut node| {
                             let end = node.end;
+                            node.label = Some("term_next");
                             list.push(node);
 
                             Node {
@@ -1805,10 +1835,7 @@ impl PEG {
                                 alternative: None,
                             }
                         })
-                    }
-                    .or_else(|_| self.rule_slice(pos, input))
-                    .or_else(|_| self.rule_mark_branch(pos, input))
-                    {
+                    } {
                         if pos == node.end {
                             // must be making progress
                             break;
@@ -1849,49 +1876,91 @@ impl PEG {
     }
 
     #[allow(non_snake_case)]
-    fn rule_mark_branch(&mut self, pos: usize, input: &str) -> Result<Node, usize> {
-        let key = (pos, Rule::mark_branch);
+    fn rule_term_next(&mut self, pos: usize, input: &str) -> Result<Node, usize> {
+        let key = (pos, Rule::term_next);
 
         if let Some(res) = self.rule_memo.get(&key) {
             return res.clone();
         }
 
-        let res = {
-            let mut list = Vec::new();
-            let start = pos;
+        let res = self
+            .rule_suffix(pos, input)
+            .map(|node| Node {
+                rule: Rule::term_next,
+                start: node.start,
+                end: node.end,
+                children: vec![node],
+                label: Some("suffix"),
+                alternative: Some("Suffix"),
+            })
+            .or_else(|_| {
+                self.rule_slice(pos, input).map(|node| Node {
+                    rule: Rule::term_next,
+                    start: node.start,
+                    end: node.end,
+                    children: vec![node],
+                    label: Some("slice"),
+                    alternative: Some("Slice"),
+                })
+            })
+            .or_else(|_| {
+                let mut list = Vec::new();
+                let start = pos;
 
-            self.match_terminal(pos, input, Terminal::Literal_6)
-                .map(|end| Node::new(Rule::Terminal, pos, end, None, None))
-                .ok_or(pos)
-                .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_5).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos))
-                .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_11).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos))
-                .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_12).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos))
-                .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_13).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos))
-                .or_else(|_| Ok(Node::new(Rule::Terminal, pos, pos, None, None)))
-                .and_then(|node| {
-                    let pos = node.end;
-                    list.push(node);
-                    self.match_terminal(pos, input, Terminal::Literal_14).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
-                })
-                .and_then(|node| {
-                    let pos = node.end;
-                    list.push(node);
-                    self.rule_symbol(pos, input)
-                })
-                .map(|node| {
-                    let end = node.end;
-                    list.push(node);
+                self.rule_IGNORE(pos, input)
+                    .and_then(|node| {
+                        let pos = node.end;
+                        list.push(node);
+                        self.rule_branch_kind(pos, input).or_else(|_| Ok(Node::new(Rule::Terminal, pos, pos, Some("kind"), None)))
+                    })
+                    .and_then(|node| {
+                        let pos = node.end;
+                        list.push(node);
+                        self.match_terminal(pos, input, Terminal::Literal_12).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
+                    })
+                    .and_then(|node| {
+                        let pos = node.end;
+                        list.push(node);
+                        self.rule_symbol(pos, input)
+                    })
+                    .map(|mut node| {
+                        let end = node.end;
+                        node.label = Some("symbol");
+                        list.push(node);
 
-                    Node {
-                        rule: Rule::mark_branch,
-                        start,
-                        end,
-                        children: list,
-                        label: None,
-                        alternative: None,
-                    }
-                })
-        };
+                        Node {
+                            rule: Rule::term_next,
+                            start,
+                            end,
+                            children: list,
+                            label: None,
+                            alternative: Some("Branch"),
+                        }
+                    })
+            });
+
+        // Note that failure to match is also cached using Err()
+        self.rule_memo.insert(key, res.clone());
+
+        res
+    }
+
+    #[allow(non_snake_case)]
+    fn rule_branch_kind(&mut self, pos: usize, input: &str) -> Result<Node, usize> {
+        let key = (pos, Rule::branch_kind);
+
+        if let Some(res) = self.rule_memo.get(&key) {
+            return res.clone();
+        }
+
+        let res = self
+            .match_terminal(pos, input, Terminal::Literal_7)
+            .map(|end| Node::new(Rule::branch_kind, pos, end, None, None))
+            .ok_or(pos)
+            .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_6).map(|end| Node::new(Rule::branch_kind, pos, end, None, None)).ok_or(pos))
+            .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_13).map(|end| Node::new(Rule::branch_kind, pos, end, None, None)).ok_or(pos))
+            .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_14).map(|end| Node::new(Rule::branch_kind, pos, end, None, None)).ok_or(pos))
+            .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_15).map(|end| Node::new(Rule::branch_kind, pos, end, None, None)).ok_or(pos));
 
         // Note that failure to match is also cached using Err()
         self.rule_memo.insert(key, res.clone());
@@ -1908,13 +1977,13 @@ impl PEG {
         }
 
         let res = self
-            .match_terminal(pos, input, Terminal::Literal_3)
+            .match_terminal(pos, input, Terminal::Literal_4)
             .map(|end| Node::new(Rule::infix, pos, end, None, None))
             .ok_or(pos)
-            .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_4).map(|end| Node::new(Rule::infix, pos, end, None, None)).ok_or(pos))
-            .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_15).map(|end| Node::new(Rule::infix, pos, end, None, None)).ok_or(pos))
+            .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_5).map(|end| Node::new(Rule::infix, pos, end, None, None)).ok_or(pos))
             .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_16).map(|end| Node::new(Rule::infix, pos, end, None, None)).ok_or(pos))
-            .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_17).map(|end| Node::new(Rule::infix, pos, end, None, None)).ok_or(pos));
+            .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_17).map(|end| Node::new(Rule::infix, pos, end, None, None)).ok_or(pos))
+            .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_3).map(|end| Node::new(Rule::infix, pos, end, None, None)).ok_or(pos));
 
         // Note that failure to match is also cached using Err()
         self.rule_memo.insert(key, res.clone());
@@ -1931,11 +2000,11 @@ impl PEG {
         }
 
         let res = self
-            .match_terminal(pos, input, Terminal::Literal_11)
+            .match_terminal(pos, input, Terminal::Literal_13)
             .map(|end| Node::new(Rule::prefix, pos, end, None, None))
             .ok_or(pos)
             .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_18).map(|end| Node::new(Rule::prefix, pos, end, None, None)).ok_or(pos))
-            .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_5).map(|end| Node::new(Rule::prefix, pos, end, None, None)).ok_or(pos))
+            .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_6).map(|end| Node::new(Rule::prefix, pos, end, None, None)).ok_or(pos))
             .or_else(|_| self.match_terminal(pos, input, Terminal::Literal_19).map(|end| Node::new(Rule::prefix, pos, end, None, None)).ok_or(pos));
 
         // Note that failure to match is also cached using Err()
@@ -1981,8 +2050,8 @@ impl PEG {
                 start: node.start,
                 end: node.end,
                 children: vec![node],
-                label: None,
-                alternative: Some("macro"),
+                label: Some("macro_call"),
+                alternative: Some("Macro"),
             })
             .or_else(|_| {
                 self.rule_regex_range(pos, input).map(|node| Node {
@@ -1990,8 +2059,8 @@ impl PEG {
                     start: node.start,
                     end: node.end,
                     children: vec![node],
-                    label: None,
-                    alternative: Some("regex"),
+                    label: Some("regex_range"),
+                    alternative: Some("Regex"),
                 })
             })
             .or_else(|_| {
@@ -2000,8 +2069,8 @@ impl PEG {
                     start: node.start,
                     end: node.end,
                     children: vec![node],
-                    label: None,
-                    alternative: Some("list"),
+                    label: Some("list"),
+                    alternative: Some("List"),
                 })
             })
             .or_else(|_| {
@@ -2010,8 +2079,8 @@ impl PEG {
                     start: node.start,
                     end: node.end,
                     children: vec![node],
-                    label: None,
-                    alternative: Some("symbol"),
+                    label: Some("symbol_path"),
+                    alternative: Some("Symbol"),
                 })
             })
             .or_else(|_| {
@@ -2020,8 +2089,8 @@ impl PEG {
                     start: node.start,
                     end: node.end,
                     children: vec![node],
-                    label: None,
-                    alternative: Some("integer"),
+                    label: Some("integer"),
+                    alternative: Some("Integer"),
                 })
             })
             .or_else(|_| {
@@ -2030,8 +2099,8 @@ impl PEG {
                     start: node.start,
                     end: node.end,
                     children: vec![node],
-                    label: None,
-                    alternative: Some("string"),
+                    label: Some("string"),
+                    alternative: Some("String"),
                 })
             });
 
@@ -2419,7 +2488,7 @@ impl PEG {
             let mut list = Vec::new();
             let start = pos;
 
-            self.match_terminal(pos, input, Terminal::Literal_7)
+            self.match_terminal(pos, input, Terminal::Literal_8)
                 .map(|end| Node::new(Rule::Terminal, pos, end, None, None))
                 .ok_or(pos)
                 .and_then(|node| {
@@ -2427,15 +2496,16 @@ impl PEG {
                     list.push(node);
                     self.rule_symbol_path(pos, input)
                 })
-                .and_then(|node| {
+                .and_then(|mut node| {
                     let pos = node.end;
+                    node.label = Some("symbol_path");
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })
                 .and_then(|node| {
                     let pos = node.end;
                     list.push(node);
-                    self.match_terminal(pos, input, Terminal::Literal_9).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
+                    self.match_terminal(pos, input, Terminal::Literal_10).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
                 })
                 .and_then(|node| {
                     let pos = node.end;
@@ -2549,7 +2619,7 @@ impl PEG {
                 .and_then(|node| {
                     let pos = node.end;
                     list.push(node);
-                    self.match_terminal(pos, input, Terminal::Literal_10).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
+                    self.match_terminal(pos, input, Terminal::Literal_11).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
                 })
                 .map(|node| {
                     let end = node.end;
@@ -2592,8 +2662,9 @@ impl PEG {
                     list.push(node);
                     self.rule_symbol_path(pos, input)
                 })
-                .and_then(|node| {
+                .and_then(|mut node| {
                     let pos = node.end;
+                    node.label = Some("symbol_path");
                     list.push(node);
                     {
                         let mut list = Vec::new();
@@ -2603,7 +2674,7 @@ impl PEG {
                             .and_then(|node| {
                                 let pos = node.end;
                                 list.push(node);
-                                self.match_terminal(pos, input, Terminal::Literal_9).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
+                                self.match_terminal(pos, input, Terminal::Literal_10).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
                             })
                             .and_then(|node| {
                                 let pos = node.end;
@@ -2717,7 +2788,7 @@ impl PEG {
                             .and_then(|node| {
                                 let pos = node.end;
                                 list.push(node);
-                                self.match_terminal(pos, input, Terminal::Literal_10).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
+                                self.match_terminal(pos, input, Terminal::Literal_11).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
                             })
                             .map(|node| {
                                 let end = node.end;
@@ -2853,7 +2924,7 @@ impl PEG {
                 .and_then(|node| {
                     let pos = node.end;
                     list.push(node);
-                    self.match_terminal(pos, input, Terminal::Literal_9).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
+                    self.match_terminal(pos, input, Terminal::Literal_10).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
                 })
                 .and_then(|node| {
                     let pos = node.end;
@@ -2967,7 +3038,7 @@ impl PEG {
                 .and_then(|node| {
                     let pos = node.end;
                     list.push(node);
-                    self.match_terminal(pos, input, Terminal::Literal_10).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
+                    self.match_terminal(pos, input, Terminal::Literal_11).map(|end| Node::new(Rule::Terminal, pos, end, None, None)).ok_or(pos)
                 })
                 .and_then(|node| {
                     let pos = node.end;
@@ -3025,7 +3096,7 @@ impl PEG {
                         let mut list = Vec::new();
                         let start = pos;
 
-                        self.match_terminal(pos, input, Terminal::Literal_17)
+                        self.match_terminal(pos, input, Terminal::Literal_3)
                             .map(|end| Node::new(Rule::Terminal, pos, end, None, None))
                             .ok_or(pos)
                             .and_then(|node| {
@@ -3066,7 +3137,7 @@ impl PEG {
                         let mut list = Vec::new();
                         let start = pos;
 
-                        self.match_terminal(pos, input, Terminal::Literal_8)
+                        self.match_terminal(pos, input, Terminal::Literal_9)
                             .map(|end| Node::new(Rule::Terminal, pos, end, None, None))
                             .ok_or(pos)
                             .and_then(|node| {
@@ -3131,19 +3202,6 @@ impl PEG {
             self.match_terminal(pos, input, Terminal::Literal_0)
                 .map(|end| Node::new(Rule::Terminal, pos, end, None, None))
                 .ok_or(pos)
-                .and_then(|node| {
-                    let pos = node.end;
-                    list.push(node);
-                    self.rule_IGNORE(pos, input)
-                })
-                .and_then(|node| {
-                    let pos = node.end;
-                    list.push(node);
-                    self.match_terminal(pos, input, Terminal::_return)
-                        .map(|end| Node::new(Rule::Terminal, pos, end, None, None))
-                        .ok_or(pos)
-                        .or_else(|_| Ok(Node::new(Rule::Terminal, pos, pos, None, None)))
-                })
                 .and_then(|node| {
                     let pos = node.end;
                     list.push(node);
@@ -3234,8 +3292,9 @@ impl PEG {
             let start = pos;
 
             self.rule_symbol(pos, input)
-                .and_then(|node| {
+                .and_then(|mut node| {
                     let pos = node.end;
+                    node.label = Some("symbol");
                     list.push(node);
                     self.rule_IGNORE(pos, input)
                 })
@@ -3265,8 +3324,9 @@ impl PEG {
                                     list.push(node);
                                     self.rule_symbol(pos, input)
                                 })
-                                .map(|node| {
+                                .map(|mut node| {
                                     let end = node.end;
+                                    node.label = Some("symbol");
                                     list.push(node);
 
                                     Node {
@@ -3542,7 +3602,7 @@ impl PEG {
                         None
                     }
                 }
-                Terminal::Literal_11 => {
+                Terminal::Literal_13 => {
                     if input[pos..].starts_with('!') {
                         Some(pos + "!".len())
                     } else {
@@ -3556,7 +3616,7 @@ impl PEG {
                         None
                     }
                 }
-                Terminal::Literal_14 => {
+                Terminal::Literal_12 => {
                     if input[pos..].starts_with('$') {
                         Some(pos + "$".len())
                     } else {
@@ -3577,14 +3637,14 @@ impl PEG {
                         None
                     }
                 }
-                Terminal::Literal_9 => {
+                Terminal::Literal_10 => {
                     if input[pos..].starts_with('(') {
                         Some(pos + "(".len())
                     } else {
                         None
                     }
                 }
-                Terminal::Literal_10 => {
+                Terminal::Literal_11 => {
                     if input[pos..].starts_with(')') {
                         Some(pos + ")".len())
                     } else {
@@ -3626,7 +3686,7 @@ impl PEG {
                         None
                     }
                 }
-                Terminal::Literal_4 => {
+                Terminal::Literal_5 => {
                     if input[pos..].starts_with('/') {
                         Some(pos + "/".len())
                     } else {
@@ -3640,7 +3700,7 @@ impl PEG {
                         None
                     }
                 }
-                Terminal::Literal_17 => {
+                Terminal::Literal_3 => {
                     if input[pos..].starts_with(':') {
                         Some(pos + ":".len())
                     } else {
@@ -3661,28 +3721,28 @@ impl PEG {
                         None
                     }
                 }
-                Terminal::Literal_12 => {
+                Terminal::Literal_14 => {
                     if input[pos..].starts_with('<') {
                         Some(pos + "<".len())
                     } else {
                         None
                     }
                 }
-                Terminal::Literal_16 => {
+                Terminal::Literal_17 => {
                     if input[pos..].starts_with("<-") {
                         Some(pos + "<-".len())
                     } else {
                         None
                     }
                 }
-                Terminal::Literal_8 => {
+                Terminal::Literal_9 => {
                     if input[pos..].starts_with('=') {
                         Some(pos + "=".len())
                     } else {
                         None
                     }
                 }
-                Terminal::Literal_13 => {
+                Terminal::Literal_15 => {
                     if input[pos..].starts_with('>') {
                         Some(pos + ">".len())
                     } else {
@@ -3696,7 +3756,7 @@ impl PEG {
                         None
                     }
                 }
-                Terminal::Literal_7 => {
+                Terminal::Literal_8 => {
                     if input[pos..].starts_with('@') {
                         Some(pos + "@".len())
                     } else {
@@ -3724,14 +3784,14 @@ impl PEG {
                         None
                     }
                 }
-                Terminal::Literal_5 => {
+                Terminal::Literal_6 => {
                     if input[pos..].starts_with('^') {
                         Some(pos + "^".len())
                     } else {
                         None
                     }
                 }
-                Terminal::Literal_6 => {
+                Terminal::Literal_7 => {
                     if input[pos..].starts_with('_') {
                         Some(pos + "_".len())
                     } else {
@@ -3780,13 +3840,6 @@ impl PEG {
                         None
                     }
                 }
-                Terminal::_return => {
-                    if input[pos..].starts_with("return") {
-                        Some(pos + "return".len())
-                    } else {
-                        None
-                    }
-                }
                 Terminal::Literal_0 => {
                     if input[pos..].starts_with('{') {
                         Some(pos + "{".len())
@@ -3794,7 +3847,7 @@ impl PEG {
                         None
                     }
                 }
-                Terminal::Literal_3 => {
+                Terminal::Literal_4 => {
                     if input[pos..].starts_with('|') {
                         Some(pos + "|".len())
                     } else {
@@ -3808,7 +3861,7 @@ impl PEG {
                         None
                     }
                 }
-                Terminal::Literal_15 => {
+                Terminal::Literal_16 => {
                     if input[pos..].starts_with('~') {
                         Some(pos + "~".len())
                     } else {

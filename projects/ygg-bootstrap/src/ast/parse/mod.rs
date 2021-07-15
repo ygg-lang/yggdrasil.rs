@@ -1,8 +1,6 @@
 mod parse_custom;
 
 use super::*;
-use crate::cst::Rule;
-use yggdrasil_shared::records::CSTNode;
 
 type Node = CSTNode<Rule>;
 
@@ -82,39 +80,6 @@ impl ASTNode<Node> for AssignStatement {
     }
 }
 
-impl ASTNode<Node> for Data {
-    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
-        println!("{:#?}", node);
-        let branch = node.branch_tag;
-        let mut map = node.get_tag_map();
-
-        match branch {
-            Some("Symbol") => Ok(Self::Symbol(Box::new(ASTNode::named_one(&mut map, "symbol_path", builder)?))),
-            Some("Integer") => Ok(Self::Integer(Box::new(ASTNode::named_one(&mut map, "integer", builder)?))),
-            Some("String") => Ok(Self::String(Box::new(ASTNode::named_one(&mut map, "string", builder)?))),
-            Some(s) => {
-                unreachable!("{:#?}", s);
-            }
-            _ => return Err(Error::node_missing("Data")),
-        }
-    }
-}
-
-macro_rules! string_node {
-    ($node:ty, $kind:ty) => {
-        impl ASTNode<$node> for $kind {
-            fn parse(node: $node, builder: &mut ASTBuilder) -> Result<Self> {
-                let range = node.get_span();
-                let data = ASTNode::parse(node, builder)?;
-                Ok(Self { data, range })
-            }
-        }
-    };
-}
-
-
-
-
 impl ASTNode<Node> for SymbolPath {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let range = node.get_span();
@@ -134,23 +99,7 @@ impl ASTNode<Node> for SymbolAlias {
     }
 }
 
-string_node!(Node,Prefix);
-string_node!(Node,Suffix);
-string_node!(Node,Symbol);
-string_node!(Node,Integer);
-
-#[test]
-fn test1() {
-    let mut parser = ASTBuilder::default();
-    let out = parser.parse_program("x = a ~ b ~ c | d #D :T");
-    println!("{:#?}", out.unwrap());
-    println!("{:#?}", parser.builder);
-}
-
-#[test]
-fn test() {
-    let mut parser = ASTBuilder::default();
-    let out = parser.parse_program(include_str!("bootstrap.ygg"));
-    println!("{:#?}", out.unwrap());
-    println!("{:#?}", parser.builder);
-}
+string_node!(Node, Prefix);
+string_node!(Node, Suffix);
+string_node!(Node, Symbol);
+string_node!(Node, Integer);

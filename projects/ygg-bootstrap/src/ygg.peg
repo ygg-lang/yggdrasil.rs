@@ -46,15 +46,15 @@ assign_kind  <- ("^"/"_"/"@")* "=";
 
 expr  <- <term:term> IGNORE (<expr_next:expr_next> IGNORE)*;
 expr_next <-
-    infix:/ infix IGNORE term
-    other:/ term IGNORE !"=";
+    Infix:/ <infix:infix> IGNORE <term:term>
+    Other:/ <term:term> IGNORE !"=";
 term <-
     priority:/"(" IGNORE "/"? IGNORE <expr:expr> IGNORE ")"
     atom:/ <prefix:prefix>* <data:data> (!assign_kind <term_next:term_next>)*;
 term_next <-
-    <suffix:suffix>
-  / <slice:slice>
-  / IGNORE <kind:branch_kind>? "$" <symbol:symbol>;
+    Suffix:/ <suffix:suffix>
+    Slice:/  <slice:slice>
+    Branch:/ IGNORE <kind:branch_kind>? "$" <symbol:symbol>;
 branch_kind <- "_"/"^"/"!"/"<"/">";
 infix   <- "|" / "/" / "~" / "<-" / ":";
 prefix  <- "!" / "&" / "^" / "%";
@@ -69,7 +69,7 @@ data <-
     String:/  <string:string>
 ;
 
-list   <- "{" IGNORE (data IGNORE ("," IGNORE data)* IGNORE ","?)? IGNORE "}";
+list   <- "{" IGNORE (<data:data> IGNORE ("," IGNORE <data:data>)* IGNORE ","?)? IGNORE "}";
 slice  <- "{" IGNORE integer IGNORE "," IGNORE integer IGNORE  "}";
 
 regex_range  <- "[" IGNORE (!"]" IGNORE . / "\\" IGNORE .)* IGNORE "]";

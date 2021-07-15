@@ -45,10 +45,7 @@ impl Debug for Statement {
 impl Debug for Expression {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Expression::Data(v) => {
-                f.write_str("Data::")?;
-                Debug::fmt(v, f)
-            }
+            Expression::Data(v) => Debug::fmt(v, f),
             Expression::UnarySuffix(v) => f
                 .debug_tuple("Unary::Suffix") //
                 .field(&v.base)
@@ -82,9 +79,13 @@ impl Debug for Expression {
 impl Debug for Data {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Data::Symbol(v) => f.debug_tuple("Identifier").field(&v.symbol).finish(),
-            Data::Integer(v) => f.debug_tuple("Integer").field(&v.data).finish(),
-            Data::String(v) => f.debug_tuple("String").field(&v.data).finish(),
+            Data::Symbol(v) => Debug::fmt(v, f),
+            Data::Integer(v) => {
+                f.write_str("Integer(")?;
+                write!(f, "{}", v.data)?;
+                f.write_str(")")
+            }
+            Data::String(v) => Debug::fmt(v, f),
             Data::Regex => f.debug_tuple("Regex").finish(),
             Data::Macro => f.debug_tuple("Macro").finish(),
         }
