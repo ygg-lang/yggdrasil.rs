@@ -41,31 +41,32 @@ ignore_statement  <-
 ;
 ignore  <- "ignore!";
 
-
-
-assign_statement  <- <symbol:symbol> IGNORE <assign_kind:assign_kind> IGNORE ("|"/"/")? IGNORE expr;
+assign_statement  <- <id:symbol> (":" <ty:symbol>)? IGNORE <eq:assign_kind> IGNORE ("|"/"/")? IGNORE <rhs:expr>;
 assign_kind  <- ("^"/"_"/"@")* "=";
 
-expr  <- term IGNORE (expr_next IGNORE)*;
+expr  <- <term:term> IGNORE (<expr_next:expr_next> IGNORE)*;
 expr_next <-
     infix:/ infix IGNORE term
     other:/ term IGNORE !"=";
 term <-
-    priority:/"(" IGNORE "/"? IGNORE expr IGNORE ")"
-    atom:/ prefix* IGNORE data IGNORE (!assign_kind suffix/slice/mark_branch)*;
-
-mark_branch  <- ("_"/"^"/"!"/"<"/">")? "$" symbol;
+    priority:/"(" IGNORE "/"? IGNORE <expr:expr> IGNORE ")"
+    atom:/ <prefix:prefix>* <data:data> (!assign_kind <term_next:term_next>)*;
+term_next <-
+    <suffix:suffix>
+  / <slice:slice>
+  / IGNORE <kind:branch_kind>? "$" <symbol:symbol>;
+branch_kind <- "_"/"^"/"!"/"<"/">";
 infix   <- "|" / "/" / "~" / "<-" / ":";
 prefix  <- "!" / "&" / "^" / "%";
 suffix  <- "?" / "+" / "-" / "*";
 
-data   <-
-    macro:/macro_call
-    regex:/ regex_range
-    list:/ list
-    symbol:/ symbol_path
-    integer:/ integer
-    string:/ string
+data <-
+    Macro:/   <macro_call:macro_call>
+    Regex:/   <regex_range:regex_range>
+    List:/    <list:list>
+    Symbol:/  <symbol_path:symbol_path>
+    Integer:/ <integer:integer>
+    String:/  <string:string>
 ;
 
 list   <- "{" IGNORE (data IGNORE ("," IGNORE data)* IGNORE ","?)? IGNORE "}";

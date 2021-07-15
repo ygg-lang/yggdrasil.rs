@@ -12,10 +12,10 @@ pub struct Program {
 #[derive(Clone)]
 pub enum Statement {
     Grammar(Box<GrammarStatement>),
-    Fragment(Box<FragmentStatement>),
     Import(Box<ImportStatement>),
     Assign(Box<AssignStatement>),
     Ignore(Box<IgnoreStatement>),
+    Fragment(Box<FragmentStatement>),
     CommentDocument(Box<CommentDocument>),
 }
 
@@ -35,6 +35,7 @@ pub struct FragmentStatement {
 #[derive(Clone, Debug)]
 pub struct AssignStatement {
     pub id: Symbol,
+    pub ty: Option<Symbol>,
     pub eq: String,
     pub rhs: Expression,
     pub range: (usize, usize),
@@ -69,6 +70,23 @@ pub enum Expression {
     Concat(Box<ConcatExpression>),
     Choice(Box<ChoiceExpression>),
     Mark(Box<MarkExpression>),
+}
+
+pub enum Term {
+    Split(char),
+    Atom(Expression),
+}
+
+#[derive(Clone, Debug)]
+pub struct Prefix {
+    pub data: char,
+    pub range: (usize, usize),
+}
+
+#[derive(Clone, Debug)]
+pub struct Suffix {
+    pub data: char,
+    pub range: (usize, usize),
 }
 
 #[derive(Clone, Debug)]
@@ -118,7 +136,7 @@ pub struct UnaryPrefix {
 
 #[derive(Clone)]
 pub enum Data {
-    SymbolPath(Box<SymbolPath>),
+    Symbol(Box<SymbolPath>),
     Integer(Box<Integer>),
     String(Box<StringLiteral>),
     Macro,

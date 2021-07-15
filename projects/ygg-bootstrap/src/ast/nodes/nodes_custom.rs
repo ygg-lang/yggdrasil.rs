@@ -82,7 +82,7 @@ impl Debug for Expression {
 impl Debug for Data {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Data::SymbolPath(v) => f.debug_tuple("Identifier").field(&v.symbol).finish(),
+            Data::Symbol(v) => f.debug_tuple("Identifier").field(&v.symbol).finish(),
             Data::Integer(v) => f.debug_tuple("Integer").field(&v.data).finish(),
             Data::String(v) => f.debug_tuple("String").field(&v.data).finish(),
             Data::Regex => f.debug_tuple("Regex").finish(),
@@ -90,7 +90,6 @@ impl Debug for Data {
         }
     }
 }
-
 
 impl Eq for SymbolPath {}
 impl PartialEq<Self> for SymbolPath {

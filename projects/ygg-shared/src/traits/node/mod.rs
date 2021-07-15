@@ -94,3 +94,8 @@ impl<R> ASTNode<CSTNode<R>> for String {
         Ok(node.get_str(&builder.input).to_string())
     }
 }
+impl<R> ASTNode<CSTNode<R>> for char {
+    fn parse(node: CSTNode<R>, builder: &mut ASTBuilder) -> Result<Self> {
+        node.get_str(&builder.input).chars().next().ok_or(Error::parse_error("Invalid `char`", node.get_span()))
+    }
+}
