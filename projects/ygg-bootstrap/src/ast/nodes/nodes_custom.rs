@@ -42,40 +42,6 @@ impl Debug for Statement {
     }
 }
 
-impl Debug for Expression {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Expression::Data(v) => Debug::fmt(v, f),
-            Expression::UnarySuffix(v) => f
-                .debug_tuple("Unary::Suffix") //
-                .field(&v.base)
-                .field(&v.suffix)
-                .finish(),
-            Expression::UnaryPrefix(v) => f
-                .debug_tuple("Unary::Prefix") //
-                .field(&v.prefix)
-                .field(&v.base)
-                .finish(),
-            Expression::Mark(v) => f
-                .debug_struct("FieldExpression") //
-                .field("lhs", &v.lhs)
-                .field("op", &v.ty)
-                .field("rhs", &v.rhs)
-                .finish(),
-            Expression::Concat(v) => f
-                .debug_struct("ConcatExpression") //
-                .field("lhs", &v.base)
-                .field("rhs", &v.rest)
-                .finish(),
-            Expression::Choice(v) => f
-                .debug_struct("ChoiceExpression") //
-                .field("lhs", &v.lhs)
-                .field("rhs", &v.rhs)
-                .finish(),
-        }
-    }
-}
-
 impl Debug for Data {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {

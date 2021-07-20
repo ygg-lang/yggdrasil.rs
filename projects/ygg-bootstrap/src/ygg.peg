@@ -58,7 +58,7 @@ term_next <-
 branch_kind <- "_"/"^"/"!"/"<"/">";
 infix   <- "|" / "/" / "~" / "<-" / ":";
 prefix  <- "!" / "&" / "^" / "%";
-suffix  <- "?" / "+" / "-" / "*";
+suffix  <- "?" / "+" / "*";
 
 data <-
     Macro:/   <macro_call:macro_call>

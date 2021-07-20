@@ -61,19 +61,45 @@ pub struct SymbolAlias {
     pub range: (usize, usize),
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Expression {
-    Data(Box<Data>),
-    // Priority(Box<Expression>),
-    UnarySuffix(Box<UnarySuffix>),
-    UnaryPrefix(Box<UnaryPrefix>),
-    Concat(Box<ConcatExpression>),
-    Choice(Box<ChoiceExpression>),
-    Mark(Box<MarkExpression>),
+    Data(Data),
+    /// lhs ~ rhs
+    Concat {
+        is_soft: bool,
+        lhs: Box<Expression>,
+        rhs: Box<Expression>,
+    },
+    /// lhs | rhs
+    Choice {
+        lhs: Box<Expression>,
+        rhs: Box<Expression>,
+    },
+    /// lhs <- rhs
+    MarkNode {
+        lhs: Box<Expression>,
+        rhs: Box<Expression>,
+    },
+    /// ^rhs
+    MarkNodeShort(Box<Expression>),
+    /// lhs: rhs
+    MarkType {
+        lhs: Box<Expression>,
+        rhs: Box<Expression>,
+    },
+    /// !rhs
+    MustNot(Box<Expression>),
+    MustOne(Box<Expression>),
+    Maybe(Box<Expression>),
+    Many(Box<Expression>),
+    ManyNonNull(Box<Expression>),
 }
 
+#[derive(Debug)]
 pub enum Term {
-    Split(char),
+    Prefix(char),
+    Suffix(char),
+    Infix(char),
     Atom(Expression),
 }
 
@@ -91,16 +117,15 @@ pub struct Suffix {
 
 #[derive(Clone, Debug)]
 pub struct ConcatExpression {
-    pub base: Expression,
-    pub rest: Vec<Expression>,
-    pub range: (usize, usize),
+    pub is_soft: bool,
+    pub lhs: Expression,
+    pub rhs: Expression,
 }
 
 #[derive(Clone, Debug)]
 pub struct ChoiceExpression {
-    pub lhs: ChoiceTag,
-    pub rhs: ChoiceTag,
-    pub range: (usize, usize),
+    pub lhs: Expression,
+    pub rhs: Expression,
 }
 
 #[derive(Clone, Debug)]

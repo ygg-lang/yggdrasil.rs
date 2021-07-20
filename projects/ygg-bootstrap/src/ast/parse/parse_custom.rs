@@ -1,5 +1,5 @@
-use yggdrasil_shared::traits::{Affix, Associativity, PrattParser, Precedence};
 use super::*;
+use yggdrasil_shared::traits::{Affix, Associativity, PrattParser};
 
 impl ASTNode<Node> for StringLiteral {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
@@ -33,8 +33,8 @@ fn unescape(raw: &str) -> Result<String> {
 }
 
 fn parse_unicode<I>(chars: &mut I) -> Result<char>
-    where
-        I: Iterator<Item=char>,
+where
+    I: Iterator<Item = char>,
 {
     match chars.next() {
         Some('{') => {}
@@ -59,15 +59,15 @@ impl ASTNode<Node> for Expression {
                 Some("infix") => {
                     let infix = map.remove("infix").unwrap_or_default().remove(0);
                     if let Some(s) = infix.get_str(&builder.input).chars().next() {
-                        terms.push(Term::Split(s))
+                        terms.push(Term::Infix(s))
                     }
                 }
-                Some("other") => terms.push(Term::Split(' ')),
+                Some("other") => terms.push(Term::Infix(' ')),
                 _ => {}
             }
             terms.push(ASTNode::named_one(&mut map, "term", builder)?);
         }
-        Term::build_expression(&mut terms)
+        Term::build_expression(terms)
 
         /*
         match branch {
@@ -104,9 +104,7 @@ impl ASTNode<Node> for Term {
         let data = Data::named_one(&mut map, "data", builder)?;
         let prefix = Prefix::named_many(&mut map, "prefix", builder);
         let suffix = Prefix::named_many(&mut map, "term_next", builder);
-        if prefix.len() + suffix.len() == 0 {
-            return Ok(Self::Atom(Expression::Data(Box::new(data))));
-        }
+
         println!("{:#?}", prefix);
         println!("{:#?}", suffix);
 
@@ -115,13 +113,85 @@ impl ASTNode<Node> for Term {
 }
 
 impl Term {
-    pub fn build_expression(input: &mut Vec<Term>) -> Result<Expression> {
-        if let 1 = input.len() {
-            if let Term::Atom(s) = input.remove(0) {
-                return Ok(s);
-            }
+    pub fn build_expression(input: Vec<Term>) -> Result<Expression> {
+        println!("{:#?}", input);
+        TermResolve.parse(&mut input.into_iter())
+    }
+}
+
+pub struct TermResolve;
+
+impl<I> PrattParser<I> for TermResolve
+where
+    I: Iterator<Item = Term>,
+{
+    type Input = Term;
+    type Output = Expression;
+
+    fn query(&mut self, term: &Self::Input) -> Result<Affix> {
+        let affix = match term {
+            Term::Suffix('?') => Affix::suffix(300),
+            Term::Suffix('+') => Affix::suffix(300),
+            Term::Suffix('*') => Affix::suffix(300),
+
+            Term::Prefix('!') => Affix::prefix(200),
+            Term::Prefix('&') => Affix::prefix(200),
+            Term::Prefix('^') => Affix::prefix(200),
+            Term::Prefix('%') => Affix::prefix(200),
+
+            Term::Infix(' ') => Affix::infix(100, Associativity::Left),
+            Term::Infix('~') => Affix::infix(90, Associativity::Left),
+            Term::Infix('|') => Affix::infix(80, Associativity::Left),
+            Term::Infix('/') => Affix::infix(80, Associativity::Left),
+            Term::Infix(':') => Affix::infix(70, Associativity::Left),
+            Term::Infix('<') => Affix::infix(60, Associativity::Left),
+
+            Term::Atom(_) => Affix::None,
+            _ => unreachable!(),
+        };
+        Ok(affix)
+    }
+
+    fn primary(&mut self, term: Self::Input) -> Result<Self::Output> {
+        match term {
+            Term::Atom(e) => Ok(e),
+            _ => unreachable!(),
         }
-        unimplemented!()
+    }
+
+    fn infix(&mut self, lhs: Self::Output, term: Self::Input, rhs: Self::Output) -> Result<Self::Output> {
+        let out = match term {
+            Term::Infix(' ') => Expression::Concat { is_soft: false, lhs: Box::new(lhs), rhs:Box::new(rhs) },
+            Term::Infix('~') => Expression::Concat { is_soft: true, lhs: Box::new(lhs), rhs:Box::new(rhs) },
+            Term::Infix('|') => Expression::Choice { lhs: Box::new(lhs), rhs:Box::new(rhs) },
+            Term::Infix('/') => Expression::Choice { lhs: Box::new(lhs), rhs:Box::new(rhs) },
+            Term::Infix(':') => Expression::MarkType { lhs: Box::new(lhs), rhs:Box::new(rhs) },
+            Term::Infix('<') => Expression::MarkNode { lhs: Box::new(lhs), rhs:Box::new(rhs) },
+            _ => unreachable!(),
+        };
+        return Ok(out);
+    }
+
+    fn prefix(&mut self, term: Self::Input, rhs: Self::Output) -> Result<Self::Output> {
+        let out = match term {
+            Term::Prefix('!') => Expression::MustNot(Box::new(rhs)),
+            Term::Prefix('&') => Expression::MustOne (Box::new(rhs)),
+            Term::Prefix('^') => Expression::MarkNodeShort(Box::new(rhs)),
+            Term::Prefix('%') => unimplemented!(),
+            _ => unreachable!(),
+        };
+        Ok(out)
+    }
+
+    // Construct a unary postfix expression, e.g. 1?
+    fn suffix(&mut self, lhs: Self::Output, tree: Self::Input) -> Result<Self::Output> {
+        let out = match tree {
+            Term::Suffix('?') => Expression::Maybe(Box::new(lhs)),
+            Term::Suffix('+') => Expression::Maybe (Box::new(lhs)),
+            Term::Suffix('*') => Expression::Maybe (Box::new(lhs)),
+            _ => unreachable!(),
+        };
+        Ok(out)
     }
 }
 
@@ -139,90 +209,5 @@ impl ASTNode<Node> for Data {
             }
             _ => return Err(Error::node_missing("Data")),
         }
-    }
-}
-
-
-
-struct ExprParser;
-
-// From this
-#[derive(Debug)]
-pub enum TokenTree {
-    Prefix(char),
-    Postfix(char),
-    Infix(char),
-    Primary(i32),
-    Group(Vec<TokenTree>),
-}
-
-impl<I> PrattParser<I> for ExprParser
-    where
-        I: Iterator<Item = TokenTree>,
-{
-    type Error = pratt::NoError;
-    type Input = TokenTree;
-    type Output = Expr;
-
-    // Query information about an operator (Affix, Precedence, Associativity)
-    fn query(&mut self, tree: &TokenTree) -> Result<Affix> {
-        let affix = match tree {
-            TokenTree::Infix('=') => Affix::Infix(Precedence(2), Associativity::Neither),
-            TokenTree::Infix('+') => Affix::Infix(Precedence(3), Associativity::Left),
-            TokenTree::Infix('-') => Affix::Infix(Precedence(3), Associativity::Left),
-            TokenTree::Infix('*') => Affix::Infix(Precedence(4), Associativity::Left),
-            TokenTree::Infix('/') => Affix::Infix(Precedence(4), Associativity::Left),
-            TokenTree::Postfix('?') => Affix::Postfix(Precedence(5)),
-            TokenTree::Prefix('-') => Affix::Prefix(Precedence(6)),
-            TokenTree::Prefix('!') => Affix::Prefix(Precedence(6)),
-            TokenTree::Infix('^') => Affix::Infix(Precedence(7), Associativity::Right),
-            TokenTree::Group(_) => Affix::Nilfix,
-            TokenTree::Primary(_) => Affix::Nilfix,
-            _ => unreachable!(),
-        };
-        Ok(affix)
-    }
-
-    // Construct a primary expression, e.g. a number
-    fn primary(&mut self, tree: TokenTree) -> Result<Expr> {
-        let expr = match tree {
-            TokenTree::Primary(num) => Expr::Int(num),
-            TokenTree::Group(group) => self.parse(&mut group.into_iter()).unwrap(),
-            _ => unreachable!(),
-        };
-        Ok(expr)
-    }
-
-    // Construct a binary infix expression, e.g. 1+1
-    fn infix(&mut self, lhs: Expr, tree: TokenTree, rhs: Expr) -> Result<Expr> {
-        let op = match tree {
-            TokenTree::Infix('+') => BinOpKind::Add,
-            TokenTree::Infix('-') => BinOpKind::Sub,
-            TokenTree::Infix('*') => BinOpKind::Mul,
-            TokenTree::Infix('/') => BinOpKind::Div,
-            TokenTree::Infix('^') => BinOpKind::Pow,
-            TokenTree::Infix('=') => BinOpKind::Eq,
-            _ => unreachable!(),
-        };
-        Ok(Expr::BinOp(Box::new(lhs), op, Box::new(rhs)))
-    }
-
-    // Construct a unary prefix expression, e.g. !1
-    fn prefix(&mut self, tree: TokenTree, rhs: Expr) -> Result<Expr> {
-        let op = match tree {
-            TokenTree::Prefix('!') => UnOpKind::Not,
-            TokenTree::Prefix('-') => UnOpKind::Neg,
-            _ => unreachable!(),
-        };
-        Ok(Expr::UnOp(op, Box::new(rhs)))
-    }
-
-    // Construct a unary postfix expression, e.g. 1?
-    fn postfix(&mut self, lhs: Expr, tree: TokenTree) -> Result<Expr> {
-        let op = match tree {
-            TokenTree::Postfix('?') => UnOpKind::Try,
-            _ => unreachable!(),
-        };
-        Ok(Expr::UnOp(op, Box::new(lhs)))
     }
 }

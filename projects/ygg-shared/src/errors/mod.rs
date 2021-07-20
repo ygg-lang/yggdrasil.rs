@@ -13,7 +13,8 @@ pub enum Error {
     FormatError { #[from] source: std::fmt::Error },
    // PestError { #[from] source: pest::error::Error<crate::cst::Rule> },
     AstError { error: String },
-    ParseError { error: String, range: (usize, usize) },
+    ParsingError { error: String, range: (usize, usize) },
+    UnexpectedToken { error: String},
     NodeMissing { error: String },
     NodeTagMissing { error: String },
     InfoMissing { error: String },
@@ -35,8 +36,12 @@ impl Error {
         Self::NodeTagMissing { error: msg.into() }
     }
     ///
-    pub fn parse_error(msg: impl Into<String>, range: (usize, usize)) -> Error {
-        Self::ParseError { error: msg.into(), range }
+    pub fn parsing_error(msg: impl Into<String>, range: (usize, usize)) -> Error {
+        Self::ParsingError { error: msg.into(), range }
+    }
+    ///
+    pub fn unexpected_token(msg: impl Into<String>) -> Error {
+        Self::UnexpectedToken { error: msg.into() }
     }
 }
 

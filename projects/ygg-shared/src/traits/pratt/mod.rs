@@ -1,6 +1,5 @@
-use std::fmt;
-use std::iter::Peekable;
-use std::result;
+use crate::{Error, Result};
+use std::{iter::Peekable};
 
 pub type PrecedenceNumber = u16;
 
@@ -12,9 +11,13 @@ pub enum Associativity {
 }
 
 #[derive(PartialEq, PartialOrd, Copy, Clone)]
-pub struct Precedence(pub PrecedenceNumber);
+pub struct Precedence(PrecedenceNumber);
 
 impl Precedence {
+    pub const fn new(i: PrecedenceNumber) -> Self {
+        Self(i)
+    }
+
     const fn raise(mut self) -> Precedence {
         self.0 += 1;
         self
@@ -37,133 +40,79 @@ impl Precedence {
 
 #[derive(Copy, Clone)]
 pub enum Affix {
-    NilFix,
     Infix(Precedence, Associativity),
     Prefix(Precedence),
-    Postfix(Precedence),
+    Suffix(Precedence),
+    None,
 }
 
-#[derive(Debug)]
-pub enum PrattError<I: fmt::Debug, E: fmt::Display> {
-    UserError(E),
-    EmptyInput,
-    UnexpectedNilfix(I),
-    UnexpectedPrefix(I),
-    UnexpectedInfix(I),
-    UnexpectedPostfix(I),
-}
-
-impl<I: fmt::Debug, E: fmt::Display> fmt::Display for PrattError<I, E> {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            PrattError::UserError(e) => write!(f, "{}", e),
-            PrattError::EmptyInput => write!(f, "Pratt parser was called with empty input."),
-            PrattError::UnexpectedNilfix(t) => {
-                write!(f, "Expected Infix or Postfix, found Nilfix {:?}", t)
-            }
-            PrattError::UnexpectedPrefix(t) => {
-                write!(f, "Expected Infix or Postfix, found Prefix {:?}", t)
-            }
-            PrattError::UnexpectedInfix(t) => {
-                write!(f, "Expected Nilfix or Prefix, found Infix {:?}", t)
-            }
-            PrattError::UnexpectedPostfix(t) => {
-                write!(f, "Expected Nilfix or Prefix, found Postfix {:?}", t)
-            }
-        }
+impl Affix {
+    pub fn infix(p: PrecedenceNumber, a: Associativity) -> Self {
+        Self::Infix(Precedence(p), a)
+    }
+    pub fn suffix(p: PrecedenceNumber) -> Self {
+        Self::Prefix(Precedence(p))
+    }
+    pub fn prefix(p: PrecedenceNumber) -> Self {
+        Self::Prefix(Precedence(p))
     }
 }
-
-#[derive(Debug)]
-pub struct NoError;
-
-impl fmt::Display for NoError {
-    fn fmt(&self, _: &mut std::fmt::Formatter) -> std::fmt::Result {
-        Ok(())
-    }
-}
-
-pub type Result<T> = result::Result<T, NoError>;
 
 pub trait PrattParser<Inputs>
-    where
-        Inputs: Iterator<Item = Self::Input>,
+where
+    Inputs: Iterator<Item = Self::Input>,
 {
-    type Error: fmt::Display;
-    type Input: fmt::Debug;
+    type Input;
     type Output: Sized;
 
-    fn query(&mut self, input: &Self::Input) -> result::Result<Affix, Self::Error>;
+    fn query(&mut self, input: &Self::Input) -> Result<Affix>;
 
-    fn primary(&mut self, input: Self::Input) -> result::Result<Self::Output, Self::Error>;
+    fn primary(&mut self, input: Self::Input) -> Result<Self::Output>;
 
-    fn infix(
-        &mut self,
-        lhs: Self::Output,
-        op: Self::Input,
-        rhs: Self::Output,
-    ) -> result::Result<Self::Output, Self::Error>;
+    fn infix(&mut self, lhs: Self::Output, op: Self::Input, rhs: Self::Output) -> Result<Self::Output>;
 
-    fn prefix(
-        &mut self,
-        op: Self::Input,
-        rhs: Self::Output,
-    ) -> result::Result<Self::Output, Self::Error>;
+    fn prefix(&mut self, op: Self::Input, rhs: Self::Output) -> Result<Self::Output>;
 
-    fn postfix(
-        &mut self,
-        lhs: Self::Output,
-        op: Self::Input,
-    ) -> result::Result<Self::Output, Self::Error>;
+    fn suffix(&mut self, lhs: Self::Output, op: Self::Input) -> Result<Self::Output>;
 
-    fn parse(
-        &mut self,
-        inputs: &mut Inputs,
-    ) -> result::Result<Self::Output, PrattError<Self::Input, Self::Error>> {
+    fn parse(&mut self, inputs: &mut Inputs) -> Result<Self::Output> {
         self.parse_input(&mut inputs.peekable(), Precedence(0))
     }
 
-    fn parse_input(
-        &mut self,
-        tail: &mut Peekable<&mut Inputs>,
-        rbp: Precedence,
-    ) -> result::Result<Self::Output, PrattError<Self::Input, Self::Error>> {
+    fn parse_input(&mut self, tail: &mut Peekable<&mut Inputs>, rbp: Precedence) -> Result<Self::Output> {
         if let Some(head) = tail.next() {
-            let info = self.query(&head).map_err(PrattError::UserError)?;
+            let info = self.query(&head)?;
             let mut nbp = self.nbp(info);
             let mut node = self.nud(head, tail, info);
             while let Some(head) = tail.peek() {
-                let info = self.query(head).map_err(PrattError::UserError)?;
+                let info = self.query(head)?;
                 let lbp = self.lbp(info);
                 if rbp < lbp && lbp < nbp {
                     let head = tail.next().unwrap();
                     nbp = self.nbp(info);
                     node = self.led(head, tail, info, node?);
-                } else {
+                }
+                else {
                     break;
                 }
             }
             node
-        } else {
-            Err(PrattError::EmptyInput)
+        }
+        else {
+            Err(Error::unexpected_token("EmptyInput"))
         }
     }
 
     /// Null-Denotation
-    fn nud(
-        &mut self,
-        head: Self::Input,
-        tail: &mut Peekable<&mut Inputs>,
-        info: Affix,
-    ) -> result::Result<Self::Output, PrattError<Self::Input, Self::Error>> {
+    fn nud(&mut self, head: Self::Input, tail: &mut Peekable<&mut Inputs>, info: Affix) -> Result<Self::Output> {
         match info {
             Affix::Prefix(precedence) => {
                 let rhs = self.parse_input(tail, precedence.normalize().lower());
-                self.prefix(head, rhs?).map_err(PrattError::UserError)
+                self.prefix(head, rhs?)
             }
-            Affix::NilFix => self.primary(head).map_err(PrattError::UserError),
-            Affix::Postfix(_) => Err(PrattError::UnexpectedPostfix(head)),
-            Affix::Infix(_, _) => Err(PrattError::UnexpectedInfix(head)),
+            Affix::None => self.primary(head),
+            Affix::Suffix(_) => Err(Error::unexpected_token("Unexpected Postfix")),
+            Affix::Infix(_, _) => Err(Error::unexpected_token("Unexpected Infix")),
         }
     }
 
@@ -174,7 +123,7 @@ pub trait PrattParser<Inputs>
         tail: &mut Peekable<&mut Inputs>,
         info: Affix,
         lhs: Self::Output,
-    ) -> result::Result<Self::Output, PrattError<Self::Input, Self::Error>> {
+    ) -> Result<Self::Output> {
         match info {
             Affix::Infix(precedence, associativity) => {
                 let precedence = precedence.normalize();
@@ -183,11 +132,11 @@ pub trait PrattParser<Inputs>
                     Associativity::Right => self.parse_input(tail, precedence.lower()),
                     Associativity::Neither => self.parse_input(tail, precedence.raise()),
                 };
-                self.infix(lhs, head, rhs?).map_err(PrattError::UserError)
+                self.infix(lhs, head, rhs?)
             }
-            Affix::Postfix(_) => self.postfix(lhs, head).map_err(PrattError::UserError),
-            Affix::NilFix => Err(PrattError::UnexpectedNilfix(head)),
-            Affix::Prefix(_) => Err(PrattError::UnexpectedPrefix(head)),
+            Affix::Suffix(_) => self.suffix(lhs, head),
+            Affix::None => Err(Error::unexpected_token("Unexpected NilFix")),
+            Affix::Prefix(_) => Err(Error::unexpected_token("Unexpected Prefix")),
         }
     }
 
@@ -202,9 +151,9 @@ pub trait PrattParser<Inputs>
     /// Left-Binding-Power
     fn lbp(&mut self, info: Affix) -> Precedence {
         match info {
-            Affix::NilFix => Precedence::min(),
+            Affix::None => Precedence::min(),
             Affix::Prefix(_) => Precedence::min(),
-            Affix::Postfix(precedence) => precedence.normalize(),
+            Affix::Suffix(precedence) => precedence.normalize(),
             Affix::Infix(precedence, _) => precedence.normalize(),
         }
     }
@@ -212,9 +161,9 @@ pub trait PrattParser<Inputs>
     /// Next-Binding-Power
     fn nbp(&mut self, info: Affix) -> Precedence {
         match info {
-            Affix::NilFix => Precedence::max(),
+            Affix::None => Precedence::max(),
             Affix::Prefix(_) => Precedence::max(),
-            Affix::Postfix(_) => Precedence::max(),
+            Affix::Suffix(_) => Precedence::max(),
             Affix::Infix(precedence, Associativity::Left) => precedence.normalize().raise(),
             Affix::Infix(precedence, Associativity::Right) => precedence.normalize().raise(),
             Affix::Infix(precedence, Associativity::Neither) => precedence.normalize(),
