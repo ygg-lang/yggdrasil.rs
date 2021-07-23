@@ -53,10 +53,18 @@ fn assign() {
     let input = r#"
 x = / 1 ~ 2 ~ 3
 x = a: T <- x
+x = a <- x: T
 x = a | b | c
-x = ^!field*?
 "#;
     peg_assert(input, include_str!("assign.yaml"))
+}
+
+#[test]
+fn unary() {
+    let input = r#"
+x = ^!field*?
+"#;
+    peg_assert(input, include_str!("unary.yaml"))
 }
 
 #[test]

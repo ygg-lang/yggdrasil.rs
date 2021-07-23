@@ -1,5 +1,5 @@
-use std::fmt::{Debug, Formatter};
 use super::*;
+use std::fmt::{Debug, Formatter};
 
 impl Debug for Program {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -42,11 +42,11 @@ impl Debug for Statement {
 impl Debug for Expression {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Expression::Data(e) => {Debug::fmt(e, f)}
+            Expression::Data(e) => Debug::fmt(e, f),
             Expression::Concat { is_soft, lhs, rhs } => {
                 let w = &mut match is_soft {
-                    true => {f.debug_struct("SoftConcat")}
-                    false => {f.debug_struct("Concat")}
+                    true => f.debug_struct("SoftConcat"),
+                    false => f.debug_struct("Concat"),
                 };
                 w.field("lhs", lhs);
                 w.field("rhs", rhs);
@@ -76,13 +76,11 @@ impl Debug for Expression {
                 w.field("type", rhs);
                 w.finish()
             }
-            Expression::MustNot(e) => {
-                f.debug_tuple("MustNot").field(e).finish()
-            }
-            Expression::MustOne(e) => {f.debug_tuple("MustOne").field(e).finish()}
-            Expression::Maybe(e) => {f.debug_tuple("Maybe").field(e).finish()}
-            Expression::Many(e) => {f.debug_tuple("Many").field(e).finish()}
-            Expression::ManyNonNull(e) => {f.debug_tuple("ManyNonNull").field(e).finish()}
+            Expression::MustNot(e) => f.debug_tuple("MustNot").field(e).finish(),
+            Expression::MustOne(e) => f.debug_tuple("MustOne").field(e).finish(),
+            Expression::Maybe(e) => f.debug_tuple("Maybe").field(e).finish(),
+            Expression::Many(e) => f.debug_tuple("Many").field(e).finish(),
+            Expression::ManyNonNull(e) => f.debug_tuple("ManyNonNull").field(e).finish(),
         }
     }
 }

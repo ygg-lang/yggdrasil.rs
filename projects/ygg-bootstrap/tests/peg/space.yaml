@@ -2,7 +2,7 @@
     AssignStatement {
         id: "x",
         eq: "=",
-        rhs: Concat {
+        rhs: Choice {
             lhs: Concat {
                 lhs: SymbolPath(a),
                 rhs: SymbolPath(b),

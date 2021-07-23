@@ -1,9 +1,5 @@
 use super::*;
-use std::{
-    hash::{Hash, Hasher},
-};
-
-
+use std::hash::{Hash, Hasher};
 
 impl Eq for SymbolPath {}
 impl PartialEq<Self> for SymbolPath {
@@ -17,7 +13,6 @@ impl Hash for SymbolPath {
     }
 }
 
-
 impl Eq for Symbol {}
 impl PartialEq<Self> for Symbol {
     fn eq(&self, other: &Self) -> bool {
@@ -29,7 +24,6 @@ impl Hash for Symbol {
         self.data.hash(state)
     }
 }
-
 
 impl Eq for StringLiteral {}
 impl PartialEq<Self> for StringLiteral {

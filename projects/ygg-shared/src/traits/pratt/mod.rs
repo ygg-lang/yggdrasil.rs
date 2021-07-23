@@ -1,5 +1,5 @@
 use crate::{Error, Result};
-use std::{iter::Peekable};
+use std::iter::Peekable;
 
 pub type PrecedenceNumber = u16;
 

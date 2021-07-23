@@ -16,7 +16,7 @@
         rhs: MarkNode {
             field: MarkType {
                 lhs: SymbolPath(a),
-                rhs: SymbolPath(T),
+                type: SymbolPath(T),
             },
             rhs: SymbolPath(x),
         },
@@ -24,17 +24,23 @@
     AssignStatement {
         id: "x",
         eq: "=",
-        rhs: Concat {
-            lhs: Concat {
-                lhs: SymbolPath(a),
-                rhs: SymbolPath(b),
+        rhs: MarkNode {
+            field: SymbolPath(a),
+            rhs: MarkType {
+                lhs: SymbolPath(x),
+                type: SymbolPath(T),
             },
-            rhs: SymbolPath(c),
         },
     },
     AssignStatement {
         id: "x",
         eq: "=",
-        rhs: SymbolPath(field),
+        rhs: Choice {
+            lhs: Choice {
+                lhs: SymbolPath(a),
+                rhs: SymbolPath(b),
+            },
+            rhs: SymbolPath(c),
+        },
     },
 ]

@@ -70,7 +70,7 @@ data <-
 ;
 
 list   <- "{" IGNORE (<data:data> IGNORE ("," IGNORE <data:data>)* IGNORE ","?)? IGNORE "}";
-slice  <- "{" IGNORE integer IGNORE "," IGNORE integer IGNORE  "}";
+slice  <- "{" IGNORE <start:integer>? IGNORE "," IGNORE <end:integer>? IGNORE  "}";
 
 regex_range  <- "[" IGNORE (!"]" IGNORE . / "\\" IGNORE .)* IGNORE "]";
 

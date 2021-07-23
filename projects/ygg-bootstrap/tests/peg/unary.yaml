@@ -1,0 +1,7 @@
+[
+    AssignStatement {
+        id: "x",
+        eq: "=",
+        rhs: SymbolPath(field),
+    },
+]

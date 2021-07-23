@@ -100,22 +100,42 @@ impl ASTNode<Node> for Expression {
 impl ASTNode<Node> for Term {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let mut map = node.get_tag_map();
-
         let data = Data::named_one(&mut map, "data", builder)?;
         let prefix = Prefix::named_many(&mut map, "prefix", builder);
-        let suffix = Prefix::named_many(&mut map, "term_next", builder);
-        // println!("{:#?}", data);
-        // println!("{:#?}", prefix);
-        // println!("{:#?}", suffix);
-
-        return Ok(Term::Atom(Expression::Data(data)))
+        let suffix = TermNext::named_many(&mut map, "term_next", builder);
+        let mut base = Expression::Data(data);
+        if prefix.is_empty() && suffix.is_empty() {
+            return Ok(Term::Atom(base));
+        }
+        println!("Suffix: \n{:#?}", suffix);
+        base = Term::build_suffix( base, vec![]);
+        println!("Prefix: \n{:#?}", prefix);
+        base = Term::build_prefix( base, prefix);
+        return Ok(Term::Atom(base))
     }
 }
 
 impl Term {
     pub fn build_expression(input: Vec<Term>) -> Result<Expression> {
-
         TermResolve.parse(&mut input.into_iter())
+    }
+    fn build_prefix(mut base: Expression, ops: Vec<Prefix>) -> Expression {
+        for op in ops.iter().rev() {
+            match op.data {
+                '!' => base = Expression::MustNot(Box::new(base)),
+                '&' => base = Expression::MustOne(Box::new(base)),
+                '^' => base = Expression::MarkNodeShort(Box::new(base)),
+                '%' => unimplemented!(),
+                _ => unreachable!()
+            }
+        }
+        return base;
+    }
+    pub fn build_suffix(mut base: Expression, ops: Vec<TermNext>) -> Expression {
+        for op in ops.iter() {
+
+        }
+       return base
     }
 }
 
@@ -161,12 +181,12 @@ where
 
     fn infix(&mut self, lhs: Self::Output, term: Self::Input, rhs: Self::Output) -> Result<Self::Output> {
         let out = match term {
-            Term::Infix(' ') => Expression::Concat { is_soft: false, lhs: Box::new(lhs), rhs:Box::new(rhs) },
-            Term::Infix('~') => Expression::Concat { is_soft: true, lhs: Box::new(lhs), rhs:Box::new(rhs) },
-            Term::Infix('|') => Expression::Choice { lhs: Box::new(lhs), rhs:Box::new(rhs) },
-            Term::Infix('/') => Expression::Choice { lhs: Box::new(lhs), rhs:Box::new(rhs) },
-            Term::Infix(':') => Expression::MarkType { lhs: Box::new(lhs), rhs:Box::new(rhs) },
-            Term::Infix('<') => Expression::MarkNode { lhs: Box::new(lhs), rhs:Box::new(rhs) },
+            Term::Infix(' ') => Expression::Concat { is_soft: false, lhs: Box::new(lhs), rhs: Box::new(rhs) },
+            Term::Infix('~') => Expression::Concat { is_soft: true, lhs: Box::new(lhs), rhs: Box::new(rhs) },
+            Term::Infix('|') => Expression::Choice { lhs: Box::new(lhs), rhs: Box::new(rhs) },
+            Term::Infix('/') => Expression::Choice { lhs: Box::new(lhs), rhs: Box::new(rhs) },
+            Term::Infix(':') => Expression::MarkType { lhs: Box::new(lhs), rhs: Box::new(rhs) },
+            Term::Infix('<') => Expression::MarkNode { lhs: Box::new(lhs), rhs: Box::new(rhs) },
             _ => unreachable!(),
         };
         return Ok(out);
@@ -175,7 +195,7 @@ where
     fn prefix(&mut self, term: Self::Input, rhs: Self::Output) -> Result<Self::Output> {
         let out = match term {
             Term::Prefix('!') => Expression::MustNot(Box::new(rhs)),
-            Term::Prefix('&') => Expression::MustOne (Box::new(rhs)),
+            Term::Prefix('&') => Expression::MustOne(Box::new(rhs)),
             Term::Prefix('^') => Expression::MarkNodeShort(Box::new(rhs)),
             Term::Prefix('%') => unimplemented!(),
             _ => unreachable!(),
@@ -187,13 +207,29 @@ where
     fn suffix(&mut self, lhs: Self::Output, tree: Self::Input) -> Result<Self::Output> {
         let out = match tree {
             Term::Suffix('?') => Expression::Maybe(Box::new(lhs)),
-            Term::Suffix('+') => Expression::Maybe (Box::new(lhs)),
-            Term::Suffix('*') => Expression::Maybe (Box::new(lhs)),
+            Term::Suffix('+') => Expression::Maybe(Box::new(lhs)),
+            Term::Suffix('*') => Expression::Maybe(Box::new(lhs)),
             _ => unreachable!(),
         };
         Ok(out)
     }
 }
+
+impl ASTNode<Node> for TermNext {
+    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
+        let branch = node.branch_tag;
+        let mut children = node.children;
+
+    }
+}
+
+impl ASTNode<Node> for Slice {
+    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
+        todo!()
+    }
+}
+
+
 
 impl ASTNode<Node> for Data {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
