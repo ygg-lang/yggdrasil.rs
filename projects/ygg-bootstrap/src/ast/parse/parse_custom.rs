@@ -56,13 +56,13 @@ impl ASTNode<Node> for Expression {
             let branch = e.branch_tag;
             let mut map = e.get_tag_map();
             match branch {
-                Some("infix") => {
+                Some("Infix") => {
                     let infix = map.remove("infix").unwrap_or_default().remove(0);
                     if let Some(s) = infix.get_str(&builder.input).chars().next() {
                         terms.push(Term::Infix(s))
                     }
                 }
-                Some("other") => terms.push(Term::Infix(' ')),
+                Some("Other") => terms.push(Term::Infix(' ')),
                 _ => {}
             }
             terms.push(ASTNode::named_one(&mut map, "term", builder)?);
@@ -104,17 +104,17 @@ impl ASTNode<Node> for Term {
         let data = Data::named_one(&mut map, "data", builder)?;
         let prefix = Prefix::named_many(&mut map, "prefix", builder);
         let suffix = Prefix::named_many(&mut map, "term_next", builder);
+        // println!("{:#?}", data);
+        // println!("{:#?}", prefix);
+        // println!("{:#?}", suffix);
 
-        println!("{:#?}", prefix);
-        println!("{:#?}", suffix);
-
-        unimplemented!();
+        return Ok(Term::Atom(Expression::Data(data)))
     }
 }
 
 impl Term {
     pub fn build_expression(input: Vec<Term>) -> Result<Expression> {
-        println!("{:#?}", input);
+
         TermResolve.parse(&mut input.into_iter())
     }
 }

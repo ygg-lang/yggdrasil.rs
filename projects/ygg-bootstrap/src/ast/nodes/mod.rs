@@ -1,5 +1,5 @@
 mod nodes_custom;
-// mod nodes_resolver;
+mod custom_debug;
 
 // pub use self::nodes_resolver::*;
 
@@ -61,7 +61,7 @@ pub struct SymbolAlias {
     pub range: (usize, usize),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub enum Expression {
     Data(Data),
     /// lhs ~ rhs
