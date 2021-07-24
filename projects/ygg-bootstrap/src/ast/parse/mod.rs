@@ -80,6 +80,16 @@ impl ASTNode<Node> for AssignStatement {
     }
 }
 
+impl ASTNode<Node> for Slice {
+    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
+        let range = node.get_span();
+        let mut map = node.get_tag_map();
+        let start = ASTNode::named_some(&mut map, "start", builder);
+        let end = ASTNode::named_some(&mut map, "end", builder);
+        Ok(Self { start, end, range })
+    }
+}
+
 impl ASTNode<Node> for SymbolPath {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let range = node.get_span();

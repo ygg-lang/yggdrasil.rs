@@ -108,10 +108,10 @@ impl ASTNode<Node> for Term {
             return Ok(Term::Atom(base));
         }
         println!("Suffix: \n{:#?}", suffix);
-        base = Term::build_suffix( base, vec![]);
+        base = Term::build_suffix(base, vec![]);
         println!("Prefix: \n{:#?}", prefix);
-        base = Term::build_prefix( base, prefix);
-        return Ok(Term::Atom(base))
+        base = Term::build_prefix(base, prefix);
+        return Ok(Term::Atom(base));
     }
 }
 
@@ -126,16 +126,14 @@ impl Term {
                 '&' => base = Expression::MustOne(Box::new(base)),
                 '^' => base = Expression::MarkNodeShort(Box::new(base)),
                 '%' => unimplemented!(),
-                _ => unreachable!()
+                _ => unreachable!(),
             }
         }
         return base;
     }
     pub fn build_suffix(mut base: Expression, ops: Vec<TermNext>) -> Expression {
-        for op in ops.iter() {
-
-        }
-       return base
+        for op in ops.iter() {}
+        return base;
     }
 }
 
@@ -218,18 +216,12 @@ where
 impl ASTNode<Node> for TermNext {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let branch = node.branch_tag;
-        let mut children = node.children;
-
+        let mut map = node.get_tag_map();
+        println!("{:#?}", branch);
+        println!("{:#?}", map);
+        unimplemented!()
     }
 }
-
-impl ASTNode<Node> for Slice {
-    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
-        todo!()
-    }
-}
-
-
 
 impl ASTNode<Node> for Data {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {

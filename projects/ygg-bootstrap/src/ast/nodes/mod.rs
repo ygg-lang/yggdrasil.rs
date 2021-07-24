@@ -1,5 +1,5 @@
 mod custom_debug;
-mod nodes_custom;
+mod custom_trait;
 
 // pub use self::nodes_resolver::*;
 
@@ -107,10 +107,7 @@ pub enum Term {
 pub enum TermNext {
     Suffix(char),
     Slice(Slice),
-    Branch {
-        kind: char,
-        symbol: Symbol
-    },
+    Branch { kind: char, symbol: Symbol },
 }
 
 #[derive(Clone, Debug)]
@@ -129,6 +126,7 @@ pub struct Suffix {
 pub struct Slice {
     pub start: Option<Integer>,
     pub end: Option<Integer>,
+    pub range: (usize, usize),
 }
 
 #[derive(Clone, Debug)]
