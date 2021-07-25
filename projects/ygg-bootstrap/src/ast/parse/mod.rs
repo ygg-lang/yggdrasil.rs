@@ -80,6 +80,22 @@ impl ASTNode<Node> for AssignStatement {
     }
 }
 
+impl ASTNode<Node> for Data {
+    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
+        let branch = node.branch_tag;
+        let children = &mut node.get_tag_map();
+        match branch {
+            Some("Symbol") => Ok(Self::Symbol(Box::new(ASTNode::named_one(children, "symbol_path", builder)?))),
+            Some("Integer") => Ok(Self::Integer(Box::new(ASTNode::named_one(children, "integer", builder)?))),
+            Some("String") => Ok(Self::String(Box::new(ASTNode::named_one(children, "string", builder)?))),
+            Some(s) => {
+                unreachable!("{:#?}", s);
+            }
+            _ => return Err(Error::node_missing("Data")),
+        }
+    }
+}
+
 impl ASTNode<Node> for Slice {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let range = node.get_span();

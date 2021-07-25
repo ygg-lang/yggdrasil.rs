@@ -24,7 +24,7 @@ impl Default for CSTBuilder {
 impl CSTBuilder {
     pub fn parse(&mut self, input: &str) -> Result<CSTNode<Rule>> {
         let parsed = self.peg.parse(input);
-        // println!("{:#?}", parsed);
+        println!("{:#?}", parsed);
         match parsed {
             Ok(o) => Ok(flatten(o)),
             Err(e) => Err(Error::unexpected_token("UnexpectedToken", Some(e))),

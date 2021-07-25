@@ -68,32 +68,6 @@ impl ASTNode<Node> for Expression {
             terms.push(ASTNode::named_one(&mut map, "term", builder)?);
         }
         Term::build_expression(terms)
-
-        /*
-        match branch {
-            Some("Priority") => Self::named_one(&mut map, "expr", builder),
-            Some("Concat") => {
-                unimplemented!()
-            }
-            Some("Mark") => {
-                let lhs = ASTNode::named_one(&mut map, "lhs", builder)?;
-                let ty = ASTNode::named_some(&mut map, "ty", builder);
-                let rhs = ASTNode::named_one(&mut map, "rhs", builder)?;
-                Ok(Self::Mark(Box::new(MarkExpression { lhs, ty, rhs, range })))
-            }
-            Some("Choice") => {
-                unimplemented!()
-            }
-            Some("Suffix") => {
-                unimplemented!("{:#?}", map);
-            }
-            Some("Data") => Ok(Self::Data(Box::new(ASTNode::named_one(&mut map, "data", builder)?))),
-            Some(s) => {
-                unreachable!("Some({:#?})=>{{}}", s);
-            }
-            _ => return Err(Error::node_missing("Expression")),
-        }
-        */
     }
 }
 
@@ -237,23 +211,6 @@ impl ASTNode<Node> for TermNext {
             Some("Suffix") => Ok(Self::Suffix(ASTNode::one(node, builder)?)),
             // Some("Integer") => Ok(Self::Integer(Box::new(ASTNode::one(node, builder)?))),
             // Some("String") => Ok(Self::String(Box::new(ASTNode::one(node, builder)?))),
-            Some(s) => {
-                unreachable!("{:#?}", s);
-            }
-            _ => return Err(Error::node_missing("Data")),
-        }
-    }
-}
-
-impl ASTNode<Node> for Data {
-    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
-        let branch = node.branch_tag;
-        let mut children = node.children;
-        let node = children.remove(0);
-        match branch {
-            Some("Symbol") => Ok(Self::Symbol(Box::new(ASTNode::one(node, builder)?))),
-            Some("Integer") => Ok(Self::Integer(Box::new(ASTNode::one(node, builder)?))),
-            Some("String") => Ok(Self::String(Box::new(ASTNode::one(node, builder)?))),
             Some(s) => {
                 unreachable!("{:#?}", s);
             }

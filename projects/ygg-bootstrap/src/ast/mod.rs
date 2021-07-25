@@ -31,14 +31,19 @@ impl Default for YggParser {
 impl YggParser {
     /// parse_program
     pub fn parse_program(&mut self, input: &str) -> Result<Program> {
-        self.init(input);
-        let cst = self.cst.parse(&self.ast.input)?;
-        println!("{:#?}", cst);
+        let cst = self.parse_cst(input)?;
+        // println!("{:#?}", cst);
         let program = Program::parse(cst, &mut self.ast)?;
         self.error.extend(std::mem::take(&mut self.cst.error).into_iter());
         self.error.extend(std::mem::take(&mut self.ast.error).into_iter());
         Ok(program)
     }
+    pub fn parse_cst(&mut self, input: &str) -> Result<CSTNode<Rule>> {
+        self.init(input);
+        let cst = self.cst.parse(&self.ast.input)?;
+        return Ok(cst);
+    }
+
     pub fn errors(&self) -> &[Error] {
         self.error.as_slice()
     }

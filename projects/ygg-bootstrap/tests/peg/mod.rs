@@ -3,7 +3,9 @@ use yggdrasil_bootstrap::ast::YggParser;
 pub fn peg_assert(input: &str, target: &str) {
     let mut parser = YggParser::default();
     let out = parser.parse_program(input).unwrap();
-    println!("{:#?}", parser.errors());
+    if !parser.errors().is_empty() {
+        println!("{:#?}", parser.errors());
+    }
     assert_eq!(format!("{:#?}", out), target)
 }
 

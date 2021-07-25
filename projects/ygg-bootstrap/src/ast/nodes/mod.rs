@@ -1,4 +1,5 @@
 mod custom_debug;
+mod custom_methods;
 mod custom_trait;
 
 // pub use self::nodes_resolver::*;
@@ -132,20 +133,6 @@ pub struct Suffix {
 pub struct Slice {
     pub start: Option<Integer>,
     pub end: Option<Integer>,
-    pub range: (usize, usize),
-}
-
-#[derive(Clone, Debug)]
-pub struct UnarySuffix {
-    pub suffix: String,
-    pub base: Expression,
-    pub range: (usize, usize),
-}
-
-#[derive(Clone, Debug)]
-pub struct UnaryPrefix {
-    pub prefix: String,
-    pub base: Expression,
     pub range: (usize, usize),
 }
 
