@@ -4,18 +4,26 @@ impl GrammarState {
     pub fn report_meta(&self) -> HintItems {
         let mut document_symbol = vec![];
         document_symbol.push(self.top_area());
+        let file = self.file_position();
         for rule in self.rules() {
-            document_symbol.push(rule.symbol_item())
+            document_symbol.push(rule.symbol_item(&file))
         }
         document_symbol.push(test_node());
         HintItems { diagnostic: vec![], code_lens: vec![], document_symbol }
     }
-    fn top_area(&self, file: &FilePosition) -> DocumentSymbol {
+    pub fn file_position(&self) -> FilePosition<'_> {
+        FilePosition::new(&self.text, &self.url)
+    }
+    pub fn get_lsp_range(&self, range: (usize, usize)) -> Range {
+        self.file_position().get_lsp_range(range)
+    }
+    fn top_area(&self) -> DocumentSymbol {
         let name = match self.is_grammar {
             true => "Grammar",
             false => "Fragment",
         };
-        let range = self.name.range;
+        let range = self.get_lsp_range(self.name.range);
+
         let mut terms = vec![];
         if self.is_grammar {
             terms.push(self.extension())
@@ -35,7 +43,8 @@ impl GrammarState {
     fn extension(&self) -> DocumentSymbol {
         let detail;
         let children;
-        let range = self.name.range;
+        let file = self.file_position();
+        let range = file.get_lsp_range(self.name.range);
         let n = self.extensions.len();
         match n {
             0 => {
@@ -48,7 +57,7 @@ impl GrammarState {
                     self.extensions
                         .iter()
                         .enumerate()
-                        .map(|(i, r)| self.extension_item(i, r.data.to_owned(), r.range))
+                        .map(|(i, r)| self.extension_item(i, r.data.to_owned(), file.get_lsp_range(r.range)))
                         .collect(),
                 );
             }
@@ -95,10 +104,12 @@ impl GrammarState {
         }
     }
     fn ignore_item(&self, id: &Symbol) -> DocumentSymbol {
+        let file = self.file_position();
+        let range = file.get_lsp_range(id.range);
         match self.get(&id.data) {
             Some(s) => {
-                let mut s = s.symbol_item();
-                s.range = id.range;
+                let mut s = s.symbol_item(&file);
+                s.range = range;
                 s.kind = SymbolKind::Number;
                 s
             }
@@ -108,8 +119,8 @@ impl GrammarState {
                 kind: SymbolKind::Number,
                 tags: None,
                 deprecated: None,
-                range: id.range,
-                selection_range: id.range,
+                range,
+                selection_range: range,
                 children: None,
             },
         }
@@ -117,7 +128,7 @@ impl GrammarState {
 }
 
 impl Rule {
-    fn symbol_item(&self) -> DocumentSymbol {
+    fn symbol_item(&self, file: &FilePosition) -> DocumentSymbol {
         let (detail, kind) = self.symbol_detail();
         DocumentSymbol {
             name: self.name.data.to_owned(),
@@ -125,28 +136,23 @@ impl Rule {
             kind,
             tags: None,
             deprecated: None,
-            range: self.range,
-            selection_range: self.name.range,
+            range: file.get_lsp_range(self.range),
+            selection_range: file.get_lsp_range(self.name.range),
             children: None,
         }
     }
     fn symbol_detail(&self) -> (Option<String>, SymbolKind) {
         if self.force_inline {
             (Some("inlined".to_string()), SymbolKind::Variable)
-        }
-        else if self.expression.inline_token {
+        } else if self.expression.inline_token {
             (Some("token".to_string()), SymbolKind::String)
-        }
-        else if self.eliminate_unnamed {
+        } else if self.eliminate_unnamed {
             (Some("no unnamed".to_string()), SymbolKind::EnumMember)
-        }
-        else if self.eliminate_unmarked {
+        } else if self.eliminate_unmarked {
             (Some("no unmarked".to_string()), SymbolKind::Enum)
-        }
-        else if self.expression.is_choice() {
+        } else if self.expression.is_choice() {
             (None, SymbolKind::Class)
-        }
-        else {
+        } else {
             (None, SymbolKind::Field)
         }
     }

@@ -11,6 +11,7 @@ use std::{
 };
 
 mod item;
+mod cli;
 
 pub static HINT_MANAGER: SyncLazy<HintManager> = SyncLazy::new(|| HintManager::default());
 

@@ -242,10 +242,18 @@ where
 impl ASTNode<Node> for TermNext {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let branch = node.branch_tag;
-        let mut map = node.get_tag_map();
-        println!("{:#?}", branch);
-        println!("{:#?}", map);
-        unimplemented!()
+        //let mut map = node.get_tag_map();
+        let mut children = node.children;
+        let node = children.remove(0);
+        match branch {
+            Some("Suffix") => Ok(Self::Suffix(ASTNode::one(node, builder)?)),
+            // Some("Integer") => Ok(Self::Integer(Box::new(ASTNode::one(node, builder)?))),
+            // Some("String") => Ok(Self::String(Box::new(ASTNode::one(node, builder)?))),
+            Some(s) => {
+                unreachable!("{:#?}", s);
+            }
+            _ => return Err(Error::node_missing("Data")),
+        }
     }
 }
 

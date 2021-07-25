@@ -20,7 +20,7 @@ impl<'i> LineBreaks<'i> {
     #[inline]
     fn get_lsp_position(&self, offset: usize) -> Position {
         let (line, column) = self.get_line_column(offset);
-        let character = match self.input.lines().nth(line) {
+        let character = match self.get_nth_line(line) {
             Some(s) => unsafe { s.get_unchecked(0..column).encode_utf16().count() as u32 },
             None => column as u32,
         };

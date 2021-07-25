@@ -3,7 +3,10 @@
 
 use lsp_types::Url;
 use std::{fmt::Write, lazy::SyncLazy, str::FromStr};
-use yggdrasil_core::{ast::YGGBuilder, Result};
+use yggdrasil_core::{Result};
+use yggdrasil_core::codegen::{FilePosition, Translator};
+use yggdrasil_core::manager::YggParser;
+
 
 pub mod basic;
 pub mod codegen;
@@ -17,11 +20,11 @@ fn ready() {
     println!("ready!")
 }
 
+
 pub fn assert_ast(text: &str, target: &str) -> Result<()> {
-    let mut parser = YGGBuilder::new()?;
-    parser.update_by_text(text)?;
+    let mut parser = YggParser::default();
     let mut out = String::new();
-    for stmt in parser.traverse()?.statement {
+    for stmt in parser.parse_program(text)?.statement {
         writeln!(out, "{:#?}", stmt)?
     }
     assert_eq!(out, target);
@@ -29,18 +32,18 @@ pub fn assert_ast(text: &str, target: &str) -> Result<()> {
 }
 
 pub fn assert_diagnostic(text: &str, target: &str) -> Result<()> {
-    let mut parser = YGGBuilder::new()?;
-    parser.update_by_text(text)?;
-    let out = parser.traverse()?;
-    let diag = build_grammar(out , (*EXAMPLE_URL).clone())?.1;
+    let file = FilePosition::new(text, &EXAMPLE_URL);
+    let mut parser = YggParser::default();
+    let diag = parser.parse_program(text)?.translate(&file)?.1;
     assert_eq!(format!("{:#?}", diag), target);
     Ok(())
 }
 
 pub fn assert_optimize(text: &str, target: &str) -> Result<()> {
-    let mut parser = YGGBuilder::new()?;
-    parser.update_by_text(text)?;
-    let mut grammar = parser.traverse()?.build_grammar((*EXAMPLE_URL).clone())?.0;
+    let file = FilePosition::new(text, &EXAMPLE_URL);
+    let mut parser = YggParser::default();
+    let mut grammar = parser.parse_program(text)?.translate(&file)?.0;
+
     grammar.optimize_local()?;
     let mut out = String::new();
     for rule in grammar.named_rules() {
@@ -51,11 +54,12 @@ pub fn assert_optimize(text: &str, target: &str) -> Result<()> {
 }
 
 pub fn assert_codegen(text: &str, target: &str) -> Result<()> {
-    let mut parser = YGGBuilder::new()?;
-    parser.update_by_text(text)?;
-    let mut grammar = parser.traverse()?.build_grammar((*EXAMPLE_URL).clone())?.0;
-    grammar.optimize_local()?;
-    let out = grammar.build_input_grammar();
+    let file = FilePosition::new(text, &EXAMPLE_URL);
+    let mut parser = YggParser::default();
+    let mut grammar = parser.parse_program(text)?.translate(&file)?.0;
+
+    let out = grammar.optimize_local()?;
+    //let out = grammar.build_input_grammar();
     assert_eq!(format!("{:#?}", out), target);
     Ok(())
 }

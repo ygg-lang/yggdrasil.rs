@@ -1,4 +1,4 @@
-
+use yggdrasil_bootstrap::shared::records::LineBreaks;
 use super::*;
 
 
@@ -23,9 +23,9 @@ impl FileType {
             }
             FileType::GrammarString(s) => {
                 let mut hints = HintItems::default();
-                let (program, err) = parser.parse_program(s)?;
+                let program = parser.parse_program(s)?;
                 let file = FilePosition::new(s, &url);
-                parse_error_to_hints(&file, err, &mut hints);
+                parse_error_to_hints(&file, parser.errors(), &mut hints);
                 let (mut grammar, err) = program.translate(&file)?;
                 hints += err;
                 hints += grammar.optimize().await?;
@@ -39,19 +39,17 @@ impl FileType {
     }
 }
 
-fn parse_error_to_hints(file: &FilePosition, es: Vec<Error>, hint: &mut HintItems) {
-
-
+fn parse_error_to_hints(file: &FilePosition, es: &[Error], hint: &mut HintItems) {
     for e in es {
         let diag = match e {
             Error::ParsingError { error, range } => {
                 Diagnostic {
-                    range: file.get_lsp_range(range),
+                    range: file.get_lsp_range(*range),
                     severity: None,
                     code: None,
                     code_description: None,
                     source: None,
-                    message: error,
+                    message: error.to_owned(),
                     related_information: None,
                     tags: None,
                     data: None

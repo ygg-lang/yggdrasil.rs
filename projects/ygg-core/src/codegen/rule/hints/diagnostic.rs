@@ -23,7 +23,7 @@ pub fn duplicate_declaration_error(
     last: (usize, usize),
     file: &FilePosition
 ) -> Diagnostic {
-    let info = DiagnosticRelatedInformation { location: Location { uri: file.url.to_owned(), range: file.get_lsp_range(last) }, message: msg.into() };
+    let info = DiagnosticRelatedInformation { location: Location { uri: file.get_url().to_owned(), range: file.get_lsp_range(last) }, message: msg.into() };
     Diagnostic {
         range: file.get_lsp_range(this),
         severity: Some(DiagnosticSeverity::Error),

@@ -5,8 +5,8 @@ pub use self::offset::OffsetRange;
 use std::fmt::{Debug, Formatter};
 
 pub struct LineBreaks<'input> {
-    pub(crate) input: &'input str,
-    pub(crate) lines: Vec<usize>,
+    input: &'input str,
+    lines: Vec<usize>,
 }
 
 impl<'i> LineBreaks<'i> {
@@ -25,6 +25,15 @@ impl<'i> LineBreaks<'i> {
             out.push(counter)
         }
         return out;
+    }
+    pub fn get_text(&self) -> &'i str {
+        self.input
+    }
+    pub fn get_lines(&self) -> &[usize] {
+        self.lines.as_slice()
+    }
+    pub fn get_nth_line(&self, line: usize) -> Option<&'_ str> {
+        self.input.lines().nth(line)
     }
 }
 

@@ -31,8 +31,9 @@ mod remap {
 }
 
 #[derive(Clone, Debug)]
-pub struct GrammarState<'i> {
-    file: LineBreaks<'i>,
+pub struct GrammarState {
+    url: Url,
+    text: String,
     is_grammar: bool,
     name: Symbol,
     extensions: Vec<StringLiteral>,

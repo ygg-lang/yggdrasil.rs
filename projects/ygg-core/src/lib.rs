@@ -6,7 +6,7 @@
 
 pub use yggdrasil_bootstrap::{Result,Error};
 pub use self::{
-    manager::{FILE_MANAGER, HINT_MANAGER},
+    manager::{FILE_MANAGER, HINT_MANAGER,PARSER_MANAGER},
 };
 
 pub mod codegen;

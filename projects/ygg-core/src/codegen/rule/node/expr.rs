@@ -52,19 +52,33 @@ impl ExpressionTag {
 impl From<Expression> for ExpressionNode {
     fn from(raw: Expression) -> Self {
         match raw {
-            Expression::Data(e) => {unimplemented!()}
-            Expression::Concat { .. } => {unimplemented!()}
-            Expression::Choice { .. } => {unimplemented!()}
-            Expression::MarkNode { .. } => {unimplemented!()}
-            Expression::MarkNodeShort(_) => {unimplemented!()}
-            Expression::MarkType { .. } => {unimplemented!()}
-            Expression::MustNot(_) => {unimplemented!()}
-            Expression::MustOne(_) => {unimplemented!()}
-            Expression::Maybe(_) => {unimplemented!()}
-            Expression::Many(_) => {unimplemented!()}
-            Expression::ManyNonNull(_) => {unimplemented!()}
-            Expression::MarkBranch { .. } => {unimplemented!()}
+            Expression::Data(e) => { Self::from(e) }
+            Expression::Concat { .. } => { unimplemented!() }
+            Expression::Choice { lhs, rhs } => {
+                ExpressionNode {
+                    inline_token: false,
+                    tag: None,
+                    ty: None,
+                    field: None,
+                    node: RefinedExpression::choice(lhs, rhs),
+                }
+            }
+            Expression::MarkNode { .. } => { unimplemented!() }
+            Expression::MarkNodeShort(_) => { unimplemented!() }
+            Expression::MarkType { .. } => { unimplemented!() }
+            Expression::MustNot(_) => { unimplemented!() }
+            Expression::MustOne(_) => { unimplemented!() }
+            Expression::Maybe(_) => { unimplemented!() }
+            Expression::Many(_) => { unimplemented!() }
+            Expression::ManyNonNull(_) => { unimplemented!() }
+            Expression::MarkBranch { .. } => { unimplemented!() }
         }
+    }
+}
+
+impl RefinedExpression {
+    pub fn choice(lhs: Box<Expression>, rhs: Box<Expression>) -> Self {
+        unimplemented!()
     }
 }
 
@@ -87,7 +101,7 @@ impl From<Data> for RefinedData {
             Data::Integer(atom) => Self::Integer(atom.data),
             Data::String(atom) => Self::String(atom.data),
             Data::Regex => unimplemented!(),
-            Data::Macro =>  unimplemented!(),
+            Data::Macro => unimplemented!(),
         }
     }
 }
@@ -99,6 +113,7 @@ impl Hash for RefinedChoice {
 }
 
 impl Eq for RefinedData {}
+
 impl PartialEq for RefinedData {
     fn eq(&self, other: &RefinedData) -> bool {
         match (self, other) {

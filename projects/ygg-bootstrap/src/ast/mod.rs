@@ -15,28 +15,32 @@ pub use self::nodes::*;
 pub struct YggParser {
     cst: CSTBuilder,
     ast: ASTBuilder,
+    error: Vec<Error>
 }
 
 impl Default for YggParser {
     fn default() -> Self {
-        Self { cst: Default::default(), ast: Default::default() }
+        Self { cst: Default::default(), ast: Default::default(), error: vec![] }
     }
 }
 
 impl YggParser {
     /// parse_program
-    pub fn parse_program(&mut self, input: &str) -> Result<(Program, Vec<Error>)> {
+    pub fn parse_program(&mut self, input: &str) -> Result<Program> {
         self.init(input);
         let cst = self.cst.parse(&self.ast.input)?;
         let program = Program::parse(cst, &mut self.ast)?;
-        let mut error = vec![];
-        error.extend(std::mem::take(&mut self.cst.error).into_iter());
-        error.extend(std::mem::take(&mut self.ast.error).into_iter());
-        Ok((program, error))
+        self.error.extend(std::mem::take(&mut self.cst.error).into_iter());
+        self.error.extend(std::mem::take(&mut self.ast.error).into_iter());
+        Ok(program)
+    }
+    pub fn errors(&self) -> &[Error] {
+        self.error.as_slice()
     }
     fn init(&mut self, input: &str) {
         self.cst.error.clear();
         self.ast.error.clear();
+        self.error.clear();
         self.ast.input = String::from(input)
     }
 }

@@ -5,20 +5,33 @@ use super::{
 
 
 pub struct FilePosition<'i> {
-    pub url: &'i Url,
-    pub lines: &'i LineBreaks<'i>,
+    text: &'i str,
+    url: &'i Url,
 }
 
 impl<'i> FilePosition<'i> {
     #[inline]
-    pub fn get_lsp_range(&self, offsets: (usize, usize)) -> Range {
-        self.lines.get_lsp_range(offsets.0, offsets.1)
-    }
-    pub fn new(input: &'i str, url: &'i Url) -> Self {
+    pub fn new(text: &'i str, url: &'i Url) -> Self {
         Self {
+            text,
             url,
-            lines: &LineBreaks::new(input),
         }
+    }
+    #[inline]
+    pub fn get_text(&self) -> &'i str {
+        self.text
+    }
+    #[inline]
+    pub fn get_url(&self) -> &'i Url {
+        self.url
+    }
+    #[inline]
+    pub fn get_lines(&self) -> LineBreaks<'i> {
+        LineBreaks::new(&self.text)
+    }
+    #[inline]
+    pub fn get_lsp_range(&self, offsets: (usize, usize)) -> Range {
+        self.get_lines().get_lsp_range(offsets.0, offsets.1)
     }
 }
 
@@ -142,7 +155,7 @@ impl Translator for Program {
             range: name_position,
         };
 
-        let state = GrammarState { name, extensions, rule_map, ignores, url: file.url.to_owned(), is_grammar: is_grammar.unwrap_or(false) };
+        let state = GrammarState { name, extensions, rule_map, ignores, url: file.url.to_owned(), text: file.get_text().to_owned(), is_grammar: is_grammar.unwrap_or(false) };
 
         let hint = HintItems { diagnostic: diag, code_lens: lens, document_symbol: vec![] };
 
@@ -153,7 +166,7 @@ impl Translator for Program {
 impl From<AssignStatement> for Rule {
     fn from(s: AssignStatement) -> Self {
         let name = &s.id.data;
-        let mut ty = Symbol { data: name.to_case(Case::UpperCamel), range: s.id.range };
+        let ty = Symbol { data: name.to_case(Case::UpperCamel), range: s.id.range };
         let force_inline = name.starts_with("_");
         // if !force_inline {
         //     ty = Some(Symbol { data: name.to_case(Case::UpperCamel), range: s.id.range })
