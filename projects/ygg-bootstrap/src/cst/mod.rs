@@ -4,6 +4,7 @@
 include!(concat!(env!("OUT_DIR"), "/ygg.rs"));
 
 mod parse;
+
 pub use self::ygg::{Node, Rule, PEG};
 //pub use self::parse::{Node, Rule, PEG};
 use yggdrasil_shared::records::CSTNode;
@@ -22,9 +23,11 @@ impl Default for CSTBuilder {
 
 impl CSTBuilder {
     pub fn parse(&mut self, input: &str) -> Result<CSTNode<Rule>> {
-        match self.peg.parse(input) {
+        let parsed = self.peg.parse(input);
+        // println!("{:#?}", parsed);
+        match parsed {
             Ok(o) => Ok(flatten(o)),
-            Err(e) => Err(Error::node_missing("E")),
+            Err(e) => Err(Error::unexpected_token("UnexpectedToken", Some(e))),
         }
     }
 }
@@ -45,37 +48,22 @@ fn flatten(node: Node) -> CSTNode<Rule> {
 }
 
 fn flatten_rec(node: Node, buffer: &mut Vec<CSTNode<Rule>>) {
+    if node.start == node.end {
+        return;
+    }
     match node.rule {
+        // not important
+        Rule::EOI | Rule::MustNotMatch => {}
         // flatten these nodes
         Rule::Any | Rule::List => {
             for node in node.children {
                 flatten_rec(node, buffer)
             }
         }
-        // not important
-        Rule::EOI => {}
-        // Rule::_expr0|Rule::_expr1|Rule::_expr2|Rule::_expr3|Rule::_expr4|Rule::_expr5|Rule::_expr6 => {
-        //     let len = node.children.len();
-        //     match len {
-        //         0 => {  },
-        //         1 => {
-        //             let mut children = node.children;
-        //             flatten_rec(children.remove(0), buffer)
-        //         },
-        //         _ => buffer.push(flatten(node))
-        //     }
-        // }
-        Rule::IGNORE | Rule::Terminal | Rule::MustNotMatch => {}
-        /*
         #[cfg(feature = "no-ignored")]
         Rule::IGNORE => {}
-        #[cfg(not(feature = "no-ignored"))]
-        Rule::IGNORE if node.start == node.end => {}
         #[cfg(feature = "no-unnamed")]
         Rule::Terminal => {}
-        #[cfg(not(feature = "no-unnamed"))]
-        Rule::Terminal if node.start == node.end => {}
-        */
         _ => buffer.push(flatten(node)),
     }
 }

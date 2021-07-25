@@ -40,7 +40,7 @@ import! "@root/" {a, b as c, d}
 #[test]
 fn atom() {
     let input = r#"
-x = symbol
+x = (symbol)
 x = 12345
 x = "\"string"
 x = '"string"'

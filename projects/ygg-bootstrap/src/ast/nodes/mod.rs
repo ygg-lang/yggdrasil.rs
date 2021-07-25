@@ -91,7 +91,7 @@ pub enum Expression {
     MarkBranch {
         lhs: Box<Expression>,
         kind: char,
-        name: Symbol
+        name: Symbol,
     },
     /// !rhs
     MustNot(Box<Expression>),
@@ -132,30 +132,6 @@ pub struct Suffix {
 pub struct Slice {
     pub start: Option<Integer>,
     pub end: Option<Integer>,
-    pub range: (usize, usize),
-}
-
-#[derive(Clone, Debug)]
-pub struct ConcatExpression {
-    pub is_soft: bool,
-    pub lhs: Expression,
-    pub rhs: Expression,
-}
-
-#[derive(Clone, Debug)]
-pub struct ChoiceTag {
-    pub expr: Expression,
-    pub tag: Option<Symbol>,
-    pub mode: Option<String>,
-    pub ty: Option<Symbol>,
-    pub range: (usize, usize),
-}
-
-#[derive(Clone, Debug)]
-pub struct MarkExpression {
-    pub lhs: Symbol,
-    pub ty: Option<SymbolPath>,
-    pub rhs: Expression,
     pub range: (usize, usize),
 }
 

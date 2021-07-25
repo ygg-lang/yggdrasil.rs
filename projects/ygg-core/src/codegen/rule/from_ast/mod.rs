@@ -3,7 +3,6 @@ use super::{
     *,
 };
 
-
 pub struct FilePosition<'i> {
     text: &'i str,
     url: &'i Url,
@@ -12,10 +11,7 @@ pub struct FilePosition<'i> {
 impl<'i> FilePosition<'i> {
     #[inline]
     pub fn new(text: &'i str, url: &'i Url) -> Self {
-        Self {
-            text,
-            url,
-        }
+        Self { text, url }
     }
     #[inline]
     pub fn get_text(&self) -> &'i str {
@@ -118,7 +114,8 @@ impl Translator for Program {
                             name_position,
                             file,
                         ))
-                    } else {
+                    }
+                    else {
                         ignores = s.rules;
                     }
                 }
@@ -140,7 +137,9 @@ impl Translator for Program {
                     }
                 }
                 Statement::CommentDocument(text) => doc_buffer.extend(text.doc.chars().chain("\n".chars())),
-                Statement::Import(_) => { unimplemented!() }
+                Statement::Import(_) => {
+                    unimplemented!()
+                }
             }
         }
 
@@ -155,7 +154,15 @@ impl Translator for Program {
             range: name_position,
         };
 
-        let state = GrammarState { name, extensions, rule_map, ignores, url: file.url.to_owned(), text: file.get_text().to_owned(), is_grammar: is_grammar.unwrap_or(false) };
+        let state = GrammarState {
+            name,
+            extensions,
+            rule_map,
+            ignores,
+            url: file.url.to_owned(),
+            text: file.get_text().to_owned(),
+            is_grammar: is_grammar.unwrap_or(false),
+        };
 
         let hint = HintItems { diagnostic: diag, code_lens: lens, document_symbol: vec![] };
 

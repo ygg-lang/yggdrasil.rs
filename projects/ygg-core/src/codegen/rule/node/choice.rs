@@ -1,24 +1,17 @@
 use super::*;
 
-
-
 impl ExpressionNode {
     #[inline]
     pub fn choice(lhs: Box<Expression>, rhs: Box<Expression>) -> Self {
-        Self {
-            inline_token: false,
-            tag: None,
-            ty: None,
-            field: None,
-            node: RefinedExpression::choice(lhs, rhs),
-        }
+        Self { inline_token: false, tag: None, ty: None, field: None, node: RefinedExpression::choice(lhs, rhs) }
     }
 }
 
 impl RefinedExpression {
     pub fn choice(lhs: Box<Expression>, rhs: Box<Expression>) -> Self {
         let mut base = RefinedChoice::from(*lhs);
-        base += * rhs;
+        base += *rhs;
+        unimplemented!("{:#?}", base);
         Self::Choice(Box::new(base))
     }
 }
@@ -42,28 +35,6 @@ impl From<ExpressionNode> for RefinedChoice {
     }
 }
 
-impl From<ChoiceTag> for ExpressionNode {
-    fn from(e: ChoiceTag) -> Self {
-        let mut inner = Set::new();
-        inner.insert(ExpressionNode::from(e.expr));
-        ExpressionNode {
-            inline_token: false,
-            tag: ExpressionTag::new_optional(e.tag, e.mode),
-            ty: e.ty,
-            field: None,
-            node: RefinedExpression::Choice(box RefinedChoice { inner }),
-        }
-    }
-}
-
-impl From<ChoiceTag> for RefinedChoice {
-    fn from(e: ChoiceTag) -> Self {
-        let mut inner = Set::new();
-        inner.insert(ExpressionNode::from(e));
-        Self { inner }
-    }
-}
-
 impl AddAssign<ExpressionNode> for RefinedChoice {
     fn add_assign(&mut self, rhs: ExpressionNode) {
         match rhs.get_choice() {
@@ -73,7 +44,7 @@ impl AddAssign<ExpressionNode> for RefinedChoice {
             None => {
                 self.inner.insert(rhs);
             }
-        }
+        };
     }
 }
 

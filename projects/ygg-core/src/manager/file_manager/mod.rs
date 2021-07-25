@@ -1,17 +1,13 @@
 pub use self::{file_store::FileStore, file_wrap::FileType, finger_print::FileFingerprint};
 use crate::{
-    codegen::{GrammarState, GrammarType},
-    manager::HintItems,
-    Error, Result,
+    codegen::{FilePosition, GrammarState, GrammarType, Translator},
+    manager::{global_parser::PARSER_MANAGER, HintItems},
+    Error, Result, HINT_MANAGER,
 };
 use dashmap::{mapref::one::Ref, DashMap};
-use lsp_types::Url;
+use lsp_types::{Diagnostic, Url};
 use std::{fs, lazy::SyncLazy, path::Path};
-use crate::{manager::global_parser::PARSER_MANAGER, HINT_MANAGER};
-use lsp_types::Diagnostic;
 use xxhash_rust::xxh3::xxh3_128;
-use crate::codegen::Translator;
-use crate::codegen::FilePosition;
 
 mod file_store;
 mod file_wrap;

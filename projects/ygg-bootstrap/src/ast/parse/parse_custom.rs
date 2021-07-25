@@ -134,26 +134,14 @@ impl Term {
     pub fn build_suffix(mut base: Expression, ops: Vec<TermNext>) -> Expression {
         for op in ops.iter() {
             match op {
-                TermNext::Suffix('?') => {
-                    base =Expression::Maybe(Box::new(base))
-                }
-                TermNext::Suffix('+') => {
-                    base =Expression::ManyNonNull(Box::new(base))
-                }
-                TermNext::Suffix('*') => {
-                    base = Expression::Many(Box::new(base))
-                }
+                TermNext::Suffix('?') => base = Expression::Maybe(Box::new(base)),
+                TermNext::Suffix('+') => base = Expression::ManyNonNull(Box::new(base)),
+                TermNext::Suffix('*') => base = Expression::Many(Box::new(base)),
                 TermNext::Slice(_) => {
                     unimplemented!()
                 }
-                TermNext::Branch { kind, symbol } => {
-                    base = Expression::MarkBranch {
-                        lhs: Box::new(base),
-                        kind: *kind,
-                        name: symbol.clone()
-                    }
-                },
-                _ => unreachable!()
+                TermNext::Branch { kind, symbol } => base = Expression::MarkBranch { lhs: Box::new(base), kind: *kind, name: symbol.clone() },
+                _ => unreachable!(),
             }
         }
         return base;

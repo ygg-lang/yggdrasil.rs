@@ -4,13 +4,11 @@
 #![feature(trivial_bounds)]
 #![feature(async_closure)]
 
-pub use yggdrasil_bootstrap::{Result,Error};
-pub use self::{
-    manager::{FILE_MANAGER, HINT_MANAGER,PARSER_MANAGER},
-};
+pub use self::manager::{FILE_MANAGER, HINT_MANAGER, PARSER_MANAGER};
+pub use yggdrasil_bootstrap::{Error, Result};
 
 pub mod codegen;
 pub mod manager;
 
-//mod errors;
+// mod errors;
 mod frontend;

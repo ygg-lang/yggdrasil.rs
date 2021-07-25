@@ -79,7 +79,7 @@ impl Debug for Expression {
             Expression::MarkBranch { lhs, kind, name } => {
                 let w = &mut f.debug_struct("MarkBranch");
                 w.field("lhs", lhs);
-                w.field("type", &format!("{}${}",kind,name.data));
+                w.field("type", &format!("{}${}", kind, name.data));
                 w.finish()
             }
             Expression::MustNot(e) => f.debug_tuple("MustNot").field(e).finish(),

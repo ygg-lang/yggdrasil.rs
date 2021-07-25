@@ -3,10 +3,11 @@
 
 use lsp_types::Url;
 use std::{fmt::Write, lazy::SyncLazy, str::FromStr};
-use yggdrasil_core::{Result};
-use yggdrasil_core::codegen::{FilePosition, Translator};
-use yggdrasil_core::manager::YggParser;
-
+use yggdrasil_core::{
+    codegen::{FilePosition, Translator},
+    manager::YggParser,
+    Result,
+};
 
 pub mod basic;
 pub mod codegen;
@@ -19,7 +20,6 @@ pub static EXAMPLE_URL: SyncLazy<Url> = SyncLazy::new(|| Url::from_str("file://e
 fn ready() {
     println!("ready!")
 }
-
 
 pub fn assert_ast(text: &str, target: &str) -> Result<()> {
     let mut parser = YggParser::default();
@@ -59,7 +59,7 @@ pub fn assert_codegen(text: &str, target: &str) -> Result<()> {
     let mut grammar = parser.parse_program(text)?.translate(&file)?.0;
 
     let out = grammar.optimize_local()?;
-    //let out = grammar.build_input_grammar();
+    // let out = grammar.build_input_grammar();
     assert_eq!(format!("{:#?}", out), target);
     Ok(())
 }

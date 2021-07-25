@@ -47,10 +47,10 @@ assign_kind  <- ("^"/"_"/"@")* "=";
 expr  <- <term:term> IGNORE (<expr_next:expr_next> IGNORE)*;
 expr_next <-
     Infix:/ <infix:infix> IGNORE <term:term>
-    Other:/ <term:term> IGNORE !"=";
+    Other:/ <term:term> !assign_kind;
 term <-
-    priority:/"(" IGNORE "/"? IGNORE <expr:expr> IGNORE ")"
-    atom:/ <prefix:prefix>* <data:data> (!assign_kind <term_next:term_next>)*;
+    Priority:/ "(" IGNORE ("/"/"|")? IGNORE <expr:expr> IGNORE ")"
+    Atom:/ <prefix:prefix>* <data:data> ( <term_next:term_next>)*;
 term_next <-
     Suffix:/ <suffix:suffix>
     Slice:/  <slice:slice>
@@ -97,7 +97,7 @@ string  <-
   / re#"([^\\"]|\\.)*"#
 ;
 
-integer  <- re#0|[1-9](_?[0-9])*#;
+integer  <- re#[0-9](_?[0-9])*#;
 
 symbol_path  <-
     <symbol:symbol> IGNORE (("::"/".") IGNORE <symbol:symbol>)*

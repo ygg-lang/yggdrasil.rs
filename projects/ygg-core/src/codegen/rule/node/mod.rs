@@ -1,9 +1,9 @@
 use crate::codegen::rule::Rule;
+pub use set::Set;
 use std::{
     fmt::{Debug, Formatter},
-    ops::AddAssign,
+    ops::{AddAssign, BitAndAssign},
 };
-use std::ops::BitAndAssign;
 use yggdrasil_bootstrap::ast::*;
 
 mod choice;
@@ -12,8 +12,10 @@ mod debug;
 mod expr;
 mod unary;
 
-// pub type Set<V> = std::collections::HashSet<V>;
-pub type Set<V> = indexmap::IndexSet<V>;
+mod set {
+    // pub type Set<V> = std::collections::HashSet<V>;
+    pub type Set<V> = indexmap::IndexSet<V>;
+}
 
 #[derive(Clone, Eq, PartialEq, Hash)]
 pub struct ExpressionNode {

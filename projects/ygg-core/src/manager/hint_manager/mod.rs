@@ -10,8 +10,8 @@ use std::{
     ops::{Add, AddAssign},
 };
 
-mod item;
 mod cli;
+mod item;
 
 pub static HINT_MANAGER: SyncLazy<HintManager> = SyncLazy::new(|| HintManager::default());
 

@@ -1,5 +1,7 @@
-pub use self::{rule::{GrammarState,Translator,FilePosition}, typing::GrammarType};
-
+pub use self::{
+    rule::{FilePosition, GrammarState, Translator},
+    typing::GrammarType,
+};
 
 mod debug;
 mod rule;

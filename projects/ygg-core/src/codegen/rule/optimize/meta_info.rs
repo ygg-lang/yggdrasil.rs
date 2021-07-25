@@ -144,15 +144,20 @@ impl Rule {
     fn symbol_detail(&self) -> (Option<String>, SymbolKind) {
         if self.force_inline {
             (Some("inlined".to_string()), SymbolKind::Variable)
-        } else if self.expression.inline_token {
+        }
+        else if self.expression.inline_token {
             (Some("token".to_string()), SymbolKind::String)
-        } else if self.eliminate_unnamed {
+        }
+        else if self.eliminate_unnamed {
             (Some("no unnamed".to_string()), SymbolKind::EnumMember)
-        } else if self.eliminate_unmarked {
+        }
+        else if self.eliminate_unmarked {
             (Some("no unmarked".to_string()), SymbolKind::Enum)
-        } else if self.expression.is_choice() {
+        }
+        else if self.expression.is_choice() {
             (None, SymbolKind::Class)
-        } else {
+        }
+        else {
             (None, SymbolKind::Field)
         }
     }

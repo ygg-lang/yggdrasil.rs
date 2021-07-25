@@ -61,8 +61,12 @@ impl Debug for RefinedConcat {
         w.entry(&self.base);
         for (is_soft, expr) in self.rest.iter() {
             match is_soft {
-                true => {w.entry(&'~');}
-                false => {w.entry(&' ');}
+                true => {
+                    w.entry(&'~');
+                }
+                false => {
+                    w.entry(&' ');
+                }
             }
             w.entry(&expr);
         }

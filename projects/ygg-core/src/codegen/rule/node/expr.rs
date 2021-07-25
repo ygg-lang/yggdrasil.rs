@@ -52,33 +52,40 @@ impl ExpressionTag {
 impl From<Expression> for ExpressionNode {
     fn from(raw: Expression) -> Self {
         match raw {
-            Expression::Data(e) => { Self::from(e) }
-            Expression::Concat { is_soft, lhs, rhs } => {
-               match is_soft {
-                    true => {Self::soft_concat(lhs, rhs)}
-                    false => {Self::concat(lhs, rhs)}
-                }
+            Expression::Data(e) => Self::from(e),
+            Expression::Concat { is_soft, lhs, rhs } => match is_soft {
+                true => Self::soft_concat(lhs, rhs),
+                false => Self::concat(lhs, rhs),
+            },
+            Expression::Choice { lhs, rhs } => Self::choice(lhs, rhs),
+            Expression::MarkNode { .. } => {
+                unimplemented!()
             }
-            Expression::Choice { lhs, rhs } => {
-                Self::choice(lhs, rhs)
+            Expression::MarkNodeShort(_) => {
+                unimplemented!()
             }
-            Expression::MarkNode { .. } => { unimplemented!() }
-            Expression::MarkNodeShort(_) => { unimplemented!() }
-            Expression::MarkType { .. } => { unimplemented!() }
-            Expression::MustNot(_) => { unimplemented!() }
-            Expression::MustOne(_) => { unimplemented!() }
-            Expression::Maybe(_) => { unimplemented!() }
-            Expression::Many(_) => { unimplemented!() }
-            Expression::ManyNonNull(_) => { unimplemented!() }
-            Expression::MarkBranch { .. } => { unimplemented!() }
+            Expression::MarkType { .. } => {
+                unimplemented!()
+            }
+            Expression::MustNot(_) => {
+                unimplemented!()
+            }
+            Expression::MustOne(_) => {
+                unimplemented!()
+            }
+            Expression::Maybe(_) => {
+                unimplemented!()
+            }
+            Expression::Many(_) => {
+                unimplemented!()
+            }
+            Expression::ManyNonNull(_) => {
+                unimplemented!()
+            }
+            Expression::MarkBranch { .. } => {
+                unimplemented!()
+            }
         }
-    }
-}
-
-
-impl From<MarkExpression> for ExpressionNode {
-    fn from(e: MarkExpression) -> Self {
-        Self { inline_token: false, tag: None, ty: None, field: Some(e.lhs), node: Self::from(e.rhs).node }
     }
 }
 

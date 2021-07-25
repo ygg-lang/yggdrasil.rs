@@ -14,7 +14,7 @@ pub enum Error {
     // PestError { #[from] source: pest::error::Error<crate::cst::Rule> },
     LanguageError { error: String },
     ParsingError { error: String, range: (usize, usize) },
-    UnexpectedToken { error: String },
+    UnexpectedToken { error: String, range: Option<(usize, usize)> },
     NodeMissing { error: String },
     NodeTagMissing { error: String },
     InfoMissing { error: String },
@@ -40,8 +40,8 @@ impl Error {
         Self::ParsingError { error: msg.into(), range }
     }
     ///
-    pub fn unexpected_token(msg: impl Into<String>) -> Error {
-        Self::UnexpectedToken { error: msg.into() }
+    pub fn unexpected_token(msg: impl Into<String>, range: Option<(usize, usize)>) -> Error {
+        Self::UnexpectedToken { error: msg.into(), range }
     }
     ///
     pub fn language_error(msg: impl Into<String>) -> Error {
