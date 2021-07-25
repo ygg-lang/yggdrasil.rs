@@ -6,6 +6,12 @@ use yggdrasil_bootstrap::{
     ast::{StringLiteral, Symbol},
     Result,
 };
+pub use self::from_ast::{Translator,FilePosition};
+use convert_case::{Case, Casing};
+use std::mem::swap;
+use crate::{manager::HintItems};
+use yggdrasil_bootstrap::ast::{AssignStatement, Program, Statement};
+use yggdrasil_bootstrap::shared::records::LineBreaks;
 
 mod from_ast;
 mod hints;
@@ -25,8 +31,8 @@ mod remap {
 }
 
 #[derive(Clone, Debug)]
-pub struct GrammarState {
-    url: Url,
+pub struct GrammarState<'i> {
+    file: LineBreaks<'i>,
     is_grammar: bool,
     name: Symbol,
     extensions: Vec<StringLiteral>,
@@ -62,7 +68,7 @@ pub struct Rule {
     ///
     expression: ExpressionNode,
     /// position of all parts
-    range: Range,
+    range: (usize, usize),
 }
 
 impl GrammarState {

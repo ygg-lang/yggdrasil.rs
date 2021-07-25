@@ -132,7 +132,30 @@ impl Term {
         return base;
     }
     pub fn build_suffix(mut base: Expression, ops: Vec<TermNext>) -> Expression {
-        for op in ops.iter() {}
+        for op in ops.iter() {
+            match op {
+                TermNext::Suffix('?') => {
+                    base =Expression::Maybe(Box::new(base))
+                }
+                TermNext::Suffix('+') => {
+                    base =Expression::ManyNonNull(Box::new(base))
+                }
+                TermNext::Suffix('*') => {
+                    base = Expression::Many(Box::new(base))
+                }
+                TermNext::Slice(_) => {
+                    unimplemented!()
+                }
+                TermNext::Branch { kind, symbol } => {
+                    base = Expression::MarkBranch {
+                        lhs: Box::new(base),
+                        kind: *kind,
+                        name: symbol.clone()
+                    }
+                },
+                _ => unreachable!()
+            }
+        }
         return base;
     }
 }
@@ -191,25 +214,28 @@ where
     }
 
     fn prefix(&mut self, term: Self::Input, rhs: Self::Output) -> Result<Self::Output> {
-        let out = match term {
-            Term::Prefix('!') => Expression::MustNot(Box::new(rhs)),
-            Term::Prefix('&') => Expression::MustOne(Box::new(rhs)),
-            Term::Prefix('^') => Expression::MarkNodeShort(Box::new(rhs)),
-            Term::Prefix('%') => unimplemented!(),
-            _ => unreachable!(),
-        };
-        Ok(out)
+        let _ = (term, rhs);
+        unreachable!()
+        // let out = match term {
+        //     Term::Prefix('!') => Expression::MustNot(Box::new(rhs)),
+        //     Term::Prefix('&') => Expression::MustOne(Box::new(rhs)),
+        //     Term::Prefix('^') => Expression::MarkNodeShort(Box::new(rhs)),
+        //     Term::Prefix('%') => unimplemented!(),
+        //     _ => unreachable!(),
+        // };
+        // Ok(out)
     }
 
-    // Construct a unary postfix expression, e.g. 1?
-    fn suffix(&mut self, lhs: Self::Output, tree: Self::Input) -> Result<Self::Output> {
-        let out = match tree {
-            Term::Suffix('?') => Expression::Maybe(Box::new(lhs)),
-            Term::Suffix('+') => Expression::Maybe(Box::new(lhs)),
-            Term::Suffix('*') => Expression::Maybe(Box::new(lhs)),
-            _ => unreachable!(),
-        };
-        Ok(out)
+    fn suffix(&mut self, lhs: Self::Output, term: Self::Input) -> Result<Self::Output> {
+        let _ = (lhs, term);
+        unreachable!()
+        // let out = match tree {
+        //     Term::Suffix('?') => Expression::Maybe(Box::new(lhs)),
+        //     Term::Suffix('+') => Expression::Maybe(Box::new(lhs)),
+        //     Term::Suffix('*') => Expression::Maybe(Box::new(lhs)),
+        //     _ => unreachable!(),
+        // };
+        // Ok(out)
     }
 }
 

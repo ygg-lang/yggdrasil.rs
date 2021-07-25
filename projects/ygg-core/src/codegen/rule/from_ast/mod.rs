@@ -1,20 +1,33 @@
-use convert_case::{Case, Casing};
-use lsp_types::Url;
-use std::mem::swap;
-
 use super::{
     hints::{duplicate_declaration_error, name_missing, top_area_error},
     *,
 };
-use crate::{manager::HintItems, Result};
-use yggdrasil_bootstrap::ast::{AssignStatement, Program, Statement};
+
+
+pub struct FilePosition<'i> {
+    pub url: &'i Url,
+    pub lines: &'i LineBreaks<'i>,
+}
+
+impl<'i> FilePosition<'i> {
+    #[inline]
+    pub fn get_lsp_range(&self, offsets: (usize, usize)) -> Range {
+        self.lines.get_lsp_range(offsets.0, offsets.1)
+    }
+    pub fn new(input: &'i str, url: &'i Url) -> Self {
+        Self {
+            url,
+            lines: &LineBreaks::new(input),
+        }
+    }
+}
 
 pub trait Translator {
-    fn translate(self, url: Url) -> Result<(GrammarState, HintItems)>;
+    fn translate(self, url: &FilePosition) -> Result<(GrammarState, HintItems)>;
 }
 
 impl Translator for Program {
-    fn translate(self, url: Url) -> Result<(GrammarState, HintItems)> {
+    fn translate(self, file: &FilePosition) -> Result<(GrammarState, HintItems)> {
         let mut is_top_area = true;
         let mut is_grammar = None;
         let mut name_position = Default::default();
@@ -29,22 +42,22 @@ impl Translator for Program {
             match stmt {
                 Statement::Grammar(s) => {
                     if !is_top_area {
-                        diag.push(top_area_error("Grammar", "Grammar statement must be declared at the top", s.range))
+                        diag.push(top_area_error("Grammar", "Grammar statement must be declared at the top", s.range, file))
                     }
                     match is_grammar {
                         Some(true) => diag.push(duplicate_declaration_error(
                             "Grammar",
                             "Already declaration as `grammar!`",
                             s.range,
-                            &url,
                             name_position,
+                            file,
                         )),
                         Some(false) => diag.push(duplicate_declaration_error(
                             "Grammar",
                             "Already declaration as `fragment!`",
                             s.range,
-                            &url,
                             name_position,
+                            file,
                         )),
                         None => {
                             is_grammar = Some(true);
@@ -56,22 +69,22 @@ impl Translator for Program {
                 }
                 Statement::Fragment(s) => {
                     if !is_top_area {
-                        diag.push(top_area_error("Fragment", "Fragment statement must be declared at the top", s.range))
+                        diag.push(top_area_error("Fragment", "Fragment statement must be declared at the top", s.range, file))
                     }
                     match is_grammar {
                         Some(true) => diag.push(duplicate_declaration_error(
                             "Fragment",
                             "Already declaration as `grammar!`",
                             s.range,
-                            &url,
                             name_position,
+                            &file,
                         )),
                         Some(false) => diag.push(duplicate_declaration_error(
                             "Fragment",
                             "Already declaration as `fragment!`",
                             s.range,
-                            &url,
                             name_position,
+                            file,
                         )),
                         None => {
                             is_grammar = Some(false);
@@ -82,18 +95,17 @@ impl Translator for Program {
                 }
                 Statement::Ignore(s) => {
                     if !is_top_area {
-                        diag.push(top_area_error("Ignore", "Ignore statement must be declared at the top", s.range))
+                        diag.push(top_area_error("Ignore", "Ignore statement must be declared at the top", s.range, file))
                     }
                     if !ignores.is_empty() {
                         diag.push(duplicate_declaration_error(
                             "Ignore",
                             "Already declaration ignore statement",
                             s.range,
-                            &url,
                             name_position,
+                            file,
                         ))
-                    }
-                    else {
+                    } else {
                         ignores = s.rules;
                     }
                 }
@@ -106,8 +118,8 @@ impl Translator for Program {
                             "Rule",
                             format!("Already declaration as Rule `{}`", old.name.data),
                             rule.range,
-                            &url,
                             old.name.range,
+                            file,
                         )),
                         None => {
                             rule_map.insert(rule.name.data.to_owned(), rule);
@@ -115,6 +127,7 @@ impl Translator for Program {
                     }
                 }
                 Statement::CommentDocument(text) => doc_buffer.extend(text.doc.chars().chain("\n".chars())),
+                Statement::Import(_) => { unimplemented!() }
             }
         }
 
@@ -129,7 +142,7 @@ impl Translator for Program {
             range: name_position,
         };
 
-        let state = GrammarState { name, extensions, rule_map, ignores, url, is_grammar: is_grammar.unwrap_or(false) };
+        let state = GrammarState { name, extensions, rule_map, ignores, url: file.url.to_owned(), is_grammar: is_grammar.unwrap_or(false) };
 
         let hint = HintItems { diagnostic: diag, code_lens: lens, document_symbol: vec![] };
 

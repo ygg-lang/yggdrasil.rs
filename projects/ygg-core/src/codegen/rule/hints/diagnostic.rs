@@ -1,8 +1,9 @@
+use crate::codegen::rule::from_ast::FilePosition;
 use super::*;
 
-pub fn top_area_error(src: &str, msg: &str, range: Range) -> Diagnostic {
+pub fn top_area_error(src: &str, msg: &str, range: (usize, usize), file: &FilePosition) -> Diagnostic {
     Diagnostic {
-        range,
+        range: file.get_lsp_range(range),
         severity: Some(DiagnosticSeverity::Warning),
         code: None,
         code_description: None,
@@ -18,13 +19,13 @@ pub fn top_area_error(src: &str, msg: &str, range: Range) -> Diagnostic {
 pub fn duplicate_declaration_error(
     src: &str,
     msg: impl Into<String>,
-    this: Range,
-    url: &Url,
-    last: Range,
+    this: (usize, usize),
+    last: (usize, usize),
+    file: &FilePosition
 ) -> Diagnostic {
-    let info = DiagnosticRelatedInformation { location: Location { uri: url.to_owned(), range: last }, message: msg.into() };
+    let info = DiagnosticRelatedInformation { location: Location { uri: file.url.to_owned(), range: file.get_lsp_range(last) }, message: msg.into() };
     Diagnostic {
-        range: this,
+        range: file.get_lsp_range(this),
         severity: Some(DiagnosticSeverity::Error),
         code: None,
         code_description: None,

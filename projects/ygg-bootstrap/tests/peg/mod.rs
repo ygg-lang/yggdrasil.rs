@@ -1,7 +1,7 @@
-use yggdrasil_bootstrap::ast::Ygg;
+use yggdrasil_bootstrap::ast::YggParser;
 
 pub fn peg_assert(input: &str, target: &str) {
-    let mut parser = Ygg::default();
+    let mut parser = YggParser::default();
     let out = parser.parse_program(input).unwrap();
     println!("{:#?}", out.1);
     assert_eq!(format!("{:#?}", out.0), target)

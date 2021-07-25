@@ -12,18 +12,18 @@ use yggdrasil_shared::Result;
 
 pub use self::nodes::*;
 
-pub struct Ygg {
+pub struct YggParser {
     cst: CSTBuilder,
     ast: ASTBuilder,
 }
 
-impl Default for Ygg {
+impl Default for YggParser {
     fn default() -> Self {
         Self { cst: Default::default(), ast: Default::default() }
     }
 }
 
-impl Ygg {
+impl YggParser {
     /// parse_program
     pub fn parse_program(&mut self, input: &str) -> Result<(Program, Vec<Error>)> {
         self.init(input);

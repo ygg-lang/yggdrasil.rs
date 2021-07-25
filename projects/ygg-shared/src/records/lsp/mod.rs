@@ -1,8 +1,8 @@
-use crate::records::position_system::LineBreaks;
-use lsp_types::{Position, Range};
-
 #[cfg(test)]
 mod test;
+
+use crate::records::LineBreaks;
+use lsp_types::{Position, Range};
 
 impl<'i> LineBreaks<'i> {
     #[inline]

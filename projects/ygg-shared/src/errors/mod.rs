@@ -11,10 +11,10 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
     IOError { #[from] source: std::io::Error },
     FormatError { #[from] source: std::fmt::Error },
-   // PestError { #[from] source: pest::error::Error<crate::cst::Rule> },
-    AstError { error: String },
+    // PestError { #[from] source: pest::error::Error<crate::cst::Rule> },
+    LanguageError { error: String },
     ParsingError { error: String, range: (usize, usize) },
-    UnexpectedToken { error: String},
+    UnexpectedToken { error: String },
     NodeMissing { error: String },
     NodeTagMissing { error: String },
     InfoMissing { error: String },
@@ -42,6 +42,10 @@ impl Error {
     ///
     pub fn unexpected_token(msg: impl Into<String>) -> Error {
         Self::UnexpectedToken { error: msg.into() }
+    }
+    ///
+    pub fn language_error(msg: impl Into<String>) -> Error {
+        Self::LanguageError { error: msg.into() }
     }
 }
 

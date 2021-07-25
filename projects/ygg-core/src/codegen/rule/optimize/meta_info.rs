@@ -10,7 +10,7 @@ impl GrammarState {
         document_symbol.push(test_node());
         HintItems { diagnostic: vec![], code_lens: vec![], document_symbol }
     }
-    fn top_area(&self) -> DocumentSymbol {
+    fn top_area(&self, file: &FilePosition) -> DocumentSymbol {
         let name = match self.is_grammar {
             true => "Grammar",
             false => "Fragment",

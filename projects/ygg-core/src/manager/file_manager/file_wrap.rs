@@ -1,5 +1,6 @@
+
 use super::*;
-use crate::{manager::global_parser::PARSER_MANAGER, HINT_MANAGER};
+
 
 #[derive(Clone, Debug)]
 pub enum FileType {
@@ -21,24 +22,43 @@ impl FileType {
                 Ok(g.clone())
             }
             FileType::GrammarString(s) => {
-                parser.update_by_text(s)?;
                 let mut hints = HintItems::default();
-                let (mut grammar, err) = parser.traverse()?.build_grammar(url.to_owned())?;
+                let (program, err) = parser.parse_program(s)?;
+                let file = FilePosition::new(s, &url);
+                parse_error_to_hints(&file, err, &mut hints);
+                let (mut grammar, err) = program.translate(&file)?;
                 hints += err;
                 hints += grammar.optimize().await?;
                 hints += grammar.report_meta();
-                // FIXME: Use ref
-                // *self = Self::Grammar(grammar);
-                // let grammar = match self {
-                //     FileType::Grammar(g) => Ok(g),
-                //     _ => Err(YGGError::Unreachable),
-                // }?;
                 *self = Self::Grammar(grammar.to_owned());
-                // FIXME: dead lock
                 HINT_MANAGER.set(url, hints);
                 Ok(grammar)
             }
             _ => Err(Error::language_error("Not a grammar file")),
         }
+    }
+}
+
+fn parse_error_to_hints(file: &FilePosition, es: Vec<Error>, hint: &mut HintItems) {
+
+
+    for e in es {
+        let diag = match e {
+            Error::ParsingError { error, range } => {
+                Diagnostic {
+                    range: file.get_lsp_range(range),
+                    severity: None,
+                    code: None,
+                    code_description: None,
+                    source: None,
+                    message: error,
+                    related_information: None,
+                    tags: None,
+                    data: None
+                }
+            }
+            _ => unreachable!()
+        };
+        hint.diagnostic.push(diag)
     }
 }

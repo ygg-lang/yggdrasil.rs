@@ -69,8 +69,8 @@ pub enum Operator {
 
 #[derive(Clone)]
 pub enum RefinedData {
-    Symbol(Symbol),
+    Symbol(SymbolPath),
     String(String),
     Regex(String),
-    Integer(usize),
+    Integer(isize),
 }

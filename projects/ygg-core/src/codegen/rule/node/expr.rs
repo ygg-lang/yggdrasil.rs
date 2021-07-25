@@ -52,12 +52,18 @@ impl ExpressionTag {
 impl From<Expression> for ExpressionNode {
     fn from(raw: Expression) -> Self {
         match raw {
-            Expression::Data(e) => Self::from(*e),
-            Expression::UnarySuffix(e) => Self::from(*e),
-            Expression::UnaryPrefix(e) => Self::from(*e),
-            Expression::Concat(e) => Self::from(*e),
-            Expression::Choice(e) => Self::from(*e),
-            Expression::Mark(e) => Self::from(*e),
+            Expression::Data(e) => {unimplemented!()}
+            Expression::Concat { .. } => {unimplemented!()}
+            Expression::Choice { .. } => {unimplemented!()}
+            Expression::MarkNode { .. } => {unimplemented!()}
+            Expression::MarkNodeShort(_) => {unimplemented!()}
+            Expression::MarkType { .. } => {unimplemented!()}
+            Expression::MustNot(_) => {unimplemented!()}
+            Expression::MustOne(_) => {unimplemented!()}
+            Expression::Maybe(_) => {unimplemented!()}
+            Expression::Many(_) => {unimplemented!()}
+            Expression::ManyNonNull(_) => {unimplemented!()}
+            Expression::MarkBranch { .. } => {unimplemented!()}
         }
     }
 }
@@ -80,8 +86,8 @@ impl From<Data> for RefinedData {
             Data::Symbol(atom) => Self::Symbol(*atom),
             Data::Integer(atom) => Self::Integer(atom.data),
             Data::String(atom) => Self::String(atom.data),
-            Data::Regex => Self::Integer(0),
-            Data::Macro => Self::Integer(0),
+            Data::Regex => unimplemented!(),
+            Data::Macro =>  unimplemented!(),
         }
     }
 }

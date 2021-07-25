@@ -87,6 +87,12 @@ pub enum Expression {
         lhs: Box<Expression>,
         rhs: Box<Expression>,
     },
+    /// lhs #name
+    MarkBranch {
+        lhs: Box<Expression>,
+        kind: char,
+        name: Symbol
+    },
     /// !rhs
     MustNot(Box<Expression>),
     MustOne(Box<Expression>),
