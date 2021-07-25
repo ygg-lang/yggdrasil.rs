@@ -53,15 +53,14 @@ impl From<Expression> for ExpressionNode {
     fn from(raw: Expression) -> Self {
         match raw {
             Expression::Data(e) => { Self::from(e) }
-            Expression::Concat { .. } => { unimplemented!() }
-            Expression::Choice { lhs, rhs } => {
-                ExpressionNode {
-                    inline_token: false,
-                    tag: None,
-                    ty: None,
-                    field: None,
-                    node: RefinedExpression::choice(lhs, rhs),
+            Expression::Concat { is_soft, lhs, rhs } => {
+               match is_soft {
+                    true => {Self::soft_concat(lhs, rhs)}
+                    false => {Self::concat(lhs, rhs)}
                 }
+            }
+            Expression::Choice { lhs, rhs } => {
+                Self::choice(lhs, rhs)
             }
             Expression::MarkNode { .. } => { unimplemented!() }
             Expression::MarkNodeShort(_) => { unimplemented!() }
@@ -76,11 +75,6 @@ impl From<Expression> for ExpressionNode {
     }
 }
 
-impl RefinedExpression {
-    pub fn choice(lhs: Box<Expression>, rhs: Box<Expression>) -> Self {
-        unimplemented!()
-    }
-}
 
 impl From<MarkExpression> for ExpressionNode {
     fn from(e: MarkExpression) -> Self {

@@ -20,21 +20,21 @@ impl ExpressionNode {
         match &self.node {
             RefinedExpression::Data(_) => (),
             RefinedExpression::Unary(e) => {
-                // ?
+                // empty a
                 if e.ops.is_empty() && self.meta_eq(&e.base) {
                     *self = e.base.to_owned()
                 }
             }
             RefinedExpression::Choice(e) => {
-                // (x <- a) | a
+                // a | a
                 if e.inner.len() == 1 && self.meta_eq(&e.inner[0]) {
                     *self = e.inner[0].to_owned()
                 }
             }
             RefinedExpression::Concat(e) => {
-                // a <- ( b <- c)
-                if e.inner.len() == 1 && self.meta_eq(&e.inner[0]) {
-                    *self = e.inner[0].to_owned()
+                // empty a
+                if e.rest.is_empty() && self.meta_eq(&e.base) {
+                    *self = e.base.to_owned()
                 }
             }
         }

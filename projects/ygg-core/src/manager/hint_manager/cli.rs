@@ -1,7 +1,8 @@
-use ariadne::{Report, ReportKind, Label, Fmt, sources, Color, CharSet, Config};
+
 
 #[test]
 fn main() {
+    use ariadne::{Report, ReportKind, Label, Fmt, sources, Color, Config};
     let config = Config::default();
     // Generate some colours for each of our elements
     let a = Color::Yellow;

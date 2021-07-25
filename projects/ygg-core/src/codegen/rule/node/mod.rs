@@ -3,6 +3,7 @@ use std::{
     fmt::{Debug, Formatter},
     ops::AddAssign,
 };
+use std::ops::BitAndAssign;
 use yggdrasil_bootstrap::ast::*;
 
 mod choice;
@@ -44,7 +45,8 @@ pub struct RefinedChoice {
 
 #[derive(Clone, Eq, PartialEq, Hash)]
 pub struct RefinedConcat {
-    pub inner: Vec<ExpressionNode>,
+    pub base: ExpressionNode,
+    pub rest: Vec<(bool, ExpressionNode)>,
 }
 
 #[derive(Clone, Eq, PartialEq, Hash)]

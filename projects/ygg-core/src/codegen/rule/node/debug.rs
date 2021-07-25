@@ -57,7 +57,16 @@ impl Debug for RefinedChoice {
 impl Debug for RefinedConcat {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.write_str("Concat")?;
-        f.debug_list().entries(self.inner.iter()).finish()
+        let w = &mut f.debug_list();
+        w.entry(&self.base);
+        for (is_soft, expr) in self.rest.iter() {
+            match is_soft {
+                true => {w.entry(&'~');}
+                false => {w.entry(&' ');}
+            }
+            w.entry(&expr);
+        }
+        w.finish()
     }
 }
 

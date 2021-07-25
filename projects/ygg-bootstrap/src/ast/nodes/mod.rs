@@ -143,12 +143,6 @@ pub struct ConcatExpression {
 }
 
 #[derive(Clone, Debug)]
-pub struct ChoiceExpression {
-    pub lhs: Expression,
-    pub rhs: Expression,
-}
-
-#[derive(Clone, Debug)]
 pub struct ChoiceTag {
     pub expr: Expression,
     pub tag: Option<Symbol>,

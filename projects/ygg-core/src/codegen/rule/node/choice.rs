@@ -1,24 +1,31 @@
 use super::*;
 
-impl From<ChoiceExpression> for ExpressionNode {
-    fn from(e: ChoiceExpression) -> Self {
+
+
+impl ExpressionNode {
+    #[inline]
+    pub fn choice(lhs: Box<Expression>, rhs: Box<Expression>) -> Self {
         Self {
             inline_token: false,
             tag: None,
             ty: None,
             field: None,
-            node: RefinedExpression::Choice(box RefinedChoice::from(e)),
+            node: RefinedExpression::choice(lhs, rhs),
         }
     }
 }
 
-impl From<ChoiceExpression> for RefinedChoice {
-    fn from(e: ChoiceExpression) -> Self {
-        let lhs = ExpressionNode::from(e.lhs);
-        let rhs = ExpressionNode::from(e.rhs);
-        let mut base = Self::from(lhs);
-        base += rhs;
-        return base;
+impl RefinedExpression {
+    pub fn choice(lhs: Box<Expression>, rhs: Box<Expression>) -> Self {
+        let mut base = RefinedChoice::from(*lhs);
+        base += * rhs;
+        Self::Choice(Box::new(base))
+    }
+}
+
+impl From<Expression> for RefinedChoice {
+    fn from(e: Expression) -> Self {
+        Self::from(ExpressionNode::from(e))
     }
 }
 
@@ -67,5 +74,11 @@ impl AddAssign<ExpressionNode> for RefinedChoice {
                 self.inner.insert(rhs);
             }
         }
+    }
+}
+
+impl AddAssign<Expression> for RefinedChoice {
+    fn add_assign(&mut self, rhs: Expression) {
+        self.add_assign(ExpressionNode::from(rhs))
     }
 }
