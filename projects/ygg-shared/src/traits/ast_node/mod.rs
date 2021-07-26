@@ -1,18 +1,19 @@
 use crate::{
     records::{ASTBuilder, CSTNode},
+    traits::PositionSystem,
     Error, Result,
 };
 use std::collections::HashMap;
 
-/// It's a node contained in the Strongly Typed Abstract Syntax Tree
-/// Implement the `parse` method to express how to become a typed node
+/// It's a cst_node contained in the Strongly Typed Abstract Syntax Tree
+/// Implement the `parse` method to express how to become a typed cst_node
 /// Semantic analysis, interpreter, LSP can start at this level
 pub trait ASTNode<N>
 where
     Self: Sized,
 {
-    /// This node will appear multiple times
-    /// If the child node fails, it will be abandoned
+    /// This cst_node will appear multiple times
+    /// If the child cst_node fails, it will be abandoned
     fn many(node: Vec<N>, builder: &mut ASTBuilder) -> Vec<Self> {
         let mut out = Vec::with_capacity(node.len());
         for pair in node {
@@ -24,7 +25,7 @@ where
         }
         return out;
     }
-    /// This node is optional
+    /// This cst_node is optional
     /// If the parsing fails, it will be abandoned and return null
     fn some(node: N, builder: &mut ASTBuilder) -> Option<Self> {
         match Self::parse(node, builder) {
@@ -34,9 +35,9 @@ where
         }
         return None;
     }
-    /// This node is required
+    /// This cst_node is required
     /// If it fails, it will start to roll back
-    /// Destruct level by level, until a node can tolerate this problem
+    /// Destruct level by level, until a cst_node can tolerate this problem
     fn one(node: N, builder: &mut ASTBuilder) -> Result<Self> {
         match Self::parse(node, builder) {
             Ok(o) => Ok(o),
@@ -65,7 +66,7 @@ where
     fn named_one(map: &mut HashMap<&'static str, Vec<N>>, tag: &str, builder: &mut ASTBuilder) -> Result<Self> {
         match map.remove(tag).as_mut().map(|v| v.remove(0)) {
             Some(s) => Self::one(s, builder),
-            _ => Err(Error::node_tag_missing(tag)),
+            _ => Err(Error::structure_error(format!("Missing Node: {tag}", tag = tag), None, None)),
         }
     }
     /// parse
@@ -96,6 +97,10 @@ impl<R> ASTNode<CSTNode<R>> for String {
 }
 impl<R> ASTNode<CSTNode<R>> for char {
     fn parse(node: CSTNode<R>, builder: &mut ASTBuilder) -> Result<Self> {
-        node.get_str(&builder.input).chars().next().ok_or(Error::parsing_error("Invalid `char`", node.get_span()))
+        let (start, end) = node.get_span();
+        match node.get_str(&builder.input).chars().next() {
+            Some(c) => Ok(c),
+            None => Err(Error::structure_error("Invalid `char`", Some(start), Some(end))),
+        }
     }
 }

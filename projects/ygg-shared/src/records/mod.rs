@@ -1,12 +1,12 @@
 mod builder;
-mod node;
-mod position_system;
+mod cst_node;
+mod line_breaks;
 
 #[cfg(feature = "lsp")]
 mod lsp;
 
 pub use self::{
     builder::ASTBuilder,
-    node::CSTNode,
-    position_system::{LineBreaks, OffsetRange},
+    cst_node::CSTNode,
+    line_breaks::{LineBreaks},
 };

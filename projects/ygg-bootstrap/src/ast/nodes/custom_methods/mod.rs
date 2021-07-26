@@ -25,8 +25,8 @@ impl Data {
             Data::Symbol(e) => e.range,
             Data::Integer(e) => e.range,
             Data::String(e) => e.range,
-            Data::Macro => {}
-            Data::Regex => {}
+            Data::Macro => (0, 0),
+            Data::Regex => (0, 0),
         }
     }
 }

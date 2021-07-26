@@ -1,13 +1,9 @@
-mod node;
+mod ast_node;
+mod position;
 mod pratt;
 
 pub use self::{
-    node::ASTNode,
+    ast_node::ASTNode,
+    position::PositionSystem,
     pratt::{Affix, Associativity, PrattParser, Precedence},
 };
-
-pub trait PositionSystem<N> {
-    /// The middle way to avoid the orphan rule
-    fn from(node: N) -> Self;
-    fn join(self, rhs: Self) -> Self;
-}

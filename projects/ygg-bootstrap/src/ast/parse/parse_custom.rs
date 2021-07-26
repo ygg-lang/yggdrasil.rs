@@ -5,46 +5,52 @@ impl ASTNode<Node> for StringLiteral {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let range = node.get_span();
         let raw = unsafe { (&builder.input).get_unchecked((range.0 + 1)..(range.1 - 1)) };
-        let data = unescape(raw)?;
+        let data = unescape(raw, range.0)?;
         Ok(Self { data, range })
     }
 }
 
-fn unescape(raw: &str) -> Result<String> {
+fn unescape(raw: &str, offset: usize) -> Result<String> {
     let mut out = String::with_capacity(raw.len());
+    let mut offset = offset;
     let mut chars = raw.chars();
     while let Some(c) = chars.next() {
+        offset += 1;
         if c != '\\' {
             out.push(c);
             continue;
         };
-        let c = chars.next().ok_or(Error::node_missing("???"))?;
+        let c = chars.next().ok_or(Error::unexpected_token("Missing character after \\", Some(offset), Some(offset + 1)))?;
         match c {
             'b' => out.push('\u{08}'),
             't' => out.push('\t'),
             'n' => out.push('\n'),
             'f' => out.push('\u{0C}'),
             'r' => out.push('\r'),
-            'u' => out.push(parse_unicode(&mut chars)?),
+            'u' => out.push(parse_unicode(&mut chars, offset)?),
             _ => out.push(c),
         }
     }
     return Ok(out);
 }
 
-fn parse_unicode<I>(chars: &mut I) -> Result<char>
+fn parse_unicode<I>(chars: &mut I, mut offset: usize) -> Result<char>
 where
     I: Iterator<Item = char>,
 {
+    offset += 1;
     match chars.next() {
         Some('{') => {}
         _ => {
-            return Err(Error::node_missing("???"));
+            return Err(Error::unexpected_token("Missing unicode closing character }", Some(offset), Some(offset + 1)));
         }
     }
     let unicode_seq: String = chars.take_while(|&c| c != '}').collect();
-    let n = u32::from_str_radix(&unicode_seq, 16)?;
-    Ok(char::from_u32(n).ok_or(Error::node_missing("???"))?)
+    let n = u32::from_str_radix(&unicode_seq, 16).ok().and_then(|c| char::from_u32(c));
+    match n {
+        Some(c) => Ok(c),
+        None => Err(Error::unexpected_token("Invalid unicode token", Some(offset), Some(offset + 1))),
+    }
 }
 
 impl ASTNode<Node> for Expression {
@@ -204,17 +210,17 @@ where
 impl ASTNode<Node> for TermNext {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let branch = node.branch_tag;
-        //let mut map = node.get_tag_map();
+        //let mut map = cst_node.get_tag_map();
         let mut children = node.children;
         let node = children.remove(0);
         match branch {
             Some("Suffix") => Ok(Self::Suffix(ASTNode::one(node, builder)?)),
-            // Some("Integer") => Ok(Self::Integer(Box::new(ASTNode::one(node, builder)?))),
-            // Some("String") => Ok(Self::String(Box::new(ASTNode::one(node, builder)?))),
+            // Some("Integer") => Ok(Self::Integer(Box::new(ASTNode::one(cst_node, builder)?))),
+            // Some("String") => Ok(Self::String(Box::new(ASTNode::one(cst_node, builder)?))),
             Some(s) => {
                 unreachable!("{:#?}", s);
             }
-            _ => return Err(Error::node_missing("Data")),
+            _ => return Err(Error::structure_error("Data", None, None)),
         }
     }
 }

@@ -1,8 +1,23 @@
 #[cfg(test)]
 mod test;
 
-use crate::records::LineBreaks;
+use crate::records::{CSTNode, LineBreaks};
 use lsp_types::{Position, Range};
+
+impl<R> CSTNode<R> {
+    #[inline]
+    pub fn get_lsp_range(&self, lines: &LineBreaks<'_>) -> Range {
+        lines.get_lsp_range(self.start, self.end)
+    }
+    #[inline]
+    pub fn get_lsp_start(&self, lines: &LineBreaks<'_>) -> Position {
+        lines.get_lsp_position(self.start)
+    }
+    #[inline]
+    pub fn get_lsp_end(&self, lines: &LineBreaks<'_>) -> Position {
+        lines.get_lsp_position(self.end)
+    }
+}
 
 impl<'i> LineBreaks<'i> {
     #[inline]

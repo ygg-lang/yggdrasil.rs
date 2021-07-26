@@ -91,7 +91,7 @@ impl ASTNode<Node> for Data {
             Some(s) => {
                 unreachable!("{:#?}", s);
             }
-            _ => return Err(Error::node_missing("Data")),
+            _ => return Err(Error::structure_error("Data", None, None)),
         }
     }
 }

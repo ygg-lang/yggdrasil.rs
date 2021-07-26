@@ -2,8 +2,9 @@ use std::{
     collections::HashMap,
     fmt::{Debug, Formatter},
 };
+use crate::traits::PositionSystem;
 
-/// It's a node contained in the Lossless Concrete Syntax Tree
+/// It's a cst_node contained in the Lossless Concrete Syntax Tree
 /// All subsequent required information will be retained
 /// Including spaces, line breaks, and comments or other semantically irrelevant content.
 /// Macros and formatting can start at this level
@@ -33,14 +34,14 @@ impl<R: Debug + Clone> Debug for CSTNode<R> {
 }
 
 impl<R> CSTNode<R> {
-    /// get str of the node
+    /// get str of the cst_node
     pub fn get_str<'i>(&self, input: &'i str) -> &'i str {
         unsafe { input.get_unchecked(self.start..self.end) }
     }
     /// Provide basic location information
     /// (start_offset, end_offset)
     pub fn get_span(&self) -> (usize, usize) {
-        (self.start, self.end)
+        PositionSystem::get_span(self)
     }
     /// Find node tags in all of the children
     /// Then collect them into a vec, and store in hashmap with the tag name

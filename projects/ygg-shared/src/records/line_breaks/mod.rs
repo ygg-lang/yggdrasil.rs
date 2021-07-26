@@ -1,9 +1,8 @@
 mod offset;
 
-pub use self::offset::OffsetRange;
-
 use std::fmt::{Debug, Formatter};
 
+/// Cache all newlines
 pub struct LineBreaks<'input> {
     input: &'input str,
     lines: Vec<usize>,
@@ -29,7 +28,7 @@ impl<'i> LineBreaks<'i> {
     pub fn get_text(&self) -> &'i str {
         self.input
     }
-    pub fn get_lines(&self) -> &[usize] {
+    pub fn get_newlines(&self) -> &[usize] {
         self.lines.as_slice()
     }
     pub fn get_nth_line(&self, line: usize) -> Option<&'_ str> {

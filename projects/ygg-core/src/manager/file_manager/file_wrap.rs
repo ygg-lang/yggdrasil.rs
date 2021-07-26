@@ -40,7 +40,7 @@ impl FileType {
 fn parse_error_to_hints(file: &FilePosition, es: &[Error], hint: &mut HintItems) {
     for e in es {
         let diag = match e {
-            Error::ParsingError { error, range } => Diagnostic {
+            Error::StructureError { error, range } => Diagnostic {
                 range: file.get_lsp_range(*range),
                 severity: None,
                 code: None,

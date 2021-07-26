@@ -27,7 +27,7 @@ impl CSTBuilder {
         println!("{:#?}", parsed);
         match parsed {
             Ok(o) => Ok(flatten(o)),
-            Err(e) => Err(Error::unexpected_token("UnexpectedToken", Some(e))),
+            Err(e) => Err(Error::unexpected_token("UnexpectedToken", Some(e.0), Some(e.1))),
         }
     }
 }

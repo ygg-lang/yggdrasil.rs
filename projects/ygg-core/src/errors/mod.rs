@@ -18,7 +18,7 @@ pub enum Error {
     InfoMissing { error: String },
     /// Some nodes failed to resolve and are being rolled back
     Unwinding,
-    /// A forbidden node encountered
+    /// A forbidden cst_node encountered
     Unreachable,
     #[error(transparent)]
     UnknownError(#[from] anyhow::Error),

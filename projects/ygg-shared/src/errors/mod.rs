@@ -13,35 +13,32 @@ pub enum Error {
     FormatError { #[from] source: std::fmt::Error },
     // PestError { #[from] source: pest::error::Error<crate::cst::Rule> },
     LanguageError { error: String },
-    ParsingError { error: String, range: (usize, usize) },
-    UnexpectedToken { error: String, range: Option<(usize, usize)> },
-    NodeMissing { error: String },
-    NodeTagMissing { error: String },
+    StructureError {
+        error: String,
+        start: Option<usize>,
+        end: Option<usize>,
+    },
+    UnexpectedToken {
+        error: String,
+        start: Option<usize>,
+        end: Option<usize>,
+    },
     InfoMissing { error: String },
     /// Some nodes failed to resolve and are being rolled back
     Unwinding,
-    /// A forbidden node encountered
+    /// A forbidden cst_node encountered
     Unreachable,
     #[error(transparent)]
     UnknownError(#[from] anyhow::Error),
 }
 
 impl Error {
-    ///
-    pub fn node_missing(msg: impl Into<String>) -> Error {
-        Self::NodeMissing { error: msg.into() }
+    pub fn structure_error(msg: impl Into<String>, start: Option<usize>, end: Option<usize>) -> Error {
+        Self::StructureError { error: msg.into(), start, end }
     }
     ///
-    pub fn node_tag_missing(msg: impl Into<String>) -> Error {
-        Self::NodeTagMissing { error: msg.into() }
-    }
-    ///
-    pub fn parsing_error(msg: impl Into<String>, range: (usize, usize)) -> Error {
-        Self::ParsingError { error: msg.into(), range }
-    }
-    ///
-    pub fn unexpected_token(msg: impl Into<String>, range: Option<(usize, usize)>) -> Error {
-        Self::UnexpectedToken { error: msg.into(), range }
+    pub fn unexpected_token(msg: impl Into<String>, start: Option<usize>, end: Option<usize>) -> Error {
+        Self::UnexpectedToken { error: msg.into(), start, end }
     }
     ///
     pub fn language_error(msg: impl Into<String>) -> Error {
