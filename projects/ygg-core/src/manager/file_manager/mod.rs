@@ -1,6 +1,6 @@
 pub use self::{file_store::FileStore, file_wrap::FileType, finger_print::FileFingerprint};
 use crate::{
-    codegen::{FilePosition, GrammarState, GrammarType, Translator},
+    frontend::{FilePosition, GrammarState, GrammarType, Translator},
     manager::{global_parser::PARSER_MANAGER, HintItems},
     Error, Result, HINT_MANAGER,
 };

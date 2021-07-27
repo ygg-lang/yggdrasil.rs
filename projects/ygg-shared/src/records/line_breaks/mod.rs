@@ -1,7 +1,5 @@
 mod offset;
 
-use std::fmt::{Debug, Formatter};
-
 /// Cache all newlines
 pub struct LineBreaks<'input> {
     input: &'input str,

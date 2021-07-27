@@ -2,7 +2,6 @@ use std::{
     collections::HashMap,
     fmt::{Debug, Formatter},
 };
-use crate::traits::PositionSystem;
 
 /// It's a cst_node contained in the Lossless Concrete Syntax Tree
 /// All subsequent required information will be retained
@@ -41,7 +40,7 @@ impl<R> CSTNode<R> {
     /// Provide basic location information
     /// (start_offset, end_offset)
     pub fn get_span(&self) -> (usize, usize) {
-        PositionSystem::get_span(self)
+        (self.start, self.end)
     }
     /// Find node tags in all of the children
     /// Then collect them into a vec, and store in hashmap with the tag name

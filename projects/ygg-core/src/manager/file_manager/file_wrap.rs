@@ -40,17 +40,23 @@ impl FileType {
 fn parse_error_to_hints(file: &FilePosition, es: &[Error], hint: &mut HintItems) {
     for e in es {
         let diag = match e {
-            Error::StructureError { error, range } => Diagnostic {
-                range: file.get_lsp_range(*range),
-                severity: None,
-                code: None,
-                code_description: None,
-                source: None,
-                message: error.to_owned(),
-                related_information: None,
-                tags: None,
-                data: None,
-            },
+            Error::StructureError { error, start, end } => {
+                let range = match (start, end) {
+                    (Some(s), Some(e)) => file.get_lsp_range((*s, *e)),
+                    _ => (Default::default()),
+                };
+                Diagnostic {
+                    range,
+                    severity: None,
+                    code: None,
+                    code_description: None,
+                    source: None,
+                    message: error.to_owned(),
+                    related_information: None,
+                    tags: None,
+                    data: None,
+                }
+            }
             _ => unreachable!(),
         };
         hint.diagnostic.push(diag)

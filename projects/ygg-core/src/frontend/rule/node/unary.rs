@@ -31,47 +31,11 @@ impl Operator {
     }
 }
 
-impl From<UnaryPrefix> for ExpressionNode {
-    fn from(e: UnaryPrefix) -> Self {
-        Self {
-            inline_token: false,
-            tag: None,
-            ty: None,
-            field: None,
-            node: RefinedExpression::Unary(box RefinedUnary::from(e)),
-        }
-    }
-}
-
 impl From<ExpressionNode> for RefinedUnary {
     fn from(e: ExpressionNode) -> Self {
         match e.get_unary() {
             Some(s) => s,
             None => Self { base: e, ops: vec![] },
         }
-    }
-}
-
-impl From<UnarySuffix> for ExpressionNode {
-    fn from(e: UnarySuffix) -> Self {
-        Self {
-            inline_token: false,
-            tag: None,
-            ty: None,
-            field: None,
-            node: RefinedExpression::Unary(box RefinedUnary::from(e)),
-        }
-    }
-}
-
-impl From<UnaryPrefix> for RefinedUnary {
-    fn from(e: UnaryPrefix) -> Self {
-        Self::build_prefix(ExpressionNode::from(e.base), e.prefix)
-    }
-}
-
-impl From<UnarySuffix> for RefinedUnary {
-    fn from(e: UnarySuffix) -> Self {
-        Self::build_suffix(ExpressionNode::from(e.base), e.suffix)
     }
 }

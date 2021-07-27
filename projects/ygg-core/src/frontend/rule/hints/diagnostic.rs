@@ -1,5 +1,5 @@
 use super::*;
-use crate::codegen::rule::from_ast::FilePosition;
+use crate::frontend::rule::from_ast::FilePosition;
 
 pub fn top_area_error(src: &str, msg: &str, range: (usize, usize), file: &FilePosition) -> Diagnostic {
     Diagnostic {

@@ -22,11 +22,14 @@ mod optimize;
 #[cfg(debug_assertions)]
 mod remap {
     pub type Map<K, V> = std::collections::HashMap<K, V>;
+
     pub use std::collections::hash_map::{Keys, Values};
 }
+
 #[cfg(not(debug_assertions))]
 mod remap {
     pub type Map<K, V> = indexmap::IndexMap<K, V>;
+
     pub use indexmap::map::{Keys, Values};
 }
 
@@ -38,7 +41,7 @@ pub struct GrammarState {
     name: Symbol,
     extensions: Vec<StringLiteral>,
     ignores: Vec<Symbol>,
-    rule_map: Map<String, Rule>,
+    pub(crate) rule_map: Map<String, Rule>,
 }
 
 #[derive(Clone)]
@@ -67,7 +70,7 @@ pub struct Rule {
     /// ```
     eliminate_unnamed: bool,
     ///
-    expression: ExpressionNode,
+    pub(crate) expression: ExpressionNode,
     /// position of all parts
     range: (usize, usize),
 }

@@ -1,6 +1,5 @@
 use crate::{
     records::{ASTBuilder, CSTNode},
-    traits::PositionSystem,
     Error, Result,
 };
 use std::collections::HashMap;

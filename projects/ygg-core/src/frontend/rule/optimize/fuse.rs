@@ -1,7 +1,7 @@
 use super::*;
 
 impl Rule {
-    pub(super) fn fuse(&mut self) {
+    pub(crate) fn fuse(&mut self) {
         self.expression.fuse()
     }
 }
@@ -27,8 +27,11 @@ impl ExpressionNode {
             }
             RefinedExpression::Choice(e) => {
                 // a | a
-                if e.inner.len() == 1 && self.meta_eq(&e.inner[0]) {
-                    *self = e.inner[0].to_owned()
+                if e.inner.len() == 1 {
+                    let item = e.inner.iter().next().unwrap();
+                    if self.meta_eq(item) {
+                        *self = item.to_owned()
+                    }
                 }
             }
             RefinedExpression::Concat(e) => {

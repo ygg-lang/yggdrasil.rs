@@ -1,4 +1,4 @@
-use crate::codegen::rule::Rule;
+use crate::frontend::rule::Rule;
 pub use set::Set;
 use std::{
     fmt::{Debug, Formatter},
@@ -12,8 +12,13 @@ mod debug;
 mod expr;
 mod unary;
 
+// used for ide hint
+#[cfg(debug_assertions)]
 mod set {
-    // pub type Set<V> = std::collections::HashSet<V>;
+    pub type Set<V> = std::collections::HashSet<V>;
+}
+#[cfg(not(debug_assertions))]
+mod remap {
     pub type Set<V> = indexmap::IndexSet<V>;
 }
 

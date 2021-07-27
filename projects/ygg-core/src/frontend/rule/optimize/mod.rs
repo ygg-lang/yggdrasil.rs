@@ -1,5 +1,5 @@
 use super::*;
-use crate::{codegen::GrammarState, manager::HintItems};
+use crate::{frontend::GrammarState, manager::HintItems};
 use lsp_types::{DocumentSymbol, SymbolKind};
 use std::mem::transmute;
 
