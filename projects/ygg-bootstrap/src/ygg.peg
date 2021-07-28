@@ -21,7 +21,7 @@ grammar_statement  <-
 ;
 grammar  <- "grammar!";
 
-fragment_statement <- fragment IGNORE symbol;
+fragment_statement <- fragment IGNORE <id:symbol>;
 fragment <- "fragment!";
 
 
@@ -31,9 +31,7 @@ import_statement  <-
 ;
 import  <- "import!";
 
-symbol_alias <-
-    <from:symbol> IGNORE "as" IGNORE <into:symbol>
-  / <from:symbol>;
+symbol_alias <- <from:symbol> (IGNORE "as" IGNORE <into:symbol>)?;
 
 ignore_statement  <-
     ignore IGNORE <rules:symbol>
@@ -50,10 +48,10 @@ expr_next <-
     Other:/ <term:term> !assign_kind;
 term <-
     Priority:/ "(" IGNORE ("/"/"|")? IGNORE <expr:expr> IGNORE ")"
-    Atom:/ <prefix:prefix>* <data:data> ( <term_next:term_next>)*;
+    Atom:/ <prefix:prefix>* <data:data> (<term_next:term_next>)*;
 term_next <-
-    Suffix:/ <suffix:suffix>
-    Slice:/  <slice:slice>
+    Suffix:/ <suffix:suffix> !"~"
+    Slice:/  <slice:slice> !"~"
     Branch:/ IGNORE <kind:branch_kind>? "$" <symbol:symbol>;
 branch_kind <- "_"/"^"/"!"/"<"/">";
 infix   <- "|" / "/" / "~" / "<-" / ":";
@@ -61,12 +59,12 @@ prefix  <- "!" / "&" / "^" / "%";
 suffix  <- "?" / "+" / "*";
 
 data <-
-    Macro:/   <macro_call:macro_call>
-    Regex:/   <regex_range:regex_range>
-    List:/    <list:list>
-    Symbol:/  <symbol_path:symbol_path>
-    Integer:/ <integer:integer>
-    String:/  <string:string>
+    Macro:/   <macro_call:macro_call> !"~"
+    Regex:/   <regex_range:regex_range> !"~"
+    List:/    <list:list> !"~"
+    Symbol:/  <symbol_path:symbol_path> !"~"
+    Integer:/ <integer:integer> !"~"
+    String:/  <string:string> !"~"
 ;
 
 list   <- "{" IGNORE (<data:data> IGNORE ("," IGNORE <data:data>)* IGNORE ","?)? IGNORE "}";
@@ -99,14 +97,11 @@ string  <-
 
 integer  <- re#[0-9](_?[0-9])*#;
 
-symbol_path  <-
-    <symbol:symbol> IGNORE (("::"/".") IGNORE <symbol:symbol>)*
-;
+symbol_path  <- <symbol:symbol> IGNORE (("::"/".") IGNORE <symbol:symbol>)*;
 symbol  <- XID_IDENTIFIER;
-
 
 IGNORE <-  (SPACE / NEWLINE / COMMENT)?;
 
 SPACE <- re#[\s]+#;
 NEWLINE <- re#[\r\n]+#;
-COMMENT <- "//" re#[^\r\n]*#
+COMMENT <- re#//[^\r\n]*#

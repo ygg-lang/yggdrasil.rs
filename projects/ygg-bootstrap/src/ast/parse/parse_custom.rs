@@ -80,6 +80,9 @@ impl ASTNode<Node> for Expression {
 impl ASTNode<Node> for Term {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let mut map = node.get_tag_map();
+        if let Ok(o) = Expression::named_one(&mut map, "expr", builder) {
+            return Ok(Term::Atom(o))
+        }
         let data = Data::named_one(&mut map, "data", builder)?;
         let prefix = Prefix::named_many(&mut map, "prefix", builder);
         let suffix = TermNext::named_many(&mut map, "term_next", builder);
@@ -87,9 +90,7 @@ impl ASTNode<Node> for Term {
         if prefix.is_empty() && suffix.is_empty() {
             return Ok(Term::Atom(base));
         }
-        println!("Suffix: \n{:#?}", suffix);
         base = Term::build_suffix(base, vec![]);
-        println!("Prefix: \n{:#?}", prefix);
         base = Term::build_prefix(base, prefix);
         return Ok(Term::Atom(base));
     }

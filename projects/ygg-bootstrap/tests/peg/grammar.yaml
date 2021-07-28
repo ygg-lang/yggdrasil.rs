@@ -17,4 +17,7 @@
             StringLiteral("*.ygg"),
         ],
     },
+    FragmentStatement {
+        id: Symbol(ygg_ex),
+    },
 ]

@@ -9,6 +9,4 @@ pub use yggdrasil_bootstrap::{Error, Result};
 
 pub mod codegen;
 pub mod manager;
-
-// mod errors;
-mod frontend;
+pub mod frontend;

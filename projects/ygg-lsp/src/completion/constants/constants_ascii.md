@@ -27,14 +27,6 @@ ASCII numbers
 [0-9]
 ```
 
-
-# ASCII_DIGIT_NONZERO
-ASCII numbers except 0
-
-```ygg
-[1-9]
-```
-
 # ASCII_BIN
 ASCII numbers in binary
 
@@ -55,4 +47,11 @@ ASCII numbers in hexadecimal
 
 ```ygg
 [0-9a-fA-F]
+```
+
+# ASCII_DIGITS_WLZ
+ASCII numbers without leading 0
+
+```ygg
+0|[1-9][0-9]*
 ```

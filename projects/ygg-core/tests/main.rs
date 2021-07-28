@@ -4,7 +4,7 @@
 use lsp_types::Url;
 use std::{fmt::Write, lazy::SyncLazy, str::FromStr};
 use yggdrasil_core::{
-    codegen::{FilePosition, Translator},
+    frontend::{FilePosition, Translator},
     manager::YggParser,
     Result,
 };

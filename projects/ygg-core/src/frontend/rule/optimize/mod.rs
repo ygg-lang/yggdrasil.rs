@@ -3,6 +3,7 @@ use crate::{frontend::GrammarState, manager::HintItems};
 use lsp_types::{DocumentSymbol, SymbolKind};
 use std::mem::transmute;
 
+mod builtin;
 mod fuse;
 mod inline;
 #[allow(deprecated)]

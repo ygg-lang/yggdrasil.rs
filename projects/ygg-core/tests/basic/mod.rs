@@ -44,21 +44,21 @@ fn test_or_simple() -> Result<()> {
 }
 
 const OR_TAGGED: &str = r#"
-test1 = e1 | e2 #B
+test1 = e1 | e2 $B
 test2 =
-    | e1 #A
+    | e1 $A
     | e2
 test3 =
-    | e1 #A
-    | e2 #B
-    | e3 #C
-    | e4 #D
+    | e1 $A
+    | e2 $B
+    | e3 $C
+    | e4 $D
 test4 =
-    | e1 #A
-    | ((e2 | e3) | e4) #B
+    | e1 $A
+    | ((e2 | e3) | e4) $B
 test5 =
-    | (e1 | e2) #A
-    | (e3 | e4) #B
+    | (e1 | e2) $A
+    | (e3 | e4) $B
 "#;
 
 #[test]
