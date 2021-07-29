@@ -46,12 +46,10 @@ expr  <- <term:term> IGNORE (<expr_next:expr_next> IGNORE)*;
 expr_next <-
     Infix:/ <infix:infix> IGNORE <term:term>
     Other:/ <term:term> !assign_kind;
-term <-
-    Priority:/ "(" IGNORE ("/"/"|")? IGNORE <expr:expr> IGNORE ")"
-    Atom:/ <prefix:prefix>* <data:data> (<term_next:term_next>)*;
+term <- <prefix:prefix>* (<data:data> / "(" IGNORE ("/"/"|")? IGNORE <expr:expr> IGNORE ")") (<term_next:term_next>)*;
 term_next <-
-    Suffix:/ <suffix:suffix> !"~"
-    Slice:/  <slice:slice> !"~"
+    Suffix:/ <suffix:suffix> !"💣"
+    Slice:/  <slice:slice> !"💣"
     Branch:/ IGNORE <kind:branch_kind>? "$" <symbol:symbol>;
 branch_kind <- "_"/"^"/"!"/"<"/">";
 infix   <- "|" / "/" / "~" / "<-" / ":";
@@ -59,12 +57,12 @@ prefix  <- "!" / "&" / "^" / "%";
 suffix  <- "?" / "+" / "*";
 
 data <-
-    Macro:/   <macro_call:macro_call> !"~"
-    Regex:/   <regex_range:regex_range> !"~"
-    List:/    <list:list> !"~"
-    Symbol:/  <symbol_path:symbol_path> !"~"
-    Integer:/ <integer:integer> !"~"
-    String:/  <string:string> !"~"
+    Macro:/   <macro_call:macro_call> !"💣"
+    Regex:/   <regex_range:regex_range> !"💣"
+    List:/    <list:list> !"💣"
+    Symbol:/  <symbol_path:symbol_path> !"💣"
+    Integer:/ <integer:integer> !"💣"
+    String:/  <string:string> !"💣"
 ;
 
 list   <- "{" IGNORE (<data:data> IGNORE ("," IGNORE <data:data>)* IGNORE ","?)? IGNORE "}";
