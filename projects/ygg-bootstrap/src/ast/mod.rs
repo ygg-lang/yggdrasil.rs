@@ -34,6 +34,7 @@ impl YggParser {
         let cst = self.parse_cst(input)?;
         // println!("{:#?}", cst);
         let program = Program::parse(cst, &mut self.ast)?;
+        // println!("{:#?}", program);
         self.error.extend(std::mem::take(&mut self.cst.error).into_iter());
         self.error.extend(std::mem::take(&mut self.ast.error).into_iter());
         Ok(program)

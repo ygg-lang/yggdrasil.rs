@@ -80,6 +80,19 @@ impl ASTNode<Node> for AssignStatement {
     }
 }
 
+impl ASTNode<Node> for TermNext {
+    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
+        let branch = node.branch_tag;
+        let mut map = node.get_tag_map();
+        match branch {
+            Some("Suffix") => Ok(Self::Suffix(ASTNode::named_one(&mut map, "suffix", builder)?)),
+            Some("Slice") => unimplemented!("Slice"),
+            Some("Branch") => unimplemented!("Branch"),
+            _ => unreachable!(),
+        }
+    }
+}
+
 impl ASTNode<Node> for Data {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let branch = node.branch_tag;

@@ -1,7 +1,5 @@
-use super::*;
 use crate::{
     frontend::{FilePosition, Translator},
-    manager::HintItems,
     Result,
 };
 use lsp_types::Url;

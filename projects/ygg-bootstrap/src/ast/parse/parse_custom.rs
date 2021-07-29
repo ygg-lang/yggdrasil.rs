@@ -80,17 +80,17 @@ impl ASTNode<Node> for Expression {
 impl ASTNode<Node> for Term {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let mut map = node.get_tag_map();
-        if let Ok(o) = Expression::named_one(&mut map, "expr", builder) {
-            return Ok(Term::Atom(o))
-        }
-        let data = Data::named_one(&mut map, "data", builder)?;
+        // println!("{:#?}", map);
         let prefix = Prefix::named_many(&mut map, "prefix", builder);
         let suffix = TermNext::named_many(&mut map, "term_next", builder);
-        let mut base = Expression::Data(data);
+        let mut base = match Expression::named_one(&mut map, "expr", builder) {
+            Ok(o) => o,
+            Err(_) => Data::named_one(&mut map, "data", builder).map(Expression::Data)?,
+        };
         if prefix.is_empty() && suffix.is_empty() {
             return Ok(Term::Atom(base));
         }
-        base = Term::build_suffix(base, vec![]);
+        base = Term::build_suffix(base, suffix);
         base = Term::build_prefix(base, prefix);
         return Ok(Term::Atom(base));
     }
@@ -98,6 +98,7 @@ impl ASTNode<Node> for Term {
 
 impl Term {
     pub fn build_expression(input: Vec<Term>) -> Result<Expression> {
+        // println!("{:#?}", input);
         TermResolve.parse(&mut input.into_iter())
     }
     fn build_prefix(mut base: Expression, ops: Vec<Prefix>) -> Expression {
@@ -205,23 +206,5 @@ where
         //     _ => unreachable!(),
         // };
         // Ok(out)
-    }
-}
-
-impl ASTNode<Node> for TermNext {
-    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
-        let branch = node.branch_tag;
-        //let mut map = cst_node.get_tag_map();
-        let mut children = node.children;
-        let node = children.remove(0);
-        match branch {
-            Some("Suffix") => Ok(Self::Suffix(ASTNode::one(node, builder)?)),
-            // Some("Integer") => Ok(Self::Integer(Box::new(ASTNode::one(cst_node, builder)?))),
-            // Some("String") => Ok(Self::String(Box::new(ASTNode::one(cst_node, builder)?))),
-            Some(s) => {
-                unreachable!("{:#?}", s);
-            }
-            _ => return Err(Error::structure_error("Data", None, None)),
-        }
     }
 }

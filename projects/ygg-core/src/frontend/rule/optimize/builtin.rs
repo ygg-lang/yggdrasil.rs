@@ -1,5 +1,4 @@
-use std::collections::BTreeMap;
-use std::lazy::SyncLazy;
+use std::{collections::BTreeMap, lazy::SyncLazy};
 
 pub static BUILTIN_RULES: SyncLazy<BTreeMap<&'static str, &'static str>> = SyncLazy::new(|| {
     let mut rules = BTreeMap::default();

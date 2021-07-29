@@ -1,13 +1,12 @@
+use self::build_symbol::build_symbol;
 use crate::frontend::{
-    rule::{ExpressionNode, RefinedChoice, RefinedConcat, RefinedData, RefinedExpression, Rule},
-    GrammarState, GrammarType,
+    rule::{ExpressionNode, RefinedChoice, RefinedConcat, RefinedData, RefinedExpression},
+    GrammarState,
 };
 use lrpeg::{
     ast::{BareExpression, Definition, Expression, Grammar},
-    parser::parse,
     Generator,
 };
-use self::build_symbol::build_symbol;
 mod build_symbol;
 mod test;
 
