@@ -114,7 +114,7 @@ pub enum Term {
 pub enum TermNext {
     Suffix(char),
     Slice(Slice),
-    Branch { kind: char, symbol: Symbol },
+    Branch(BranchTag),
 }
 
 #[derive(Clone, Debug)]
@@ -136,11 +136,18 @@ pub struct Slice {
     pub range: (usize, usize),
 }
 
+#[derive(Clone, Debug)]
+pub struct BranchTag {
+    pub kind: Option<char>,
+    pub symbol: Symbol,
+    pub range: (usize, usize),
+}
+
 #[derive(Clone)]
 pub enum Data {
-    Symbol(Box<SymbolPath>),
-    Integer(Box<Integer>),
-    String(Box<StringLiteral>),
+    Symbol(SymbolPath),
+    Integer(Integer),
+    String(StringLiteral),
     Macro,
     Regex,
 }

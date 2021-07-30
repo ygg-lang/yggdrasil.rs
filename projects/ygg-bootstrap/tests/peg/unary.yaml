@@ -2,6 +2,14 @@
     AssignStatement {
         id: "x",
         eq: "=",
-        rhs: SymbolPath(field),
+        rhs: MarkNode {
+            base: MustNot(
+                Maybe(
+                    Many(
+                        SymbolPath(field),
+                    ),
+                ),
+            ),
+        },
     },
 ]

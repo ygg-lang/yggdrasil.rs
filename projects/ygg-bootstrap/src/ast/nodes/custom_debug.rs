@@ -59,15 +59,14 @@ impl Debug for Expression {
                 w.finish()
             }
             Expression::MarkNode { lhs, rhs } => {
-                let w = &mut f.debug_struct("MarkNode");
-                w.field("field", lhs);
-                w.field("rhs", rhs);
+                let w = &mut f.debug_struct("MarkNodeAs");
+                w.field("base", rhs);
+                w.field("as", lhs);
                 w.finish()
             }
             Expression::MarkNodeShort(e) => {
                 let w = &mut f.debug_struct("MarkNode");
-                w.field("field", e);
-                w.field("rhs", e);
+                w.field("base", e);
                 w.finish()
             }
             Expression::MarkType { lhs, rhs } => {

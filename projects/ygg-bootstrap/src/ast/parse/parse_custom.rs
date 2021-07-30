@@ -80,7 +80,6 @@ impl ASTNode<Node> for Expression {
 impl ASTNode<Node> for Term {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let mut map = node.get_tag_map();
-        // println!("{:#?}", map);
         let prefix = Prefix::named_many(&mut map, "prefix", builder);
         let suffix = TermNext::named_many(&mut map, "term_next", builder);
         let mut base = match Expression::named_one(&mut map, "expr", builder) {
@@ -97,8 +96,8 @@ impl ASTNode<Node> for Term {
 }
 
 impl Term {
+    #[inline]
     pub fn build_expression(input: Vec<Term>) -> Result<Expression> {
-        // println!("{:#?}", input);
         TermResolve.parse(&mut input.into_iter())
     }
     fn build_prefix(mut base: Expression, ops: Vec<Prefix>) -> Expression {
@@ -122,7 +121,7 @@ impl Term {
                 TermNext::Slice(_) => {
                     unimplemented!()
                 }
-                TermNext::Branch { kind, symbol } => base = Expression::MarkBranch { lhs: Box::new(base), kind: *kind, name: symbol.clone() },
+                TermNext::Branch(BranchTag { kind, symbol, .. }) => base = Expression::MarkBranch { lhs: Box::new(base), kind: kind.unwrap_or('$'), name: symbol.clone() },
                 _ => unreachable!(),
             }
         }

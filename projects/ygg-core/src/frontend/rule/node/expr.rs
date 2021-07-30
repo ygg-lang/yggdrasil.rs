@@ -98,7 +98,7 @@ impl From<Data> for ExpressionNode {
 impl From<Data> for RefinedData {
     fn from(data: Data) -> Self {
         match data {
-            Data::Symbol(atom) => Self::Symbol(*atom),
+            Data::Symbol(atom) => Self::Symbol(atom),
             Data::Integer(atom) => Self::Integer(atom.data),
             Data::String(atom) => Self::String(atom.data),
             Data::Regex => unimplemented!(),

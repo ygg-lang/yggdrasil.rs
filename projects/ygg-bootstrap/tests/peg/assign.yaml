@@ -13,23 +13,23 @@
     AssignStatement {
         id: "x",
         eq: "=",
-        rhs: MarkNode {
-            field: MarkType {
+        rhs: MarkNodeAs {
+            base: SymbolPath(x),
+            as: MarkType {
                 lhs: SymbolPath(a),
                 type: SymbolPath(T),
             },
-            rhs: SymbolPath(x),
         },
     },
     AssignStatement {
         id: "x",
         eq: "=",
-        rhs: MarkNode {
-            field: SymbolPath(a),
-            rhs: MarkType {
+        rhs: MarkNodeAs {
+            base: MarkType {
                 lhs: SymbolPath(x),
                 type: SymbolPath(T),
             },
+            as: SymbolPath(a),
         },
     },
     AssignStatement {

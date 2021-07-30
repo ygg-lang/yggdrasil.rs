@@ -1,10 +1,10 @@
 use super::*;
 
 const UNARY: &str = r#"
-test1 = e1?;
-test2 = e1+;
-test3 = e1*;
-test4 = ^e1;
+test1 = ^e1;
+test2 = e1?;
+test3 = e1+;
+test4 = e1*;
 "#;
 
 #[test]

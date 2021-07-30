@@ -85,11 +85,25 @@ impl ASTNode<Node> for TermNext {
         let branch = node.branch_tag;
         let mut map = node.get_tag_map();
         match branch {
-            Some("Suffix") => Ok(Self::Suffix(ASTNode::named_one(&mut map, "suffix", builder)?)),
+            Some("Suffix") => {
+                Ok(Self::Suffix(ASTNode::named_one(&mut map, "suffix", builder)?))
+            }
             Some("Slice") => unimplemented!("Slice"),
-            Some("Branch") => unimplemented!("Branch"),
+            Some("Branch") => {
+                Ok(Self::Branch(ASTNode::named_one(&mut map, "suffix", builder)?))
+            }
             _ => unreachable!(),
         }
+    }
+}
+
+impl ASTNode<Node> for BranchTag {
+    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
+        let range = node.get_span();
+        let mut map = node.get_tag_map();
+        let kind = ASTNode::named_some(&mut map, "kind", builder);
+        let symbol = ASTNode::named_one(&mut map, "symbol", builder)?;
+        Ok(Self { kind, symbol, range })
     }
 }
 
@@ -98,9 +112,9 @@ impl ASTNode<Node> for Data {
         let branch = node.branch_tag;
         let children = &mut node.get_tag_map();
         match branch {
-            Some("Symbol") => Ok(Self::Symbol(Box::new(ASTNode::named_one(children, "symbol_path", builder)?))),
-            Some("Integer") => Ok(Self::Integer(Box::new(ASTNode::named_one(children, "integer", builder)?))),
-            Some("String") => Ok(Self::String(Box::new(ASTNode::named_one(children, "string", builder)?))),
+            Some("Symbol") => Ok(Self::Symbol(ASTNode::named_one(children, "symbol_path", builder)?)),
+            Some("Integer") => Ok(Self::Integer(ASTNode::named_one(children, "integer", builder)?)),
+            Some("String") => Ok(Self::String(ASTNode::named_one(children, "string", builder)?)),
             Some(s) => {
                 unreachable!("{:#?}", s);
             }
