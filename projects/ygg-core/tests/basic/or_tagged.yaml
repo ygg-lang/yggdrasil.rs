@@ -1,644 +1,88 @@
 AssignStatement {
     id: "test1",
     eq: "=",
-    rhs: ChoiceExpression {
-        lhs: ChoiceTag {
-            expr: ChoiceExpression {
-                lhs: ChoiceTag {
-                    expr: ChoiceExpression {
-                        lhs: ChoiceTag {
-                            expr: Data::Identifier(
-                                "e1",
-                            ),
-                            tag: None,
-                            mode: None,
-                            ty: None,
-                            range: Range {
-                                start: Position {
-                                    line: 1,
-                                    character: 8,
-                                },
-                                end: Position {
-                                    line: 1,
-                                    character: 10,
-                                },
-                            },
-                        },
-                        op: "|",
-                        rhs: ChoiceTag {
-                            expr: Data::Identifier(
-                                "e2",
-                            ),
-                            tag: None,
-                            mode: None,
-                            ty: None,
-                            range: Range {
-                                start: Position {
-                                    line: 1,
-                                    character: 13,
-                                },
-                                end: Position {
-                                    line: 1,
-                                    character: 15,
-                                },
-                            },
-                        },
-                    },
-                    tag: Some(
-                        Identifier {
-                            data: "test2",
-                            range: Range {
-                                start: Position {
-                                    line: 2,
-                                    character: 0,
-                                },
-                                end: Position {
-                                    line: 2,
-                                    character: 5,
-                                },
-                            },
-                        },
-                    ),
-                    mode: None,
-                    ty: None,
-                    range: Range {
-                        start: Position {
-                            line: 1,
-                            character: 8,
-                        },
-                        end: Position {
-                            line: 2,
-                            character: 5,
-                        },
-                    },
-                },
-                op: "|",
-                rhs: ChoiceTag {
-                    expr: Data::Identifier(
-                        "e1",
-                    ),
-                    tag: None,
-                    mode: None,
-                    ty: None,
-                    range: Range {
-                        start: Position {
-                            line: 3,
-                            character: 6,
-                        },
-                        end: Position {
-                            line: 3,
-                            character: 8,
-                        },
-                    },
-                },
-            },
-            tag: Some(
-                Identifier {
-                    data: "A",
-                    range: Range {
-                        start: Position {
-                            line: 3,
-                            character: 10,
-                        },
-                        end: Position {
-                            line: 3,
-                            character: 11,
-                        },
-                    },
-                },
-            ),
-            mode: None,
-            ty: None,
-            range: Range {
-                start: Position {
-                    line: 1,
-                    character: 8,
-                },
-                end: Position {
-                    line: 3,
-                    character: 11,
-                },
-            },
+    rhs: Choice {
+        lhs: SymbolPath(e1),
+        rhs: MarkBranch {
+            lhs: SymbolPath(e2),
+            type: "$B",
         },
-        op: "|",
-        rhs: ChoiceTag {
-            expr: Data::Identifier(
-                "e2",
-            ),
-            tag: None,
-            mode: None,
-            ty: None,
-            range: Range {
-                start: Position {
-                    line: 4,
-                    character: 6,
-                },
-                end: Position {
-                    line: 4,
-                    character: 8,
-                },
-            },
+    },
+}
+AssignStatement {
+    id: "test2",
+    eq: "=",
+    rhs: Choice {
+        lhs: MarkBranch {
+            lhs: SymbolPath(e1),
+            type: "$A",
         },
+        rhs: SymbolPath(e2),
     },
 }
 AssignStatement {
     id: "test3",
     eq: "=",
-    rhs: ChoiceExpression {
-        lhs: ChoiceTag {
-            expr: ChoiceExpression {
-                lhs: ChoiceTag {
-                    expr: ChoiceExpression {
-                        lhs: ChoiceTag {
-                            expr: ChoiceExpression {
-                                lhs: ChoiceTag {
-                                    expr: ChoiceExpression {
-                                        lhs: ChoiceTag {
-                                            expr: ChoiceExpression {
-                                                lhs: ChoiceTag {
-                                                    expr: ChoiceExpression {
-                                                        lhs: ChoiceTag {
-                                                            expr: Data::Identifier(
-                                                                "e1",
-                                                            ),
-                                                            tag: Some(
-                                                                Identifier {
-                                                                    data: "A",
-                                                                    range: Range {
-                                                                        start: Position {
-                                                                            line: 6,
-                                                                            character: 10,
-                                                                        },
-                                                                        end: Position {
-                                                                            line: 6,
-                                                                            character: 11,
-                                                                        },
-                                                                    },
-                                                                },
-                                                            ),
-                                                            mode: None,
-                                                            ty: None,
-                                                            range: Range {
-                                                                start: Position {
-                                                                    line: 6,
-                                                                    character: 6,
-                                                                },
-                                                                end: Position {
-                                                                    line: 6,
-                                                                    character: 11,
-                                                                },
-                                                            },
-                                                        },
-                                                        op: "|",
-                                                        rhs: ChoiceTag {
-                                                            expr: Data::Identifier(
-                                                                "e2",
-                                                            ),
-                                                            tag: None,
-                                                            mode: None,
-                                                            ty: None,
-                                                            range: Range {
-                                                                start: Position {
-                                                                    line: 7,
-                                                                    character: 6,
-                                                                },
-                                                                end: Position {
-                                                                    line: 7,
-                                                                    character: 8,
-                                                                },
-                                                            },
-                                                        },
-                                                    },
-                                                    tag: Some(
-                                                        Identifier {
-                                                            data: "B",
-                                                            range: Range {
-                                                                start: Position {
-                                                                    line: 7,
-                                                                    character: 10,
-                                                                },
-                                                                end: Position {
-                                                                    line: 7,
-                                                                    character: 11,
-                                                                },
-                                                            },
-                                                        },
-                                                    ),
-                                                    mode: None,
-                                                    ty: None,
-                                                    range: Range {
-                                                        start: Position {
-                                                            line: 6,
-                                                            character: 6,
-                                                        },
-                                                        end: Position {
-                                                            line: 7,
-                                                            character: 11,
-                                                        },
-                                                    },
-                                                },
-                                                op: "|",
-                                                rhs: ChoiceTag {
-                                                    expr: Data::Identifier(
-                                                        "e3",
-                                                    ),
-                                                    tag: None,
-                                                    mode: None,
-                                                    ty: None,
-                                                    range: Range {
-                                                        start: Position {
-                                                            line: 8,
-                                                            character: 6,
-                                                        },
-                                                        end: Position {
-                                                            line: 8,
-                                                            character: 8,
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                            tag: Some(
-                                                Identifier {
-                                                    data: "C",
-                                                    range: Range {
-                                                        start: Position {
-                                                            line: 8,
-                                                            character: 10,
-                                                        },
-                                                        end: Position {
-                                                            line: 8,
-                                                            character: 11,
-                                                        },
-                                                    },
-                                                },
-                                            ),
-                                            mode: None,
-                                            ty: None,
-                                            range: Range {
-                                                start: Position {
-                                                    line: 6,
-                                                    character: 6,
-                                                },
-                                                end: Position {
-                                                    line: 8,
-                                                    character: 11,
-                                                },
-                                            },
-                                        },
-                                        op: "|",
-                                        rhs: ChoiceTag {
-                                            expr: Data::Identifier(
-                                                "e4",
-                                            ),
-                                            tag: None,
-                                            mode: None,
-                                            ty: None,
-                                            range: Range {
-                                                start: Position {
-                                                    line: 9,
-                                                    character: 6,
-                                                },
-                                                end: Position {
-                                                    line: 9,
-                                                    character: 8,
-                                                },
-                                            },
-                                        },
-                                    },
-                                    tag: Some(
-                                        Identifier {
-                                            data: "test4",
-                                            range: Range {
-                                                start: Position {
-                                                    line: 10,
-                                                    character: 0,
-                                                },
-                                                end: Position {
-                                                    line: 10,
-                                                    character: 5,
-                                                },
-                                            },
-                                        },
-                                    ),
-                                    mode: None,
-                                    ty: None,
-                                    range: Range {
-                                        start: Position {
-                                            line: 6,
-                                            character: 6,
-                                        },
-                                        end: Position {
-                                            line: 10,
-                                            character: 5,
-                                        },
-                                    },
-                                },
-                                op: "|",
-                                rhs: ChoiceTag {
-                                    expr: Data::Identifier(
-                                        "e1",
-                                    ),
-                                    tag: None,
-                                    mode: None,
-                                    ty: None,
-                                    range: Range {
-                                        start: Position {
-                                            line: 11,
-                                            character: 6,
-                                        },
-                                        end: Position {
-                                            line: 11,
-                                            character: 8,
-                                        },
-                                    },
-                                },
-                            },
-                            tag: Some(
-                                Identifier {
-                                    data: "A",
-                                    range: Range {
-                                        start: Position {
-                                            line: 11,
-                                            character: 10,
-                                        },
-                                        end: Position {
-                                            line: 11,
-                                            character: 11,
-                                        },
-                                    },
-                                },
-                            ),
-                            mode: None,
-                            ty: None,
-                            range: Range {
-                                start: Position {
-                                    line: 6,
-                                    character: 6,
-                                },
-                                end: Position {
-                                    line: 11,
-                                    character: 11,
-                                },
-                            },
-                        },
-                        op: "|",
-                        rhs: ChoiceTag {
-                            expr: ChoiceExpression {
-                                lhs: ChoiceTag {
-                                    expr: ChoiceExpression {
-                                        lhs: ChoiceTag {
-                                            expr: Data::Identifier(
-                                                "e2",
-                                            ),
-                                            tag: None,
-                                            mode: None,
-                                            ty: None,
-                                            range: Range {
-                                                start: Position {
-                                                    line: 12,
-                                                    character: 8,
-                                                },
-                                                end: Position {
-                                                    line: 12,
-                                                    character: 10,
-                                                },
-                                            },
-                                        },
-                                        op: "|",
-                                        rhs: ChoiceTag {
-                                            expr: Data::Identifier(
-                                                "e3",
-                                            ),
-                                            tag: None,
-                                            mode: None,
-                                            ty: None,
-                                            range: Range {
-                                                start: Position {
-                                                    line: 12,
-                                                    character: 13,
-                                                },
-                                                end: Position {
-                                                    line: 12,
-                                                    character: 15,
-                                                },
-                                            },
-                                        },
-                                    },
-                                    tag: None,
-                                    mode: None,
-                                    ty: None,
-                                    range: Range {
-                                        start: Position {
-                                            line: 12,
-                                            character: 7,
-                                        },
-                                        end: Position {
-                                            line: 12,
-                                            character: 16,
-                                        },
-                                    },
-                                },
-                                op: "|",
-                                rhs: ChoiceTag {
-                                    expr: Data::Identifier(
-                                        "e4",
-                                    ),
-                                    tag: None,
-                                    mode: None,
-                                    ty: None,
-                                    range: Range {
-                                        start: Position {
-                                            line: 12,
-                                            character: 19,
-                                        },
-                                        end: Position {
-                                            line: 12,
-                                            character: 21,
-                                        },
-                                    },
-                                },
-                            },
-                            tag: None,
-                            mode: None,
-                            ty: None,
-                            range: Range {
-                                start: Position {
-                                    line: 12,
-                                    character: 6,
-                                },
-                                end: Position {
-                                    line: 12,
-                                    character: 22,
-                                },
-                            },
-                        },
-                    },
-                    tag: Some(
-                        Identifier {
-                            data: "test5",
-                            range: Range {
-                                start: Position {
-                                    line: 13,
-                                    character: 0,
-                                },
-                                end: Position {
-                                    line: 13,
-                                    character: 5,
-                                },
-                            },
-                        },
-                    ),
-                    mode: None,
-                    ty: None,
-                    range: Range {
-                        start: Position {
-                            line: 6,
-                            character: 6,
-                        },
-                        end: Position {
-                            line: 13,
-                            character: 5,
-                        },
-                    },
+    rhs: Choice {
+        lhs: Choice {
+            lhs: Choice {
+                lhs: MarkBranch {
+                    lhs: SymbolPath(e1),
+                    type: "$A",
                 },
-                op: "|",
-                rhs: ChoiceTag {
-                    expr: ChoiceExpression {
-                        lhs: ChoiceTag {
-                            expr: Data::Identifier(
-                                "e1",
-                            ),
-                            tag: None,
-                            mode: None,
-                            ty: None,
-                            range: Range {
-                                start: Position {
-                                    line: 14,
-                                    character: 7,
-                                },
-                                end: Position {
-                                    line: 14,
-                                    character: 9,
-                                },
-                            },
-                        },
-                        op: "|",
-                        rhs: ChoiceTag {
-                            expr: Data::Identifier(
-                                "e2",
-                            ),
-                            tag: None,
-                            mode: None,
-                            ty: None,
-                            range: Range {
-                                start: Position {
-                                    line: 14,
-                                    character: 12,
-                                },
-                                end: Position {
-                                    line: 14,
-                                    character: 14,
-                                },
-                            },
-                        },
-                    },
-                    tag: None,
-                    mode: None,
-                    ty: None,
-                    range: Range {
-                        start: Position {
-                            line: 14,
-                            character: 6,
-                        },
-                        end: Position {
-                            line: 14,
-                            character: 15,
-                        },
-                    },
+                rhs: MarkBranch {
+                    lhs: SymbolPath(e2),
+                    type: "$B",
                 },
             },
-            tag: Some(
-                Identifier {
-                    data: "A",
-                    range: Range {
-                        start: Position {
-                            line: 14,
-                            character: 17,
-                        },
-                        end: Position {
-                            line: 14,
-                            character: 18,
-                        },
-                    },
-                },
-            ),
-            mode: None,
-            ty: None,
-            range: Range {
-                start: Position {
-                    line: 6,
-                    character: 6,
-                },
-                end: Position {
-                    line: 14,
-                    character: 18,
-                },
+            rhs: MarkBranch {
+                lhs: SymbolPath(e3),
+                type: "$C",
             },
         },
-        op: "|",
-        rhs: ChoiceTag {
-            expr: ChoiceExpression {
-                lhs: ChoiceTag {
-                    expr: Data::Identifier(
-                        "e3",
-                    ),
-                    tag: None,
-                    mode: None,
-                    ty: None,
-                    range: Range {
-                        start: Position {
-                            line: 15,
-                            character: 7,
-                        },
-                        end: Position {
-                            line: 15,
-                            character: 9,
-                        },
-                    },
+        rhs: MarkBranch {
+            lhs: SymbolPath(e4),
+            type: "$D",
+        },
+    },
+}
+AssignStatement {
+    id: "test4",
+    eq: "=",
+    rhs: Choice {
+        lhs: MarkBranch {
+            lhs: SymbolPath(e1),
+            type: "$A",
+        },
+        rhs: MarkBranch {
+            lhs: Choice {
+                lhs: Choice {
+                    lhs: SymbolPath(e2),
+                    rhs: SymbolPath(e3),
                 },
-                op: "|",
-                rhs: ChoiceTag {
-                    expr: Data::Identifier(
-                        "e4",
-                    ),
-                    tag: None,
-                    mode: None,
-                    ty: None,
-                    range: Range {
-                        start: Position {
-                            line: 15,
-                            character: 12,
-                        },
-                        end: Position {
-                            line: 15,
-                            character: 14,
-                        },
-                    },
-                },
+                rhs: SymbolPath(e4),
             },
-            tag: None,
-            mode: None,
-            ty: None,
-            range: Range {
-                start: Position {
-                    line: 15,
-                    character: 6,
-                },
-                end: Position {
-                    line: 15,
-                    character: 15,
-                },
+            type: "$B",
+        },
+    },
+}
+AssignStatement {
+    id: "test5",
+    eq: "=",
+    rhs: Choice {
+        lhs: MarkBranch {
+            lhs: Choice {
+                lhs: SymbolPath(e1),
+                rhs: SymbolPath(e2),
             },
+            type: "$A",
+        },
+        rhs: MarkBranch {
+            lhs: Choice {
+                lhs: SymbolPath(e3),
+                rhs: SymbolPath(e4),
+            },
+            type: "$B",
         },
     },
 }

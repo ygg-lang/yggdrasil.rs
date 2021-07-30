@@ -5,7 +5,7 @@ pub fn build_symbol(path: &SymbolPath) -> BareExpression {
     match path.symbol.len() {
         1 => unsafe { build_maybe_builtin(path.symbol.get_unchecked(0)) },
         // all symbol must link to eliminate scope at codegen
-        _ => unreachable!("Unlinked Symbol {:?}", path)
+        _ => unreachable!("Unlinked Symbol {:?}", path),
     }
 }
 

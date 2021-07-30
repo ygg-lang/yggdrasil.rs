@@ -9,7 +9,7 @@ impl Expression {
             Expression::MarkNode { lhs, rhs } => (lhs.range().0, rhs.range().1),
             Expression::MarkNodeShort(e) => (e.range().0 - 1, e.range().1),
             Expression::MarkType { lhs, rhs } => (lhs.range().0, rhs.range().1),
-            Expression::MarkBranch { lhs, name, .. } => (lhs.range().0, name.range.1),
+            Expression::MarkBranch { base, name, .. } => (base.range().0, name.range.1),
             Expression::MustNot(e) => (e.range().0 - 1, e.range().1),
             Expression::MustOne(e) => (e.range().0 - 1, e.range().1),
             Expression::Maybe(e) => (e.range().0, e.range().1 + 1),

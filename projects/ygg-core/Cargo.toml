@@ -29,13 +29,12 @@ anyhow = "1.0"
 ariadne = "0.1"
 # same as tower-lsp = "0.14"
 lsp-types = { version = "0.89", features = ["proposed"], optional = true }
-
+railroad = {version = "0.1", optional = true}
 lrpeg = {version = "0.4", git = "https://github.com/ygg-lang/lrpeg", optional = true}
 
 [features]
-default = ["lsp", "peg"]
+default = ["lsp", "lrpeg", "railroad"]
 lsp = ["lsp-types"]
-peg = ["lrpeg"]
 
 [dev-dependencies]
 

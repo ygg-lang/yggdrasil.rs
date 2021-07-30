@@ -101,7 +101,7 @@ impl Term {
         TermResolve.parse(&mut input.into_iter())
     }
     fn build_prefix(mut base: Expression, ops: Vec<Prefix>) -> Expression {
-        for op in ops.iter().rev() {
+        for op in ops.into_iter().rev() {
             match op.data {
                 '!' => base = Expression::MustNot(Box::new(base)),
                 '&' => base = Expression::MustOne(Box::new(base)),
@@ -113,7 +113,7 @@ impl Term {
         return base;
     }
     pub fn build_suffix(mut base: Expression, ops: Vec<TermNext>) -> Expression {
-        for op in ops.iter() {
+        for op in ops.into_iter() {
             match op {
                 TermNext::Suffix('?') => base = Expression::Maybe(Box::new(base)),
                 TermNext::Suffix('+') => base = Expression::ManyNonNull(Box::new(base)),
@@ -121,7 +121,13 @@ impl Term {
                 TermNext::Slice(_) => {
                     unimplemented!()
                 }
-                TermNext::Branch(BranchTag { kind, symbol, .. }) => base = Expression::MarkBranch { lhs: Box::new(base), kind: kind.unwrap_or('$'), name: symbol.clone() },
+                TermNext::Branch(BranchTag { kind, symbol, .. }) => {
+                    base = Expression::MarkBranch {
+                        base: Box::new(base),
+                        kind,
+                        name: symbol,
+                    }
+                }
                 _ => unreachable!(),
             }
         }

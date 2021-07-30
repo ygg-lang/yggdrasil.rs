@@ -90,8 +90,8 @@ pub enum Expression {
     },
     /// lhs #name
     MarkBranch {
-        lhs: Box<Expression>,
-        kind: char,
+        base: Box<Expression>,
+        kind: Option<char>,
         name: Symbol,
     },
     /// !rhs

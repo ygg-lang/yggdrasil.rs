@@ -75,10 +75,13 @@ impl Debug for Expression {
                 w.field("type", rhs);
                 w.finish()
             }
-            Expression::MarkBranch { lhs, kind, name } => {
+            Expression::MarkBranch { base: lhs, kind, name } => {
                 let w = &mut f.debug_struct("MarkBranch");
                 w.field("lhs", lhs);
-                w.field("type", &format!("{}${}", kind, name.data));
+                match kind {
+                    None => {w.field("type", &format!("${}", name.data));}
+                    Some(c) => {w.field("type", &format!("{}${}", c, name.data));}
+                }
                 w.finish()
             }
             Expression::MustNot(e) => f.debug_tuple("MustNot").field(e).finish(),

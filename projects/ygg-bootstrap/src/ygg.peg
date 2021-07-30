@@ -19,17 +19,17 @@ grammar_statement  <-
     grammar IGNORE <id:symbol> IGNORE "{" IGNORE (<ext:string> IGNORE ("," IGNORE <ext:string>)* IGNORE ","?)? IGNORE "}"
   / grammar IGNORE <id:symbol> IGNORE <ext:string>?
 ;
-grammar  <- "grammar!";
+grammar  <- "@grammar";
 
 fragment_statement <- fragment IGNORE <id:symbol>;
-fragment <- "fragment!";
+fragment <- "@fragment";
 
 
 import_statement  <-
     import IGNORE <path:string> IGNORE "{" IGNORE (<symbol_alias:symbol_alias> IGNORE ("," IGNORE <symbol_alias:symbol_alias>)* IGNORE ","?)? IGNORE "}"
   / import IGNORE <path:string>
 ;
-import  <- "import!";
+import  <- "@import";
 
 symbol_alias <- <from:symbol> (IGNORE "as" IGNORE <into:symbol>)?;
 
@@ -37,7 +37,7 @@ ignore_statement  <-
     ignore IGNORE <rules:symbol>
   / ignore IGNORE "{" IGNORE (<rules:symbol> IGNORE ("," IGNORE <rules:symbol>)* IGNORE ","?)? IGNORE "}"
 ;
-ignore  <- "ignore!";
+ignore  <- "@ignore";
 
 assign_statement  <- <id:symbol> (":" <ty:symbol>)? IGNORE <eq:assign_kind> IGNORE ("|"/"/")? IGNORE <rhs:expr>;
 assign_kind  <- ("^"/"_"/"@")* "=";

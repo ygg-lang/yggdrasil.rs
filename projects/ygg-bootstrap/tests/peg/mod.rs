@@ -12,11 +12,11 @@ pub fn peg_assert(input: &str, target: &str) {
 #[test]
 fn grammar() {
     let input = r#"
-grammar! ygg
-grammar! ygg "*.ygg";
-grammar! ygg { }
-grammar! ygg {"*.ygg",};
-fragment! ygg_ex;
+@grammar ygg
+@grammar ygg "*.ygg";
+@grammar ygg { }
+@grammar ygg {"*.ygg",};
+@fragment ygg_ex;
 "#;
     peg_assert(input, include_str!("grammar.yaml"))
 }
@@ -24,8 +24,8 @@ fragment! ygg_ex;
 #[test]
 fn ignore() {
     let input = r#"
-ignore! a;
-ignore! {a, b, c};
+@ignore a;
+@ignore {a, b, c};
 "#;
     peg_assert(input, include_str!("ignore.yaml"))
 }
@@ -33,8 +33,8 @@ ignore! {a, b, c};
 #[test]
 fn import() {
     let input = r#"
-import! ">root/"
-import! "@root/" {a, b as c, d}
+@import ">root/"
+@import "@root/" {a, b as c, d}
 "#;
     peg_assert(input, include_str!("import.yaml"))
 }
