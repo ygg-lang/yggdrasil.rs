@@ -2,30 +2,32 @@ use super::*;
 
 impl ExpressionNode {
     #[inline]
-    pub fn concat(lhs: Box<Expression>, rhs: Box<Expression>) -> Self {
-        Self { inline_token: false, tag: None, ty: None, field: None, node: RefinedExpression::concat(lhs, rhs) }
+    pub fn concat(lhs: Expression, rhs: Expression) -> Self {
+        let mut base = ExpressionNode::from(lhs).as_concat();
+        base.get_concat_mut().map(|e|e.add_assign( ExpressionNode::from(rhs)));
+        return base
     }
     #[inline]
-    pub fn soft_concat(lhs: Box<Expression>, rhs: Box<Expression>) -> Self {
-        Self { inline_token: false, tag: None, ty: None, field: None, node: RefinedExpression::soft_concat(lhs, rhs) }
+    pub fn soft_concat(lhs: Expression, rhs: Expression) -> Self {
+        let mut base = ExpressionNode::from(lhs).as_concat();
+        base.get_concat_mut().map(|e|e.bitand_assign( ExpressionNode::from(rhs)));
+        return base
+    }
+    fn as_concat(self) -> Self {
+        if let Some(_) = self.get_concat() { return self }
+        return  Self {
+            inline_token: false,
+            ty: None,
+            branch_tag: None,
+            node_tag: None,
+            node: RefinedExpression::concat(self)
+        }
     }
 }
 
 impl RefinedExpression {
-    pub fn concat(lhs: Box<Expression>, rhs: Box<Expression>) -> Self {
-        unimplemented!()
-    }
-    pub fn soft_concat(lhs: Box<Expression>, rhs: Box<Expression>) -> Self {
-        unimplemented!()
-    }
-}
-
-impl From<ExpressionNode> for RefinedConcat {
-    fn from(e: ExpressionNode) -> Self {
-        match e.get_concat() {
-            Some(s) => Self { base: s.base, rest: vec![] },
-            None => Self { base: e, rest: vec![] },
-        }
+    pub fn concat(base: ExpressionNode) -> Self {
+        Self::Concat(Box::new(RefinedConcat{ base, rest: vec![] }))
     }
 }
 

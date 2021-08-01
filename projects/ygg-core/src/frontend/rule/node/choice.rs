@@ -3,7 +3,7 @@ use super::*;
 impl ExpressionNode {
     #[inline]
     pub fn choice(lhs: Box<Expression>, rhs: Box<Expression>) -> Self {
-        Self { inline_token: false, tag: None, ty: None, field: None, node: RefinedExpression::choice(lhs, rhs) }
+        Self { inline_token: false, branch_tag: None, ty: None, node_tag: None, node: RefinedExpression::choice(lhs, rhs) }
     }
 }
 

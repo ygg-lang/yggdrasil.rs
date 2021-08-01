@@ -1,3 +1,5 @@
+use lsp_types::Range;
+use yggdrasil_bootstrap::ast::Symbol;
 use super::*;
 
 impl GrammarState {

@@ -1,7 +1,9 @@
-use super::*;
+use crate::frontend::rule::*;
 use crate::{frontend::GrammarState, manager::HintItems};
 use lsp_types::{DocumentSymbol, SymbolKind};
 use std::mem::transmute;
+use crate::Result;
+
 
 mod builtin;
 mod fuse;

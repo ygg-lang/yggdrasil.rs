@@ -1,7 +1,7 @@
 use super::*;
 
 const UNARY_FUSION: &str = r#"
-grammar! unary
+@grammar unary
 test1 = e1?;
 test2 = e1+;
 test3 = e1*;
@@ -23,7 +23,7 @@ fn test_unary() -> Result<()> {
 }
 
 const OR_FUSION: &str = r#"
-grammar! or
+@grammar or
 test1 = a | a
 test2 = a | b | b
 test3 = 0 | 0
@@ -42,7 +42,7 @@ fn test_or_fusion() -> Result<()> {
 }
 
 const STRING_FUSION: &str = r#"
-grammar! string
+@grammar string
 test1 = 0 | "0" | "1"
 test2 = "a" | "a" | "b"
 "#;

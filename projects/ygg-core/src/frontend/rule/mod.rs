@@ -1,66 +1,69 @@
-use self::remap::{Keys, Map, Values};
+use std::{fmt::Debug, mem::swap};
+
+use convert_case::{Case, Casing};
+use lsp_types::{Range, Url};
+
+use yggdrasil_bootstrap::{
+    ast::{AssignStatement, Program, Statement, StringLiteral, Symbol},
+    Result,
+    shared::records::LineBreaks,
+};
+
+use crate::manager::HintItems;
+
 pub use self::{
     from_ast::{FilePosition, Translator},
     node::*,
 };
-use crate::manager::HintItems;
-use convert_case::{Case, Casing};
-use lsp_types::{Range, Url};
-use std::{fmt::Debug, mem::swap};
-use yggdrasil_bootstrap::{
-    ast::{AssignStatement, Program, Statement, StringLiteral, Symbol},
-    shared::records::LineBreaks,
-    Result,
-};
+use self::remap::{Keys, Map, Values};
 
 mod from_ast;
 mod hints;
 mod node;
-mod optimize;
 
 // used for ide hint
 #[cfg(debug_assertions)]
 mod remap {
-    pub type Map<K, V> = std::collections::HashMap<K, V>;
-
     pub use std::collections::hash_map::{Keys, Values};
+
+    pub type Map<K, V> = std::collections::HashMap<K, V>;
 }
 
 #[cfg(not(debug_assertions))]
 mod remap {
-    pub type Map<K, V> = indexmap::IndexMap<K, V>;
-
     pub use indexmap::map::{Keys, Values};
+
+    pub type Map<K, V> = indexmap::IndexMap<K, V>;
 }
 
 #[derive(Clone, Debug)]
 pub struct GrammarState {
-    url: Url,
-    text: String,
-    is_grammar: bool,
-    name: Symbol,
-    extensions: Vec<StringLiteral>,
-    ignores: Vec<Symbol>,
+    pub(crate) url: Url,
+    pub(crate) text: String,
+    pub(crate) is_grammar: bool,
+    pub(crate) name: Symbol,
+    pub(crate) extensions: Vec<StringLiteral>,
+    pub(crate) ignores: Vec<Symbol>,
     pub(crate) rule_map: Map<String, Rule>,
 }
 
 #[derive(Clone)]
 pub struct Rule {
     ///
-    name: Symbol,
+    pub(crate) name: Symbol,
     ///
-    ty: Symbol,
+    pub(crate) ty: Symbol,
     ///
-    doc: String,
+    pub(crate) doc: String,
     ///
-    force_inline: bool,
+    pub(crate) force_inline: bool,
     /// Eliminate unnamed nodes
     /// ```ygg
     /// name <- expr
     /// ^expr
     /// ```
-    already_inline: bool,
-    eliminate_unmarked: bool,
+    pub(crate) already_inline: bool,
+    pub(crate) eliminate_unmarked: bool,
     /// Eliminate unnamed nodes
     /// ```ygg
     /// "string"
@@ -68,11 +71,11 @@ pub struct Rule {
     /// [0-9a-z]
     /// 012345
     /// ```
-    eliminate_unnamed: bool,
+    pub(crate) eliminate_unnamed: bool,
     ///
     pub(crate) expression: ExpressionNode,
     /// position of all parts
-    range: (usize, usize),
+    pub(crate) range: (usize, usize),
 }
 
 impl GrammarState {

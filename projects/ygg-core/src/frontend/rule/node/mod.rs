@@ -1,5 +1,5 @@
 use crate::frontend::rule::Rule;
-pub use set::Set;
+pub use self::remap::Set;
 use std::{
     fmt::{Debug, Formatter},
     ops::{AddAssign, BitAndAssign},
@@ -14,7 +14,7 @@ mod unary;
 
 // used for ide hint
 #[cfg(debug_assertions)]
-mod set {
+mod remap {
     pub type Set<V> = std::collections::HashSet<V>;
 }
 #[cfg(not(debug_assertions))]
@@ -25,15 +25,15 @@ mod remap {
 #[derive(Clone, Eq, PartialEq, Hash)]
 pub struct ExpressionNode {
     pub inline_token: bool,
-    pub tag: Option<ExpressionTag>,
     pub ty: Option<Symbol>,
-    pub field: Option<Symbol>,
+    pub branch_tag: Option<ExpressionTag>,
+    pub node_tag: Option<Symbol>,
     pub node: RefinedExpression,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct ExpressionTag {
-    pub tag: Symbol,
+    pub name: Symbol,
     pub mode: String,
 }
 

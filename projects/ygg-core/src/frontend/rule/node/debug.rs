@@ -18,12 +18,12 @@ impl Debug for Rule {
 impl Debug for ExpressionNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let w = &mut f.debug_struct("ExpressionNode");
-        if let Some(s) = &self.tag {
-            w.field("tag", &s.tag.data);
-            w.field("tag_mode", &s.mode);
+        if let Some(s) = &self.branch_tag {
+            w.field("branch_tag", &s.name.data);
+            w.field("branch_mode", &s.mode);
         }
-        if let Some(s) = &self.field {
-            w.field("field", &s.data);
+        if let Some(s) = &self.node_tag {
+            w.field("node_tag", &s.data);
         }
         if let Some(s) = &self.ty {
             w.field("type", &s.data);

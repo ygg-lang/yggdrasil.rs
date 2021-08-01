@@ -3,7 +3,7 @@ use std::hash::{Hash, Hasher};
 
 impl ExpressionNode {
     pub fn has_meta(&self) -> bool {
-        self.field.is_some()
+        self.node_tag.is_some()
     }
     pub fn is_choice(&self) -> bool {
         matches!(self.node, RefinedExpression::Choice(_))
@@ -23,6 +23,12 @@ impl ExpressionNode {
             _ => None,
         }
     }
+    pub fn get_concat_mut(&mut self) -> Option<&mut RefinedConcat> {
+        match &mut self.node {
+            RefinedExpression::Concat(c) => Some(c.as_mut()),
+            _ => None,
+        }
+    }
     pub fn get_choice(&self) -> Option<RefinedChoice> {
         match self.to_owned().node {
             RefinedExpression::Choice(c) => Some(*c),
@@ -35,16 +41,10 @@ impl ExpressionNode {
             _ => None,
         }
     }
-}
-
-impl ExpressionTag {
-    pub fn new(tag: Symbol, mode: Option<String>) -> Self {
-        Self { tag, mode: mode.unwrap_or_default() }
-    }
-    pub fn new_optional(tag: Option<Symbol>, mode: Option<String>) -> Option<Self> {
-        match tag {
-            Some(s) => Some(Self::new(s, mode)),
-            None => None,
+    pub fn get_unary_mut(&mut self) -> Option<&mut RefinedUnary> {
+        match &mut self.node {
+            RefinedExpression::Unary(c) => Some(c.as_mut()),
+            _ => None,
         }
     }
 }
@@ -54,15 +54,15 @@ impl From<Expression> for ExpressionNode {
         match raw {
             Expression::Data(e) => Self::from(e),
             Expression::Concat { is_soft, lhs, rhs } => match is_soft {
-                true => Self::soft_concat(lhs, rhs),
-                false => Self::concat(lhs, rhs),
+                true => Self::soft_concat(*lhs, *rhs),
+                false => Self::concat(*lhs, *rhs),
             },
             Expression::Choice { lhs, rhs } => Self::choice(lhs, rhs),
-            Expression::MarkNode { .. } => {
-                unimplemented!()
+            Expression::MarkNode { lhs, rhs } => {
+                Self::mark_node(*lhs, *rhs)
             }
-            Expression::MarkNodeShort(_) => {
-                unimplemented!()
+            Expression::MarkNodeShort(s) => {
+                Self::mark_node(*s.clone(), *s)
             }
             Expression::MarkType { .. } => {
                 unimplemented!()
@@ -73,17 +73,17 @@ impl From<Expression> for ExpressionNode {
             Expression::MustOne(_) => {
                 unimplemented!()
             }
-            Expression::Maybe(_) => {
-                unimplemented!()
+            Expression::Maybe(e) => {
+                Self::suffix(*e, "?")
             }
-            Expression::Many(_) => {
-                unimplemented!()
+            Expression::Many(e) => {
+                Self::suffix(*e, "*")
             }
-            Expression::ManyNonNull(_) => {
-                unimplemented!()
+            Expression::ManyNonNull(e) => {
+                Self::suffix(*e, "+")
             }
-            Expression::MarkBranch { .. } => {
-                unimplemented!()
+            Expression::MarkBranch { base, kind, name } => {
+                Self::mark_branch(*base, kind, name)
             }
         }
     }
@@ -91,7 +91,7 @@ impl From<Expression> for ExpressionNode {
 
 impl From<Data> for ExpressionNode {
     fn from(e: Data) -> Self {
-        Self { inline_token: false, tag: None, ty: None, field: None, node: RefinedExpression::Data(box RefinedData::from(e)) }
+        Self { inline_token: false, branch_tag: None, ty: None, node_tag: None, node: RefinedExpression::Data(box RefinedData::from(e)) }
     }
 }
 

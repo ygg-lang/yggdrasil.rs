@@ -8,23 +8,17 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: e1,
+                base: SymbolPath(e1),
             },
             operations: [
                 Optional?,
             ],
         },
     },
-    range: Range {
-        start: Position {
-            line: 2,
-            character: 0,
-        },
-        end: Position {
-            line: 2,
-            character: 12,
-        },
-    },
+    range: (
+        16,
+        27,
+    ),
 }
 Rule {
     name: "test2",
@@ -36,23 +30,17 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: e1,
+                base: SymbolPath(e1),
             },
             operations: [
                 Repeats*,
             ],
         },
     },
-    range: Range {
-        start: Position {
-            line: 3,
-            character: 0,
-        },
-        end: Position {
-            line: 3,
-            character: 12,
-        },
-    },
+    range: (
+        29,
+        40,
+    ),
 }
 Rule {
     name: "test3",
@@ -64,23 +52,17 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: e1,
+                base: SymbolPath(e1),
             },
             operations: [
                 RepeatsNonnull+,
             ],
         },
     },
-    range: Range {
-        start: Position {
-            line: 4,
-            character: 0,
-        },
-        end: Position {
-            line: 4,
-            character: 12,
-        },
-    },
+    range: (
+        42,
+        53,
+    ),
 }
 Rule {
     name: "test4",
@@ -90,25 +72,13 @@ Rule {
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
-        base: Unary {
-            base: ExpressionNode {
-                base: e1,
-            },
-            operations: [
-                ^MarkSymbol,
-            ],
-        },
+        node_tag: "e1",
+        base: SymbolPath(e1),
     },
-    range: Range {
-        start: Position {
-            line: 5,
-            character: 0,
-        },
-        end: Position {
-            line: 5,
-            character: 12,
-        },
-    },
+    range: (
+        55,
+        66,
+    ),
 }
 Rule {
     name: "test5",
@@ -120,24 +90,17 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: e1,
+                base: SymbolPath(e1),
             },
             operations: [
                 Repeats*,
-                ^MarkSymbol,
             ],
         },
     },
-    range: Range {
-        start: Position {
-            line: 6,
-            character: 0,
-        },
-        end: Position {
-            line: 6,
-            character: 13,
-        },
-    },
+    range: (
+        68,
+        80,
+    ),
 }
 Rule {
     name: "test6",
@@ -149,7 +112,7 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: e1,
+                base: SymbolPath(e1),
             },
             operations: [
                 Repeats*,
@@ -157,16 +120,10 @@ Rule {
             ],
         },
     },
-    range: Range {
-        start: Position {
-            line: 8,
-            character: 0,
-        },
-        end: Position {
-            line: 8,
-            character: 13,
-        },
-    },
+    range: (
+        83,
+        95,
+    ),
 }
 Rule {
     name: "test7",
@@ -178,7 +135,7 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: e1,
+                base: SymbolPath(e1),
             },
             operations: [
                 Repeats*,
@@ -186,16 +143,10 @@ Rule {
             ],
         },
     },
-    range: Range {
-        start: Position {
-            line: 9,
-            character: 0,
-        },
-        end: Position {
-            line: 9,
-            character: 13,
-        },
-    },
+    range: (
+        97,
+        109,
+    ),
 }
 Rule {
     name: "test8",
@@ -207,7 +158,7 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: e1,
+                base: SymbolPath(e1),
             },
             operations: [
                 Optional?,
@@ -215,16 +166,10 @@ Rule {
             ],
         },
     },
-    range: Range {
-        start: Position {
-            line: 10,
-            character: 0,
-        },
-        end: Position {
-            line: 10,
-            character: 13,
-        },
-    },
+    range: (
+        111,
+        123,
+    ),
 }
 Rule {
     name: "test9",
@@ -236,25 +181,18 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: e1,
+                base: SymbolPath(e1),
             },
             operations: [
                 Optional?,
-                ^MarkSymbol,
                 Repeats*,
             ],
         },
     },
-    range: Range {
-        start: Position {
-            line: 11,
-            character: 0,
-        },
-        end: Position {
-            line: 11,
-            character: 16,
-        },
-    },
+    range: (
+        125,
+        140,
+    ),
 }
 Rule {
     name: "test10",
@@ -270,22 +208,21 @@ Rule {
                     ExpressionNode {
                         base: Unary {
                             base: ExpressionNode {
-                                base: e1,
+                                base: SymbolPath(e1),
                             },
                             operations: [
                                 Optional?,
-                                ^MarkSymbol,
                             ],
                         },
                     },
+                    ' ',
                     ExpressionNode {
                         base: Unary {
                             base: ExpressionNode {
-                                base: e2,
+                                base: SymbolPath(e2),
                             },
                             operations: [
                                 RepeatsNonnull+,
-                                ^MarkSymbol,
                             ],
                         },
                     },
@@ -296,16 +233,10 @@ Rule {
             ],
         },
     },
-    range: Range {
-        start: Position {
-            line: 13,
-            character: 0,
-        },
-        end: Position {
-            line: 13,
-            character: 23,
-        },
-    },
+    range: (
+        143,
+        167,
+    ),
 }
 Rule {
     name: "test11",
@@ -321,22 +252,21 @@ Rule {
                     ExpressionNode {
                         base: Unary {
                             base: ExpressionNode {
-                                base: e1,
+                                base: SymbolPath(e1),
                             },
                             operations: [
                                 Optional?,
-                                ^MarkSymbol,
                             ],
                         },
                     },
+                    ' ',
                     ExpressionNode {
                         base: Unary {
                             base: ExpressionNode {
-                                base: e2,
+                                base: SymbolPath(e2),
                             },
                             operations: [
                                 Repeats*,
-                                ^MarkSymbol,
                             ],
                         },
                     },
@@ -347,14 +277,8 @@ Rule {
             ],
         },
     },
-    range: Range {
-        start: Position {
-            line: 14,
-            character: 0,
-        },
-        end: Position {
-            line: 14,
-            character: 23,
-        },
-    },
+    range: (
+        167,
+        191,
+    ),
 }

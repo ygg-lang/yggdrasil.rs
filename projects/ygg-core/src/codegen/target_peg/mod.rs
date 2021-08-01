@@ -41,8 +41,8 @@ impl GrammarState {
 
 impl ExpressionNode {
     pub fn build_peg(&self) -> Expression {
-        let label = self.field.as_ref().map(|e| e.data.to_owned());
-        let alt = self.field.as_ref().map(|e| e.data.to_owned());
+        let label = self.node_tag.as_ref().map(|e| e.data.to_owned());
+        let alt = self.node_tag.as_ref().map(|e| e.data.to_owned());
         Expression { label, alt, expr: self.node.build_peg() }
     }
 }
