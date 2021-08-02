@@ -88,6 +88,7 @@ Rule {
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
+        node_tag: "e1",
         base: Unary {
             base: Data {
                 data: SymbolPath(e1),
@@ -179,6 +180,7 @@ Rule {
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
+        node_tag: "e1",
         base: Unary {
             base: Data {
                 data: SymbolPath(e1),
@@ -206,6 +208,7 @@ Rule {
             base: ExpressionNode {
                 base: Concat [
                     ExpressionNode {
+                        node_tag: "e1",
                         base: Unary {
                             base: Data {
                                 data: SymbolPath(e1),
@@ -217,6 +220,7 @@ Rule {
                     },
                     '~',
                     ExpressionNode {
+                        node_tag: "e2",
                         base: Unary {
                             base: Data {
                                 data: SymbolPath(e2),
@@ -250,6 +254,7 @@ Rule {
             base: ExpressionNode {
                 base: Concat [
                     ExpressionNode {
+                        node_tag: "e1",
                         base: Unary {
                             base: Data {
                                 data: SymbolPath(e1),
@@ -261,6 +266,7 @@ Rule {
                     },
                     '~',
                     ExpressionNode {
+                        node_tag: "e2",
                         base: Unary {
                             base: Data {
                                 data: SymbolPath(e2),

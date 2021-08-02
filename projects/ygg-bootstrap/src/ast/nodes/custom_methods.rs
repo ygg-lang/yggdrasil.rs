@@ -20,6 +20,7 @@ impl Expression {
     pub fn as_data(self) -> Option<Data> {
         match self {
             Expression::Data(e) => Some(e),
+            Expression::Maybe(e)| Expression::Many(e)| Expression::ManyNonNull(e) => e.as_data(),
             _ => None,
         }
     }
