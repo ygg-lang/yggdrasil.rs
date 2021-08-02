@@ -3,7 +3,6 @@ pub use self::{
     typing::GrammarType,
 };
 
+mod optimize;
 pub mod rule;
 pub mod typing;
-mod optimize;
-

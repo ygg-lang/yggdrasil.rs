@@ -57,9 +57,8 @@ pub fn assert_codegen(text: &str, target: &str) -> Result<()> {
     let file = FilePosition::new(text, &EXAMPLE_URL);
     let mut parser = YggParser::default();
     let mut grammar = parser.parse_program(text)?.translate(&file)?.0;
-
-    let out = grammar.optimize_local()?;
-    // let out = grammar.build_input_grammar();
-    assert_eq!(format!("{:#?}", out), target);
+    let _hint = grammar.optimize_local()?;
+    let (gr, ge) = grammar.build_peg();
+    assert_eq!(format!("{:#?}\n{:#?}", gr, ge), target);
     Ok(())
 }

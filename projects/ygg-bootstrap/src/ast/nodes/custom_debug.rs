@@ -79,8 +79,12 @@ impl Debug for Expression {
                 let w = &mut f.debug_struct("MarkBranch");
                 w.field("lhs", lhs);
                 match kind {
-                    None => {w.field("type", &format!("${}", name.data));}
-                    Some(c) => {w.field("type", &format!("{}${}", c, name.data));}
+                    None => {
+                        w.field("type", &format!("${}", name.data));
+                    }
+                    Some(c) => {
+                        w.field("type", &format!("{}${}", c, name.data));
+                    }
                 }
                 w.finish()
             }

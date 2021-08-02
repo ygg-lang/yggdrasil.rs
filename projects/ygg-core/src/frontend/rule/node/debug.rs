@@ -17,7 +17,12 @@ impl Debug for Rule {
 
 impl Debug for ExpressionNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let w = &mut f.debug_struct("ExpressionNode");
+        let w = &mut match &self.node {
+            RefinedExpression::Data(_) => {f.debug_struct("Data")}
+            RefinedExpression::Unary(_) => {f.debug_struct("ExpressionNode")}
+            RefinedExpression::Choice(_) => {f.debug_struct("ExpressionNode")}
+            RefinedExpression::Concat(_) => {f.debug_struct("ExpressionNode")}
+        };
         if let Some(s) = &self.branch_tag {
             w.field("branch_tag", &s.name.data);
             w.field("branch_mode", &s.mode);
@@ -31,7 +36,12 @@ impl Debug for ExpressionNode {
         if self.inline_token {
             w.field("inline_token", &true);
         }
-        w.field("base", &self.node);
+        match &self.node {
+            RefinedExpression::Data(e) => {w.field("data", e)}
+            RefinedExpression::Unary(_) => {w.field("base", &self.node)}
+            RefinedExpression::Choice(_) => {w.field("base", &self.node)}
+            RefinedExpression::Concat(_) => {w.field("base", &self.node)}
+        };
         w.finish()
     }
 }
@@ -49,14 +59,14 @@ impl Debug for RefinedExpression {
 
 impl Debug for RefinedChoice {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.write_str("Choice")?;
+        f.write_str("Choice ")?;
         f.debug_list().entries(self.inner.iter()).finish()
     }
 }
 
 impl Debug for RefinedConcat {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.write_str("Concat")?;
+        f.write_str("Concat ")?;
         let w = &mut f.debug_list();
         w.entry(&self.base);
         for (is_soft, expr) in self.rest.iter() {

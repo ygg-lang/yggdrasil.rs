@@ -19,24 +19,23 @@ impl Expression {
     }
     pub fn as_data(self) -> Option<Data> {
         match self {
-            Expression::Data(e) => {Some(e)}
-            _ => None
+            Expression::Data(e) => Some(e),
+            _ => None,
         }
     }
     pub fn as_symbol_path(self) -> Option<SymbolPath> {
         match self.as_data() {
-            Some(Data::Symbol(s)) => {Some(s)},
-            _ => None
+            Some(Data::Symbol(s)) => Some(s),
+            _ => None,
         }
     }
     pub fn as_symbol(self) -> Option<Symbol> {
-        let mut symbols = self.as_symbol_path().map(|e|e.symbol).unwrap_or_default();
+        let mut symbols = self.as_symbol_path().map(|e| e.symbol).unwrap_or_default();
         match symbols.len() {
-            1 => {Some(symbols.remove(0))},
-            _ => None
+            1 => Some(symbols.remove(0)),
+            _ => None,
         }
     }
-
 }
 
 impl Data {

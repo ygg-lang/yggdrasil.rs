@@ -1,5 +1,5 @@
-use crate::frontend::rule::Rule;
 pub use self::remap::Set;
+use crate::frontend::rule::Rule;
 use std::{
     fmt::{Debug, Formatter},
     ops::{AddAssign, BitAndAssign},

@@ -5,17 +5,17 @@ use lsp_types::{Range, Url};
 
 use yggdrasil_bootstrap::{
     ast::{AssignStatement, Program, Statement, StringLiteral, Symbol},
-    Result,
     shared::records::LineBreaks,
+    Result,
 };
 
 use crate::manager::HintItems;
 
+use self::remap::{Keys, Map, Values};
 pub use self::{
     from_ast::{FilePosition, Translator},
     node::*,
 };
-use self::remap::{Keys, Map, Values};
 
 mod from_ast;
 mod hints;

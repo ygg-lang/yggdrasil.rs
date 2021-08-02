@@ -1,5 +1,4 @@
-use railroad;
-use railroad::{DEFAULT_CSS, Diagram, End, NonTerminal, Sequence, Start, svg, Terminal};
+use railroad::{self, svg, Diagram, End, NonTerminal, Sequence, Start, Terminal, DEFAULT_CSS};
 
 #[test]
 fn test() {
@@ -11,10 +10,7 @@ fn test() {
 
     let mut dia = Diagram::new(seq);
 
-    dia.add_element(svg::Element::new("style")
-        .set("type", "text/css")
-        .text(DEFAULT_CSS));
+    dia.add_element(svg::Element::new("style").set("type", "text/css").text(DEFAULT_CSS));
 
     println!("{}", dia);
 }
-

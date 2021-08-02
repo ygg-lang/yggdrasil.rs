@@ -2,17 +2,24 @@ use super::*;
 
 impl ExpressionNode {
     #[inline]
-    pub fn choice(lhs: Box<Expression>, rhs: Box<Expression>) -> Self {
-        Self { inline_token: false, branch_tag: None, ty: None, node_tag: None, node: RefinedExpression::choice(lhs, rhs) }
+    pub fn choice(lhs: Expression, rhs: Expression) -> Self {
+        let mut base = ExpressionNode::from(lhs).as_choice();
+        base.get_choice_mut().map(|e| e.add_assign(ExpressionNode::from(rhs)));
+        return base;
+    }
+    fn as_choice(self) -> Self {
+        if let Some(_) = self.get_choice() {
+            return self;
+        }
+        return Self { inline_token: false, ty: None, branch_tag: None, node_tag: None, node: RefinedExpression::concat(self) };
     }
 }
 
 impl RefinedExpression {
-    pub fn choice(lhs: Box<Expression>, rhs: Box<Expression>) -> Self {
-        let mut base = RefinedChoice::from(*lhs);
-        base += *rhs;
-        unimplemented!("{:#?}", base);
-        Self::Choice(Box::new(base))
+    pub fn choice(base: ExpressionNode) -> Self {
+        let mut inner =  Set::default();
+        inner.insert(base);
+        Self::Choice(Box::new(RefinedChoice { inner }))
     }
 }
 
@@ -45,11 +52,5 @@ impl AddAssign<ExpressionNode> for RefinedChoice {
                 self.inner.insert(rhs);
             }
         };
-    }
-}
-
-impl AddAssign<Expression> for RefinedChoice {
-    fn add_assign(&mut self, rhs: Expression) {
-        self.add_assign(ExpressionNode::from(rhs))
     }
 }

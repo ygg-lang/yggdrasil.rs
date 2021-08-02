@@ -1,6 +1,6 @@
+use super::*;
 use lsp_types::Range;
 use yggdrasil_bootstrap::ast::Symbol;
-use super::*;
 
 impl GrammarState {
     pub fn report_meta(&self) -> HintItems {

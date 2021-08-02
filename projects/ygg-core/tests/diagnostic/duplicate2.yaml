@@ -3,12 +3,12 @@ HintItems {
         Diagnostic {
             range: Range {
                 start: Position {
-                    line: 3,
-                    character: 0,
+                    line: 2,
+                    character: 3,
                 },
                 end: Position {
-                    line: 3,
-                    character: 12,
+                    line: 2,
+                    character: 16,
                 },
             },
             severity: Some(
@@ -41,12 +41,12 @@ HintItems {
                             },
                             range: Range {
                                 start: Position {
-                                    line: 1,
-                                    character: 0,
+                                    line: 0,
+                                    character: 1,
                                 },
                                 end: Position {
-                                    line: 1,
-                                    character: 4,
+                                    line: 0,
+                                    character: 5,
                                 },
                             },
                         },

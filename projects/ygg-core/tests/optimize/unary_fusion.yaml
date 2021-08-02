@@ -7,8 +7,8 @@ Rule {
     eliminate_unnamed: false,
     expression: ExpressionNode {
         base: Unary {
-            base: ExpressionNode {
-                base: SymbolPath(e1),
+            base: Data {
+                data: SymbolPath(e1),
             },
             operations: [
                 Optional?,
@@ -29,8 +29,8 @@ Rule {
     eliminate_unnamed: false,
     expression: ExpressionNode {
         base: Unary {
-            base: ExpressionNode {
-                base: SymbolPath(e1),
+            base: Data {
+                data: SymbolPath(e1),
             },
             operations: [
                 Repeats*,
@@ -51,8 +51,8 @@ Rule {
     eliminate_unnamed: false,
     expression: ExpressionNode {
         base: Unary {
-            base: ExpressionNode {
-                base: SymbolPath(e1),
+            base: Data {
+                data: SymbolPath(e1),
             },
             operations: [
                 RepeatsNonnull+,
@@ -71,9 +71,9 @@ Rule {
     already_inline: false,
     eliminate_unmarked: false,
     eliminate_unnamed: false,
-    expression: ExpressionNode {
+    expression: Data {
         node_tag: "e1",
-        base: SymbolPath(e1),
+        data: SymbolPath(e1),
     },
     range: (
         55,
@@ -89,8 +89,8 @@ Rule {
     eliminate_unnamed: false,
     expression: ExpressionNode {
         base: Unary {
-            base: ExpressionNode {
-                base: SymbolPath(e1),
+            base: Data {
+                data: SymbolPath(e1),
             },
             operations: [
                 Repeats*,
@@ -111,8 +111,8 @@ Rule {
     eliminate_unnamed: false,
     expression: ExpressionNode {
         base: Unary {
-            base: ExpressionNode {
-                base: SymbolPath(e1),
+            base: Data {
+                data: SymbolPath(e1),
             },
             operations: [
                 Repeats*,
@@ -134,8 +134,8 @@ Rule {
     eliminate_unnamed: false,
     expression: ExpressionNode {
         base: Unary {
-            base: ExpressionNode {
-                base: SymbolPath(e1),
+            base: Data {
+                data: SymbolPath(e1),
             },
             operations: [
                 Repeats*,
@@ -157,8 +157,8 @@ Rule {
     eliminate_unnamed: false,
     expression: ExpressionNode {
         base: Unary {
-            base: ExpressionNode {
-                base: SymbolPath(e1),
+            base: Data {
+                data: SymbolPath(e1),
             },
             operations: [
                 Optional?,
@@ -180,8 +180,8 @@ Rule {
     eliminate_unnamed: false,
     expression: ExpressionNode {
         base: Unary {
-            base: ExpressionNode {
-                base: SymbolPath(e1),
+            base: Data {
+                data: SymbolPath(e1),
             },
             operations: [
                 Optional?,
@@ -204,22 +204,22 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: Concat[
+                base: Concat [
                     ExpressionNode {
                         base: Unary {
-                            base: ExpressionNode {
-                                base: SymbolPath(e1),
+                            base: Data {
+                                data: SymbolPath(e1),
                             },
                             operations: [
                                 Optional?,
                             ],
                         },
                     },
-                    ' ',
+                    '~',
                     ExpressionNode {
                         base: Unary {
-                            base: ExpressionNode {
-                                base: SymbolPath(e2),
+                            base: Data {
+                                data: SymbolPath(e2),
                             },
                             operations: [
                                 RepeatsNonnull+,
@@ -248,22 +248,22 @@ Rule {
     expression: ExpressionNode {
         base: Unary {
             base: ExpressionNode {
-                base: Concat[
+                base: Concat [
                     ExpressionNode {
                         base: Unary {
-                            base: ExpressionNode {
-                                base: SymbolPath(e1),
+                            base: Data {
+                                data: SymbolPath(e1),
                             },
                             operations: [
                                 Optional?,
                             ],
                         },
                     },
-                    ' ',
+                    '~',
                     ExpressionNode {
                         base: Unary {
-                            base: ExpressionNode {
-                                base: SymbolPath(e2),
+                            base: Data {
+                                data: SymbolPath(e2),
                             },
                             operations: [
                                 Repeats*,

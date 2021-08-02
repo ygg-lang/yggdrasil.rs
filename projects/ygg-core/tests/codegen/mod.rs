@@ -1,7 +1,7 @@
 use super::*;
 
 const UNARY: &str = r#"
-grammar! unary
+@grammar unary
 test1 = e1?;
 test2 = e1+;
 test3 = e1*;

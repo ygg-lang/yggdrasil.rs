@@ -11,7 +11,7 @@ fn test_gen(text: &str) -> Result<String> {
     let file = FilePosition::new(text, &url);
     let mut parser = YggParser::default();
     let state = parser.parse_program(text)?.translate(&file)?.0;
-    Ok(state.build_peg())
+    Ok(state.build_peg_code())
 }
 
 #[test]

@@ -1,48 +1,84 @@
-InputGrammar {
-    name: "unary",
-    variables: [
-        Variable {
+Grammar {
+    lookup: {},
+    definitions: [
+        Definition {
             name: "test1",
-            kind: Named,
-            rule: Repeat(
-                NamedSymbol(
+            sequence: Expression {
+                label: None,
+                alt: None,
+                expr: StringLiteral(
                     "e1",
                 ),
-            ),
+            },
         },
-        Variable {
+        Definition {
             name: "test2",
-            kind: Named,
-            rule: Repeat(
-                NamedSymbol(
+            sequence: Expression {
+                label: None,
+                alt: None,
+                expr: StringLiteral(
                     "e1",
                 ),
-            ),
+            },
         },
-        Variable {
+        Definition {
             name: "test3",
-            kind: Named,
-            rule: Repeat(
-                NamedSymbol(
+            sequence: Expression {
+                label: None,
+                alt: None,
+                expr: StringLiteral(
                     "e1",
                 ),
-            ),
+            },
         },
-        Variable {
+        Definition {
             name: "test4",
-            kind: Named,
-            rule: NamedSymbol(
-                "e1",
-            ),
+            sequence: Expression {
+                label: Some(
+                    "e1",
+                ),
+                alt: Some(
+                    "e1",
+                ),
+                expr: StringLiteral(
+                    "e1",
+                ),
+            },
         },
     ],
-    extra_symbols: [],
-    expected_conflicts: [],
-    precedence_orderings: [],
-    external_tokens: [],
-    variables_to_inline: [],
-    supertype_symbols: [],
-    word_token: Some(
-        "id",
-    ),
+}
+Generator {
+    symbols: {
+        "test2",
+        "XID_IDENTIFIER",
+        "test1",
+        "EOI",
+        "test4",
+        "test3",
+        "Dot",
+        "WHITESPACE",
+        "e1",
+        "e1_0",
+    },
+    builtins: {},
+    terminals: {
+        Expression {
+            label: None,
+            alt: None,
+            expr: StringLiteral(
+                "e1",
+            ),
+        }: "e1",
+        Expression {
+            label: Some(
+                "e1",
+            ),
+            alt: Some(
+                "e1",
+            ),
+            expr: StringLiteral(
+                "e1",
+            ),
+        }: "e1_0",
+    },
 }

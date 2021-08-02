@@ -5,19 +5,13 @@ Rule {
     already_inline: false,
     eliminate_unmarked: false,
     eliminate_unnamed: false,
-    expression: ExpressionNode {
-        base: a,
+    expression: Data {
+        data: SymbolPath(a),
     },
-    range: Range {
-        start: Position {
-            line: 2,
-            character: 0,
-        },
-        end: Position {
-            line: 2,
-            character: 13,
-        },
-    },
+    range: (
+        13,
+        27,
+    ),
 }
 Rule {
     name: "test2",
@@ -27,32 +21,16 @@ Rule {
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
-        base: Choice[
-            ExpressionNode {
-                base: Choice[
-                    ExpressionNode {
-                        base: a,
-                    },
-                    ExpressionNode {
-                        base: b,
-                    },
-                ],
-            },
-            ExpressionNode {
-                base: b,
+        base: Concat [
+            Data {
+                data: SymbolPath(a),
             },
         ],
     },
-    range: Range {
-        start: Position {
-            line: 3,
-            character: 0,
-        },
-        end: Position {
-            line: 3,
-            character: 17,
-        },
-    },
+    range: (
+        27,
+        45,
+    ),
 }
 Rule {
     name: "test3",
@@ -61,19 +39,13 @@ Rule {
     already_inline: false,
     eliminate_unmarked: false,
     eliminate_unnamed: false,
-    expression: ExpressionNode {
-        base: 0,
+    expression: Data {
+        data: 0,
     },
-    range: Range {
-        start: Position {
-            line: 4,
-            character: 0,
-        },
-        end: Position {
-            line: 4,
-            character: 13,
-        },
-    },
+    range: (
+        45,
+        59,
+    ),
 }
 Rule {
     name: "test4",
@@ -83,32 +55,16 @@ Rule {
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
-        base: Choice[
-            ExpressionNode {
-                base: Choice[
-                    ExpressionNode {
-                        base: 0,
-                    },
-                    ExpressionNode {
-                        base: 1,
-                    },
-                ],
-            },
-            ExpressionNode {
-                base: 1,
+        base: Concat [
+            Data {
+                data: 0,
             },
         ],
     },
-    range: Range {
-        start: Position {
-            line: 5,
-            character: 0,
-        },
-        end: Position {
-            line: 5,
-            character: 17,
-        },
-    },
+    range: (
+        59,
+        77,
+    ),
 }
 Rule {
     name: "test5",
@@ -117,19 +73,13 @@ Rule {
     already_inline: false,
     eliminate_unmarked: false,
     eliminate_unnamed: false,
-    expression: ExpressionNode {
-        base: "a",
+    expression: Data {
+        data: "a",
     },
-    range: Range {
-        start: Position {
-            line: 6,
-            character: 0,
-        },
-        end: Position {
-            line: 6,
-            character: 17,
-        },
-    },
+    range: (
+        77,
+        95,
+    ),
 }
 Rule {
     name: "test6",
@@ -139,29 +89,16 @@ Rule {
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
-        base: Choice[
-            ExpressionNode {
-                base: Choice[
-                    ExpressionNode {
-                        base: "a",
-                    },
-                ],
-            },
-            ExpressionNode {
-                base: "b",
+        base: Concat [
+            Data {
+                data: "a",
             },
         ],
     },
-    range: Range {
-        start: Position {
-            line: 7,
-            character: 0,
-        },
-        end: Position {
-            line: 7,
-            character: 23,
-        },
-    },
+    range: (
+        95,
+        120,
+    ),
 }
 Rule {
     name: "test7",
@@ -171,39 +108,20 @@ Rule {
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
-        base: Choice[
+        base: Concat [
             ExpressionNode {
-                base: Choice[
-                    ExpressionNode {
-                        base: Choice[
-                            ExpressionNode {
-                                base: 0,
-                            },
-                            ExpressionNode {
-                                base: 1,
-                            },
-                        ],
-                    },
-                    ExpressionNode {
-                        base: 1,
+                base: Concat [
+                    Data {
+                        data: 0,
                     },
                 ],
             },
-            ExpressionNode {
-                base: 2,
-            },
         ],
     },
-    range: Range {
-        start: Position {
-            line: 9,
-            character: 0,
-        },
-        end: Position {
-            line: 9,
-            character: 21,
-        },
-    },
+    range: (
+        120,
+        142,
+    ),
 }
 Rule {
     name: "test8",
@@ -213,39 +131,16 @@ Rule {
     eliminate_unmarked: false,
     eliminate_unnamed: false,
     expression: ExpressionNode {
-        base: Choice[
-            ExpressionNode {
-                base: Choice[
-                    ExpressionNode {
-                        base: 0,
-                    },
-                    ExpressionNode {
-                        base: 1,
-                    },
-                ],
-            },
-            ExpressionNode {
-                base: Choice[
-                    ExpressionNode {
-                        base: 1,
-                    },
-                    ExpressionNode {
-                        base: 2,
-                    },
-                ],
+        base: Concat [
+            Data {
+                data: 0,
             },
         ],
     },
-    range: Range {
-        start: Position {
-            line: 10,
-            character: 0,
-        },
-        end: Position {
-            line: 10,
-            character: 25,
-        },
-    },
+    range: (
+        142,
+        168,
+    ),
 }
 Rule {
     name: "test9",
@@ -254,33 +149,11 @@ Rule {
     already_inline: false,
     eliminate_unmarked: false,
     eliminate_unnamed: false,
-    expression: ExpressionNode {
-        base: Choice[
-            ExpressionNode {
-                field: "0 | a",
-                base: 1,
-            },
-            ExpressionNode {
-                field: "b",
-                base: Choice[
-                    ExpressionNode {
-                        base: 1,
-                    },
-                    ExpressionNode {
-                        base: 2,
-                    },
-                ],
-            },
-        ],
+    expression: Data {
+        data: 1,
     },
-    range: Range {
-        start: Position {
-            line: 11,
-            character: 0,
-        },
-        end: Position {
-            line: 11,
-            character: 35,
-        },
-    },
+    range: (
+        168,
+        204,
+    ),
 }

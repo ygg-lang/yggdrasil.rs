@@ -121,13 +121,7 @@ impl Term {
                 TermNext::Slice(_) => {
                     unimplemented!()
                 }
-                TermNext::Branch(BranchTag { kind, symbol, .. }) => {
-                    base = Expression::MarkBranch {
-                        base: Box::new(base),
-                        kind,
-                        name: symbol,
-                    }
-                }
+                TermNext::Branch(BranchTag { kind, symbol, .. }) => base = Expression::MarkBranch { base: Box::new(base), kind, name: symbol },
                 _ => unreachable!(),
             }
         }

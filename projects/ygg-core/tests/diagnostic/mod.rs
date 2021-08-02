@@ -1,11 +1,11 @@
 use super::*;
 
 const DUPLICATE1: &str = r#"
-grammar! test
+@grammar test
 
 rule = a ~ b
 
-fragment! test
+@fragment test
 "#;
 
 #[test]

@@ -35,6 +35,12 @@ impl ExpressionNode {
             _ => None,
         }
     }
+    pub fn get_choice_mut(&mut self) -> Option<&mut RefinedChoice> {
+        match &mut self.node  {
+            RefinedExpression::Choice(c) => Some(c.as_mut()),
+            _ => None,
+        }
+    }
     pub fn get_unary(&self) -> Option<RefinedUnary> {
         match self.to_owned().node {
             RefinedExpression::Unary(c) => Some(*c),
@@ -57,13 +63,9 @@ impl From<Expression> for ExpressionNode {
                 true => Self::soft_concat(*lhs, *rhs),
                 false => Self::concat(*lhs, *rhs),
             },
-            Expression::Choice { lhs, rhs } => Self::choice(lhs, rhs),
-            Expression::MarkNode { lhs, rhs } => {
-                Self::mark_node(*lhs, *rhs)
-            }
-            Expression::MarkNodeShort(s) => {
-                Self::mark_node(*s.clone(), *s)
-            }
+            Expression::Choice { lhs, rhs } => Self::choice(*lhs, *rhs),
+            Expression::MarkNode { lhs, rhs } => Self::mark_node(*lhs, *rhs),
+            Expression::MarkNodeShort(s) => Self::mark_node(*s.clone(), *s),
             Expression::MarkType { .. } => {
                 unimplemented!()
             }
@@ -73,25 +75,23 @@ impl From<Expression> for ExpressionNode {
             Expression::MustOne(_) => {
                 unimplemented!()
             }
-            Expression::Maybe(e) => {
-                Self::suffix(*e, "?")
-            }
-            Expression::Many(e) => {
-                Self::suffix(*e, "*")
-            }
-            Expression::ManyNonNull(e) => {
-                Self::suffix(*e, "+")
-            }
-            Expression::MarkBranch { base, kind, name } => {
-                Self::mark_branch(*base, kind, name)
-            }
+            Expression::Maybe(e) => Self::suffix(*e, "?"),
+            Expression::Many(e) => Self::suffix(*e, "*"),
+            Expression::ManyNonNull(e) => Self::suffix(*e, "+"),
+            Expression::MarkBranch { base, kind, name } => Self::mark_branch(*base, kind, name),
         }
     }
 }
 
 impl From<Data> for ExpressionNode {
     fn from(e: Data) -> Self {
-        Self { inline_token: false, branch_tag: None, ty: None, node_tag: None, node: RefinedExpression::Data(box RefinedData::from(e)) }
+        Self {
+            inline_token: false,
+            branch_tag: None,
+            ty: None,
+            node_tag: None,
+            node: RefinedExpression::Data(box RefinedData::from(e)),
+        }
     }
 }
 
