@@ -1,7 +1,7 @@
 use super::*;
-use crate::frontend::rule::from_ast::FilePosition;
+use crate::frontend::rule::from_ast::GrammarContext;
 
-pub fn top_area_error(src: &str, msg: &str, range: (usize, usize), file: &FilePosition) -> Diagnostic {
+pub fn top_area_error(src: &str, msg: &str, range: (usize, usize), file: &GrammarContext) -> Diagnostic {
     Diagnostic {
         range: file.get_lsp_range(range),
         severity: Some(DiagnosticSeverity::Warning),
@@ -21,7 +21,7 @@ pub fn duplicate_declaration_error(
     msg: impl Into<String>,
     this: (usize, usize),
     last: (usize, usize),
-    file: &FilePosition
+    file: &GrammarContext
 ) -> Diagnostic {
     let info = DiagnosticRelatedInformation { location: Location { uri: file.get_url().to_owned(), range: file.get_lsp_range(last) }, message: msg.into() };
     Diagnostic {

@@ -2,7 +2,7 @@ use super::*;
 use lsp_types::Range;
 use yggdrasil_bootstrap::ast::Symbol;
 
-impl GrammarState {
+impl GrammarInfo {
     pub fn report_meta(&self) -> HintItems {
         let mut document_symbol = vec![];
         document_symbol.push(self.top_area());
@@ -13,8 +13,8 @@ impl GrammarState {
         document_symbol.push(test_node());
         HintItems { diagnostic: vec![], code_lens: vec![], document_symbol }
     }
-    pub fn file_position(&self) -> FilePosition<'_> {
-        FilePosition::new(&self.text, &self.url)
+    pub fn file_position(&self) -> GrammarContext<'_> {
+        GrammarContext::new(&self.text, &self.url)
     }
     pub fn get_lsp_range(&self, range: (usize, usize)) -> Range {
         self.file_position().get_lsp_range(range)
@@ -130,7 +130,7 @@ impl GrammarState {
 }
 
 impl Rule {
-    fn symbol_item(&self, file: &FilePosition) -> DocumentSymbol {
+    fn symbol_item(&self, file: &GrammarContext) -> DocumentSymbol {
         let (detail, kind) = self.symbol_detail();
         DocumentSymbol {
             name: self.name.data.to_owned(),

@@ -1,6 +1,5 @@
 use railroad::{self, svg, Diagram, End, NonTerminal, Sequence, Start, Terminal, DEFAULT_CSS};
 
-#[test]
 fn test() {
     let mut seq = Sequence::default();
     seq.push(Box::new(Start))

@@ -35,6 +35,7 @@ impl Debug for Statement {
                 .field("rules", &v.rules)
                 .finish(),
             Statement::CommentDocument(_) => Ok(()),
+            Statement::MacroCall(_) => Ok(()),
         }
     }
 }
@@ -108,7 +109,7 @@ impl Debug for Data {
             }
             Data::String(v) => Debug::fmt(v, f),
             Data::Regex => f.debug_tuple("Regex").finish(),
-            Data::Macro => f.debug_tuple("Macro").finish(),
+            Data::Macro(v) => Debug::fmt(v, f),
         }
     }
 }

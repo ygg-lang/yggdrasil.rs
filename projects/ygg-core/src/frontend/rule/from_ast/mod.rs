@@ -3,15 +3,16 @@ use super::{
     *,
 };
 
-pub struct FilePosition<'i> {
-    text: &'i str,
+pub struct GrammarContext<'i> {
     url: &'i Url,
+    text: &'i str,
+    is_top_area: bool,
 }
 
-impl<'i> FilePosition<'i> {
+impl<'i> GrammarContext<'i> {
     #[inline]
     pub fn new(text: &'i str, url: &'i Url) -> Self {
-        Self { text, url }
+        Self { text, url, is_top_area: true }
     }
     #[inline]
     pub fn get_text(&self) -> &'i str {
@@ -32,11 +33,11 @@ impl<'i> FilePosition<'i> {
 }
 
 pub trait Translator {
-    fn translate(self, url: &FilePosition) -> Result<(GrammarState, HintItems)>;
+    fn translate(self, url: &GrammarContext) -> Result<(GrammarInfo, HintItems)>;
 }
 
 impl Translator for Program {
-    fn translate(self, file: &FilePosition) -> Result<(GrammarState, HintItems)> {
+    fn translate(self, file: &GrammarContext) -> Result<(GrammarInfo, HintItems)> {
         let mut is_top_area = true;
         let mut is_grammar = None;
         let mut name_position = Default::default();
@@ -114,8 +115,7 @@ impl Translator for Program {
                             name_position,
                             file,
                         ))
-                    }
-                    else {
+                    } else {
                         ignores = s.rules;
                     }
                 }
@@ -140,6 +140,7 @@ impl Translator for Program {
                 Statement::Import(_) => {
                     unimplemented!()
                 }
+                Statement::MacroCall(_) => { unimplemented!() }
             }
         }
 
@@ -154,7 +155,7 @@ impl Translator for Program {
             range: name_position,
         };
 
-        let state = GrammarState {
+        let state = GrammarInfo {
             name,
             extensions,
             rule_map,
@@ -196,6 +197,7 @@ impl From<AssignStatement> for Rule {
             ty,
             doc: "".to_string(),
             force_inline,
+            force_box: false,
             already_inline: false,
             eliminate_unmarked,
             eliminate_unnamed,

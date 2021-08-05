@@ -5,7 +5,7 @@ impl Rule {
         rhs.name.data.starts_with("_")
     }
 
-    fn inline(&mut self, _map: &GrammarState) {
+    fn inline(&mut self, _map: &GrammarInfo) {
         if self.already_inline {
             return;
         }

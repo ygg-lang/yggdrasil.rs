@@ -1,10 +1,10 @@
-pub use self::remap::Set;
-use crate::frontend::rule::Rule;
 use std::{
     fmt::{Debug, Formatter},
     ops::{AddAssign, BitAndAssign},
 };
 use yggdrasil_bootstrap::ast::*;
+use crate::frontend::Set;
+use crate::frontend::Rule;
 
 mod choice;
 mod concat;
@@ -12,15 +12,6 @@ mod debug;
 mod expr;
 mod unary;
 
-// used for ide hint
-#[cfg(debug_assertions)]
-mod remap {
-    pub type Set<V> = std::collections::HashSet<V>;
-}
-#[cfg(not(debug_assertions))]
-mod remap {
-    pub type Set<V> = indexmap::IndexSet<V>;
-}
 
 #[derive(Clone, Eq, PartialEq, Hash)]
 pub struct ExpressionNode {

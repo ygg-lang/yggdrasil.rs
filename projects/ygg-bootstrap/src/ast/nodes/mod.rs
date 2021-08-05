@@ -17,6 +17,7 @@ pub enum Statement {
     Assign(Box<AssignStatement>),
     Ignore(Box<IgnoreStatement>),
     Fragment(Box<FragmentStatement>),
+    MacroCall(Box<MacroCall>),
     CommentDocument(Box<CommentDocument>),
 }
 
@@ -148,8 +149,14 @@ pub enum Data {
     Symbol(SymbolPath),
     Integer(Integer),
     String(StringLiteral),
-    Macro,
+    Macro(MacroCall),
     Regex,
+}
+
+#[derive(Clone, Debug)]
+pub struct MacroCall {
+    pub symbol: SymbolPath,
+    pub range: (usize, usize),
 }
 
 #[derive(Clone)]

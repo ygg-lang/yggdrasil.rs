@@ -102,7 +102,7 @@ impl From<Data> for RefinedData {
             Data::Integer(atom) => Self::Integer(atom.data),
             Data::String(atom) => Self::String(atom.data),
             Data::Regex => unimplemented!(),
-            Data::Macro => unimplemented!(),
+            Data::Macro(_) => unimplemented!(),
         }
     }
 }

@@ -1,6 +1,6 @@
 pub use self::{file_store::FileStore, file_wrap::FileType, finger_print::FileFingerprint};
 use crate::{
-    frontend::{FilePosition, GrammarState, GrammarType, Translator},
+    frontend::{GrammarContext, GrammarInfo, GrammarType, Translator},
     manager::{global_parser::PARSER_MANAGER, HintItems},
     Error, Result, HINT_MANAGER,
 };
@@ -94,7 +94,7 @@ impl FileManager {
         unimplemented!()
     }
 
-    pub async fn parse_grammar(&self, url: &Url) -> Result<GrammarState> {
+    pub async fn parse_grammar(&self, url: &Url) -> Result<GrammarInfo> {
         self.update_url(url.to_owned())?;
         self.store.get_mut(url).ok_or(Error::language_error("Grammar not found"))?.value_mut().parse_ygg(url.to_owned()).await
     }

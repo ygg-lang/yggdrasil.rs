@@ -4,7 +4,7 @@
 use lsp_types::Url;
 use std::{fmt::Write, lazy::SyncLazy, str::FromStr};
 use yggdrasil_core::{
-    frontend::{FilePosition, Translator},
+    frontend::{GrammarContext, Translator},
     manager::YggParser,
     Result,
 };
@@ -32,7 +32,7 @@ pub fn assert_ast(text: &str, target: &str) -> Result<()> {
 }
 
 pub fn assert_diagnostic(text: &str, target: &str) -> Result<()> {
-    let file = FilePosition::new(text, &EXAMPLE_URL);
+    let file = GrammarContext::new(text, &EXAMPLE_URL);
     let mut parser = YggParser::default();
     let diag = parser.parse_program(text)?.translate(&file)?.1;
     assert_eq!(format!("{:#?}", diag), target);
@@ -40,7 +40,7 @@ pub fn assert_diagnostic(text: &str, target: &str) -> Result<()> {
 }
 
 pub fn assert_optimize(text: &str, target: &str) -> Result<()> {
-    let file = FilePosition::new(text, &EXAMPLE_URL);
+    let file = GrammarContext::new(text, &EXAMPLE_URL);
     let mut parser = YggParser::default();
     let mut grammar = parser.parse_program(text)?.translate(&file)?.0;
 
@@ -54,7 +54,7 @@ pub fn assert_optimize(text: &str, target: &str) -> Result<()> {
 }
 
 pub fn assert_codegen(text: &str, target: &str) -> Result<()> {
-    let file = FilePosition::new(text, &EXAMPLE_URL);
+    let file = GrammarContext::new(text, &EXAMPLE_URL);
     let mut parser = YggParser::default();
     let mut grammar = parser.parse_program(text)?.translate(&file)?.0;
     let _hint = grammar.optimize_local()?;

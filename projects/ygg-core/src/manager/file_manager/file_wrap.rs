@@ -3,7 +3,7 @@ use super::*;
 #[derive(Clone, Debug)]
 pub enum FileType {
     GrammarString(String),
-    Grammar(GrammarState),
+    Grammar(GrammarInfo),
     TypeString(String),
     Type(GrammarType),
 }
@@ -12,7 +12,7 @@ impl FileType {
     pub fn parse_toml(&mut self) -> Result<FileType> {
         unimplemented!()
     }
-    pub async fn parse_ygg(&mut self, url: Url) -> Result<GrammarState> {
+    pub async fn parse_ygg(&mut self, url: Url) -> Result<GrammarInfo> {
         let mut parser = PARSER_MANAGER.write().await;
         match self {
             FileType::Grammar(g) => {
@@ -22,7 +22,7 @@ impl FileType {
             FileType::GrammarString(s) => {
                 let mut hints = HintItems::default();
                 let program = parser.parse_program(s)?;
-                let file = FilePosition::new(s, &url);
+                let file = GrammarContext::new(s, &url);
                 parse_error_to_hints(&file, parser.errors(), &mut hints);
                 let (mut grammar, err) = program.translate(&file)?;
                 hints += err;
@@ -37,7 +37,7 @@ impl FileType {
     }
 }
 
-fn parse_error_to_hints(file: &FilePosition, es: &[Error], hint: &mut HintItems) {
+fn parse_error_to_hints(file: &GrammarContext, es: &[Error], hint: &mut HintItems) {
     for e in es {
         let diag = match e {
             Error::StructureError { error, start, end } => {

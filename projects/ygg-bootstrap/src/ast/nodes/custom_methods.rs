@@ -45,7 +45,7 @@ impl Data {
             Data::Symbol(e) => e.range,
             Data::Integer(e) => e.range,
             Data::String(e) => e.range,
-            Data::Macro => (0, 0),
+            Data::Macro(e) => e.range,
             Data::Regex => (0, 0),
         }
     }

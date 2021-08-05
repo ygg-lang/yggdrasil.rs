@@ -1,19 +1,18 @@
 use std::{fmt::Debug, mem::swap};
-
 use convert_case::{Case, Casing};
 use lsp_types::{Range, Url};
-
 use yggdrasil_bootstrap::{
     ast::{AssignStatement, Program, Statement, StringLiteral, Symbol},
     shared::records::LineBreaks,
     Result,
 };
-
+use crate::frontend::{GrammarInfo, Rule};
 use crate::manager::HintItems;
+use crate::frontend::Map;
+use crate::frontend::{Keys, Values};
 
-use self::remap::{Keys, Map, Values};
 pub use self::{
-    from_ast::{FilePosition, Translator},
+    from_ast::{GrammarContext, Translator},
     node::*,
 };
 
@@ -21,64 +20,7 @@ mod from_ast;
 mod hints;
 mod node;
 
-// used for ide hint
-#[cfg(debug_assertions)]
-mod remap {
-    pub use std::collections::hash_map::{Keys, Values};
-
-    pub type Map<K, V> = std::collections::HashMap<K, V>;
-}
-
-#[cfg(not(debug_assertions))]
-mod remap {
-    pub use indexmap::map::{Keys, Values};
-
-    pub type Map<K, V> = indexmap::IndexMap<K, V>;
-}
-
-#[derive(Clone, Debug)]
-pub struct GrammarState {
-    pub(crate) url: Url,
-    pub(crate) text: String,
-    pub(crate) is_grammar: bool,
-    pub(crate) name: Symbol,
-    pub(crate) extensions: Vec<StringLiteral>,
-    pub(crate) ignores: Vec<Symbol>,
-    pub(crate) rule_map: Map<String, Rule>,
-}
-
-#[derive(Clone)]
-pub struct Rule {
-    ///
-    pub(crate) name: Symbol,
-    ///
-    pub(crate) ty: Symbol,
-    ///
-    pub(crate) doc: String,
-    ///
-    pub(crate) force_inline: bool,
-    /// Eliminate unnamed nodes
-    /// ```ygg
-    /// name <- expr
-    /// ^expr
-    /// ```
-    pub(crate) already_inline: bool,
-    pub(crate) eliminate_unmarked: bool,
-    /// Eliminate unnamed nodes
-    /// ```ygg
-    /// "string"
-    /// /regex/
-    /// [0-9a-z]
-    /// 012345
-    /// ```
-    pub(crate) eliminate_unnamed: bool,
-    ///
-    pub(crate) expression: ExpressionNode,
-    /// position of all parts
-    pub(crate) range: (usize, usize),
-}
-
-impl GrammarState {
+impl GrammarInfo {
     #[inline]
     pub fn get(&self, rule: &str) -> Option<&Rule> {
         self.rule_map.get(rule)

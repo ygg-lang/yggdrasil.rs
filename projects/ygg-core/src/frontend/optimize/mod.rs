@@ -1,10 +1,11 @@
 use crate::{
-    frontend::{rule::*, GrammarState},
+    frontend::{rule::*, GrammarInfo},
     manager::HintItems,
     Result,
 };
 use lsp_types::{DocumentSymbol, SymbolKind};
 use std::mem::transmute;
+use crate::frontend::Rule;
 
 mod builtin;
 mod fuse;
@@ -12,7 +13,7 @@ mod inline;
 #[allow(deprecated)]
 mod meta_info;
 
-impl GrammarState {
+impl GrammarInfo {
     pub async fn optimize(&mut self) -> Result<HintItems> {
         let mut hint = HintItems::default();
         self.link_external().await?;

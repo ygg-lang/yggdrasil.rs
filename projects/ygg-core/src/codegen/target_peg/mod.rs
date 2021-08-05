@@ -1,7 +1,7 @@
 use self::build_symbol::build_symbol;
 use crate::frontend::{
     rule::{ExpressionNode, RefinedChoice, RefinedConcat, RefinedData, RefinedExpression},
-    GrammarState,
+    GrammarInfo,
 };
 use lrpeg::{
     ast::{BareExpression, Definition, Expression, Grammar},
@@ -12,7 +12,7 @@ use crate::frontend::rule::RefinedUnary;
 mod build_symbol;
 mod test;
 
-impl GrammarState {
+impl GrammarInfo {
     pub fn build_peg(&self) -> (Grammar, Generator) {
         let mut gen = Generator::new();
         let mut grammar = Grammar { lookup: Default::default(), definitions: vec![] };
