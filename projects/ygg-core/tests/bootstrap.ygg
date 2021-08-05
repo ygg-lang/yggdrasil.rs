@@ -21,18 +21,16 @@ statement =
     | import_statement    #Import
     | assign_statement    #Assign
 
-
 //* grammar tsg
 //* grammar tsg {"*.tsg", }
-grammar_statement ^= grammar ~ ^id ~ _grammar_exts? ~ eos?
+grammar_statement  = grammar ~ id ~ _grammar_exts? ~ eos?
 _grammar_exts      = "{" ~ $join(extensions <- string, ",", trailing = true)? ~ "}"
 
 
 //? `fragment` means that this file cannot build as grammar, it can only be imported.
 //? `id` represents the default name when importing, which can be changed by `as`.
 //* fragment ascii
-fragment_statement ^= fragment ~ ^id ~ eos?
-
+fragment_statement = fragment ~ id ~ eos?
 
 
 import_statement ^=
@@ -47,17 +45,18 @@ import_item       = (id <- id) ~ as ~ (alias <- id)
 //* ignores [comment, comment_inline]
 ignores_statement ^=
     | ignores ~ ^id
-    | ignores ~ "{" ~ $join(^id, ",", trailing = 1)? ~ "}"
+    | ignores ~ "{" ~ $join(^id, ",", trailing = 1)? ~ "}";
+
 
 
 expression =
-    | *priority         #Priority
+    | priority          #Priority
     | data              #Data
     | unary_suffix      #Suffix
     | unary_prefix      #Prefix
     | concat_expression #Concat
     | or_expression     #Or
-_priority ^= "(" ~ "|"? ~ expression ~ ")"
+_priority = "(" ~ ("|" | "/")? ~ expression ~ ")"
 unary_suffix =
     | $unary_suffix(210, _suffix_ops, expression)
 unary_prefix =
@@ -67,12 +66,12 @@ concat_expression =
     | $variadic_left(40, "~", expression)
 //* item = e1 #A | e2
 or_expression =
-    | @variadic_left(20, "|", variant_tag)
-variant_tag = @precedence_left(100, ^expression ~ _tag_name? )
+    | $variadic_left(20, "|", variant_tag)
+variant_tag = $precedence_left(100, ^expression ~ _tag_name? )
 _tag_name = "#" ~ (name <- id) ~ (mode <- /[!_^]?/) ~ (name <- id)
 //* item = tag <- name
 label_expression =
-    | @binary_left(10, id, "<-", expression)
+    | $binary_left(10, id, "<-", expression)
 _prefix_ops @=
     | "^"
 _suffix_ops @=
@@ -95,8 +94,8 @@ atom =
 // `f(a, b)`  vs `f ~ (a | b) `
 // `f!(a, b)` vs `f ~ !(a | b)`
 macro_call =
-      (name <- @token("@", id))
-    ~ "(" ~ @join(Expression, ",", trailing = 1) ~ ")"
+      (name <- $token("@", id))
+    ~ "(" ~ $join(Expression, ",", trailing = 1) ~ ")"
 
 
 // Identifier
@@ -115,14 +114,14 @@ string @=
 regex_long ^= "/" ~ (item <- regex_item) ~ "/" ~ (mode: String <- regex_mode)?
 regex_mode @= [igm]
 regex_item  =
-    |
+    | i
 regex_range = (mode <- "[" | "[^")  ~ regex_range_item* ~ "]"
 regex_range_item =
     | regex_set
     | regex_range_item_group
     | /[^\]]/
 regex_range_item_group =
-    | @binary_left(10, regex_range_item, "-", regex_range_item)
+    | $binary_left(10, regex_range_item, "-", regex_range_item)
 regex_set = "\\p" ~ "{" ~ (set <- /[_0-9a-zA-Z]+/) ~ "}"
 regex_repeats ^=
     | "{" ~ (repeats <- integer) ~ "}"
@@ -137,7 +136,7 @@ eos = ";"
 
 
 @syntax_type(constant)
-bool: bool @= "true" | "false"
+bool @= "true" | "false"
 
 //! ====================== OVERRIDE ============================
 
@@ -152,7 +151,7 @@ comment_block = "//+" ~ "//-"
 //! ===================== HOOK AREA ============================
 
 // All elements defined next will warp with `@token`
-@define_hook(@token)
+@define_hook(token)
 // All elements defined next will be marked as `keyword`
 @syntax_type_hook(keyword)
 fragment = "fragment!"

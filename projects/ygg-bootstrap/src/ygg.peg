@@ -51,7 +51,7 @@ term_next <-
     Suffix:/ <suffix:suffix> !"💣"
     Slice:/  <slice:slice> !"💣"
     Branch:/ IGNORE <branch_tag:branch_tag> !"💣";
-branch_tag <- <kind:branch_kind>? "$" <symbol:symbol>
+branch_tag <- <kind:branch_kind>? "#" <symbol:symbol>
 branch_kind <- "_"/"^"/"!"/"<"/">";
 infix   <- "|" / "/" / "~" / "<-" / ":";
 prefix  <- "!" / "&" / "^" / "%";
@@ -59,7 +59,8 @@ suffix  <- "?" / "+" / "*";
 
 data <-
     Macro:/   <macro_call:macro_call> !"💣"
-    Regex:/   <regex_range:regex_range> !"💣"
+    Range:/   <regex_range:regex_range> !"💣"
+    Regex:/   <regex:regex> !"💣"
     List:/    <list:list> !"💣"
     Symbol:/  <symbol_path:symbol_path> !"💣"
     Integer:/ <integer:integer> !"💣"
@@ -69,16 +70,17 @@ data <-
 list   <- "{" IGNORE (<data:data> IGNORE ("," IGNORE <data:data>)* IGNORE ","?)? IGNORE "}";
 slice  <- "{" IGNORE <start:integer>? IGNORE "," IGNORE <end:integer>? IGNORE  "}";
 
+regex <- re#/([^\\/]|\\.)*/#;
 regex_range  <- "[" IGNORE (!"]" IGNORE . / "\\" IGNORE .)* IGNORE "]";
 
 
 macro_call  <-
-    "@" <symbol_path:symbol_path> IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE")"
+    "$" <symbol_path:symbol_path> IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE ")"
 ;
 macro_then  <-
-    "#" <symbol_path:symbol_path> (IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE")")?
+    "@" <symbol_path:symbol_path> (IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE ")")?
 ;
-macro_kv  <-  symbol IGNORE " <-" IGNORE expr / expr;
+macro_kv  <-  symbol IGNORE "=" IGNORE expr / expr;
 
 
 
@@ -99,8 +101,8 @@ integer  <- re#[0-9](_?[0-9])*#;
 symbol_path  <- <symbol:symbol> IGNORE (("::"/".") IGNORE <symbol:symbol>)*;
 symbol  <- XID_IDENTIFIER;
 
-IGNORE <-  (SPACE / NEWLINE / COMMENT)?;
+IGNORE <-  (SPACE / NEWLINE / COMMENT)*;
 
 SPACE <- re#[\s]+#;
 NEWLINE <- re#[\r\n]+#;
-COMMENT <- re#//[^\r\n]*#
+COMMENT <- re#//[^\r\n]*#;
