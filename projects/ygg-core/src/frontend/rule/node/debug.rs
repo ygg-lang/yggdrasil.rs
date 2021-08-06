@@ -18,10 +18,10 @@ impl Debug for Rule {
 impl Debug for ExpressionNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let w = &mut match &self.node {
-            RefinedExpression::Data(_) => {f.debug_struct("Data")}
-            RefinedExpression::Unary(_) => {f.debug_struct("ExpressionNode")}
-            RefinedExpression::Choice(_) => {f.debug_struct("ExpressionNode")}
-            RefinedExpression::Concat(_) => {f.debug_struct("ExpressionNode")}
+            RefinedExpression::Data(_) => f.debug_struct("Data"),
+            RefinedExpression::Unary(_) => f.debug_struct("ExpressionNode"),
+            RefinedExpression::Choice(_) => f.debug_struct("ExpressionNode"),
+            RefinedExpression::Concat(_) => f.debug_struct("ExpressionNode"),
         };
         if let Some(s) = &self.branch_tag {
             w.field("branch_tag", &s.name.data);
@@ -37,10 +37,10 @@ impl Debug for ExpressionNode {
             w.field("inline_token", &true);
         }
         match &self.node {
-            RefinedExpression::Data(e) => {w.field("data", e)}
-            RefinedExpression::Unary(_) => {w.field("base", &self.node)}
-            RefinedExpression::Choice(_) => {w.field("base", &self.node)}
-            RefinedExpression::Concat(_) => {w.field("base", &self.node)}
+            RefinedExpression::Data(e) => w.field("data", e),
+            RefinedExpression::Unary(_) => w.field("base", &self.node),
+            RefinedExpression::Choice(_) => w.field("base", &self.node),
+            RefinedExpression::Concat(_) => w.field("base", &self.node),
         };
         w.finish()
     }

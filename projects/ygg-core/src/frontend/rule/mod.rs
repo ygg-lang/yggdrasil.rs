@@ -1,15 +1,15 @@
-use std::{fmt::Debug, mem::swap};
+use crate::{
+    frontend::{GrammarInfo, Keys, Map, Rule, Values},
+    manager::HintItems,
+};
 use convert_case::{Case, Casing};
 use lsp_types::{Range, Url};
+use std::mem::swap;
 use yggdrasil_bootstrap::{
-    ast::{AssignStatement, Program, Statement, StringLiteral, Symbol},
+    ast::{AssignStatement, Program, Statement, Symbol},
     shared::records::LineBreaks,
     Result,
 };
-use crate::frontend::{GrammarInfo, Rule};
-use crate::manager::HintItems;
-use crate::frontend::Map;
-use crate::frontend::{Keys, Values};
 
 pub use self::{
     from_ast::{GrammarContext, Translator},

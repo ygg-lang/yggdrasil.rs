@@ -17,7 +17,7 @@ impl ExpressionNode {
 
 impl RefinedExpression {
     pub fn choice(base: ExpressionNode) -> Self {
-        let mut inner =  Set::default();
+        let mut inner = Set::default();
         inner.insert(base);
         Self::Choice(Box::new(RefinedChoice { inner }))
     }

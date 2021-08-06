@@ -1,13 +1,12 @@
 use self::build_symbol::build_symbol;
 use crate::frontend::{
-    rule::{ExpressionNode, RefinedChoice, RefinedConcat, RefinedData, RefinedExpression},
+    rule::{ExpressionNode, RefinedChoice, RefinedConcat, RefinedData, RefinedExpression, RefinedUnary},
     GrammarInfo,
 };
 use lrpeg::{
     ast::{BareExpression, Definition, Expression, Grammar},
     Generator,
 };
-use crate::frontend::rule::RefinedUnary;
 
 mod build_symbol;
 mod test;
@@ -32,7 +31,7 @@ impl GrammarInfo {
         for rule in &grammar.definitions {
             gen.collect_terminals_recursive(&rule.sequence);
         }
-        return (grammar, gen)
+        return (grammar, gen);
     }
     pub fn build_peg_code(&self) -> String {
         let mut gen = Generator::new();
@@ -74,9 +73,7 @@ impl RefinedExpression {
     pub fn build_peg(&self) -> Expression {
         match self {
             Self::Data(e) => e.build_peg(),
-            Self::Unary(e) => {
-                e.build_peg()
-            }
+            Self::Unary(e) => e.build_peg(),
             Self::Choice(e) => e.build_peg(),
             Self::Concat(e) => e.build_peg(),
         }
@@ -97,11 +94,7 @@ impl RefinedData {
             Self::Regex(s) => BareExpression::Regex(s.to_owned()),
             Self::Integer(i) => BareExpression::StringLiteral(i.to_string()),
         };
-        Expression {
-            label: None,
-            alt: None,
-            expr: bare
-        }
+        Expression { label: None, alt: None, expr: bare }
     }
 }
 

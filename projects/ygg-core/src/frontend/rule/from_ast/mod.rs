@@ -2,17 +2,45 @@ use super::{
     hints::{duplicate_declaration_error, name_missing, top_area_error},
     *,
 };
+use std::mem::take;
+use yggdrasil_bootstrap::ast::StringLiteral;
+mod macros;
 
 pub struct GrammarContext<'i> {
     url: &'i Url,
     text: &'i str,
+    name: Option<String>,
+    name_position: (usize, usize),
     is_top_area: bool,
+    is_grammar: Option<bool>,
+    hints: HintItems,
+    ignores: Vec<Symbol>,
+    extensions: Vec<StringLiteral>,
+    rule_map: Map<String, Rule>,
 }
 
 impl<'i> GrammarContext<'i> {
     #[inline]
     pub fn new(text: &'i str, url: &'i Url) -> Self {
-        Self { text, url, is_top_area: true }
+        Self {
+            text,
+            name: None,
+            url,
+            is_top_area: true,
+            is_grammar: None,
+            hints: Default::default(),
+            ignores: vec![],
+            extensions: vec![],
+            rule_map: Default::default(),
+            name_position: (0, 0),
+        }
+    }
+    #[inline]
+    pub fn reset(&mut self, text: &'i str, url: &'i Url) {
+        self.text = text;
+        self.url = url;
+        self.is_grammar = None;
+        self.hints = Default::default();
     }
     #[inline]
     pub fn get_text(&self) -> &'i str {
@@ -30,109 +58,117 @@ impl<'i> GrammarContext<'i> {
     pub fn get_lsp_range(&self, offsets: (usize, usize)) -> Range {
         self.get_lines().get_lsp_range(offsets.0, offsets.1)
     }
+    #[inline]
+    pub fn get_hints(&self) -> &HintItems {
+        &self.hints
+    }
+}
+
+impl<'i> GrammarContext<'i> {
+    #[inline]
+    fn must_at_top_area(&mut self, source: &str, message: &str, range: (usize, usize)) {
+        if !self.is_top_area {
+            self.hints.diagnostic.push(top_area_error(source, message, range, self))
+        }
+    }
+    #[inline]
+    fn must_not_duplicate(
+        &mut self,
+        source: &str,
+        message: impl Into<String>,
+        this_range: (usize, usize),
+        last_range: (usize, usize),
+    ) {
+        self.hints.diagnostic.push(duplicate_declaration_error(source, message, this_range, last_range, self))
+    }
+    fn set_ignores(&mut self, rules: Vec<Symbol>, this_range: (usize, usize), last_range: (usize, usize)) {
+        if !self.ignores.is_empty() {
+            self.must_not_duplicate("Ignore", "Already declaration ignore statement", this_range, last_range)
+        }
+        else {
+            self.ignores = rules;
+        }
+    }
+    fn set_grammar(&mut self, range: (usize, usize), name: String, extensions: Vec<StringLiteral>) {
+        match self.is_grammar {
+            Some(true) => self.must_not_duplicate("Grammar", "Already declaration as `grammar!`", range, self.name_position),
+            Some(false) => self.must_not_duplicate("Grammar", "Already declaration as `fragment!`", range, self.name_position),
+            None => {
+                self.is_grammar = Some(true);
+                self.name_position = range;
+                self.extensions = extensions;
+                self.name = Some(name)
+            }
+        }
+    }
+    fn set_fragment(&mut self, range: (usize, usize), name: String) {
+        match self.is_grammar {
+            Some(true) => self.must_not_duplicate("Fragment", "Already declaration as `grammar!`", range, self.name_position),
+            Some(false) => self.must_not_duplicate("Fragment", "Already declaration as `fragment!`", range, self.name_position),
+            None => {
+                self.is_grammar = Some(false);
+                self.name_position = range;
+                self.name = Some(name)
+            }
+        }
+    }
+    fn build_grammar_info(&mut self) -> GrammarInfo {
+        let name = Symbol {
+            data: match &self.name {
+                Some(s) => s.to_owned(),
+                None => {
+                    self.hints.code_lens.push(name_missing());
+                    String::from("<anonymous>")
+                }
+            },
+            range: self.name_position,
+        };
+        GrammarInfo {
+            name,
+            extensions: take(&mut self.extensions),
+            rule_map: take(&mut self.rule_map),
+            ignores: take(&mut self.ignores),
+            url: self.url.to_owned(),
+            text: self.get_text().to_owned(),
+            is_grammar: self.is_grammar.unwrap_or(false),
+        }
+    }
 }
 
 pub trait Translator {
-    fn translate(self, url: &GrammarContext) -> Result<(GrammarInfo, HintItems)>;
+    fn translate(self, ctx: &mut GrammarContext) -> Result<GrammarInfo>;
 }
 
 impl Translator for Program {
-    fn translate(self, file: &GrammarContext) -> Result<(GrammarInfo, HintItems)> {
-        let mut is_top_area = true;
-        let mut is_grammar = None;
-        let mut name_position = Default::default();
-        let mut name = None;
-        let mut rule_map = Map::<String, Rule>::default();
-        let mut extensions = vec![];
-        let mut ignores = vec![];
-        let mut diag = vec![];
-        let mut lens = vec![];
+    fn translate(self, ctx: &mut GrammarContext) -> Result<GrammarInfo> {
         let mut doc_buffer = String::new();
         for stmt in self.statement {
             match stmt {
                 Statement::Grammar(s) => {
-                    if !is_top_area {
-                        diag.push(top_area_error("Grammar", "Grammar statement must be declared at the top", s.range, file))
-                    }
-                    match is_grammar {
-                        Some(true) => diag.push(duplicate_declaration_error(
-                            "Grammar",
-                            "Already declaration as `grammar!`",
-                            s.range,
-                            name_position,
-                            file,
-                        )),
-                        Some(false) => diag.push(duplicate_declaration_error(
-                            "Grammar",
-                            "Already declaration as `fragment!`",
-                            s.range,
-                            name_position,
-                            file,
-                        )),
-                        None => {
-                            is_grammar = Some(true);
-                            name_position = s.range;
-                            extensions = s.ext;
-                            name = Some(s.id.data)
-                        }
-                    }
+                    ctx.must_at_top_area("Grammar", "Grammar statement must be declared at the top", s.range);
+                    ctx.set_grammar(s.range, s.id.data, s.ext);
                 }
                 Statement::Fragment(s) => {
-                    if !is_top_area {
-                        diag.push(top_area_error("Fragment", "Fragment statement must be declared at the top", s.range, file))
-                    }
-                    match is_grammar {
-                        Some(true) => diag.push(duplicate_declaration_error(
-                            "Fragment",
-                            "Already declaration as `grammar!`",
-                            s.range,
-                            name_position,
-                            &file,
-                        )),
-                        Some(false) => diag.push(duplicate_declaration_error(
-                            "Fragment",
-                            "Already declaration as `fragment!`",
-                            s.range,
-                            name_position,
-                            file,
-                        )),
-                        None => {
-                            is_grammar = Some(false);
-                            name_position = s.range;
-                            name = Some(s.id.data)
-                        }
-                    }
+                    ctx.must_at_top_area("Fragment", "Fragment statement must be declared at the top", s.range);
+                    ctx.set_fragment(s.range, s.id.data);
                 }
                 Statement::Ignore(s) => {
-                    if !is_top_area {
-                        diag.push(top_area_error("Ignore", "Ignore statement must be declared at the top", s.range, file))
-                    }
-                    if !ignores.is_empty() {
-                        diag.push(duplicate_declaration_error(
-                            "Ignore",
-                            "Already declaration ignore statement",
-                            s.range,
-                            name_position,
-                            file,
-                        ))
-                    } else {
-                        ignores = s.rules;
-                    }
+                    ctx.must_at_top_area("Ignore", "Ignore statement must be declared at the top", s.range);
+                    ctx.set_ignores(s.rules, s.range, ctx.name_position)
                 }
                 Statement::Assign(s) => {
-                    is_top_area = false;
+                    ctx.is_top_area = false;
                     let mut rule = Rule::from(*s);
                     swap(&mut rule.doc, &mut doc_buffer);
-                    match rule_map.get(&rule.name.data) {
-                        Some(old) => diag.push(duplicate_declaration_error(
+                    match ctx.rule_map.get(&rule.name.data) {
+                        Some(old) => ctx.must_not_duplicate(
                             "Rule",
                             format!("Already declaration as Rule `{}`", old.name.data),
                             rule.range,
                             old.name.range,
-                            file,
-                        )),
+                        ),
                         None => {
-                            rule_map.insert(rule.name.data.to_owned(), rule);
+                            ctx.rule_map.insert(rule.name.data.to_owned(), rule);
                         }
                     }
                 }
@@ -140,34 +176,10 @@ impl Translator for Program {
                 Statement::Import(_) => {
                     unimplemented!()
                 }
-                Statement::MacroCall(_) => { unimplemented!() }
+                Statement::MacroCall(m) => ctx.read_macros(*m),
             }
         }
-
-        let name = Symbol {
-            data: match name {
-                Some(s) => s,
-                None => {
-                    lens.push(name_missing());
-                    String::from("<anonymous>")
-                }
-            },
-            range: name_position,
-        };
-
-        let state = GrammarInfo {
-            name,
-            extensions,
-            rule_map,
-            ignores,
-            url: file.url.to_owned(),
-            text: file.get_text().to_owned(),
-            is_grammar: is_grammar.unwrap_or(false),
-        };
-
-        let hint = HintItems { diagnostic: diag, code_lens: lens, document_symbol: vec![] };
-
-        Ok((state, hint))
+        Ok(ctx.build_grammar_info())
     }
 }
 

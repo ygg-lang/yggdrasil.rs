@@ -45,20 +45,17 @@ impl ExpressionNode {
         node.branch_tag = Some(ExpressionTag::new(kind, name));
         return node;
     }
-
 }
 
 impl ExpressionTag {
     pub fn new(kind: Option<char>, name: Symbol) -> Self {
-        match kind {
-            None => {
-                unimplemented!()
-            }
+        let mode = match kind {
+            None => "".to_string(),
             Some(_) => {
                 unimplemented!()
             }
-        }
-        Self { name, mode: "".to_string() }
+        };
+        Self { name, mode }
     }
 }
 

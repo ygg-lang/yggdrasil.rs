@@ -1,17 +1,15 @@
+use crate::frontend::{Rule, Set};
 use std::{
     fmt::{Debug, Formatter},
     ops::{AddAssign, BitAndAssign},
 };
 use yggdrasil_bootstrap::ast::*;
-use crate::frontend::Set;
-use crate::frontend::Rule;
 
 mod choice;
 mod concat;
 mod debug;
 mod expr;
 mod unary;
-
 
 #[derive(Clone, Eq, PartialEq, Hash)]
 pub struct ExpressionNode {

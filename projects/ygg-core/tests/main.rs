@@ -32,17 +32,17 @@ pub fn assert_ast(text: &str, target: &str) -> Result<()> {
 }
 
 pub fn assert_diagnostic(text: &str, target: &str) -> Result<()> {
-    let file = GrammarContext::new(text, &EXAMPLE_URL);
+    let mut ctx = GrammarContext::new(text, &EXAMPLE_URL);
     let mut parser = YggParser::default();
-    let diag = parser.parse_program(text)?.translate(&file)?.1;
-    assert_eq!(format!("{:#?}", diag), target);
+    parser.parse_program(text)?.translate(&mut ctx)?;
+    assert_eq!(format!("{:#?}", ctx.get_hints()), target);
     Ok(())
 }
 
 pub fn assert_optimize(text: &str, target: &str) -> Result<()> {
-    let file = GrammarContext::new(text, &EXAMPLE_URL);
+    let mut ctx = GrammarContext::new(text, &EXAMPLE_URL);
     let mut parser = YggParser::default();
-    let mut grammar = parser.parse_program(text)?.translate(&file)?.0;
+    let mut grammar = parser.parse_program(text)?.translate(&mut ctx)?;
 
     grammar.optimize_local()?;
     let mut out = String::new();
@@ -54,10 +54,10 @@ pub fn assert_optimize(text: &str, target: &str) -> Result<()> {
 }
 
 pub fn assert_codegen(text: &str, target: &str) -> Result<()> {
-    let file = GrammarContext::new(text, &EXAMPLE_URL);
+    let mut ctx = GrammarContext::new(text, &EXAMPLE_URL);
     let mut parser = YggParser::default();
-    let mut grammar = parser.parse_program(text)?.translate(&file)?.0;
-    let _hint = grammar.optimize_local()?;
+    let mut grammar = parser.parse_program(text)?.translate(&mut ctx)?;
+    grammar.optimize_local()?;
     let (gr, ge) = grammar.build_peg();
     assert_eq!(format!("{:#?}\n{:#?}", gr, ge), target);
     Ok(())

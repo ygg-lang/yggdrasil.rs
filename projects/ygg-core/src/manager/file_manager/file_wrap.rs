@@ -22,10 +22,10 @@ impl FileType {
             FileType::GrammarString(s) => {
                 let mut hints = HintItems::default();
                 let program = parser.parse_program(s)?;
-                let file = GrammarContext::new(s, &url);
-                parse_error_to_hints(&file, parser.errors(), &mut hints);
-                let (mut grammar, err) = program.translate(&file)?;
-                hints += err;
+                let mut ctx = GrammarContext::new(s, &url);
+                parse_error_to_hints(&ctx, parser.errors(), &mut hints);
+                let mut grammar = program.translate(&mut ctx)?;
+                hints += ctx.get_hints().to_owned();
                 hints += grammar.optimize().await?;
                 hints += grammar.report_meta();
                 *self = Self::Grammar(grammar.to_owned());

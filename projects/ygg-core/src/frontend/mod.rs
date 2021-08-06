@@ -1,17 +1,17 @@
+mod optimize;
 pub mod rule;
 pub mod typing;
-mod optimize;
 
 pub use self::{
     rule::{GrammarContext, Translator},
     typing::GrammarType,
 };
 
-use self::remap::{Keys, Map, Values};
 pub use self::remap::Set;
+use self::remap::{Keys, Map, Values};
+use crate::frontend::rule::ExpressionNode;
 use lsp_types::Url;
 use yggdrasil_bootstrap::ast::{StringLiteral, Symbol};
-use crate::frontend::rule::ExpressionNode;
 
 // used for ide hint
 #[cfg(debug_assertions)]

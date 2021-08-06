@@ -36,7 +36,7 @@ impl ExpressionNode {
         }
     }
     pub fn get_choice_mut(&mut self) -> Option<&mut RefinedChoice> {
-        match &mut self.node  {
+        match &mut self.node {
             RefinedExpression::Choice(c) => Some(c.as_mut()),
             _ => None,
         }

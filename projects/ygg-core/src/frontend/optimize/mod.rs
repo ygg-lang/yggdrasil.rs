@@ -1,11 +1,10 @@
 use crate::{
-    frontend::{rule::*, GrammarInfo},
+    frontend::{rule::*, GrammarInfo, Rule},
     manager::HintItems,
     Result,
 };
 use lsp_types::{DocumentSymbol, SymbolKind};
 use std::mem::transmute;
-use crate::frontend::Rule;
 
 mod builtin;
 mod fuse;

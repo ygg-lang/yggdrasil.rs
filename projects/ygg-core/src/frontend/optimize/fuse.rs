@@ -44,7 +44,10 @@ impl ExpressionNode {
     }
 
     fn meta_eq(&self, rhs: &Self) -> bool {
-        rhs.inline_token == self.inline_token && rhs.node_tag == self.node_tag && rhs.branch_tag == self.branch_tag && rhs.ty == self.ty
+        rhs.inline_token == self.inline_token
+            && rhs.node_tag == self.node_tag
+            && rhs.branch_tag == self.branch_tag
+            && rhs.ty == self.ty
     }
 }
 

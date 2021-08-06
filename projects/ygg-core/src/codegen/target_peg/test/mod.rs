@@ -8,9 +8,9 @@ use yggdrasil_bootstrap::ast::YggParser;
 
 fn test_gen(text: &str) -> Result<String> {
     let url = Url::from_str("file://example/path").unwrap();
-    let file = GrammarContext::new(text, &url);
+    let mut ctx = GrammarContext::new(text, &url);
     let mut parser = YggParser::default();
-    let state = parser.parse_program(text)?.translate(&file)?.0;
+    let state = parser.parse_program(text)?.translate(&mut ctx)?;
     Ok(state.build_peg_code())
 }
 
