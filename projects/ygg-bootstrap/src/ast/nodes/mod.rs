@@ -59,7 +59,7 @@ pub struct ImportStatement {
 #[derive(Clone)]
 pub struct SymbolAlias {
     pub from: Symbol,
-    pub into: Option<Symbol>,
+    pub into: Symbol,
     pub range: (usize, usize),
 }
 

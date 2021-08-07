@@ -1,10 +1,13 @@
+mod import;
+mod macros;
+
 use super::{
     hints::{duplicate_declaration_error, name_missing, top_area_error},
     *,
 };
 use std::mem::take;
-use yggdrasil_bootstrap::ast::StringLiteral;
-mod macros;
+use yggdrasil_bootstrap::ast::{ImportStatement, MacroCall, StringLiteral, SymbolAlias};
+use crate::manager::{GLOBAL_ROOT, WORKSPACE_ROOT};
 
 pub struct GrammarContext<'i> {
     url: &'i Url,
@@ -14,7 +17,8 @@ pub struct GrammarContext<'i> {
     is_top_area: bool,
     is_grammar: Option<bool>,
     hints: HintItems,
-    ignores: Vec<Symbol>,
+    ignore: ((usize, usize), Vec<Symbol>),
+    import: Map<Url, ((usize, usize), Vec<SymbolAlias>)>,
     extensions: Vec<StringLiteral>,
     rule_map: Map<String, Rule>,
 }
@@ -24,15 +28,16 @@ impl<'i> GrammarContext<'i> {
     pub fn new(text: &'i str, url: &'i Url) -> Self {
         Self {
             text,
-            name: None,
             url,
+            name: None,
+            name_position: Default::default(),
+            import: Default::default(),
             is_top_area: true,
             is_grammar: None,
             hints: Default::default(),
-            ignores: vec![],
+            ignore: Default::default(),
             extensions: vec![],
             rule_map: Default::default(),
-            name_position: (0, 0),
         }
     }
     #[inline]
@@ -81,12 +86,12 @@ impl<'i> GrammarContext<'i> {
     ) {
         self.hints.diagnostic.push(duplicate_declaration_error(source, message, this_range, last_range, self))
     }
-    fn set_ignores(&mut self, rules: Vec<Symbol>, this_range: (usize, usize), last_range: (usize, usize)) {
-        if !self.ignores.is_empty() {
-            self.must_not_duplicate("Ignore", "Already declaration ignore statement", this_range, last_range)
+    fn set_ignores(&mut self, rules: Vec<Symbol>, this_range: (usize, usize)) {
+        if !self.ignore.1.is_empty() {
+            self.must_not_duplicate("Ignore", "Already declaration ignore statement", this_range, self.ignore.0)
         }
         else {
-            self.ignores = rules;
+            self.ignore = (this_range, rules);
         }
     }
     fn set_grammar(&mut self, range: (usize, usize), name: String, extensions: Vec<StringLiteral>) {
@@ -123,14 +128,20 @@ impl<'i> GrammarContext<'i> {
             },
             range: self.name_position,
         };
+        let mut imports = Map::with_capacity(self.import.len());
+        for (k, (_, v)) in take(&mut self.import) {
+            imports.insert(k, v);
+        }
+        let ignores = take(&mut self.ignore).1;
         GrammarInfo {
             name,
-            extensions: take(&mut self.extensions),
-            rule_map: take(&mut self.rule_map),
-            ignores: take(&mut self.ignores),
             url: self.url.to_owned(),
             text: self.get_text().to_owned(),
             is_grammar: self.is_grammar.unwrap_or(false),
+            extensions: take(&mut self.extensions),
+            rule_map: take(&mut self.rule_map),
+            ignores,
+            imports,
         }
     }
 }
@@ -154,7 +165,7 @@ impl Translator for Program {
                 }
                 Statement::Ignore(s) => {
                     ctx.must_at_top_area("Ignore", "Ignore statement must be declared at the top", s.range);
-                    ctx.set_ignores(s.rules, s.range, ctx.name_position)
+                    ctx.set_ignores(s.rules, s.range)
                 }
                 Statement::Assign(s) => {
                     ctx.is_top_area = false;
@@ -173,9 +184,7 @@ impl Translator for Program {
                     }
                 }
                 Statement::CommentDocument(text) => doc_buffer.extend(text.doc.chars().chain("\n".chars())),
-                Statement::Import(_) => {
-                    unimplemented!()
-                }
+                Statement::Import(i) => ctx.read_import(*i),
                 Statement::MacroCall(m) => ctx.read_macros(*m),
             }
         }

@@ -1,3 +1,4 @@
+use std::sync::PoisonError;
 use super::Error;
 
 impl From<std::str::Utf8Error> for Error {
@@ -15,6 +16,20 @@ impl From<std::num::ParseIntError> for Error {
 impl From<std::num::ParseFloatError> for Error {
     fn from(e: std::num::ParseFloatError) -> Self {
         Self::LanguageError { error: e.to_string() }
+    }
+}
+
+impl From<url::ParseError> for Error {
+    fn from(_: url::ParseError) -> Self {
+        Self::IOError {
+            source: std::io::Error::from_raw_os_error(10022)
+        }
+    }
+}
+
+impl<T> From<std::sync::PoisonError<T>> for Error {
+    fn from(_: PoisonError<T>) -> Self {
+        Self::Unreachable
     }
 }
 

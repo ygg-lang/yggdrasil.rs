@@ -13,17 +13,20 @@ impl FileType {
         unimplemented!()
     }
     pub async fn parse_ygg(&mut self, url: Url) -> Result<GrammarInfo> {
-        let mut parser = PARSER_MANAGER.write().await;
         match self {
             FileType::Grammar(g) => {
                 // TODO: no clone
                 Ok(g.clone())
             }
             FileType::GrammarString(s) => {
-                let mut hints = HintItems::default();
-                let program = parser.parse_program(s)?;
                 let mut ctx = GrammarContext::new(s, &url);
-                parse_error_to_hints(&ctx, parser.errors(), &mut hints);
+                let mut hints = HintItems::default();
+                let program = {
+                    let mut parser = PARSER_MANAGER.write()?;
+                    let program = parser.parse_program(s)?;
+                    parse_error_to_hints(&ctx, parser.errors(), &mut hints);
+                    program
+                };
                 let mut grammar = program.translate(&mut ctx)?;
                 hints += ctx.get_hints().to_owned();
                 hints += grammar.optimize().await?;

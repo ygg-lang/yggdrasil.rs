@@ -142,16 +142,6 @@ impl ASTNode<Node> for SymbolPath {
     }
 }
 
-impl ASTNode<Node> for SymbolAlias {
-    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
-        let range = node.get_span();
-        let mut map = node.get_tag_map();
-        let from = ASTNode::named_one(&mut map, "from", builder)?;
-        let into = ASTNode::named_some(&mut map, "into", builder);
-        Ok(Self { from, into, range })
-    }
-}
-
 string_node!(Node, Prefix);
 string_node!(Node, Suffix);
 string_node!(Node, Symbol);

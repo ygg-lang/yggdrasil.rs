@@ -127,10 +127,8 @@ impl Debug for SymbolAlias {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.write_str("SymbolAlias(")?;
         f.write_str(&self.from.data)?;
-        if let Some(s) = &self.into {
-            f.write_str(" as ")?;
-            f.write_str(&s.data)?;
-        };
+        f.write_str(" as ")?;
+        f.write_str(&self.into.data)?;
         f.write_str(")")
     }
 }

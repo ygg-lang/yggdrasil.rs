@@ -53,6 +53,16 @@ where
     }
 }
 
+impl ASTNode<Node> for SymbolAlias {
+    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
+        let range = node.get_span();
+        let mut map = node.get_tag_map();
+        let from = Symbol::named_one(&mut map, "from", builder)?;
+        let into = Symbol::named_some(&mut map, "into", builder).unwrap_or(from.clone());
+        Ok(Self { from, into, range })
+    }
+}
+
 impl ASTNode<Node> for Expression {
     fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {
         let mut map = node.get_tag_map();

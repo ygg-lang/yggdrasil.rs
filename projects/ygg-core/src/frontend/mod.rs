@@ -11,7 +11,7 @@ pub use self::remap::Set;
 use self::remap::{Keys, Map, Values};
 use crate::frontend::rule::ExpressionNode;
 use lsp_types::Url;
-use yggdrasil_bootstrap::ast::{StringLiteral, Symbol};
+use yggdrasil_bootstrap::ast::{StringLiteral, Symbol, SymbolAlias};
 
 // used for ide hint
 #[cfg(debug_assertions)]
@@ -38,6 +38,7 @@ pub struct GrammarInfo {
     pub(crate) name: Symbol,
     pub(crate) extensions: Vec<StringLiteral>,
     pub(crate) ignores: Vec<Symbol>,
+    pub(crate) imports: Map<Url, Vec<SymbolAlias>>,
     pub(crate) rule_map: Map<String, Rule>,
 }
 
