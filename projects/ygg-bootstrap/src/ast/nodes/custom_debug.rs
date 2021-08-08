@@ -1,5 +1,5 @@
 use super::*;
-use std::fmt::{Debug, Formatter};
+use std::fmt::{Debug, Display, Formatter};
 
 impl Debug for Program {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -120,6 +120,13 @@ impl Debug for SymbolPath {
         let s = self.symbol.iter().map(|s| s.data.to_owned()).collect::<Vec<_>>().join("::");
         f.write_str(&s)?;
         f.write_str(")")
+    }
+}
+
+impl Display for SymbolPath {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let s = self.symbol.iter().map(|s| s.data.to_owned()).collect::<Vec<_>>().join("::");
+        f.write_str(&s)
     }
 }
 
