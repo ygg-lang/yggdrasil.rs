@@ -5,9 +5,9 @@ use super::{
     hints::{duplicate_declaration_error, name_missing, top_area_error},
     *,
 };
+use crate::manager::{GLOBAL_ROOT, WORKSPACE_ROOT};
 use std::mem::take;
 use yggdrasil_bootstrap::ast::{ImportStatement, MacroCall, StringLiteral, SymbolAlias};
-use crate::manager::{GLOBAL_ROOT, WORKSPACE_ROOT};
 
 pub struct GrammarContext<'i> {
     url: &'i Url,

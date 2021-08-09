@@ -1,19 +1,23 @@
 mod css;
+mod helper;
 
 pub use self::css::DEFAULT_CSS;
-use std::borrow::Borrow;
-use std::fmt::Debug;
-use std::lazy::SyncLazy;
-use std::str::FromStr;
+pub use helper::*;
+
+use crate::{
+    frontend::{
+        rule::{ExpressionNode, RefinedData, RefinedExpression},
+        GrammarContext, GrammarInfo, Rule, Translator,
+    },
+    Result,
+};
 use lsp_types::Url;
-use railroad::{self, svg, Diagram, End, Sequence, Start, Optional, SimpleStart, SimpleEnd, HorizontalGrid, VerticalGrid, Stack, RailroadNode, Comment, Link};
+use railroad::{self, svg, Comment, Diagram, End, HorizontalGrid, Link, RailroadNode, Sequence, Stack, Start, VerticalGrid, Repeat, Choice};
+use std::{borrow::Borrow, fmt::Debug, lazy::SyncLazy, str::FromStr};
 use yggdrasil_bootstrap::ast::{SymbolPath, YggParser};
-use crate::frontend::{GrammarContext, GrammarInfo, Rule, Translator};
-use crate::frontend::rule::{ExpressionNode, RefinedData, RefinedExpression};
-use crate::Result;
+use crate::frontend::rule::{Operator, RefinedChoice, RefinedConcat, RefinedUnary};
 
 pub static EXAMPLE_URL: SyncLazy<Url> = SyncLazy::new(|| Url::from_str("file://example/path").unwrap());
-
 
 pub fn assert_codegen(text: &str) -> Result<VerticalGrid> {
     let mut ctx = GrammarContext::new(text, &EXAMPLE_URL);
@@ -33,89 +37,101 @@ impl Rule {
     pub fn into_railroad(self) -> Box<dyn RailroadNode> {
         let mut s = Sequence::default();
         s.push(box SimpleStart);
-        s.push(box Comment::new(self.name.data));
+        s.push(box RuleName::new(self.name.data));
         s.push(self.expression.into_railroad());
+        s.push(box SimpleEnd);
         return box s;
     }
 }
 
 impl ExpressionNode {
     pub fn into_railroad(self) -> Box<dyn RailroadNode> {
-        self.node.into_railroad()
+        self.node.into_railroad(self.inline_token)
     }
 }
 
 impl RefinedExpression {
-    pub fn into_railroad(self) -> Box<dyn RailroadNode> {
+    pub fn into_railroad(self, inline: bool) -> Box<dyn RailroadNode> {
         match self {
-            Self::Data(v) => { v.into_railroad() }
-            Self::Unary(_) => { unimplemented!() }
-            Self::Choice(_) => { unimplemented!() }
-            Self::Concat(_) => { unimplemented!() }
+            Self::Data(v) => v.into_railroad(inline),
+            Self::Unary(v) => {
+                v.into_railroad()
+            }
+            Self::Choice(v) => {
+                v.into_railroad()
+            }
+            Self::Concat(v) => {
+                v.into_railroad()
+            }
         }
     }
 }
 
 impl RefinedData {
-    pub fn into_railroad(self) -> Box<dyn RailroadNode> {
+    pub fn into_railroad(self, inline: bool) -> Box<dyn RailroadNode> {
         match self {
-            RefinedData::Symbol(v) => {
-                box Link::new(NonTerminal::new(v.to_string(), &vec!["symbol"]), "a".to_string())
-                // box NonTerminal::new(v.to_string(), &vec!["symbol"])
+            Self::Symbol(v) => {
+                let mut class = vec!["symbol"];
+                if inline {
+                    class.push("inline")
+                }
+                if v.symbol.len() == 1 {
+                    box Link::new(NonTerminal::new(v.to_string(), &class), format!("#{}", v.to_string()))
+                } else {
+                    // TODO: External link
+                    box NonTerminal::new(v.to_string(), &class)
+                }
             }
-            RefinedData::String(v) => {
-                box Terminal::new(format!("{:?}", v), &vec!["integer"])
-            }
-            RefinedData::Regex(_) => { unimplemented!() }
-            RefinedData::Integer(v) => {
-                box Terminal::new(v.to_string(), &vec!["integer"])
-            }
+            Self::String(v) => box Terminal::new(v, &vec!["string"]),
+            Self::Regex(v) => box Terminal::new(v.to_string(), &vec!["regex"]),
+            Self::Integer(v) => box Terminal::new(v.to_string(), &vec!["string"]),
         }
     }
 }
 
-pub struct Terminal;
-
-
-
-impl Terminal {
-    pub fn new(context: String, classes: &[&str]) -> railroad::Terminal {
-        let mut nt = railroad::Terminal::new(context);
-        if classes.is_empty() { return nt; }
-        let class = nt.attr("class".to_owned()).or_insert(String::new());
-        *class = classes.join(" ");
-        return nt;
+impl RefinedUnary {
+    pub fn into_railroad(self) -> Box<dyn RailroadNode> {
+        let mut base = self.base.into_railroad();
+        for o in self.ops {
+            match o {
+                Operator::Optional => { base = box Optional::new(base) }
+                Operator::Repeats => {
+                    base = box Repeat::new(base, Comment::new("*".to_string()));
+                }
+                Operator::Repeats1 => {
+                    base = box Repeat::new(base, Comment::new("+".to_string()));
+                }
+                Operator::Mark => continue,
+                Operator::Recursive => continue,
+            }
+        }
+        return base;
     }
 }
 
-pub struct NonTerminal;
-
-impl NonTerminal {
-    pub fn new(context: String, classes: &[&str]) -> railroad::NonTerminal {
-        let mut nt = railroad::NonTerminal::new(context);
-        if classes.is_empty() { return nt; }
-        let class = nt.attr("class".to_owned()).or_insert(String::new());
-        *class = classes.join(" ");
-        return nt;
+impl RefinedChoice {
+    pub fn into_railroad(self) -> Box<dyn RailroadNode> {
+        box Choice::new(self.inner.into_iter().map(|e| e.into_railroad()).collect())
     }
 }
 
-pub struct RuleName;
-
-impl RuleName {
-    pub fn new(context: String, id: &str) -> railroad::Comment {
-        let mut nt = railroad::Comment::new(context);
-        nt.attr("id".to_owned()).or_insert(id.to_string());
-        return nt;
+impl RefinedConcat {
+    pub fn into_railroad(self) -> Box<dyn RailroadNode> {
+        // TODO: maybe stack
+        let mut out = Sequence::default();
+        out.push(self.base.into_railroad());
+        for (_, e) in self.rest {
+            out.push(e.into_railroad());
+        }
+        return box out;
     }
 }
 
 #[test]
 fn test() {
     let text = r#"
-    a = b;
-    b = 2;
-    c = "3";
+    a = b | c?;
+    b = 2? ~ "3"+;
     "#;
     let grid = assert_codegen(text).unwrap();
     let mut dia = Diagram::new(grid);

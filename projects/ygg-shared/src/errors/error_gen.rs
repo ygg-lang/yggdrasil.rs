@@ -1,5 +1,5 @@
-use std::sync::PoisonError;
 use super::Error;
+use std::sync::PoisonError;
 
 impl From<std::str::Utf8Error> for Error {
     fn from(e: std::str::Utf8Error) -> Self {
@@ -21,9 +21,7 @@ impl From<std::num::ParseFloatError> for Error {
 
 impl From<url::ParseError> for Error {
     fn from(_: url::ParseError) -> Self {
-        Self::IOError {
-            source: std::io::Error::from_raw_os_error(10022)
-        }
+        Self::IOError { source: std::io::Error::from_raw_os_error(10022) }
     }
 }
 

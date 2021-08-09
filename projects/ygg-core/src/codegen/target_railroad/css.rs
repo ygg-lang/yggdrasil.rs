@@ -27,7 +27,7 @@ svg.railroad .nonterminal text {
 }
 
 svg.railroad text.comment {
-    font: italic 12px monospace;
+    font: italic 12px;
 }
 
 svg.railroad rect {
@@ -44,5 +44,11 @@ svg.railroad g.labeledbox > rect {
 
 svg.railroad .symbol > rect {
     fill:rgba(90, 90, 150, .1);
+}
+svg.railroad .regex > rect {
+    fill: honeydew;
+}
+svg.railroad .string > rect {
+    fill: cornsilk;
 }
 "#;

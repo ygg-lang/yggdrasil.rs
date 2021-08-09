@@ -1,6 +1,6 @@
-use std::lazy::SyncLazy;
 use lsp_types::Url;
-//use tokio::sync::RwLock;
+use std::lazy::SyncLazy;
+// use tokio::sync::RwLock;
 use std::sync::RwLock;
 use yggdrasil_bootstrap::ast::YggParser;
 

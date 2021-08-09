@@ -1,10 +1,9 @@
-
 use super::*;
 
 impl<'i> GrammarContext<'i> {
     pub(super) fn read_import(&mut self, call: ImportStatement) {
         let url = match Self::resolve_url(self.url, &call.path.data) {
-            Ok(o) => {o}
+            Ok(o) => o,
             Err(_) => {
                 // TODO: report error
                 return;
@@ -17,15 +16,9 @@ impl<'i> GrammarContext<'i> {
     }
     fn resolve_url(url: &Url, path: &str) -> Result<Url> {
         match path {
-            path if path.starts_with(">") => {
-               Ok(WORKSPACE_ROOT.read()?.join(&path[1..path.len()])?)
-            }
-            path if path.starts_with("@") => {
-                Ok(GLOBAL_ROOT.read()?.join(&path[1..path.len()])?)
-            }
-            _ => {
-                Ok(url.clone())
-            }
+            path if path.starts_with(">") => Ok(WORKSPACE_ROOT.read()?.join(&path[1..path.len()])?),
+            path if path.starts_with("@") => Ok(GLOBAL_ROOT.read()?.join(&path[1..path.len()])?),
+            _ => Ok(url.clone()),
         }
     }
 }
