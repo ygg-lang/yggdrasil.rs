@@ -59,6 +59,8 @@ pub enum Operator {
     Repeats,
     /// e+
     Repeats1,
+    /// e+
+    RepeatsBetween(Option<u8>, Option<u8>),
     /// ^e
     Mark,
     /// *e

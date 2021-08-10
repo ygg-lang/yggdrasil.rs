@@ -6,26 +6,15 @@ pub use helper::*;
 
 use crate::{
     frontend::{
-        rule::{ExpressionNode, RefinedData, RefinedExpression},
+        rule::{ExpressionNode, Operator, RefinedChoice, RefinedConcat, RefinedData, RefinedExpression, RefinedUnary},
         GrammarContext, GrammarInfo, Rule, Translator,
     },
     Result,
 };
 use lsp_types::Url;
-use railroad::{self, svg, Comment, Diagram, End, HorizontalGrid, Link, RailroadNode, Sequence, Stack, Start, VerticalGrid, Repeat, Choice};
+use railroad::{self, svg, RailroadNode};
 use std::{borrow::Borrow, fmt::Debug, lazy::SyncLazy, str::FromStr};
 use yggdrasil_bootstrap::ast::{SymbolPath, YggParser};
-use crate::frontend::rule::{Operator, RefinedChoice, RefinedConcat, RefinedUnary};
-
-pub static EXAMPLE_URL: SyncLazy<Url> = SyncLazy::new(|| Url::from_str("file://example/path").unwrap());
-
-pub fn assert_codegen(text: &str) -> Result<VerticalGrid> {
-    let mut ctx = GrammarContext::new(text, &EXAMPLE_URL);
-    let mut parser = YggParser::default();
-    let mut grammar = parser.parse_program(text)?.translate(&mut ctx)?;
-    grammar.optimize_local()?;
-    Ok(grammar.into_railroad())
-}
 
 impl GrammarInfo {
     pub fn into_railroad(self) -> VerticalGrid {
@@ -54,15 +43,9 @@ impl RefinedExpression {
     pub fn into_railroad(self, inline: bool) -> Box<dyn RailroadNode> {
         match self {
             Self::Data(v) => v.into_railroad(inline),
-            Self::Unary(v) => {
-                v.into_railroad()
-            }
-            Self::Choice(v) => {
-                v.into_railroad()
-            }
-            Self::Concat(v) => {
-                v.into_railroad()
-            }
+            Self::Unary(v) => v.into_railroad(),
+            Self::Choice(v) => v.into_railroad(),
+            Self::Concat(v) => v.into_railroad(),
         }
     }
 }
@@ -77,7 +60,8 @@ impl RefinedData {
                 }
                 if v.symbol.len() == 1 {
                     box Link::new(NonTerminal::new(v.to_string(), &class), format!("#{}", v.to_string()))
-                } else {
+                }
+                else {
                     // TODO: External link
                     box NonTerminal::new(v.to_string(), &class)
                 }
@@ -94,12 +78,24 @@ impl RefinedUnary {
         let mut base = self.base.into_railroad();
         for o in self.ops {
             match o {
-                Operator::Optional => { base = box Optional::new(base) }
+                Operator::Optional => base = box Optional::new(base),
                 Operator::Repeats => {
                     base = box Repeat::new(base, Comment::new("*".to_string()));
                 }
                 Operator::Repeats1 => {
                     base = box Repeat::new(base, Comment::new("+".to_string()));
+                }
+                Operator::RepeatsBetween(s, e) => {
+                    let start = match s {
+                        Some(s) => s.to_string(),
+                        None => String::from("0"),
+                    };
+                    let end = match e {
+                        Some(s) => s.to_string(),
+                        None => String::from("∞"),
+                    };
+                    let c = Comment::new(format!("[{}, {}]", start, end));
+                    base = box Repeat::new(base, c);
                 }
                 Operator::Mark => continue,
                 Operator::Recursive => continue,
@@ -125,6 +121,17 @@ impl RefinedConcat {
         }
         return box out;
     }
+}
+
+
+pub static EXAMPLE_URL: SyncLazy<Url> = SyncLazy::new(|| Url::from_str("file://example/path").unwrap());
+
+pub fn assert_codegen(text: &str) -> Result<VerticalGrid> {
+    let mut ctx = GrammarContext::new(text, &EXAMPLE_URL);
+    let mut parser = YggParser::default();
+    let mut grammar = parser.parse_program(text)?.translate(&mut ctx)?;
+    // grammar.optimize_local()?;
+    Ok(grammar.into_railroad())
 }
 
 #[test]

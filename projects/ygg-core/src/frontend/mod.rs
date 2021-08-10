@@ -51,6 +51,8 @@ pub struct Rule {
     ///
     pub(crate) doc: String,
     ///
+    pub(crate) custom_methods: RuleMethods,
+    ///
     pub(crate) force_inline: bool,
     ///
     pub(crate) force_box: bool,
@@ -73,4 +75,9 @@ pub struct Rule {
     pub(crate) expression: ExpressionNode,
     /// position of all parts
     pub(crate) range: (usize, usize),
+}
+
+pub struct RuleMethods {
+    debug: Option<String>,
+    display: Option<String>,
 }

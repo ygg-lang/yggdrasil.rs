@@ -6,3 +6,4 @@ mod target_pest;
 mod target_railroad;
 #[cfg(feature = "tree-sitter")]
 mod target_tree_sitter;
+mod target_ast;

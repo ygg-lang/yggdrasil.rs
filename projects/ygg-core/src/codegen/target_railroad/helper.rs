@@ -1,4 +1,7 @@
-pub use railroad::{Optional, SimpleEnd, SimpleStart};
+pub use railroad::{
+    Choice, Comment, Diagram, End, HorizontalGrid, Link, Optional, Repeat, Sequence, SimpleEnd, SimpleStart, Stack, Start,
+    VerticalGrid,
+};
 
 pub struct Terminal;
 
