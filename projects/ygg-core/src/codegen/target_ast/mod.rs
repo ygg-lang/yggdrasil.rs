@@ -1,14 +1,15 @@
-use crate::frontend::rule::ExpressionNode;
+use crate::frontend::{rule::ExpressionNode, Map, Rule, RuleMethods};
+use std::{
+    fmt,
+    fmt::{Debug, Formatter, Write},
+};
 use yggdrasil_bootstrap::ast::Symbol;
-use crate::frontend::{Map, Rule, RuleMethods};
-use std::fmt::{Debug, Formatter, Write};
-use std::fmt;
+mod write_nodes;
 
 pub struct SymbolCountMap {
     rule: Rule,
     map: Map<String, SymbolCount>,
 }
-
 
 pub enum SymbolCount {
     One(String, String),
@@ -18,15 +19,11 @@ pub enum SymbolCount {
 
 impl From<Rule> for SymbolCountMap {
     fn from(rule: Rule) -> Self {
-        let mut out = Self {
-            rule,
-            map: Default::default(),
-        };
+        let mut out = Self { rule, map: Default::default() };
         out.count();
         return out;
     }
 }
-
 
 impl SymbolCountMap {
     fn count(&mut self) {}
@@ -37,51 +34,64 @@ impl SymbolCountMap {
 
 impl ExpressionNode {
     fn count(&self, map: &mut SymbolCountMap) {
-        self.expression
+
     }
 }
 
 impl SymbolCountMap {
-    fn write_struct(&self, f: &mut Formatter<'_>) -> fmt::Result {
-
-        writeln!(f, "pub struct {} {{", self.name)?;
-        for symbol in self.map.values() {
-            f.write_str("    pub ");
-            symbol.write_struct(f)?;
-        }
-        writeln!(f, "    pub range: (usize, usize),")?;
-        writeln!(f, "}}")
-    }
     fn write_string_node_parsing(&self, f: &mut Formatter<'_>) -> fmt::Result {
         writeln!(f, "string_node!(Node, {});", self.name)
     }
-
-}
-
-impl RuleMethods {
-    fn write_derive(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        auto_derive
-
-
-        writeln!(f, "string_node!(Node, {});", self.name)
-    }
-    fn write_custom_derive(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match self.debug {
-            None => {}
-            Some(_) => {}
+    fn write_parser(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        if let Some(s) = &self.rule.custom_methods.parser {
+            f.write_str(s)?;
+            return Ok(());
         }
-        writeln!(f, "#[derive({})]", self.auto_derive.join(", "))?;
-        writeln!(f, "string_node!(Node, {});", self.name)
+
+        writeln!(f, "impl ASTNode<Node> for {} {{", self.rule.ty.data);
+        writeln!(f, "    fn parse(node: Node, builder: &mut ASTBuilder) -> Result<Self> {{");
+        writeln!(f, "        let range = node.get_span();");
+        writeln!(f, "        let mut map = node.get_tag_map();");
+        for symbol in self.map.values() {
+            f.write_str("        ");
+            symbol.write_parser(f)?;
+        }
+        f.write_str("        ");
+        if self.map.is_empty() {
+            f.write_str("Ok(Self { range })");
+        } else {
+            writeln!(f, "Ok(Self {{ {}, range }})", self.map.keys().join(", "))?;
+        }
+        writeln!(f, "    }}")?;
+        writeln!(f, "}}")
     }
 }
 
 impl SymbolCount {
-    fn write_struct(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match ty {
-            Self::One(s, t) => { writeln!(f, "{}: {},", s, t) }
-            Self::Some(s, t) => { writeln!(f, "{}: Option<{}>,", s, t) }
-            Self::Many(s, t) => { writeln!(f, "{}: Vec<{}>,", s, t) }
+    fn write_parser(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::One(s, _) => {
+                writeln!(f, r#"let {id} = ASTNode::named_one(&mut map, "{id}", builder)?;"#, id = s)
+            }
+            Self::Some(s, _) => {
+                writeln!(f, r#"let {id} = ASTNode::named_some(&mut map, "{id}", builder);"#, id = s)
+            }
+            Self::Many(s, _) => {
+                writeln!(f, r#"let {id} = ASTNode::named_many(&mut map, "{id}", builder);"#, id = s)
+            }
         }
     }
 }
 
+impl RuleMethods {
+    fn write_custom_derive(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let mut traits = vec![];
+        if let Some(s) = &self.debug {
+            traits.push(s)
+        }
+        if let Some(s) = &self.display {
+            traits.push(s)
+        }
+        f.write_str(traits.join("\n\n"))
+    }
+}

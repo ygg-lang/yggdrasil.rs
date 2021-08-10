@@ -123,7 +123,6 @@ impl RefinedConcat {
     }
 }
 
-
 pub static EXAMPLE_URL: SyncLazy<Url> = SyncLazy::new(|| Url::from_str("file://example/path").unwrap());
 
 pub fn assert_codegen(text: &str) -> Result<VerticalGrid> {

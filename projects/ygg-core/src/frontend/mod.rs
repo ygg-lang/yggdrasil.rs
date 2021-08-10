@@ -77,7 +77,12 @@ pub struct Rule {
     pub(crate) range: (usize, usize),
 }
 
+#[derive(Clone)]
 pub struct RuleMethods {
-    debug: Option<String>,
-    display: Option<String>,
+    pub(crate) parser: Option<String>,
+    pub(crate) debug: Option<String>,
+    pub(crate) display: Option<String>,
+    pub(crate) eq: bool,
+    pub(crate) eq_partial: Option<String>,
+    pub(crate) hash: Option<String>,
 }
