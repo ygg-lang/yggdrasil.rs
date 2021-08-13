@@ -6,9 +6,9 @@
     ImportStatement {
         id: StringLiteral("@root/"),
         symbol_alias: [
-            SymbolAlias(a),
+            SymbolAlias(a as a),
             SymbolAlias(b as c),
-            SymbolAlias(d),
+            SymbolAlias(d as d),
         ],
     },
 ]

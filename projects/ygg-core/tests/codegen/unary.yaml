@@ -49,16 +49,16 @@ Grammar {
 }
 Generator {
     symbols: {
-        "test2",
-        "XID_IDENTIFIER",
-        "test1",
-        "EOI",
-        "test4",
-        "test3",
         "Dot",
+        "EOI",
         "WHITESPACE",
+        "XID_IDENTIFIER",
         "e1",
         "e1_0",
+        "test1",
+        "test2",
+        "test3",
+        "test4",
     },
     builtins: {},
     terminals: {

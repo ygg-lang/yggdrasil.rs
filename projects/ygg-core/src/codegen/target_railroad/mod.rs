@@ -4,26 +4,32 @@ mod helper;
 pub use self::css::DEFAULT_CSS;
 pub use helper::*;
 
-use crate::{
-    frontend::{
-        rule::{ExpressionNode, Operator, RefinedChoice, RefinedConcat, RefinedData, RefinedExpression, RefinedUnary},
-        GrammarContext, GrammarInfo, Rule, Translator,
-    },
-    Result,
+use crate::frontend::{
+    rule::{ExpressionNode, Operator, RefinedChoice, RefinedConcat, RefinedData, RefinedExpression, RefinedUnary},
+    GrammarInfo, Rule,
 };
-use lsp_types::Url;
-use railroad::{RailroadNode};
-use std::{lazy::SyncLazy, str::FromStr};
-use yggdrasil_bootstrap::ast::{YggParser};
+
+pub use railroad::RailroadNode;
+
+use railroad::svg::Element;
+
+// impl GrammarContext {
+//
+// }
 
 impl GrammarInfo {
-    pub fn into_railroad(self) -> VerticalGrid {
+    pub fn railroad_svg(self, css: &str) -> Diagram<VerticalGrid> {
+        let mut diagram = Diagram::new(self.into_railroad());
+        diagram.add_element(Element::new("style").set("type", "text/css").raw_text(css));
+        return diagram;
+    }
+    fn into_railroad(self) -> VerticalGrid {
         VerticalGrid::new(self.rule_map.into_iter().map(|(_, rule)| rule.into_railroad()).collect())
     }
 }
 
 impl Rule {
-    pub fn into_railroad(self) -> Box<dyn RailroadNode> {
+    fn into_railroad(self) -> Box<dyn RailroadNode> {
         let mut s = Sequence::default();
         s.push(box SimpleStart);
         s.push(box RuleName::new(self.name.data));
@@ -34,13 +40,13 @@ impl Rule {
 }
 
 impl ExpressionNode {
-    pub fn into_railroad(self) -> Box<dyn RailroadNode> {
+    fn into_railroad(self) -> Box<dyn RailroadNode> {
         self.node.into_railroad(self.inline_token)
     }
 }
 
 impl RefinedExpression {
-    pub fn into_railroad(self, inline: bool) -> Box<dyn RailroadNode> {
+    fn into_railroad(self, inline: bool) -> Box<dyn RailroadNode> {
         match self {
             Self::Data(v) => v.into_railroad(inline),
             Self::Unary(v) => v.into_railroad(),
@@ -51,7 +57,7 @@ impl RefinedExpression {
 }
 
 impl RefinedData {
-    pub fn into_railroad(self, inline: bool) -> Box<dyn RailroadNode> {
+    fn into_railroad(self, inline: bool) -> Box<dyn RailroadNode> {
         match self {
             Self::Symbol(v) => {
                 let mut class = vec!["symbol"];
@@ -74,7 +80,7 @@ impl RefinedData {
 }
 
 impl RefinedUnary {
-    pub fn into_railroad(self) -> Box<dyn RailroadNode> {
+    fn into_railroad(self) -> Box<dyn RailroadNode> {
         let mut base = self.base.into_railroad();
         for o in self.ops {
             match o {
@@ -106,13 +112,13 @@ impl RefinedUnary {
 }
 
 impl RefinedChoice {
-    pub fn into_railroad(self) -> Box<dyn RailroadNode> {
+    fn into_railroad(self) -> Box<dyn RailroadNode> {
         box Choice::new(self.inner.into_iter().map(|e| e.into_railroad()).collect())
     }
 }
 
 impl RefinedConcat {
-    pub fn into_railroad(self) -> Box<dyn RailroadNode> {
+    fn into_railroad(self) -> Box<dyn RailroadNode> {
         // TODO: maybe stack
         let mut out = Sequence::default();
         out.push(self.base.into_railroad());
@@ -121,26 +127,4 @@ impl RefinedConcat {
         }
         return box out;
     }
-}
-
-pub static EXAMPLE_URL: SyncLazy<Url> = SyncLazy::new(|| Url::from_str("file://example/path").unwrap());
-
-pub fn assert_codegen(text: &str) -> Result<VerticalGrid> {
-    let mut ctx = GrammarContext::new(text, &EXAMPLE_URL);
-    let mut parser = YggParser::default();
-    let mut grammar = parser.parse_program(text)?.translate(&mut ctx)?;
-    // grammar.optimize_local()?;
-    Ok(grammar.into_railroad())
-}
-
-#[test]
-fn test() {
-    let text = r#"
-    a = b | c?;
-    b = 2? ~ "3"+;
-    "#;
-    let grid = assert_codegen(text).unwrap();
-    let mut dia = Diagram::new(grid);
-    dia.add_element(svg::Element::new("style").set("type", "text/css").raw_text(DEFAULT_CSS));
-    println!("{}", dia);
 }

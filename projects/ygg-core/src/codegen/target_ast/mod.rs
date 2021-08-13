@@ -1,13 +1,14 @@
 use crate::frontend::{rule::ExpressionNode, Map, Rule, RuleMethods};
-use std::{
-    fmt,
-    fmt::{Formatter},
-};
 use itertools::Itertools;
+use std::{fmt, fmt::Formatter};
 use yggdrasil_bootstrap::ast::Symbol;
 mod write_nodes;
 
-pub struct SymbolCountMap {
+pub enum ASTWriter {
+    Normal(SymbolCounted),
+}
+
+pub struct SymbolCounted {
     rule: Rule,
     map: Map<String, SymbolCount>,
 }
@@ -18,7 +19,7 @@ pub enum SymbolCount {
     Many(String, String),
 }
 
-impl From<Rule> for SymbolCountMap {
+impl From<Rule> for SymbolCounted {
     fn from(rule: Rule) -> Self {
         let mut out = Self { rule, map: Map::default() };
         out.count();
@@ -26,7 +27,7 @@ impl From<Rule> for SymbolCountMap {
     }
 }
 
-impl SymbolCountMap {
+impl SymbolCounted {
     fn count(&mut self) {}
     fn one(&mut self, s: &Symbol) {}
     fn some(&mut self, s: &Symbol) {}
@@ -34,16 +35,14 @@ impl SymbolCountMap {
 }
 
 impl ExpressionNode {
-    fn count(&self, map: &mut SymbolCountMap) {
-
-    }
+    fn count(&self, map: &mut SymbolCounted) {}
 }
 
-impl SymbolCountMap {
+impl SymbolCounted {
     fn write_string_node_parsing(&self, f: &mut Formatter<'_>) -> fmt::Result {
         writeln!(f, "string_node!(Node, {});", self.rule.name.data)
     }
-    fn write_parser(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    pub fn write_parser(&self, f: &mut Formatter<'_>) -> fmt::Result {
         if let Some(s) = &self.rule.custom_methods.parser {
             f.write_str(s)?;
             return Ok(());
@@ -54,13 +53,14 @@ impl SymbolCountMap {
         writeln!(f, "        let range = node.get_span();");
         writeln!(f, "        let mut map = node.get_tag_map();");
         for symbol in self.map.values() {
-            f.write_str("        ");
+            f.write_str("        ")?;
             symbol.write_parser(f)?;
         }
-        f.write_str("        ");
+        f.write_str("        ")?;
         if self.map.is_empty() {
-            f.write_str("Ok(Self { range })");
-        } else {
+            f.write_str("Ok(Self { range })")?;
+        }
+        else {
             writeln!(f, "Ok(Self {{ {}, range }})", self.map.keys().join(", "))?;
         }
         writeln!(f, "    }}")?;

@@ -10,3 +10,8 @@ pub use yggdrasil_bootstrap::{Error, Result};
 pub mod codegen;
 pub mod frontend;
 pub mod manager;
+
+#[cfg(feature = "railroad")]
+pub mod railroad {
+    pub use crate::codegen::target_railroad::{Diagram, RailroadNode, VerticalGrid, DEFAULT_CSS};
+}

@@ -1,14 +1,27 @@
 use super::*;
 
-impl SymbolCountMap {
+impl ASTWriter {
+    pub fn write_node(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            ASTWriter::Normal(v) => v.write_struct(f),
+        }
+    }
+    pub fn write_parser(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            ASTWriter::Normal(v) => v.write_parser(f),
+        }
+    }
+}
+
+impl SymbolCounted {
     pub(super) fn write_struct(&self, f: &mut Formatter<'_>) -> fmt::Result {
         self.rule.custom_methods.write_derive(f)?;
         writeln!(f, "pub struct {} {{", self.rule.name.data)?;
         for symbol in self.map.values() {
-            f.write_str("    pub ");
+            f.write_str("    pub ")?;
             symbol.write_struct(f)?;
         }
-        f.write_str("    pub ");
+        f.write_str("    pub ")?;
         writeln!(f, "range: (usize, usize),")?;
         writeln!(f, "}}")
     }

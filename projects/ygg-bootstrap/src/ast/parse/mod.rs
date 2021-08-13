@@ -23,6 +23,7 @@ impl ASTNode<Node> for Statement {
             Some("Ignore") => Ok(Self::Ignore(Box::new(ASTNode::named_one(&mut map, "ignore_statement", builder)?))),
             Some("Import") => Ok(Self::Import(Box::new(ASTNode::named_one(&mut map, "import_statement", builder)?))),
             Some("Assign") => Ok(Self::Assign(Box::new(ASTNode::named_one(&mut map, "assign_statement", builder)?))),
+            Some("MacroCall") => Ok(Self::Assign(Box::new(ASTNode::named_one(&mut map, "assign_statement", builder)?))),
             _ => {
                 println!("{:#?}", map);
                 unreachable!()
@@ -114,6 +115,7 @@ impl ASTNode<Node> for Data {
             Some("String") => Ok(Self::String(ASTNode::named_one(children, "string", builder)?)),
             Some("Macro") => Ok(Self::String(ASTNode::named_one(children, "macro", builder)?)),
             Some("Regex") => Ok(Self::String(ASTNode::named_one(children, "regex", builder)?)),
+            Some("Range") => Ok(Self::String(ASTNode::named_one(children, "regex", builder)?)),
             Some(s) => {
                 println!("{:#?}", s);
                 unreachable!()

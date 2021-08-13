@@ -85,7 +85,7 @@ macro_kv  <-  symbol IGNORE "=" IGNORE expr / expr;
 
 
 macro_define  <-
-    "macro!" IGNORE symbol IGNORE  "(" IGNORE(macro_arg IGNORE ("," IGNORE macro_arg)* IGNORE ","?)? IGNORE ")" IGNORE block
+    "@macro" IGNORE symbol IGNORE  "(" IGNORE(macro_arg IGNORE ("," IGNORE macro_arg)* IGNORE ","?)? IGNORE ")" IGNORE block
 ;
 macro_arg  <- symbol IGNORE (":" IGNORE symbol)? IGNORE ("=" IGNORE expr)?;
 block  <- "{" IGNORE expr IGNORE "}";

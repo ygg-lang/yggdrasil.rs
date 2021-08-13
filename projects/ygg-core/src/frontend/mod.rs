@@ -7,8 +7,7 @@ pub use self::{
     typing::GrammarType,
 };
 
-pub use self::remap::Set;
-pub use self::remap::{Keys, Map, Values};
+pub use self::remap::{Keys, Map, Set, Values};
 use crate::frontend::rule::ExpressionNode;
 use lsp_types::Url;
 use yggdrasil_bootstrap::ast::{StringLiteral, Symbol, SymbolAlias};
@@ -87,16 +86,8 @@ pub struct RuleMethods {
     pub(crate) hash: Option<String>,
 }
 
-
 impl Default for RuleMethods {
     fn default() -> Self {
-        Self {
-            parser: None,
-            debug: None,
-            display: None,
-            eq: false,
-            eq_partial: None,
-            hash: None,
-        }
+        Self { parser: None, debug: None, display: None, eq: false, eq_partial: None, hash: None }
     }
 }

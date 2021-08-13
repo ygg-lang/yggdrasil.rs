@@ -9,6 +9,7 @@ use yggdrasil_core::{
     Result,
 };
 
+pub mod backends;
 pub mod basic;
 pub mod codegen;
 pub mod diagnostic;

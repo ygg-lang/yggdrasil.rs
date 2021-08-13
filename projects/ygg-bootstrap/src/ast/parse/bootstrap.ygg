@@ -15,11 +15,11 @@ program = ^statement*
 // Note that compared to ANTLR, this is not mandatory, but the same name is also forbidden.
 // If not specified, a name like `AuxVariant1` will be generated.
 statement =
-    | grammar_statement   $Grammar
-    | fragment_statement  $Fragment
-    | ignore_statement    $Ignore
-    | import_statement    $Import
-    | assign_statement    $Assign
+    | grammar_statement   #Grammar
+    | fragment_statement  #Fragment
+    | ignore_statement    #Ignore
+    | import_statement    #Import
+    | assign_statement    #Assign
 
 
 //* grammar tsg
