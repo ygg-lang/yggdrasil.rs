@@ -9,8 +9,8 @@ license = "MPL-2.0"
 edition = "2018"
 
 [dependencies]
-pest_meta = "2.1"
-anyhow = "1.0"
+pest_meta = "2.1.3"
+anyhow = "1.0.50"
 
 [dev-dependencies]
 

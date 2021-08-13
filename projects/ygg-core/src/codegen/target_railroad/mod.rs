@@ -12,9 +12,9 @@ use crate::{
     Result,
 };
 use lsp_types::Url;
-use railroad::{self, svg, RailroadNode};
-use std::{borrow::Borrow, fmt::Debug, lazy::SyncLazy, str::FromStr};
-use yggdrasil_bootstrap::ast::{SymbolPath, YggParser};
+use railroad::{RailroadNode};
+use std::{lazy::SyncLazy, str::FromStr};
+use yggdrasil_bootstrap::ast::{YggParser};
 
 impl GrammarInfo {
     pub fn into_railroad(self) -> VerticalGrid {

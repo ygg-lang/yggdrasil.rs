@@ -6,12 +6,12 @@ description = "AWSL Window Structure Language"
 repository = "https://github.com/GalAster/awsl-rs"
 readme = "Readme.md"
 license = "MPL-2.0"
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 lrpeg = { version = "0.4", git = "https://github.com/seanyoung/lrpeg" }
-regex = "1.5"
-unicode-xid = "0.2"
+regex = "1.5.4"
+unicode-xid = "0.2.2"
 
 [dependencies.yggdrasil-shared]
 version = "0.1"

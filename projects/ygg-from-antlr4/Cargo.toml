@@ -10,9 +10,9 @@ edition = "2018"
 
 [dependencies]
 lrpeg = { version = "0.4", git = "https://github.com/seanyoung/lrpeg" }
-regex = "*"
-unicode-xid = "*"
-anyhow = "1.0"
+regex = "1.5.4"
+unicode-xid = "0.2.2"
+anyhow = "1.0.50"
 
 [dev-dependencies]
 

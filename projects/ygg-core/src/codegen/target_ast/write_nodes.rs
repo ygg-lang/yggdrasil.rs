@@ -3,7 +3,7 @@ use super::*;
 impl SymbolCountMap {
     pub(super) fn write_struct(&self, f: &mut Formatter<'_>) -> fmt::Result {
         self.rule.custom_methods.write_derive(f)?;
-        writeln!(f, "pub struct {} {{", self.name)?;
+        writeln!(f, "pub struct {} {{", self.rule.name.data)?;
         for symbol in self.map.values() {
             f.write_str("    pub ");
             symbol.write_struct(f)?;
@@ -37,6 +37,6 @@ impl RuleMethods {
         if self.debug.is_none() {
             auto_derive.push("Debug")
         }
-        writeln!(f, "#[derive({})]", self.auto_derive.join(", "))
+        writeln!(f, "#[derive({})]", auto_derive.join(", "))
     }
 }

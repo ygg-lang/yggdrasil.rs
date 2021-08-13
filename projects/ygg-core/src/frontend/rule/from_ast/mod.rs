@@ -217,6 +217,7 @@ impl From<AssignStatement> for Rule {
             name: s.id,
             ty,
             doc: "".to_string(),
+            custom_methods: Default::default(),
             force_inline,
             force_box: false,
             already_inline: false,

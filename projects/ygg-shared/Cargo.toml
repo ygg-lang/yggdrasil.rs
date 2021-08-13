@@ -6,13 +6,13 @@ description = "AWSL Window Structure Language"
 repository = "https://github.com/GalAster/awsl-rs"
 readme = "Readme.md"
 license = "MPL-2.0"
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-lsp-types = { version = "0.89", features = ["proposed"], optional = true }
-url = { version = "2.0", optional = true }
-thiserror = "1.0"
-anyhow = "1.0"
+lsp-types = { version = "0.91.1", features = ["proposed"], optional = true }
+url = { version = "2.2.2", optional = true }
+thiserror = "1.0.30"
+anyhow = "1.0.50"
 
 [features]
 default = ["lsp"]

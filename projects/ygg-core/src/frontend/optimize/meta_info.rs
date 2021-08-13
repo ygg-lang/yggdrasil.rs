@@ -34,7 +34,7 @@ impl GrammarInfo {
         DocumentSymbol {
             name: name.to_string(),
             detail: Some(self.name.data.to_owned()),
-            kind: SymbolKind::Namespace,
+            kind: SymbolKind::NAMESPACE,
             tags: None,
             deprecated: None,
             range,
@@ -67,7 +67,7 @@ impl GrammarInfo {
         DocumentSymbol {
             name: "extensions".to_owned(),
             detail: Some(detail),
-            kind: SymbolKind::Array,
+            kind: SymbolKind::ARRAY,
             tags: None,
             deprecated: None,
             range,
@@ -80,7 +80,7 @@ impl GrammarInfo {
         DocumentSymbol {
             name: format!("{}: ", index + 1),
             detail: Some(detail.to_string()),
-            kind: SymbolKind::Key,
+            kind: SymbolKind::KEY,
             tags: None,
             deprecated: None,
             range,
@@ -97,7 +97,7 @@ impl GrammarInfo {
         DocumentSymbol {
             name: "Ignores".to_string(),
             detail: Some(n.to_string()),
-            kind: SymbolKind::Number,
+            kind: SymbolKind::NUMBER,
             tags: None,
             deprecated: None,
             range: Default::default(),
@@ -112,13 +112,13 @@ impl GrammarInfo {
             Some(s) => {
                 let mut s = s.symbol_item(&file);
                 s.range = range;
-                s.kind = SymbolKind::Number;
+                s.kind = SymbolKind::NUMBER;
                 s
             }
             None => DocumentSymbol {
                 name: id.data.to_owned(),
                 detail: None,
-                kind: SymbolKind::Number,
+                kind: SymbolKind::NUMBER,
                 tags: None,
                 deprecated: None,
                 range,
@@ -145,22 +145,22 @@ impl Rule {
     }
     fn symbol_detail(&self) -> (Option<String>, SymbolKind) {
         if self.force_inline {
-            (Some("inlined".to_string()), SymbolKind::Variable)
+            (Some("inlined".to_string()), SymbolKind::VARIABLE)
         }
         else if self.expression.inline_token {
-            (Some("token".to_string()), SymbolKind::String)
+            (Some("token".to_string()), SymbolKind::STRING)
         }
         else if self.eliminate_unnamed {
-            (Some("no unnamed".to_string()), SymbolKind::EnumMember)
+            (Some("no unnamed".to_string()), SymbolKind::ENUM_MEMBER)
         }
         else if self.eliminate_unmarked {
-            (Some("no unmarked".to_string()), SymbolKind::Enum)
+            (Some("no unmarked".to_string()), SymbolKind::ENUM)
         }
         else if self.expression.is_choice() {
-            (None, SymbolKind::Class)
+            (None, SymbolKind::CLASS)
         }
         else {
-            (None, SymbolKind::Field)
+            (None, SymbolKind::FIELD)
         }
     }
 }
@@ -169,7 +169,7 @@ fn test_node() -> DocumentSymbol {
     DocumentSymbol {
         name: "Testing".to_string(),
         detail: Some("Symbol".to_string()),
-        kind: SymbolKind::File,
+        kind: SymbolKind::FILE,
         tags: None,
         deprecated: None,
         range: Default::default(),
@@ -179,8 +179,8 @@ fn test_node() -> DocumentSymbol {
 }
 
 unsafe fn test_all_symbol() -> Vec<DocumentSymbol> {
-    (1u8..=26)
-        .map(|n| transmute::<u8, SymbolKind>(n))
+    (1u32..=26)
+        .map(|n| transmute::<u32, SymbolKind>(n))
         .map(|k| DocumentSymbol {
             name: format!("{:?}", k),
             detail: Some(format!("{:?}", k)),

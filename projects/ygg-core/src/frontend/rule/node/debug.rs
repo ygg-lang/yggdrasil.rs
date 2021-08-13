@@ -109,6 +109,7 @@ impl Debug for Operator {
             Self::Repeats1 => f.write_str("RepeatsNonnull+"),
             Self::Mark => f.write_str("^MarkSymbol"),
             Self::Recursive => f.write_str("*RecursiveSymbol"),
+            Self::RepeatsBetween(_, _) => {unimplemented!()}
         }
     }
 }

@@ -6,16 +6,16 @@ description = "Yggdrasil Language Server"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
 readme = "Readme.md"
 license = "MPL-2.0"
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 yggdrasil-core = { version = "0.1", path = "../ygg-core" }
-futures = { version = "0.3", features = ["compat"] }
+futures = { version = "0.3.18", features = ["compat"] }
 # jsonrpc-core = "14.0"
 # jsonrpc-derive = "14.0"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-tokio = { version = "1.12", features = ["io-std", "rt-multi-thread", "macros", "test-util"] }
-lspower = "1.1"
-unicode-xid = "0.2"
-itertools = "0.10"
+serde = { version = "1.0.130", features = ["derive"] }
+serde_json = "1.0.72"
+tokio = { version = "1.14.0", features = ["io-std", "rt-multi-thread", "macros", "test-util"] }
+lspower = "1.4.0"
+unicode-xid = "0.2.2"
+itertools = "0.10.1"

@@ -4,7 +4,7 @@ use crate::frontend::rule::from_ast::GrammarContext;
 pub fn top_area_error(src: &str, msg: &str, range: (usize, usize), file: &GrammarContext) -> Diagnostic {
     Diagnostic {
         range: file.get_lsp_range(range),
-        severity: Some(DiagnosticSeverity::Warning),
+        severity: Some(DiagnosticSeverity::WARNING),
         code: None,
         code_description: None,
         source: Some(String::from(src)),
@@ -26,7 +26,7 @@ pub fn duplicate_declaration_error(
     let info = DiagnosticRelatedInformation { location: Location { uri: file.get_url().to_owned(), range: file.get_lsp_range(last) }, message: msg.into() };
     Diagnostic {
         range: file.get_lsp_range(this),
-        severity: Some(DiagnosticSeverity::Error),
+        severity: Some(DiagnosticSeverity::ERROR),
         code: None,
         code_description: None,
         source: Some(String::from(src)),

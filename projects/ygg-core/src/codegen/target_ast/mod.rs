@@ -1,8 +1,9 @@
 use crate::frontend::{rule::ExpressionNode, Map, Rule, RuleMethods};
 use std::{
     fmt,
-    fmt::{Debug, Formatter, Write},
+    fmt::{Formatter},
 };
+use itertools::Itertools;
 use yggdrasil_bootstrap::ast::Symbol;
 mod write_nodes;
 
@@ -19,7 +20,7 @@ pub enum SymbolCount {
 
 impl From<Rule> for SymbolCountMap {
     fn from(rule: Rule) -> Self {
-        let mut out = Self { rule, map: Default::default() };
+        let mut out = Self { rule, map: Map::default() };
         out.count();
         return out;
     }
@@ -40,7 +41,7 @@ impl ExpressionNode {
 
 impl SymbolCountMap {
     fn write_string_node_parsing(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        writeln!(f, "string_node!(Node, {});", self.name)
+        writeln!(f, "string_node!(Node, {});", self.rule.name.data)
     }
     fn write_parser(&self, f: &mut Formatter<'_>) -> fmt::Result {
         if let Some(s) = &self.rule.custom_methods.parser {
@@ -92,6 +93,6 @@ impl RuleMethods {
         if let Some(s) = &self.display {
             traits.push(s)
         }
-        f.write_str(traits.join("\n\n"))
+        f.write_str(&traits.iter().join("\n\n"))
     }
 }
