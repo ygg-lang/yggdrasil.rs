@@ -1,4 +1,4 @@
-pub(crate) mod cst;
+// pub(crate) mod cst;
 pub(crate) mod line_column;
 pub(crate) mod lsp;
 pub(crate) mod text_change;

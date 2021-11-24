@@ -9,9 +9,10 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-lrpeg = { version = "0.4" }
-regex = "1.5.4"
-unicode-xid = "0.2.2"
+peginator = "0.2.0"
+
+
+
 
 [dependencies.yggdrasil-shared]
 version = "0.1"
@@ -21,7 +22,7 @@ features = ["lsp"]
 [dev-dependencies]
 
 [build-dependencies]
-lrpeg = { version = "0.4" }
+peginator = "0.2.0"
 
 [features]
 default = ["no-unnamed", "no-ignored"]

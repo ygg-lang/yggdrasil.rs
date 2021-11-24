@@ -1,8 +1,13 @@
-pub mod ast;
-pub mod cst;
+// pub mod ast;
+// pub mod cst;
+//
+// pub use yggdrasil_shared::{Result, YggdrasilError};
+//
+// pub mod shared {
+//     pub use yggdrasil_shared::*;
+// }
 
-pub use yggdrasil_shared::{Result, YggdrasilError};
+use peginator::buildscript::Compile;
 
-pub mod shared {
-    pub use yggdrasil_shared::*;
-}
+#[test]
+fn test() {}

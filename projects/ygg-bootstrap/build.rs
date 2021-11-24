@@ -1,6 +1,8 @@
-use std::{env, path::PathBuf};
+use peginator::buildscript::Compile;
 
 fn main() {
-    let out_dir = env::var("OUT_DIR").unwrap();
-    // lrpeg::process_files(&PathBuf::from("src"), &PathBuf::from(out_dir));
+    let path = format!("{}/src/ygg.rs", module_path!());
+    println!("{}", path);
+    Compile::file("ygg.ebnf").destination(path).format().run_exit_on_error();
+    println!("cargo:rerun-if-changed=ygg.ebnf");
 }
