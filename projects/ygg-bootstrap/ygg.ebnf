@@ -1,19 +1,126 @@
+# Copyright (C) 2022, Alex Badics
+# This file is part of peginator
+# Licensed under the MIT license. See LICENSE file in the project root for details.
+
 @export
-FunctionDef = 'fn' name:Ident '(' param_list:ParamList ')' [ '->' return_value:Type ];
+Grammar = {(rules:Rule | rules:CharRule) ";"} $ ;
 
-ParamList = self_param:SelfParam {',' params:Param} | params:Param  {',' params:Param} | ;
+Rule = {directives:DirectiveExpression} name:Identifier "=" definition:Choice;
 
-Param = name:Ident ':' typ: Type;
+CharRule = CharDirective name:Identifier "=" choices:CharRulePart {"|" choices:CharRulePart };
 
-SelfParam = [ref_type:ReferenceMarker] 'self';
+CharRulePart = @:CharacterRange | @:CharRangePart | @:Identifier;
 
-Type = [ref_type:ReferenceMarker] typename:Ident;
+Choice = choices:Sequence {"|" choices:Sequence};
 
-ReferenceMarker = @:MutableReference | @:ImmutableReference;
+Sequence = { parts:DelimitedExpression };
 
-ImmutableReference = '&';
-MutableReference = '&' 'mut';
+Group = "(" body:Choice ")";
+
+Optional = "[" body:Choice "]";
+
+Closure = "{" body:Choice "}" [at_least_one:AtLeastOneMarker];
+AtLeastOneMarker = '+';
+
+NegativeLookahead = "!" expr:*DelimitedExpression;
+
+PositiveLookahead = "&" expr:*DelimitedExpression;
+
+CharacterRange = from:CharRangePart ".." to:CharRangePart;
+
+@no_skip_ws
+CharRangePart = "'" @:StringItem "'";
+
+@no_skip_ws
+StringLiteral =
+    '"' {!'"' body:StringItem } '"' |
+    "'" {!"'" body:StringItem } "'"
+;
+
+Field = [name:Identifier ":" [boxed:BoxMarker]] typ:Identifier;
+
+BoxMarker = '*';
+
+OverrideField = "@" ":" typ:Identifier;
+
+DelimitedExpression =
+    @:Group |
+    @:Optional |
+    @:Closure |
+    @:NegativeLookahead |
+    @:PositiveLookahead |
+    @:CharacterRange |
+    @:StringLiteral |
+    @:EndOfInput |
+    @:OverrideField |
+    @:Field
+;
+
 
 @string
 @no_skip_ws
-Ident = {'a'..'z' | 'A'..'Z' | '_' | '0'..'9'};
+Identifier = {IdentifierChar}+;
+
+@char
+IdentifierChar = 'a'..'z' | 'A'..'Z' | '0'..'9' | '_';
+
+@no_skip_ws
+StringItem = '\\' (@:SimpleEscape | @:HexaEscape | @:Utf8Escape) | !'\\' @:char ;
+
+@no_skip_ws
+SimpleEscape =
+    @:SimpleEscapeNewline |
+    @:SimpleEscapeCarriageReturn |
+    @:SimpleEscapeTab |
+    @:SimpleEscapeBackslash |
+    @:SimpleEscapeQuote |
+    @:SimpleEscapeDQuote
+;
+
+@no_skip_ws
+SimpleEscapeNewline = 'n';
+@no_skip_ws
+SimpleEscapeCarriageReturn = 'r';
+@no_skip_ws
+SimpleEscapeTab = 't';
+@no_skip_ws
+SimpleEscapeBackslash = '\\';
+@no_skip_ws
+SimpleEscapeQuote = "'";
+@no_skip_ws
+SimpleEscapeDQuote = '"';
+
+@no_skip_ws
+HexaEscape = 'x' c1:HexChar c2:HexChar;
+
+@char
+HexChar = '0'..'9' | 'a'..'f' | 'A'..'F';
+
+@no_skip_ws
+Utf8Escape =
+    'u' '{' c1:HexChar [c2:HexChar [c3:HexChar [c4:HexChar [c5:HexChar [c6:HexChar ]]]]] '}' |
+    'u' c1:HexChar c2:HexChar c3:HexChar c4:HexChar |
+    'U' '0' '0' c1:HexChar c2:HexChar c3:HexChar c4:HexChar c5:HexChar c6:HexChar
+;
+
+DirectiveExpression =
+    @:StringDirective |
+    @:NoSkipWsDirective |
+    @:ExportDirective |
+    @:PositionDirective |
+    @:MemoizeDirective
+;
+StringDirective = "@string";
+CharDirective = "@char";
+NoSkipWsDirective = "@no_skip_ws";
+ExportDirective = "@export";
+PositionDirective = "@position";
+MemoizeDirective = "@memoize";
+
+EndOfInput = '$';
+
+@no_skip_ws
+Whitespace = {Comment |  '\t' | '\n' | '\x0C' | '\r' | ' '};
+
+@no_skip_ws
+Comment = '#' {!'\n' char} '\n';

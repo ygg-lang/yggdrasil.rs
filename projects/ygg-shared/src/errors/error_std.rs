@@ -1,20 +1,25 @@
 use super::*;
-use std::sync::PoisonError;
+use std::{
+    env::VarError,
+    num::{ParseFloatError, ParseIntError},
+    str::Utf8Error,
+    sync::PoisonError,
+};
 
-impl From<std::str::Utf8Error> for YggdrasilError {
-    fn from(e: std::str::Utf8Error) -> Self {
+impl From<Utf8Error> for YggdrasilError {
+    fn from(e: Utf8Error) -> Self {
         Self::language_error(e.to_string())
     }
 }
 
-impl From<std::num::ParseIntError> for YggdrasilError {
-    fn from(e: std::num::ParseIntError) -> Self {
+impl From<ParseIntError> for YggdrasilError {
+    fn from(e: ParseIntError) -> Self {
         Self::language_error(e.to_string())
     }
 }
 
-impl From<std::num::ParseFloatError> for YggdrasilError {
-    fn from(e: std::num::ParseFloatError) -> Self {
+impl From<ParseFloatError> for YggdrasilError {
+    fn from(e: ParseFloatError) -> Self {
         Self::language_error(e.to_string())
     }
 }
@@ -25,13 +30,13 @@ impl From<std::io::Error> for YggdrasilError {
     }
 }
 
-impl From<std::fmt::Error> for YggdrasilError {
-    fn from(e: std::fmt::Error) -> Self {
+impl From<fmt::Error> for YggdrasilError {
+    fn from(e: fmt::Error) -> Self {
         Self { kind: FormatError(e), file: None, range: None }
     }
 }
 
-impl<T> From<std::sync::PoisonError<T>> for YggdrasilError {
+impl<T> From<PoisonError<T>> for YggdrasilError {
     fn from(_: PoisonError<T>) -> Self {
         Self::unreachable()
     }
@@ -40,5 +45,11 @@ impl<T> From<std::sync::PoisonError<T>> for YggdrasilError {
 impl From<()> for YggdrasilError {
     fn from(_: ()) -> Self {
         Self::unreachable()
+    }
+}
+
+impl From<VarError> for YggdrasilError {
+    fn from(e: VarError) -> Self {
+        Self::language_error(e.to_string())
     }
 }
