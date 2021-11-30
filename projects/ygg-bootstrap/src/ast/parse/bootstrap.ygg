@@ -1,172 +1,36 @@
-grammar ygg {"*.yg","*.ygg", "*.grammar"}
+grammar ygg {
+    extension: ["*.yg", "*.ygg", "*.grammar"]
+    ignore: [
+        NEWLINE, WHITESPACE, COMMENT
+    ]
+}
 
 \\ Import the predefined types,
 \\ Otherwise the `String` type of each language will be used directly to represent the atomic expression
-import "literal_types.toml"
+import "literal_types.toml" {
 
-ignore {NEWLINE, WHITESPACE, COMMENT}
-
-\\ right now, first rule will become entry point
-def program {
-    ^statement*
 }
 
+\\ right now, first rule will become entry point
+def entry program {
+    ^statement*
+}
 
 \\ `#` will generate named bindings for languages that do not support union type, such as rust
 \\ Union type will be used directly in other languages that support union type, such as ts, scala
 \\ Note that compared to ANTLR, this is not mandatory, but the same name is also forbidden.
 \\ If not specified, a name like `AuxVariant1` will be generated.
-statement =
-    | grammar_statement   #Grammar
-    | fragment_statement  #Fragment
-    | ignore_statement    #Ignore
-    | import_statement    #Import
-    | assign_statement    #Assign
-
+def choice statement {
+    | ^grammar_statement
+}
 
 \\* grammar tsg
 \\* grammar tsg {"*.tsg", }
-grammar_statement ^= grammar ~ ^id ~ _grammar_exts? ~ eos?
-_grammar_exts      = "{" ~ @join(extensions <- string, ",", trailing = true)? ~ "}"
+rule grammar_statement {
+    grammar ^id _grammar_exts? eos?
+}
 
-
-\\? `fragment` means that this file cannot build as grammar, it can only be imported.
-\\? `id` represents the default name when importing, which can be changed by `as`.
-\\* fragment ascii
-fragment_statement ^= fragment ~ ^id ~ eos?
-
-
-
-import_statement ^=
-    | import ~ (path <- string) ~ (as ~ ^id)?       #FromPath
-    | import ~ (path <- string) ~ _import_selected  #FromPathItems
-_import_selected  = "{" ~ @join(item <- import_item, ",", trailing = 1)? ~ "}"
-import_item       = (id <- id) ~ as ~ (alias <- id)
-
-
-
-\\* ignores /\/
-\\* ignores [comment, comment_inline]
-ignores_statement ^=
-    | ignores ~ ^id
-    | ignores ~ "{" ~ @join(^id, ",", trailing = 1)? ~ "}"
-
-
-expression =
-    | *priority         #Priority
-    | data              #Data
-    | unary_suffix      #Suffix
-    | unary_prefix      #Prefix
-    | concat_expression #Concat
-    | or_expression     #Or
-_priority ^= "(" ~ "|"? ~ expression ~ ")"
-unary_suffix =
-    | @unary_suffix(210, _suffix_ops, expression)
-unary_prefix =
-    | @unary_prefix(200, _prefix_ops, expression)
-\\* item = e1 ~ e2 ~ e3
-concat_expression =
-    | @variadic_left(40, "~", expression)
-\\* item = e1 #A | e2
-or_expression =
-    | @variadic_left(20, "|", variant_tag)
-variant_tag = @precedence_left(100, ^expression ~ _tag_name? )
-_tag_name = "#" ~ (name <- id) ~ (mode <- /[!_^]?/) ~ (name <- id)
-\\* item = tag <- name
-label_expression =
-    | @binary_left(10, id, "<-", expression)
-_prefix_ops @=
-    | "^"
-_suffix_ops @=
-    | "?"
-    | "*"
-    | "+"
-
-
-\\ `_` inline a item even if it not mark as automatic inline
-data = _atom
-atom =
-    | id
-    | string
-    | unsigned    #Integer
-    | regex
-    | macro_call
-
-
-
-\\ `f(a, b)`  vs `f ~ (a | b) `
-\\ `f!(a, b)` vs `f ~ !(a | b)`
-macro_call =
-      (name <- @token("@", id))
-    ~ "(" ~ @join(Expression, ",", trailing = 1) ~ ")"
-
-
-\\ Identifier
-@alias(id)
-@syntax_type(identifier)
-identifier @= ("_" | XID_START) ~ XID_CONTINUE
-\\ The bare 0 will be considered as the string "0"
-integer    @= _sign? _unsigned
-_unsigned   = 0 | [1-9] [0-9]*
-_sign       = [+-]
-\\ string
-string @=
-    | /'[^'\\]*(\\.[^'\\]*)*'/
-    | /"[^"\\]*(\\.[^"\\]*)*"/
-\\ regex
-regex_long ^= "/" ~ (item <- regex_item) ~ "/" ~ (mode: String <- regex_mode)?
-regex_mode @= [igm]
-regex_item  =
-    |
-regex_range = (mode <- "[" | "[^")  ~ regex_range_item* ~ "]"
-regex_range_item =
-    | regex_set
-    | regex_range_item_group
-    | /[^\]]/
-regex_range_item_group =
-    | @binary_left(10, regex_range_item, "-", regex_range_item)
-regex_set = "\\p" ~ "{" ~ (set <- /[_0-9a-zA-Z]+/) ~ "}"
-regex_repeats ^=
-    | "{" ~ (repeats <- integer) ~ "}"
-    | "{" ~ (least <- integer?) ~ "," ~ (most <- integer?) ~ "}"
-\\ end of line
-eos = ";"
-
-
-
-
-@syntax_type(identifier)
-
-
-@syntax_type(constant)
-bool: bool @= "true" | "false"
-
-\\! ====================== OVERRIDE ============================
-
-COMMENT =
-    | comment_inline
-    | comment_multiline
-@syntax_type_hook(comment)
-comment_inline = "\\!"
-comment_block = "\\+" ~ "\\-"
-@syntax_type_hook()
-
-\\! ===================== HOOK AREA ============================
-
-\\ All elements defined next will warp with `@token`
-@define_hook(@token)
-\\ All elements defined next will be marked as `keyword`
-@syntax_type_hook(keyword)
-fragment = "fragment!"
-grammar  = "grammar!"
-ignore   = "ignore!"
-import   = "import!"
-macro    = "macro!"
-as       = "as"
-\\ clean warp broadcast
-@syntax_type_hook()
-\\ clean syntax type broadcast
-@define_hook()
-\\ clean all hook
-@clear_hook()
+def inline grammar_exts {
+    "{" ~ @join(extensions:string, ",", trailing = true)? ~ "}"
+}
 

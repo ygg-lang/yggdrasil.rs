@@ -15,7 +15,7 @@ node_modules
 package-lock.json
 
 # Antlr
-
+*.zip
 *.antlr
 *.ps1
 *.m
