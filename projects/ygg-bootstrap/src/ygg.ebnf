@@ -1,31 +1,36 @@
 @export
-Program = {Statement} $;
+@position
+Program = {statement:Statement} $;
+
 Statement =
     @:DefineStatement [EOS]
   | @:EmptyStatement
   ;
+
 EmptyStatement = EOS;
-
-@position
-DefineStatement = define:DEFINE modifiers:Modifiers symbol:Identifier '{'  '}';
-
-
-
-@string
-@no_skip_ws
-DEFINE = 'def!' | 'def';
 
 @string
 @no_skip_ws
 EOS = ';;' | ';';
 
 @position
+DefineStatement = define:DEFINE modifiers:Modifiers symbol:Identifier '{' [Expression] '}';
+
+@string
+@no_skip_ws
+DEFINE = 'def!' | 'def';
+
+@position
 Modifiers = {id:Identifier (!'{')};
 
+Expression =
+    @:DefineStatement [EOS]
+  | @:EmptyStatement
+  ;
 
 @position
 Identifier = identifier:IDENTIFIER;
 
 @string
 @no_skip_ws
-IDENTIFIER = 'a'..'z' | 'A'..'Z' | '_' | '0'..'9';
+IDENTIFIER = {'a'..'z' | 'A'..'Z' | '_' | '0'..'9'}+;

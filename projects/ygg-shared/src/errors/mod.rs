@@ -24,7 +24,7 @@ pub struct YggdrasilError {
 pub enum YggdrasilErrorKind {
     IOError(std::io::Error),
     FormatError(std::fmt::Error),
-    // PestError { #[from] source: pest::error::Error<crate::cst::Rule> },
+    // PestError { #[from] source: pest::error::Error<crate::as_peg::Rule> },
     LanguageError(String),
     StructureError(String),
     UnexpectedToken(String),
