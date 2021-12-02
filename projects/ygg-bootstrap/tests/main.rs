@@ -23,7 +23,8 @@ fn codegen() -> Result<()> {
 fn regen() {
     codegen().unwrap();
     println!("{}", as_peg(r#"
-    def token string a {}
-
+    def token string IDENTIFIER {
+        'a'
+    }
     "#))
 }

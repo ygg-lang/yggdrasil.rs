@@ -7,12 +7,20 @@ use crate::ygg::{DefineStatement, Identifier, Program, Statement};
 mod extend;
 
 pub struct PegBuffer {
+    indent: usize,
     buffer: String,
 }
 
 impl PegBuffer {
-    pub fn write_str(&mut self, str) {
-
+    pub fn indent(&mut self) {
+        self.indent = self.indent.saturating_add(4)
+    }
+    pub fn dedent(&mut self) {
+        self.indent = self.indent.saturating_sub(4)
+    }
+    pub fn newline(&mut self) {
+        self.buffer.push('\r');
+        self.buffer.push_str(&" ".repeat(self.indent))
     }
 }
 
@@ -59,7 +67,8 @@ pub fn as_peg(ygg: &str) -> String {
     let pro = Program::parse(ygg).unwrap();
     println!("{:#?}", pro);
     let mut cfg = PegBuffer {
-        buffer: "".to_string()
+        indent: 0,
+        buffer: String::new(),
     };
     pro.write_peg(&mut cfg).unwrap();
     return cfg.buffer.to_owned();

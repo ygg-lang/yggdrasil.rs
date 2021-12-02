@@ -14,7 +14,7 @@ EmptyStatement = EOS;
 EOS = ';;' | ';';
 
 @position
-DefineStatement = define:DEFINE modifiers:Modifiers symbol:Identifier '{' [Expression] '}';
+DefineStatement = define:DEFINE modifiers:Modifiers symbol:Identifier '{' Choice '}';
 
 @string
 @no_skip_ws
@@ -23,10 +23,27 @@ DEFINE = 'def!' | 'def';
 @position
 Modifiers = {id:Identifier (!'{')};
 
+Choice = [['|'] choices:Sequence {"|" choices:Sequence}];
+
+Sequence = { items:Expression };
+
 Expression =
-    @:DefineStatement [EOS]
-  | @:EmptyStatement
-  ;
+    @:Group |
+
+    @:StringLiteral
+    ;
+Group = "(" body:Choice ")";
+Optional = body:Choice "?";
+
+@no_skip_ws
+StringLiteral =
+    '"' {!'"' body:StringItem } '"' |
+    "'" {!"'" body:StringItem } "'"
+    ;
+
+@string
+@no_skip_ws
+StringItem = '\\' char | char;
 
 @position
 Identifier = identifier:IDENTIFIER;
