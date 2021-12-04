@@ -9,7 +9,7 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-peginator = "0.2.0"
+peginator = "0.2.2"
 
 
 
@@ -22,7 +22,7 @@ features = ["lsp"]
 [dev-dependencies]
 
 [build-dependencies]
-peginator = "0.2.0"
+peginator = "0.2.2"
 
 [features]
 default = ["no-unnamed", "no-ignored"]

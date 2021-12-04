@@ -22,10 +22,17 @@ fn codegen() -> Result<()> {
 #[test]
 fn regen() {
     codegen().unwrap();
-    println!("{}", as_peg(r#"
+    println!(
+        "{}",
+        as_peg(
+            r#"
     def token string IDENTIFIER {
-        | 'a'
-        | 'b'
+        | 'a'*
+        | 'b'+
+        | 'c'?
+        | 'd'
     }
-    "#))
+    "#
+        )
+    )
 }

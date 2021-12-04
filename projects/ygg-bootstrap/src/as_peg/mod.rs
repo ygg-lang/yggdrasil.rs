@@ -7,8 +7,9 @@ use crate::ygg::{DefineStatement, Identifier, Program, Statement};
 mod extend;
 
 pub struct PegBuffer {
-    indent: usize,
     buffer: String,
+    indent: usize,
+    capture: bool,
 }
 
 impl PegBuffer {
@@ -46,9 +47,7 @@ impl WritePeg for Program {
     fn write_peg(&self, cfg: &mut PegBuffer) -> std::fmt::Result {
         for stmt in &self.statement {
             match stmt {
-                Statement::DefineStatement(define) => {
-                    define.write_peg(cfg)?
-                }
+                Statement::DefineStatement(define) => define.write_peg(cfg)?,
                 Statement::EmptyStatement(_) => {}
             }
         }
@@ -58,18 +57,16 @@ impl WritePeg for Program {
 
 impl WritePeg for DefineStatement {
     fn write_peg(&self, cfg: &mut PegBuffer) -> std::fmt::Result {
-        write!(cfg, "{}", self.symbol)
+        write!(cfg, "{}", self.symbol)?;
+        cfg.newline();
+
+        Ok(())
     }
 }
 
-
 pub fn as_peg(ygg: &str) -> String {
     let pro = Program::parse(ygg).unwrap();
-    println!("{:#?}", pro);
-    let mut cfg = PegBuffer {
-        indent: 0,
-        buffer: String::new(),
-    };
+    let mut cfg = PegBuffer { indent: 0, buffer: String::new(), capture: true };
     pro.write_peg(&mut cfg).unwrap();
     return cfg.buffer.to_owned();
 }
