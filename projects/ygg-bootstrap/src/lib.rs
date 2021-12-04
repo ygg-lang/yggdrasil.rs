@@ -10,7 +10,4 @@ mod as_peg;
 //     pub use yggdrasil_shared::*;
 // }
 //noinspection DuplicatedCode
-mod ygg;
-
-#[test]
-fn test() {}
+pub mod ast;

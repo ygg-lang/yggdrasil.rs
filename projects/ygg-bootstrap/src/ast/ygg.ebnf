@@ -1,6 +1,6 @@
 @export
 @position
-Program = {statement:Statement} $;
+Program = {statement:Statement};
 
 Statement =
     @:DefineStatement [EOS]
@@ -9,9 +9,8 @@ Statement =
 
 EmptyStatement = EOS;
 
-@string
-@no_skip_ws
-EOS = ';;' | ';';
+@char
+EOS = ';';
 
 @position
 DefineStatement = define:DEFINE modifiers:Modifiers symbol:Identifier '{' body:Choice '}';

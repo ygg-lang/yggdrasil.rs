@@ -1,3 +1,4 @@
+#[cfg(feature = "peginator")]
 pub(crate) mod target_ast;
 #[cfg(feature = "lrpeg")]
 pub(crate) mod target_peg;

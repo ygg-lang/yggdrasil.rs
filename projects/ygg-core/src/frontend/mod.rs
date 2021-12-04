@@ -10,7 +10,7 @@ pub use self::{
 use crate::frontend::rule::ExpressionNode;
 use lsp_types::Url;
 use std::ops::Range;
-use yggdrasil_bootstrap::ast::{StringLiteral, Symbol, SymbolAlias};
+use yggdrasil_bootstrap::ygg::{StringLiteral, Symbol, SymbolAlias};
 use indexmap::map::IndexMap;
 
 #[derive(Clone, Debug)]

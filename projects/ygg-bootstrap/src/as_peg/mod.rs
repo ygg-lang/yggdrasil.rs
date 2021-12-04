@@ -2,7 +2,7 @@ use std::fmt::{Arguments, Display, Formatter, Write};
 
 use peginator::PegParser;
 
-use crate::ygg::{DefineStatement, Identifier, Program, Statement};
+use crate::ast::{DefineStatement, Identifier, Program, Statement};
 
 mod extend;
 

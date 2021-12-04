@@ -14,8 +14,8 @@ fn ready() {
 #[test]
 fn codegen() -> Result<()> {
     let path = PathBuf::from(current_dir()?);
-    let output = path.join("src/ygg.rs");
-    Compile::file("src/ygg.ebnf").destination(output).format().run().unwrap();
+    let output = path.join("src/ast/ygg.rs");
+    Compile::file("src/ast/ygg.ebnf").destination(output).format().run().unwrap();
     Ok(())
 }
 
