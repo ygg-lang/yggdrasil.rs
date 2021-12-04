@@ -24,7 +24,8 @@ fn regen() {
     codegen().unwrap();
     println!("{}", as_peg(r#"
     def token string IDENTIFIER {
-        'a'
+        | 'a'
+        | 'b'
     }
     "#))
 }

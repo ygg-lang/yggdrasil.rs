@@ -29,7 +29,7 @@ Sequence = { items:Expression };
 
 Expression =
     @:Group |
-
+    @:Charset |
     @:StringLiteral
     ;
 Group = "(" body:Choice ")";
@@ -44,6 +44,14 @@ StringLiteral =
 @string
 @no_skip_ws
 StringItem = '\\' char | char;
+
+@position
+Charset = '[' CharRange ']';
+CharItem =
+    @:CharRange |
+    ;
+CharRange = char '-' char;
+
 
 @position
 Identifier = identifier:IDENTIFIER;
