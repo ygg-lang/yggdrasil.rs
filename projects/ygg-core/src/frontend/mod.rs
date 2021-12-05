@@ -1,16 +1,13 @@
 mod optimize;
 pub mod rule;
 pub mod typing;
-
 pub use self::{
     rule::{GrammarContext, Translator},
     typing::GrammarType,
 };
-
 use crate::frontend::rule::ExpressionNode;
 use lsp_types::Url;
 use std::ops::Range;
-use yggdrasil_bootstrap::ygg::{StringLiteral, Symbol, SymbolAlias};
 use indexmap::map::IndexMap;
 
 #[derive(Clone, Debug)]
