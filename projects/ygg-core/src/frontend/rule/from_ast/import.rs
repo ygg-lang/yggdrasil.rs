@@ -2,7 +2,7 @@ use super::*;
 
 impl<'i> GrammarContext<'i> {
     pub(super) fn read_import(&mut self, call: ImportStatement) {
-        let url = match Self::resolve_url(self.url, &call.path.data) {
+        let url = match Self::resolve_url(self.info, &call.path.data) {
             Ok(o) => o,
             Err(_) => {
                 // TODO: report error

@@ -1,48 +1,120 @@
-mod optimize;
-pub mod rule;
-pub mod typing;
-pub use self::{
-    rule::{GrammarContext, Translator},
-    typing::GrammarType,
-};
-use crate::frontend::rule::ExpressionNode;
-use lsp_types::Url;
 use std::ops::Range;
+
 use indexmap::map::IndexMap;
+use lsp_types::Url;
+
+use crate::frontend::rule::ExpressionNode;
+
+pub use self::rule::GrammarContext;
+
+// mod optimize;
+pub mod rule;
+// pub mod typing;
 
 #[derive(Clone, Debug)]
 pub struct GrammarInfo {
-    pub(crate) url: Url,
-    pub(crate) text: String,
-    pub(crate) is_grammar: bool,
-    pub(crate) name: Symbol,
-    pub(crate) extensions: Vec<StringLiteral>,
-    pub(crate) ignores: Vec<Symbol>,
-    pub(crate) imports: IndexMap<Url, Vec<SymbolAlias>>,
-    pub(crate) rule_map: IndexMap<String, Rule>,
+    /// File path of the grammar
+    pub url: Url,
+    pub text: String,
+    pub is_grammar: bool,
+    pub name: Symbol,
+    pub extensions: Vec<Symbol>,
+    pub ignores: Vec<Symbol>,
+    pub imports: IndexMap<Url, Vec<SymbolAlias>>,
+    pub rule_map: IndexMap<String, Rule>,
 }
+
+pub struct Symbol {
+    pub name: String,
+    pub range: Range<usize>,
+}
+
+pub struct SymbolAlias {
+    pub name: String,
+    pub alias: String,
+    pub range: Range<usize>,
+}
+
 
 #[derive(Clone)]
 pub struct Rule {
+    /// Automatically inline when this rule is called
     ///
-    pub(crate) name: Symbol,
+    /// ## Examples
+    /// ```ygg
+    /// def RuleName {
     ///
-    pub(crate) ty: Symbol,
+    /// }
+    /// ```
+    pub name: String,
+    /// Automatically inline when this rule is called
     ///
-    pub(crate) doc: String,
+    /// ## Examples
+    /// ```ygg
+    /// def rule -> char {
     ///
-    pub(crate) custom_methods: RuleMethods,
+    /// }
     ///
-    pub(crate) force_inline: bool,
+    /// def rule() -> char {
     ///
-    pub(crate) force_box: bool,
+    /// }
+    /// ```
+    pub r#type: String,
+    /// Document of this rule
+    ///
+    /// ## Examples
+    /// ```ygg
+    ///
+    /// def rule {
+    ///
+    /// }
+    ///
+    /// def rule() -> char {
+    ///
+    /// }
+    /// ```
+    pub document: String,
+    ///
+    pub derives: RuleDerive,
+    /// Automatically inline when this rule is called
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// #inline(true)
+    /// def rule {
+    ///
+    /// }
+    ///
+    /// def inline rule {
+    ///
+    /// }
+    ///
+    /// def _rule {
+    ///
+    /// }
+    /// ```
+    pub auto_inline: bool,
+    /// Automatically box when this rule is called
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// #boxed(true)
+    /// def rule {
+    ///
+    /// }
+    ///
+    /// def boxed rule {
+    ///
+    /// }
+    /// ```
+    pub auto_box: bool,
     /// Eliminate unnamed nodes
     /// ```ygg
     /// name <- expr
     /// ^expr
     /// ```
-    pub(crate) already_inline: bool,
-    pub(crate) eliminate_unmarked: bool,
+    pub already_inline: bool,
+    pub eliminate_unmarked: bool,
     /// Eliminate unnamed nodes
     /// ```ygg
     /// "string"
@@ -50,15 +122,15 @@ pub struct Rule {
     /// [0-9a-z]
     /// 012345
     /// ```
-    pub(crate) eliminate_unnamed: bool,
+    pub eliminate_unnamed: bool,
     ///
-    pub(crate) expression: ExpressionNode,
+    pub expression: ExpressionNode,
     /// position of all parts
-    pub(crate) range: Range<usize>,
+    pub range: Range<usize>,
 }
 
 #[derive(Clone)]
-pub struct RuleMethods {
+pub struct RuleDerive {
     pub(crate) parser: Option<String>,
     pub(crate) debug: Option<String>,
     pub(crate) display: Option<String>,
@@ -69,8 +141,9 @@ pub struct RuleMethods {
     pub(crate) hash: Option<String>,
 }
 
-impl Default for RuleMethods {
+impl Default for RuleDerive {
     fn default() -> Self {
         Self { parser: None, debug: None, display: None, eq: false, eq_partial: None, ord: false, ord_partial: None, hash: None }
     }
 }
+

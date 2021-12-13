@@ -142,7 +142,7 @@ impl Rule {
         }
     }
     fn symbol_detail(&self) -> (Option<String>, SymbolKind) {
-        if self.force_inline {
+        if self.auto_inline {
             (Some("inlined".to_string()), SymbolKind::VARIABLE)
         }
         else if self.expression.inline_token {

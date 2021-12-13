@@ -5,7 +5,7 @@ impl Debug for Rule {
         f.debug_struct("Rule")
             .field("name", &self.name.data)
             .field("type", &self.ty.data)
-            .field("force_inline", &self.force_inline)
+            .field("force_inline", &self.auto_inline)
             .field("already_inline", &self.already_inline)
             .field("eliminate_unmarked", &self.eliminate_unmarked)
             .field("eliminate_unnamed", &self.eliminate_unnamed)

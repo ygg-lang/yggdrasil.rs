@@ -1,4 +1,4 @@
-use crate::frontend::{rule::ExpressionNode, Rule, RuleMethods};
+use crate::frontend::{rule::ExpressionNode, Rule, RuleDerive};
 use itertools::Itertools;
 use std::{fmt, fmt::Formatter};
 use yggdrasil_bootstrap::ast::Symbol;
@@ -45,7 +45,7 @@ impl SymbolCounted {
         writeln!(f, "string_node!(Node, {});", self.rule.name.data)
     }
     pub fn write_parser(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        if let Some(s) = &self.rule.custom_methods.parser {
+        if let Some(s) = &self.rule.derives.parser {
             f.write_str(s)?;
             return Ok(());
         }
@@ -86,7 +86,7 @@ impl SymbolCount {
     }
 }
 
-impl RuleMethods {
+impl RuleDerive {
     fn write_custom_derive(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let mut traits = vec![];
         if let Some(s) = &self.debug {
