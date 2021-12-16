@@ -12,7 +12,7 @@
 //
 mod from_ast;
 // mod hints;
-// mod node;
+mod node;
 
 // impl GrammarInfo {
 //     #[inline]

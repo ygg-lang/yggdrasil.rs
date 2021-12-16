@@ -1,6 +1,6 @@
 @export
 @position
-Program = {statement:Statement};
+Program = {statements:Statement};
 
 Statement =
     @:DefineStatement [EOS]

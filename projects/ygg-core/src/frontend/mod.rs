@@ -14,7 +14,7 @@ pub mod rule;
 #[derive(Clone, Debug)]
 pub struct GrammarInfo {
     /// File path of the grammar
-    pub url: Url,
+    pub url: Option<Url>,
     pub text: String,
     pub is_grammar: bool,
     pub name: Symbol,
@@ -107,7 +107,7 @@ pub struct Rule {
     ///
     /// }
     /// ```
-    pub auto_box: bool,
+    pub auto_boxed: bool,
     /// Eliminate unnamed nodes
     /// ```ygg
     /// name <- expr

@@ -1,15 +1,20 @@
+use std::collections::HashSet;
+use std::str::FromStr;
+
+use url::Url;
+
+use yggdrasil_bootstrap::ast::{Choice, DefineStatement, Program, Statement};
+use yggdrasil_bootstrap::Result;
+
+use crate::frontend::{GrammarInfo, Rule, Symbol};
+use crate::frontend::rule::node::ExpressionNode;
+
 mod import;
 mod macros;
 
-use std::str::FromStr;
-use yggdrasil_bootstrap::ast::Program;
-use crate::frontend::GrammarInfo;
-use yggdrasil_bootstrap::Result;
-
 pub struct GrammarContext {
-    pub(crate) info: GrammarInfo
+    pub(crate) info: GrammarInfo,
 }
-
 
 
 impl Default for GrammarContext {
@@ -19,31 +24,98 @@ impl Default for GrammarContext {
         }
     }
 }
+
 impl Default for GrammarInfo {
     fn default() -> Self {
         Self {
-            url: Url::from_str("file://example/path").unwrap(),
+            url: None,
             text: "".to_string(),
             is_grammar: false,
             name: Symbol { name: "".to_string(), range: Default::default() },
             extensions: vec![],
             ignores: vec![],
             imports: Default::default(),
-            rule_map: Default::default()
+            rule_map: Default::default(),
         }
     }
 }
 
 trait Translator {
-    fn translate(self, ctx: &mut GrammarContext) -> Result<()>;
+    fn translate(self, ctx: &mut GrammarContext) -> Result<()> {
+        let _ = ctx;
+        unimplemented!()
+    }
+
+    fn into_rule(self, ctx: &mut GrammarContext) -> Result<Rule> {
+        let _ = ctx;
+        unimplemented!()
+    }
+    fn into_expr(self, ctx: &mut GrammarContext) -> Result<ExpressionNode> {
+        let _ = ctx;
+        unimplemented!()
+    }
 }
 
 impl Translator for Program {
     fn translate(self, ctx: &mut GrammarContext) -> Result<()> {
-        todo!()
+        for s in self.statement {
+            match s {
+                Statement::DefineStatement(define) => {
+                    let rule = define.into_rule(ctx)?;
+                    let name = rule.name.to_owned();
+                    ctx.info.rule_map.insert(name, rule)
+                }
+                Statement::EmptyStatement(_) => {}
+            }
+        }
+        Ok(())
     }
 }
 
+
+impl Translator for DefineStatement {
+    fn into_rule(self, ctx: &mut GrammarContext) -> Result<Rule> {
+        let mut modifiers: HashSet<String> = Default::default();
+        for id in self.modifiers.id {
+            modifiers.insert(id.identifier)
+        }
+        let mut auto_inline = false;
+        if modifiers.contains("inline") {
+            auto_inline = true
+        }
+        let mut auto_boxed = false;
+        if modifiers.contains("boxed") {
+            auto_boxed = true
+        }
+        let rule = Rule {
+            name: self.symbol.identifier.to_owned(),
+            r#type: "".to_string(),
+            document: "".to_string(),
+            derives: Default::default(),
+            auto_inline,
+            auto_boxed,
+            already_inline: false,
+            eliminate_unmarked: false,
+            eliminate_unnamed: false,
+            expression: self.body.into_expr(ctx)?,
+            range: self.position,
+        };
+        Ok(rule)
+    }
+}
+
+impl Translator for Choice {
+    fn into_expr(self, ctx: &mut GrammarContext) -> Result<ExpressionNode> {
+        let node = ExpressionNode {
+            inline_token: false,
+            ty: None,
+            branch_tag: None,
+            node_tag: None,
+            node: (),
+        };
+        return Ok(node);
+    }
+}
 
 // impl GrammarContext {
 //     #[inline]
