@@ -6,7 +6,7 @@ impl Debug for Rule {
             .field("name", &self.name.data)
             .field("type", &self.ty.data)
             .field("force_inline", &self.auto_inline)
-            .field("already_inline", &self.already_inline)
+            .field("already_inline", &self.auto_capture)
             .field("eliminate_unmarked", &self.eliminate_unmarked)
             .field("eliminate_unnamed", &self.eliminate_unnamed)
             .field("expression", &self.expression)
@@ -15,13 +15,13 @@ impl Debug for Rule {
     }
 }
 
-impl Debug for ExpressionNode {
+impl Debug for ASTNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let w = &mut match &self.node {
-            RefinedExpression::Data(_) => f.debug_struct("Data"),
-            RefinedExpression::Unary(_) => f.debug_struct("ExpressionNode"),
-            RefinedExpression::Choice(_) => f.debug_struct("ExpressionNode"),
-            RefinedExpression::Concat(_) => f.debug_struct("ExpressionNode"),
+            ASTExpression::Data(_) => f.debug_struct("Data"),
+            ASTExpression::Unary(_) => f.debug_struct("ExpressionNode"),
+            ASTExpression::Choice(_) => f.debug_struct("ExpressionNode"),
+            ASTExpression::Concat(_) => f.debug_struct("ExpressionNode"),
         };
         if let Some(s) = &self.branch_tag {
             w.field("branch_tag", &s.name.data);
@@ -37,16 +37,16 @@ impl Debug for ExpressionNode {
             w.field("inline_token", &true);
         }
         match &self.node {
-            RefinedExpression::Data(e) => w.field("data", e),
-            RefinedExpression::Unary(_) => w.field("base", &self.node),
-            RefinedExpression::Choice(_) => w.field("base", &self.node),
-            RefinedExpression::Concat(_) => w.field("base", &self.node),
+            ASTExpression::Data(e) => w.field("data", e),
+            ASTExpression::Unary(_) => w.field("base", &self.node),
+            ASTExpression::Choice(_) => w.field("base", &self.node),
+            ASTExpression::Concat(_) => w.field("base", &self.node),
         };
         w.finish()
     }
 }
 
-impl Debug for RefinedExpression {
+impl Debug for ASTExpression {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Data(e) => e.fmt(f),

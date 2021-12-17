@@ -45,7 +45,7 @@ trait WritePeg {
 
 impl WritePeg for Program {
     fn write_peg(&self, cfg: &mut PegBuffer) -> std::fmt::Result {
-        for stmt in &self.statement {
+        for stmt in &self.statements {
             match stmt {
                 Statement::DefineStatement(define) => define.write_peg(cfg)?,
                 Statement::EmptyStatement(_) => {}
@@ -64,9 +64,3 @@ impl WritePeg for DefineStatement {
     }
 }
 
-pub fn as_peg(ygg: &str) -> String {
-    let pro = Program::parse(ygg).unwrap();
-    let mut cfg = PegBuffer { indent: 0, buffer: String::new(), capture: true };
-    pro.write_peg(&mut cfg).unwrap();
-    return cfg.buffer.to_owned();
-}

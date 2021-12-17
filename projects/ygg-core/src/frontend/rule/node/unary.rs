@@ -18,13 +18,13 @@ impl Operator {
     }
 }
 
-impl ExpressionNode {
-    pub fn prefix(e: Expression, o: &str) -> Self {
+impl ASTNode {
+    pub fn prefix(e: ASTExpression, o: &str) -> Self {
         let mut node = Self::from(e).as_unary();
         node.get_unary_mut().map(|e| e.ops.push(Operator::prefix(o)));
         return node;
     }
-    pub fn suffix(e: Expression, o: &str) -> Self {
+    pub fn suffix(e: ASTExpression, o: &str) -> Self {
         let mut node = Self::from(e).as_unary();
         node.get_unary_mut().map(|e| e.ops.push(Operator::suffix(o)));
         return node;
@@ -33,14 +33,14 @@ impl ExpressionNode {
         if let Some(_) = self.get_unary() {
             return self;
         }
-        return Self { inline_token: false, ty: None, branch_tag: None, node_tag: None, node: RefinedExpression::unary(self) };
+        return Self { inline_token: false, ty: None, branch_tag: None, node_tag: None, node: ASTExpression::unary(self) };
     }
-    pub fn mark_node(name: Expression, node: Expression) -> Self {
+    pub fn mark_node(name: ASTExpression, node: ASTExpression) -> Self {
         let mut node = Self::from(node);
         node.node_tag = name.as_symbol();
         return node;
     }
-    pub fn mark_branch(base: Expression, kind: Option<char>, name: Symbol) -> Self {
+    pub fn mark_branch(base: ASTExpression, kind: Option<char>, name: Symbol) -> Self {
         let mut node = Self::from(base);
         node.branch_tag = Some(ExpressionTag::new(kind, name));
         return node;
@@ -59,8 +59,8 @@ impl ExpressionTag {
     }
 }
 
-impl RefinedExpression {
-    pub fn unary(base: ExpressionNode) -> Self {
+impl ASTExpression {
+    pub fn unary(base: ASTNode) -> Self {
         Self::Unary(Box::new(RefinedUnary { base, ops: vec![] }))
     }
 }

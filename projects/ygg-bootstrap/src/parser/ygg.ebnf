@@ -26,7 +26,7 @@ Modifiers = {id:Identifier (!'{')};
 Choice = [['|'] terms:Term {"|" terms:Term}];
 
 @position
-Term = {prefix:Prefix} node:Node {suffix:Suffix};
+Term = {prefix:Prefix} [tag:Identifier ':'] node:Node {suffix:Suffix};
 
 @char
 Prefix = '^';
@@ -65,4 +65,14 @@ Identifier = identifier:IDENTIFIER;
 
 @string
 @no_skip_ws
-IDENTIFIER = {'a'..'z' | 'A'..'Z' | '_' | '0'..'9'}+;
+IDENTIFIER = (XID_START | '_') {XID_CONTINUE};
+
+
+@char
+@check(unicode_xid::UnicodeXID::is_xid_start)
+XID_START = char;
+
+
+@char
+@check(unicode_xid::UnicodeXID::is_xid_continue)
+XID_CONTINUE = char;

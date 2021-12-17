@@ -10,7 +10,7 @@ edition = "2021"
 
 [dependencies]
 peginator = "0.2.2"
-
+unicode-xid = "0.2.4"
 
 
 

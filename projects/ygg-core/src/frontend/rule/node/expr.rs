@@ -1,96 +1,96 @@
 use super::*;
 use std::hash::{Hash, Hasher};
 
-impl ExpressionNode {
+impl ASTNode {
     pub fn has_meta(&self) -> bool {
         self.node_tag.is_some()
     }
     pub fn is_choice(&self) -> bool {
-        matches!(self.node, RefinedExpression::Choice(_))
+        matches!(self.node, ASTExpression::Choice(_))
     }
     pub fn is_concat(&self) -> bool {
-        matches!(self.node, RefinedExpression::Concat(_))
+        matches!(self.node, ASTExpression::Concat(_))
     }
     pub fn is_unary(&self) -> bool {
-        matches!(self.node, RefinedExpression::Unary(_))
+        matches!(self.node, ASTExpression::Unary(_))
     }
 }
 
-impl ExpressionNode {
+impl ASTNode {
     pub fn get_concat(&self) -> Option<RefinedConcat> {
         match self.to_owned().node {
-            RefinedExpression::Concat(c) => Some(*c),
+            ASTExpression::Concat(c) => Some(*c),
             _ => None,
         }
     }
     pub fn get_concat_mut(&mut self) -> Option<&mut RefinedConcat> {
         match &mut self.node {
-            RefinedExpression::Concat(c) => Some(c.as_mut()),
+            ASTExpression::Concat(c) => Some(c.as_mut()),
             _ => None,
         }
     }
     pub fn get_choice(&self) -> Option<RefinedChoice> {
         match self.to_owned().node {
-            RefinedExpression::Choice(c) => Some(*c),
+            ASTExpression::Choice(c) => Some(*c),
             _ => None,
         }
     }
     pub fn get_choice_mut(&mut self) -> Option<&mut RefinedChoice> {
         match &mut self.node {
-            RefinedExpression::Choice(c) => Some(c.as_mut()),
+            ASTExpression::Choice(c) => Some(c.as_mut()),
             _ => None,
         }
     }
     pub fn get_unary(&self) -> Option<RefinedUnary> {
         match self.to_owned().node {
-            RefinedExpression::Unary(c) => Some(*c),
+            ASTExpression::Unary(c) => Some(*c),
             _ => None,
         }
     }
     pub fn get_unary_mut(&mut self) -> Option<&mut RefinedUnary> {
         match &mut self.node {
-            RefinedExpression::Unary(c) => Some(c.as_mut()),
+            ASTExpression::Unary(c) => Some(c.as_mut()),
             _ => None,
         }
     }
 }
 
-impl From<Expression> for ExpressionNode {
-    fn from(raw: Expression) -> Self {
+impl From<ASTExpression> for ASTNode {
+    fn from(raw: ASTExpression) -> Self {
         match raw {
-            Expression::Data(e) => Self::from(e),
-            Expression::Concat { is_soft, lhs, rhs } => match is_soft {
+            ASTExpression::Data(e) => Self::from(e),
+            ASTExpression::Concat { is_soft, lhs, rhs } => match is_soft {
                 true => Self::soft_concat(*lhs, *rhs),
                 false => Self::concat(*lhs, *rhs),
             },
-            Expression::Choice { lhs, rhs } => Self::choice(*lhs, *rhs),
-            Expression::MarkNode { lhs, rhs } => Self::mark_node(*lhs, *rhs),
-            Expression::MarkNodeShort(s) => Self::mark_node(*s.clone(), *s),
-            Expression::MarkType { .. } => {
+            ASTExpression::Choice { lhs, rhs } => Self::choice(*lhs, *rhs),
+            ASTExpression::MarkNode { lhs, rhs } => Self::mark_node(*lhs, *rhs),
+            ASTExpression::MarkNodeShort(s) => Self::mark_node(*s.clone(), *s),
+            ASTExpression::MarkType { .. } => {
                 unimplemented!()
             }
-            Expression::MustNot(_) => {
+            ASTExpression::MustNot(_) => {
                 unimplemented!()
             }
-            Expression::MustOne(_) => {
+            ASTExpression::MustOne(_) => {
                 unimplemented!()
             }
-            Expression::Maybe(e) => Self::suffix(*e, "?"),
-            Expression::Many(e) => Self::suffix(*e, "*"),
-            Expression::ManyNonNull(e) => Self::suffix(*e, "+"),
-            Expression::MarkBranch { base, kind, name } => Self::mark_branch(*base, kind, name),
+            ASTExpression::Maybe(e) => Self::suffix(*e, "?"),
+            ASTExpression::Many(e) => Self::suffix(*e, "*"),
+            ASTExpression::ManyNonNull(e) => Self::suffix(*e, "+"),
+            ASTExpression::MarkBranch { base, kind, name } => Self::mark_branch(*base, kind, name),
         }
     }
 }
 
-impl From<Data> for ExpressionNode {
+impl From<Data> for ASTNode {
     fn from(e: Data) -> Self {
         Self {
             inline_token: false,
             branch_tag: None,
             ty: None,
             node_tag: None,
-            node: RefinedExpression::Data(box RefinedData::from(e)),
+            node: ASTExpression::Data(box RefinedData::from(e)),
         }
     }
 }

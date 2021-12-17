@@ -108,12 +108,13 @@ pub struct Rule {
     /// }
     /// ```
     pub auto_boxed: bool,
+    pub auto_capture: bool,
+    pub atomic_rule: bool,
     /// Eliminate unnamed nodes
     /// ```ygg
     /// name <- expr
     /// ^expr
     /// ```
-    pub already_inline: bool,
     pub eliminate_unmarked: bool,
     /// Eliminate unnamed nodes
     /// ```ygg
