@@ -22,6 +22,8 @@ pub struct GrammarInfo {
     pub ignores: Vec<Symbol>,
     pub imports: IndexMap<Url, Vec<SymbolAlias>>,
     pub rule_map: IndexMap<String, Rule>,
+    pub rule_prefix: String,
+    pub rule_suffix: String,
 }
 
 pub struct Symbol {

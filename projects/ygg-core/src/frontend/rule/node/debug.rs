@@ -15,13 +15,13 @@ impl Debug for Rule {
     }
 }
 
-impl Debug for ASTNode {
+impl Debug for TermNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let w = &mut match &self.node {
-            ASTExpression::Data(_) => f.debug_struct("Data"),
-            ASTExpression::Unary(_) => f.debug_struct("ExpressionNode"),
-            ASTExpression::Choice(_) => f.debug_struct("ExpressionNode"),
-            ASTExpression::Concat(_) => f.debug_struct("ExpressionNode"),
+            ExpressionNode::Data(_) => f.debug_struct("Data"),
+            ExpressionNode::Unary(_) => f.debug_struct("ExpressionNode"),
+            ExpressionNode::Choice(_) => f.debug_struct("ExpressionNode"),
+            ExpressionNode::Concat(_) => f.debug_struct("ExpressionNode"),
         };
         if let Some(s) = &self.branch_tag {
             w.field("branch_tag", &s.name.data);
@@ -37,16 +37,16 @@ impl Debug for ASTNode {
             w.field("inline_token", &true);
         }
         match &self.node {
-            ASTExpression::Data(e) => w.field("data", e),
-            ASTExpression::Unary(_) => w.field("base", &self.node),
-            ASTExpression::Choice(_) => w.field("base", &self.node),
-            ASTExpression::Concat(_) => w.field("base", &self.node),
+            ExpressionNode::Data(e) => w.field("data", e),
+            ExpressionNode::Unary(_) => w.field("base", &self.node),
+            ExpressionNode::Choice(_) => w.field("base", &self.node),
+            ExpressionNode::Concat(_) => w.field("base", &self.node),
         };
         w.finish()
     }
 }
 
-impl Debug for ASTExpression {
+impl Debug for ExpressionNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Data(e) => e.fmt(f),
@@ -57,7 +57,7 @@ impl Debug for ASTExpression {
     }
 }
 
-impl Debug for RefinedChoice {
+impl Debug for ChoiceNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.write_str("Choice ")?;
         f.debug_list().entries(self.inner.iter()).finish()
@@ -90,7 +90,7 @@ impl Debug for RefinedUnary {
     }
 }
 
-impl Debug for RefinedData {
+impl Debug for DataNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Symbol(e) => e.fmt(f),

@@ -1,101 +1,101 @@
 use super::*;
 use std::hash::{Hash, Hasher};
 
-impl ASTNode {
+impl TermNode {
     pub fn has_meta(&self) -> bool {
         self.node_tag.is_some()
     }
     pub fn is_choice(&self) -> bool {
-        matches!(self.node, ASTExpression::Choice(_))
+        matches!(self.node, ExpressionNode::Choice(_))
     }
     pub fn is_concat(&self) -> bool {
-        matches!(self.node, ASTExpression::Concat(_))
+        matches!(self.node, ExpressionNode::Concat(_))
     }
     pub fn is_unary(&self) -> bool {
-        matches!(self.node, ASTExpression::Unary(_))
+        matches!(self.node, ExpressionNode::Unary(_))
     }
 }
 
-impl ASTNode {
+impl TermNode {
     pub fn get_concat(&self) -> Option<RefinedConcat> {
         match self.to_owned().node {
-            ASTExpression::Concat(c) => Some(*c),
+            ExpressionNode::Concat(c) => Some(*c),
             _ => None,
         }
     }
     pub fn get_concat_mut(&mut self) -> Option<&mut RefinedConcat> {
         match &mut self.node {
-            ASTExpression::Concat(c) => Some(c.as_mut()),
+            ExpressionNode::Concat(c) => Some(c.as_mut()),
             _ => None,
         }
     }
-    pub fn get_choice(&self) -> Option<RefinedChoice> {
+    pub fn get_choice(&self) -> Option<ChoiceNode> {
         match self.to_owned().node {
-            ASTExpression::Choice(c) => Some(*c),
+            ExpressionNode::Choice(c) => Some(*c),
             _ => None,
         }
     }
-    pub fn get_choice_mut(&mut self) -> Option<&mut RefinedChoice> {
+    pub fn get_choice_mut(&mut self) -> Option<&mut ChoiceNode> {
         match &mut self.node {
-            ASTExpression::Choice(c) => Some(c.as_mut()),
+            ExpressionNode::Choice(c) => Some(c.as_mut()),
             _ => None,
         }
     }
     pub fn get_unary(&self) -> Option<RefinedUnary> {
         match self.to_owned().node {
-            ASTExpression::Unary(c) => Some(*c),
+            ExpressionNode::Unary(c) => Some(*c),
             _ => None,
         }
     }
     pub fn get_unary_mut(&mut self) -> Option<&mut RefinedUnary> {
         match &mut self.node {
-            ASTExpression::Unary(c) => Some(c.as_mut()),
+            ExpressionNode::Unary(c) => Some(c.as_mut()),
             _ => None,
         }
     }
 }
 
-impl From<ASTExpression> for ASTNode {
-    fn from(raw: ASTExpression) -> Self {
+impl From<ExpressionNode> for TermNode {
+    fn from(raw: ExpressionNode) -> Self {
         match raw {
-            ASTExpression::Data(e) => Self::from(e),
-            ASTExpression::Concat { is_soft, lhs, rhs } => match is_soft {
+            ExpressionNode::Data(e) => Self::from(e),
+            ExpressionNode::Concat { is_soft, lhs, rhs } => match is_soft {
                 true => Self::soft_concat(*lhs, *rhs),
                 false => Self::concat(*lhs, *rhs),
             },
-            ASTExpression::Choice { lhs, rhs } => Self::choice(*lhs, *rhs),
-            ASTExpression::MarkNode { lhs, rhs } => Self::mark_node(*lhs, *rhs),
-            ASTExpression::MarkNodeShort(s) => Self::mark_node(*s.clone(), *s),
-            ASTExpression::MarkType { .. } => {
+            ExpressionNode::Choice { lhs, rhs } => Self::choice(*lhs, *rhs),
+            ExpressionNode::MarkNode { lhs, rhs } => Self::mark_node(*lhs, *rhs),
+            ExpressionNode::MarkNodeShort(s) => Self::mark_node(*s.clone(), *s),
+            ExpressionNode::MarkType { .. } => {
                 unimplemented!()
             }
-            ASTExpression::MustNot(_) => {
+            ExpressionNode::MustNot(_) => {
                 unimplemented!()
             }
-            ASTExpression::MustOne(_) => {
+            ExpressionNode::MustOne(_) => {
                 unimplemented!()
             }
-            ASTExpression::Maybe(e) => Self::suffix(*e, "?"),
-            ASTExpression::Many(e) => Self::suffix(*e, "*"),
-            ASTExpression::ManyNonNull(e) => Self::suffix(*e, "+"),
-            ASTExpression::MarkBranch { base, kind, name } => Self::mark_branch(*base, kind, name),
+            ExpressionNode::Maybe(e) => Self::suffix(*e, "?"),
+            ExpressionNode::Many(e) => Self::suffix(*e, "*"),
+            ExpressionNode::ManyNonNull(e) => Self::suffix(*e, "+"),
+            ExpressionNode::MarkBranch { base, kind, name } => Self::mark_branch(*base, kind, name),
         }
     }
 }
 
-impl From<Data> for ASTNode {
+impl From<Data> for TermNode {
     fn from(e: Data) -> Self {
         Self {
             inline_token: false,
             branch_tag: None,
             ty: None,
             node_tag: None,
-            node: ASTExpression::Data(box RefinedData::from(e)),
+            node: ExpressionNode::Data(box DataNode::from(e)),
         }
     }
 }
 
-impl From<Data> for RefinedData {
+impl From<Data> for DataNode {
     fn from(data: Data) -> Self {
         match data {
             Data::Symbol(atom) => Self::Symbol(atom),
@@ -107,16 +107,16 @@ impl From<Data> for RefinedData {
     }
 }
 
-impl Hash for RefinedChoice {
+impl Hash for ChoiceNode {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.inner.iter().for_each(|e| e.hash(state))
     }
 }
 
-impl Eq for RefinedData {}
+impl Eq for DataNode {}
 
-impl PartialEq for RefinedData {
-    fn eq(&self, other: &RefinedData) -> bool {
+impl PartialEq for DataNode {
+    fn eq(&self, other: &DataNode) -> bool {
         match (self, other) {
             (Self::Symbol(lhs), Self::Symbol(rhs)) => lhs == rhs,
             (Self::String(lhs), Self::String(rhs)) => lhs == rhs,
@@ -128,13 +128,13 @@ impl PartialEq for RefinedData {
     }
 }
 
-impl Hash for RefinedData {
+impl Hash for DataNode {
     fn hash<H: Hasher>(&self, state: &mut H) -> () {
         match self {
-            RefinedData::Symbol(e) => e.hash(state),
-            RefinedData::String(e) => e.hash(state),
-            RefinedData::Regex(e) => e.hash(state),
-            RefinedData::Integer(e) => e.to_string().hash(state),
+            DataNode::Symbol(e) => e.hash(state),
+            DataNode::String(e) => e.hash(state),
+            DataNode::Regex(e) => e.hash(state),
+            DataNode::Integer(e) => e.to_string().hash(state),
         }
     }
 }

@@ -8,7 +8,7 @@ use yggdrasil_bootstrap::parser::{Choice, DefineStatement, Program, Statement};
 use yggdrasil_bootstrap::Result;
 
 use crate::frontend::{GrammarInfo, Rule, Symbol};
-use crate::frontend::rule::node::ASTNode;
+use crate::frontend::rule::node::TermNode;
 
 mod import;
 mod macros;
@@ -24,6 +24,8 @@ impl Default for GrammarContext {
         Self {
             info: Default::default(),
             docs: "".to_string(),
+            name_prefix: "".to_string(),
+            name_suffix: "Node".to_string(),
         }
     }
 }
@@ -39,6 +41,8 @@ impl Default for GrammarInfo {
             ignores: vec![],
             imports: Default::default(),
             rule_map: Default::default(),
+            rule_prefix: "".to_string(),
+            rule_suffix: "Node".to_string()
         }
     }
 }
@@ -48,7 +52,7 @@ trait Translator {
         let _ = ctx;
         unimplemented!()
     }
-    fn into_expr(self, ctx: &mut GrammarContext) -> Result<ASTNode> {
+    fn into_expr(self, ctx: &mut GrammarContext) -> Result<TermNode> {
         let _ = ctx;
         unimplemented!()
     }
@@ -111,10 +115,8 @@ impl Translator for DefineStatement {
 }
 
 impl Translator for Choice {
-    fn into_expr(self, ctx: &mut GrammarContext) -> Result<ASTNode> {
-
-
-        let node = ASTNode {
+    fn into_expr(self, ctx: &mut GrammarContext) -> Result<TermNode> {
+        let node = TermNode {
             inline_token: false,
             node_tag: None,
             node: (),

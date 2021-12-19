@@ -13,40 +13,43 @@ mod expr;
 mod unary;
 
 #[derive(Clone, Eq, PartialEq, Hash)]
-pub struct ASTNode {
-    pub inline_token: bool,
+pub struct TermNode {
     pub node_tag: Option<String>,
-    pub node: ASTExpression,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, Hash)]
-pub struct ExpressionTag {
-    pub name: Symbol,
-    pub mode: String,
+    pub node: ExpressionNode,
 }
 
 #[derive(Clone, Eq, PartialEq, Hash)]
-pub enum ASTExpression {
-    Data(Box<RefinedData>),
+pub enum ExpressionNode {
     Unary(Box<RefinedUnary>),
-    Choice(Box<RefinedChoice>),
+    Choice(Box<ChoiceNode>),
     Concat(Box<RefinedConcat>),
+    Data(Box<DataNode>),
 }
 
-#[derive(Clone, Eq, PartialEq)]
-pub struct RefinedChoice {
-    pub inner: IndexSet<ASTNode>,
+#[derive(Clone, Eq, PartialEq, Hash)]
+pub enum DataNode {
+    String(String),
+    Regex(String),
+    Integer(isize),
+    CharacterSet(Charset)
 }
+
+#[derive(Clone, Eq, PartialEq, Hash)]
+pub struct Charset {
+    pub
+}
+
+
 
 #[derive(Clone, Eq, PartialEq, Hash)]
 pub struct RefinedConcat {
-    pub base: ASTNode,
-    pub rest: Vec<(bool, ASTNode)>,
+    pub base: TermNode,
+    pub rest: Vec<(bool, TermNode)>,
 }
 
 #[derive(Clone, Eq, PartialEq, Hash)]
 pub struct RefinedUnary {
-    pub base: ASTNode,
+    pub base: TermNode,
     pub ops: Vec<Operator>,
 }
 
@@ -66,10 +69,3 @@ pub enum Operator {
     Recursive,
 }
 
-#[derive(Clone)]
-pub enum RefinedData {
-    Symbol(SymbolPath),
-    String(String),
-    Regex(String),
-    Integer(isize),
-}
