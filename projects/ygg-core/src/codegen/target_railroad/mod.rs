@@ -24,7 +24,7 @@ impl GrammarInfo {
         return diagram;
     }
     fn into_railroad(self) -> VerticalGrid {
-        VerticalGrid::new(self.rule_map.into_iter().map(|(_, rule)| rule.into_railroad()).collect())
+        VerticalGrid::new(self.rules.into_iter().map(|(_, rule)| rule.into_railroad()).collect())
     }
 }
 
@@ -33,7 +33,7 @@ impl Rule {
         let mut s = Sequence::default();
         s.push(box SimpleStart);
         s.push(box RuleName::new(self.name.data));
-        s.push(self.expression.into_railroad());
+        s.push(self.body.into_railroad());
         s.push(box SimpleEnd);
         return box s;
     }

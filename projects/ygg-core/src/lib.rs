@@ -8,7 +8,7 @@
 // pub use self::manager::{FILE_MANAGER, HINT_MANAGER, PARSER_MANAGER};
 pub use yggdrasil_bootstrap::{Result, YggdrasilError};
 //
-// pub mod codegen;
+pub mod codegen;
 pub mod frontend;
 // pub mod manager;
 //

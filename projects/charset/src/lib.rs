@@ -1,10 +1,14 @@
+#![doc = include_str!("../Readme.md")]
+
 use std::ops::Range;
 
 mod utils;
 mod insert;
+pub mod builtin;
 
 /// Some characters appear significantly more frequently than others, and you need to quickly search for this high-frequency character set
 /// Such as ascii character set
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct CharacterSet {
     #[cfg(debug_assertions)]

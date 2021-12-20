@@ -1,10 +1,16 @@
-use crate::frontend::{Rule};
 use std::{
     fmt::{Debug, Formatter},
-    ops::{AddAssign, BitAndAssign},
+    ops::{AddAssign, BitAndAssign, Range},
 };
-use yggdrasil_bootstrap::parser::*;
+
 use indexmap::set::IndexSet;
+
+use character_set::CharacterSet;
+
+use crate::frontend::{
+    rule::node::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression},
+    Rule,
+};
 
 mod choice;
 mod concat;
@@ -13,44 +19,27 @@ mod expr;
 mod unary;
 
 #[derive(Clone, Eq, PartialEq, Hash)]
-pub struct TermNode {
+pub struct Expression {
     pub node_tag: Option<String>,
-    pub node: ExpressionNode,
+    pub node: Term,
 }
 
 #[derive(Clone, Eq, PartialEq, Hash)]
-pub enum ExpressionNode {
-    Unary(Box<RefinedUnary>),
-    Choice(Box<ChoiceNode>),
-    Concat(Box<RefinedConcat>),
-    Data(Box<DataNode>),
+pub enum Term {
+    Unary(Box<UnaryExpression>),
+    Choice(Box<ChoiceExpression>),
+    Concat(Box<ConcatExpression>),
+    Data(Box<DataExpression>),
 }
 
 #[derive(Clone, Eq, PartialEq, Hash)]
-pub enum DataNode {
+pub enum DataExpression {
     String(String),
     Regex(String),
     Integer(isize),
-    CharacterSet(Charset)
-}
-
-#[derive(Clone, Eq, PartialEq, Hash)]
-pub struct Charset {
-    pub
-}
-
-
-
-#[derive(Clone, Eq, PartialEq, Hash)]
-pub struct RefinedConcat {
-    pub base: TermNode,
-    pub rest: Vec<(bool, TermNode)>,
-}
-
-#[derive(Clone, Eq, PartialEq, Hash)]
-pub struct RefinedUnary {
-    pub base: TermNode,
-    pub ops: Vec<Operator>,
+    Character(char),
+    CharacterRange(Range<char>),
+    CharacterSet(CharacterSet),
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
@@ -68,4 +57,3 @@ pub enum Operator {
     /// *e
     Recursive,
 }
-

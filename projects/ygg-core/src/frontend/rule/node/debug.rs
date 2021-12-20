@@ -9,19 +9,19 @@ impl Debug for Rule {
             .field("already_inline", &self.auto_capture)
             .field("eliminate_unmarked", &self.eliminate_unmarked)
             .field("eliminate_unnamed", &self.eliminate_unnamed)
-            .field("expression", &self.expression)
+            .field("expression", &self.body)
             .field("range", &self.range)
             .finish()
     }
 }
 
-impl Debug for TermNode {
+impl Debug for Expression {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let w = &mut match &self.node {
-            ExpressionNode::Data(_) => f.debug_struct("Data"),
-            ExpressionNode::Unary(_) => f.debug_struct("ExpressionNode"),
-            ExpressionNode::Choice(_) => f.debug_struct("ExpressionNode"),
-            ExpressionNode::Concat(_) => f.debug_struct("ExpressionNode"),
+            Term::Data(_) => f.debug_struct("Data"),
+            Term::Unary(_) => f.debug_struct("ExpressionNode"),
+            Term::Choice(_) => f.debug_struct("ExpressionNode"),
+            Term::Concat(_) => f.debug_struct("ExpressionNode"),
         };
         if let Some(s) = &self.branch_tag {
             w.field("branch_tag", &s.name.data);
@@ -37,16 +37,16 @@ impl Debug for TermNode {
             w.field("inline_token", &true);
         }
         match &self.node {
-            ExpressionNode::Data(e) => w.field("data", e),
-            ExpressionNode::Unary(_) => w.field("base", &self.node),
-            ExpressionNode::Choice(_) => w.field("base", &self.node),
-            ExpressionNode::Concat(_) => w.field("base", &self.node),
+            Term::Data(e) => w.field("data", e),
+            Term::Unary(_) => w.field("base", &self.node),
+            Term::Choice(_) => w.field("base", &self.node),
+            Term::Concat(_) => w.field("base", &self.node),
         };
         w.finish()
     }
 }
 
-impl Debug for ExpressionNode {
+impl Debug for Term {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Data(e) => e.fmt(f),
@@ -57,7 +57,7 @@ impl Debug for ExpressionNode {
     }
 }
 
-impl Debug for ChoiceNode {
+impl Debug for ChoiceExpression {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.write_str("Choice ")?;
         f.debug_list().entries(self.inner.iter()).finish()
@@ -84,13 +84,13 @@ impl Debug for RefinedConcat {
     }
 }
 
-impl Debug for RefinedUnary {
+impl Debug for UnaryExpression {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Unary").field("base", &self.base).field("operations", &self.ops).finish()
     }
 }
 
-impl Debug for DataNode {
+impl Debug for DataExpression {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Symbol(e) => e.fmt(f),

@@ -1,5 +1,5 @@
 #[cfg(feature = "peginator")]
-pub(crate) mod target_ast;
+pub(crate) mod target_peg;
 #[cfg(feature = "lrpeg")]
 pub(crate) mod target_peg;
 #[cfg(feature = "pest")]

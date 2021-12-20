@@ -1,5 +1,11 @@
 use super::*;
 
+#[derive(Clone, Eq, PartialEq, Hash)]
+pub struct UnaryExpression {
+    pub base: Expression,
+    pub ops: Vec<Operator>,
+}
+
 impl Operator {
     pub fn prefix(o: &str) -> Operator {
         match o {
@@ -18,13 +24,13 @@ impl Operator {
     }
 }
 
-impl TermNode {
-    pub fn prefix(e: ExpressionNode, o: &str) -> Self {
+impl Expression {
+    pub fn prefix(e: Term, o: &str) -> Self {
         let mut node = Self::from(e).as_unary();
         node.get_unary_mut().map(|e| e.ops.push(Operator::prefix(o)));
         return node;
     }
-    pub fn suffix(e: ExpressionNode, o: &str) -> Self {
+    pub fn suffix(e: Term, o: &str) -> Self {
         let mut node = Self::from(e).as_unary();
         node.get_unary_mut().map(|e| e.ops.push(Operator::suffix(o)));
         return node;
@@ -33,14 +39,14 @@ impl TermNode {
         if let Some(_) = self.get_unary() {
             return self;
         }
-        return Self { inline_token: false, ty: None, branch_tag: None, node_tag: None, node: ExpressionNode::unary(self) };
+        return Self { inline_token: false, ty: None, branch_tag: None, node_tag: None, node: Term::unary(self) };
     }
-    pub fn mark_node(name: ExpressionNode, node: ExpressionNode) -> Self {
+    pub fn mark_node(name: Term, node: Term) -> Self {
         let mut node = Self::from(node);
         node.node_tag = name.as_symbol();
         return node;
     }
-    pub fn mark_branch(base: ExpressionNode, kind: Option<char>, name: Symbol) -> Self {
+    pub fn mark_branch(base: Term, kind: Option<char>, name: Symbol) -> Self {
         let mut node = Self::from(base);
         node.branch_tag = Some(ExpressionTag::new(kind, name));
         return node;
@@ -59,8 +65,8 @@ impl ExpressionTag {
     }
 }
 
-impl ExpressionNode {
-    pub fn unary(base: TermNode) -> Self {
-        Self::Unary(Box::new(RefinedUnary { base, ops: vec![] }))
+impl Term {
+    pub fn unary(base: Expression) -> Self {
+        Self::Unary(Box::new(UnaryExpression { base, ops: vec![] }))
     }
 }

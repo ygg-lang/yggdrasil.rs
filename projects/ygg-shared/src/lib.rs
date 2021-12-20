@@ -4,7 +4,6 @@
 pub(crate) mod macros;
 pub(crate) mod records;
 pub(crate) mod traits;
-
 pub(crate) mod errors;
 pub use self::{
     errors::{diagnostic::DiagnosticLevel, Result, YggdrasilError, YggdrasilErrorKind},

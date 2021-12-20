@@ -16,10 +16,21 @@ impl Default for CharacterSet {
 
 
 impl CharacterSet {
-    fn contains(&self, c: char) -> bool {
+    /// Count how many characters are in this set
+    pub fn count(&self) -> usize {
         debug_assert!(self.optimized);
+        let mut all = 0;
+        for rule in &self.common {
+            all += rule.end - rule.start + 1
+        }
+        return all as usize;
+    }
+    /// Determines whether the set contains the given character
+    pub fn contains(&self, c: char) -> bool {
+        debug_assert!(self.optimized);
+        let c = c as u32;
         for rule in &self.fast {
-            if rule.contains(&c) {
+            if rule.start <= c && c <= rule.end {
                 return true
             }
         }
@@ -31,8 +42,8 @@ impl CharacterSet {
     // table entry is greater than `c`) than `Less` results. And given that
     // ASCII chars are so common, it makes sense to favor them. Therefore,
     // the `Greater` case is tested for before the `Less` case.
-    fn bsearch_range_table(&self, r: &[Range<char>], c: char) -> bool {
-        r.binary_search_by(|&range| {
+    fn bsearch_range_table(&self, r: &[Range<u32>], c: u32) -> bool {
+        r.binary_search_by(|range| {
             if range.start > c {
                 Greater
             } else if range.end < c {
@@ -63,38 +74,23 @@ impl CharacterSet {
         {
             self.optimized = true;
         }
-        // a = [(7, 10), (11, 13), (11, 15), (14, 20), (23, 39)]
-        // b = []
-        // for begin,end in sorted(a):
-        //     if b and b[-1][1] >= begin - 1:
-        //         b[-1][1] = max(b[-1][1], end)
-        //     else:
-        //         b.append([begin, end])
-
-        let mut new: Vec<Range<char>> = vec![];
+        let mut new: Vec<Range<u32>> = vec![];
         self.common.sort_by_key(|r| r.start);
         for Range { start, end } in &self.common {
             match new.last_mut() {
                 Some(last) => {
-                    if last.start >= start - 1 {
-                        last.start = last.start.max(*end)
+                    if last.end >= start.saturating_sub(1) {
+                        last.end = last.end.max(*end)
                     } else {
                         new.push(Range { start: *start, end: *end })
                     }
                 }
-                None => break
+                None => {
+                    new.push(Range { start: *start, end: *end })
+                }
             }
         };
         new.truncate(new.len());
         self.common = new;
     }
-}
-
-#[test]
-fn test() {
-    let mut set = CharacterSet::default();
-    set.insert('a'..'z');
-    set.insert('A'..'Z');
-    set.insert('0'..'9');
-    println!("{:#?}", set)
 }

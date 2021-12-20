@@ -1,101 +1,101 @@
 use super::*;
 use std::hash::{Hash, Hasher};
 
-impl TermNode {
+impl Expression {
     pub fn has_meta(&self) -> bool {
         self.node_tag.is_some()
     }
     pub fn is_choice(&self) -> bool {
-        matches!(self.node, ExpressionNode::Choice(_))
+        matches!(self.node, Term::Choice(_))
     }
     pub fn is_concat(&self) -> bool {
-        matches!(self.node, ExpressionNode::Concat(_))
+        matches!(self.node, Term::Concat(_))
     }
     pub fn is_unary(&self) -> bool {
-        matches!(self.node, ExpressionNode::Unary(_))
+        matches!(self.node, Term::Unary(_))
     }
 }
 
-impl TermNode {
+impl Expression {
     pub fn get_concat(&self) -> Option<RefinedConcat> {
         match self.to_owned().node {
-            ExpressionNode::Concat(c) => Some(*c),
+            Term::Concat(c) => Some(*c),
             _ => None,
         }
     }
     pub fn get_concat_mut(&mut self) -> Option<&mut RefinedConcat> {
         match &mut self.node {
-            ExpressionNode::Concat(c) => Some(c.as_mut()),
+            Term::Concat(c) => Some(c.as_mut()),
             _ => None,
         }
     }
-    pub fn get_choice(&self) -> Option<ChoiceNode> {
+    pub fn get_choice(&self) -> Option<ChoiceExpression> {
         match self.to_owned().node {
-            ExpressionNode::Choice(c) => Some(*c),
+            Term::Choice(c) => Some(*c),
             _ => None,
         }
     }
-    pub fn get_choice_mut(&mut self) -> Option<&mut ChoiceNode> {
+    pub fn get_choice_mut(&mut self) -> Option<&mut ChoiceExpression> {
         match &mut self.node {
-            ExpressionNode::Choice(c) => Some(c.as_mut()),
+            Term::Choice(c) => Some(c.as_mut()),
             _ => None,
         }
     }
-    pub fn get_unary(&self) -> Option<RefinedUnary> {
+    pub fn get_unary(&self) -> Option<UnaryExpression> {
         match self.to_owned().node {
-            ExpressionNode::Unary(c) => Some(*c),
+            Term::Unary(c) => Some(*c),
             _ => None,
         }
     }
-    pub fn get_unary_mut(&mut self) -> Option<&mut RefinedUnary> {
+    pub fn get_unary_mut(&mut self) -> Option<&mut UnaryExpression> {
         match &mut self.node {
-            ExpressionNode::Unary(c) => Some(c.as_mut()),
+            Term::Unary(c) => Some(c.as_mut()),
             _ => None,
         }
     }
 }
 
-impl From<ExpressionNode> for TermNode {
-    fn from(raw: ExpressionNode) -> Self {
+impl From<Term> for Expression {
+    fn from(raw: Term) -> Self {
         match raw {
-            ExpressionNode::Data(e) => Self::from(e),
-            ExpressionNode::Concat { is_soft, lhs, rhs } => match is_soft {
+            Term::Data(e) => Self::from(e),
+            Term::Concat { is_soft, lhs, rhs } => match is_soft {
                 true => Self::soft_concat(*lhs, *rhs),
                 false => Self::concat(*lhs, *rhs),
             },
-            ExpressionNode::Choice { lhs, rhs } => Self::choice(*lhs, *rhs),
-            ExpressionNode::MarkNode { lhs, rhs } => Self::mark_node(*lhs, *rhs),
-            ExpressionNode::MarkNodeShort(s) => Self::mark_node(*s.clone(), *s),
-            ExpressionNode::MarkType { .. } => {
+            Term::Choice { lhs, rhs } => Self::choice(*lhs, *rhs),
+            Term::MarkNode { lhs, rhs } => Self::mark_node(*lhs, *rhs),
+            Term::MarkNodeShort(s) => Self::mark_node(*s.clone(), *s),
+            Term::MarkType { .. } => {
                 unimplemented!()
             }
-            ExpressionNode::MustNot(_) => {
+            Term::MustNot(_) => {
                 unimplemented!()
             }
-            ExpressionNode::MustOne(_) => {
+            Term::MustOne(_) => {
                 unimplemented!()
             }
-            ExpressionNode::Maybe(e) => Self::suffix(*e, "?"),
-            ExpressionNode::Many(e) => Self::suffix(*e, "*"),
-            ExpressionNode::ManyNonNull(e) => Self::suffix(*e, "+"),
-            ExpressionNode::MarkBranch { base, kind, name } => Self::mark_branch(*base, kind, name),
+            Term::Maybe(e) => Self::suffix(*e, "?"),
+            Term::Many(e) => Self::suffix(*e, "*"),
+            Term::ManyNonNull(e) => Self::suffix(*e, "+"),
+            Term::MarkBranch { base, kind, name } => Self::mark_branch(*base, kind, name),
         }
     }
 }
 
-impl From<Data> for TermNode {
+impl From<Data> for Expression {
     fn from(e: Data) -> Self {
         Self {
             inline_token: false,
             branch_tag: None,
             ty: None,
             node_tag: None,
-            node: ExpressionNode::Data(box DataNode::from(e)),
+            node: Term::Data(box DataExpression::from(e)),
         }
     }
 }
 
-impl From<Data> for DataNode {
+impl From<Data> for DataExpression {
     fn from(data: Data) -> Self {
         match data {
             Data::Symbol(atom) => Self::Symbol(atom),
@@ -107,16 +107,16 @@ impl From<Data> for DataNode {
     }
 }
 
-impl Hash for ChoiceNode {
+impl Hash for ChoiceExpression {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.inner.iter().for_each(|e| e.hash(state))
     }
 }
 
-impl Eq for DataNode {}
+impl Eq for DataExpression {}
 
-impl PartialEq for DataNode {
-    fn eq(&self, other: &DataNode) -> bool {
+impl PartialEq for DataExpression {
+    fn eq(&self, other: &DataExpression) -> bool {
         match (self, other) {
             (Self::Symbol(lhs), Self::Symbol(rhs)) => lhs == rhs,
             (Self::String(lhs), Self::String(rhs)) => lhs == rhs,
@@ -128,13 +128,13 @@ impl PartialEq for DataNode {
     }
 }
 
-impl Hash for DataNode {
+impl Hash for DataExpression {
     fn hash<H: Hasher>(&self, state: &mut H) -> () {
         match self {
-            DataNode::Symbol(e) => e.hash(state),
-            DataNode::String(e) => e.hash(state),
-            DataNode::Regex(e) => e.hash(state),
-            DataNode::Integer(e) => e.to_string().hash(state),
+            DataExpression::Symbol(e) => e.hash(state),
+            DataExpression::String(e) => e.hash(state),
+            DataExpression::Regex(e) => e.hash(state),
+            DataExpression::Integer(e) => e.to_string().hash(state),
         }
     }
 }

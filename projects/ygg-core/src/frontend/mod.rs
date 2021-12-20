@@ -1,11 +1,8 @@
 use std::ops::Range;
 
+use crate::frontend::rule::Expression;
 use indexmap::map::IndexMap;
 use lsp_types::Url;
-
-use crate::frontend::rule::ExpressionNode;
-
-pub use self::rule::GrammarContext;
 
 // mod optimize;
 pub mod rule;
@@ -21,7 +18,7 @@ pub struct GrammarInfo {
     pub extensions: Vec<Symbol>,
     pub ignores: Vec<Symbol>,
     pub imports: IndexMap<Url, Vec<SymbolAlias>>,
-    pub rule_map: IndexMap<String, Rule>,
+    pub rules: IndexMap<String, Rule>,
     pub rule_prefix: String,
     pub rule_suffix: String,
 }
@@ -36,7 +33,6 @@ pub struct SymbolAlias {
     pub alias: String,
     pub range: Range<usize>,
 }
-
 
 #[derive(Clone)]
 pub struct Rule {
@@ -66,7 +62,7 @@ pub struct Rule {
     ///
     /// ## Examples
     /// ```ygg
-    ///
+    /// 
     /// def rule {
     ///
     /// }
@@ -127,7 +123,7 @@ pub struct Rule {
     /// ```
     pub eliminate_unnamed: bool,
     ///
-    pub expression: ExpressionNode,
+    pub body: Expression,
     /// position of all parts
     pub range: Range<usize>,
 }
@@ -146,7 +142,15 @@ pub struct RuleDerive {
 
 impl Default for RuleDerive {
     fn default() -> Self {
-        Self { parser: None, debug: None, display: None, eq: false, eq_partial: None, ord: false, ord_partial: None, hash: None }
+        Self {
+            parser: None,
+            debug: None,
+            display: None,
+            eq: false,
+            eq_partial: None,
+            ord: false,
+            ord_partial: None,
+            hash: None,
+        }
     }
 }
-

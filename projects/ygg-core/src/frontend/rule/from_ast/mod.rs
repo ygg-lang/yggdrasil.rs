@@ -1,14 +1,13 @@
-use std::collections::HashSet;
-use std::mem::take;
-use std::str::FromStr;
+use std::{collections::HashSet, mem::take, str::FromStr};
 
 use url::Url;
 
-use yggdrasil_bootstrap::parser::{Choice, DefineStatement, Program, Statement};
-use yggdrasil_bootstrap::Result;
+use yggdrasil_bootstrap::{
+    parser::{Choice, DefineStatement, Program, Statement},
+    Result,
+};
 
-use crate::frontend::{GrammarInfo, Rule, Symbol};
-use crate::frontend::rule::node::TermNode;
+use crate::frontend::{rule::node::Expression, GrammarInfo, Rule, Symbol};
 
 mod import;
 mod macros;
@@ -18,15 +17,9 @@ pub struct GrammarContext {
     docs: String,
 }
 
-
 impl Default for GrammarContext {
     fn default() -> Self {
-        Self {
-            info: Default::default(),
-            docs: "".to_string(),
-            name_prefix: "".to_string(),
-            name_suffix: "Node".to_string(),
-        }
+        Self { info: Default::default(), docs: "".to_string(), name_prefix: "".to_string(), name_suffix: "Node".to_string() }
     }
 }
 
@@ -40,9 +33,9 @@ impl Default for GrammarInfo {
             extensions: vec![],
             ignores: vec![],
             imports: Default::default(),
-            rule_map: Default::default(),
+            rules: Default::default(),
             rule_prefix: "".to_string(),
-            rule_suffix: "Node".to_string()
+            rule_suffix: "Node".to_string(),
         }
     }
 }
@@ -52,7 +45,7 @@ trait Translator {
         let _ = ctx;
         unimplemented!()
     }
-    fn into_expr(self, ctx: &mut GrammarContext) -> Result<TermNode> {
+    fn into_expr(self, ctx: &mut GrammarContext) -> Result<Expression> {
         let _ = ctx;
         unimplemented!()
     }
@@ -62,16 +55,13 @@ impl Translator for Program {
     fn translate(self, ctx: &mut GrammarContext) -> Result<()> {
         for s in self.statement {
             match s {
-                Statement::DefineStatement(define) => {
-                    define.into_rule(ctx)?
-                }
+                Statement::DefineStatement(define) => define.into_rule(ctx)?,
                 Statement::EmptyStatement(_) => {}
             }
         }
         Ok(())
     }
 }
-
 
 impl Translator for DefineStatement {
     fn translate(self, ctx: &mut GrammarContext) -> Result<()> {
@@ -84,7 +74,8 @@ impl Translator for DefineStatement {
         let mut auto_inline = false;
         if modifiers.contains("inline") {
             auto_inline = true
-        } else if name.starts_with('_') {
+        }
+        else if name.starts_with('_') {
             auto_inline = true;
             name = name.trim_start_matches("_").to_string()
         }
@@ -105,22 +96,18 @@ impl Translator for DefineStatement {
                 atomic_rule: false,
                 eliminate_unmarked: false,
                 eliminate_unnamed: false,
-                expression: self.body.into_expr(ctx)?,
+                body: self.body.into_expr(ctx)?,
                 range: self.position,
             };
-            ctx.info.rule_map.insert(rule.name.clone(), rule);
+            ctx.info.rules.insert(rule.name.clone(), rule);
         }
         Ok(ctx.docs.clear())
     }
 }
 
 impl Translator for Choice {
-    fn into_expr(self, ctx: &mut GrammarContext) -> Result<TermNode> {
-        let node = TermNode {
-            inline_token: false,
-            node_tag: None,
-            node: (),
-        };
+    fn into_expr(self, ctx: &mut GrammarContext) -> Result<Expression> {
+        let node = Expression { inline_token: false, node_tag: None, node: () };
         return Ok(node);
     }
 }
@@ -252,7 +239,6 @@ impl Translator for Choice {
 // }
 //
 
-//
 // impl Translator for Program {
 //     fn translate(self, ctx: &mut GrammarContext) -> Result<GrammarInfo> {
 //         let mut doc_buffer = String::new();

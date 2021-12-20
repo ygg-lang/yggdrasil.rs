@@ -1,12 +1,36 @@
-use std::ops::Range;
+use std::fmt::{Display, Formatter};
+use std::ops::{AddAssign, Range};
 
-use crate::CharacterInsert;
+use crate::{CharacterInsert, CharacterSet};
+
+impl Display for CharacterSet {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let mut w = &mut f.debug_set();
+        for range in self.fast.iter().chain(self.common.iter()) {
+            if range.start == range.end {
+                w = w.entry(&format!("{}", char::from_u32(range.start).unwrap()))
+            } else {
+                w = w.entry(&format!("{}..{}", char::from_u32(range.start).unwrap(), char::from_u32(range.end).unwrap()))
+            }
+        }
+        w.finish()
+    }
+}
 
 impl From<char> for CharacterInsert {
     fn from(char: char) -> Self {
         CharacterInsert {
             fast: false,
             range: Range { start: char as u32, end: char as u32 },
+        }
+    }
+}
+
+impl From<Range<char>> for CharacterInsert {
+    fn from(range: Range<char>) -> Self {
+        CharacterInsert {
+            fast: false,
+            range: Range { start: range.start as u32, end: range.end as u32 },
         }
     }
 }
@@ -37,5 +61,16 @@ impl From<Range<u32>> for CharacterInsert {
             fast: false,
             range: Range { start: range.start, end: range.end },
         }
+    }
+}
+
+
+impl AddAssign<Self> for CharacterSet {
+    fn add_assign(&mut self, rhs: Self) {
+        #[cfg(debug_assertions)]
+        {
+            self.optimized = false;
+        }
+        self.common.extend(rhs.common.into_iter());
     }
 }

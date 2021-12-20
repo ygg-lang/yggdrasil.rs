@@ -14,6 +14,8 @@ mod from_ast;
 // mod hints;
 mod node;
 
+pub use self::node::{DataExpression, Expression, Term};
+
 // impl GrammarInfo {
 //     #[inline]
 //     pub fn get(&self, rule: &str) -> Option<&Rule> {

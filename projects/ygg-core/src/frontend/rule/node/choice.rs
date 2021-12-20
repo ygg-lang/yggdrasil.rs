@@ -2,41 +2,41 @@ use super::*;
 
 
 #[derive(Clone, Eq, PartialEq)]
-pub struct ChoiceNode {
-    pub inner: IndexSet<TermNode>,
+pub struct ChoiceExpression {
+    pub inner: IndexSet<Expression>,
 }
 
-impl TermNode {
+impl Expression {
     #[inline]
-    pub fn choice(lhs: ExpressionNode, rhs: ExpressionNode) -> Self {
-        let mut base = TermNode::from(lhs).as_choice();
-        base.get_choice_mut().map(|e| e.add_assign(TermNode::from(rhs)));
+    pub fn choice(lhs: Term, rhs: Term) -> Self {
+        let mut base = Expression::from(lhs).as_choice();
+        base.get_choice_mut().map(|e| e.add_assign(Expression::from(rhs)));
         return base;
     }
     fn as_choice(self) -> Self {
         if let Some(_) = self.get_choice() {
             return self;
         }
-        return Self { inline_token: false, ty: None, branch_tag: None, node_tag: None, node: ExpressionNode::concat(self) };
+        return Self { inline_token: false, ty: None, branch_tag: None, node_tag: None, node: Term::concat(self) };
     }
 }
 
-impl ExpressionNode {
-    pub fn choice(base: TermNode) -> Self {
+impl Term {
+    pub fn choice(base: Expression) -> Self {
         let mut inner = IndexSet::default();
         inner.insert(base);
-        Self::Choice(Box::new(ChoiceNode { inner }))
+        Self::Choice(Box::new(ChoiceExpression { inner }))
     }
 }
 
-impl From<ExpressionNode> for ChoiceNode {
-    fn from(e: ExpressionNode) -> Self {
-        Self::from(TermNode::from(e))
+impl From<Term> for ChoiceExpression {
+    fn from(e: Term) -> Self {
+        Self::from(Expression::from(e))
     }
 }
 
-impl From<TermNode> for ChoiceNode {
-    fn from(e: TermNode) -> Self {
+impl From<Expression> for ChoiceExpression {
+    fn from(e: Expression) -> Self {
         match e.get_choice() {
             Some(s) => Self { inner: s.inner },
             None => {
@@ -48,8 +48,8 @@ impl From<TermNode> for ChoiceNode {
     }
 }
 
-impl AddAssign<TermNode> for ChoiceNode {
-    fn add_assign(&mut self, rhs: TermNode) {
+impl AddAssign<Expression> for ChoiceExpression {
+    fn add_assign(&mut self, rhs: Expression) {
         match rhs.get_choice() {
             Some(c) => c.inner.into_iter().for_each(|e| {
                 self.inner.insert(e);

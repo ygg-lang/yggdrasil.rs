@@ -1,35 +1,41 @@
 use super::*;
 
-impl TermNode {
+#[derive(Clone, Eq, PartialEq, Hash)]
+pub struct ConcatExpression {
+    pub base: Expression,
+    pub rest: Vec<(bool, Expression)>,
+}
+
+impl Expression {
     #[inline]
-    pub fn concat(lhs: ExpressionNode, rhs: ExpressionNode) -> Self {
-        let mut base = TermNode::from(lhs).as_concat();
-        base.get_concat_mut().map(|e| e.bitand_assign(TermNode::from(rhs)));
+    pub fn concat(lhs: Term, rhs: Term) -> Self {
+        let mut base = Expression::from(lhs).as_concat();
+        base.get_concat_mut().map(|e| e.bitand_assign(Expression::from(rhs)));
         return base;
     }
     #[inline]
-    pub fn soft_concat(lhs: ExpressionNode, rhs: ExpressionNode) -> Self {
-        let mut base = TermNode::from(lhs).as_concat();
-        base.get_concat_mut().map(|e| e.add_assign(TermNode::from(rhs)));
+    pub fn soft_concat(lhs: Term, rhs: Term) -> Self {
+        let mut base = Expression::from(lhs).as_concat();
+        base.get_concat_mut().map(|e| e.add_assign(Expression::from(rhs)));
         return base;
     }
     fn as_concat(self) -> Self {
         if let Some(_) = self.get_concat() {
             return self;
         }
-        return Self { inline_token: false, ty: None, branch_tag: None, node_tag: None, node: ExpressionNode::concat(self) };
+        return Self { inline_token: false, ty: None, branch_tag: None, node_tag: None, node: Term::concat(self) };
     }
 }
 
-impl ExpressionNode {
-    pub fn concat(base: TermNode) -> Self {
-        Self::Concat(Box::new(RefinedConcat { base, rest: vec![] }))
+impl Term {
+    pub fn concat(base: Expression) -> Self {
+        Self::Concat(Box::new(ConcatExpression { base, rest: vec![] }))
     }
 }
 
-impl AddAssign<TermNode> for RefinedConcat {
+impl AddAssign<Expression> for ConcatExpression {
     /// a + b
-    fn add_assign(&mut self, rhs: TermNode) {
+    fn add_assign(&mut self, rhs: Expression) {
         match rhs.get_concat() {
             Some(c) => {
                 self.rest.push((true, c.base));
@@ -40,9 +46,9 @@ impl AddAssign<TermNode> for RefinedConcat {
     }
 }
 
-impl BitAndAssign<TermNode> for RefinedConcat {
+impl BitAndAssign<Expression> for ConcatExpression {
     /// a b
-    fn bitand_assign(&mut self, rhs: TermNode) {
+    fn bitand_assign(&mut self, rhs: Expression) {
         match rhs.get_concat() {
             Some(c) => {
                 self.rest.push((false, c.base));

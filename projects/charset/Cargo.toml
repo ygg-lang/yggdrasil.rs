@@ -2,8 +2,9 @@
 name = "character-set"
 version = "0.1.0"
 authors = ["Aster <192607617@qq.com>"]
-description = "High performance set.contains(char)"
+description = "High performance `set.contains(char)`"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
+documentation = "https://docs.rs/character-set"
 readme = "Readme.md"
 license = "MPL-2.0"
 edition = "2021"
@@ -13,4 +14,6 @@ edition = "2021"
 
 [dependencies.serde]
 version = "1.0.145"
+optional = true
 features = ["derive"]
+

@@ -53,12 +53,13 @@ StringLiteral =
 StringItem = '\\' char | char;
 
 @position
-Charset = '[' CharRange ']';
+Charset = '[' {CharItem} ']';
 CharItem =
     @:CharRange |
+    @:CharOne
     ;
 CharRange = char '-' char;
-
+CharOne = char;
 
 @position
 Identifier = identifier:IDENTIFIER;
