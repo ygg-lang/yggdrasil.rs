@@ -6,7 +6,7 @@ pub use helper::*;
 
 use crate::frontend::{
     rule::{ExpressionNode, Operator, RefinedChoice, RefinedConcat, RefinedData, RefinedExpression, RefinedUnary},
-    GrammarInfo, Rule,
+    GrammarInfo, GrammarRule,
 };
 
 pub use railroad::RailroadNode;
@@ -28,7 +28,7 @@ impl GrammarInfo {
     }
 }
 
-impl Rule {
+impl GrammarRule {
     fn into_railroad(self) -> Box<dyn RailroadNode> {
         let mut s = Sequence::default();
         s.push(box SimpleStart);

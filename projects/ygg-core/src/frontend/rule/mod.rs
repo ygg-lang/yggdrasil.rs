@@ -14,7 +14,7 @@ mod from_ast;
 // mod hints;
 mod node;
 
-pub use self::node::{DataExpression, Expression, Term};
+pub use self::node::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression, DataKind, Expression};
 
 // impl GrammarInfo {
 //     #[inline]

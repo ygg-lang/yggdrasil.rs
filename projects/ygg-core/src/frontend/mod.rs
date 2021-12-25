@@ -1,4 +1,4 @@
-use std::ops::Range;
+use std::{collections::BTreeMap, ops::Range};
 
 use crate::frontend::rule::Expression;
 use indexmap::map::IndexMap;
@@ -17,8 +17,8 @@ pub struct GrammarInfo {
     pub name: Symbol,
     pub extensions: Vec<Symbol>,
     pub ignores: Vec<Symbol>,
-    pub imports: IndexMap<Url, Vec<SymbolAlias>>,
-    pub rules: IndexMap<String, Rule>,
+    pub imports: BTreeMap<Url, Vec<SymbolAlias>>,
+    pub rules: BTreeMap<String, GrammarRule>,
     pub rule_prefix: String,
     pub rule_suffix: String,
 }
@@ -35,7 +35,7 @@ pub struct SymbolAlias {
 }
 
 #[derive(Clone)]
-pub struct Rule {
+pub struct GrammarRule {
     /// Automatically inline when this rule is called
     ///
     /// ## Examples

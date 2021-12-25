@@ -17,6 +17,10 @@ impl Expression {
 }
 
 impl Expression {
+    pub fn set_tag(&mut self) {}
+}
+
+impl Expression {
     pub fn get_concat(&self) -> Option<RefinedConcat> {
         match self.to_owned().node {
             Term::Concat(c) => Some(*c),
@@ -85,17 +89,11 @@ impl From<Term> for Expression {
 
 impl From<Data> for Expression {
     fn from(e: Data) -> Self {
-        Self {
-            inline_token: false,
-            branch_tag: None,
-            ty: None,
-            node_tag: None,
-            node: Term::Data(box DataExpression::from(e)),
-        }
+        Self { inline_token: false, branch_tag: None, ty: None, node_tag: None, node: Term::Data(box DataKind::from(e)) }
     }
 }
 
-impl From<Data> for DataExpression {
+impl From<Data> for DataKind {
     fn from(data: Data) -> Self {
         match data {
             Data::Symbol(atom) => Self::Symbol(atom),
@@ -113,10 +111,10 @@ impl Hash for ChoiceExpression {
     }
 }
 
-impl Eq for DataExpression {}
+impl Eq for DataKind {}
 
-impl PartialEq for DataExpression {
-    fn eq(&self, other: &DataExpression) -> bool {
+impl PartialEq for DataKind {
+    fn eq(&self, other: &DataKind) -> bool {
         match (self, other) {
             (Self::Symbol(lhs), Self::Symbol(rhs)) => lhs == rhs,
             (Self::String(lhs), Self::String(rhs)) => lhs == rhs,
@@ -128,13 +126,13 @@ impl PartialEq for DataExpression {
     }
 }
 
-impl Hash for DataExpression {
+impl Hash for DataKind {
     fn hash<H: Hasher>(&self, state: &mut H) -> () {
         match self {
-            DataExpression::Symbol(e) => e.hash(state),
-            DataExpression::String(e) => e.hash(state),
-            DataExpression::Regex(e) => e.hash(state),
-            DataExpression::Integer(e) => e.to_string().hash(state),
+            DataKind::Symbol(e) => e.hash(state),
+            DataKind::String(e) => e.hash(state),
+            DataKind::Regex(e) => e.hash(state),
+            DataKind::Integer(e) => e.to_string().hash(state),
         }
     }
 }

@@ -1,6 +1,6 @@
 use super::*;
 
-impl Debug for Rule {
+impl Debug for GrammarRule {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Rule")
             .field("name", &self.name.data)
@@ -90,7 +90,7 @@ impl Debug for UnaryExpression {
     }
 }
 
-impl Debug for DataExpression {
+impl Debug for DataKind {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Symbol(e) => e.fmt(f),

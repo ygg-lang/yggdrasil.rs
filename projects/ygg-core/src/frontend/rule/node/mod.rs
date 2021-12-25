@@ -7,33 +7,30 @@ use indexmap::set::IndexSet;
 
 use character_set::CharacterSet;
 
-use crate::frontend::{
-    rule::node::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression},
-    Rule,
-};
+use super::*;
 
-mod choice;
-mod concat;
-mod debug;
-mod expr;
-mod unary;
+pub mod choice;
+pub mod concat;
+pub mod debug;
+pub mod expr;
+pub mod unary;
 
 #[derive(Clone, Eq, PartialEq, Hash)]
-pub struct Expression {
-    pub node_tag: Option<String>,
-    pub node: Term,
-}
-
-#[derive(Clone, Eq, PartialEq, Hash)]
-pub enum Term {
+pub enum Expression {
     Unary(Box<UnaryExpression>),
     Choice(Box<ChoiceExpression>),
     Concat(Box<ConcatExpression>),
     Data(Box<DataExpression>),
 }
 
+pub struct DataExpression {
+    pub tag: String,
+    pub kind: DataKind,
+}
+
 #[derive(Clone, Eq, PartialEq, Hash)]
-pub enum DataExpression {
+pub enum DataKind {
+    AnyCharacter,
     String(String),
     Regex(String),
     Integer(isize),

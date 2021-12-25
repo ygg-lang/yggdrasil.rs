@@ -7,7 +7,7 @@ use yggdrasil_bootstrap::{
     Result,
 };
 
-use crate::frontend::{rule::node::Expression, GrammarInfo, Rule, Symbol};
+use crate::frontend::{rule::node::Expression, GrammarInfo, GrammarRule, Symbol};
 
 mod import;
 mod macros;
@@ -85,7 +85,7 @@ impl Translator for DefineStatement {
         }
         let mut auto_capture = true;
         if self.define == "define" {
-            let rule = Rule {
+            let rule = GrammarRule {
                 name,
                 r#type: "".to_string(),
                 document,
