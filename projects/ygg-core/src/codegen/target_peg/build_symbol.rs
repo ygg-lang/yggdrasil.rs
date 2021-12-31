@@ -21,10 +21,10 @@ impl PegBuffer {
     pub fn write_end(&mut self) {
         self.buffer.push_str(")")
     }
-    pub fn write_semicolon(&mut self) {
+    pub fn semicolon(&mut self) {
         self.buffer.push_str(";\n\n")
     }
-    pub fn write_tag(&mut self, tag: &str) {
+    pub fn tag(&mut self, tag: &str) {
         if tag.is_empty() {
             return;
         }
@@ -32,5 +32,14 @@ impl PegBuffer {
             self.buffer.push_str(&tag);
             self.buffer.push(':')
         }
+    }
+    pub fn char_token(&mut self, token: char) {
+        if token == '\'' {
+            write!(self.buffer, "\"'\"")?
+        }
+        else {
+            write!(self.buffer, "'{}'", token)?
+        }
+        write!(self.buffer, "'{}'", token)?
     }
 }

@@ -7,7 +7,10 @@ use yggdrasil_bootstrap::{
     Result,
 };
 
-use crate::frontend::{rule::node::Expression, GrammarInfo, GrammarRule, Symbol};
+use crate::frontend::{
+    rule::{node::Expression, ChoiceExpression},
+    GrammarInfo, GrammarRule, Symbol,
+};
 
 mod import;
 mod macros;
@@ -107,8 +110,8 @@ impl Translator for DefineStatement {
 
 impl Translator for Choice {
     fn into_expr(self, ctx: &mut GrammarContext) -> Result<Expression> {
-        let node = Expression { inline_token: false, node_tag: None, node: () };
-        return Ok(node);
+        let expr = ChoiceExpression { tag: "".to_string(), inner: Default::default() };
+        return Ok(Expression::Choice(Box::new(expr)));
     }
 }
 

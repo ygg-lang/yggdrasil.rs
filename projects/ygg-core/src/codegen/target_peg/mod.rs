@@ -7,10 +7,7 @@ mod build_symbol;
 
 pub fn as_peg(grammar: &GrammarInfo) -> String {
     let mut buffer = PegBuffer { buffer: "".to_string(), indent: 0 };
-    match grammar.write_peg(&mut buffer) {
-        Ok(_) => {}
-        Err(_) => {}
-    }
+    grammar.write_peg(&mut buffer);
     buffer.buffer
 }
 
@@ -20,19 +17,21 @@ struct PegBuffer {
 }
 
 impl GrammarInfo {
-    fn write_peg(&self, w: &mut PegBuffer) -> std::fmt::Result {
+    fn write_peg(&self, w: &mut PegBuffer) {
         for (_, rule) in &self.rules {
-            rule.write_peg(w, self)
+            rule.write_peg(w, self).unwrap_or_default()
         }
-        Ok(())
     }
 }
 
 impl GrammarRule {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
+        if self.atomic_rule {
+            w.write_str("@no_skip_ws\n")?
+        }
         write!(w, "{}{}{} = ", info.rule_prefix, self.name, info.rule_suffix)?;
         self.body.write_peg(w, info)?;
-        w.write_semicolon();
+        w.semicolon();
         Ok(())
     }
 }
@@ -52,16 +51,16 @@ impl Expression {
     }
     fn write_tag(&self, w: &mut PegBuffer) {
         match self {
-            Expression::Unary(expr) => w.write_tag(&expr.tag),
-            Expression::Choice(expr) => w.write_tag(&expr.tag),
-            Expression::Concat(expr) => w.write_tag(&expr.tag),
-            Expression::Data(expr) => w.write_tag(&expr.tag),
+            Expression::Unary(expr) => w.tag(&expr.tag),
+            Expression::Choice(expr) => w.tag(&expr.tag),
+            Expression::Concat(expr) => w.tag(&expr.tag),
+            Expression::Data(expr) => w.tag(&expr.tag),
         }
     }
 }
 
 impl DataKind {
-    fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
+    fn write_peg(&self, w: &mut PegBuffer, _: &GrammarInfo) -> std::fmt::Result {
         match self {
             DataKind::AnyCharacter => {
                 w.write_str("char")?;
@@ -71,28 +70,29 @@ impl DataKind {
                 w.write_str(s)?;
                 w.write_char('"')?;
             }
-            DataKind::Regex(_) => {}
-            DataKind::Integer(_) => {}
-            DataKind::Character(c) => {
-                if c == '\'' {
-                    write!(w, "\"'\"")?
-                }
-                else {
-                    write!(w, "'{}'", c)?
-                }
-                write!(w, "'{}'", c)?
+            DataKind::Regex(_) => {
+                unimplemented!()
             }
-            DataKind::CharacterRange(_) => {}
-            DataKind::CharacterSet(_) => {}
+            DataKind::Integer(_) => {
+                unimplemented!()
+            }
+            DataKind::Character(c) => w.char_token(*c),
+            DataKind::CharacterRange(r) => {
+                w.char_token(*r.start);
+                w.write_str("..")?;
+                w.char_token(*r.end);
+            }
+            DataKind::CharacterSet(_) => {
+                unimplemented!()
+            }
         }
-
         Ok(())
     }
 }
 
 impl UnaryExpression {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
-        Ok(())
+        unimplemented!()
     }
 }
 
