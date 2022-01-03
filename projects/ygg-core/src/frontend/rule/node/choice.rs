@@ -1,10 +1,30 @@
 use super::*;
-use std::collections::BTreeSet;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct ChoiceExpression {
     pub tag: String,
-    pub inner: BTreeSet<Expression>,
+    pub inner: IndexSet<Expression>,
+}
+
+impl Default for ChoiceExpression {
+    fn default() -> Self {
+        Self { tag: "".to_string(), inner: Default::default() }
+    }
+}
+
+impl Hash for ChoiceExpression {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        state.write(self.tag.as_bytes());
+        for item in &self.inner {
+            item.hash(state)
+        }
+    }
+}
+
+impl ChoiceExpression {
+    pub fn push(&mut self, e: impl Into<Expression>) {
+        self.inner.insert(e.into());
+    }
 }
 
 // impl Expression {

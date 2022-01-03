@@ -1,3 +1,5 @@
+use yggdrasil_core::{codegen::as_peg, frontend::GrammarInfo};
+
 // #![feature(once_cell)]
 // #![feature(allow_fail)]
 //
@@ -21,7 +23,23 @@
 fn ready() {
     println!("ready!")
 }
-//
+
+const INPUT: &'static str = r#"
+def atomic Identifier -> string {
+    | 'a'*
+    | 'b'+
+    | label:'c'?
+    | 'd'
+}
+"#;
+
+#[test]
+fn test() {
+    let grammar = GrammarInfo::parse(INPUT).unwrap();
+    println!("{:#?}", grammar);
+    println!("{}", as_peg(&grammar));
+}
+
 // pub fn assert_ast(text: &str, target: &str) -> Result<()> {
 //     let mut parser = YggParser::default();
 //     let mut out = String::new();

@@ -1,7 +1,8 @@
 use super::*;
 
-#[derive(Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct UnaryExpression {
+    pub tag: String,
     pub base: Expression,
     pub ops: Vec<Operator>,
 }

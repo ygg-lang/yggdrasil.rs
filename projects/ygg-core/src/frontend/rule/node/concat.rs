@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct ConcatExpression {
     pub tag: String,
     pub base: Expression,

@@ -35,11 +35,12 @@ impl PegBuffer {
     }
     pub fn char_token(&mut self, token: char) {
         if token == '\'' {
-            write!(self.buffer, "\"'\"")?
+            self.buffer.push_str("\"'\"");
         }
         else {
-            write!(self.buffer, "'{}'", token)?
+            self.buffer.push('\'');
+            self.buffer.push(token);
+            self.buffer.push('\'');
         }
-        write!(self.buffer, "'{}'", token)?
     }
 }

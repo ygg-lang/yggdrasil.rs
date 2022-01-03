@@ -3,19 +3,23 @@ use std::{
     ops::{AddAssign, BitAndAssign, Range},
 };
 
-use indexmap::set::IndexSet;
-
 use character_set::CharacterSet;
+use indexmap::set::IndexSet;
+use std::{
+    collections::BTreeSet,
+    hash::{Hash, Hasher},
+};
 
 use super::*;
 
 pub mod choice;
 pub mod concat;
+pub mod data;
 pub mod debug;
 pub mod expr;
 pub mod unary;
 
-#[derive(Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum Expression {
     Unary(Box<UnaryExpression>),
     Choice(Box<ChoiceExpression>),
@@ -23,23 +27,7 @@ pub enum Expression {
     Data(Box<DataExpression>),
 }
 
-pub struct DataExpression {
-    pub tag: String,
-    pub kind: DataKind,
-}
-
-#[derive(Clone, Eq, PartialEq, Hash)]
-pub enum DataKind {
-    AnyCharacter,
-    String(String),
-    Regex(String),
-    Integer(isize),
-    Character(char),
-    CharacterRange(Range<char>),
-    CharacterSet(CharacterSet),
-}
-
-#[derive(Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum Operator {
     /// e?
     Optional,

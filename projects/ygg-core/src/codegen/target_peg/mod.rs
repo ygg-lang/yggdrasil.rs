@@ -1,8 +1,9 @@
 use crate::frontend::{
-    rule::{ConcatExpression, DataKind, Expression, UnaryExpression},
+    rule::{ChoiceExpression, ConcatExpression, DataKind, Expression, UnaryExpression},
     GrammarInfo, GrammarRule,
 };
 use std::fmt::{Arguments, Display, Formatter, Write};
+
 mod build_symbol;
 
 pub fn as_peg(grammar: &GrammarInfo) -> String {
@@ -78,9 +79,9 @@ impl DataKind {
             }
             DataKind::Character(c) => w.char_token(*c),
             DataKind::CharacterRange(r) => {
-                w.char_token(*r.start);
+                w.char_token(r.start);
                 w.write_str("..")?;
-                w.char_token(*r.end);
+                w.char_token(r.end);
             }
             DataKind::CharacterSet(_) => {
                 unimplemented!()
@@ -96,20 +97,36 @@ impl UnaryExpression {
     }
 }
 
+impl ChoiceExpression {
+    fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
+        for (id, expr) in self.inner.iter().enumerate() {
+            if id != 0 {
+                w.write_char('|')?;
+            }
+            w.write_start();
+            expr.write_peg(w, info)?;
+            w.write_end();
+        }
+
+        Ok(())
+    }
+}
+
 impl ConcatExpression {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
-        w.write_char('(')?;
+        w.write_start();
         self.base.write_peg(w, info)?;
-        w.write_char(')')?;
+        w.write_end();
         for (ws, expr) in &self.rest {
-            w.write_str(" | (")?;
-            if ws {
+            w.write_char('|')?;
+            w.write_start();
+            if *ws {
                 expr.write_peg(w, info)?;
             }
             else {
                 expr.write_peg(w, info)?;
             }
-            w.write_char(')')?;
+            w.write_end();
         }
         Ok(())
     }

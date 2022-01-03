@@ -6,13 +6,12 @@ use lsp_types::Url;
 
 // mod optimize;
 pub mod rule;
-// pub mod typing;
+pub mod typing;
 
-#[derive(Clone, Debug)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct GrammarInfo {
     /// File path of the grammar
     pub url: Option<Url>,
-    pub text: String,
     pub is_grammar: bool,
     pub name: Symbol,
     pub extensions: Vec<Symbol>,
@@ -23,18 +22,19 @@ pub struct GrammarInfo {
     pub rule_suffix: String,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Symbol {
     pub name: String,
     pub range: Range<usize>,
 }
-
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct SymbolAlias {
     pub name: String,
     pub alias: String,
     pub range: Range<usize>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct GrammarRule {
     /// Automatically inline when this rule is called
     ///
@@ -108,27 +108,13 @@ pub struct GrammarRule {
     pub auto_boxed: bool,
     pub auto_capture: bool,
     pub atomic_rule: bool,
-    /// Eliminate unnamed nodes
-    /// ```ygg
-    /// name <- expr
-    /// ^expr
-    /// ```
-    pub eliminate_unmarked: bool,
-    /// Eliminate unnamed nodes
-    /// ```ygg
-    /// "string"
-    /// /regex/
-    /// [0-9a-z]
-    /// 012345
-    /// ```
-    pub eliminate_unnamed: bool,
     ///
     pub body: Expression,
     /// position of all parts
     pub range: Range<usize>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct RuleDerive {
     pub(crate) parser: Option<String>,
     pub(crate) debug: Option<String>,

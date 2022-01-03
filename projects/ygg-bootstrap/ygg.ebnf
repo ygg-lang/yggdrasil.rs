@@ -1,6 +1,6 @@
 @export
 @position
-Program = {statements:Statement};
+Program = {statements:Statement} $;
 
 Statement =
     @:DefineStatement [EOS]
@@ -13,14 +13,14 @@ EmptyStatement = EOS;
 EOS = ';';
 
 @position
-DefineStatement = define:DEFINE modifiers:Modifiers symbol:Identifier '{' body:Choice '}';
+DefineStatement = define:DEFINE modifiers:Modifiers symbol:Identifier [arguments:Arguments] [type:Typing] '{' body:Choice '}';
 
 @string
 @no_skip_ws
 DEFINE = 'def!' | 'def';
 
 @position
-Modifiers = {id:Identifier (!'{')};
+Modifiers = {id:Identifier !('{'|'('|':'|'->'|';')};
 
 @position
 Choice = [['|'] terms:Term {"|" terms:Term}];
@@ -28,45 +28,59 @@ Choice = [['|'] terms:Term {"|" terms:Term}];
 @position
 Term = {prefix:Prefix} [tag:Identifier ':'] node:Node {suffix:Suffix};
 
+@position
+Arguments = '(' ')';
+
+@position
+Typing = ('->' | ':') id:Identifier;
+
 @char
 Prefix = '^';
 
 @char
 Suffix = '+' | '*' | '?';
 
+@position
 Node =
     @:Group |
     @:Charset |
-    @:StringLiteral
+    @:StringLiteral |
+    @:Identifier
     ;
+@position
 Group = "(" body:Choice ")";
-Optional = body:Choice "?";
 
+@position
 @no_skip_ws
 StringLiteral =
     '"' {!'"' body:StringItem } '"' |
     "'" {!"'" body:StringItem } "'"
     ;
 
-@string
 @no_skip_ws
-StringItem = '\\' char | char;
+StringItem =
+    @:StringEscaped |
+    @:CharOne
+    ;
+
+StringEscaped = '\\' char:char;
 
 @position
 Charset = '[' {CharItem} ']';
+
 CharItem =
     @:CharRange |
     @:CharOne
     ;
-CharRange = char '-' char;
+@position
+CharRange = start:char '-' end:char;
+@char
 CharOne = char;
 
 @position
-Identifier = identifier:IDENTIFIER;
-
 @string
 @no_skip_ws
-IDENTIFIER = (XID_START | '_') {XID_CONTINUE};
+Identifier = (XID_START | '_') {XID_CONTINUE};
 
 
 @char

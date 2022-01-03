@@ -14,7 +14,30 @@ mod from_ast;
 // mod hints;
 mod node;
 
-pub use self::node::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression, DataKind, Expression};
+pub use self::node::{
+    choice::ChoiceExpression,
+    concat::ConcatExpression,
+    data::{DataExpression, DataKind},
+    unary::UnaryExpression,
+    Expression,
+};
+use crate::frontend::{GrammarInfo, Symbol};
+
+impl Default for GrammarInfo {
+    fn default() -> Self {
+        Self {
+            url: None,
+            is_grammar: false,
+            name: Symbol { name: "".to_string(), range: Default::default() },
+            extensions: vec![],
+            ignores: vec![],
+            imports: Default::default(),
+            rules: Default::default(),
+            rule_prefix: "".to_string(),
+            rule_suffix: "Node".to_string(),
+        }
+    }
+}
 
 // impl GrammarInfo {
 //     #[inline]
