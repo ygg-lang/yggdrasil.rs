@@ -20,11 +20,17 @@ pub mod expr;
 pub mod unary;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
-pub enum Expression {
+pub struct ExpressionNode {
+    pub tag: String,
+    pub kind: ExpressionKind,
+}
+
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+pub enum ExpressionKind {
     Unary(Box<UnaryExpression>),
     Choice(Box<ChoiceExpression>),
     Concat(Box<ConcatExpression>),
-    Data(Box<DataExpression>),
+    Data(Box<DataKind>),
 }
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
@@ -32,9 +38,9 @@ pub enum Operator {
     /// e?
     Optional,
     /// e*
-    Repeats,
+    Repeat,
     /// e+
-    Repeats1,
+    Repeat1,
     /// e+
     RepeatsBetween(Option<u8>, Option<u8>),
     /// ^e

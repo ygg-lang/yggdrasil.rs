@@ -1,15 +1,15 @@
 use super::*;
 use std::hash::{Hash, Hasher};
 
-impl Expression {
+impl ExpressionKind {
     pub fn is_choice(&self) -> bool {
-        matches!(self, Expression::Choice(_))
+        matches!(self, ExpressionKind::Choice(_))
     }
     pub fn is_concat(&self) -> bool {
-        matches!(self, Expression::Concat(_))
+        matches!(self, ExpressionKind::Concat(_))
     }
     pub fn is_unary(&self) -> bool {
-        matches!(self, Expression::Unary(_))
+        matches!(self, ExpressionKind::Unary(_))
     }
 }
 

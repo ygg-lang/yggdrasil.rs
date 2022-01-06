@@ -1,5 +1,5 @@
 use crate::frontend::{
-    rule::{ChoiceExpression, ConcatExpression, DataKind, Expression, UnaryExpression},
+    rule::{ChoiceExpression, ConcatExpression, DataKind, ExpressionKind, ExpressionNode, UnaryExpression},
     GrammarInfo, GrammarRule,
 };
 use std::fmt::{Arguments, Display, Formatter, Write};
@@ -30,6 +30,16 @@ impl GrammarRule {
         if self.atomic_rule {
             w.write_str("@no_skip_ws\n")?
         }
+        match self.r#type.to_ascii_lowercase().as_str() {
+            "string" => {
+                w.write_str("@string\n")?;
+                w.write_str("@position\n")?;
+            }
+            "char" | "character" => {
+                w.write_str("@char\n")?;
+            }
+            _ => {}
+        }
         write!(w, "{}{}{} = ", info.rule_prefix, self.name, info.rule_suffix)?;
         self.body.write_peg(w, info)?;
         w.semicolon();
@@ -37,31 +47,23 @@ impl GrammarRule {
     }
 }
 
-impl Expression {
+impl ExpressionNode {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
-        self.write_tag(w);
+        w.tag(&self.tag);
         w.write_start();
-        match self {
-            Expression::Unary(expr) => expr.write_peg(w, info)?,
-            Expression::Choice(expr) => expr.write_peg(w, info)?,
-            Expression::Concat(expr) => expr.write_peg(w, info)?,
-            Expression::Data(expr) => expr.kind.write_peg(w, info)?,
+        match &self.kind {
+            ExpressionKind::Unary(expr) => expr.write_peg(w, info)?,
+            ExpressionKind::Choice(expr) => expr.write_peg(w, info)?,
+            ExpressionKind::Concat(expr) => expr.write_peg(w, info)?,
+            ExpressionKind::Data(expr) => expr.write_peg(w, info)?,
         }
         w.write_end();
         Ok(())
     }
-    fn write_tag(&self, w: &mut PegBuffer) {
-        match self {
-            Expression::Unary(expr) => w.tag(&expr.tag),
-            Expression::Choice(expr) => w.tag(&expr.tag),
-            Expression::Concat(expr) => w.tag(&expr.tag),
-            Expression::Data(expr) => w.tag(&expr.tag),
-        }
-    }
 }
 
 impl DataKind {
-    fn write_peg(&self, w: &mut PegBuffer, _: &GrammarInfo) -> std::fmt::Result {
+    fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
         match self {
             DataKind::AnyCharacter => {
                 w.write_str("char")?;
@@ -85,6 +87,9 @@ impl DataKind {
             }
             DataKind::CharacterSet(_) => {
                 unimplemented!()
+            }
+            DataKind::Rule(r) => {
+                write!(w, "{}{}{}", info.rule_prefix, r.name, info.rule_suffix)?;
             }
         }
         Ok(())
@@ -114,19 +119,11 @@ impl ChoiceExpression {
 
 impl ConcatExpression {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
-        w.write_start();
-        self.base.write_peg(w, info)?;
-        w.write_end();
-        for (ws, expr) in &self.rest {
-            w.write_char('|')?;
-            w.write_start();
-            if *ws {
-                expr.write_peg(w, info)?;
+        for (index, expr) in self.sequence.iter().enumerate() {
+            if index != 0 {
+                w.write_char('|')?;
             }
-            else {
-                expr.write_peg(w, info)?;
-            }
-            w.write_end();
+            expr.write_peg(w, info)?;
         }
         Ok(())
     }

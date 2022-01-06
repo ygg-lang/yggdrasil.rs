@@ -29,14 +29,14 @@ def atomic Identifier -> string {
     | 'a'*
     | 'b'+
     | label:'c'?
-    | 'd'
+    | DTerm
+    | ANY
 }
 "#;
 
 #[test]
 fn test() {
     let grammar = GrammarInfo::parse(INPUT).unwrap();
-    println!("{:#?}", grammar);
     println!("{}", as_peg(&grammar));
 }
 

@@ -1,6 +1,6 @@
 use std::{collections::BTreeMap, ops::Range};
 
-use crate::frontend::rule::Expression;
+use crate::frontend::rule::{ExpressionKind, ExpressionNode};
 use indexmap::map::IndexMap;
 use lsp_types::Url;
 
@@ -109,7 +109,7 @@ pub struct GrammarRule {
     pub auto_capture: bool,
     pub atomic_rule: bool,
     ///
-    pub body: Expression,
+    pub body: ExpressionNode,
     /// position of all parts
     pub range: Range<usize>,
 }

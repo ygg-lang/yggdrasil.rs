@@ -13,9 +13,10 @@ use yggdrasil_bootstrap::{
 };
 
 use crate::frontend::{
-    rule::{node::Expression, ChoiceExpression, DataExpression, DataKind},
+    rule::{node::ExpressionKind, ChoiceExpression, DataKind, ExpressionNode},
     GrammarInfo, GrammarRule, Symbol,
 };
+use crate::frontend::rule::UnaryExpression;
 
 mod import;
 mod macros;
@@ -42,11 +43,11 @@ where
         let _ = ctx;
         unimplemented!()
     }
-    fn into_expr(self, ctx: &mut GrammarContext) -> Result<Expression> {
+    fn into_expr(self, ctx: &mut GrammarContext) -> Result<ExpressionNode> {
         let _ = ctx;
         unimplemented!()
     }
-    fn into_data(self, ctx: &mut GrammarContext) -> Result<DataExpression> {
+    fn into_data(self, ctx: &mut GrammarContext) -> Result<DataKind> {
         let _ = ctx;
         unimplemented!()
     }
@@ -97,7 +98,6 @@ impl Translator for DefineStatement {
         if self.arguments.is_some() {
         }
         else {
-            println!("{:#?}", self.body);
             let rule = GrammarRule {
                 name,
                 r#type,
@@ -117,40 +117,52 @@ impl Translator for DefineStatement {
 }
 
 impl Translator for Choice {
-    fn into_expr(self, ctx: &mut GrammarContext) -> Result<Expression> {
+    fn into_expr(self, ctx: &mut GrammarContext) -> Result<ExpressionNode> {
         let mut expr = ChoiceExpression::default();
         for term in self.terms {
-            match term.node {
+            let tag = term.tag.map(|f| f.string).unwrap_or_default();
+            let body = match term.node {
+                Node::Identifier(node) => ExpressionNode { tag, kind: ExpressionKind::rule(&node.string) },
+                Node::StringLiteral(node) => {
+                    let mut s = String::new();
+                    for item in node.body {
+                        match item {
+                            StringItem::CharOne(c) => s.push(c),
+                            StringItem::StringEscaped(escaped) => match escaped.char {
+                                'n' => s.push('\n'),
+                                _ => s.push(escaped.char),
+                            },
+                        }
+                    }
+                    ExpressionNode { tag, kind: ExpressionKind::string(s) }
+                },
                 Node::Charset(node) => {
                     unimplemented!()
                 }
                 Node::Group(node) => {
                     unimplemented!()
                 }
-                Node::StringLiteral(node) => expr.push(Expression::Data(Box::new(node.into_data(ctx)?))),
-                Node::Identifier(node) => {
-                    let kind = DataKind::Rule(node.string.starts_with('_'), node.string.trim_start_matches("_").to_string());
-                    expr.push(Expression::Data(Box::new(DataExpression { tag: "".to_string(), kind })))
+            };
+            let mut ops = vec![];
+            for suffix in term.suffix {
+
+            }
+            if ops.is_empty() {
+
+            }
+            else {
+                ExpressionNode {
+
                 }
+
+                ExpressionKind::Unary(UnaryExpression {
+                    tag,
+                    base: (),
+                    ops: vec![]
+                })
+
             }
         }
-
-        return Ok(Expression::Choice(Box::new(expr)));
-    }
-}
-
-impl Translator for StringLiteral {
-    fn into_data(self, ctx: &mut GrammarContext) -> Result<DataExpression> {
-        let mut s = String::new();
-        for item in self.body {
-            match item {
-                StringItem::CharOne(c) => s.push(c),
-                StringItem::StringEscaped(escaped) => match escaped.char {
-                    'n' => s.push('\n'),
-                    _ => s.push(escaped.char),
-                },
-            }
-        }
-        Ok(DataExpression { tag: "".to_string(), kind: DataKind::AnyCharacter })
+        return Ok(ExpressionNode { tag: "".to_string(), kind: ExpressionKind::Choice(Box::new(expr)) });
     }
 }

@@ -2,8 +2,7 @@ use super::*;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct UnaryExpression {
-    pub tag: String,
-    pub base: Expression,
+    pub base: ExpressionKind,
     pub ops: Vec<Operator>,
 }
 
@@ -18,8 +17,8 @@ impl Operator {
     pub fn suffix(o: &str) -> Operator {
         match o {
             "?" => Self::Optional,
-            "+" => Self::Repeats,
-            "*" => Self::Repeats1,
+            "+" => Self::Repeat,
+            "*" => Self::Repeat1,
             _ => unreachable!(),
         }
     }

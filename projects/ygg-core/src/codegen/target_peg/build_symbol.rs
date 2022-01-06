@@ -21,6 +21,12 @@ impl PegBuffer {
     pub fn write_end(&mut self) {
         self.buffer.push_str(")")
     }
+    pub fn indent(&mut self) {
+        self.indent += 4;
+    }
+    pub fn dedent(&mut self) {
+        self.indent -= 4;
+    }
     pub fn semicolon(&mut self) {
         self.buffer.push_str(";\n\n")
     }

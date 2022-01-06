@@ -35,7 +35,7 @@ Arguments = '(' ')';
 Typing = ('->' | ':') id:Identifier;
 
 @char
-Prefix = '^';
+Prefix = '^' | '!';
 
 @char
 Suffix = '+' | '*' | '?';
