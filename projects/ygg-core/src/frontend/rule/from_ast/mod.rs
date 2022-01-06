@@ -8,15 +8,17 @@ use std::{
 use url::Url;
 
 use yggdrasil_bootstrap::{
-    parser::{Choice, DefineStatement, Node, Program, Statement, StringItem, StringLiteral, Typing},
+    parser::{Choice, DefineStatement, Node, Program, Statement, StringItem, StringLiteral, Suffix, Typing},
     Result,
 };
 
 use crate::frontend::{
-    rule::{node::ExpressionKind, ChoiceExpression, DataKind, ExpressionNode},
+    rule::{
+        node::{ExpressionKind, Operator},
+        ChoiceExpression, DataKind, ExpressionNode, UnaryExpression,
+    },
     GrammarInfo, GrammarRule, Symbol,
 };
-use crate::frontend::rule::UnaryExpression;
 
 mod import;
 mod macros;
@@ -122,7 +124,7 @@ impl Translator for Choice {
         for term in self.terms {
             let tag = term.tag.map(|f| f.string).unwrap_or_default();
             let body = match term.node {
-                Node::Identifier(node) => ExpressionNode { tag, kind: ExpressionKind::rule(&node.string) },
+                Node::Identifier(node) => ExpressionKind::rule(&node.string),
                 Node::StringLiteral(node) => {
                     let mut s = String::new();
                     for item in node.body {
@@ -134,8 +136,8 @@ impl Translator for Choice {
                             },
                         }
                     }
-                    ExpressionNode { tag, kind: ExpressionKind::string(s) }
-                },
+                    ExpressionKind::string(s)
+                }
                 Node::Charset(node) => {
                     unimplemented!()
                 }
@@ -145,22 +147,26 @@ impl Translator for Choice {
             };
             let mut ops = vec![];
             for suffix in term.suffix {
-
+                match suffix {
+                    '?' => ops.push(Operator::Optional),
+                    '*' => ops.push(Operator::Repeat),
+                    '+' => ops.push(Operator::Repeat1),
+                    _ => unreachable!(),
+                }
+            }
+            for suffix in term.prefix.into_iter().rev() {
+                match suffix {
+                    '^' => ops.push(Operator::Remark),
+                    '!' => ops.push(Operator::Negative),
+                    _ => unreachable!(),
+                }
             }
             if ops.is_empty() {
-
+                expr.push(body, tag)
             }
             else {
-                ExpressionNode {
-
-                }
-
-                ExpressionKind::Unary(UnaryExpression {
-                    tag,
-                    base: (),
-                    ops: vec![]
-                })
-
+                let unary = UnaryExpression { base: body, ops };
+                expr.push(unary, tag)
             }
         }
         return Ok(ExpressionNode { tag: "".to_string(), kind: ExpressionKind::Choice(Box::new(expr)) });

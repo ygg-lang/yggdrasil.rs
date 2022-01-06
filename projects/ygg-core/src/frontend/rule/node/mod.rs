@@ -27,14 +27,18 @@ pub struct ExpressionNode {
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum ExpressionKind {
-    Unary(Box<UnaryExpression>),
     Choice(Box<ChoiceExpression>),
     Concat(Box<ConcatExpression>),
+    Unary(Box<UnaryExpression>),
     Data(Box<DataKind>),
 }
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum Operator {
+    /// ```
+    /// !e
+    /// ```
+    Negative,
     /// e?
     Optional,
     /// e*
@@ -44,7 +48,7 @@ pub enum Operator {
     /// e+
     RepeatsBetween(Option<u8>, Option<u8>),
     /// ^e
-    Mark,
+    Remark,
     /// *e
     Recursive,
 }

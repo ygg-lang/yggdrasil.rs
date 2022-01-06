@@ -6,11 +6,17 @@ pub struct UnaryExpression {
     pub ops: Vec<Operator>,
 }
 
+impl From<UnaryExpression> for ExpressionKind {
+    fn from(e: UnaryExpression) -> Self {
+        Self::Unary(Box::new(e))
+    }
+}
+
 impl Operator {
     pub fn prefix(o: &str) -> Operator {
         match o {
             "*" => Self::Recursive,
-            "^" => Self::Mark,
+            "^" => Self::Remark,
             _ => unreachable!(),
         }
     }

@@ -4,6 +4,7 @@ mod node;
 
 pub use self::node::{
     choice::ChoiceExpression, concat::ConcatExpression, data::DataKind, unary::UnaryExpression, ExpressionKind, ExpressionNode,
+    Operator,
 };
 use crate::frontend::{GrammarInfo, Symbol};
 

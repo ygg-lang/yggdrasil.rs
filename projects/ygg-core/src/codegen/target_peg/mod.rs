@@ -1,5 +1,5 @@
 use crate::frontend::{
-    rule::{ChoiceExpression, ConcatExpression, DataKind, ExpressionKind, ExpressionNode, UnaryExpression},
+    rule::{ChoiceExpression, ConcatExpression, DataKind, ExpressionKind, ExpressionNode, Operator, UnaryExpression},
     GrammarInfo, GrammarRule,
 };
 use std::fmt::{Arguments, Display, Formatter, Write};
@@ -50,15 +50,19 @@ impl GrammarRule {
 impl ExpressionNode {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
         w.tag(&self.tag);
-        w.write_start();
-        match &self.kind {
-            ExpressionKind::Unary(expr) => expr.write_peg(w, info)?,
-            ExpressionKind::Choice(expr) => expr.write_peg(w, info)?,
-            ExpressionKind::Concat(expr) => expr.write_peg(w, info)?,
-            ExpressionKind::Data(expr) => expr.write_peg(w, info)?,
-        }
-        w.write_end();
+        self.kind.write_peg(w, info)?;
         Ok(())
+    }
+}
+
+impl ExpressionKind {
+    fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
+        match &self {
+            ExpressionKind::Unary(expr) => expr.write_peg(w, info),
+            ExpressionKind::Choice(expr) => expr.write_peg(w, info),
+            ExpressionKind::Concat(expr) => expr.write_peg(w, info),
+            ExpressionKind::Data(expr) => expr.write_peg(w, info),
+        }
     }
 }
 
@@ -98,7 +102,48 @@ impl DataKind {
 
 impl UnaryExpression {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
-        unimplemented!()
+        let mut pre = vec![];
+        let mut post = vec![];
+        for op in &self.ops {
+            match op {
+                Operator::Negative => {
+                    pre.push("!(");
+                    post.push(")")
+                }
+                Operator::Optional => {
+                    pre.push("[");
+                    post.push("]")
+                }
+                Operator::Repeat => {
+                    pre.push("{");
+                    post.push("}")
+                }
+                Operator::Repeat1 => {
+                    pre.push("{");
+                    post.push("}+")
+                }
+                Operator::RepeatsBetween(_, _) => {
+                    pre.push("(");
+                    post.push(")")
+                }
+                Operator::Remark => {
+                    pre.push("(");
+                    post.push(")")
+                }
+                Operator::Recursive => {
+                    pre.push("(");
+                    post.push(")")
+                }
+            }
+        }
+        for s in pre {
+            w.write_str(s)?
+        }
+        self.base.write_peg(w, info)?;
+        for s in post {
+            w.write_str(s)?
+        }
+        Ok(())
     }
 }
 
@@ -108,9 +153,9 @@ impl ChoiceExpression {
             if id != 0 {
                 w.write_char('|')?;
             }
-            w.write_start();
+            // w.write_start();
             expr.write_peg(w, info)?;
-            w.write_end();
+            // w.write_end();
         }
 
         Ok(())
