@@ -12,6 +12,12 @@ impl From<UnaryExpression> for ExpressionKind {
     }
 }
 
+impl UnaryExpression {
+    pub fn set_tag(&mut self, tag: String) {
+        self.base.set_tag(tag)
+    }
+}
+
 impl Operator {
     pub fn prefix(o: &str) -> Operator {
         match o {

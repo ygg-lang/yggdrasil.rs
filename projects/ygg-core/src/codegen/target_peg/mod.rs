@@ -1,5 +1,5 @@
 use crate::frontend::{
-    rule::{ChoiceExpression, ConcatExpression, DataKind, ExpressionKind, ExpressionNode, Operator, UnaryExpression},
+    rule::{ChoiceExpression, ConcatExpression, DataKind, ExpressionKind, Operator, UnaryExpression},
     GrammarInfo, GrammarRule,
 };
 use std::fmt::{Arguments, Display, Formatter, Write};
@@ -47,14 +47,6 @@ impl GrammarRule {
     }
 }
 
-impl ExpressionNode {
-    fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
-        w.tag(&self.tag);
-        self.kind.write_peg(w, info)?;
-        Ok(())
-    }
-}
-
 impl ExpressionKind {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
         match &self {
@@ -93,7 +85,13 @@ impl DataKind {
                 unimplemented!()
             }
             DataKind::Rule(r) => {
-                write!(w, "{}{}{}", info.rule_prefix, r.name, info.rule_suffix)?;
+                w.tag(&r.tag);
+                if r.tag.is_empty() {
+                    write!(w, "{}{}{}", info.rule_prefix, r.name, info.rule_suffix)?;
+                }
+                else {
+                    write!(w, "{}:{}{}{}", r.tag, info.rule_prefix, r.name, info.rule_suffix)?;
+                }
             }
         }
         Ok(())

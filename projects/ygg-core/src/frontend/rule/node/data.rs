@@ -14,13 +14,14 @@ pub enum DataKind {
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct RuleReference {
+    pub tag: String,
     pub name: String,
     pub inline: bool,
 }
 
-impl RuleReference {
-    pub fn new(name: &str) -> Self {
-        Self { name: name.trim_start_matches("_").to_string(), inline: name.starts_with('_') }
+impl From<DataKind> for ExpressionKind {
+    fn from(e: DataKind) -> Self {
+        Self::Data(Box::new(e))
     }
 }
 
@@ -38,8 +39,23 @@ impl ExpressionKind {
     }
 }
 
-impl From<DataKind> for ExpressionKind {
-    fn from(e: DataKind) -> Self {
-        Self::Data(Box::new(e))
+impl RuleReference {
+    pub fn new(name: &str) -> Self {
+        Self { tag: "".to_string(), name: name.trim_start_matches("_").to_string(), inline: name.starts_with('_') }
+    }
+}
+
+impl DataKind {
+    pub fn set_tag(&mut self, tag: String) {
+        match self {
+            DataKind::AnyCharacter => {}
+            DataKind::String(_) => {}
+            DataKind::Regex(_) => {}
+            DataKind::Rule(r) => r.tag = tag,
+            DataKind::Integer(_) => {}
+            DataKind::Character(_) => {}
+            DataKind::CharacterRange(_) => {}
+            DataKind::CharacterSet(_) => {}
+        }
     }
 }

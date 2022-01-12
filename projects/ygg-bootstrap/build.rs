@@ -1,6 +1,5 @@
 use peginator::buildscript::Compile;
 use std::env::current_dir;
-use std::ops::Range;
 use std::path::PathBuf;
 
 fn main() {

@@ -1,27 +1,20 @@
 use peginator::PegParser;
-use std::{
-    collections::{BTreeSet, HashSet},
-    mem::take,
-    str::FromStr,
-};
-
-use url::Url;
+use std::{collections::HashSet, mem::take};
 
 use yggdrasil_bootstrap::{
-    parser::{Choice, DefineStatement, Node, Program, Statement, StringItem, StringLiteral, Suffix, Typing},
+    parser::{Choice, DefineStatement, Node, Program, Statement, StringItem},
     Result,
 };
 
 use crate::frontend::{
     rule::{
         node::{ExpressionKind, Operator},
-        ChoiceExpression, DataKind, ExpressionNode, UnaryExpression,
+        ChoiceExpression, DataKind, UnaryExpression,
     },
-    GrammarInfo, GrammarRule, Symbol,
+    GrammarInfo, GrammarRule,
 };
 
 mod import;
-mod macros;
 
 impl GrammarInfo {
     pub fn parse(input: &str) -> Result<Self> {
@@ -45,7 +38,7 @@ where
         let _ = ctx;
         unimplemented!()
     }
-    fn into_expr(self, ctx: &mut GrammarContext) -> Result<ExpressionNode> {
+    fn into_expr(self, ctx: &mut GrammarContext) -> Result<ExpressionKind> {
         let _ = ctx;
         unimplemented!()
     }
@@ -119,11 +112,10 @@ impl Translator for DefineStatement {
 }
 
 impl Translator for Choice {
-    fn into_expr(self, ctx: &mut GrammarContext) -> Result<ExpressionNode> {
+    fn into_expr(self, ctx: &mut GrammarContext) -> Result<ExpressionKind> {
         let mut expr = ChoiceExpression::default();
         for term in self.terms {
-            let tag = term.tag.map(|f| f.string).unwrap_or_default();
-            let body = match term.node {
+            let mut body = match term.node {
                 Node::Identifier(node) => ExpressionKind::rule(&node.string),
                 Node::StringLiteral(node) => {
                     let mut s = String::new();
@@ -145,6 +137,7 @@ impl Translator for Choice {
                     unimplemented!()
                 }
             };
+            body.set_tag(term.tag.map(|f| f.string).unwrap_or_default());
             let mut ops = vec![];
             for suffix in term.suffix {
                 match suffix {
@@ -162,13 +155,13 @@ impl Translator for Choice {
                 }
             }
             if ops.is_empty() {
-                expr.push(body, tag)
+                expr.push(body)
             }
             else {
                 let unary = UnaryExpression { base: body, ops };
-                expr.push(unary, tag)
+                expr.push(unary)
             }
         }
-        return Ok(ExpressionNode { tag: "".to_string(), kind: ExpressionKind::Choice(Box::new(expr)) });
+        return Ok(ExpressionKind::Choice(Box::new(expr)));
     }
 }

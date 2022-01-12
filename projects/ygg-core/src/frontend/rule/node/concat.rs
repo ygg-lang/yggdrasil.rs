@@ -2,7 +2,7 @@ use super::*;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct ConcatExpression {
-    pub sequence: Vec<ExpressionNode>,
+    pub sequence: Vec<ExpressionKind>,
 }
 
 // impl Expression {

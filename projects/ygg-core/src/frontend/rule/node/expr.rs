@@ -1,5 +1,6 @@
 use super::*;
 use std::hash::{Hash, Hasher};
+use yggdrasil_bootstrap::Result;
 
 impl ExpressionKind {
     pub fn is_choice(&self) -> bool {
@@ -10,6 +11,17 @@ impl ExpressionKind {
     }
     pub fn is_unary(&self) -> bool {
         matches!(self, ExpressionKind::Unary(_))
+    }
+}
+
+impl ExpressionKind {
+    pub fn set_tag(&mut self, tag: String) {
+        match self {
+            ExpressionKind::Choice(_) => {}
+            ExpressionKind::Concat(_) => {}
+            ExpressionKind::Unary(e) => e.set_tag(tag),
+            ExpressionKind::Data(e) => e.set_tag(tag),
+        }
     }
 }
 

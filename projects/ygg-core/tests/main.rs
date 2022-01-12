@@ -29,7 +29,7 @@ def atomic Identifier -> string {
     | 'a'*
     | 'b'+
     | label:'c'?
-    | DTerm
+    | label2:DTerm
     | ANY
 }
 "#;

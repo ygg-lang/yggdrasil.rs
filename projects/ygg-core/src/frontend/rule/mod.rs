@@ -3,8 +3,7 @@ mod from_ast;
 mod node;
 
 pub use self::node::{
-    choice::ChoiceExpression, concat::ConcatExpression, data::DataKind, unary::UnaryExpression, ExpressionKind, ExpressionNode,
-    Operator,
+    choice::ChoiceExpression, concat::ConcatExpression, data::DataKind, unary::UnaryExpression, ExpressionKind, Operator,
 };
 use crate::frontend::{GrammarInfo, Symbol};
 
