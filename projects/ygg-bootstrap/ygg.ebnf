@@ -13,11 +13,25 @@ EmptyStatement = EOS;
 EOS = ';';
 
 @position
-DefineStatement = define:DEFINE modifiers:Modifiers symbol:Identifier [arguments:Arguments] [type:Typing] '{' body:Choice '}';
+DefineStatement = MacroCalls define:DEFINE modifiers:Modifiers symbol:Identifier [arguments:Arguments] [type:Typing] '{' body:Choice '}';
 
 @string
 @no_skip_ws
 DEFINE = 'def!' | 'def';
+
+
+MacroCalls =
+    { '#' macros:Macro
+    | '#' '[' macros:Macro ']'
+    };
+Macro = id:Identifier ['(' args:ArgumentValue ')'];
+
+@string
+Boolean = 'true' | 'false';
+
+@string
+ArgumentValue =
+    @:Boolean;
 
 @position
 Modifiers = {id:Identifier !('{'|'('|':'|'->'|';')};

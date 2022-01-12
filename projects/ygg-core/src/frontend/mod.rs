@@ -1,8 +1,9 @@
 use std::{collections::BTreeMap, ops::Range};
 
-use crate::frontend::rule::ExpressionKind;
+use crate::{frontend::rule::ExpressionKind, YggdrasilError};
 use indexmap::map::IndexMap;
 use lsp_types::Url;
+use yggdrasil_bootstrap::Result;
 
 // mod optimize;
 pub mod rule;
@@ -12,14 +13,36 @@ pub mod typing;
 pub struct GrammarInfo {
     /// File path of the grammar
     pub url: Option<Url>,
-    pub is_grammar: bool,
     pub name: Symbol,
     pub extensions: Vec<Symbol>,
     pub ignores: Vec<Symbol>,
     pub imports: BTreeMap<Url, Vec<SymbolAlias>>,
+    pub exports: Vec<String>,
     pub rules: BTreeMap<String, GrammarRule>,
+    pub macros: Vec<String>,
     pub rule_prefix: String,
     pub rule_suffix: String,
+}
+
+pub trait CodeOptimizer {
+    fn optimize(&self, info: &mut GrammarInfo) -> Result<Diagnostics<()>>;
+}
+
+pub trait CodeGenerator<T> {
+    fn generate(&self, info: &GrammarInfo) -> Result<Diagnostics<T>>;
+}
+
+impl GrammarInfo {
+    pub fn optimize(&mut self, pass: &[impl CodeOptimizer]) -> Result<Diagnostics<()>> {
+        let mut errors = vec![];
+        for opt in pass {
+            errors.extend(opt.optimize(self)?.errors);
+        }
+        Ok(Diagnostics { success: (), errors })
+    }
+    pub fn codegen<T>(&self, pass: impl CodeGenerator<T>) -> Result<Diagnostics<T>> {
+        pass.generate(self)
+    }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]

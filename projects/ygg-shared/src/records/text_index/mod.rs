@@ -7,7 +7,6 @@ pub(crate) mod text_indexed;
 #[cfg(test)]
 mod test;
 
-use crate::CSTNode;
 use std::ops::Range;
 use text_indexed::TextMap;
 

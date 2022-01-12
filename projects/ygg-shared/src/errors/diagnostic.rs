@@ -1,3 +1,16 @@
+use super::*;
+
+pub struct Diagnostic<T> {
+    pub success: T,
+    pub errors: Vec<YggdrasilError>,
+}
+
+impl<T: Default> Default for Diagnostic<T> {
+    fn default() -> Self {
+        Self { success: Default::default(), errors: vec![] }
+    }
+}
+
 /// DiagnosticLevel
 #[derive(Debug, Copy, Clone)]
 pub enum DiagnosticLevel {
@@ -12,4 +25,3 @@ pub enum DiagnosticLevel {
     /// Hint Message, dots
     Hint = 4,
 }
-

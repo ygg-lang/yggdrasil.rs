@@ -6,6 +6,7 @@ pub enum DataKind {
     String(String),
     Regex(String),
     Rule(RuleReference),
+    Builtin(String),
     Integer(isize),
     Character(char),
     CharacterRange(Range<char>),
@@ -29,6 +30,7 @@ impl ExpressionKind {
     pub fn rule(name: &str) -> Self {
         let data = match name {
             "ANY" => DataKind::AnyCharacter,
+            "XID_START" => DataKind::Builtin(name.to_string()),
             _ => DataKind::Rule(RuleReference::new(name)),
         };
         ExpressionKind::Data(Box::new(data))
@@ -56,6 +58,7 @@ impl DataKind {
             DataKind::Character(_) => {}
             DataKind::CharacterRange(_) => {}
             DataKind::CharacterSet(_) => {}
+            DataKind::Builtin(_) => {}
         }
     }
 }

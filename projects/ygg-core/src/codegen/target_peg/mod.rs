@@ -86,13 +86,9 @@ impl DataKind {
             }
             DataKind::Rule(r) => {
                 w.tag(&r.tag);
-                if r.tag.is_empty() {
-                    write!(w, "{}{}{}", info.rule_prefix, r.name, info.rule_suffix)?;
-                }
-                else {
-                    write!(w, "{}:{}{}{}", r.tag, info.rule_prefix, r.name, info.rule_suffix)?;
-                }
+                write!(w, "{}{}{}", info.rule_prefix, r.name, info.rule_suffix)?;
             }
+            DataKind::Builtin(r) => w.write_str(r)?,
         }
         Ok(())
     }

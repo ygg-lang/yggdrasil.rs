@@ -133,9 +133,7 @@ impl Translator for Choice {
                 Node::Charset(node) => {
                     unimplemented!()
                 }
-                Node::Group(node) => {
-                    unimplemented!()
-                }
+                Node::Group(node) => node.body.into_expr(ctx)?,
             };
             body.set_tag(term.tag.map(|f| f.string).unwrap_or_default());
             let mut ops = vec![];

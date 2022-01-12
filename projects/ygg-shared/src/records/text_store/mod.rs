@@ -1,6 +1,7 @@
+#[cfg(feature = "lsp")]
 mod lsp;
 
-use crate::{Result, TextIndex, YggdrasilError};
+use crate::{TextIndex, YggdrasilError, YggdrasilResult};
 use dashmap::DashMap;
 use ropey::Rope;
 use std::{borrow::Borrow, ops::RangeBounds};
@@ -21,9 +22,12 @@ impl TextStore {
         self.inner.insert(url, Rope::from_str(text))
     }
 
-    pub fn insert_incremental(&mut self, url: Url, offset: usize, text: &str) -> Result<()> {
+    pub fn insert_incremental(&mut self, url: Url, offset: usize, text: &str) -> YggdrasilResult {
         match self.inner.get_mut(&url) {
-            Some(mut s) => Ok(s.value_mut().try_insert(offset, text)?),
+            Some(mut s) => {
+                // Ok(s.value_mut().try_insert(offset, text)?)
+                todo!()
+            }
             None => Err(YggdrasilError::unreachable()),
         }
     }
@@ -32,9 +36,12 @@ impl TextStore {
         self.inner.remove(url)
     }
 
-    pub fn delete_incremental(&mut self, url: Url, range: impl RangeBounds<usize>) -> Result<()> {
+    pub fn delete_incremental(&mut self, url: Url, range: impl RangeBounds<usize>) -> YggdrasilResult {
         match self.inner.get_mut(&url) {
-            Some(mut s) => Ok(s.value_mut().try_remove(range)?),
+            Some(mut s) => {
+                // Ok(s.value_mut().try_remove(range)?)
+                todo!()
+            }
             None => Err(YggdrasilError::unreachable()),
         }
     }

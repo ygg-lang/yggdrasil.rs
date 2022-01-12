@@ -1,4 +1,5 @@
 use self::YggdrasilErrorKind::*;
+use crate::Diagnostic;
 use std::{
     error::Error,
     fmt::{self, Debug, Display, Formatter},
@@ -6,12 +7,12 @@ use std::{
 };
 use url::Url;
 
+pub(crate) mod diagnostic;
 pub(crate) mod error_3rd;
 pub(crate) mod error_lsp;
 pub(crate) mod error_std;
-pub(crate) mod diagnostic;
 
-pub type Result<T> = std::result::Result<T, YggdrasilError>;
+pub type YggdrasilResult<T = ()> = Result<Diagnostic<T>, YggdrasilError>;
 
 #[derive(Debug)]
 pub struct YggdrasilError {

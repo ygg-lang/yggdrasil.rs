@@ -23,14 +23,103 @@ use yggdrasil_core::{codegen::as_peg, frontend::GrammarInfo};
 fn ready() {
     println!("ready!")
 }
+// @export
+// @position
+// Program = {statements:Statement} $;
+//
+// Statement =
+// @:DefineStatement [EOS]
+// | @:EmptyStatement
+// ;
+//
+// EmptyStatement = EOS;
+//
+// @char
+// EOS = ';';
+//
+// @position
+// DefineStatement = define:DEFINE modifiers:Modifiers symbol:Identifier [arguments:Arguments] [type:Typing] '{' body:Choice '}';
+//
+// @string
+// @no_skip_ws
+// DEFINE = 'def!' | 'def';
+//
+// @position
+// Modifiers = {id:Identifier !('{'|'('|':'|'->'|';')};
+//
+// @position
+// Choice = [['|'] terms:Term {"|" terms:Term}];
+//
+// @position
+// Term = {prefix:Prefix} [tag:Identifier ':'] node:Node {suffix:Suffix};
+//
+// @position
+// Arguments = '(' ')';
+//
+// @position
+// Typing = ('->' | ':') id:Identifier;
+//
+// @char
+// Prefix = '^' | '!';
+//
+// @char
+// Suffix = '+' | '*' | '?';
+//
+// @position
+// Node =
+// @:Group |
+// @:Charset |
+// @:StringLiteral |
+// @:Identifier
+// ;
+// @position
+// Group = "(" body:Choice ")";
+//
+// @position
+// @no_skip_ws
+// StringLiteral =
+// '"' {!'"' body:StringItem } '"' |
+// "'" {!"'" body:StringItem } "'"
+// ;
+//
+// @no_skip_ws
+// StringItem =
+// @:StringEscaped |
+// @:CharOne
+// ;
+//
+// StringEscaped = '\\' char:char;
+//
+// @position
+// Charset = '[' {CharItem} ']';
+//
+// CharItem =
+// @:CharRange |
+// @:CharOne
+// ;
+// @position
+// CharRange = start:char '-' end:char;
+// @char
+// CharOne = char;
+//
+// @position
+// @string
+// @no_skip_ws
+// Identifier = (XID_START | '_') {XID_CONTINUE};
+//
+//
+// @char
+// @check(unicode_xid::UnicodeXID::is_xid_start)
+// XID_START = char;
+//
+//
+// @char
+// @check(unicode_xid::UnicodeXID::is_xid_continue)
+// XID_CONTINUE = char;
 
 const INPUT: &'static str = r#"
 def atomic Identifier -> string {
-    | 'a'*
-    | 'b'+
-    | label:'c'?
-    | label2:DTerm
-    | ANY
+    (XID_START | '_')
 }
 "#;
 
