@@ -1,0 +1,23 @@
+[package]
+name = "yggdrasil-error"
+version = "0.1.5"
+authors = ["Aster <192607617@qq.com>"]
+description = "Yggdrasil Shared Structure"
+repository = "https://github.com/ygg-lang/yggdrasil-rs"
+readme = "Readme.md"
+license = "MPL-2.0"
+edition = "2021"
+
+[dependencies]
+lsp-types = { version = "0.93.1", features = ["proposed"], optional = true }
+# lsp-document = "0.4.0"
+url = "2.3.1"
+anyhow = "1.0.65"
+ariadne = "0.1.5"
+ropey = "1.5.0"
+dashmap = "5.4.0"
+peginator = "0.2.5"
+
+[features]
+default = ["lsp"]
+lsp = ["lsp-types"]
