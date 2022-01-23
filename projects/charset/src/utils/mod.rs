@@ -14,7 +14,6 @@ impl Default for CharacterSet {
     }
 }
 
-
 impl CharacterSet {
     /// Count how many characters are in this set
     pub fn count(&self) -> usize {
@@ -31,7 +30,7 @@ impl CharacterSet {
         let c = c as u32;
         for rule in &self.fast {
             if rule.start <= c && c <= rule.end {
-                return true
+                return true;
             }
         }
         self.bsearch_range_table(&self.common, c)
@@ -46,16 +45,17 @@ impl CharacterSet {
         r.binary_search_by(|range| {
             if range.start > c {
                 Greater
-            } else if range.end < c {
+            }
+            else if range.end < c {
                 Less
-            } else {
+            }
+            else {
                 Equal
             }
         })
-            .is_ok()
+        .is_ok()
     }
 }
-
 
 impl CharacterSet {
     pub fn insert(&mut self, set: impl Into<CharacterInsert>) {
@@ -65,8 +65,8 @@ impl CharacterSet {
         }
         let set = set.into();
         match set.fast {
-            true => { self.fast.push(set.range) }
-            false => { self.common.push(set.range) }
+            true => self.fast.push(set.range),
+            false => self.common.push(set.range),
         }
     }
     pub fn optimize(&mut self) {
@@ -81,15 +81,14 @@ impl CharacterSet {
                 Some(last) => {
                     if last.end >= start.saturating_sub(1) {
                         last.end = last.end.max(*end)
-                    } else {
+                    }
+                    else {
                         new.push(Range { start: *start, end: *end })
                     }
                 }
-                None => {
-                    new.push(Range { start: *start, end: *end })
-                }
+                None => new.push(Range { start: *start, end: *end }),
             }
-        };
+        }
         new.truncate(new.len());
         self.common = new;
     }

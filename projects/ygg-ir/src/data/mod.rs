@@ -1,16 +1,14 @@
-use super::*;
+use ucd_trie::TrieSetOwned;
+
+use crate::rule::ExpressionKind;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum DataKind {
     AnyCharacter,
-    String(String),
-    Regex(String),
-    Rule(RuleReference),
-    Builtin(String),
     Integer(isize),
-    Character(char),
-    CharacterRange(Range<char>),
-    CharacterSet(CharacterSet),
+    String(String),
+    Rule(RuleReference),
+    CharacterSet(TrieSetOwned),
 }
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
@@ -39,6 +37,7 @@ impl ExpressionKind {
         let data = DataKind::String(string);
         ExpressionKind::Data(Box::new(data))
     }
+    pub fn builtin(name: &str) -> Option<Self> {}
 }
 
 impl RuleReference {

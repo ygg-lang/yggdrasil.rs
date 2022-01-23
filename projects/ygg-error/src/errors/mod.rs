@@ -1,22 +1,23 @@
-use self::YggdrasilErrorKind::*;
-use crate::Diagnostic;
 use std::{
     error::Error,
     fmt::{self, Debug, Display, Formatter},
     ops::Range,
 };
+
 use url::Url;
 
-pub(crate) mod diagnostic;
-pub(crate) mod error_3rd;
-pub(crate) mod error_lsp;
-pub(crate) mod error_std;
+use crate::Diagnostic;
+
+use self::YggdrasilErrorKind::*;
+
+pub mod diagnostic;
+pub mod error_std;
 
 pub type YggdrasilResult<T = ()> = Result<Diagnostic<T>, YggdrasilError>;
 
 #[derive(Debug)]
 pub struct YggdrasilError {
-    pub kind: YggdrasilErrorKind,
+    pub kind: Box<YggdrasilErrorKind>,
     pub file: Option<Url>,
     pub range: Option<Range<usize>>,
 }
@@ -34,7 +35,6 @@ pub enum YggdrasilErrorKind {
     Unwinding,
     /// A forbidden cst_node encountered
     Unreachable,
-    UnknownError(anyhow::Error),
 }
 
 impl YggdrasilError {
@@ -48,37 +48,33 @@ impl YggdrasilError {
         return self;
     }
     #[inline]
-    pub fn get_kind(&self) -> &YggdrasilErrorKind {
-        &self.kind
-    }
-    #[inline]
     pub fn is_unwinding(&self) -> bool {
-        matches!(self.kind, Unwinding)
+        matches!(*self.kind, Unwinding)
     }
 }
 
 impl YggdrasilError {
     #[inline]
     pub fn structure_error(msg: impl Into<String>) -> Self {
-        Self { kind: StructureError(msg.into()), file: None, range: None }
+        Self { kind: Box::new(StructureError(msg.into())), file: None, range: None }
     }
     ///
     #[inline]
     pub fn unexpected_token(msg: impl Into<String>) -> Self {
-        Self { kind: UnexpectedToken(msg.into()), file: None, range: None }
+        Self { kind: Box::new(UnexpectedToken(msg.into())), file: None, range: None }
     }
     ///
     #[inline]
     pub fn language_error(msg: impl Into<String>) -> Self {
-        Self { kind: LanguageError(msg.into()), file: None, range: None }
+        Self { kind: Box::new(LanguageError(msg.into())), file: None, range: None }
     }
     #[inline]
     pub fn unreachable() -> Self {
-        Self { kind: Unreachable, file: None, range: None }
+        Self { kind: Box::new(Unreachable), file: None, range: None }
     }
     #[inline]
     pub fn unwinding() -> Self {
-        Self { kind: Unwinding, file: None, range: None }
+        Self { kind: Box::new(Unwinding), file: None, range: None }
     }
 }
 
@@ -117,7 +113,6 @@ impl Display for YggdrasilErrorKind {
             Unreachable => {
                 unimplemented!()
             }
-            UnknownError(e) => f.write_str(&e.to_string()),
         }
     }
 }

@@ -2,7 +2,7 @@
 members = ["projects/*"]
 default-members = [
     "projects/ygg-ir",
-#    "projects/ygg-bootstrap",
+    "projects/ygg-error",
 #    "projects/ygg-core",
 #    "projects/ygg-rt",
 ]

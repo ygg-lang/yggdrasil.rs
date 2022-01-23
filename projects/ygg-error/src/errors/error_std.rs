@@ -26,13 +26,13 @@ impl From<ParseFloatError> for YggdrasilError {
 
 impl From<std::io::Error> for YggdrasilError {
     fn from(e: std::io::Error) -> Self {
-        Self { kind: IOError(e), file: None, range: None }
+        Self { kind: Box::new(IOError(e)), file: None, range: None }
     }
 }
 
 impl From<fmt::Error> for YggdrasilError {
     fn from(e: fmt::Error) -> Self {
-        Self { kind: FormatError(e), file: None, range: None }
+        Self { kind: Box::new(FormatError(e)), file: None, range: None }
     }
 }
 

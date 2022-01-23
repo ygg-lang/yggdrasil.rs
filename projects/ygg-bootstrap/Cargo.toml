@@ -19,6 +19,15 @@ version = "0.1"
 path = "../ygg-rt"
 features = ["lsp"]
 
+[dependencies.yggdrasil-ir]
+version = "0.1"
+path = "../ygg-ir"
+
+[dependencies.yggdrasil-error]
+version = "0.1"
+path = "../ygg-error"
+
+
 [dev-dependencies]
 
 [build-dependencies]

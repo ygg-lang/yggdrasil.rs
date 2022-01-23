@@ -1,86 +1,120 @@
-#![feature(try_trait_v2)]
+use std::ops::Range;
 
-mod json;
+use indexmap::map::IndexMap;
+
+// mod optimize;
+mod data;
+mod grammar;
+mod rule;
 mod traits;
+mod typing;
 
-use chumsky::{
-    combinator::{Map, Then},
-    prelude::just,
-    text, Parser,
-};
-use std::{
-    fmt::{Display, Formatter},
-    num::NonZeroUsize,
-    ops::{ControlFlow, FromResidual, Try},
-};
-use text::digits;
-
-use crate::IResult::{Failure, Success};
-
-pub enum IResult<I, O> {
-    Success(I, O),
-    Failure(Failed),
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct Symbol {
+    pub name: String,
+    pub range: Range<usize>,
+}
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct SymbolAlias {
+    pub name: String,
+    pub alias: String,
+    pub range: Range<usize>,
 }
 
-impl<I, O> IResult<I, O> {
-    pub fn finish(self) -> Result<O, ErrorMessage> {
-        match self {
-            Success(_, o) => Ok(o),
-            Failure(Failed::Fail(e)) | Failure(Failed::Fatal(e)) => Err(e),
-            Failure(Failed::Incomplete(_)) => {
-                panic!(
-                    "Cannot call `finish()` on `Err(Err::Incomplete(_))`: this result means that the parser does not have enough data to decide, you should gather more data and try to reapply  the parser instead"
-                )
-            }
-        }
-    }
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct GrammarRule {
+    /// Automatically inline when this rule is called
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// def RuleName {
+    ///
+    /// }
+    /// ```
+    pub name: String,
+    /// Automatically inline when this rule is called
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// def rule -> char {
+    ///
+    /// }
+    ///
+    /// def rule() -> char {
+    ///
+    /// }
+    /// ```
+    pub r#type: String,
+    /// Document of this rule
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// 
+    /// def rule {
+    ///
+    /// }
+    ///
+    /// def rule() -> char {
+    ///
+    /// }
+    /// ```
+    pub document: String,
+    ///
+    pub derives: RuleDerive,
+    /// Automatically inline when this rule is called
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// #inline(true)
+    /// def rule {
+    ///
+    /// }
+    ///
+    /// def inline rule {
+    ///
+    /// }
+    ///
+    /// def _rule {
+    ///
+    /// }
+    /// ```
+    pub auto_inline: bool,
+    /// Automatically box when this rule is called
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// #boxed(true)
+    /// def rule {
+    ///
+    /// }
+    ///
+    /// def boxed rule {
+    ///
+    /// }
+    /// ```
+    pub auto_boxed: bool,
+    pub auto_capture: bool,
+    pub atomic_rule: bool,
+    ///
+    pub body: ExpressionKind,
+    /// position of all parts
+    pub range: Range<usize>,
 }
 
-pub enum Failed {
-    Fail(ErrorMessage),
-    Fatal(ErrorMessage),
-    Incomplete(usize),
+#[derive(Clone, Eq, PartialEq)]
+pub struct RuleDerive {
+    pub(crate) parser: Option<String>,
+    pub(crate) debug: Option<String>,
+    pub(crate) display: Option<String>,
+    pub(crate) eq: bool,
+    pub(crate) eq_partial: Option<String>,
+    pub(crate) ord: bool,
+    pub(crate) ord_partial: Option<String>,
+    pub(crate) hash: Option<String>,
 }
 
-impl Display for Failed {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Failed::Incomplete(0) => write!(f, "Parsing requires more data"),
-            Failed::Incomplete(u) => write!(f, "Parsing requires {} bytes/chars", u),
-
-            Failed::Fatal(c) => write!(f, "Parsing Failure: {:?}", c),
-            Failed::Fail(c) => write!(f, "Parsing Error: {:?}", c),
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct ErrorMessage {}
-
-impl<I, O> FromResidual<(I, O)> for IResult<I, O> {
-    fn from_residual(residual: (I, O)) -> Self {
-        Self::Success(residual.0, residual.1)
-    }
-}
-
-impl<I, O> FromResidual<Failed> for IResult<I, O> {
-    fn from_residual(residual: Failed) -> Self {
-        Self::Failure(residual)
-    }
-}
-
-impl<I, O> Try for IResult<I, O> {
-    type Output = (I, O);
-    type Residual = Failed;
-
-    fn from_output(output: Self::Output) -> Self {
-        Success(output.0, output.1)
-    }
-
-    fn branch(self) -> ControlFlow<Self::Residual, Self::Output> {
-        match self {
-            Success(i, o) => ControlFlow::Continue((i, o)),
-            Failure(e) => ControlFlow::Break(e),
-        }
+impl Default for RuleDerive {
+    fn default() -> Self {
+        Self { parser: None, debug: None, display: None, eq: false, eq_partial: None, ord: false, ord_partial: None, hash: None }
     }
 }

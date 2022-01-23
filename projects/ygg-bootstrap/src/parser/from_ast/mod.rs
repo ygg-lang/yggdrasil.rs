@@ -26,7 +26,7 @@ impl GrammarInfo {
 }
 
 pub struct GrammarContext {
-    pub(crate) info: GrammarInfo,
+    pub info: GrammarInfo,
     docs: String,
 }
 
@@ -71,8 +71,7 @@ impl Translator for DefineStatement {
         let mut auto_inline = false;
         if modifiers.contains("inline") {
             auto_inline = true
-        }
-        else if name.starts_with('_') {
+        } else if name.starts_with('_') {
             auto_inline = true;
             name = name.trim_start_matches("_").to_string()
         }
@@ -91,8 +90,7 @@ impl Translator for DefineStatement {
             r#type = s.id.string
         }
         if self.arguments.is_some() {
-        }
-        else {
+        } else {
             let rule = GrammarRule {
                 name,
                 r#type,
@@ -154,8 +152,7 @@ impl Translator for Choice {
             }
             if ops.is_empty() {
                 expr.push(body)
-            }
-            else {
+            } else {
                 let unary = UnaryExpression { base: body, ops };
                 expr.push(unary)
             }

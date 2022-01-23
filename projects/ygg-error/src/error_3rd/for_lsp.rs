@@ -1,6 +1,5 @@
-use lsp_types::DiagnosticSeverity;
 use crate::DiagnosticLevel;
-
+use lsp_types::DiagnosticSeverity;
 
 impl DiagnosticLevel {
     /// Convert to lsp [`DiagnosticSeverity`]
