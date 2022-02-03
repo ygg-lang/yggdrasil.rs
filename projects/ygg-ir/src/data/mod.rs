@@ -2,6 +2,8 @@ use ucd_trie::TrieSetOwned;
 
 use crate::rule::ExpressionKind;
 
+mod charset;
+
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum DataKind {
     AnyCharacter,

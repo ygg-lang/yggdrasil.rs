@@ -10,10 +10,5 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-
-
-[dependencies.serde]
-version = "1.0.145"
-optional = true
-features = ["derive"]
-
+serde = "1.0.145"
+ucd-trie = "0.1.5"

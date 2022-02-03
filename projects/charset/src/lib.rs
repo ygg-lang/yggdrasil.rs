@@ -2,23 +2,17 @@
 
 use std::ops::Range;
 
+use serde::{Deserialize, Serialize};
+pub use ucd_trie::{TrieSetOwned, TrieSetSlice};
+
 pub mod builtin;
 mod insert;
 mod utils;
 
-/// Some characters appear significantly more frequently than others, and you need to quickly search for this high-frequency character set
-/// Such as ascii character set
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
-pub struct CharacterSet {
-    #[cfg(debug_assertions)]
-    pub optimized: bool,
-    /// Sort by the frequency of use
-    pub fast: Vec<Range<u32>>,
-    /// Sort by smaller value
-    pub common: Vec<Range<u32>>,
-}
+pub struct CharacterSet(TrieSetOwned);
 
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub struct CharacterInsert {
     pub fast: bool,
     pub range: Range<u32>,

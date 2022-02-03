@@ -1,95 +1,47 @@
-use core::cmp::Ordering::{Equal, Greater, Less};
 use std::ops::Range;
 
 use crate::{CharacterInsert, CharacterSet};
 
 impl Default for CharacterSet {
     fn default() -> Self {
-        Self {
-            #[cfg(debug_assertions)]
-            optimized: true,
-            fast: vec![],
-            common: vec![],
-        }
+        Self { positive: true, set: Ti }
     }
 }
 
 impl CharacterSet {
     /// Count how many characters are in this set
     pub fn count(&self) -> usize {
-        debug_assert!(self.optimized);
-        let mut all = 0;
-        for rule in &self.common {
-            all += rule.end - rule.start + 1
-        }
-        return all as usize;
+        for ucd_trie in self.set {}
     }
     /// Determines whether the set contains the given character
     pub fn contains(&self, c: char) -> bool {
-        debug_assert!(self.optimized);
-        let c = c as u32;
-        for rule in &self.fast {
-            if rule.start <= c && c <= rule.end {
-                return true;
-            }
-        }
-        self.bsearch_range_table(&self.common, c)
-    }
-
-    // Because ASCII ranges are at the start of the tables, a search for an
-    // ASCII char will involve more `Greater` results (i.e. the `(lo,hi)`
-    // table entry is greater than `c`) than `Less` results. And given that
-    // ASCII chars are so common, it makes sense to favor them. Therefore,
-    // the `Greater` case is tested for before the `Less` case.
-    fn bsearch_range_table(&self, r: &[Range<u32>], c: u32) -> bool {
-        r.binary_search_by(|range| {
-            if range.start > c {
-                Greater
-            }
-            else if range.end < c {
-                Less
-            }
-            else {
-                Equal
-            }
-        })
-        .is_ok()
+        self.set.contains_char(c)
     }
 }
 
 impl CharacterSet {
-    pub fn insert(&mut self, set: impl Into<CharacterInsert>) {
-        #[cfg(debug_assertions)]
-        {
-            self.optimized = false;
+    pub fn exclude(&mut self, set: impl Into<CharacterInsert>) {}
+    pub fn to_ranges(&self) -> Vec<Range<char>> {
+        let mut codepoints: Vec<u32> = self.set.into_iter().collect();
+        codepoints.sort();
+        codepoints.dedup();
+
+        let mut ranges = vec![];
+        for cp in codepoints {
+            range_add(&mut ranges, cp);
         }
-        let set = set.into();
-        match set.fast {
-            true => self.fast.push(set.range),
-            false => self.common.push(set.range),
+        ranges.into_iter().map(|(min, max)| Range { start: min as char, end: max as char }).collect()
+    }
+}
+
+/// https://github.com/BurntSushi/ucd-generate/blob/07c11775dbc8e659e5e9485284f74fe7429ead6c/src/util.rs#L206
+fn range_add(ranges: &mut Vec<(u32, u32)>, codepoint: u32) {
+    if let Some(&mut (_, ref mut end)) = ranges.last_mut() {
+        assert!(*end < codepoint);
+        if codepoint == *end + 1 {
+            *end = codepoint;
+            return;
         }
     }
-    pub fn optimize(&mut self) {
-        #[cfg(debug_assertions)]
-        {
-            self.optimized = true;
-        }
-        let mut new: Vec<Range<u32>> = vec![];
-        self.common.sort_by_key(|r| r.start);
-        for Range { start, end } in &self.common {
-            match new.last_mut() {
-                Some(last) => {
-                    if last.end >= start.saturating_sub(1) {
-                        last.end = last.end.max(*end)
-                    }
-                    else {
-                        new.push(Range { start: *start, end: *end })
-                    }
-                }
-                None => new.push(Range { start: *start, end: *end }),
-            }
-        }
-        new.truncate(new.len());
-        self.common = new;
-    }
+    ranges.push((codepoint, codepoint));
 }
