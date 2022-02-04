@@ -1,10 +1,34 @@
+mod arth;
+
 use std::ops::Range;
 
-use crate::{CharacterInsert, CharacterSet};
+use ucd_trie::{Error, TrieSetOwned};
+
+use crate::CharacterInsert;
+
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+pub struct CharacterSet {
+    pub(crate) all: [bool; 0x110000],
+}
 
 impl Default for CharacterSet {
     fn default() -> Self {
-        Self { positive: true, set: Ti }
+        Self::nil()
+    }
+}
+
+impl Display for CharacterSet {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let mut w = &mut f.debug_set();
+        for range in self.set.iter().chain(self.common.iter()) {
+            if range.start == range.end {
+                w = w.entry(&format!("{}", char::from_u32(range.start).unwrap()))
+            }
+            else {
+                w = w.entry(&format!("{}..{}", char::from_u32(range.start).unwrap(), char::from_u32(range.end).unwrap()))
+            }
+        }
+        w.finish()
     }
 }
 
@@ -20,7 +44,21 @@ impl CharacterSet {
 }
 
 impl CharacterSet {
-    pub fn exclude(&mut self, set: impl Into<CharacterInsert>) {}
+    pub fn from_codepoints<I, C>(codepoints: I) -> Result<TrieSetOwned>
+    where
+        I: IntoIterator<Item = C>,
+        C: Borrow<u32>,
+    {
+        let mut all = vec![false; 0x110000];
+        for cp in codepoints {
+            let cp = *cp.borrow();
+            if cp > 0x10FFFF {
+                return Err(Error::InvalidCodepoint(cp));
+            }
+            all[cp as usize] = true;
+        }
+        TrieSetOwned::new(&all)
+    }
     pub fn to_ranges(&self) -> Vec<Range<char>> {
         let mut codepoints: Vec<u32> = self.set.into_iter().collect();
         codepoints.sort();
