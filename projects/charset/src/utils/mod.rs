@@ -1,14 +1,16 @@
-mod arth;
+use std::{
+    fmt::{Debug, Display, Formatter},
+    ops::Range,
+};
 
-use std::ops::Range;
+use ucd_trie::TrieSetOwned;
 
-use ucd_trie::{Error, TrieSetOwned};
+mod arithmetic;
+mod save;
 
-use crate::CharacterInsert;
-
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Clone, Hash, Eq, PartialEq)]
 pub struct CharacterSet {
-    pub(crate) all: [bool; 0x110000],
+    pub(crate) all: Box<[bool; 0x110000]>,
 }
 
 impl Default for CharacterSet {
@@ -17,15 +19,32 @@ impl Default for CharacterSet {
     }
 }
 
-impl Display for CharacterSet {
+impl Debug for CharacterSet {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "CharacterSet({}) ", self.count())?;
         let mut w = &mut f.debug_set();
-        for range in self.set.iter().chain(self.common.iter()) {
+        for range in self.to_ranges() {
             if range.start == range.end {
-                w = w.entry(&format!("{}", char::from_u32(range.start).unwrap()))
+                w = w.entry(&format!("{}", range.start as u32))
             }
             else {
-                w = w.entry(&format!("{}..{}", char::from_u32(range.start).unwrap(), char::from_u32(range.end).unwrap()))
+                w = w.entry(&format!("{}..{}", range.start as u32, range.end as u32))
+            }
+        }
+        w.finish()
+    }
+}
+
+impl Display for CharacterSet {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "CharacterSet({}) ", self.count())?;
+        let mut w = &mut f.debug_set();
+        for range in self.to_ranges() {
+            if range.start == range.end {
+                w = w.entry(&format!("{}", range.start))
+            }
+            else {
+                w = w.entry(&format!("{}..{}", range.start, range.end))
             }
         }
         w.finish()
@@ -35,40 +54,57 @@ impl Display for CharacterSet {
 impl CharacterSet {
     /// Count how many characters are in this set
     pub fn count(&self) -> usize {
-        for ucd_trie in self.set {}
+        self.all.iter().filter(|f| **f == true).count()
     }
     /// Determines whether the set contains the given character
+    pub fn compress(&self) -> TrieSetOwned {
+        let set = TrieSetOwned::from_codepoints(self.codepoints());
+        #[cfg(debug_assertions)]
+        {
+            set.unwrap()
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            unsafe { set.unwrap_unchecked() }
+        }
+    }
     pub fn contains(&self, c: char) -> bool {
-        self.set.contains_char(c)
+        self.compress().contains_char(c)
+    }
+    fn codepoints(&self) -> Vec<u32> {
+        let mut codepoints = vec![];
+        let mut this_cp: u32 = 0;
+        for contains in self.all.iter() {
+            if *contains {
+                codepoints.push(this_cp)
+            }
+            this_cp += 1;
+        }
+        return codepoints;
+    }
+
+    pub fn to_ranges(&self) -> Vec<Range<char>> {
+        let mut ranges = vec![];
+        for cp in self.codepoints() {
+            range_add(&mut ranges, cp);
+        }
+        ranges.into_iter().map(|(min, max)| range_u2c(min, max)).collect()
     }
 }
 
-impl CharacterSet {
-    pub fn from_codepoints<I, C>(codepoints: I) -> Result<TrieSetOwned>
-    where
-        I: IntoIterator<Item = C>,
-        C: Borrow<u32>,
+#[track_caller]
+pub(crate) fn range_u2c(start: u32, end: u32) -> Range<char> {
+    #[cfg(debug_assertions)]
     {
-        let mut all = vec![false; 0x110000];
-        for cp in codepoints {
-            let cp = *cp.borrow();
-            if cp > 0x10FFFF {
-                return Err(Error::InvalidCodepoint(cp));
-            }
-            all[cp as usize] = true;
-        }
-        TrieSetOwned::new(&all)
+        let start = char::from_u32(start).unwrap();
+        let end = char::from_u32(end).unwrap();
+        Range { start, end }
     }
-    pub fn to_ranges(&self) -> Vec<Range<char>> {
-        let mut codepoints: Vec<u32> = self.set.into_iter().collect();
-        codepoints.sort();
-        codepoints.dedup();
-
-        let mut ranges = vec![];
-        for cp in codepoints {
-            range_add(&mut ranges, cp);
-        }
-        ranges.into_iter().map(|(min, max)| Range { start: min as char, end: max as char }).collect()
+    #[cfg(not(debug_assertions))]
+    {
+        let start = char::from_u32_unchecked(start);
+        let end = char::from_u32_unchecked(end);
+        Range { start, end }
     }
 }
 

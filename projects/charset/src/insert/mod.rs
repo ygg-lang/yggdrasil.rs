@@ -1,14 +1,10 @@
-use std::{
-    fmt::Display,
-    ops::{Neg, Range},
-};
+use std::ops::Range;
 
-use serde::{Deserialize, Serialize};
 use ucd_trie::Error;
 
-use crate::{CharacterSet, Serialize};
+use crate::CharacterSet;
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone)]
 pub struct CharacterInsert {
     pub insert: Vec<Range<u32>>,
     pub error: Option<Error>,
@@ -16,31 +12,40 @@ pub struct CharacterInsert {
 
 impl CharacterSet {
     pub fn all() -> Self {
-        Self { all: [true; 0x110000] }
+        Self { all: Box::new([true; 0x110000]) }
     }
 
     pub fn nil() -> Self {
-        Self { all: [false; 0x110000] }
+        Self { all: Box::new([false; 0x110000]) }
     }
 
     pub fn include(&mut self, set: impl Into<CharacterInsert>) -> Result<(), Error> {
-        self.insert(set.into(), true)
+        self.try_insert(set, true)
     }
     pub fn exclude(&mut self, set: impl Into<CharacterInsert>) -> Result<(), Error> {
-        self.insert(set.into(), false)
+        self.try_insert(set, false)
     }
-    fn insert(&mut self, set: Vec<Range<u32>>, result: bool) -> Result<(), Error> {
-        let CharacterInsert { insert, error } = set;
+    fn try_insert(&mut self, set: impl Into<CharacterInsert>, result: bool) -> Result<(), Error> {
+        let CharacterInsert { insert, error } = set.into();
         if let Some(e) = error {
             return Err(e);
         }
-        for range in insert {
-            for cp in range {
-                debug_assert!(cp > 0x10FFFF);
-                self.all[cp as usize] = result;
+        self.insert(insert, result);
+        Ok(())
+    }
+    fn insert(&mut self, set: Vec<Range<u32>>, result: bool) {
+        for range in set {
+            debug_assert!(range.end < 0x10FFFF);
+            debug_assert!(range.start <= range.end);
+            if range.start == range.end {
+                self.all[range.start as usize] = result;
+            }
+            else {
+                for cp in range {
+                    self.all[cp as usize] = result;
+                }
             }
         }
-        Ok(())
     }
 }
 
@@ -52,7 +57,7 @@ impl From<char> for CharacterInsert {
 
 impl From<Range<char>> for CharacterInsert {
     fn from(range: Range<char>) -> Self {
-        CharacterInsert { insert: vec![Range { start: char as u32, end: char as u32 }], error: None }
+        CharacterInsert { insert: vec![Range { start: range.start as u32, end: range.end as u32 }], error: None }
     }
 }
 
@@ -64,12 +69,12 @@ impl From<u32> for CharacterInsert {
 
 impl From<(u32, u32)> for CharacterInsert {
     fn from(range: (u32, u32)) -> Self {
-        CharacterInsert { insert: vec![Range { start: char as u32, end: char as u32 }], error: None }
+        CharacterInsert { insert: vec![Range { start: range.0 as u32, end: range.1 as u32 }], error: None }
     }
 }
 
 impl From<Range<u32>> for CharacterInsert {
     fn from(range: Range<u32>) -> Self {
-        CharacterInsert { insert: vec![Range { start: char as u32, end: char as u32 }], error: None }
+        CharacterInsert { insert: vec![Range { start: range.start as u32, end: range.end as u32 }], error: None }
     }
 }
