@@ -15,6 +15,8 @@ fn test_ascii_range() {
     assert_eq!(set.count(), 62);
     assert!(set.contains('a'));
     assert!(!set.contains(' '));
+
+    print!("{}", set.dump_tree("TXT", true).unwrap())
 }
 
 #[test]

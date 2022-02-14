@@ -1,9 +1,9 @@
+use serde::{ser::SerializeSeq, Deserialize, Deserializer, Serialize, Serializer};
 use std::{
-    fmt::{Debug, Display, Formatter},
+    fmt::{Debug, Display, Formatter, Write},
     ops::Range,
 };
-
-use ucd_trie::TrieSetOwned;
+use ucd_trie::{TrieSet, TrieSetOwned};
 
 mod arithmetic;
 mod save;
@@ -25,12 +25,13 @@ impl Debug for CharacterSet {
         let mut w = &mut f.debug_set();
         for range in self.to_ranges() {
             if range.start == range.end {
-                w = w.entry(&format!("{}", range.start as u32))
+                w = w.entry(&(range.start as u32))
             }
             else {
-                w = w.entry(&format!("{}..{}", range.start as u32, range.end as u32))
+                w = w.entry(&Range { start: range.start as u32, end: range.end as u32 })
             }
         }
+
         w.finish()
     }
 }
@@ -40,12 +41,7 @@ impl Display for CharacterSet {
         write!(f, "CharacterSet({}) ", self.count())?;
         let mut w = &mut f.debug_set();
         for range in self.to_ranges() {
-            if range.start == range.end {
-                w = w.entry(&format!("{}", range.start))
-            }
-            else {
-                w = w.entry(&format!("{}..{}", range.start, range.end))
-            }
+            if range.start == range.end { w = w.entry(&range.start) } else { w = w.entry(&Range { start: range.start, end: range.end }) }
         }
         w.finish()
     }
