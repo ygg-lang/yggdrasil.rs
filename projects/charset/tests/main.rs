@@ -1,4 +1,4 @@
-use character_set::CharacterSet;
+use character_set::{CharacterSet, DumpAction};
 
 #[test]
 fn ready() {
@@ -16,7 +16,12 @@ fn test_ascii_range() {
     assert!(set.contains('a'));
     assert!(!set.contains(' '));
 
-    print!("{}", set.dump_tree("TXT", true).unwrap())
+    print!("{}", dumper().dump(&set))
+}
+
+fn dumper() -> DumpAction {
+    let dump = DumpAction { name: "TEST".to_string(), ..Default::default() };
+    return dump;
 }
 
 #[test]

@@ -1,6 +1,6 @@
 #![doc = include_str!("../Readme.md")]
 
-pub use self::{insert::InsertAction, utils::CharacterSet};
+pub use self::{dump::DumpAction, insert::InsertAction, utils::CharacterSet};
 
 pub mod builtin;
 mod dump;
