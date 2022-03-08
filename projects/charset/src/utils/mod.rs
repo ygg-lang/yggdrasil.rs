@@ -31,7 +31,6 @@ impl Debug for CharacterSet {
                 w = w.entry(&Range { start: range.start as u32, end: range.end as u32 })
             }
         }
-
         w.finish()
     }
 }

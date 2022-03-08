@@ -1,5 +1,5 @@
 [package]
-name = "yggdrasil-shared"
+name = "yggdrasil-rt"
 version = "0.1.5"
 authors = ["Aster <192607617@qq.com>"]
 description = "Yggdrasil Shared Structure"

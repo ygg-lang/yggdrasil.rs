@@ -16,7 +16,6 @@ impl CharacterSet {
     pub fn all() -> Self {
         Self { all: Box::new([true; UNICODE_MAX as usize]) }
     }
-
     pub fn nil() -> Self {
         Self { all: Box::new([false; UNICODE_MAX as usize]) }
     }

@@ -5,6 +5,8 @@ use yggdrasil_bootstrap::{
     parser::{Choice, DefineStatement, Node, Program, Statement, StringItem},
     Result,
 };
+use yggdrasil_ir::GrammarInfo;
+use yggdrasil_rt::{Diagnostic, YggdrasilResult};
 
 use crate::frontend::{
     rule::{
@@ -13,16 +15,15 @@ use crate::frontend::{
     },
     GrammarInfo, GrammarRule,
 };
+use crate::parser::{ChoiceNode, DefineStatement, Program, Statement};
 
 mod import;
 
-impl GrammarInfo {
-    pub fn parse(input: &str) -> Result<Self> {
-        let mut ctx = GrammarContext { info: Default::default(), docs: "".to_string() };
-        let pro = Program::parse(input).unwrap();
-        pro.translate(&mut ctx)?;
-        Ok(ctx.info)
-    }
+pub fn parse(input: &str) -> Result<GrammarInfo> {
+    let mut ctx = GrammarContext { info: Default::default(), docs: "".to_string() };
+    let pro = Program::parse(input).unwrap();
+    pro.translate(&mut ctx)?;
+    Ok(ctx.info)
 }
 
 pub struct GrammarContext {
@@ -48,19 +49,19 @@ where
     }
 }
 
-impl Translator for Program {
-    fn translate(self, ctx: &mut GrammarContext) -> Result<()> {
+impl Program {
+    fn translate(self, ctx: &mut GrammarContext) -> YggdrasilResult {
         for s in self.statements {
             match s {
                 Statement::DefineStatement(define) => define.translate(ctx)?,
                 Statement::EmptyStatement(_) => {}
             }
         }
-        Ok(())
+        Ok(Diagnostic { success: (), errors: vec![] })
     }
 }
 
-impl Translator for DefineStatement {
+impl DefineStatement {
     fn translate(self, ctx: &mut GrammarContext) -> Result<()> {
         let document = take(&mut ctx.docs);
         let mut name = self.symbol.string.to_owned();
@@ -109,7 +110,7 @@ impl Translator for DefineStatement {
     }
 }
 
-impl Translator for Choice {
+impl ChoiceNode {
     fn into_expr(self, ctx: &mut GrammarContext) -> Result<ExpressionKind> {
         let mut expr = ChoiceExpression::default();
         for term in self.terms {

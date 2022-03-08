@@ -1,6 +1,6 @@
 [package]
 name = "character-set"
-version = "0.1.0"
+version = "0.2.1"
 authors = ["Aster <192607617@qq.com>"]
 description = "High performance `set.contains(char)`"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"

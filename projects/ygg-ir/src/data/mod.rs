@@ -1,24 +1,57 @@
-use ucd_trie::TrieSetOwned;
+use std::{
+    fmt::{Display, Formatter, Write},
+    hash::Hash,
+    ops::Range,
+};
 
-use crate::rule::ExpressionKind;
+use num::BigInt;
 
-mod charset;
+use character_set::CharacterSet;
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+use crate::{data::charset::string_display, *};
+
+pub mod builtin;
+pub mod charset;
+pub mod rule_ref;
+pub mod symbol;
+
+//
+// #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum DataKind {
-    AnyCharacter,
-    Integer(isize),
+    Integer(BigInt),
     String(String),
     Rule(RuleReference),
-    CharacterSet(TrieSetOwned),
+    CharacterAny,
+    Character(char),
+    CharacterRange(Range<char>),
+    CharacterSet(CharacterSet),
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
-pub struct RuleReference {
-    pub tag: String,
-    pub name: String,
-    pub inline: bool,
+impl Display for DataKind {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            DataKind::Integer(i) => {
+                write!(f, "{}", i)
+            }
+            DataKind::String(s) => string_display(s, f)?,
+            DataKind::Rule(_) => {
+                todo!()
+            }
+            DataKind::CharacterAny => {
+                todo!()
+            }
+            DataKind::Character { .. } => {
+                todo!()
+            }
+            DataKind::CharacterRange { .. } => {
+                todo!()
+            }
+            DataKind::CharacterSet(set) => todo!(),
+        }
+    }
 }
+
+impl DataKind {}
 
 impl From<DataKind> for ExpressionKind {
     fn from(e: DataKind) -> Self {
@@ -29,7 +62,7 @@ impl From<DataKind> for ExpressionKind {
 impl ExpressionKind {
     pub fn rule(name: &str) -> Self {
         let data = match name {
-            "ANY" => DataKind::AnyCharacter,
+            "ANY" => DataKind::CharacterAny,
             "XID_START" => DataKind::Builtin(name.to_string()),
             _ => DataKind::Rule(RuleReference::new(name)),
         };
@@ -42,24 +75,16 @@ impl ExpressionKind {
     pub fn builtin(name: &str) -> Option<Self> {}
 }
 
-impl RuleReference {
-    pub fn new(name: &str) -> Self {
-        Self { tag: "".to_string(), name: name.trim_start_matches("_").to_string(), inline: name.starts_with('_') }
-    }
-}
-
 impl DataKind {
     pub fn set_tag(&mut self, tag: String) {
         match self {
-            DataKind::AnyCharacter => {}
+            DataKind::CharacterAny => {}
             DataKind::String(_) => {}
-            DataKind::Regex(_) => {}
             DataKind::Rule(r) => r.tag = tag,
             DataKind::Integer(_) => {}
             DataKind::Character(_) => {}
             DataKind::CharacterRange(_) => {}
             DataKind::CharacterSet(_) => {}
-            DataKind::Builtin(_) => {}
         }
     }
 }

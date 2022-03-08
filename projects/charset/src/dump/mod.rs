@@ -18,7 +18,7 @@ impl Default for DumpAction {
     fn default() -> Self {
         Self {
             name: "".to_string(),
-            public: "".to_string(),
+            public: "pub".to_string(),
             skip_fmt: true,
             dump_tree: true,
             dump_check: true,
@@ -32,8 +32,11 @@ impl DumpAction {
         let mut out = String::new();
         if self.dump_tree {
             let tree = set.compress();
-            self.dump_tree(tree.as_slice(), &mut out).unwrap_or_default();
-            if self.dump_check {}
+            self.write_tree(tree.as_slice(), &mut out).unwrap_or_default();
+            if self.dump_check {
+                out.push_str("\n\n");
+                self.write_check(&mut out).unwrap_or_default()
+            }
         }
         return out;
     }
@@ -49,7 +52,8 @@ impl DumpAction {
     //     write!(w, "];")?;
     //     Ok(w)
     // }
-    fn dump_tree(&self, tree: TrieSetSlice, w: &mut impl Write) -> Result<(), std::fmt::Error> {
+
+    fn write_tree(&self, tree: TrieSetSlice, w: &mut impl Write) -> Result<(), std::fmt::Error> {
         self.write_skip_fmt(w)?;
         self.write_public(w)?;
         writeln!(w, "const {name}: {trie_set} = {trie_set} {{", name = self.name, trie_set = self.trie_set)?;
@@ -59,6 +63,13 @@ impl DumpAction {
         writeln!(w, "    tree3_level1: &{:?},", tree.tree3_level1)?;
         writeln!(w, "    tree3_level2: &{:?},", tree.tree3_level2)?;
         writeln!(w, "    tree3_level3: &{:?},", tree.tree3_level3)?;
+        write!(w, "}};")?;
+        Ok(())
+    }
+    fn write_check(&self, w: &mut impl Write) -> Result<(), std::fmt::Error> {
+        self.write_public(w)?;
+        writeln!(w, "fn is_{name}(c: char) -> bool {{", name = self.name.to_ascii_lowercase())?;
+        writeln!(w, "    {name}.contains_char(c)", name = self.name)?;
         write!(w, "}};")?;
         Ok(())
     }

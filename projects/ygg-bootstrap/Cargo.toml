@@ -12,9 +12,7 @@ edition = "2021"
 peginator = "0.2.5"
 unicode-xid = "0.2.4"
 
-
-
-[dependencies.yggdrasil-shared]
+[dependencies.yggdrasil-rt]
 version = "0.1"
 path = "../ygg-rt"
 features = ["lsp"]

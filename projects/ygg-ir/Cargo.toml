@@ -9,10 +9,13 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
+character-set = { version = "0.2.1", path = "../charset" }
 yggdrasil-error = {version = "0.1.0", path = "../ygg-error"}
 indexmap = "1.9.1"
 ucd-trie = "0.1.5"
 ucd-util = "0.1.9"
+num = "0.4.0"
+serde = { version = "1.0.145", features = ["derive"] }
 
 [dependencies.chumsky]
 version = "0.8.0"

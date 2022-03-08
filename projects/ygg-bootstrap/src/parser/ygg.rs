@@ -23,7 +23,7 @@ pub struct DefineStatement {
     pub symbol: Identifier,
     pub arguments: Option<Arguments>,
     pub r#type: Option<Typing>,
-    pub body: Choice,
+    pub body: ChoiceNode,
     pub position: std::ops::Range<usize>,
 }
 pub type DEFINE = String;
@@ -44,7 +44,7 @@ pub struct Modifiers {
     pub position: std::ops::Range<usize>,
 }
 #[derive(Debug, Clone)]
-pub struct Choice {
+pub struct ChoiceNode {
     pub terms: Vec<Term>,
     pub position: std::ops::Range<usize>,
 }
@@ -77,7 +77,7 @@ pub enum Node {
 }
 #[derive(Debug, Clone)]
 pub struct Group {
-    pub body: Choice,
+    pub body: ChoiceNode,
     pub position: std::ops::Range<usize>,
 }
 #[derive(Debug, Clone)]
@@ -499,7 +499,7 @@ mod peginator_generated {
                 Ok(ok_result.map(|result| Parsed { body: result }))
             }
             pub struct Parsed {
-                pub body: Choice,
+                pub body: ChoiceNode,
             }
         }
         mod part_8 {
@@ -639,7 +639,7 @@ mod peginator_generated {
             pub symbol: Identifier,
             pub arguments: Option<Arguments>,
             pub r#type: Option<Typing>,
-            pub body: Choice,
+            pub body: ChoiceNode,
         }
         #[inline(always)]
         pub fn rule_parser<'a>(state: ParseState<'a>, tracer: impl ParseTracer, cache: &mut ParseCache<'a>) -> ParseResult<'a, super::DefineStatement> {
@@ -1529,16 +1529,16 @@ mod peginator_generated {
             pub terms: Vec<Term>,
         }
         #[inline(always)]
-        pub fn rule_parser<'a>(state: ParseState<'a>, tracer: impl ParseTracer, cache: &mut ParseCache<'a>) -> ParseResult<'a, super::Choice> {
-            let result = parse(state.clone(), tracer, cache)?.map_with_state(|r, new_state| super::Choice { terms: r.terms, position: state.range_until(new_state) });
+        pub fn rule_parser<'a>(state: ParseState<'a>, tracer: impl ParseTracer, cache: &mut ParseCache<'a>) -> ParseResult<'a, super::ChoiceNode> {
+            let result = parse(state.clone(), tracer, cache)?.map_with_state(|r, new_state| super::ChoiceNode { terms: r.terms, position: state.range_until(new_state) });
             Ok(result)
         }
     }
     #[inline]
-    pub(super) fn parse_Choice<'a>(state: ParseState<'a>, tracer: impl ParseTracer, cache: &mut ParseCache<'a>) -> ParseResult<'a, Choice> {
+    pub(super) fn parse_Choice<'a>(state: ParseState<'a>, tracer: impl ParseTracer, cache: &mut ParseCache<'a>) -> ParseResult<'a, ChoiceNode> {
         tracer.run_traced("Choice", state, |state, tracer| Choice_impl::rule_parser(state, tracer, cache))
     }
-    impl PegPosition for Choice {
+    impl PegPosition for ChoiceNode {
         fn position(&self) -> &std::ops::Range<usize> {
             &self.position
         }
@@ -2111,7 +2111,7 @@ mod peginator_generated {
                 Ok(ok_result.map(|result| Parsed { body: result }))
             }
             pub struct Parsed {
-                pub body: Choice,
+                pub body: ChoiceNode,
             }
         }
         mod part_2 {
@@ -2166,7 +2166,7 @@ mod peginator_generated {
             Ok(ParseOk { result: Parsed { body }, state, farthest_error })
         }
         pub struct Parsed {
-            pub body: Choice,
+            pub body: ChoiceNode,
         }
         #[inline(always)]
         pub fn rule_parser<'a>(state: ParseState<'a>, tracer: impl ParseTracer, cache: &mut ParseCache<'a>) -> ParseResult<'a, super::Group> {

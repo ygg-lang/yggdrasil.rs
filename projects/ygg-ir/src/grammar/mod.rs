@@ -1,14 +1,19 @@
+use std::collections::BTreeMap;
+
+use yggdrasil_error::Url;
+
+use crate::*;
+
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct GrammarInfo {
     /// File path of the grammar
     pub url: Option<Url>,
-    pub name: Symbol,
-    pub extensions: Vec<Symbol>,
-    pub ignores: Vec<Symbol>,
+    pub name: String,
+    pub extensions: Vec<String>,
     pub imports: BTreeMap<Url, Vec<SymbolAlias>>,
     pub exports: Vec<String>,
     pub rules: BTreeMap<String, GrammarRule>,
-    pub macros: Vec<String>,
+    pub functions: Vec<String>,
     pub rule_prefix: String,
     pub rule_suffix: String,
 }
@@ -17,14 +22,18 @@ impl Default for GrammarInfo {
     fn default() -> Self {
         Self {
             url: None,
-            is_grammar: false,
-            name: Symbol { name: "".to_string(), range: Default::default() },
+            name: "".to_string(),
             extensions: vec![],
-            ignores: vec![],
             imports: Default::default(),
+            exports: vec![],
             rules: Default::default(),
+            functions: vec![],
             rule_prefix: "".to_string(),
             rule_suffix: "Node".to_string(),
         }
     }
+}
+
+impl GrammarInfo {
+    pub fn ignored_rules(&self) -> Vec<GrammarRule> {}
 }

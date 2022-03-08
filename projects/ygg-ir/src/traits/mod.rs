@@ -1,3 +1,6 @@
+use crate::*;
+use yggdrasil_error::{Diagnostic, YggdrasilResult};
+
 pub trait CodeOptimizer {
     fn optimize(&self, info: &mut GrammarInfo) -> YggdrasilResult;
 }
@@ -12,7 +15,7 @@ impl GrammarInfo {
         for opt in pass {
             errors.extend(opt.optimize(self)?.errors);
         }
-        Ok(Diagnostics { success: (), errors })
+        Ok(Diagnostic { success: (), errors })
     }
     pub fn codegen<T>(&self, pass: impl CodeGenerator<T>) -> YggdrasilResult {
         pass.generate(self)

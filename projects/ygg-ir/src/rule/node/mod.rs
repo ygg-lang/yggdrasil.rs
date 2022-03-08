@@ -1,12 +1,3 @@
-use std::{fmt::Debug, ops::Range};
-
-use character_set::CharacterSet;
-use indexmap::set::IndexSet;
-use std::{
-    collections::BTreeSet,
-    hash::{Hash, Hasher},
-};
-
 use super::*;
 
 pub mod choice;
