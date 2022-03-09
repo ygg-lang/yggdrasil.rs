@@ -1,10 +1,12 @@
 use std::collections::BTreeMap;
 
+use serde::{Deserialize, Serialize};
+
 use yggdrasil_error::Url;
 
 use crate::*;
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct GrammarInfo {
     /// File path of the grammar
     pub url: Option<Url>,
@@ -35,5 +37,7 @@ impl Default for GrammarInfo {
 }
 
 impl GrammarInfo {
-    pub fn ignored_rules(&self) -> Vec<GrammarRule> {}
+    pub fn ignored_rules(&self) -> Vec<GrammarRule> {
+        todo!()
+    }
 }

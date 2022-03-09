@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub struct UnaryExpression {
     pub base: ExpressionKind,
     pub ops: Vec<Operator>,

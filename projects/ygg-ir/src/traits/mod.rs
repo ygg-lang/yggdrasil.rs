@@ -17,7 +17,7 @@ impl GrammarInfo {
         }
         Ok(Diagnostic { success: (), errors })
     }
-    pub fn codegen<T>(&self, pass: impl CodeGenerator<T>) -> YggdrasilResult {
+    pub fn codegen<T>(&self, pass: impl CodeGenerator<T>) -> YggdrasilResult<T> {
         pass.generate(self)
     }
 }

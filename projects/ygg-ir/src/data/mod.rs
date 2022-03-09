@@ -1,3 +1,4 @@
+use chumsky::prelude::todo;
 use std::{
     fmt::{Display, Formatter, Write},
     hash::Hash,
@@ -5,6 +6,7 @@ use std::{
 };
 
 use num::BigInt;
+use serde::{Deserialize, Serialize};
 
 use character_set::CharacterSet;
 
@@ -16,7 +18,7 @@ pub mod rule_ref;
 pub mod symbol;
 
 //
-// #[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub enum DataKind {
     Integer(BigInt),
     String(String),
@@ -30,9 +32,7 @@ pub enum DataKind {
 impl Display for DataKind {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DataKind::Integer(i) => {
-                write!(f, "{}", i)
-            }
+            DataKind::Integer(i) => write!(f, "{}", i)?,
             DataKind::String(s) => string_display(s, f)?,
             DataKind::Rule(_) => {
                 todo!()
@@ -48,6 +48,7 @@ impl Display for DataKind {
             }
             DataKind::CharacterSet(set) => todo!(),
         }
+        Ok(())
     }
 }
 
@@ -63,7 +64,10 @@ impl ExpressionKind {
     pub fn rule(name: &str) -> Self {
         let data = match name {
             "ANY" => DataKind::CharacterAny,
-            "XID_START" => DataKind::Builtin(name.to_string()),
+            "XID_START" => {
+                todo!();
+                // DataKind::CharacterSet(name.to_string())
+            }
             _ => DataKind::Rule(RuleReference::new(name)),
         };
         ExpressionKind::Data(Box::new(data))
@@ -72,7 +76,9 @@ impl ExpressionKind {
         let data = DataKind::String(string);
         ExpressionKind::Data(Box::new(data))
     }
-    pub fn builtin(name: &str) -> Option<Self> {}
+    pub fn builtin(name: &str) -> Option<Self> {
+        todo!()
+    }
 }
 
 impl DataKind {

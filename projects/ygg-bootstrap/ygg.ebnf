@@ -3,7 +3,7 @@
 ProgramParser = program:ProgramNode $;
 
 @position
-ProgramNode = {statements:StatementNode}
+ProgramNode = {statements:StatementNode};
 
 StatementNode =
     @:DefineStatement [EOS]

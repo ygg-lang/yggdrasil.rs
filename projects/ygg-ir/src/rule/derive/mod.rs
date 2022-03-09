@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Clone, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct RuleDerive {
     pub(crate) parser: Option<String>,
     pub(crate) debug: Option<String>,

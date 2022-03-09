@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ChoiceExpression {
     pub tag: String,
     pub inner: IndexSet<ExpressionKind>,
@@ -15,9 +15,7 @@ impl Default for ChoiceExpression {
 impl Hash for ChoiceExpression {
     fn hash<H: Hasher>(&self, state: &mut H) {
         state.write(self.tag.as_bytes());
-        for item in &self.inner {
-            item.hash(state)
-        }
+        self.inner.iter().for_each(|e| e.hash(state))
     }
 }
 

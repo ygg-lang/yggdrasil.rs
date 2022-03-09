@@ -35,7 +35,7 @@ pub(super) fn string_display(s: &str, f: &mut Formatter<'_>) -> std::fmt::Result
     for char in s.chars() {
         match char {
             '\n' => f.write_str("\\n")?,
-            _ => f.write_char(char),
+            _ => f.write_char(char)?,
         }
     }
     Ok(())

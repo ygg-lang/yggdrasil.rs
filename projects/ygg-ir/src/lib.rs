@@ -2,12 +2,12 @@ pub use self::{
     data::{rule_ref::RuleReference, symbol::SymbolAlias, DataKind},
     grammar::GrammarInfo,
     rule::{
+        derive::RuleDerive,
         node::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression, ExpressionKind, Operator},
         GrammarRule,
     },
 };
 
-// mod optimize;
 mod data;
 mod grammar;
 mod rule;
