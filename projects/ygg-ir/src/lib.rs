@@ -4,7 +4,7 @@ pub use self::{
     rule::{
         derive::RuleDerive,
         node::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression, ExpressionKind, Operator},
-        GrammarRule,
+        FunctionRule, GrammarRule,
     },
 };
 

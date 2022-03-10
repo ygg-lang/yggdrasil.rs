@@ -1,6 +1,6 @@
 use super::*;
 
-impl GrammarContext {
+impl GrammarParser {
     // pub(super) fn read_import(&mut self, call: ImportStatement) {
     //     let url = match Self::resolve_url(self.info, &call.path.data) {
     //         Ok(o) => o,
