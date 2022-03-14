@@ -1,5 +1,5 @@
-mod from_ast;
 #[allow(warnings, unused)]
-mod ygg;
+pub mod ast;
+mod from_ast;
 
-pub use ygg::*;
+pub use self::from_ast::GrammarParser;

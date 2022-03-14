@@ -5,23 +5,22 @@ use peginator::PegParser;
 use yggdrasil_ir::{ChoiceExpression, ExpressionKind, FunctionRule, GrammarInfo, GrammarRule, Operator, UnaryExpression};
 use yggdrasil_rt::{Diagnostic, YggdrasilError, YggdrasilResult};
 
-use crate::{
-    parser::{ChoiceNode, DefineStatement, Node, ProgramNode, ProgramParser, StatementNode, StringItem},
-    Result,
-};
+use crate::parser::ast::{ChoiceNode, DefineStatement, Node, ProgramNode, ProgramParser, StatementNode, StringItem};
 
 mod import;
 
 pub struct GrammarParser {
-    pub info: GrammarInfo,
-    pub docs: String,
-    pub errors: Vec<YggdrasilError>,
+    info: GrammarInfo,
+    docs: String,
+    errors: Vec<YggdrasilError>,
 }
 
-pub fn parse(input: &str) -> YggdrasilResult<GrammarInfo> {
-    let mut ctx = GrammarParser { info: Default::default(), docs: "".to_string(), errors: vec![] };
-    ProgramParser::parse(input)?.translate(&mut ctx)?;
-    Ok(Diagnostic { success: ctx.info, errors: ctx.errors })
+impl GrammarParser {
+    pub fn parse(input: &str) -> YggdrasilResult<GrammarInfo> {
+        let mut ctx = GrammarParser { info: Default::default(), docs: "".to_string(), errors: vec![] };
+        ProgramParser::parse(input)?.program.translate(&mut ctx)?;
+        Ok(Diagnostic { success: ctx.info, errors: ctx.errors })
+    }
 }
 
 impl ProgramNode {
