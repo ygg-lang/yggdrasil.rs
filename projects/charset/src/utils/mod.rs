@@ -1,9 +1,9 @@
 use serde::{ser::SerializeSeq, Deserialize, Deserializer, Serialize, Serializer};
 use std::{
-    fmt::{Debug, Display, Formatter, Write},
+    fmt::{Debug, Display, Formatter},
     ops::Range,
 };
-use ucd_trie::{TrieSet, TrieSetOwned};
+use ucd_trie::TrieSetOwned;
 
 mod arithmetic;
 mod save;

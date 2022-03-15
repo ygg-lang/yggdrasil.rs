@@ -94,7 +94,7 @@ impl Display for YggdrasilError {
                 writeln!(f, "at {}", path)?;
             }
         }
-        write!(f, "{:indent$}{}", self.kind, indent = 4)
+        write!(f, "{indent:indent$}{kind}", indent = 4, kind = self.kind)
     }
 }
 
