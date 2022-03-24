@@ -22,7 +22,7 @@ version = "0.1"
 path = "../ygg-ir"
 
 [dependencies.yggdrasil-error]
-version = "0.1"
+version = "0.1.1"
 path = "../ygg-error"
 features = ["peginator"]
 

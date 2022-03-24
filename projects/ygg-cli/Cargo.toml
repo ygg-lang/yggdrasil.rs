@@ -13,6 +13,6 @@ name = "ygg"
 path = "src/main.rs"
 
 [dependencies]
-yggdrasil-core = { version = "0.1", path = "../ygg-core" }
+yggdrasil-bootstrap = { version = "0.1", path = "../ygg-bootstrap" }
 clap = "4.0.0-rc.2"
 anyhow = "1.0.65"

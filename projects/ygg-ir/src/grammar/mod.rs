@@ -1,3 +1,4 @@
+mod dead_code;
 use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};

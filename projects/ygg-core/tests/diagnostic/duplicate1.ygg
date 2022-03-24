@@ -1,5 +1,0 @@
-@grammar test;
-
-rule = a ~ b;
-
-@fragment test;
