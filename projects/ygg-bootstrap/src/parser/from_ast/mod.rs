@@ -1,9 +1,9 @@
 use std::mem::take;
 
 use peginator::PegParser;
+use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
 
 use yggdrasil_ir::{ChoiceExpression, ExpressionKind, FunctionRule, GrammarInfo, GrammarRule, Operator, UnaryExpression};
-use yggdrasil_rt::{Diagnostic, YggdrasilError, YggdrasilResult};
 
 use crate::parser::ast::{ChoiceNode, DefineStatement, Node, ProgramNode, ProgramParser, StatementNode, StringItem};
 
@@ -18,7 +18,7 @@ pub struct GrammarParser {
 impl GrammarParser {
     pub fn parse(input: &str) -> YggdrasilResult<GrammarInfo> {
         let mut ctx = GrammarParser { info: Default::default(), docs: "".to_string(), errors: vec![] };
-        ProgramParser::parse(input)?.program.translate(&mut ctx)?;
+        ProgramParser::parse(input).unwrap().program.translate(&mut ctx)?;
         Ok(Diagnostic { success: ctx.info, errors: ctx.errors })
     }
 }
@@ -53,8 +53,8 @@ impl DefineStatement {
             name = name.trim_start_matches("_").to_string()
         }
         let mut r#type = String::new();
-        if let Some(s) = self.r#type {
-            r#type = s.id.string
+        if let Some(s) = &self.r#type {
+            r#type = s.id.string.to_owned()
         }
         if self.arguments.is_some() {
             let _ = FunctionRule {};
@@ -82,16 +82,16 @@ impl DefineStatement {
 }
 
 impl ChoiceNode {
-    fn into_expr(self, ctx: &mut GrammarParser) -> Result<ExpressionKind, YggdrasilError> {
+    fn into_expr(&self, ctx: &mut GrammarParser) -> Result<ExpressionKind, YggdrasilError> {
         let mut expr = ChoiceExpression::default();
-        for term in self.terms {
-            let mut body = match term.node {
+        for term in &self.terms {
+            let mut body = match &term.node {
                 Node::Identifier(node) => ExpressionKind::rule(&node.string),
                 Node::StringLiteral(node) => {
                     let mut s = String::new();
-                    for item in node.body {
+                    for item in &node.body {
                         match item {
-                            StringItem::CharOne(c) => s.push(c),
+                            StringItem::CharOne(c) => s.push(*c),
                             StringItem::StringEscaped(escaped) => match escaped.char {
                                 'n' => s.push('\n'),
                                 _ => s.push(escaped.char),
@@ -105,9 +105,9 @@ impl ChoiceNode {
                 }
                 Node::Group(node) => node.body.into_expr(ctx)?,
             };
-            body.set_tag(term.tag.map(|f| f.string).unwrap_or_default());
+            body.set_tag(term.tag.as_ref().map(|f| f.string.to_owned()).unwrap_or_default());
             let mut ops = vec![];
-            for suffix in term.suffix {
+            for suffix in &term.suffix {
                 match suffix {
                     '?' => ops.push(Operator::Optional),
                     '*' => ops.push(Operator::Repeat),
@@ -115,7 +115,7 @@ impl ChoiceNode {
                     _ => unreachable!(),
                 }
             }
-            for suffix in term.prefix.into_iter().rev() {
+            for suffix in term.prefix.iter().rev() {
                 match suffix {
                     '^' => ops.push(Operator::Remark),
                     '!' => ops.push(Operator::Negative),

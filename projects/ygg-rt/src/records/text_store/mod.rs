@@ -1,11 +1,12 @@
 #[cfg(feature = "lsp")]
 mod lsp;
 
-use crate::{TextIndex, YggdrasilError, YggdrasilResult};
+use crate::TextIndex;
 use dashmap::DashMap;
 use ropey::Rope;
 use std::{borrow::Borrow, ops::RangeBounds};
 use url::Url;
+use yggdrasil_error::YggdrasilError;
 
 #[derive(Default)]
 pub struct TextStore {
@@ -22,7 +23,7 @@ impl TextStore {
         self.inner.insert(url, Rope::from_str(text))
     }
 
-    pub fn insert_incremental(&mut self, url: Url, offset: usize, text: &str) -> YggdrasilResult {
+    pub fn insert_incremental(&mut self, url: Url, offset: usize, text: &str) -> Result<(), YggdrasilError> {
         match self.inner.get_mut(&url) {
             Some(mut s) => {
                 // Ok(s.value_mut().try_insert(offset, text)?)
@@ -36,7 +37,7 @@ impl TextStore {
         self.inner.remove(url)
     }
 
-    pub fn delete_incremental(&mut self, url: Url, range: impl RangeBounds<usize>) -> YggdrasilResult {
+    pub fn delete_incremental(&mut self, url: Url, range: impl RangeBounds<usize>) -> Result<(), YggdrasilError> {
         match self.inner.get_mut(&url) {
             Some(mut s) => {
                 // Ok(s.value_mut().try_remove(range)?)

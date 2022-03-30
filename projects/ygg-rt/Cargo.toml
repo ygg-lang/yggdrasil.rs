@@ -18,6 +18,11 @@ ropey = "1.5.0"
 dashmap = "5.4.0"
 peginator = "0.2.5"
 
+[dependencies.yggdrasil-error]
+version = "0.1.1"
+path = "../ygg-error"
+features = []
+
 [features]
 default = ["lsp"]
 lsp = ["lsp-types"]
