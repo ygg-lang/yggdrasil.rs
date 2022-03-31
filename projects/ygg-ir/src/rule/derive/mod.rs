@@ -36,6 +36,6 @@ impl Debug for RuleDerive {
 
 impl Display for RuleDerive {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        todo!()
+        write!(f, "#derive({})", self.derived().join(", "))
     }
 }

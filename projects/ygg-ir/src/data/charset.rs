@@ -24,6 +24,9 @@ impl DataKind {
                     unsafe { *self = DataKind::CharacterRange(ranges.get_unchecked(0).clone()) }
                 }
             }
+            DataKind::CharacterBuiltin(_) => {
+                todo!()
+            }
         }
     }
 }
@@ -39,4 +42,16 @@ pub(super) fn string_display(s: &str, f: &mut Formatter<'_>) -> std::fmt::Result
         }
     }
     Ok(())
+}
+
+pub(super) fn char_range_display(range: &Range<char>, f: &mut Formatter<'_>) -> std::fmt::Result {
+    write!(f, "[{}-{}]", range.start, range.end)
+}
+
+pub(super) fn char_set_display(set: &CharacterSet, f: &mut Formatter<'_>) -> std::fmt::Result {
+    write!(f, "[")?;
+    for range in set.to_ranges() {
+        write!(f, "{}-{}", range.start, range.end)?
+    }
+    write!(f, "]")
 }

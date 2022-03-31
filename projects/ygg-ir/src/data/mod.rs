@@ -1,5 +1,5 @@
 use std::{
-    fmt::{Display, Formatter},
+    fmt::{Debug, Display, Formatter},
     hash::Hash,
     ops::Range,
 };
@@ -9,7 +9,10 @@ use serde::{Deserialize, Serialize};
 
 use character_set::CharacterSet;
 
-use crate::{data::charset::string_display, *};
+use crate::{
+    data::charset::{char_range_display, char_set_display, string_display},
+    *,
+};
 
 pub mod builtin;
 pub mod charset;
@@ -24,6 +27,7 @@ pub enum DataKind {
     Rule(RuleReference),
     CharacterAny,
     Character(char),
+    CharacterBuiltin(String),
     CharacterRange(Range<char>),
     CharacterSet(CharacterSet),
 }
@@ -31,23 +35,15 @@ pub enum DataKind {
 impl Display for DataKind {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DataKind::Integer(i) => write!(f, "{}", i)?,
-            DataKind::String(s) => string_display(s, f)?,
-            DataKind::Rule(_) => {
-                todo!()
-            }
-            DataKind::CharacterAny => {
-                todo!()
-            }
-            DataKind::Character { .. } => {
-                todo!()
-            }
-            DataKind::CharacterRange { .. } => {
-                todo!()
-            }
-            DataKind::CharacterSet(set) => todo!(),
+            DataKind::Integer(i) => write!(f, "{}", i),
+            DataKind::String(s) => string_display(s, f),
+            DataKind::Rule(rule) => Display::fmt(rule, f),
+            DataKind::CharacterAny => write!(f, "ANY"),
+            DataKind::Character(c) => write!(f, "{:?}", c),
+            DataKind::CharacterRange(range) => char_range_display(range, f),
+            DataKind::CharacterBuiltin(set) => write!(f, "{}", set),
+            DataKind::CharacterSet(set) => char_set_display(set, f),
         }
-        Ok(())
     }
 }
 
@@ -76,7 +72,14 @@ impl ExpressionKind {
         ExpressionKind::Data(Box::new(data))
     }
     pub fn builtin(name: &str) -> Option<Self> {
-        todo!()
+        let builtin = &["XID_START"];
+        if builtin.contains(&name) {
+            let data = DataKind::CharacterBuiltin(name.to_string());
+            Some(ExpressionKind::Data(Box::new(data)))
+        }
+        else {
+            return None;
+        }
     }
 }
 
@@ -90,6 +93,7 @@ impl DataKind {
             DataKind::Character(_) => {}
             DataKind::CharacterRange(_) => {}
             DataKind::CharacterSet(_) => {}
+            DataKind::CharacterBuiltin(_) => {}
         }
     }
 }
