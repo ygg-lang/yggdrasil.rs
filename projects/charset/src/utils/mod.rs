@@ -97,9 +97,11 @@ pub(crate) fn range_u2c(start: u32, end: u32) -> Range<char> {
     }
     #[cfg(not(debug_assertions))]
     {
-        let start = char::from_u32_unchecked(start);
-        let end = char::from_u32_unchecked(end);
-        Range { start, end }
+        unsafe {
+            let start = char::from_u32_unchecked(start);
+            let end = char::from_u32_unchecked(end);
+            Range { start, end }
+        }
     }
 }
 

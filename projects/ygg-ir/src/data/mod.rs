@@ -1,5 +1,5 @@
 use std::{
-    fmt::{Display, Formatter, Write},
+    fmt::{Display, Formatter},
     hash::Hash,
     ops::Range,
 };

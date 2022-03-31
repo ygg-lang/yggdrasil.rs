@@ -1,5 +1,4 @@
 use super::*;
-use std::hash::{Hash, Hasher};
 
 impl ExpressionKind {
     pub fn is_choice(&self) -> bool {

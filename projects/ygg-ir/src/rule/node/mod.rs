@@ -16,7 +16,7 @@ pub enum ExpressionKind {
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub enum Operator {
-    /// ```
+    /// ```ygg
     /// !e
     /// ```
     Negative,
