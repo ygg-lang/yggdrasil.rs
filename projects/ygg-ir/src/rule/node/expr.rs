@@ -1,24 +1,24 @@
 use super::*;
 
-impl ExpressionKind {
+impl ExpressionNode {
     pub fn is_choice(&self) -> bool {
-        matches!(self, ExpressionKind::Choice(_))
+        matches!(self, ExpressionNode::Choice(_))
     }
     pub fn is_concat(&self) -> bool {
-        matches!(self, ExpressionKind::Concat(_))
+        matches!(self, ExpressionNode::Concat(_))
     }
     pub fn is_unary(&self) -> bool {
-        matches!(self, ExpressionKind::Unary(_))
+        matches!(self, ExpressionNode::Unary(_))
     }
 }
 
-impl ExpressionKind {
+impl ExpressionNode {
     pub fn set_tag(&mut self, tag: String) {
         match self {
-            ExpressionKind::Choice(_) => {}
-            ExpressionKind::Concat(_) => {}
-            ExpressionKind::Unary(e) => e.set_tag(tag),
-            ExpressionKind::Data(e) => e.set_tag(tag),
+            ExpressionNode::Choice(_) => {}
+            ExpressionNode::Concat(_) => {}
+            ExpressionNode::Unary(e) => e.set_tag(tag),
+            ExpressionNode::Data(e) => e.set_tag(tag),
         }
     }
 }

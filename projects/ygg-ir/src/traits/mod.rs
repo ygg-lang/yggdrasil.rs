@@ -2,22 +2,25 @@ use crate::*;
 use yggdrasil_error::{Diagnostic, YggdrasilResult};
 
 pub trait CodeOptimizer {
-    fn optimize(&self, info: &mut GrammarInfo) -> YggdrasilResult;
+    fn optimize(&mut self, info: &GrammarInfo) -> YggdrasilResult<GrammarInfo>;
 }
 
 pub trait CodeGenerator<T> {
-    fn generate(&self, info: &GrammarInfo) -> YggdrasilResult<T>;
+    fn generate(&mut self, info: &GrammarInfo) -> YggdrasilResult<T>;
 }
 
 impl GrammarInfo {
-    pub fn optimize(&mut self, pass: &[impl CodeOptimizer]) -> YggdrasilResult {
+    pub fn optimize(&self, mut pass: Vec<impl CodeOptimizer>) -> YggdrasilResult<GrammarInfo> {
         let mut errors = vec![];
-        for opt in pass {
-            errors.extend(opt.optimize(self)?.errors);
+        let mut out = GrammarInfo::default();
+        for co in pass.iter_mut() {
+            let step = co.optimize(self)?;
+            out = step.success;
+            errors.extend(step.errors);
         }
-        Ok(Diagnostic { success: (), errors })
+        Ok(Diagnostic { success: out, errors })
     }
-    pub fn codegen<T>(&self, pass: impl CodeGenerator<T>) -> YggdrasilResult<T> {
+    pub fn codegen<T>(&self, mut pass: impl CodeGenerator<T>) -> YggdrasilResult<T> {
         pass.generate(self)
     }
 }

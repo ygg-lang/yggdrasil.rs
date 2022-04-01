@@ -3,7 +3,7 @@ use super::*;
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ChoiceExpression {
     pub tag: String,
-    pub inner: IndexSet<ExpressionKind>,
+    pub inner: IndexSet<ExpressionNode>,
 }
 
 impl Default for ChoiceExpression {
@@ -20,7 +20,7 @@ impl Hash for ChoiceExpression {
 }
 
 impl ChoiceExpression {
-    pub fn push(&mut self, e: impl Into<ExpressionKind>) {
+    pub fn push(&mut self, e: impl Into<ExpressionNode>) {
         self.inner.insert(e.into());
     }
 }

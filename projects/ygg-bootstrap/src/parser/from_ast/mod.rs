@@ -3,7 +3,7 @@ use std::mem::take;
 use peginator::PegParser;
 use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
 
-use yggdrasil_ir::{ChoiceExpression, ExpressionKind, FunctionRule, GrammarInfo, GrammarRule, Operator, UnaryExpression};
+use yggdrasil_ir::{ChoiceExpression, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule, Operator, UnaryExpression};
 
 use crate::parser::ast::{ChoiceNode, DefineStatement, Node, ProgramNode, ProgramParser, StatementNode, StringItem};
 
@@ -68,7 +68,7 @@ impl DefineStatement {
                 auto_inline,
                 auto_boxed: self.annotation("boxed", false),
                 auto_capture: self.annotation("capture", true),
-                atomic_rule: self.annotation("capture", false),
+                atomic: self.annotation("capture", false),
                 keep: false,
                 used: false,
                 body: self.body.into_expr(ctx)?,
@@ -82,11 +82,11 @@ impl DefineStatement {
 }
 
 impl ChoiceNode {
-    fn into_expr(&self, ctx: &mut GrammarParser) -> Result<ExpressionKind, YggdrasilError> {
+    fn into_expr(&self, ctx: &mut GrammarParser) -> Result<ExpressionNode, YggdrasilError> {
         let mut expr = ChoiceExpression::default();
         for term in &self.terms {
             let mut body = match &term.node {
-                Node::Identifier(node) => ExpressionKind::rule(&node.string),
+                Node::Identifier(node) => ExpressionNode::rule(&node.string),
                 Node::StringLiteral(node) => {
                     let mut s = String::new();
                     for item in &node.body {
@@ -98,7 +98,7 @@ impl ChoiceNode {
                             },
                         }
                     }
-                    ExpressionKind::string(s)
+                    ExpressionNode::string(s)
                 }
                 Node::Charset(node) => {
                     unimplemented!()
@@ -130,6 +130,6 @@ impl ChoiceNode {
                 expr.push(unary)
             }
         }
-        return Ok(ExpressionKind::Choice(Box::new(expr)));
+        return Ok(ExpressionNode::Choice(Box::new(expr)));
     }
 }

@@ -3,7 +3,7 @@ pub use self::{
     grammar::GrammarInfo,
     rule::{
         derive::RuleDerive,
-        node::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression, ExpressionKind, Operator},
+        node::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression, ExpressionNode, Operator},
         FunctionRule, GrammarRule,
     },
 };

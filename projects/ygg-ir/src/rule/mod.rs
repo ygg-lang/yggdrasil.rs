@@ -88,13 +88,14 @@ pub struct GrammarRule {
     ///
     pub auto_capture: bool,
     ///
-    pub atomic_rule: bool,
-    /// Keep export this rule
+    pub atomic: bool,
+    /// The entry of the parser, the name of the parser to be exported
+    pub entry: bool,
+    /// Keep export this rule, even if this rule is not used
     pub keep: bool,
-    /// The rule is used and should export
-    pub used: bool,
     ///
-    pub body: ExpressionKind,
+    pub body: ExpressionNode,
+
     /// position of all parts
     pub range: Range<usize>,
 }

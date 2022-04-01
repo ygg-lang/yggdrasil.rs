@@ -2,11 +2,11 @@ use super::*;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub struct UnaryExpression {
-    pub base: ExpressionKind,
+    pub base: ExpressionNode,
     pub ops: Vec<Operator>,
 }
 
-impl From<UnaryExpression> for ExpressionKind {
+impl From<UnaryExpression> for ExpressionNode {
     fn from(e: UnaryExpression) -> Self {
         Self::Unary(Box::new(e))
     }

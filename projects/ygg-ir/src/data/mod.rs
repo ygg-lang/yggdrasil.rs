@@ -24,7 +24,6 @@ pub mod symbol;
 pub enum DataKind {
     Integer(BigInt),
     String(String),
-    Rule(RuleReference),
     CharacterAny,
     Character(char),
     CharacterBuiltin(String),
@@ -49,13 +48,13 @@ impl Display for DataKind {
 
 impl DataKind {}
 
-impl From<DataKind> for ExpressionKind {
+impl From<DataKind> for ExpressionNode {
     fn from(e: DataKind) -> Self {
         Self::Data(Box::new(e))
     }
 }
 
-impl ExpressionKind {
+impl ExpressionNode {
     pub fn rule(name: &str) -> Self {
         let data = match name {
             "ANY" => DataKind::CharacterAny,
@@ -65,17 +64,17 @@ impl ExpressionKind {
             }
             _ => DataKind::Rule(RuleReference::new(name)),
         };
-        ExpressionKind::Data(Box::new(data))
+        ExpressionNode::Data(Box::new(data))
     }
     pub fn string(string: String) -> Self {
         let data = DataKind::String(string);
-        ExpressionKind::Data(Box::new(data))
+        ExpressionNode::Data(Box::new(data))
     }
     pub fn builtin(name: &str) -> Option<Self> {
         let builtin = &["XID_START"];
         if builtin.contains(&name) {
             let data = DataKind::CharacterBuiltin(name.to_string());
-            Some(ExpressionKind::Data(Box::new(data)))
+            Some(ExpressionNode::Data(Box::new(data)))
         }
         else {
             return None;
