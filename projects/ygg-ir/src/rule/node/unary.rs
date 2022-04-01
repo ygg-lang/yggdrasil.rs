@@ -6,17 +6,13 @@ pub struct UnaryExpression {
     pub ops: Vec<Operator>,
 }
 
-impl From<UnaryExpression> for ExpressionNode {
+impl From<UnaryExpression> for ExpressionKind {
     fn from(e: UnaryExpression) -> Self {
         Self::Unary(Box::new(e))
     }
 }
 
-impl UnaryExpression {
-    pub fn set_tag(&mut self, tag: String) {
-        self.base.set_tag(tag)
-    }
-}
+impl UnaryExpression {}
 
 impl Operator {
     pub fn prefix(o: &str) -> Operator {

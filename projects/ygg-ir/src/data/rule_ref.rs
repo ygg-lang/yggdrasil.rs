@@ -33,3 +33,37 @@ impl RuleReference {
         Self { tag: "".to_string(), name: name.trim_start_matches("_").to_string(), boxed: false, inline: name.starts_with('_') }
     }
 }
+
+impl ExpressionNode {
+    pub fn rule(name: &str) -> Self {
+        let data = match name {
+            "ANY" => DataKind::CharacterAny,
+            "XID_START" => {
+                todo!();
+                // DataKind::CharacterSet(name.to_string())
+            }
+            _ => {
+                todo!()
+                // DataKind::Rule(RuleReference::new(name))
+            }
+        };
+        todo!()
+        // ExpressionNode::Data(Box::new(data))
+    }
+    pub fn string(string: String) -> Self {
+        let data = DataKind::String(string);
+        todo!()
+        // ExpressionKind::Data(Box::new(data))
+    }
+    pub fn builtin(name: &str) -> Option<Self> {
+        // let builtin = &["XID_START"];
+        // if builtin.contains(&name) {
+        //     let data = DataKind::CharacterBuiltin(name.to_string());
+        //     Some(ExpressionNode::Data(Box::new(data)))
+        // }
+        // else {
+        //     return None;
+        // }
+        todo!()
+    }
+}

@@ -10,7 +10,6 @@ impl DataKind {
                     unsafe { *self = DataKind::Character(s.chars().nth(0).unwrap_unchecked()) }
                 }
             }
-            DataKind::Rule(_) => {}
             DataKind::CharacterAny => {}
             DataKind::Character(_) => {}
             DataKind::CharacterRange(r) => {

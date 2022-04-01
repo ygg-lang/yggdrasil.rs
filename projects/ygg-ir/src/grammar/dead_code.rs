@@ -1,6 +1,5 @@
 use std::collections::HashSet;
 
-use crate::rule::node::ExpressionKind;
 use yggdrasil_error::{Diagnostic, YggdrasilResult};
 
 use crate::traits::CodeOptimizer;
@@ -18,6 +17,16 @@ impl CodeOptimizer for DecodeEliminator {
         self.find_entry(info);
         self.find_unvisited();
         while !self.unvisited.is_empty() {
+            for rule in &self.unvisited {
+                match info.rules.get(rule) {
+                    Some(s) => {
+                        let mut new = HashSet::new();
+                        s.get_field_names(&mut new);
+                        self.new.extend(new.iter().map(|s| s.to_string()))
+                    }
+                    None => {}
+                }
+            }
             self.find_unvisited();
         }
         let rules = self.find_needed(info);
@@ -36,8 +45,9 @@ impl DecodeEliminator {
     }
     fn find_unvisited(&mut self) {
         for rule in self.new.difference(&self.used) {
-            self.unvisited.insert(rule.to_owned())
+            self.unvisited.insert(rule.to_owned());
         }
+        self.new.clear();
     }
     fn find_needed(&self, info: &GrammarInfo) -> BTreeMap<String, GrammarRule> {
         todo!()
@@ -45,39 +55,5 @@ impl DecodeEliminator {
     fn clear(&mut self) {
         self.used.clear();
         self.new.clear();
-    }
-}
-
-impl GrammarRule {
-    pub fn get_field_names(&self, buffer: &mut HashSet<&String>) {
-        self.body.get_fields(buffer)
-    }
-}
-
-impl ExpressionKind {
-    pub fn get_field_names(&self, buffer: &mut HashSet<&String>) {
-        match self {
-            ExpressionKind::Choice(e) => e.get_fields(buffer),
-            ExpressionKind::Concat(e) => e.get_field_names(buffer),
-            ExpressionKind::Unary(e) => e.get_fields(buffer),
-            ExpressionKind::Data(_) => {}
-            ExpressionKind::Rule(e) => buffer.insert(&e.name),
-        }
-    }
-}
-
-impl ConcatExpression {
-    pub fn get_field_names(&self, buffer: &mut HashSet<&String>) {}
-}
-
-impl ChoiceExpression {
-    pub fn get_field_names(&self, buffer: &mut HashSet<&String>) {
-        self.inner.iter().for_each(|f| f.get_field_names(buffer))
-    }
-}
-
-impl ConcatExpression {
-    pub fn get_field_names(&self, buffer: &mut HashSet<&String>) {
-        self.sequence.iter().for_each(|f| f.get_field_names(buffer))
     }
 }

@@ -1,5 +1,16 @@
-use crate::*;
+use std::collections::HashSet;
+
 use yggdrasil_error::{Diagnostic, YggdrasilResult};
+
+use crate::*;
+
+mod field_descriptor;
+
+pub enum FieldCount {}
+
+pub trait FieldDescriptor {
+    fn get_field_names<'a>(&'a self, buffer: &mut HashSet<&'a String>);
+}
 
 pub trait CodeOptimizer {
     fn optimize(&mut self, info: &GrammarInfo) -> YggdrasilResult<GrammarInfo>;

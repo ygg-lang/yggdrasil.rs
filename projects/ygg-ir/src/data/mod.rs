@@ -36,7 +36,6 @@ impl Display for DataKind {
         match self {
             DataKind::Integer(i) => write!(f, "{}", i),
             DataKind::String(s) => string_display(s, f),
-            DataKind::Rule(rule) => Display::fmt(rule, f),
             DataKind::CharacterAny => write!(f, "ANY"),
             DataKind::Character(c) => write!(f, "{:?}", c),
             DataKind::CharacterRange(range) => char_range_display(range, f),
@@ -47,52 +46,3 @@ impl Display for DataKind {
 }
 
 impl DataKind {}
-
-impl From<DataKind> for ExpressionNode {
-    fn from(e: DataKind) -> Self {
-        Self::Data(Box::new(e))
-    }
-}
-
-impl ExpressionNode {
-    pub fn rule(name: &str) -> Self {
-        let data = match name {
-            "ANY" => DataKind::CharacterAny,
-            "XID_START" => {
-                todo!();
-                // DataKind::CharacterSet(name.to_string())
-            }
-            _ => DataKind::Rule(RuleReference::new(name)),
-        };
-        ExpressionNode::Data(Box::new(data))
-    }
-    pub fn string(string: String) -> Self {
-        let data = DataKind::String(string);
-        ExpressionNode::Data(Box::new(data))
-    }
-    pub fn builtin(name: &str) -> Option<Self> {
-        let builtin = &["XID_START"];
-        if builtin.contains(&name) {
-            let data = DataKind::CharacterBuiltin(name.to_string());
-            Some(ExpressionNode::Data(Box::new(data)))
-        }
-        else {
-            return None;
-        }
-    }
-}
-
-impl DataKind {
-    pub fn set_tag(&mut self, tag: String) {
-        match self {
-            DataKind::CharacterAny => {}
-            DataKind::String(_) => {}
-            DataKind::Rule(r) => r.tag = tag,
-            DataKind::Integer(_) => {}
-            DataKind::Character(_) => {}
-            DataKind::CharacterRange(_) => {}
-            DataKind::CharacterSet(_) => {}
-            DataKind::CharacterBuiltin(_) => {}
-        }
-    }
-}

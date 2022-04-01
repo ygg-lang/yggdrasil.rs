@@ -1,11 +1,12 @@
 pub use self::{
     data::{rule_ref::RuleReference, symbol::SymbolAlias, DataKind},
-    grammar::GrammarInfo,
+    grammar::{dead_code::DecodeEliminator, inlining::RuleInlineAlways, GrammarInfo},
     rule::{
         derive::RuleDerive,
         node::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression, ExpressionNode, Operator},
         FunctionRule, GrammarRule,
     },
+    traits::{CodeGenerator, CodeOptimizer, FieldDescriptor},
 };
 
 mod data;

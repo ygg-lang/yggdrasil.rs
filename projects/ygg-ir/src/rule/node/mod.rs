@@ -6,6 +6,7 @@ pub mod debug;
 pub mod expr;
 pub mod unary;
 
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ExpressionNode {
     pub kind: ExpressionKind,
     pub branch_tag: String,

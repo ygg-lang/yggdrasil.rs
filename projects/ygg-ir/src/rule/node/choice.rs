@@ -2,26 +2,24 @@ use super::*;
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ChoiceExpression {
-    pub tag: String,
-    pub inner: IndexSet<ExpressionNode>,
+    pub branches: IndexSet<ExpressionNode>,
 }
 
 impl Default for ChoiceExpression {
     fn default() -> Self {
-        Self { tag: "".to_string(), inner: Default::default() }
+        Self { branches: Default::default() }
     }
 }
 
 impl Hash for ChoiceExpression {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        state.write(self.tag.as_bytes());
-        self.inner.iter().for_each(|e| e.hash(state))
+        self.branches.iter().for_each(|e| e.hash(state))
     }
 }
 
 impl ChoiceExpression {
     pub fn push(&mut self, e: impl Into<ExpressionNode>) {
-        self.inner.insert(e.into());
+        self.branches.insert(e.into());
     }
 }
 
