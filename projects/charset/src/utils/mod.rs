@@ -1,17 +1,12 @@
+use crate::CharacterSet;
 use serde::{ser::SerializeSeq, Deserialize, Deserializer, Serialize, Serializer};
 use std::{
     fmt::{Debug, Display, Formatter},
     ops::Range,
 };
 use ucd_trie::TrieSetOwned;
-
 mod arithmetic;
 mod save;
-
-#[derive(Clone, Hash, Eq, PartialEq)]
-pub struct CharacterSet {
-    pub(crate) all: Box<[bool; 0x110000]>,
-}
 
 impl Default for CharacterSet {
     fn default() -> Self {

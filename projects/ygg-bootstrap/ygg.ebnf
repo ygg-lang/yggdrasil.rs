@@ -60,7 +60,7 @@ Suffix = '+' | '*' | '?';
 @position
 Node =
     @:Group |
-    @:Charset |
+    @:CharsetNode |
     @:StringLiteral |
     @:Identifier
     ;
@@ -83,7 +83,7 @@ StringItem =
 StringEscaped = '\\' char:char;
 
 @position
-Charset = '[' {CharItem} ']';
+CharsetNode = '[' {items:CharItem} ']';
 
 CharItem =
     @:CharRange |

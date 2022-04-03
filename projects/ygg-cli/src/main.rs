@@ -11,7 +11,7 @@ mod subs;
 /// This doc string acts as a help message when the user runs '--help'
 /// as do all doc strings on fields
 #[derive(Parser)]
-#[clap(version = crate_version ! (), author = crate_authors ! ("\n"))]
+// #[clap(version = crate_version!(), author = crate_authors!("\n"))]
 // #[clap(setting = AppSettings::ColoredHelp)]
 struct Options {
     /// Sets a custom config file. Could have been an Option<T> with no default too

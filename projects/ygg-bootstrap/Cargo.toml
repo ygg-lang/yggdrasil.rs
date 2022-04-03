@@ -9,7 +9,8 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-peginator = "0.2.5"
+character-set = { version = "0.2.2", path = "../charset" }
+peginator = "0.2.6"
 unicode-xid = "0.2.4"
 railroad = { version = "0.1.1", optional = true }
 
@@ -25,13 +26,13 @@ path = "../ygg-ir"
 [dependencies.yggdrasil-error]
 version = "0.1.1"
 path = "../ygg-error"
-features = ["peginator"]
+features = ["peginator", "ucd-trie"]
 
 
 [dev-dependencies]
 
 [build-dependencies]
-peginator = "0.2.5"
+peginator = "0.2.6"
 
 [features]
 default = ["railroad"]

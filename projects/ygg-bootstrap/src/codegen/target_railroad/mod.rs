@@ -14,14 +14,17 @@ mod css;
 mod helper;
 
 pub struct Railroad {
+    pub with_css: bool,
     pub css: String,
 }
 
 impl Default for Railroad {
     fn default() -> Self {
-        Self { css: DEFAULT_CSS.to_string() }
+        Self { with_css: true, css: DEFAULT_CSS.to_string() }
     }
 }
+
+impl Railroad {}
 
 impl CodeGenerator for Railroad {
     type Output = Diagram<VerticalGrid>;
@@ -29,7 +32,11 @@ impl CodeGenerator for Railroad {
     fn generate(&mut self, info: &GrammarInfo) -> YggdrasilResult<Self::Output> {
         let grid = VerticalGrid::new(info.rules.iter().map(|(_, rule)| rule.as_railroad()).collect());
         let mut diagram = Diagram::new(grid);
-        diagram.add_element(Element::new("style").set("type", "text/css").raw_text(&self.css));
+        let mut element = Element::new("style").set("type", "text/css");
+        if self.with_css {
+            element = element.raw_text(&self.css);
+        }
+        diagram.add_element(element);
         return Ok(Diagnostic { success: diagram, errors: vec![] });
     }
 }
@@ -40,7 +47,7 @@ trait AsRailroad {
 
 impl AsRailroad for GrammarInfo {
     fn as_railroad(&self) -> Box<dyn RailroadNode> {
-        box VerticalGrid::new(self.rules.into_iter().map(|(_, rule)| rule.as_railroad()).collect())
+        box VerticalGrid::new(self.rules.iter().map(|(_, rule)| rule.as_railroad()).collect())
     }
 }
 
@@ -89,7 +96,7 @@ impl AsRailroad for ConcatExpression {
 impl AsRailroad for UnaryExpression {
     fn as_railroad(&self) -> Box<dyn RailroadNode> {
         let mut base = self.base.as_railroad();
-        for o in self.ops {
+        for o in &self.ops {
             match o {
                 Operator::Optional => base = box Optional::new(base),
                 Operator::Repeats => {
@@ -136,7 +143,16 @@ impl AsRailroad for DataKind {
 
 impl AsRailroad for RuleReference {
     fn as_railroad(&self) -> Box<dyn RailroadNode> {
-        // TODO: maybe stack
-        todo!()
+        let mut class = vec!["symbol"];
+        if self.inline {
+            class.push("inline")
+        }
+        if self.name.len() == 1 {
+            box Link::new(NonTerminal::new(self.name.to_string(), &class), format!("#{}", self.name.to_string()))
+        }
+        else {
+            // TODO: External link
+            box NonTerminal::new(self.name.to_string(), &class)
+        }
     }
 }

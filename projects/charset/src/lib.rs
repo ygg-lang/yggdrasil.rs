@@ -1,7 +1,12 @@
 #![doc = include_str!("../Readme.md")]
 
-pub use self::{dump::DumpAction, insert::InsertAction, utils::CharacterSet};
+pub use self::{dump::DumpAction, insert::InsertAction};
 
 mod dump;
 mod insert;
 mod utils;
+
+#[derive(Clone, Hash, Eq, PartialEq)]
+pub struct CharacterSet {
+    all: Box<[bool; 0x110000]>,
+}

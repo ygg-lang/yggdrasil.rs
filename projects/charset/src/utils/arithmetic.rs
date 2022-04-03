@@ -1,4 +1,4 @@
-use super::*;
+use crate::CharacterSet;
 use std::ops::Neg;
 
 impl Neg for CharacterSet {

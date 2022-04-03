@@ -12,7 +12,7 @@ impl FieldDescriptor for GrammarRule {
     }
 
     fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount>) {
-        todo!()
+        self.body.get_field_count(buffer)
     }
 }
 
@@ -22,7 +22,7 @@ impl FieldDescriptor for ExpressionNode {
     }
 
     fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount>) {
-        todo!()
+        self.kind.get_field_count(buffer)
     }
 }
 
@@ -38,7 +38,13 @@ impl FieldDescriptor for ExpressionKind {
     }
 
     fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount>) {
-        todo!()
+        match self {
+            ExpressionKind::Choice(e) => e.get_field_count(buffer),
+            ExpressionKind::Concat(e) => e.get_field_count(buffer),
+            ExpressionKind::Unary(e) => e.get_field_count(buffer),
+            ExpressionKind::Data(e) => e.get_field_count(buffer),
+            ExpressionKind::Rule(e) => e.get_field_count(buffer),
+        }
     }
 }
 
@@ -47,7 +53,7 @@ impl FieldDescriptor for ChoiceExpression {
         self.branches.iter().for_each(|f| f.get_field_names(buffer))
     }
 
-    fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount>) {
+    fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount>) {
         todo!()
     }
 }
@@ -57,7 +63,7 @@ impl FieldDescriptor for ConcatExpression {
         self.sequence.iter().for_each(|f| f.get_field_names(buffer))
     }
 
-    fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount>) {
+    fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount>) {
         todo!()
     }
 }
@@ -67,7 +73,7 @@ impl FieldDescriptor for UnaryExpression {
         self.base.get_field_names(buffer)
     }
 
-    fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount>) {
+    fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount>) {
         todo!()
     }
 }
@@ -83,7 +89,7 @@ impl FieldDescriptor for RuleReference {
         buffer.insert(&self.name);
     }
 
-    fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount>) {
-        todo!()
+    fn get_field_count(&self, _: &mut HashSet<String, FieldCount>) {
+        unreachable!()
     }
 }

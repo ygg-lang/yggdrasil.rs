@@ -1,14 +1,15 @@
 use std::mem::take;
 
+use crate::parser::ast::{CharsetNode, StringLiteral};
 use peginator::PegParser;
 use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
-
 use yggdrasil_ir::{
     ChoiceExpression, ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule, Operator, UnaryExpression,
 };
 
 use crate::parser::ast::{ChoiceNode, DefineStatement, Node, ProgramNode, ProgramParser, StatementNode, StringItem};
 
+mod charset;
 mod import;
 
 pub struct GrammarParser {
@@ -73,7 +74,7 @@ impl DefineStatement {
                 atomic: self.annotation("atomic", false),
                 entry: self.annotation("entry", false),
                 keep: self.annotation("keep", false),
-                body: self.body.into_expr(ctx)?,
+                body: ExpressionNode { kind: self.body.as_expr(ctx)?, branch_tag: "".to_string(), node_tag: "".to_string() },
                 range: self.position.clone(),
             };
             ctx.info.rules.insert(rule.name.clone(), rule);
@@ -84,29 +85,15 @@ impl DefineStatement {
 }
 
 impl ChoiceNode {
-    fn into_expr(&self, ctx: &mut GrammarParser) -> Result<ExpressionNode, YggdrasilError> {
+    fn as_expr(&self, ctx: &mut GrammarParser) -> Result<ExpressionKind, YggdrasilError> {
         let mut expr = ChoiceExpression::default();
         for term in &self.terms {
             let tag = term.tag.as_ref().map(|f| f.string.to_owned()).unwrap_or_default();
-            let mut body = match &term.node {
+            let body = match &term.node {
                 Node::Identifier(node) => ExpressionKind::rule(&node.string),
-                Node::StringLiteral(node) => {
-                    let mut s = String::new();
-                    for item in &node.body {
-                        match item {
-                            StringItem::CharOne(c) => s.push(*c),
-                            StringItem::StringEscaped(escaped) => match escaped.char {
-                                'n' => s.push('\n'),
-                                _ => s.push(escaped.char),
-                            },
-                        }
-                    }
-                    ExpressionKind::string(s)
-                }
-                Node::Charset(node) => {
-                    unimplemented!()
-                }
-                Node::Group(node) => node.body.into_expr(ctx)?,
+                Node::StringLiteral(node) => node.as_expr(ctx)?,
+                Node::CharsetNode(node) => node.as_expr(ctx)?,
+                Node::Group(node) => node.body.as_expr(ctx)?,
             };
             let mut ops = vec![];
             for suffix in &term.suffix {
@@ -125,17 +112,18 @@ impl ChoiceNode {
                 }
             }
             if ops.is_empty() {
-                expr.push(body)
+                expr.push(ExpressionNode { kind: body, branch_tag: "".to_string(), node_tag: tag })
             }
             else {
-                let unary = UnaryExpression { base: body, ops };
-                expr.push(unary)
+                let unary =
+                    UnaryExpression { base: ExpressionNode { kind: body, branch_tag: "".to_string(), node_tag: tag }, ops };
+                expr.push(ExpressionNode {
+                    kind: ExpressionKind::Unary(Box::new(unary)),
+                    branch_tag: "".to_string(),
+                    node_tag: "".to_string(),
+                })
             }
         }
-        return Ok(ExpressionNode {
-            kind: ExpressionKind::Choice(Box::new(expr)),
-            branch_tag: "".to_string(),
-            node_tag: "".to_string(),
-        });
+        return Ok(ExpressionKind::Choice(Box::new(expr)));
     }
 }

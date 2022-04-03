@@ -8,6 +8,7 @@ mod field_descriptor;
 
 pub enum FieldCount {
     Optional(RuleReference),
+    One(RuleReference),
     Many(RuleReference),
 }
 
@@ -36,7 +37,7 @@ impl GrammarInfo {
         }
         Ok(Diagnostic { success: out, errors })
     }
-    pub fn codegen<T>(&self, mut pass: T) -> YggdrasilResult<<T as CodeGenerator>::Output>
+    pub fn generate<T>(&self, mut pass: T) -> YggdrasilResult<<T as CodeGenerator>::Output>
     where
         T: CodeGenerator,
     {

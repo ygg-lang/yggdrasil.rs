@@ -14,5 +14,5 @@ path = "src/main.rs"
 
 [dependencies]
 yggdrasil-bootstrap = { version = "0.1", path = "../ygg-bootstrap" }
-clap = "4.0.0-rc.2"
+clap = "4.0.0-rc.3"
 anyhow = "1.0.65"

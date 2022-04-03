@@ -42,10 +42,7 @@ impl ExpressionKind {
                 todo!();
                 // DataKind::CharacterSet(name.to_string())
             }
-            _ => {
-                todo!()
-                // DataKind::Rule(RuleReference::new(name))
-            }
+            _ => return Self::Rule(Box::new(RuleReference::new(name))),
         };
         Self::Data(Box::new(data))
     }
