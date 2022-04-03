@@ -6,18 +6,23 @@ use crate::*;
 
 mod field_descriptor;
 
-pub enum FieldCount {}
+pub enum FieldCount {
+    Optional(RuleReference),
+    Many(RuleReference),
+}
 
 pub trait FieldDescriptor {
     fn get_field_names<'a>(&'a self, buffer: &mut HashSet<&'a String>);
+    fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount>);
 }
 
 pub trait CodeOptimizer {
     fn optimize(&mut self, info: &GrammarInfo) -> YggdrasilResult<GrammarInfo>;
 }
 
-pub trait CodeGenerator<T> {
-    fn generate(&mut self, info: &GrammarInfo) -> YggdrasilResult<T>;
+pub trait CodeGenerator {
+    type Output;
+    fn generate(&mut self, info: &GrammarInfo) -> YggdrasilResult<Self::Output>;
 }
 
 impl GrammarInfo {
@@ -31,7 +36,10 @@ impl GrammarInfo {
         }
         Ok(Diagnostic { success: out, errors })
     }
-    pub fn codegen<T>(&self, mut pass: impl CodeGenerator<T>) -> YggdrasilResult<T> {
+    pub fn codegen<T>(&self, mut pass: T) -> YggdrasilResult<<T as CodeGenerator>::Output>
+    where
+        T: CodeGenerator,
+    {
         pass.generate(self)
     }
 }

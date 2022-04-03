@@ -31,9 +31,11 @@ pub enum Operator {
     /// e?
     Optional,
     /// e*
-    Repeat,
+    Repeats,
     /// e+
     Repeat1,
+    /// no such literal
+    Boxing,
     /// e+
     RepeatsBetween(Option<u8>, Option<u8>),
     /// ^e

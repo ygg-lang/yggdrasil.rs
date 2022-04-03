@@ -25,7 +25,7 @@ impl Operator {
     pub fn suffix(o: &str) -> Operator {
         match o {
             "?" => Self::Optional,
-            "+" => Self::Repeat,
+            "+" => Self::Repeats,
             "*" => Self::Repeat1,
             _ => unreachable!(),
         }

@@ -1,94 +1,101 @@
+use railroad::svg::Element;
+pub use railroad::RailroadNode;
+
+pub use helper::*;
+use yggdrasil_error::{Diagnostic, YggdrasilResult};
+use yggdrasil_ir::{
+    ChoiceExpression, CodeGenerator, ConcatExpression, DataKind, ExpressionKind, ExpressionNode, GrammarInfo, GrammarRule,
+    Operator, RuleReference, UnaryExpression,
+};
+
+pub use self::css::DEFAULT_CSS;
+
 mod css;
 mod helper;
 
-pub use self::css::DEFAULT_CSS;
-pub use helper::*;
+pub struct Railroad {
+    pub css: String,
+}
 
-use crate::frontend::{
-    rule::{ExpressionNode, Operator, RefinedChoice, RefinedConcat, RefinedData, RefinedExpression, RefinedUnary},
-    GrammarInfo, GrammarRule,
-};
-
-pub use railroad::RailroadNode;
-
-use railroad::svg::Element;
-
-// impl GrammarContext {
-//
-// }
-
-impl GrammarInfo {
-    pub fn railroad_svg(self, css: &str) -> Diagram<VerticalGrid> {
-        let mut diagram = Diagram::new(self.into_railroad());
-        diagram.add_element(Element::new("style").set("type", "text/css").raw_text(css));
-        return diagram;
-    }
-    fn into_railroad(self) -> VerticalGrid {
-        VerticalGrid::new(self.rules.into_iter().map(|(_, rule)| rule.into_railroad()).collect())
+impl Default for Railroad {
+    fn default() -> Self {
+        Self { css: DEFAULT_CSS.to_string() }
     }
 }
 
-impl GrammarRule {
-    fn into_railroad(self) -> Box<dyn RailroadNode> {
+impl CodeGenerator for Railroad {
+    type Output = Diagram<VerticalGrid>;
+
+    fn generate(&mut self, info: &GrammarInfo) -> YggdrasilResult<Self::Output> {
+        let grid = VerticalGrid::new(info.rules.iter().map(|(_, rule)| rule.as_railroad()).collect());
+        let mut diagram = Diagram::new(grid);
+        diagram.add_element(Element::new("style").set("type", "text/css").raw_text(&self.css));
+        return Ok(Diagnostic { success: diagram, errors: vec![] });
+    }
+}
+
+trait AsRailroad {
+    fn as_railroad(&self) -> Box<dyn RailroadNode>;
+}
+
+impl AsRailroad for GrammarInfo {
+    fn as_railroad(&self) -> Box<dyn RailroadNode> {
+        box VerticalGrid::new(self.rules.into_iter().map(|(_, rule)| rule.as_railroad()).collect())
+    }
+}
+
+impl AsRailroad for GrammarRule {
+    fn as_railroad(&self) -> Box<dyn RailroadNode> {
         let mut s = Sequence::default();
         s.push(box SimpleStart);
-        s.push(box RuleName::new(self.name.data));
-        s.push(self.body.into_railroad());
+        s.push(box RuleName::new(self.name.to_string()));
+        s.push(self.body.as_railroad());
         s.push(box SimpleEnd);
         return box s;
     }
 }
 
-impl ExpressionNode {
-    fn into_railroad(self) -> Box<dyn RailroadNode> {
-        self.node.into_railroad(self.inline_token)
+impl AsRailroad for ExpressionNode {
+    fn as_railroad(&self) -> Box<dyn RailroadNode> {
+        self.kind.as_railroad()
     }
 }
 
-impl RefinedExpression {
-    fn into_railroad(self, inline: bool) -> Box<dyn RailroadNode> {
+impl AsRailroad for ExpressionKind {
+    fn as_railroad(&self) -> Box<dyn RailroadNode> {
         match self {
-            Self::Data(v) => v.into_railroad(inline),
-            Self::Unary(v) => v.into_railroad(),
-            Self::Choice(v) => v.into_railroad(),
-            Self::Concat(v) => v.into_railroad(),
+            ExpressionKind::Choice(e) => e.as_railroad(),
+            ExpressionKind::Concat(e) => e.as_railroad(),
+            ExpressionKind::Unary(e) => e.as_railroad(),
+            ExpressionKind::Rule(e) => e.as_railroad(),
+            ExpressionKind::Data(e) => e.as_railroad(),
         }
     }
 }
 
-impl RefinedData {
-    fn into_railroad(self, inline: bool) -> Box<dyn RailroadNode> {
-        match self {
-            Self::Symbol(v) => {
-                let mut class = vec!["symbol"];
-                if inline {
-                    class.push("inline")
-                }
-                if v.symbol.len() == 1 {
-                    box Link::new(NonTerminal::new(v.to_string(), &class), format!("#{}", v.to_string()))
-                }
-                else {
-                    // TODO: External link
-                    box NonTerminal::new(v.to_string(), &class)
-                }
-            }
-            Self::String(v) => box Terminal::new(v, &vec!["string"]),
-            Self::Regex(v) => box Terminal::new(v.to_string(), &vec!["regex"]),
-            Self::Integer(v) => box Terminal::new(v.to_string(), &vec!["string"]),
-        }
+impl AsRailroad for ChoiceExpression {
+    fn as_railroad(&self) -> Box<dyn RailroadNode> {
+        box Choice::new(self.branches.iter().map(|e| e.as_railroad()).collect())
     }
 }
 
-impl RefinedUnary {
-    fn into_railroad(self) -> Box<dyn RailroadNode> {
-        let mut base = self.base.into_railroad();
+impl AsRailroad for ConcatExpression {
+    fn as_railroad(&self) -> Box<dyn RailroadNode> {
+        // TODO: maybe stack
+        box Sequence::new(self.sequence.iter().map(|e| e.as_railroad()).collect())
+    }
+}
+
+impl AsRailroad for UnaryExpression {
+    fn as_railroad(&self) -> Box<dyn RailroadNode> {
+        let mut base = self.base.as_railroad();
         for o in self.ops {
             match o {
                 Operator::Optional => base = box Optional::new(base),
                 Operator::Repeats => {
                     base = box Repeat::new(base, Comment::new("*".to_string()));
                 }
-                Operator::Repeats1 => {
+                Operator::Repeat1 => {
                     base = box Repeat::new(base, Comment::new("+".to_string()));
                 }
                 Operator::RepeatsBetween(s, e) => {
@@ -103,28 +110,33 @@ impl RefinedUnary {
                     let c = Comment::new(format!("[{}, {}]", start, end));
                     base = box Repeat::new(base, c);
                 }
-                Operator::Mark => continue,
+                Operator::Boxing => continue,
                 Operator::Recursive => continue,
+                Operator::Negative => continue,
+                Operator::Remark => continue,
             }
         }
         return base;
     }
 }
 
-impl RefinedChoice {
-    fn into_railroad(self) -> Box<dyn RailroadNode> {
-        box Choice::new(self.inner.into_iter().map(|e| e.into_railroad()).collect())
+impl AsRailroad for DataKind {
+    fn as_railroad(&self) -> Box<dyn RailroadNode> {
+        match self {
+            DataKind::Integer(v) => box Terminal::new(v.to_string(), &vec!["string"]),
+            DataKind::String(v) => box Terminal::new(v.to_string(), &vec!["string"]),
+            DataKind::CharacterAny => box Terminal::new("ANY".to_string(), &vec!["character"]),
+            DataKind::Character(v) => box Terminal::new(v.to_string(), &vec!["string"]),
+            DataKind::CharacterBuiltin(v) => box Terminal::new(v.to_string(), &vec!["string"]),
+            DataKind::CharacterRange(v) => box Terminal::new(format!("{}-{}", v.start, v.end), &vec!["string"]),
+            DataKind::CharacterSet(v) => box Terminal::new(v.to_string(), &vec!["string"]),
+        }
     }
 }
 
-impl RefinedConcat {
-    fn into_railroad(self) -> Box<dyn RailroadNode> {
+impl AsRailroad for RuleReference {
+    fn as_railroad(&self) -> Box<dyn RailroadNode> {
         // TODO: maybe stack
-        let mut out = Sequence::default();
-        out.push(self.base.into_railroad());
-        for (_, e) in self.rest {
-            out.push(e.into_railroad());
-        }
-        return box out;
+        todo!()
     }
 }

@@ -11,6 +11,7 @@ edition = "2021"
 [dependencies]
 peginator = "0.2.5"
 unicode-xid = "0.2.4"
+railroad = { version = "0.1.1", optional = true }
 
 [dependencies.yggdrasil-rt]
 version = "0.1"
@@ -33,6 +34,4 @@ features = ["peginator"]
 peginator = "0.2.5"
 
 [features]
-default = ["no-unnamed", "no-ignored"]
-no-unnamed = []
-no-ignored = []
+default = ["railroad"]

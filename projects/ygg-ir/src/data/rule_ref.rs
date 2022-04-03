@@ -34,7 +34,7 @@ impl RuleReference {
     }
 }
 
-impl ExpressionNode {
+impl ExpressionKind {
     pub fn rule(name: &str) -> Self {
         let data = match name {
             "ANY" => DataKind::CharacterAny,
@@ -47,13 +47,11 @@ impl ExpressionNode {
                 // DataKind::Rule(RuleReference::new(name))
             }
         };
-        todo!()
-        // ExpressionNode::Data(Box::new(data))
+        Self::Data(Box::new(data))
     }
     pub fn string(string: String) -> Self {
         let data = DataKind::String(string);
-        todo!()
-        // ExpressionKind::Data(Box::new(data))
+        Self::Data(Box::new(data))
     }
     pub fn builtin(name: &str) -> Option<Self> {
         // let builtin = &["XID_START"];

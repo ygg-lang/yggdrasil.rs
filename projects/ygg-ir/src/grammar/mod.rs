@@ -1,5 +1,6 @@
 pub mod dead_code;
 pub mod inlining;
+pub mod refining;
 use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
