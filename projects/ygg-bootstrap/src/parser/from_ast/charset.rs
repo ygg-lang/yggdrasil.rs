@@ -1,5 +1,4 @@
 use character_set::CharacterSet;
-
 use yggdrasil_ir::DataKind;
 
 use crate::parser::ast::CharItem;
@@ -8,14 +7,27 @@ use super::*;
 
 impl CharsetNode {
     pub(super) fn as_expr(&self, _: &mut GrammarParser) -> Result<ExpressionKind, YggdrasilError> {
-        let mut set = CharacterSet::nil();
-        for item in &self.items {
-            match item {
-                CharItem::CharOne(c) => set.include(*c)?,
-                CharItem::CharRange(c) => set.include(c.start..=c.end)?,
+        let mut set: CharacterSet;
+        if self.neg.is_some() {
+            set = CharacterSet::all();
+            for item in &self.items {
+                match item {
+                    CharItem::CharOne(c) => set.exclude(*c)?,
+                    CharItem::CharRange(c) => set.exclude(c.start..=c.end)?,
+                }
             }
+            Ok(ExpressionKind::Data(Box::new(DataKind::CharacterSet(set))))
         }
-        Ok(ExpressionKind::Data(Box::new(DataKind::CharacterSet(set))))
+        else {
+            set = CharacterSet::nil();
+            for item in &self.items {
+                match item {
+                    CharItem::CharOne(c) => set.include(*c)?,
+                    CharItem::CharRange(c) => set.include(c.start..=c.end)?,
+                }
+            }
+            Ok(ExpressionKind::Data(Box::new(DataKind::CharacterSet(set))))
+        }
     }
 }
 

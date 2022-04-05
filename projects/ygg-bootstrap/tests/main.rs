@@ -1,5 +1,7 @@
 use std::fs::File;
+
 use yggdrasil_bootstrap::{codegen::Railroad, parser::GrammarParser};
+use yggdrasil_ir::DeadCodeEliminator;
 
 #[test]
 fn ready() {
@@ -20,7 +22,10 @@ def Other {
 fn dumper() {
     let info = GrammarParser::parse(TEST).unwrap().success;
     let railroad = Railroad::default();
+    let dce = DeadCodeEliminator::default();
     let diag = info.generate(railroad).unwrap().success;
-    let mut file = File::create("tests/test.svg").unwrap();
+    let mut file = File::create("tests/test0.svg").unwrap();
+    diag.write(&mut file).unwrap();
+    let mut file = File::create("tests/test1.svg").unwrap();
     diag.write(&mut file).unwrap();
 }

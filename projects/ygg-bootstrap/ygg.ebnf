@@ -83,8 +83,9 @@ StringItem =
 StringEscaped = '\\' char:char;
 
 @position
-CharsetNode = '[' {items:CharItem} ']';
+CharsetNode = '[' [neg:CharsetNeg] {items:CharItem} ']';
 
+CharsetNeg = '^';
 CharItem =
     @:CharRange |
     @:CharOne

@@ -6,13 +6,19 @@ use crate::traits::CodeOptimizer;
 
 use super::*;
 
-pub struct DecodeEliminator {
+pub struct DeadCodeEliminator {
     used: HashSet<String>,
     new: HashSet<String>,
     unvisited: HashSet<String>,
 }
 
-impl CodeOptimizer for DecodeEliminator {
+impl Default for DeadCodeEliminator {
+    fn default() -> Self {
+        Self { used: Default::default(), new: Default::default(), unvisited: Default::default() }
+    }
+}
+
+impl CodeOptimizer for DeadCodeEliminator {
     fn optimize(&mut self, info: &GrammarInfo) -> YggdrasilResult<GrammarInfo> {
         self.find_entry(info);
         self.find_unvisited();
@@ -24,7 +30,12 @@ impl CodeOptimizer for DecodeEliminator {
                         s.get_field_names(&mut new);
                         self.new.extend(new.iter().map(|s| s.to_string()))
                     }
-                    None => {}
+                    None => {
+                        #[cfg(debug_assertions)]
+                        {
+                            panic!("Undefined rule {}", rule)
+                        }
+                    }
                 }
             }
             self.find_unvisited();
@@ -35,7 +46,7 @@ impl CodeOptimizer for DecodeEliminator {
     }
 }
 
-impl DecodeEliminator {
+impl DeadCodeEliminator {
     fn find_entry(&mut self, info: &GrammarInfo) {
         for (_, rule) in &info.rules {
             if rule.keep || rule.entry {
@@ -50,7 +61,7 @@ impl DecodeEliminator {
         self.new.clear();
     }
     fn find_needed(&self, info: &GrammarInfo) -> BTreeMap<String, GrammarRule> {
-        todo!()
+        info.rules.iter().filter(|r| self.used.contains(r.0)).map(|(k, v)| (k.clone(), v.clone())).collect()
     }
     fn clear(&mut self) {
         self.used.clear();

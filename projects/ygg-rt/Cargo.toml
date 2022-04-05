@@ -21,7 +21,7 @@ peginator = "0.2.6"
 [dependencies.yggdrasil-error]
 version = "0.1.1"
 path = "../ygg-error"
-features = []
+features = ["ropey"]
 
 [features]
 default = ["lsp"]
