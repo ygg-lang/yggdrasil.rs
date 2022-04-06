@@ -1,12 +1,16 @@
 use character_set::CharacterSet;
+mod general_category;
 
 #[test]
 fn ready() {
     println!("it works!")
 }
 
-fn ucd() {
-    BY_NAME
+#[test]
+fn ready_1() {
+    for c in 'a'..='a' {
+        println!("{}", c)
+    }
 }
 
 #[test]

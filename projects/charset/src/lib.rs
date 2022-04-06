@@ -2,7 +2,7 @@
 
 pub use self::{dump::DumpAction, insert::InsertAction};
 
-mod builtin;
+pub mod builtin;
 mod dump;
 mod insert;
 mod utils;
