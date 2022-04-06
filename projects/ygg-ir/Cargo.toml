@@ -10,10 +10,10 @@ edition = "2021"
 
 [dependencies]
 character-set = { version = "0.2.1", path = "../charset" }
-
 indexmap = { version = "1.9.1", features = ["serde"] }
 ucd-trie = "0.1.5"
 ucd-util = "0.1.9"
+lazy_static = "1.4.0"
 num = { version = "0.4.0", features = ["serde"] }
 serde = { version = "1.0.145", features = ["derive"] }
 url = { version = "2.3.1", features = ["serde"] }

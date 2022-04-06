@@ -51,14 +51,8 @@ impl ExpressionKind {
         Self::Data(Box::new(data))
     }
     pub fn builtin(name: &str) -> Option<Self> {
-        // let builtin = &["XID_START"];
-        // if builtin.contains(&name) {
-        //     let data = DataKind::CharacterBuiltin(name.to_string());
-        //     Some(ExpressionNode::Data(Box::new(data)))
-        // }
-        // else {
-        //     return None;
-        // }
-        todo!()
+        let ranges = BUILTIN_CHARACTER_SETS.get(name)?;
+        let set = CharacterSet::from_ranges(ranges);
+        Some(Self::Data(Box::new(DataKind::CharacterSet(set))))
     }
 }

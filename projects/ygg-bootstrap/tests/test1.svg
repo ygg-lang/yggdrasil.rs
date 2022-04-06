@@ -19,7 +19,8 @@ svg.railroad .debug {
 }
 
 svg.railroad text {
-    font: 14px monospace;
+    font-size: 14px;
+    font-family: monospace;
     text-anchor: middle;
 }
 
@@ -28,7 +29,9 @@ svg.railroad .nonterminal text {
 }
 
 svg.railroad text.comment {
-    font: italic 12px;
+    font-family: serif;
+    font-style: italic;
+    font-size: 12px;
 }
 
 svg.railroad rect {

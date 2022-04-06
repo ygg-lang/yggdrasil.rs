@@ -1,12 +1,13 @@
 use std::collections::HashSet;
 
-use yggdrasil_error::{Diagnostic, YggdrasilResult};
+use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
 
 use crate::traits::CodeOptimizer;
 
 use super::*;
 
 pub struct DeadCodeEliminator {
+    pub panic: bool,
     used: HashSet<String>,
     new: HashSet<String>,
     unvisited: HashSet<String>,
@@ -14,14 +15,16 @@ pub struct DeadCodeEliminator {
 
 impl Default for DeadCodeEliminator {
     fn default() -> Self {
-        Self { used: Default::default(), new: Default::default(), unvisited: Default::default() }
+        Self { used: Default::default(), new: Default::default(), unvisited: Default::default(), panic: true }
     }
 }
 
 impl CodeOptimizer for DeadCodeEliminator {
+    // TODO: Tri-Color mark and sweep algorithm
     fn optimize(&mut self, info: &GrammarInfo) -> YggdrasilResult<GrammarInfo> {
         self.find_entry(info);
         self.find_unvisited();
+        let mut errors = vec![];
         while !self.unvisited.is_empty() {
             for rule in &self.unvisited {
                 match info.rules.get(rule) {
@@ -32,10 +35,8 @@ impl CodeOptimizer for DeadCodeEliminator {
                         self.new.extend(new.iter().map(|s| s.to_string()))
                     }
                     None => {
-                        #[cfg(debug_assertions)]
-                        {
-                            panic!("Undefined rule {}", rule)
-                        }
+                        let error = format!("Undefined rule {}", rule);
+                        if self.panic { panic!("{}", error) } else { errors.push(YggdrasilError::language_error(error)) }
                     }
                 }
             }
@@ -43,7 +44,7 @@ impl CodeOptimizer for DeadCodeEliminator {
         }
         let rules = self.find_needed(info);
         self.clear();
-        Ok(Diagnostic { success: GrammarInfo { rules, ..info.clone() }, errors: vec![] })
+        Ok(Diagnostic { success: GrammarInfo { rules, ..info.clone() }, errors })
     }
 }
 
@@ -60,7 +61,7 @@ impl DeadCodeEliminator {
         for rule in self.new.difference(&self.used) {
             self.unvisited.insert(rule.to_owned());
         }
-        println!("未访问节点: {:?}", self.unvisited);
+        // println!("未访问节点: {:?}", self.unvisited);
         self.new.clear();
     }
     fn find_needed(&self, info: &GrammarInfo) -> IndexMap<String, GrammarRule> {

@@ -5,6 +5,10 @@ fn ready() {
     println!("it works!")
 }
 
+fn ucd() {
+    BY_NAME
+}
+
 #[test]
 fn test_ascii_range() {
     let mut set = CharacterSet::default();

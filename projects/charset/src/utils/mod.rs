@@ -1,10 +1,13 @@
-use crate::CharacterSet;
-use serde::{ser::SerializeSeq, Deserialize, Deserializer, Serialize, Serializer};
 use std::{
     fmt::{Debug, Display, Formatter},
     ops::Range,
 };
+
+use serde::{ser::SerializeSeq, Deserialize, Deserializer, Serialize, Serializer};
 use ucd_trie::TrieSetOwned;
+
+use crate::CharacterSet;
+
 mod arithmetic;
 mod save;
 
@@ -71,6 +74,14 @@ impl CharacterSet {
             this_cp += 1;
         }
         return codepoints;
+    }
+
+    pub fn from_ranges(ranges: &[Range<char>]) -> Self {
+        let mut out = Self::nil();
+        for range in ranges {
+            out.include(range.start..range.end).unwrap_or_default()
+        }
+        return out;
     }
 
     pub fn to_ranges(&self) -> Vec<Range<char>> {
