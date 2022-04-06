@@ -1,6 +1,7 @@
 pub mod dead_code;
 pub mod inlining;
 pub mod refining;
+use indexmap::IndexMap;
 use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
@@ -17,7 +18,7 @@ pub struct GrammarInfo {
     pub extensions: Vec<String>,
     pub imports: BTreeMap<Url, Vec<SymbolAlias>>,
     pub exports: Vec<String>,
-    pub rules: BTreeMap<String, GrammarRule>,
+    pub rules: IndexMap<String, GrammarRule>,
     pub functions: Vec<String>,
     pub rule_prefix: String,
     pub rule_suffix: String,

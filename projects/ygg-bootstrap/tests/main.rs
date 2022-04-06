@@ -1,31 +1,29 @@
 use std::fs::File;
 
 use yggdrasil_bootstrap::{codegen::Railroad, parser::GrammarParser};
-use yggdrasil_ir::DeadCodeEliminator;
+use yggdrasil_error::YggdrasilError;
+use yggdrasil_ir::{DeadCodeEliminator, GrammarInfo};
 
 #[test]
 fn ready() {
     println!("it, works!")
 }
 
-const TEST: &'static str = r#"
-def Program {
-    (A1 | A2) | (B1? | B2+ | B3*) | "string"
-}
-
-def Other {
-    a | _b
-}
-"#;
+const TEST: &'static str = include_str!("prog.ygg");
 
 #[test]
 fn dumper() {
-    let info = GrammarParser::parse(TEST).unwrap().success;
-    let railroad = Railroad::default();
+    let info1 = GrammarParser::parse(TEST).unwrap().success;
+    dump_railroad(&info1, "tests/test1.svg").unwrap();
     let dce = DeadCodeEliminator::default();
-    let diag = info.generate(railroad).unwrap().success;
-    let mut file = File::create("tests/test0.svg").unwrap();
-    diag.write(&mut file).unwrap();
-    let mut file = File::create("tests/test1.svg").unwrap();
-    diag.write(&mut file).unwrap();
+    let info2 = info1.optimize(vec![dce]).unwrap().success;
+    dump_railroad(&info2, "tests/test2.svg").unwrap();
+}
+
+fn dump_railroad(info: &GrammarInfo, path: &str) -> Result<(), YggdrasilError> {
+    let railroad = Railroad::default();
+    let diag1 = info.generate(railroad)?.success;
+    let mut file = File::create(path)?;
+    diag1.write(&mut file)?;
+    Ok(())
 }

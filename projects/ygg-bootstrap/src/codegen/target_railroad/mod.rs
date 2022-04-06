@@ -8,9 +8,6 @@ use yggdrasil_ir::{
     Operator, RuleReference, UnaryExpression,
 };
 
-pub use self::css::DEFAULT_CSS;
-
-mod css;
 mod helper;
 
 pub struct Railroad {
@@ -20,7 +17,7 @@ pub struct Railroad {
 
 impl Default for Railroad {
     fn default() -> Self {
-        Self { with_css: true, css: DEFAULT_CSS.to_string() }
+        Self { with_css: true, css: include_str!("default.css").to_string() }
     }
 }
 

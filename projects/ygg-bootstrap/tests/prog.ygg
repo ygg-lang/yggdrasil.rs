@@ -1,0 +1,16 @@
+def entry Program {
+    A1 | B3*
+}
+
+def A1 {
+    B1? | B2+ 
+}
+
+def A2 {}
+def B1 {}
+def B2 {}
+def B3 {}
+
+def C1 {
+    B1 | "char"
+}

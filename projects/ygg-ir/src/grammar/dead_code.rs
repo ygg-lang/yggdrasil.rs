@@ -28,6 +28,7 @@ impl CodeOptimizer for DeadCodeEliminator {
                     Some(s) => {
                         let mut new = HashSet::new();
                         s.get_field_names(&mut new);
+                        self.used.insert(rule.to_owned());
                         self.new.extend(new.iter().map(|s| s.to_string()))
                     }
                     None => {
@@ -55,12 +56,14 @@ impl DeadCodeEliminator {
         }
     }
     fn find_unvisited(&mut self) {
+        self.unvisited.clear();
         for rule in self.new.difference(&self.used) {
             self.unvisited.insert(rule.to_owned());
         }
+        println!("未访问节点: {:?}", self.unvisited);
         self.new.clear();
     }
-    fn find_needed(&self, info: &GrammarInfo) -> BTreeMap<String, GrammarRule> {
+    fn find_needed(&self, info: &GrammarInfo) -> IndexMap<String, GrammarRule> {
         info.rules.iter().filter(|r| self.used.contains(r.0)).map(|(k, v)| (k.clone(), v.clone())).collect()
     }
     fn clear(&mut self) {
