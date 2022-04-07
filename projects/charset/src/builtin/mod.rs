@@ -1,22 +1,16 @@
-use std::ops::Range;
+use std::ops::{Range, RangeInclusive};
 
 pub use generated::*;
 
 mod generated;
 
-pub const XID_START: &'static [Range<char>] = &['a'..'c', 'c'..'c'];
-
-pub const WHITE_SPACE: &'static [Range<char>] = &['a'..'c', 'c'..'c'];
-
-pub const LETTER: &'static [Range<char>] = &['a'..'c', 'c'..'c'];
-
-pub static BUILTIN_CHARACTER_RANGES: &'static [(&'static str, &'static str, &'static [Range<char>])] = &[
+pub static BUILTIN_CHARACTER_RANGES: &'static [(&'static str, &'static str, &'static [RangeInclusive<char>])] = &[
     // Letter
-    ("XID_START", "XID_Start", XID_START),
+    ("XID_START", "XID_Start", LETTER),
 ];
 
 /// https://www.regular-expressions.info/unicode.html#prop
-pub const REGEX_CHARACTER_RANGES: &'static [(&'static str, &'static str, &'static [Range<char>])] = &[
+pub const REGEX_CHARACTER_RANGES: &'static [(&'static str, &'static str, &'static [RangeInclusive<char>])] = &[
     // Letter
     ("L", "Letter", LETTER),
     ("Ll", "Lowercase_Letter", LETTER),

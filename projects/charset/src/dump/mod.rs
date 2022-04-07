@@ -11,6 +11,7 @@ pub struct DumpAction {
     pub skip_fmt: bool,
     pub dump_tree: bool,
     pub dump_check: bool,
+    pub dump_range: bool,
     pub trie_set: String,
 }
 
@@ -22,36 +23,41 @@ impl Default for DumpAction {
             skip_fmt: true,
             dump_tree: true,
             dump_check: true,
+            dump_range: true,
             trie_set: "ucd_trie::TrieSet".to_string(),
         }
     }
 }
 
 impl DumpAction {
-    pub fn dump(&self, set: &CharacterSet) -> String {
+    pub fn dump(&self, set: &CharacterSet) -> Result<String, std::fmt::Error> {
         let mut out = String::new();
+        if self.dump_range {
+            self.write_range(set, &mut out)?;
+            return Ok(out);
+        }
         if self.dump_tree {
             let tree = set.compress();
-            self.write_tree(tree.as_slice(), &mut out).unwrap_or_default();
+            self.write_tree(tree.as_slice(), &mut out)?;
             if self.dump_check {
                 out.push_str("\n\n");
-                self.write_check(&mut out).unwrap_or_default()
+                self.write_check(&mut out)?
             }
+            return Ok(out);
         }
-        return out;
+        return Ok(out);
     }
 
-    // fn write_range(&self) -> Result<String, std::fmt::Error> {
-    //     let ranges = self.to_ranges();
-    //     let mut w = String::new();
-    //     let public = if public { "pub " } else { "" };
-    //     writeln!(w, "const {}: &'static [(char, char); {}] = &[", public, name, ranges.len())?;
-    //     for range in ranges {
-    //         writeln!(w, "    ({:?}, {:?}),", range.start, range.end)?;
-    //     }
-    //     write!(w, "];")?;
-    //     Ok(w)
-    // }
+    fn write_range(&self, set: &CharacterSet, w: &mut impl Write) -> Result<(), std::fmt::Error> {
+        let ranges = set.to_ranges();
+        self.write_public(w)?;
+        writeln!(w, "const {name}: &'static [RangeInclusive<char>] = &[", name = self.name)?;
+        for range in ranges {
+            writeln!(w, "    {:?}..={:?},", range.start(), range.end())?;
+        }
+        write!(w, "];")?;
+        Ok(())
+    }
 
     fn write_tree(&self, tree: TrieSetSlice, w: &mut impl Write) -> Result<(), std::fmt::Error> {
         self.write_skip_fmt(w)?;

@@ -45,67 +45,58 @@ impl CharacterSet {
 
 impl From<char> for InsertAction {
     fn from(char: char) -> Self {
-        InsertAction { insert: vec![RangeInclusive::new(char as u32, char as u32)], error: None }
-    }
-}
-
-impl From<u32> for InsertAction {
-    fn from(char: u32) -> Self {
-        let mut error = None;
-        if char > UNICODE_MAX {
-            error = Some(Error::InvalidCodepoint(char))
-        }
-        InsertAction { insert: vec![RangeInclusive::new(char, char)], error }
-    }
-}
-
-impl From<Range<char>> for InsertAction {
-    fn from(range: Range<char>) -> Self {
-        let start = range.start as u32;
-        let end = range.end as u32 + 1;
-        InsertAction { insert: vec![RangeInclusive::new(start, end)], error }
-    }
-}
-
-impl From<(u32, u32)> for InsertAction {
-    fn from(range: (u32, u32)) -> Self {
-        let mut error = None;
-        if range.1 > UNICODE_MAX {
-            error = Some(Error::InvalidCodepoint(range.0))
-        }
-        if range.0 > UNICODE_MAX {
-            error = Some(Error::InvalidCodepoint(range.1))
-        }
-        InsertAction { insert: vec![Range { start: range.0, end: range.1 }], error }
-    }
-}
-
-impl From<Range<u32>> for InsertAction {
-    fn from(range: Range<u32>) -> Self {
-        let start = range.start as u32;
-        let end = range.end as u32 + 1;
-        InsertAction { insert: vec![RangeInclusive::new(start, end)], error }
-    }
-}
-
-impl From<RangeInclusive<u32>> for InsertAction {
-    fn from(range: RangeInclusive<u32>) -> Self {
-        let start = *range.start();
-        let end = *range.end();
-        Self::from((start, end))
+        InsertAction::from(RangeInclusive::new(char, char))
     }
 }
 
 impl From<RangeInclusive<char>> for InsertAction {
     fn from(range: RangeInclusive<char>) -> Self {
-        InsertAction { insert: vec![range], error }
+        let start = *range.start() as u32;
+        let end = *range.end() as u32;
+        InsertAction { insert: vec![RangeInclusive::new(start, end)], error: None }
     }
 }
 
+impl From<Range<char>> for InsertAction {
+    fn from(range: Range<char>) -> Self {
+        InsertAction::from(RangeInclusive::new(range.start as u32, range.end as u32 + 1))
+    }
+}
+
+impl From<(char, char)> for InsertAction {
+    fn from(range: (char, char)) -> Self {
+        InsertAction::from(RangeInclusive::new(range.0, range.1))
+    }
+}
+
+impl From<u32> for InsertAction {
+    fn from(char: u32) -> Self {
+        InsertAction::from(RangeInclusive::new(char, char))
+    }
+}
+
+impl From<RangeInclusive<u32>> for InsertAction {
+    fn from(range: RangeInclusive<u32>) -> Self {
+        let mut error = None;
+        let start = *range.start();
+        let end = *range.end();
+        if start > UNICODE_MAX {
+            error = Some(Error::InvalidCodepoint(start))
+        }
+        if end > UNICODE_MAX {
+            error = Some(Error::InvalidCodepoint(end))
+        }
+        InsertAction { insert: vec![RangeInclusive::new(start, end)], error }
+    }
+}
 impl From<Range<u32>> for InsertAction {
     fn from(range: Range<u32>) -> Self {
-        let start = range.start;
-        let end = range.end + 1;
-        Self::from((start, end))
+        InsertAction::from(RangeInclusive::new(range.start, range.end + 1))
+    }
+}
+
+impl From<(u32, u32)> for InsertAction {
+    fn from(range: (u32, u32)) -> Self {
+        InsertAction::from(RangeInclusive::new(range.0, range.1))
     }
 }

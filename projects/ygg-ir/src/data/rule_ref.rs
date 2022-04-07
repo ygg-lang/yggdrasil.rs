@@ -1,4 +1,5 @@
 use super::*;
+use character_set::builtin::BUILTIN_CHARACTER_RANGES;
 
 //
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
@@ -51,7 +52,7 @@ impl ExpressionKind {
         Self::Data(Box::new(data))
     }
     pub fn builtin(name: &str) -> Option<Self> {
-        let ranges = BUILTIN_CHARACTER_SETS.get(name)?;
+        let ranges = BUILTIN_CHARACTER_RANGES.get(name)?;
         let set = CharacterSet::from_ranges(ranges);
         Some(Self::Data(Box::new(DataKind::CharacterSet(set))))
     }

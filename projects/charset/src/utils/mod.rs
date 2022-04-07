@@ -1,6 +1,6 @@
 use std::{
     fmt::{Debug, Display, Formatter},
-    ops::Range,
+    ops::{Range, RangeInclusive},
 };
 
 use serde::{ser::SerializeSeq, Deserialize, Deserializer, Serialize, Serializer};
@@ -22,11 +22,11 @@ impl Debug for CharacterSet {
         write!(f, "CharacterSet({}) ", self.count())?;
         let mut w = &mut f.debug_set();
         for range in self.to_ranges() {
-            if range.start == range.end {
-                w = w.entry(&(range.start as u32))
+            if range.start() == range.end() {
+                w = w.entry(&(*range.start() as u32))
             }
             else {
-                w = w.entry(&Range { start: range.start as u32, end: range.end as u32 })
+                w = w.entry(&RangeInclusive::new(*range.start() as u32, *range.end() as u32))
             }
         }
         w.finish()
@@ -38,7 +38,7 @@ impl Display for CharacterSet {
         write!(f, "CharacterSet({}) ", self.count())?;
         let mut w = &mut f.debug_set();
         for range in self.to_ranges() {
-            if range.start == range.end { w = w.entry(&range.start) } else { w = w.entry(&Range { start: range.start, end: range.end }) }
+            if range.start() == range.end() { w = w.entry(range.start()) } else { w = w.entry(&range) }
         }
         w.finish()
     }
@@ -84,7 +84,7 @@ impl CharacterSet {
         return out;
     }
 
-    pub fn to_ranges(&self) -> Vec<Range<char>> {
+    pub fn to_ranges(&self) -> Vec<RangeInclusive<char>> {
         let mut ranges = vec![];
         for cp in self.codepoints() {
             range_add(&mut ranges, cp);
@@ -94,19 +94,19 @@ impl CharacterSet {
 }
 
 #[track_caller]
-pub(crate) fn range_u2c(start: u32, end: u32) -> Range<char> {
+pub(crate) fn range_u2c(start: u32, end: u32) -> RangeInclusive<char> {
     #[cfg(debug_assertions)]
     {
         let start = char::from_u32(start).unwrap();
         let end = char::from_u32(end).unwrap();
-        Range { start, end }
+        RangeInclusive::new(start, end)
     }
     #[cfg(not(debug_assertions))]
     {
         unsafe {
             let start = char::from_u32_unchecked(start);
             let end = char::from_u32_unchecked(end);
-            Range { start, end }
+            RangeInclusive::new(start, end)
         }
     }
 }
