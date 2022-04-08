@@ -9,7 +9,7 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-character-set = { version = "0.2.2", path = "../charset" }
+character-set = "0.4.0"
 peginator = "0.2.6"
 unicode-xid = "0.2.4"
 railroad = { version = "0.1.1", optional = true }

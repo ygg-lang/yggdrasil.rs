@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, fmt::Write};
+use std::fmt::Write;
 
 use lazy_static::lazy_static;
 
@@ -16,8 +16,8 @@ impl DataKind {
             DataKind::CharacterAny => {}
             DataKind::Character(_) => {}
             DataKind::CharacterRange(r) => {
-                if r.start == r.end {
-                    *self = DataKind::Character(r.start)
+                if r.start() == r.end() {
+                    *self = DataKind::Character(*r.start())
                 }
             }
             DataKind::CharacterSet(set) => {
@@ -46,14 +46,14 @@ pub(super) fn string_display(s: &str, f: &mut Formatter<'_>) -> std::fmt::Result
     Ok(())
 }
 
-pub(super) fn char_range_display(range: &Range<char>, f: &mut Formatter<'_>) -> std::fmt::Result {
-    write!(f, "[{}-{}]", range.start, range.end)
+pub(super) fn char_range_display(range: &RangeInclusive<char>, f: &mut Formatter<'_>) -> std::fmt::Result {
+    write!(f, "[{}-{}]", range.start(), range.end())
 }
 
 pub(super) fn char_set_display(set: &CharacterSet, f: &mut Formatter<'_>) -> std::fmt::Result {
     write!(f, "[")?;
     for range in set.to_ranges() {
-        write!(f, "{}-{}", range.start, range.end)?
+        write!(f, "{}-{}", range.start(), range.end())?
     }
     write!(f, "]")
 }

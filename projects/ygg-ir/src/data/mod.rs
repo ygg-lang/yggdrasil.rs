@@ -1,7 +1,7 @@
 use std::{
     fmt::{Debug, Display, Formatter},
     hash::Hash,
-    ops::Range,
+    ops::{Range, RangeInclusive},
 };
 
 use num::BigInt;
@@ -27,7 +27,7 @@ pub enum DataKind {
     CharacterAny,
     Character(char),
     CharacterBuiltin(String),
-    CharacterRange(Range<char>),
+    CharacterRange(RangeInclusive<char>),
     CharacterSet(CharacterSet),
 }
 
