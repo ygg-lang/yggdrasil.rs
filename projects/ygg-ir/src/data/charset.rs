@@ -1,7 +1,5 @@
 use std::fmt::Write;
 
-use lazy_static::lazy_static;
-
 use super::*;
 
 impl DataKind {
@@ -56,4 +54,10 @@ pub(super) fn char_set_display(set: &CharacterSet, f: &mut Formatter<'_>) -> std
         write!(f, "{}-{}", range.start(), range.end())?
     }
     write!(f, "]")
+}
+impl ExpressionKind {
+    pub fn string(string: String) -> Self {
+        let data = DataKind::String(string);
+        Self::Data(Box::new(data))
+    }
 }

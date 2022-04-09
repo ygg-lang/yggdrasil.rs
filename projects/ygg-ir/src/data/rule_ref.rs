@@ -1,5 +1,4 @@
 use super::*;
-use character_set::builtin::property_values::PROPERTY_VALUES;
 
 //
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
@@ -32,40 +31,5 @@ impl Display for RuleReference {
 impl RuleReference {
     pub fn new(name: &str) -> Self {
         Self { tag: "".to_string(), name: name.trim_start_matches("_").to_string(), boxed: false, inline: name.starts_with('_') }
-    }
-}
-
-impl ExpressionKind {
-    pub fn rule(name: &str) -> Self {
-        let data = match name {
-            "ANY" => DataKind::CharacterAny,
-            "XID_START" => {
-                todo!();
-                // DataKind::CharacterSet(name.to_string())
-            }
-            _ => return Self::Rule(Box::new(RuleReference::new(name))),
-        };
-        Self::Data(Box::new(data))
-    }
-    pub fn string(string: String) -> Self {
-        let data = DataKind::String(string);
-        Self::Data(Box::new(data))
-    }
-    pub fn builtin(name: &str) -> Option<Self> {
-        todo!();
-        // let ranges = BUILTIN_CHARACTER_RANGES.get(name)?;
-        // let set = CharacterSet::from_ranges(ranges);
-        // Some(Self::Data(Box::new(DataKind::CharacterSet(set))))
-    }
-}
-
-#[test]
-fn test() {
-    for (key, names) in PROPERTY_VALUES {
-        if *key == "General_Category" {
-            for (k, v) in *names {
-                println!("{} => {}", k, v)
-            }
-        }
     }
 }
