@@ -1,5 +1,5 @@
 use super::*;
-use character_set::builtin::property_values::PROPERTY_VALUES;
+use character_set::builtin::{general_category, property_values::PROPERTY_VALUES};
 use std::collections::{HashMap, HashSet};
 
 const GENERAL_CATEGORY: usize = 36;
@@ -17,10 +17,6 @@ impl ExpressionKind {
         Self::Data(Box::new(data))
     }
     pub fn regex_category(name: &str) -> String {
-        if let Some(s) = general_map().get(name) {
-            return s.to_owned();
-        }
-
         String::new()
     }
 
@@ -32,21 +28,46 @@ impl ExpressionKind {
     }
 }
 
-pub struct BuiltinMap {
+pub struct RegexCategory {
     inner: HashMap<String, &'static [(char, char)]>,
 }
 
-impl BuiltinMap {
-    fn new() -> Self {
+impl Debug for RegexCategory {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        // *const
+        let mut w = &mut f.debug_struct("RegexCategory");
+
+        f.debug_map().entries(self.inner.iter()).finish()
+    }
+}
+
+impl Default for RegexCategory {
+    fn default() -> Self {
         let mut out = HashMap::default();
-        for (short, long) in PROPERTY_VALUES[GENERAL_CATEGORY].1 {}
+        for (group, range) in general_category::BY_NAME {
+            out.insert(group.to_string(), *range);
+        }
+        for (short, long) in PROPERTY_VALUES[GENERAL_CATEGORY].1 {
+            let range = match out.get(*long) {
+                Some(s) => *s,
+                None => continue,
+            };
+            out.insert(short.to_string(), range);
+        }
         Self { inner: out }
     }
+}
 
+impl RegexCategory {
     fn general_map(&self) -> HashMap<String, String> {
         let general = PROPERTY_VALUES[GENERAL_CATEGORY].1;
         HashMap::from_iter(general.iter().map(|(k, v)| (k.to_string(), v.to_string())))
     }
+}
+
+#[test]
+fn test() {
+    println!("{:#?}", RegexCategory::default())
 }
 
 #[test]
