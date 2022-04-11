@@ -18,7 +18,7 @@ impl DataKind {
                     *self = DataKind::Character(*r.start())
                 }
             }
-            DataKind::CharacterSet(set) => {
+            DataKind::CharacterFused(set) => {
                 let ranges = set.to_ranges();
                 if ranges.len() == 1 {
                     unsafe { *self = DataKind::CharacterRange(ranges.get_unchecked(0).clone()) }

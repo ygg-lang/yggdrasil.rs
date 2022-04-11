@@ -1,6 +1,7 @@
 use super::*;
 use character_set::builtin::{general_category, property_bool, property_values::PROPERTY_VALUES, script_extension};
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+use std::collections::BTreeMap;
+use yggdrasil_error::YggdrasilError;
 
 const GENERAL_CATEGORY: usize = 36;
 
@@ -16,11 +17,17 @@ impl ExpressionKind {
         };
         Self::Data(Box::new(data))
     }
-    pub fn regex_category(name: &str) -> String {
-        String::new()
+    pub fn regex_category(name: &str) -> Result<String, YggdrasilError> {
+        let key = RegexCategory::normalize_name(name);
+        if RegexCategory::default().inner.contains_key(&key) {
+            Ok(key)
+        }
+        else {
+            Err(YggdrasilError::language_error(format!("Unknown RegexCategory {}", name)))
+        }
     }
 
-    pub fn builtin(name: &str) -> Option<Self> {
+    pub fn builtin(_name: &str) -> Option<Self> {
         todo!();
         // let ranges = BUILTIN_CHARACTER_RANGES.get(name)?;
         // let set = CharacterSet::from_ranges(ranges);
@@ -28,10 +35,10 @@ impl ExpressionKind {
     }
 }
 
-pub type CategoryRange = BTreeMap<String, &'static [(char, char)]>;
+type CategoryRange = BTreeMap<String, &'static [(char, char)]>;
 
 pub struct RegexCategory {
-    inner: BTreeMap<String, &'static [(char, char)]>,
+    inner: CategoryRange,
 }
 
 impl Debug for RegexCategory {

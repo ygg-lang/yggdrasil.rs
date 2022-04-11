@@ -24,11 +24,12 @@ pub mod symbol;
 pub enum DataKind {
     Integer(BigInt),
     String(String),
+    StringFused(),
     CharacterAny,
     Character(char),
     CharacterBuiltin(String),
     CharacterRange(RangeInclusive<char>),
-    CharacterSet { readable_name: String, set: CharacterSet },
+    CharacterFused(CharacterSet),
 }
 
 impl Display for DataKind {
@@ -40,9 +41,7 @@ impl Display for DataKind {
             DataKind::Character(c) => write!(f, "{:?}", c),
             DataKind::CharacterRange(range) => char_range_display(range, f),
             DataKind::CharacterBuiltin(set) => write!(f, "{}", set),
-            DataKind::CharacterSet(set) => char_set_display(set, f),
+            DataKind::CharacterFused(set) => char_set_display(set, f),
         }
     }
 }
-
-impl DataKind {}

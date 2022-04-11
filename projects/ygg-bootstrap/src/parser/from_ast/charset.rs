@@ -16,7 +16,7 @@ impl CharsetNode {
                     CharItem::CharRange(c) => set.exclude(c.start..=c.end)?,
                 }
             }
-            Ok(ExpressionKind::Data(Box::new(DataKind::CharacterSet(set))))
+            Ok(ExpressionKind::Data(Box::new(DataKind::CharacterFused(set))))
         }
         else {
             set = CharacterSet::nil();
@@ -26,7 +26,7 @@ impl CharsetNode {
                     CharItem::CharRange(c) => set.include(c.start..=c.end)?,
                 }
             }
-            Ok(ExpressionKind::Data(Box::new(DataKind::CharacterSet(set))))
+            Ok(ExpressionKind::Data(Box::new(DataKind::CharacterFused(set))))
         }
     }
 }

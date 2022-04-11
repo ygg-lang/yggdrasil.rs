@@ -133,7 +133,7 @@ impl AsRailroad for DataKind {
             DataKind::Character(v) => box Terminal::new(v.to_string(), &vec!["string"]),
             DataKind::CharacterBuiltin(v) => box Terminal::new(v.to_string(), &vec!["string"]),
             DataKind::CharacterRange(v) => box Terminal::new(format!("{}-{}", v.start, v.end), &vec!["string"]),
-            DataKind::CharacterSet(v) => box Terminal::new(v.to_string(), &vec!["string"]),
+            DataKind::CharacterFused(v) => box Terminal::new(v.to_string(), &vec!["string"]),
         }
     }
 }
