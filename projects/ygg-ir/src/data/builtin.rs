@@ -1,6 +1,6 @@
 use super::*;
-use character_set::builtin::{general_category, property_values::PROPERTY_VALUES};
-use std::collections::{HashMap, HashSet};
+use character_set::builtin::{general_category, property_bool, property_values::PROPERTY_VALUES, script_extension};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 
 const GENERAL_CATEGORY: usize = 36;
 
@@ -28,22 +28,36 @@ impl ExpressionKind {
     }
 }
 
+pub type CategoryRange = BTreeMap<String, &'static [(char, char)]>;
+
 pub struct RegexCategory {
-    inner: HashMap<String, &'static [(char, char)]>,
+    inner: BTreeMap<String, &'static [(char, char)]>,
 }
 
 impl Debug for RegexCategory {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        // *const
         let mut w = &mut f.debug_struct("RegexCategory");
-
-        f.debug_map().entries(self.inner.iter()).finish()
+        for (key, value) in &self.inner {
+            let ptr = (*value).as_ptr();
+            w = w.field(key, &ptr)
+        }
+        w.finish()
     }
 }
 
 impl Default for RegexCategory {
     fn default() -> Self {
-        let mut out = HashMap::default();
+        Self { inner: Self::normalize(RegexCategory::load_data()) }
+    }
+}
+
+impl RegexCategory {
+    fn general_map(&self) -> BTreeMap<String, String> {
+        let general = PROPERTY_VALUES[GENERAL_CATEGORY].1;
+        BTreeMap::from_iter(general.iter().map(|(k, v)| (k.to_string(), v.to_string())))
+    }
+    fn load_data() -> CategoryRange {
+        let mut out = BTreeMap::default();
         for (group, range) in general_category::BY_NAME {
             out.insert(group.to_string(), *range);
         }
@@ -54,14 +68,21 @@ impl Default for RegexCategory {
             };
             out.insert(short.to_string(), range);
         }
-        Self { inner: out }
+        for (group, range) in property_bool::BY_NAME {
+            out.insert(group.to_string(), *range);
+        }
+        for (group, range) in script_extension::BY_NAME {
+            out.insert(group.to_string(), *range);
+        }
+        out
     }
-}
 
-impl RegexCategory {
-    fn general_map(&self) -> HashMap<String, String> {
-        let general = PROPERTY_VALUES[GENERAL_CATEGORY].1;
-        HashMap::from_iter(general.iter().map(|(k, v)| (k.to_string(), v.to_string())))
+    fn normalize(map: CategoryRange) -> CategoryRange {
+        map.into_iter().map(|(k, v)| (Self::normalize_name(&k), v)).collect()
+    }
+
+    fn normalize_name(name: &str) -> String {
+        name.chars().filter(|c| *c != ' ' && *c != '_').map(|c| c.to_ascii_lowercase()).collect()
     }
 }
 

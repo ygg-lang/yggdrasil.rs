@@ -28,7 +28,7 @@ pub enum DataKind {
     Character(char),
     CharacterBuiltin(String),
     CharacterRange(RangeInclusive<char>),
-    CharacterSet(CharacterSet),
+    CharacterSet { readable_name: String, set: CharacterSet },
 }
 
 impl Display for DataKind {
