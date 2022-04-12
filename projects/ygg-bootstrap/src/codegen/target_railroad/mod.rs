@@ -132,8 +132,11 @@ impl AsRailroad for DataKind {
             DataKind::CharacterAny => box Terminal::new("ANY".to_string(), &vec!["character"]),
             DataKind::Character(v) => box Terminal::new(v.to_string(), &vec!["string"]),
             DataKind::CharacterBuiltin(v) => box Terminal::new(v.to_string(), &vec!["string"]),
-            DataKind::CharacterRange(v) => box Terminal::new(format!("{}-{}", v.start, v.end), &vec!["string"]),
+            DataKind::CharacterRange(v) => box Terminal::new(format!("{}-{}", v.start(), v.end()), &vec!["string"]),
             DataKind::CharacterFused(v) => box Terminal::new(v.to_string(), &vec!["string"]),
+            DataKind::Null => box Terminal::new("Null".to_string(), &vec!["character"]),
+            DataKind::Boolean(_) => box Terminal::new("Boolean".to_string(), &vec!["character"]),
+            DataKind::StringFused(_) => box Terminal::new("StringFused".to_string(), &vec!["string"]),
         }
     }
 }

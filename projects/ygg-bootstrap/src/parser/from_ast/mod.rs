@@ -1,13 +1,13 @@
-use std::mem::take;
-
-use crate::parser::ast::{CharsetNode, StringLiteral};
+use crate::parser::ast::{CharsetNode, ExprStream, StringLiteral};
 use peginator::PegParser;
+use pratt::{Affix, Associativity, PrattParser, Precedence};
+use std::mem::take;
 use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
 use yggdrasil_ir::{
     ChoiceExpression, ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule, Operator, UnaryExpression,
 };
 
-use crate::parser::ast::{ChoiceNode, DefineStatement, Node, ProgramNode, ProgramParser, StatementNode, StringItem};
+use crate::parser::ast::{ChoiceNode, DefineStatement, ProgramNode, ProgramParser, StatementNode, StringItem};
 
 mod charset;
 mod import;
@@ -81,6 +81,101 @@ impl DefineStatement {
         }
         ctx.docs.clear();
         Ok(())
+    }
+}
+
+struct ExprParser;
+
+impl<I> PrattParser<I> for ExprParser
+where
+    I: Iterator<Item = ExprStream>,
+{
+    type Error = YggdrasilError;
+    type Input = ExprStream;
+    type Output = ExpressionNode;
+
+    // Query information about an operator (Affix, Precedence, Associativity)
+    fn query(&mut self, tree: &ExprStream) -> Result<Affix, YggdrasilError> {
+        let affix = match tree {
+            ExprStream::Infix('=') => Affix::Infix(Precedence(2), Associativity::Neither),
+            ExprStream::Infix('+') => Affix::Infix(Precedence(3), Associativity::Left),
+            ExprStream::Infix('-') => Affix::Infix(Precedence(3), Associativity::Left),
+            ExprStream::Infix('*') => Affix::Infix(Precedence(4), Associativity::Left),
+            ExprStream::Infix('/') => Affix::Infix(Precedence(4), Associativity::Left),
+            ExprStream::Suffix('?') => Affix::Postfix(Precedence(5)),
+            ExprStream::Prefix('-') => Affix::Prefix(Precedence(6)),
+            ExprStream::Prefix('!') => Affix::Prefix(Precedence(6)),
+            ExprStream::Infix('^') => Affix::Infix(Precedence(7), Associativity::Right),
+            ExprStream::Group(_) | ExprStream::CharsetNode(_) | ExprStream::Identifier(_) | ExprStream::StringLiteral(_) => {
+                Affix::Nilfix
+            }
+        };
+        Ok(affix)
+    }
+
+    // Construct a primary expression, e.g. a number
+    fn primary(&mut self, tree: ExprStream) -> Result<ExpressionNode, YggdrasilError> {
+        let expr = match tree {
+            ExprStream::CharsetNode(v) => {
+                todo!()
+            }
+            ExprStream::Group(v) => ExpressionKind::Choice(box v.body),
+            ExprStream::Identifier(v) => {}
+            ExprStream::Infix(_) => {
+                unreachable!()
+            }
+            ExprStream::Prefix(_) => {
+                unreachable!()
+            }
+            ExprStream::Suffix(_) => {
+                unreachable!()
+            }
+            ExprStream::StringLiteral(v) => {}
+        };
+        Ok(expr)
+    }
+
+    // Construct a binary infix expression, e.g. 1+1
+    fn infix(&mut self, lhs: ExpressionNode, tree: ExprStream, rhs: ExpressionNode) -> Result<ExpressionNode, YggdrasilError> {
+        let op = match tree {
+            ExprStream::Infix('~') => {
+                ChoiceExpression { branches: () };
+
+                ExpressionKind::Concat()
+            }
+            ExprStream::Infix('|') => {
+                ChoiceExpression { branches: () };
+
+                ExpressionKind::Choice()
+            }
+            ExprStream::Infix(':') => match lhs.kind {
+                ExpressionKind::Choice(_) => {}
+                ExpressionKind::Concat(_) => {}
+                ExpressionKind::Unary(_) => {}
+                ExpressionKind::Rule(_) => {}
+                ExpressionKind::Data(_) => {}
+            },
+            _ => unreachable!(),
+        };
+        Ok(Expr::BinOp(Box::new(lhs), op, Box::new(rhs)))
+    }
+
+    // Construct a unary prefix expression, e.g. !1
+    fn prefix(&mut self, tree: ExprStream, rhs: ExpressionNode) -> Result<Expr, YggdrasilError> {
+        let op = match tree {
+            ExprStream::Prefix(_) => {}
+            _ => unreachable!(),
+        };
+        Ok(Expr::UnOp(op, Box::new(rhs)))
+    }
+
+    // Construct a unary postfix expression, e.g. 1?
+    fn postfix(&mut self, lhs: ExpressionNode, tree: ExprStream) -> Result<Expr, YggdrasilError> {
+        let op = match tree {
+            ExprStream::Suffix(_) => {}
+            _ => unreachable!(),
+        };
+        Ok(Expr::UnOp(op, Box::new(lhs)))
     }
 }
 

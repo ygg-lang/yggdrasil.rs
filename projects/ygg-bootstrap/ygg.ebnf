@@ -40,16 +40,17 @@ ArgumentValue =
 Modifiers = {id:Identifier !('{'|'('|':'|'->'|';')};
 
 @position
-ChoiceNode = [['|'] terms:Term {"|" terms:Term}];
+ChoiceNode = ['|'] {terms:TermStream};
 
-@position
-Term = {prefix:Prefix} [tag:Identifier ':'] node:Node {suffix:Suffix};
-
-@position
-Arguments = '(' ')';
-
-@position
-Typing = ('->' | ':') id:Identifier;
+ExprStream =
+    @:Prefix        |
+    @:Suffix        |
+    @:Infix         |
+    @:CharsetNode   |
+    @:StringLiteral |
+    @:Identifier    |
+    @:Group
+    ;
 
 @char
 Prefix = '^' | '!';
@@ -57,13 +58,15 @@ Prefix = '^' | '!';
 @char
 Suffix = '+' | '*' | '?';
 
+@char
+Infix = '|' | ':' | '~';
+
 @position
-Node =
-    @:Group |
-    @:CharsetNode |
-    @:StringLiteral |
-    @:Identifier
-    ;
+Arguments = '(' ')';
+
+@position
+Typing = ('->' | ':') id:Identifier;
+
 @position
 Group = "(" body:ChoiceNode ")";
 

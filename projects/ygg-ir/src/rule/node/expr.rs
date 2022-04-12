@@ -10,4 +10,5 @@ impl ExpressionNode {
     pub fn is_unary(&self) -> bool {
         matches!(self.kind, ExpressionKind::Unary(_))
     }
+    pub fn as_tag(&self) {}
 }
