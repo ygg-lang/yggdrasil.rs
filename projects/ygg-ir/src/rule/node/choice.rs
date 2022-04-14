@@ -18,6 +18,13 @@ impl Hash for ChoiceExpression {
 }
 
 impl ChoiceExpression {
+    pub fn new(lhs: impl Into<ExpressionNode>, rhs: impl Into<ExpressionNode>) -> Self {
+        let mut branches = IndexSet::default();
+        branches.insert(lhs.into());
+        branches.insert(rhs.into());
+        Self { branches }
+    }
+
     pub fn push(&mut self, e: impl Into<ExpressionNode>) {
         self.branches.insert(e.into());
     }

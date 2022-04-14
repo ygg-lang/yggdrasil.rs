@@ -5,6 +5,16 @@ pub struct ConcatExpression {
     pub sequence: Vec<ExpressionNode>,
 }
 
+impl ConcatExpression {
+    pub fn new(lhs: impl Into<ExpressionNode>, rhs: impl Into<ExpressionNode>, soft: bool) -> Self {
+        let mut sequence = vec![];
+        sequence.push(lhs.into());
+        if soft {}
+        sequence.push(rhs.into());
+        Self { sequence }
+    }
+}
+
 // impl Expression {
 //     #[inline]
 //     pub fn concat(lhs: Term, rhs: Term) -> Self {

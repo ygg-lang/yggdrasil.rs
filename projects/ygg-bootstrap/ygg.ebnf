@@ -40,7 +40,7 @@ ArgumentValue =
 Modifiers = {id:Identifier !('{'|'('|':'|'->'|';')};
 
 @position
-ChoiceNode = ['|'] {terms:TermStream};
+ChoiceNode = ['|'] {terms:ExprStream};
 
 ExprStream =
     @:Prefix        |

@@ -1,5 +1,5 @@
-use crate::{Result, YggdrasilError};
 use std::iter::Peekable;
+use yggdrasil_error::YggdrasilError;
 
 pub type PrecedenceNumber = u16;
 
@@ -65,21 +65,21 @@ where
     type Input;
     type Output: Sized;
 
-    fn query(&mut self, input: &Self::Input) -> Result<Affix>;
+    fn query(&mut self, input: &Self::Input) -> Result<Affix, YggdrasilError>;
 
-    fn primary(&mut self, input: Self::Input) -> Result<Self::Output>;
+    fn primary(&mut self, input: Self::Input) -> Result<Self::Output, YggdrasilError>;
 
-    fn infix(&mut self, lhs: Self::Output, op: Self::Input, rhs: Self::Output) -> Result<Self::Output>;
+    fn infix(&mut self, lhs: Self::Output, op: Self::Input, rhs: Self::Output) -> Result<Self::Output, YggdrasilError>;
 
-    fn prefix(&mut self, op: Self::Input, rhs: Self::Output) -> Result<Self::Output>;
+    fn prefix(&mut self, op: Self::Input, rhs: Self::Output) -> Result<Self::Output, YggdrasilError>;
 
-    fn suffix(&mut self, lhs: Self::Output, op: Self::Input) -> Result<Self::Output>;
+    fn suffix(&mut self, lhs: Self::Output, op: Self::Input) -> Result<Self::Output, YggdrasilError>;
 
-    fn parse(&mut self, inputs: &mut Inputs) -> Result<Self::Output> {
+    fn parse(&mut self, inputs: &mut Inputs) -> Result<Self::Output, YggdrasilError> {
         self.parse_input(&mut inputs.peekable(), Precedence(0))
     }
 
-    fn parse_input(&mut self, tail: &mut Peekable<&mut Inputs>, rbp: Precedence) -> Result<Self::Output> {
+    fn parse_input(&mut self, tail: &mut Peekable<&mut Inputs>, rbp: Precedence) -> Result<Self::Output, YggdrasilError> {
         if let Some(head) = tail.next() {
             let info = self.query(&head)?;
             let mut nbp = self.nbp(info);
@@ -104,7 +104,12 @@ where
     }
 
     /// Null-Denotation
-    fn nud(&mut self, head: Self::Input, tail: &mut Peekable<&mut Inputs>, info: Affix) -> Result<Self::Output> {
+    fn nud(
+        &mut self,
+        head: Self::Input,
+        tail: &mut Peekable<&mut Inputs>,
+        info: Affix,
+    ) -> Result<Self::Output, YggdrasilError> {
         match info {
             Affix::Prefix(precedence) => {
                 let rhs = self.parse_input(tail, precedence.normalize().lower());
@@ -123,7 +128,7 @@ where
         tail: &mut Peekable<&mut Inputs>,
         info: Affix,
         lhs: Self::Output,
-    ) -> Result<Self::Output> {
+    ) -> Result<Self::Output, YggdrasilError> {
         match info {
             Affix::Infix(precedence, associativity) => {
                 let precedence = precedence.normalize();

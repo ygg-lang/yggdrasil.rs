@@ -1,10 +1,11 @@
-use crate::parser::ast::{CharsetNode, ExprStream, StringLiteral};
+use crate::parser::ast::{CharsetNode, ExprStream, Prefix, StringLiteral};
 use peginator::PegParser;
-use pratt::{Affix, Associativity, PrattParser, Precedence};
+use pratt::{Affix, Associativity, NoError, PrattError, PrattParser, Precedence};
 use std::mem::take;
 use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
 use yggdrasil_ir::{
-    ChoiceExpression, ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule, Operator, UnaryExpression,
+    ChoiceExpression, ConcatExpression, ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule, Operator,
+    UnaryExpression,
 };
 
 use crate::parser::ast::{ChoiceNode, DefineStatement, ProgramNode, ProgramParser, StatementNode, StringItem};
@@ -84,9 +85,11 @@ impl DefineStatement {
     }
 }
 
-struct ExprParser;
+struct ExprParser<'ctx> {
+    ctx: &'ctx mut GrammarParser,
+}
 
-impl<I> PrattParser<I> for ExprParser
+impl<'i, I> PrattParser<I> for ExprParser<'i>
 where
     I: Iterator<Item = ExprStream>,
 {
@@ -119,8 +122,10 @@ where
             ExprStream::CharsetNode(v) => {
                 todo!()
             }
-            ExprStream::Group(v) => ExpressionKind::Choice(box v.body),
-            ExprStream::Identifier(v) => {}
+            ExprStream::Group(v) => v.body.as_expr(self.ctx)?,
+            ExprStream::Identifier(v) => {
+                todo!()
+            }
             ExprStream::Infix(_) => {
                 unreachable!()
             }
@@ -130,95 +135,70 @@ where
             ExprStream::Suffix(_) => {
                 unreachable!()
             }
-            ExprStream::StringLiteral(v) => {}
+            ExprStream::StringLiteral(v) => {
+                todo!()
+            }
         };
-        Ok(expr)
+        Ok(ExpressionNode { kind: expr, branch_tag: "".to_string(), node_tag: "".to_string() })
     }
 
     // Construct a binary infix expression, e.g. 1+1
     fn infix(&mut self, lhs: ExpressionNode, tree: ExprStream, rhs: ExpressionNode) -> Result<ExpressionNode, YggdrasilError> {
-        let op = match tree {
-            ExprStream::Infix('~') => {
-                ChoiceExpression { branches: () };
-
-                ExpressionKind::Concat()
-            }
-            ExprStream::Infix('|') => {
-                ChoiceExpression { branches: () };
-
-                ExpressionKind::Choice()
-            }
-            ExprStream::Infix(':') => match lhs.kind {
-                ExpressionKind::Choice(_) => {}
-                ExpressionKind::Concat(_) => {}
-                ExpressionKind::Unary(_) => {}
-                ExpressionKind::Rule(_) => {}
-                ExpressionKind::Data(_) => {}
+        let kind = match tree {
+            ExprStream::Infix('~') => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, true)),
+            ExprStream::Infix('|') => ExpressionKind::Choice(box ChoiceExpression::new(lhs, rhs)),
+            ExprStream::Infix(':') => match lhs.kind.as_tag() {
+                Some(s) => return Ok(ExpressionNode { kind: rhs.kind, branch_tag: rhs.branch_tag, node_tag: s.to_string() }),
+                None => {
+                    unreachable!()
+                }
             },
             _ => unreachable!(),
         };
-        Ok(Expr::BinOp(Box::new(lhs), op, Box::new(rhs)))
+        Ok(ExpressionNode { kind, branch_tag: "".to_string(), node_tag: "".to_string() })
     }
 
     // Construct a unary prefix expression, e.g. !1
-    fn prefix(&mut self, tree: ExprStream, rhs: ExpressionNode) -> Result<Expr, YggdrasilError> {
+    fn prefix(&mut self, tree: ExprStream, rhs: ExpressionNode) -> Result<ExpressionNode, YggdrasilError> {
         let op = match tree {
-            ExprStream::Prefix(_) => {}
+            ExprStream::Prefix(prefix) => {
+                let op = match prefix {
+                    '^' => Operator::Remark,
+                    _ => unreachable!(),
+                };
+                UnaryExpression { base: rhs, ops: vec![op] }
+            }
             _ => unreachable!(),
         };
-        Ok(Expr::UnOp(op, Box::new(rhs)))
+        Ok(ExpressionNode { kind: ExpressionKind::Unary(box op), branch_tag: "".to_string(), node_tag: "".to_string() })
     }
 
     // Construct a unary postfix expression, e.g. 1?
-    fn postfix(&mut self, lhs: ExpressionNode, tree: ExprStream) -> Result<Expr, YggdrasilError> {
+    fn postfix(&mut self, lhs: ExpressionNode, tree: ExprStream) -> Result<ExpressionNode, YggdrasilError> {
         let op = match tree {
-            ExprStream::Suffix(_) => {}
+            ExprStream::Suffix(suffix) => {
+                let op = match suffix {
+                    '?' => Operator::Optional,
+                    '*' => Operator::Repeats,
+                    '+' => Operator::Repeat1,
+                    _ => unreachable!(),
+                };
+                UnaryExpression { base: lhs, ops: vec![op] }
+            }
             _ => unreachable!(),
         };
-        Ok(Expr::UnOp(op, Box::new(lhs)))
+        Ok(ExpressionNode { kind: ExpressionKind::Unary(box op), branch_tag: "".to_string(), node_tag: "".to_string() })
     }
 }
 
 impl ChoiceNode {
     fn as_expr(&self, ctx: &mut GrammarParser) -> Result<ExpressionKind, YggdrasilError> {
-        let mut expr = ChoiceExpression::default();
-        for term in &self.terms {
-            let tag = term.tag.as_ref().map(|f| f.string.to_owned()).unwrap_or_default();
-            let body = match &term.node {
-                Node::Identifier(node) => ExpressionKind::rule(&node.string),
-                Node::StringLiteral(node) => node.as_expr(ctx)?,
-                Node::CharsetNode(node) => node.as_expr(ctx)?,
-                Node::Group(node) => node.body.as_expr(ctx)?,
-            };
-            let mut ops = vec![];
-            for suffix in &term.suffix {
-                match suffix {
-                    '?' => ops.push(Operator::Optional),
-                    '*' => ops.push(Operator::Repeats),
-                    '+' => ops.push(Operator::Repeat1),
-                    _ => unreachable!(),
-                }
-            }
-            for suffix in term.prefix.iter().rev() {
-                match suffix {
-                    '^' => ops.push(Operator::Remark),
-                    '!' => ops.push(Operator::Negative),
-                    _ => unreachable!(),
-                }
-            }
-            if ops.is_empty() {
-                expr.push(ExpressionNode { kind: body, branch_tag: "".to_string(), node_tag: tag })
-            }
-            else {
-                let unary =
-                    UnaryExpression { base: ExpressionNode { kind: body, branch_tag: "".to_string(), node_tag: tag }, ops };
-                expr.push(ExpressionNode {
-                    kind: ExpressionKind::Unary(Box::new(unary)),
-                    branch_tag: "".to_string(),
-                    node_tag: "".to_string(),
-                })
+        let expr = ExprParser { ctx }.parse(self.terms.iter());
+        match expr {
+            Ok(o) => Ok(o),
+            Err(e) => {
+                panic!("{}", e)
             }
         }
-        return Ok(ExpressionKind::Choice(Box::new(expr)));
     }
 }
