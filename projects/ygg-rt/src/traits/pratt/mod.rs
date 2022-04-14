@@ -1,4 +1,4 @@
-use std::iter::Peekable;
+use std::{iter::Peekable, vec::IntoIter};
 use yggdrasil_error::YggdrasilError;
 
 pub type PrecedenceNumber = u16;
@@ -47,6 +47,12 @@ pub enum Affix {
 }
 
 impl Affix {
+    pub fn infix_left(p: PrecedenceNumber) -> Self {
+        Self::Infix(Precedence(p), Associativity::Left)
+    }
+    pub fn infix_right(p: PrecedenceNumber) -> Self {
+        Self::Infix(Precedence(p), Associativity::Right)
+    }
     pub fn infix(p: PrecedenceNumber, a: Associativity) -> Self {
         Self::Infix(Precedence(p), a)
     }
@@ -58,11 +64,8 @@ impl Affix {
     }
 }
 
-pub trait PrattParser<Inputs>
-where
-    Inputs: Iterator<Item = Self::Input>,
-{
-    type Input;
+pub trait PrattParser {
+    type Input: Clone;
     type Output: Sized;
 
     fn query(&mut self, input: &Self::Input) -> Result<Affix, YggdrasilError>;
@@ -75,11 +78,16 @@ where
 
     fn suffix(&mut self, lhs: Self::Output, op: Self::Input) -> Result<Self::Output, YggdrasilError>;
 
-    fn parse(&mut self, inputs: &mut Inputs) -> Result<Self::Output, YggdrasilError> {
-        self.parse_input(&mut inputs.peekable(), Precedence(0))
+    fn parse(&mut self, inputs: &[Self::Input]) -> Result<Self::Output, YggdrasilError> {
+        let mut stream = inputs.to_vec().into_iter().peekable();
+        self.parse_input(&mut stream, Precedence(0))
     }
 
-    fn parse_input(&mut self, tail: &mut Peekable<&mut Inputs>, rbp: Precedence) -> Result<Self::Output, YggdrasilError> {
+    fn parse_input(
+        &mut self,
+        tail: &mut Peekable<IntoIter<Self::Input>>,
+        rbp: Precedence,
+    ) -> Result<Self::Output, YggdrasilError> {
         if let Some(head) = tail.next() {
             let info = self.query(&head)?;
             let mut nbp = self.nbp(info);
@@ -107,7 +115,7 @@ where
     fn nud(
         &mut self,
         head: Self::Input,
-        tail: &mut Peekable<&mut Inputs>,
+        tail: &mut Peekable<IntoIter<Self::Input>>,
         info: Affix,
     ) -> Result<Self::Output, YggdrasilError> {
         match info {
@@ -125,7 +133,7 @@ where
     fn led(
         &mut self,
         head: Self::Input,
-        tail: &mut Peekable<&mut Inputs>,
+        tail: &mut Peekable<IntoIter<Self::Input>>,
         info: Affix,
         lhs: Self::Output,
     ) -> Result<Self::Output, YggdrasilError> {

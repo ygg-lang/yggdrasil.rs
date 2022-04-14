@@ -9,7 +9,6 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-pratt = "0.4.0"
 character-set = "0.4.0"
 peginator = "0.3.0"
 unicode-xid = "0.2.4"

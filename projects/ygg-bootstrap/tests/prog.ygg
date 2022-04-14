@@ -1,16 +1,50 @@
 def entry Program {
-    A1 | B3*
+    statements:Statement
 }
 
-def A1 {
-    B1? | B2+ 
+def Statement {
+    | DefineStatement EOS?
+    | EmptyStatement
 }
 
-def A2 {}
-def B1 {}
-def B2 {}
-def B3 {}
+def EmptyStatement {
+    EOS
+}
 
-def C1 {
-    B1 | "char"
+def MacroCalls {
+    | '#' macros:Macro
+    | '#' '[' macros:Macro ']'
+}
+
+def Macro {
+    id:Identifier ('(' args:ArgumentValue ')')?
+}
+
+
+
+
+def DefineStatement {
+    MacroCalls ^DEFINE modifiers:Modifiers symbol:Identifier arguments:Arguments? type:Typing? '{' body:ChoiceNode '}'
+}
+def DEFINE {
+    "def"
+}
+def ChoiceNode {
+
+}
+
+
+
+def Modifiers {
+    _Modifier+
+}
+def _Modifier {
+    id:Identifier !('{'|'('|':'|'->'|';')
+}
+def Identifier {
+    (XID_START | '_') XID_CONTINUE*
+}
+
+def EOS -> char {
+    ';'
 }

@@ -1,12 +1,12 @@
-use crate::parser::ast::{CharsetNode, ExprStream, Prefix, StringLiteral};
+use crate::parser::ast::{CharsetNode, ExprStream, StringLiteral};
 use peginator::PegParser;
-use pratt::{Affix, Associativity, NoError, PrattError, PrattParser, Precedence};
 use std::mem::take;
 use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
 use yggdrasil_ir::{
     ChoiceExpression, ConcatExpression, ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule, Operator,
     UnaryExpression,
 };
+use yggdrasil_rt::traits::{Affix, PrattParser};
 
 use crate::parser::ast::{ChoiceNode, DefineStatement, ProgramNode, ProgramParser, StatementNode, StringItem};
 
@@ -75,7 +75,7 @@ impl DefineStatement {
                 atomic: self.annotation("atomic", false),
                 entry: self.annotation("entry", false),
                 keep: self.annotation("keep", false),
-                body: ExpressionNode { kind: self.body.as_expr(ctx)?, branch_tag: "".to_string(), node_tag: "".to_string() },
+                body: self.body.as_expr(ctx)?,
                 range: self.position.clone(),
             };
             ctx.info.rules.insert(rule.name.clone(), rule);
@@ -89,28 +89,27 @@ struct ExprParser<'ctx> {
     ctx: &'ctx mut GrammarParser,
 }
 
-impl<'i, I> PrattParser<I> for ExprParser<'i>
-where
-    I: Iterator<Item = ExprStream>,
-{
-    type Error = YggdrasilError;
+impl<'i> PrattParser for ExprParser<'i> {
     type Input = ExprStream;
     type Output = ExpressionNode;
 
     // Query information about an operator (Affix, Precedence, Associativity)
     fn query(&mut self, tree: &ExprStream) -> Result<Affix, YggdrasilError> {
         let affix = match tree {
-            ExprStream::Infix('=') => Affix::Infix(Precedence(2), Associativity::Neither),
-            ExprStream::Infix('+') => Affix::Infix(Precedence(3), Associativity::Left),
-            ExprStream::Infix('-') => Affix::Infix(Precedence(3), Associativity::Left),
-            ExprStream::Infix('*') => Affix::Infix(Precedence(4), Associativity::Left),
-            ExprStream::Infix('/') => Affix::Infix(Precedence(4), Associativity::Left),
-            ExprStream::Suffix('?') => Affix::Postfix(Precedence(5)),
-            ExprStream::Prefix('-') => Affix::Prefix(Precedence(6)),
-            ExprStream::Prefix('!') => Affix::Prefix(Precedence(6)),
-            ExprStream::Infix('^') => Affix::Infix(Precedence(7), Associativity::Right),
+            ExprStream::Prefix('^') => Affix::prefix(10),
+            ExprStream::Prefix('!') => Affix::prefix(10),
+            ExprStream::Prefix(o) => unreachable!("{}", o),
+            ExprStream::Infix('|') => Affix::infix_left(1),
+            ExprStream::Infix('~') => Affix::infix_left(2),
+            ExprStream::Infix('+') => Affix::infix_left(2),
+            ExprStream::Infix(':') => Affix::infix_left(3),
+            ExprStream::Infix(o) => unreachable!("{}", o),
+            ExprStream::Suffix('?') => Affix::suffix(20),
+            ExprStream::Suffix('+') => Affix::suffix(20),
+            ExprStream::Suffix('*') => Affix::suffix(20),
+            ExprStream::Suffix(o) => unreachable!("{}", o),
             ExprStream::Group(_) | ExprStream::CharsetNode(_) | ExprStream::Identifier(_) | ExprStream::StringLiteral(_) => {
-                Affix::Nilfix
+                Affix::None
             }
         };
         Ok(affix)
@@ -122,10 +121,8 @@ where
             ExprStream::CharsetNode(v) => {
                 todo!()
             }
-            ExprStream::Group(v) => v.body.as_expr(self.ctx)?,
-            ExprStream::Identifier(v) => {
-                todo!()
-            }
+            ExprStream::Group(v) => return v.body.as_expr(self.ctx),
+            ExprStream::Identifier(v) => ExpressionKind::rule(&v.string),
             ExprStream::Infix(_) => {
                 unreachable!()
             }
@@ -135,9 +132,7 @@ where
             ExprStream::Suffix(_) => {
                 unreachable!()
             }
-            ExprStream::StringLiteral(v) => {
-                todo!()
-            }
+            ExprStream::StringLiteral(v) => v.as_expr(self.ctx)?,
         };
         Ok(ExpressionNode { kind: expr, branch_tag: "".to_string(), node_tag: "".to_string() })
     }
@@ -146,6 +141,7 @@ where
     fn infix(&mut self, lhs: ExpressionNode, tree: ExprStream, rhs: ExpressionNode) -> Result<ExpressionNode, YggdrasilError> {
         let kind = match tree {
             ExprStream::Infix('~') => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, true)),
+            ExprStream::Infix('+') => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, false)),
             ExprStream::Infix('|') => ExpressionKind::Choice(box ChoiceExpression::new(lhs, rhs)),
             ExprStream::Infix(':') => match lhs.kind.as_tag() {
                 Some(s) => return Ok(ExpressionNode { kind: rhs.kind, branch_tag: rhs.branch_tag, node_tag: s.to_string() }),
@@ -173,8 +169,7 @@ where
         Ok(ExpressionNode { kind: ExpressionKind::Unary(box op), branch_tag: "".to_string(), node_tag: "".to_string() })
     }
 
-    // Construct a unary postfix expression, e.g. 1?
-    fn postfix(&mut self, lhs: ExpressionNode, tree: ExprStream) -> Result<ExpressionNode, YggdrasilError> {
+    fn suffix(&mut self, lhs: Self::Output, tree: Self::Input) -> Result<Self::Output, YggdrasilError> {
         let op = match tree {
             ExprStream::Suffix(suffix) => {
                 let op = match suffix {
@@ -192,13 +187,31 @@ where
 }
 
 impl ChoiceNode {
-    fn as_expr(&self, ctx: &mut GrammarParser) -> Result<ExpressionKind, YggdrasilError> {
-        let expr = ExprParser { ctx }.parse(self.terms.iter());
-        match expr {
-            Ok(o) => Ok(o),
-            Err(e) => {
-                panic!("{}", e)
+    fn as_expr(&self, ctx: &mut GrammarParser) -> Result<ExpressionNode, YggdrasilError> {
+        if self.terms.is_empty() {
+            Ok(ExpressionNode::empty())
+        }
+        else {
+            let mut pratt = ExprParser { ctx };
+            let mut normed = vec![];
+            let mut last = false;
+            for term in &self.terms {
+                let this = match term {
+                    ExprStream::Prefix(_) => false,
+                    ExprStream::Infix(_) => false,
+                    ExprStream::Suffix(_) => false,
+                    ExprStream::CharsetNode(_) => true,
+                    ExprStream::Group(_) => true,
+                    ExprStream::Identifier(_) => true,
+                    ExprStream::StringLiteral(_) => true,
+                };
+                if last && this {
+                    normed.push(ExprStream::Infix('+'))
+                }
+                normed.push(term.clone());
+                last = this;
             }
+            pratt.parse(&normed)
         }
     }
 }

@@ -10,6 +10,9 @@ impl ExpressionNode {
     pub fn is_unary(&self) -> bool {
         matches!(self.kind, ExpressionKind::Unary(_))
     }
+    pub fn empty() -> Self {
+        Self { kind: ExpressionKind::Choice(Box::new(Default::default())), branch_tag: "".to_string(), node_tag: "".to_string() }
+    }
 }
 
 impl ExpressionKind {
