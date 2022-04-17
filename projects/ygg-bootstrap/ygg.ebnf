@@ -18,11 +18,11 @@ EmptyStatement = EOS;
 EOS = ';';
 
 @position
-DefineStatement = MacroCalls define:DEFINE modifiers:Modifiers symbol:Identifier [arguments:Arguments] [type:Typing] '{' body:ChoiceNode '}';
+DefineStatement = MacroCalls define:DefineNode modifiers:Modifiers symbol:Identifier [arguments:Arguments] [type:Typing] '{' body:ChoiceNode '}';
 
 @string
 @no_skip_ws
-DEFINE = 'def!' | 'def';
+DefineNode = 'def' | 'union' | 'class' | 'enum' | 'struct';
 
 
 MacroCalls =
@@ -54,13 +54,16 @@ ExprStream =
     @:Group
     ;
 
-@char
+@position
+@string
 Prefix = '^' | '!';
 
-@char
+@position
+@string
 Suffix = '+' | '*' | '?';
 
-@char
+@position
+@string
 Infix = '|' | ':' | '~';
 
 @position

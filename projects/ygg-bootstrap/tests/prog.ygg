@@ -1,50 +1,62 @@
-def entry Program {
+class entry Program {
     statements:Statement
 }
 
-def Statement {
-    | DefineStatement EOS?
-    | EmptyStatement
+union Statement {
+    | ^DefineStatement EOS?
+    | ^EmptyStatement
 }
 
-def EmptyStatement {
+class EmptyStatement {
     EOS
 }
 
-def MacroCalls {
+class MacroCalls {
+    _MacroCall+
+}
+class _MacroCall {
     | '#' macros:Macro
     | '#' '[' macros:Macro ']'
 }
 
-def Macro {
+class Macro {
     id:Identifier ('(' args:ArgumentValue ')')?
 }
-
-
-
-
-def DefineStatement {
-    MacroCalls ^DEFINE modifiers:Modifiers symbol:Identifier arguments:Arguments? type:Typing? '{' body:ChoiceNode '}'
-}
-def DEFINE {
-    "def"
-}
-def ChoiceNode {
+union ArgumentValue {
 
 }
 
 
 
-def Modifiers {
+class DefineStatement {
+    MacroCalls Define modifiers:Modifiers symbol:Identifier arguments:Arguments? type:Typing? '{' body:Choice '}'
+}
+
+class Define -> string {
+    "class" | "union" | "struct" | "enum"
+}
+class Arguments {
+
+}
+class Typing {
+}
+
+union Choice {
+
+}
+
+
+
+class Modifiers {
     _Modifier+
 }
-def _Modifier {
+class _Modifier {
     id:Identifier !('{'|'('|':'|'->'|';')
 }
-def Identifier {
+class Identifier {
     (XID_START | '_') XID_CONTINUE*
 }
 
-def EOS -> char {
+class EOS -> char {
     ';'
 }

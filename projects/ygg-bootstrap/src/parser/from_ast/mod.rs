@@ -1,4 +1,4 @@
-use crate::parser::ast::{CharsetNode, ExprStream, StringLiteral};
+use crate::parser::ast::{CharsetNode, ExprStream, Infix, StringLiteral};
 use peginator::PegParser;
 use std::mem::take;
 use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
@@ -89,6 +89,27 @@ struct ExprParser<'ctx> {
     ctx: &'ctx mut GrammarParser,
 }
 
+impl ExprStream {
+    pub fn as_infix(&self) -> Option<&str> {
+        match self {
+            ExprStream::Infix(i) => Some(i.string.as_str()),
+            _ => None,
+        }
+    }
+    pub fn as_prefix(&self) -> Option<&str> {
+        match self {
+            ExprStream::Prefix(i) => Some(i.string.as_str()),
+            _ => None,
+        }
+    }
+    pub fn as_suffix(&self) -> Option<&str> {
+        match self {
+            ExprStream::Suffix(i) => Some(i.string.as_str()),
+            _ => None,
+        }
+    }
+}
+
 impl<'i> PrattParser for ExprParser<'i> {
     type Input = ExprStream;
     type Output = ExpressionNode;
@@ -96,21 +117,21 @@ impl<'i> PrattParser for ExprParser<'i> {
     // Query information about an operator (Affix, Precedence, Associativity)
     fn query(&mut self, tree: &ExprStream) -> Result<Affix, YggdrasilError> {
         let affix = match tree {
-            ExprStream::Prefix('^') => Affix::prefix(10),
-            ExprStream::Prefix('!') => Affix::prefix(10),
-            ExprStream::Prefix(o) => unreachable!("{}", o),
-            ExprStream::Infix('|') => Affix::infix_left(1),
-            ExprStream::Infix('~') => Affix::infix_left(2),
-            ExprStream::Infix('+') => Affix::infix_left(2),
-            ExprStream::Infix(':') => Affix::infix_left(3),
-            ExprStream::Infix(o) => unreachable!("{}", o),
-            ExprStream::Suffix('?') => Affix::suffix(20),
-            ExprStream::Suffix('+') => Affix::suffix(20),
-            ExprStream::Suffix('*') => Affix::suffix(20),
-            ExprStream::Suffix(o) => unreachable!("{}", o),
-            ExprStream::Group(_) | ExprStream::CharsetNode(_) | ExprStream::Identifier(_) | ExprStream::StringLiteral(_) => {
-                Affix::None
-            }
+            ExprStream::Prefix(prefix) => match prefix.string.as_str() {
+                "^" | "!" => Affix::prefix(10),
+                _ => unreachable!("{}", prefix.string.as_str()),
+            },
+            ExprStream::Infix(infix) => match infix.string.as_str() {
+                "|" => Affix::infix_left(1),
+                "~" | "+" => Affix::infix_left(2),
+                ":" => Affix::infix_left(3),
+                _ => unreachable!("{}", infix.string.as_str()),
+            },
+            ExprStream::Suffix(suffix) => match suffix.string.as_str() {
+                "?" | "+" | "*" => Affix::suffix(20),
+                _ => unreachable!("{}", suffix.string.as_str()),
+            },
+            _ => Affix::None,
         };
         Ok(affix)
     }
@@ -137,14 +158,18 @@ impl<'i> PrattParser for ExprParser<'i> {
         Ok(ExpressionNode { kind: expr, branch_tag: "".to_string(), node_tag: "".to_string() })
     }
 
-    // Construct a binary infix expression, e.g. 1+1
     fn infix(&mut self, lhs: ExpressionNode, tree: ExprStream, rhs: ExpressionNode) -> Result<ExpressionNode, YggdrasilError> {
-        let kind = match tree {
-            ExprStream::Infix('~') => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, true)),
-            ExprStream::Infix('+') => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, false)),
-            ExprStream::Infix('|') => ExpressionKind::Choice(box ChoiceExpression::new(lhs, rhs)),
-            ExprStream::Infix(':') => match lhs.kind.as_tag() {
-                Some(s) => return Ok(ExpressionNode { kind: rhs.kind, branch_tag: rhs.branch_tag, node_tag: s.to_string() }),
+        let kind = match tree.as_infix() {
+            Some("~") => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, true)),
+            Some("+") => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, false)),
+            Some("|") => ExpressionKind::Choice(box ChoiceExpression::new(lhs, rhs)),
+            Some(":") => match lhs.kind.as_tag() {
+                Some("_") => {
+                    return Ok(ExpressionNode { kind: rhs.kind, branch_tag: rhs.branch_tag, node_tag: "".to_string() });
+                }
+                Some(s) => {
+                    return Ok(ExpressionNode { kind: rhs.kind, branch_tag: rhs.branch_tag, node_tag: s.to_string() });
+                }
                 None => {
                     unreachable!()
                 }
@@ -156,12 +181,13 @@ impl<'i> PrattParser for ExprParser<'i> {
 
     // Construct a unary prefix expression, e.g. !1
     fn prefix(&mut self, tree: ExprStream, rhs: ExpressionNode) -> Result<ExpressionNode, YggdrasilError> {
-        let op = match tree {
-            ExprStream::Prefix(prefix) => {
-                let op = match prefix {
-                    '^' => Operator::Remark,
-                    _ => unreachable!(),
-                };
+        let op = match tree.as_prefix() {
+            Some("^") => {
+                let op = Operator::Remark;
+                UnaryExpression { base: rhs, ops: vec![op] }
+            }
+            Some("!") => {
+                let op = Operator::Negative;
                 UnaryExpression { base: rhs, ops: vec![op] }
             }
             _ => unreachable!(),
@@ -170,19 +196,18 @@ impl<'i> PrattParser for ExprParser<'i> {
     }
 
     fn suffix(&mut self, lhs: Self::Output, tree: Self::Input) -> Result<Self::Output, YggdrasilError> {
-        let op = match tree {
-            ExprStream::Suffix(suffix) => {
-                let op = match suffix {
-                    '?' => Operator::Optional,
-                    '*' => Operator::Repeats,
-                    '+' => Operator::Repeat1,
-                    _ => unreachable!(),
-                };
-                UnaryExpression { base: lhs, ops: vec![op] }
-            }
+        let op = match tree.as_suffix() {
+            Some("?") => Operator::Optional,
+            Some("*") => Operator::Repeats,
+            Some("+") => Operator::Repeat1,
             _ => unreachable!(),
         };
-        Ok(ExpressionNode { kind: ExpressionKind::Unary(box op), branch_tag: "".to_string(), node_tag: "".to_string() })
+
+        Ok(ExpressionNode {
+            kind: ExpressionKind::Unary(box UnaryExpression { base: lhs, ops: vec![op] }),
+            branch_tag: "".to_string(),
+            node_tag: "".to_string(),
+        })
     }
 }
 
@@ -206,7 +231,7 @@ impl ChoiceNode {
                     ExprStream::StringLiteral(_) => true,
                 };
                 if last && this {
-                    normed.push(ExprStream::Infix('+'))
+                    normed.push(ExprStream::Infix(Infix { string: "+".to_string(), position: Default::default() }))
                 }
                 normed.push(term.clone());
                 last = this;
