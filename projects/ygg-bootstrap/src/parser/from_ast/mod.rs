@@ -110,11 +110,11 @@ impl ExprStream {
     }
 }
 
+// noinspection DuplicatedCode
 impl<'i> PrattParser for ExprParser<'i> {
     type Input = ExprStream;
     type Output = ExpressionNode;
 
-    // Query information about an operator (Affix, Precedence, Associativity)
     fn query(&mut self, tree: &ExprStream) -> Result<Affix, YggdrasilError> {
         let affix = match tree {
             ExprStream::Prefix(prefix) => match prefix.string.as_str() {
@@ -136,7 +136,6 @@ impl<'i> PrattParser for ExprParser<'i> {
         Ok(affix)
     }
 
-    // Construct a primary expression, e.g. a number
     fn primary(&mut self, tree: ExprStream) -> Result<ExpressionNode, YggdrasilError> {
         let expr = match tree {
             ExprStream::CharsetNode(v) => {
@@ -179,20 +178,13 @@ impl<'i> PrattParser for ExprParser<'i> {
         Ok(ExpressionNode { kind, branch_tag: "".to_string(), node_tag: "".to_string() })
     }
 
-    // Construct a unary prefix expression, e.g. !1
-    fn prefix(&mut self, tree: ExprStream, rhs: ExpressionNode) -> Result<ExpressionNode, YggdrasilError> {
+    fn prefix(&mut self, tree: Self::Input, rhs: Self::Output) -> Result<Self::Output, YggdrasilError> {
         let op = match tree.as_prefix() {
-            Some("^") => {
-                let op = Operator::Remark;
-                UnaryExpression { base: rhs, ops: vec![op] }
-            }
-            Some("!") => {
-                let op = Operator::Negative;
-                UnaryExpression { base: rhs, ops: vec![op] }
-            }
+            Some("^") => Operator::Remark,
+            Some("!") => Operator::Negative,
             _ => unreachable!(),
         };
-        Ok(ExpressionNode { kind: ExpressionKind::Unary(box op), branch_tag: "".to_string(), node_tag: "".to_string() })
+        Ok(rhs + op)
     }
 
     fn suffix(&mut self, lhs: Self::Output, tree: Self::Input) -> Result<Self::Output, YggdrasilError> {
@@ -202,12 +194,7 @@ impl<'i> PrattParser for ExprParser<'i> {
             Some("+") => Operator::Repeat1,
             _ => unreachable!(),
         };
-
-        Ok(ExpressionNode {
-            kind: ExpressionKind::Unary(box UnaryExpression { base: lhs, ops: vec![op] }),
-            branch_tag: "".to_string(),
-            node_tag: "".to_string(),
-        })
+        Ok(lhs + op)
     }
 }
 

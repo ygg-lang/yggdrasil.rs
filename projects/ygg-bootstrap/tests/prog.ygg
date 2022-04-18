@@ -20,29 +20,31 @@ class _MacroCall {
 }
 
 class Macro {
-    id:Identifier ('(' args:ArgumentValue ')')?
+    Identifier Arguments?
 }
+
+class Arguments {
+    '(' ArgumentValue ')'
+}
+
 union ArgumentValue {
 
 }
 
-
-
 class DefineStatement {
-    MacroCalls Define modifiers:Modifiers symbol:Identifier arguments:Arguments? type:Typing? '{' body:Choice '}'
+    MacroCalls Define Modifiers symbol:Identifier Arguments? Typing? '{' body:Choice '}'
 }
 
 class Define -> string {
-    "class" | "union" | "struct" | "enum"
+    "def" | "class" | "union" | "structure" | "struct" | "enumerate" | "enum"
 }
-class Arguments {
 
-}
 class Typing {
+    '->' Identifier
 }
 
 union Choice {
-
+    '|'?
 }
 
 
@@ -51,7 +53,7 @@ class Modifiers {
     _Modifier+
 }
 class _Modifier {
-    id:Identifier !('{'|'('|':'|'->'|';')
+    Identifier !('{'|'('|':'|'->'|';')
 }
 class Identifier {
     (XID_START | '_') XID_CONTINUE*

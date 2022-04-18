@@ -1,4 +1,5 @@
 use super::*;
+use std::ops::Add;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub struct UnaryExpression {
@@ -12,7 +13,24 @@ impl From<UnaryExpression> for ExpressionKind {
     }
 }
 
-impl UnaryExpression {}
+impl Add<Operator> for ExpressionNode {
+    type Output = Self;
+
+    fn add(self, o: Operator) -> Self::Output {
+        match self.kind {
+            ExpressionKind::Unary(node) => {
+                let mut ops = node.ops;
+                ops.push(o);
+                let unary = UnaryExpression { base: node.base, ops };
+                ExpressionNode { kind: ExpressionKind::Unary(Box::new(unary)), branch_tag: self.branch_tag, node_tag: self.node_tag }
+            }
+            _ => {
+                let unary = UnaryExpression { base: self, ops: vec![o] };
+                ExpressionNode { kind: ExpressionKind::Unary(Box::new(unary)), branch_tag: "".to_string(), node_tag: "".to_string() }
+            }
+        }
+    }
+}
 
 impl Operator {
     pub fn prefix(o: &str) -> Operator {

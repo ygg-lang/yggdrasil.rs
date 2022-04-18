@@ -90,6 +90,7 @@ StringItem =
 
 StringEscaped = '\\' char:char;
 
+
 @position
 CharsetNode = '[' [neg:CharsetNeg] {items:CharItem} ']';
 
@@ -100,7 +101,9 @@ CharItem =
     ;
 @position
 CharRange = start:char '-' end:char;
-@char
+
+@position
+@string
 CharOne = char;
 
 @position

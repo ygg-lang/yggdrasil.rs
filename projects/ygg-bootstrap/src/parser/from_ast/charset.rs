@@ -12,7 +12,7 @@ impl CharsetNode {
             set = CharacterSet::all();
             for item in &self.items {
                 match item {
-                    CharItem::CharOne(c) => set.exclude(*c)?,
+                    CharItem::CharOne(c) => set.exclude(c.string.chars().next().unwrap())?,
                     CharItem::CharRange(c) => set.exclude(c.start..=c.end)?,
                 }
             }
@@ -22,7 +22,7 @@ impl CharsetNode {
             set = CharacterSet::nil();
             for item in &self.items {
                 match item {
-                    CharItem::CharOne(c) => set.include(*c)?,
+                    CharItem::CharOne(c) => set.include(c.string.chars().next().unwrap())?,
                     CharItem::CharRange(c) => set.include(c.start..=c.end)?,
                 }
             }
@@ -36,7 +36,7 @@ impl StringLiteral {
         let mut s = String::new();
         for item in &self.body {
             match item {
-                StringItem::CharOne(c) => s.push(*c),
+                StringItem::CharOne(c) => s.push(c.string.chars().next().unwrap()),
                 StringItem::StringEscaped(escaped) => match escaped.char {
                     'n' => s.push('\n'),
                     _ => s.push(escaped.char),
