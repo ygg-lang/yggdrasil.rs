@@ -1,4 +1,5 @@
 use super::*;
+use std::ops::BitOr;
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ChoiceExpression {
@@ -27,6 +28,30 @@ impl ChoiceExpression {
 
     pub fn push(&mut self, e: impl Into<ExpressionNode>) {
         self.branches.insert(e.into());
+    }
+}
+
+impl BitOr<Self> for ExpressionNode {
+    type Output = Self;
+
+    fn bitor(self, other: Self) -> Self::Output {
+        match (self.kind, other.kind) {
+            (ExpressionKind::Choice(mut a), ExpressionKind::Choice(b)) => {
+                a.branches.extend(b.branches.into_iter());
+                ExpressionNode { kind: ExpressionKind::Choice(a), branch_tag: "".to_string(), node_tag: "".to_string() }
+            }
+            (ExpressionKind::Choice(mut a), b) | (b, ExpressionKind::Choice(mut a)) => {
+                a.push(ExpressionNode { kind: b, branch_tag: other.branch_tag, node_tag: other.node_tag });
+                ExpressionNode { kind: ExpressionKind::Choice(a), branch_tag: self.branch_tag, node_tag: self.node_tag }
+            }
+            (a, b) => {
+                let new = ChoiceExpression::new(
+                    ExpressionNode { kind: a, branch_tag: self.branch_tag, node_tag: self.node_tag },
+                    ExpressionNode { kind: b, branch_tag: other.branch_tag, node_tag: other.node_tag },
+                );
+                ExpressionNode { kind: ExpressionKind::Choice(Box::new(new)), branch_tag: "".to_string(), node_tag: "".to_string() }
+            }
+        }
     }
 }
 

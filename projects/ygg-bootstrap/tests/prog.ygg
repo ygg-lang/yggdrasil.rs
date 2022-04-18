@@ -28,7 +28,7 @@ class Arguments {
 }
 
 union ArgumentValue {
-
+    | Boolean
 }
 
 class DefineStatement {
@@ -43,18 +43,49 @@ class Typing {
     '->' Identifier
 }
 
-union Choice {
-    '|'?
+class Choice {
+    '|'? stream:ExprStream
 }
 
+union ExprStream {
+    | Prefix
+    | Infix
+    | Suffix
+    | CharsetNode
+    | StringLiteral
+    | Identifier
+    | Group
+}
 
+def Prefix -> string {
+    '^' | '!'
+}
+
+def Infix {
+    '|' | ':' | '~'
+}
+
+def Suffix -> string {
+    '+' | '*' | '?'
+}
+
+def Group {
+    '(' Choice ')'
+}
 
 class Modifiers {
     _Modifier+
 }
+
 class _Modifier {
     Identifier !('{'|'('|':'|'->'|';')
 }
+
+
+class Boolean -> string {
+    "true" | "false"
+}
+
 class Identifier {
     (XID_START | '_') XID_CONTINUE*
 }

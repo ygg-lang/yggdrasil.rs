@@ -4,7 +4,6 @@ use std::mem::take;
 use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
 use yggdrasil_ir::{
     ChoiceExpression, ConcatExpression, ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule, Operator,
-    UnaryExpression,
 };
 use yggdrasil_rt::traits::{Affix, PrattParser};
 
@@ -138,7 +137,7 @@ impl<'i> PrattParser for ExprParser<'i> {
 
     fn primary(&mut self, tree: ExprStream) -> Result<ExpressionNode, YggdrasilError> {
         let expr = match tree {
-            ExprStream::CharsetNode(v) => {
+            ExprStream::CharsetNode(_v) => {
                 todo!()
             }
             ExprStream::Group(v) => return v.body.as_expr(self.ctx),
@@ -160,8 +159,8 @@ impl<'i> PrattParser for ExprParser<'i> {
     fn infix(&mut self, lhs: ExpressionNode, tree: ExprStream, rhs: ExpressionNode) -> Result<ExpressionNode, YggdrasilError> {
         let kind = match tree.as_infix() {
             Some("~") => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, true)),
-            Some("+") => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, false)),
-            Some("|") => ExpressionKind::Choice(box ChoiceExpression::new(lhs, rhs)),
+            Some("&") => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, false)),
+            Some("|") => return Ok(lhs | rhs),
             Some(":") => match lhs.kind.as_tag() {
                 Some("_") => {
                     return Ok(ExpressionNode { kind: rhs.kind, branch_tag: rhs.branch_tag, node_tag: "".to_string() });
@@ -218,7 +217,7 @@ impl ChoiceNode {
                     ExprStream::StringLiteral(_) => true,
                 };
                 if last && this {
-                    normed.push(ExprStream::Infix(Infix { string: "+".to_string(), position: Default::default() }))
+                    normed.push(ExprStream::Infix(Infix { string: "&".to_string(), position: Default::default() }))
                 }
                 normed.push(term.clone());
                 last = this;
