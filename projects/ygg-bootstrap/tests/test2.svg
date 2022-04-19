@@ -281,74 +281,59 @@ Arguments</text>
 <text class="comment" id="Define" x="61" y="331">
 Define</text>
 <g class="choice">
-<path d=" M 97 326 h 24 m 300 0 h 24"/>
-<g class="choice">
-<path d=" M 121 326 h 24 m 252 0 h 24"/>
-<g class="choice">
-<path d=" M 145 326 h 24 m 204 0 h 24"/>
-<g class="choice">
-<path d=" M 169 326 h 24 m 156 0 h 24"/>
-<g class="choice">
-<path d=" M 193 326 h 24 m 108 0 h 24"/>
-<g class="choice">
-<path d=" M 217 326 h 24 m 44 0 h 40"/>
+<path d=" M 97 326 h 24 m 44 0 h 72 m -33 0 l -5 -5 m 0 10 l 5 -5 m 33 0"/>
 <g class="string">
-<rect height="22" rx="10" ry="10" width="44" x="241" y="315"/>
-<text x="263" y="331">
+<rect height="22" rx="10" ry="10" width="44" x="121" y="315"/>
+<text x="143" y="331">
 def</text>
 </g>
-<path d=" M 217 326 a 12 12 0 0 1 12 12 v 9 m 84 0 v -9 a 12 12 0 0 1 12 -12"/>
-<path d=" M 229 347 v 0 a 12 12 0 0 0 12 12 m 60 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
+<path d=" M 97 326 a 12 12 0 0 1 12 12 v 9 m 116 0 v -9 a 12 12 0 0 1 12 -12"/>
+<path d=" M 109 347 v 33 m 116 0 v -33"/>
+<path d=" M 109 380 v 33 m 116 0 v -33"/>
+<path d=" M 109 413 v 33 m 116 0 v -33"/>
+<path d=" M 109 446 v 33 m 116 0 v -33"/>
+<path d=" M 109 479 v 33 m 116 0 v -33"/>
+<path d=" M 109 347 v 0 a 12 12 0 0 0 12 12 m 60 0 h 32 a 12 12 0 0 0 12 -12 v 0"/>
 <g class="string">
-<rect height="22" rx="10" ry="10" width="60" x="241" y="348"/>
-<text x="271" y="364">
+<rect height="22" rx="10" ry="10" width="60" x="121" y="348"/>
+<text x="151" y="364">
 class</text>
 </g>
-</g>
-<path d=" M 193 326 a 12 12 0 0 1 12 12 v 42 m 132 0 v -42 a 12 12 0 0 1 12 -12"/>
-<path d=" M 205 380 v 0 a 12 12 0 0 0 12 12 m 60 0 h 48 a 12 12 0 0 0 12 -12 v 0"/>
+<path d=" M 109 380 v 0 a 12 12 0 0 0 12 12 m 60 0 h 32 a 12 12 0 0 0 12 -12 v 0"/>
 <g class="string">
-<rect height="22" rx="10" ry="10" width="60" x="217" y="381"/>
-<text x="247" y="397">
+<rect height="22" rx="10" ry="10" width="60" x="121" y="381"/>
+<text x="151" y="397">
 union</text>
 </g>
-</g>
-<path d=" M 169 326 a 12 12 0 0 1 12 12 v 75 m 0 -34 l -5 -5 m 10 0 l -5 5 m 0 34 m 180 0 v -75 m 0 40 l -5 5 m 10 0 l -5 -5 m 0 -40 a 12 12 0 0 1 12 -12"/>
-<path d=" M 181 413 v 0 a 12 12 0 0 0 12 12 m 92 0 h 64 m -29 0 l -5 -5 m 0 10 l 5 -5 m 29 0 a 12 12 0 0 0 12 -12 v 0"/>
+<path d=" M 109 413 v 0 a 12 12 0 0 0 12 12 m 92 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
 <g class="string">
-<rect height="22" rx="10" ry="10" width="92" x="193" y="414"/>
-<text x="239" y="430">
+<rect height="22" rx="10" ry="10" width="92" x="121" y="414"/>
+<text x="167" y="430">
 structure</text>
 </g>
-</g>
-<path d=" M 145 326 a 12 12 0 0 1 12 12 v 108 m 0 -51 l -5 -5 m 10 0 l -5 5 m 0 51 m 228 0 v -108 m 0 57 l -5 5 m 10 0 l -5 -5 m 0 -57 a 12 12 0 0 1 12 -12"/>
-<path d=" M 157 446 v 0 a 12 12 0 0 0 12 12 m 68 0 h 136 m -65 0 l -5 -5 m 0 10 l 5 -5 m 65 0 a 12 12 0 0 0 12 -12 v 0"/>
+<path d=" M 109 446 v 0 a 12 12 0 0 0 12 12 m 68 0 h 24 a 12 12 0 0 0 12 -12 v 0"/>
 <g class="string">
-<rect height="22" rx="10" ry="10" width="68" x="169" y="447"/>
-<text x="203" y="463">
+<rect height="22" rx="10" ry="10" width="68" x="121" y="447"/>
+<text x="155" y="463">
 struct</text>
 </g>
-</g>
-<path d=" M 121 326 a 12 12 0 0 1 12 12 v 141 m 0 -67 l -5 -5 m 10 0 l -5 5 m 0 67 m 276 0 v -141 m 0 73 l -5 5 m 10 0 l -5 -5 m 0 -73 a 12 12 0 0 1 12 -12"/>
-<path d=" M 133 479 v 0 a 12 12 0 0 0 12 12 m 92 0 h 160 m -77 0 l -5 -5 m 0 10 l 5 -5 m 77 0 a 12 12 0 0 0 12 -12 v 0"/>
+<path d=" M 109 479 v 0 a 12 12 0 0 0 12 12 m 92 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
 <g class="string">
-<rect height="22" rx="10" ry="10" width="92" x="145" y="480"/>
-<text x="191" y="496">
+<rect height="22" rx="10" ry="10" width="92" x="121" y="480"/>
+<text x="167" y="496">
 enumerate</text>
 </g>
-</g>
-<path d=" M 97 326 a 12 12 0 0 1 12 12 v 174 m 0 -84 l -5 -5 m 10 0 l -5 5 m 0 84 m 324 0 v -174 m 0 90 l -5 5 m 10 0 l -5 -5 m 0 -90 a 12 12 0 0 1 12 -12"/>
-<path d=" M 109 512 v 0 a 12 12 0 0 0 12 12 m 52 0 h 248 m -121 0 l -5 -5 m 0 10 l 5 -5 m 121 0 a 12 12 0 0 0 12 -12 v 0"/>
+<path d=" M 109 512 v 0 a 12 12 0 0 0 12 12 m 52 0 h 40 a 12 12 0 0 0 12 -12 v 0"/>
 <g class="string">
 <rect height="22" rx="10" ry="10" width="52" x="121" y="513"/>
 <text x="147" y="529">
 enum</text>
 </g>
 </g>
-<path d=" M 455 326 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 247 326 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
 <path d=" M 25 326 h 10"/>
 <path d=" M 87 326 h 10"/>
-<path d=" M 445 326 h 10"/>
+<path d=" M 237 326 h 10"/>
 </g>
 <g class="sequence">
 <path d=" M 10 558 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>

@@ -122,7 +122,7 @@ impl<'i> PrattParser for ExprParser<'i> {
             },
             ExprStream::Infix(infix) => match infix.string.as_str() {
                 "|" => Affix::infix_left(1),
-                "~" | "+" => Affix::infix_left(2),
+                "~" | "&" => Affix::infix_left(2),
                 ":" => Affix::infix_left(3),
                 _ => unreachable!("{}", infix.string.as_str()),
             },
@@ -161,17 +161,7 @@ impl<'i> PrattParser for ExprParser<'i> {
             Some("~") => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, true)),
             Some("&") => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, false)),
             Some("|") => return Ok(lhs | rhs),
-            Some(":") => match lhs.kind.as_tag() {
-                Some("_") => {
-                    return Ok(ExpressionNode { kind: rhs.kind, branch_tag: rhs.branch_tag, node_tag: "".to_string() });
-                }
-                Some(s) => {
-                    return Ok(ExpressionNode { kind: rhs.kind, branch_tag: rhs.branch_tag, node_tag: s.to_string() });
-                }
-                None => {
-                    unreachable!()
-                }
-            },
+            Some(":") => return lhs / rhs,
             _ => unreachable!(),
         };
         Ok(ExpressionNode { kind, branch_tag: "".to_string(), node_tag: "".to_string() })

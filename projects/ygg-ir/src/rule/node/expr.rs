@@ -1,4 +1,6 @@
 use super::*;
+use std::ops::Div;
+use yggdrasil_error::YggdrasilError;
 
 impl ExpressionNode {
     pub fn is_choice(&self) -> bool {
@@ -20,6 +22,22 @@ impl ExpressionKind {
         match self {
             ExpressionKind::Rule(r) => Some(&r.name),
             _ => None,
+        }
+    }
+}
+
+impl Div<Self> for ExpressionNode {
+    type Output = Result<Self, YggdrasilError>;
+    fn div(self, rhs: Self) -> Self::Output {
+        match self.kind.as_tag() {
+            Some(s) => {
+                let node_tag = match s {
+                    "_" => "".to_string(),
+                    _ => s.to_string(),
+                };
+                Ok(ExpressionNode { kind: rhs.kind, branch_tag: rhs.branch_tag, node_tag })
+            }
+            None => Err(YggdrasilError::language_error("lhs not a valid tag")),
         }
     }
 }
