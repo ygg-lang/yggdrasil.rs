@@ -9,8 +9,7 @@ pub mod unary;
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ExpressionNode {
     pub kind: ExpressionKind,
-    pub branch_tag: String,
-    pub node_tag: String,
+    pub tag: String,
 }
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]

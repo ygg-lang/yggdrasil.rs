@@ -1,5 +1,5 @@
 use super::*;
-use std::ops::Div;
+use std::ops::BitXor;
 use yggdrasil_error::YggdrasilError;
 
 impl ExpressionNode {
@@ -13,7 +13,7 @@ impl ExpressionNode {
         matches!(self.kind, ExpressionKind::Unary(_))
     }
     pub fn empty() -> Self {
-        Self { kind: ExpressionKind::Choice(Box::new(Default::default())), branch_tag: "".to_string(), node_tag: "".to_string() }
+        Self { kind: ExpressionKind::Choice(Box::new(Default::default())), tag: "".to_string() }
     }
 }
 
@@ -26,16 +26,17 @@ impl ExpressionKind {
     }
 }
 
-impl Div<Self> for ExpressionNode {
+impl BitXor<Self> for ExpressionNode {
     type Output = Result<Self, YggdrasilError>;
-    fn div(self, rhs: Self) -> Self::Output {
+
+    fn bitxor(self, rhs: Self) -> Self::Output {
         match self.kind.as_tag() {
             Some(s) => {
                 let node_tag = match s {
                     "_" => "".to_string(),
                     _ => s.to_string(),
                 };
-                Ok(ExpressionNode { kind: rhs.kind, branch_tag: rhs.branch_tag, node_tag })
+                Ok(ExpressionNode { kind: rhs.kind, tag: node_tag })
             }
             None => Err(YggdrasilError::language_error("lhs not a valid tag")),
         }

@@ -38,18 +38,15 @@ impl BitOr<Self> for ExpressionNode {
         match (self.kind, other.kind) {
             (ExpressionKind::Choice(mut a), ExpressionKind::Choice(b)) => {
                 a.branches.extend(b.branches.into_iter());
-                ExpressionNode { kind: ExpressionKind::Choice(a), branch_tag: "".to_string(), node_tag: "".to_string() }
+                ExpressionNode { kind: ExpressionKind::Choice(a), tag: "".to_string() }
             }
             (ExpressionKind::Choice(mut a), b) | (b, ExpressionKind::Choice(mut a)) => {
-                a.push(ExpressionNode { kind: b, branch_tag: other.branch_tag, node_tag: other.node_tag });
-                ExpressionNode { kind: ExpressionKind::Choice(a), branch_tag: self.branch_tag, node_tag: self.node_tag }
+                a.push(ExpressionNode { kind: b, tag: other.tag });
+                ExpressionNode { kind: ExpressionKind::Choice(a), tag: self.tag }
             }
             (a, b) => {
-                let new = ChoiceExpression::new(
-                    ExpressionNode { kind: a, branch_tag: self.branch_tag, node_tag: self.node_tag },
-                    ExpressionNode { kind: b, branch_tag: other.branch_tag, node_tag: other.node_tag },
-                );
-                ExpressionNode { kind: ExpressionKind::Choice(Box::new(new)), branch_tag: "".to_string(), node_tag: "".to_string() }
+                let new = ChoiceExpression::new(ExpressionNode { kind: a, tag: self.tag }, ExpressionNode { kind: b, tag: other.tag });
+                ExpressionNode { kind: ExpressionKind::Choice(Box::new(new)), tag: "".to_string() }
             }
         }
     }

@@ -22,11 +22,11 @@ impl Add<Operator> for ExpressionNode {
                 let mut ops = node.ops;
                 ops.push(o);
                 let unary = UnaryExpression { base: node.base, ops };
-                ExpressionNode { kind: ExpressionKind::Unary(Box::new(unary)), branch_tag: self.branch_tag, node_tag: self.node_tag }
+                ExpressionNode { kind: ExpressionKind::Unary(Box::new(unary)), tag: self.tag }
             }
             _ => {
                 let unary = UnaryExpression { base: self, ops: vec![o] };
-                ExpressionNode { kind: ExpressionKind::Unary(Box::new(unary)), branch_tag: "".to_string(), node_tag: "".to_string() }
+                ExpressionNode { kind: ExpressionKind::Unary(Box::new(unary)), tag: "".to_string() }
             }
         }
     }

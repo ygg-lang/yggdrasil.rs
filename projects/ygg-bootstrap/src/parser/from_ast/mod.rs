@@ -2,9 +2,7 @@ use crate::parser::ast::{CharsetNode, ExprStream, Infix, StringLiteral};
 use peginator::PegParser;
 use std::mem::take;
 use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
-use yggdrasil_ir::{
-    ChoiceExpression, ConcatExpression, ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule, Operator,
-};
+use yggdrasil_ir::{ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule, Operator};
 use yggdrasil_rt::traits::{Affix, PrattParser};
 
 use crate::parser::ast::{ChoiceNode, DefineStatement, ProgramNode, ProgramParser, StatementNode, StringItem};
@@ -142,29 +140,22 @@ impl<'i> PrattParser for ExprParser<'i> {
             }
             ExprStream::Group(v) => return v.body.as_expr(self.ctx),
             ExprStream::Identifier(v) => ExpressionKind::rule(&v.string),
-            ExprStream::Infix(_) => {
-                unreachable!()
-            }
-            ExprStream::Prefix(_) => {
-                unreachable!()
-            }
-            ExprStream::Suffix(_) => {
-                unreachable!()
-            }
             ExprStream::StringLiteral(v) => v.as_expr(self.ctx)?,
+            ExprStream::Prefix(_) | ExprStream::Infix(_) | ExprStream::Suffix(_) => {
+                unreachable!()
+            }
         };
-        Ok(ExpressionNode { kind: expr, branch_tag: "".to_string(), node_tag: "".to_string() })
+        Ok(ExpressionNode { kind: expr, tag: "".to_string() })
     }
 
     fn infix(&mut self, lhs: ExpressionNode, tree: ExprStream, rhs: ExpressionNode) -> Result<ExpressionNode, YggdrasilError> {
-        let kind = match tree.as_infix() {
-            Some("~") => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, true)),
-            Some("&") => ExpressionKind::Concat(box ConcatExpression::new(lhs, rhs, false)),
-            Some("|") => return Ok(lhs | rhs),
-            Some(":") => return lhs / rhs,
+        match tree.as_infix() {
+            Some("~") => Ok(lhs + rhs),
+            Some("&") => Ok(lhs & rhs),
+            Some("|") => Ok(lhs | rhs),
+            Some(":") => lhs ^ rhs,
             _ => unreachable!(),
-        };
-        Ok(ExpressionNode { kind, branch_tag: "".to_string(), node_tag: "".to_string() })
+        }
     }
 
     fn prefix(&mut self, tree: Self::Input, rhs: Self::Output) -> Result<Self::Output, YggdrasilError> {
