@@ -107,7 +107,6 @@ impl ExprStream {
     }
 }
 
-// noinspection DuplicatedCode
 impl<'i> PrattParser for ExprParser<'i> {
     type Input = ExprStream;
     type Output = ExpressionNode;
@@ -153,7 +152,13 @@ impl<'i> PrattParser for ExprParser<'i> {
             Some("~") => Ok(lhs + rhs),
             Some("&") => Ok(lhs & rhs),
             Some("|") => Ok(lhs | rhs),
-            Some(":") => lhs ^ rhs,
+            Some(":") => match lhs ^ rhs.clone() {
+                Ok(o) => Ok(o),
+                Err(e) => {
+                    self.ctx.errors.push(e);
+                    Ok(rhs)
+                }
+            },
             _ => unreachable!(),
         }
     }

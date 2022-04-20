@@ -16,7 +16,7 @@ anyhow = "1.0.65"
 ariadne = "0.1.5"
 ropey = "1.5.0"
 dashmap = "5.4.0"
-peginator = "0.2.6"
+peginator = "0.3.0"
 
 [dependencies.yggdrasil-error]
 version = "0.1.1"

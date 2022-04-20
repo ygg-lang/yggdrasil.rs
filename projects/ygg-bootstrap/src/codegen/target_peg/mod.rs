@@ -1,9 +1,15 @@
-use crate::frontend::{
-    rule::{ChoiceExpression, ConcatExpression, DataKind, ExpressionKind, Operator, UnaryExpression},
-    GrammarInfo, GrammarRule,
+use proc_macro2::TokenStream;
+use std::{
+    fmt::{Arguments, Display, Formatter, Write},
+    mem::take,
 };
-use std::fmt::{Arguments, Display, Formatter, Write};
+use yggdrasil_error::{Diagnostic, YggdrasilResult};
+use yggdrasil_ir::{
+    ChoiceExpression, CodeGenerator, ConcatExpression, DataKind, ExpressionKind, GrammarInfo, GrammarRule, Operator,
+    UnaryExpression,
+};
 
+mod build_rust;
 mod build_symbol;
 
 pub fn as_peg(grammar: &GrammarInfo) -> String {
@@ -17,17 +23,25 @@ struct PegBuffer {
     indent: usize,
 }
 
-impl GrammarInfo {
-    fn write_peg(&self, w: &mut PegBuffer) {
-        for (_, rule) in &self.rules {
-            rule.write_peg(w, self).unwrap_or_default()
+impl CodeGenerator for PegBuffer {
+    type Output = String;
+
+    fn generate(&mut self, info: &GrammarInfo) -> YggdrasilResult<Self::Output> {
+        let mut errors = vec![];
+        for (_, rule) in &info.rules {
+            rule.write_peg(self, info)?
         }
+        Ok(Diagnostic { success: take(&mut self.buffer), errors })
     }
 }
 
-impl GrammarRule {
+trait WritePeg {
+    fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result;
+}
+
+impl WritePeg for GrammarRule {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
-        if self.atomic_rule {
+        if self.atomic {
             w.write_str("@no_skip_ws\n")?
         }
         match self.r#type.to_ascii_lowercase().as_str() {
@@ -46,10 +60,9 @@ impl GrammarRule {
         Ok(())
     }
 }
-
-impl ExpressionKind {
+impl WritePeg for ExpressionKind {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
-        match &self {
+        match self {
             ExpressionKind::Unary(expr) => expr.write_peg(w, info),
             ExpressionKind::Choice(expr) => expr.write_peg(w, info),
             ExpressionKind::Concat(expr) => expr.write_peg(w, info),
@@ -58,7 +71,7 @@ impl ExpressionKind {
     }
 }
 
-impl DataKind {
+impl WritePeg for DataKind {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
         match self {
             DataKind::AnyCharacter => {
@@ -94,7 +107,7 @@ impl DataKind {
     }
 }
 
-impl UnaryExpression {
+impl WritePeg for UnaryExpression {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
         let mut pre = vec![];
         let mut post = vec![];
@@ -108,7 +121,7 @@ impl UnaryExpression {
                     pre.push("[");
                     post.push("]")
                 }
-                Operator::Repeat => {
+                Operator::Repeats => {
                     pre.push("{");
                     post.push("}")
                 }
@@ -141,7 +154,7 @@ impl UnaryExpression {
     }
 }
 
-impl ChoiceExpression {
+impl WritePeg for ChoiceExpression {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
         for (id, expr) in self.inner.iter().enumerate() {
             if id != 0 {
@@ -156,7 +169,7 @@ impl ChoiceExpression {
     }
 }
 
-impl ConcatExpression {
+impl WritePeg for ConcatExpression {
     fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
         for (index, expr) in self.sequence.iter().enumerate() {
             if index != 0 {

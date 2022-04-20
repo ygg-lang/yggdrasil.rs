@@ -9,6 +9,8 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
+proc-macro2 = "1.0.46"
+proc-macro-error = "1.0.4"
 character-set = "0.4.0"
 peginator = "0.3.0"
 unicode-xid = "0.2.4"
