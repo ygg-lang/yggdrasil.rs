@@ -27,6 +27,7 @@ impl FuseCharset {
                     DataKind::CharacterRange(_) => {}
                     DataKind::CharacterSet(_) => {}
                 },
+                ExpressionKind::Function(_) => {}
             }
         }
         Ok(Diagnostic { success: ChoiceExpression { branches: Default::default() }, errors })

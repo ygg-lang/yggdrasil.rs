@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use crate::{
     rule::node::ExpressionKind,
     traits::{FieldCount, FieldDescriptor},
-    ChoiceExpression, ConcatExpression, DataKind, ExpressionNode, GrammarRule, RuleReference, UnaryExpression,
+    ChoiceExpression, ConcatExpression, DataKind, ExpressionNode, FunctionExpression, GrammarRule, RuleReference, UnaryExpression,
 };
 
 impl FieldDescriptor for GrammarRule {
@@ -34,6 +34,7 @@ impl FieldDescriptor for ExpressionKind {
             ExpressionKind::Unary(e) => e.get_field_names(buffer),
             ExpressionKind::Data(e) => e.get_field_names(buffer),
             ExpressionKind::Rule(e) => e.get_field_names(buffer),
+            ExpressionKind::Function(e) => e.get_field_names(buffer),
         }
     }
 
@@ -44,7 +45,18 @@ impl FieldDescriptor for ExpressionKind {
             ExpressionKind::Unary(e) => e.get_field_count(buffer),
             ExpressionKind::Data(e) => e.get_field_count(buffer),
             ExpressionKind::Rule(e) => e.get_field_count(buffer),
+            ExpressionKind::Function(e) => e.get_field_count(buffer),
         }
+    }
+}
+
+impl FieldDescriptor for FunctionExpression {
+    fn get_field_names<'a>(&'a self, _buffer: &mut HashSet<&'a String>) {
+        todo!()
+    }
+
+    fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount>) {
+        todo!()
     }
 }
 
