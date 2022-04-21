@@ -1,6 +1,8 @@
 pub mod dead_code;
+pub mod emit_function;
+pub mod fuse_charset;
+pub mod fuse_rule;
 pub mod inlining;
-pub mod refining;
 use indexmap::IndexMap;
 use std::collections::BTreeMap;
 

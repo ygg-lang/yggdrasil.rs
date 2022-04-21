@@ -1,1 +1,1 @@
-pub struct RuleInline {}
+pub struct InlineRule {}

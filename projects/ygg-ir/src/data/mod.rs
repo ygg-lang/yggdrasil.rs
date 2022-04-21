@@ -52,3 +52,5 @@ impl Display for DataKind {
         }
     }
 }
+
+impl DataKind {}

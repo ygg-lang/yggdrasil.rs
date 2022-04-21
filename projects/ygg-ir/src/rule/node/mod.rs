@@ -14,6 +14,7 @@ pub struct ExpressionNode {
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub enum ExpressionKind {
+    Function(Box<FunctionExpression>),
     Choice(Box<ChoiceExpression>),
     Concat(Box<ConcatExpression>),
     Unary(Box<UnaryExpression>),
