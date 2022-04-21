@@ -9,6 +9,7 @@ pub use self::{
     },
     traits::{CodeGenerator, CodeOptimizer, FieldDescriptor},
 };
+pub use indexmap::{IndexMap, IndexSet};
 
 mod data;
 mod function;
