@@ -25,7 +25,9 @@ impl FuseCharset {
                     DataKind::Character(_) => {}
                     DataKind::CharacterBuiltin(_) => {}
                     DataKind::CharacterRange(_) => {}
-                    DataKind::CharacterSet(_) => {}
+                    DataKind::CharacterFused(_) => {}
+                    DataKind::Ignored => {}
+                    DataKind::StringFused(_) => {}
                 },
                 ExpressionKind::Function(_) => {}
             }
