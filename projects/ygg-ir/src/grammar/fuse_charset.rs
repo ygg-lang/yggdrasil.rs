@@ -1,4 +1,4 @@
-use crate::{ChoiceExpression, CodeOptimizer, DataKind, ExpressionKind, GrammarInfo};
+use crate::{ChoiceExpression, CodeOptimizer, ExpressionKind, GrammarInfo};
 use yggdrasil_error::{Diagnostic, YggdrasilResult};
 
 pub struct FuseCharset {}
@@ -18,17 +18,7 @@ impl FuseCharset {
                 ExpressionKind::Concat(_) => {}
                 ExpressionKind::Unary(_) => {}
                 ExpressionKind::Rule(_) => {}
-                ExpressionKind::Data(data) => match &**data {
-                    DataKind::Integer(_) => {}
-                    DataKind::String(_) => {}
-                    DataKind::CharacterAny => {}
-                    DataKind::Character(_) => {}
-                    DataKind::CharacterBuiltin(_) => {}
-                    DataKind::CharacterRange(_) => {}
-                    DataKind::CharacterFused(_) => {}
-                    DataKind::Ignored => {}
-                    DataKind::StringFused(_) => {}
-                },
+                ExpressionKind::Data(_) => todo!(),
                 ExpressionKind::Function(_) => {}
             }
         }

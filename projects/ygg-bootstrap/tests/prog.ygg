@@ -90,6 +90,6 @@ class Identifier {
     (XID_START | '_') XID_CONTINUE*
 }
 
-class EOS -> char {
+class EOS -> string {
     ';'
 }

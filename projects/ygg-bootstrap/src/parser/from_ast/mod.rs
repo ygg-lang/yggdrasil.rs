@@ -72,7 +72,7 @@ impl DefineStatement {
                 atomic: self.annotation("atomic", false),
                 entry: self.annotation("entry", false),
                 keep: self.annotation("keep", false),
-                body: ExpressionNode { kind: self.body.as_expr(ctx)?, branch_tag: "".to_string(), node_tag: "".to_string() },
+                body: self.body.as_expr(ctx)?,
                 range: self.position.clone(),
             };
             ctx.info.rules.insert(rule.name.clone(), rule);

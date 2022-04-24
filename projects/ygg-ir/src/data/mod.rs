@@ -24,7 +24,7 @@ pub mod symbol;
 //
 #[derive(Debug, Clone)]
 pub enum DataKind {
-    Null,
+    Ignored,
     Boolean(bool),
     Integer(BigInt),
     String(String),
@@ -39,7 +39,7 @@ pub enum DataKind {
 impl Display for DataKind {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DataKind::Null => write!(f, "null"),
+            DataKind::Ignored => write!(f, "IGNORED"),
             DataKind::Boolean(v) => write!(f, "{}", v),
             DataKind::Integer(v) => write!(f, "{}", v),
             DataKind::String(v) => string_display(v, f),

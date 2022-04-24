@@ -73,6 +73,7 @@ impl AsRailroad for ExpressionKind {
             ExpressionKind::Unary(e) => e.as_railroad(),
             ExpressionKind::Rule(e) => e.as_railroad(),
             ExpressionKind::Data(e) => e.as_railroad(),
+            ExpressionKind::Function(e) => box Terminal::new(e.name.to_string(), &vec!["function"]),
         }
     }
 }
@@ -134,7 +135,7 @@ impl AsRailroad for DataKind {
             DataKind::CharacterBuiltin(v) => box Terminal::new(v.to_string(), &vec!["string"]),
             DataKind::CharacterRange(v) => box Terminal::new(format!("{}-{}", v.start(), v.end()), &vec!["string"]),
             DataKind::CharacterFused(v) => box Terminal::new(v.to_string(), &vec!["string"]),
-            DataKind::Null => box Terminal::new("Null".to_string(), &vec!["character"]),
+            DataKind::Ignored => box Terminal::new("Null".to_string(), &vec!["character"]),
             DataKind::Boolean(_) => box Terminal::new("Boolean".to_string(), &vec!["character"]),
             DataKind::StringFused(_) => box Terminal::new("StringFused".to_string(), &vec!["string"]),
         }

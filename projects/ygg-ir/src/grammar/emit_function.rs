@@ -4,7 +4,7 @@ use indexmap::IndexMap;
 
 use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
 
-use crate::{CodeOptimizer, ExpressionKind, ExpressionNode, FunctionExpression, FunctionRule, GrammarInfo, GrammarRule};
+use crate::{CodeOptimizer, ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule};
 
 pub struct EmitFunction {
     functions: IndexMap<String, FunctionRule>,
