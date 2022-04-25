@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::{fs::File, io::Write};
 
 use yggdrasil_bootstrap::{codegen::Railroad, parser::GrammarParser};
 use yggdrasil_error::YggdrasilError;
@@ -12,12 +12,15 @@ fn ready() {
 const TEST: &'static str = include_str!("prog.ygg");
 
 #[test]
-fn dumper() {
-    let info1 = GrammarParser::parse(TEST).unwrap().success;
-    dump_railroad(&info1, "tests/test1.svg").unwrap();
+fn dumper() -> Result<(), YggdrasilError> {
+    let info1 = GrammarParser::parse(TEST)?.success;
+    let mut ast = File::create("tests/test.yaml")?;
+    ast.write_all(serde_yaml::to_string(&info1).unwrap().as_bytes())?;
+    dump_railroad(&info1, "tests/test1.svg")?;
     let dce = DeadCodeEliminator::default();
-    let info2 = info1.optimize(vec![dce]).unwrap().success;
-    dump_railroad(&info2, "tests/test2.svg").unwrap();
+    let info2 = info1.optimize(vec![dce])?.success;
+    dump_railroad(&info2, "tests/test2.svg")?;
+    Ok(())
 }
 
 fn dump_railroad(info: &GrammarInfo, path: &str) -> Result<(), YggdrasilError> {

@@ -32,6 +32,7 @@ features = ["peginator", "ucd-trie"]
 
 
 [dev-dependencies]
+serde_yaml = "0.9.13"
 
 [build-dependencies]
 peginator = "0.3.0"

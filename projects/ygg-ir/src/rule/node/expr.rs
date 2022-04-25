@@ -15,6 +15,9 @@ impl ExpressionNode {
     pub fn empty() -> Self {
         Self { kind: ExpressionKind::Choice(Box::new(Default::default())), tag: "".to_string() }
     }
+    pub fn ignored() -> Self {
+        Self { kind: ExpressionKind::Data(Box::new(DataKind::Ignored)), tag: "".to_string() }
+    }
 }
 
 impl ExpressionKind {

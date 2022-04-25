@@ -5,6 +5,7 @@ pub struct FuseCharset {}
 
 impl CodeOptimizer for FuseCharset {
     fn optimize(&mut self, info: &GrammarInfo) -> YggdrasilResult<GrammarInfo> {
+        self.fuse_choice(todo!())?;
         todo!()
     }
 }

@@ -1,0 +1,818 @@
+url: null
+name: ''
+extensions: []
+imports: {}
+exports: []
+rules:
+  Program:
+    name: Program
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: true
+    keep: false
+    body:
+      kind: !Rule
+        tag: ''
+        name: Statement
+        boxed: false
+        inline: false
+      tag: statements
+    range:
+      start: 0
+      end: 48
+  Statement:
+    name: Statement
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Concat
+        sequence:
+        - kind: !Unary
+            base:
+              kind: !Rule
+                tag: ''
+                name: DefineStatement
+                boxed: false
+                inline: false
+              tag: ''
+            ops:
+            - Remark
+          tag: ''
+        - kind: !Rule
+            tag: ''
+            name: EOS
+            boxed: false
+            inline: false
+          tag: ''
+      tag: ''
+    range:
+      start: 50
+      end: 119
+  EmptyStatement:
+    name: EmptyStatement
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Rule
+        tag: ''
+        name: EOS
+        boxed: false
+        inline: false
+      tag: ''
+    range:
+      start: 121
+      end: 153
+  MacroCalls:
+    name: MacroCalls
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Rule
+        tag: ''
+        name: MacroCall
+        boxed: false
+        inline: true
+      tag: ''
+    range:
+      start: 155
+      end: 191
+  MacroCall:
+    name: MacroCall
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: true
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Choice
+        branches:
+        - kind: !Concat
+            sequence:
+            - kind: !Data '#'
+              tag: ''
+            - kind: !Rule
+                tag: ''
+                name: Macro
+                boxed: false
+                inline: false
+              tag: macros
+          tag: ''
+        - kind: !Concat
+            sequence:
+            - kind: !Concat
+                sequence:
+                - kind: !Concat
+                    sequence:
+                    - kind: !Data '#'
+                      tag: ''
+                    - kind: !Data '['
+                      tag: ''
+                  tag: ''
+                - kind: !Rule
+                    tag: ''
+                    name: Macro
+                    boxed: false
+                    inline: false
+                  tag: macros
+              tag: ''
+            - kind: !Data ']'
+              tag: ''
+          tag: ''
+      tag: ''
+    range:
+      start: 192
+      end: 266
+  Macro:
+    name: Macro
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Concat
+        sequence:
+        - kind: !Rule
+            tag: ''
+            name: Identifier
+            boxed: false
+            inline: false
+          tag: ''
+        - kind: !Rule
+            tag: ''
+            name: Arguments
+            boxed: false
+            inline: false
+          tag: ''
+      tag: ''
+    range:
+      start: 268
+      end: 309
+  Arguments:
+    name: Arguments
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Concat
+        sequence:
+        - kind: !Concat
+            sequence:
+            - kind: !Data (
+              tag: ''
+            - kind: !Rule
+                tag: ''
+                name: ArgumentValue
+                boxed: false
+                inline: false
+              tag: ''
+          tag: ''
+        - kind: !Data )
+          tag: ''
+      tag: ''
+    range:
+      start: 311
+      end: 356
+  ArgumentValue:
+    name: ArgumentValue
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Rule
+        tag: ''
+        name: Boolean
+        boxed: false
+        inline: false
+      tag: ''
+    range:
+      start: 358
+      end: 395
+  DefineStatement:
+    name: DefineStatement
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Concat
+        sequence:
+        - kind: !Concat
+            sequence:
+            - kind: !Concat
+                sequence:
+                - kind: !Concat
+                    sequence:
+                    - kind: !Rule
+                        tag: ''
+                        name: MacroCalls
+                        boxed: false
+                        inline: false
+                      tag: ''
+                    - kind: !Rule
+                        tag: ''
+                        name: Define
+                        boxed: false
+                        inline: false
+                      tag: ''
+                  tag: ''
+                - kind: !Rule
+                    tag: ''
+                    name: Modifiers
+                    boxed: false
+                    inline: false
+                  tag: ''
+              tag: ''
+            - kind: !Rule
+                tag: ''
+                name: Identifier
+                boxed: false
+                inline: false
+              tag: symbol
+          tag: ''
+        - kind: !Rule
+            tag: ''
+            name: Arguments
+            boxed: false
+            inline: false
+          tag: ''
+      tag: ''
+    range:
+      start: 397
+      end: 511
+  Define:
+    name: Define
+    type: string
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Choice
+        branches:
+        - kind: !Data def
+          tag: ''
+        - kind: !Data class
+          tag: ''
+        - kind: !Data union
+          tag: ''
+        - kind: !Data structure
+          tag: ''
+        - kind: !Data struct
+          tag: ''
+        - kind: !Data enumerate
+          tag: ''
+        - kind: !Data enum
+          tag: ''
+      tag: ''
+    range:
+      start: 513
+      end: 617
+  Typing:
+    name: Typing
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Concat
+        sequence:
+        - kind: !Data ->
+          tag: ''
+        - kind: !Rule
+            tag: ''
+            name: Identifier
+            boxed: false
+            inline: false
+          tag: ''
+      tag: ''
+    range:
+      start: 619
+      end: 655
+  Choice:
+    name: Choice
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Data '|'
+      tag: ''
+    range:
+      start: 657
+      end: 700
+  ExprStream:
+    name: ExprStream
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Choice
+        branches:
+        - kind: !Rule
+            tag: ''
+            name: Prefix
+            boxed: false
+            inline: false
+          tag: ''
+        - kind: !Rule
+            tag: ''
+            name: Infix
+            boxed: false
+            inline: false
+          tag: ''
+        - kind: !Rule
+            tag: ''
+            name: Suffix
+            boxed: false
+            inline: false
+          tag: ''
+        - kind: !Rule
+            tag: ''
+            name: CharsetNode
+            boxed: false
+            inline: false
+          tag: ''
+        - kind: !Rule
+            tag: ''
+            name: StringLiteral
+            boxed: false
+            inline: false
+          tag: ''
+        - kind: !Rule
+            tag: ''
+            name: Identifier
+            boxed: false
+            inline: false
+          tag: ''
+        - kind: !Rule
+            tag: ''
+            name: Group
+            boxed: false
+            inline: false
+          tag: ''
+      tag: ''
+    range:
+      start: 702
+      end: 827
+  Prefix:
+    name: Prefix
+    type: string
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Choice
+        branches:
+        - kind: !Data ^
+          tag: ''
+        - kind: !Data '!'
+          tag: ''
+      tag: ''
+    range:
+      start: 829
+      end: 867
+  Infix:
+    name: Infix
+    type: string
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Choice
+        branches:
+        - kind: !Data '|'
+          tag: ''
+        - kind: !Data ':'
+          tag: ''
+        - kind: !Data '~'
+          tag: ''
+      tag: ''
+    range:
+      start: 869
+      end: 912
+  Suffix:
+    name: Suffix
+    type: string
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Choice
+        branches:
+        - kind: !Data +
+          tag: ''
+        - kind: !Data '*'
+          tag: ''
+        - kind: !Data '?'
+          tag: ''
+      tag: ''
+    range:
+      start: 914
+      end: 958
+  Group:
+    name: Group
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Concat
+        sequence:
+        - kind: !Concat
+            sequence:
+            - kind: !Data (
+              tag: ''
+            - kind: !Rule
+                tag: ''
+                name: Choice
+                boxed: false
+                inline: false
+              tag: ''
+          tag: ''
+        - kind: !Data )
+          tag: ''
+      tag: ''
+    range:
+      start: 960
+      end: 992
+  Modifiers:
+    name: Modifiers
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Rule
+        tag: ''
+        name: Modifier
+        boxed: false
+        inline: true
+      tag: ''
+    range:
+      start: 994
+      end: 1028
+  Modifier:
+    name: Modifier
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: true
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Rule
+        tag: ''
+        name: Identifier
+        boxed: false
+        inline: false
+      tag: ''
+    range:
+      start: 1030
+      end: 1088
+  Boolean:
+    name: Boolean
+    type: string
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Choice
+        branches:
+        - kind: !Data 'true'
+          tag: ''
+        - kind: !Data 'false'
+          tag: ''
+      tag: ''
+    range:
+      start: 1091
+      end: 1139
+  Identifier:
+    name: Identifier
+    type: ''
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Concat
+        sequence:
+        - kind: !Choice
+            branches:
+            - kind: !Data
+              - XID_START
+              tag: ''
+            - kind: !Data _
+              tag: ''
+          tag: ''
+        - kind: !Data
+          - XID_CONTINUE
+          tag: ''
+      tag: ''
+    range:
+      start: 1141
+      end: 1197
+  EOS:
+    name: EOS
+    type: string
+    document: ''
+    derives:
+      parser: null
+      debug: null
+      display: null
+      eq: false
+      eq_partial: null
+      ord: false
+      ord_partial: null
+      hash: null
+    auto_inline: false
+    auto_boxed: false
+    auto_capture: true
+    atomic: false
+    entry: false
+    keep: false
+    body:
+      kind: !Data ;
+      tag: ''
+    range:
+      start: 1199
+      end: 1230
+functions: {}
+rule_prefix: ''
+rule_suffix: Node

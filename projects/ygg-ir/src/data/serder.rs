@@ -1,6 +1,7 @@
 use crate::DataKind;
 use serde::{
     de::{Error, Visitor},
+    ser::SerializeTupleStruct,
     Deserialize, Deserializer, Serialize, Serializer,
 };
 use std::{
@@ -77,8 +78,10 @@ impl Serialize for DataKind {
             }
             DataKind::CharacterAny => serializer.serialize_unit_struct("CharacterAny"),
             DataKind::Character(v) => serializer.serialize_char(*v),
-            DataKind::CharacterBuiltin(_) => {
-                unimplemented!()
+            DataKind::CharacterBuiltin(v) => {
+                let mut state = serializer.serialize_tuple_struct("CharacterBuiltin", 1)?;
+                state.serialize_field(v)?;
+                state.end()
             }
             DataKind::CharacterRange(_) => {
                 unimplemented!()
