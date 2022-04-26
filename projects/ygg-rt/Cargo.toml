@@ -12,11 +12,12 @@ edition = "2021"
 lsp-types = { version = "0.93.1", features = ["proposed"], optional = true }
 # lsp-document = "0.4.0"
 url = "2.3.1"
-anyhow = "1.0.65"
+#anyhow = "1.0.65"
 ariadne = "0.1.5"
-ropey = "1.5.0"
-dashmap = "5.4.0"
+#ropey = "1.5.0"
+#dashmap = "5.4.0"
 peginator = "0.3.0"
+ucd-trie = "0.1.5"
 
 [dependencies.yggdrasil-error]
 version = "0.1.1"

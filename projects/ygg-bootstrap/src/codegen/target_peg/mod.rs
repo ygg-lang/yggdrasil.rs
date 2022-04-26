@@ -1,51 +1,98 @@
-use proc_macro2::TokenStream;
-use std::{
-    fmt::{Arguments, Display, Formatter, Write},
-    mem::take,
+use fs::read_to_string;
+use peginator::{
+    codegen::{CodegenGrammar, CodegenSettings},
+    grammar::Grammar,
+    PegParser,
 };
-use yggdrasil_error::{Diagnostic, YggdrasilResult};
-use yggdrasil_ir::{
-    ChoiceExpression, CodeGenerator, ConcatExpression, DataKind, ExpressionKind, GrammarInfo, GrammarRule, Operator,
-    UnaryExpression,
+use proc_macro2::{Span, TokenStream};
+use proc_macro_error::emit_error;
+use std::{
+    fmt::{Arguments, Write},
+    fs,
+    fs::File,
+    io::Write as _,
+    path::Path,
 };
 
-mod build_rust;
+use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
+use yggdrasil_ir::{
+    ChoiceExpression, CodeGenerator, ConcatExpression, DataKind, ExpressionKind, FunctionExpression, GrammarInfo, GrammarRule,
+    Operator, RuleReference, UnaryExpression,
+};
+
+use crate::parser::GrammarParser;
+
+mod build_data;
 mod build_symbol;
 
-pub fn as_peg(grammar: &GrammarInfo) -> String {
-    let mut buffer = PegBuffer { buffer: "".to_string(), indent: 0 };
-    grammar.write_peg(&mut buffer);
-    buffer.buffer
-}
-
-struct PegBuffer {
+pub struct PegCodegen {
     buffer: String,
-    indent: usize,
 }
 
-impl CodeGenerator for PegBuffer {
-    type Output = String;
+impl Default for PegCodegen {
+    fn default() -> Self {
+        Self { buffer: "".to_string() }
+    }
+}
+
+impl PegCodegen {
+    pub fn codegen(&mut self, src: impl AsRef<Path>) -> Result<(), YggdrasilError> {
+        self.buffer.clear();
+        let path = src.as_ref().to_path_buf().canonicalize()?;
+        let dir = match path.parent() {
+            Some(s) => s,
+            None => return Err(YggdrasilError::language_error("ygg dir not found")),
+        };
+        let mut peg = File::create(path.with_extension("ebnf"))?;
+        println!("{:#?}", path);
+        let text = read_to_string(&path)?;
+        let Diagnostic { success: info, errors: error1 } = GrammarParser::parse(&text)?;
+        let Diagnostic { success: tokens, errors: error2 } = self.generate(&info)?;
+        write!(peg, "{}", self.buffer)?;
+        for error in error1.into_iter().chain(error2.into_iter()) {
+            let span = Span::call_site();
+            println!("{:#?}", span);
+            emit_error!(span, error.to_string());
+        }
+
+        Ok(())
+
+        // grammar.write_peg(&mut buffer);
+        // buffer.buffer
+        // fs::write(destination, &generated_code)?;
+        // if self.format {
+        //     Command::new("rustfmt").arg(out_rust).status()?;
+        // };
+    }
+}
+
+impl CodeGenerator for PegCodegen {
+    type Output = TokenStream;
 
     fn generate(&mut self, info: &GrammarInfo) -> YggdrasilResult<Self::Output> {
         let mut errors = vec![];
         for (_, rule) in &info.rules {
             rule.write_peg(self, info)?
         }
-        Ok(Diagnostic { success: take(&mut self.buffer), errors })
+        let parsed = Grammar::parse(&self.buffer)?;
+        let config = CodegenSettings {
+            skip_whitespace: false,
+            peginator_crate_name: "peginator".into(),
+            derives: vec!["Debug".into(), "Clone".into()],
+        };
+        let success = parsed.generate_code(&config).unwrap();
+        Ok(Diagnostic { success, errors })
     }
 }
 
 trait WritePeg {
-    fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result;
+    fn write_peg(&self, w: &mut PegCodegen, info: &GrammarInfo) -> std::fmt::Result;
 }
 
 impl WritePeg for GrammarRule {
-    fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
-        if self.atomic {
-            w.write_str("@no_skip_ws\n")?
-        }
+    fn write_peg(&self, w: &mut PegCodegen, info: &GrammarInfo) -> std::fmt::Result {
         match self.r#type.to_ascii_lowercase().as_str() {
-            "string" => {
+            "str" | "string" => {
                 w.write_str("@string\n")?;
                 w.write_str("@position\n")?;
             }
@@ -55,60 +102,32 @@ impl WritePeg for GrammarRule {
             _ => {}
         }
         write!(w, "{}{}{} = ", info.rule_prefix, self.name, info.rule_suffix)?;
-        self.body.write_peg(w, info)?;
+        self.body.kind.write_peg(w, info)?;
         w.semicolon();
         Ok(())
     }
 }
 impl WritePeg for ExpressionKind {
-    fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
+    fn write_peg(&self, w: &mut PegCodegen, info: &GrammarInfo) -> std::fmt::Result {
         match self {
-            ExpressionKind::Unary(expr) => expr.write_peg(w, info),
-            ExpressionKind::Choice(expr) => expr.write_peg(w, info),
-            ExpressionKind::Concat(expr) => expr.write_peg(w, info),
-            ExpressionKind::Data(expr) => expr.write_peg(w, info),
+            ExpressionKind::Unary(e) => e.write_peg(w, info),
+            ExpressionKind::Choice(e) => e.write_peg(w, info),
+            ExpressionKind::Concat(e) => e.write_peg(w, info),
+            ExpressionKind::Data(e) => e.write_peg(w, info),
+            ExpressionKind::Function(e) => e.write_peg(w, info),
+            ExpressionKind::Rule(e) => e.write_peg(w, info),
         }
     }
 }
 
-impl WritePeg for DataKind {
-    fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
-        match self {
-            DataKind::AnyCharacter => {
-                w.write_str("char")?;
-            }
-            DataKind::String(s) => {
-                w.write_char('"')?;
-                w.write_str(s)?;
-                w.write_char('"')?;
-            }
-            DataKind::Regex(_) => {
-                unimplemented!()
-            }
-            DataKind::Integer(_) => {
-                unimplemented!()
-            }
-            DataKind::Character(c) => w.char_token(*c),
-            DataKind::CharacterRange(r) => {
-                w.char_token(r.start);
-                w.write_str("..")?;
-                w.char_token(r.end);
-            }
-            DataKind::CharacterSet(_) => {
-                unimplemented!()
-            }
-            DataKind::Rule(r) => {
-                w.tag(&r.tag);
-                write!(w, "{}{}{}", info.rule_prefix, r.name, info.rule_suffix)?;
-            }
-            DataKind::Builtin(r) => w.write_str(r)?,
-        }
-        Ok(())
+impl WritePeg for FunctionExpression {
+    fn write_peg(&self, w: &mut PegCodegen, info: &GrammarInfo) -> std::fmt::Result {
+        todo!()
     }
 }
 
 impl WritePeg for UnaryExpression {
-    fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
+    fn write_peg(&self, w: &mut PegCodegen, info: &GrammarInfo) -> std::fmt::Result {
         let mut pre = vec![];
         let mut post = vec![];
         for op in &self.ops {
@@ -130,23 +149,27 @@ impl WritePeg for UnaryExpression {
                     post.push("}+")
                 }
                 Operator::RepeatsBetween(_, _) => {
-                    pre.push("(");
-                    post.push(")")
+                    // pre.push("(");
+                    // post.push(")")
                 }
                 Operator::Remark => {
-                    pre.push("(");
-                    post.push(")")
+                    // pre.push("(");
+                    // post.push(")")
                 }
                 Operator::Recursive => {
-                    pre.push("(");
-                    post.push(")")
+                    // pre.push("(");
+                    // post.push(")")
+                }
+                Operator::Boxing => {
+                    // pre.push("(");
+                    // post.push(")")
                 }
             }
         }
         for s in pre {
             w.write_str(s)?
         }
-        self.base.write_peg(w, info)?;
+        self.base.kind.write_peg(w, info)?;
         for s in post {
             w.write_str(s)?
         }
@@ -155,13 +178,13 @@ impl WritePeg for UnaryExpression {
 }
 
 impl WritePeg for ChoiceExpression {
-    fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
-        for (id, expr) in self.inner.iter().enumerate() {
+    fn write_peg(&self, w: &mut PegCodegen, info: &GrammarInfo) -> std::fmt::Result {
+        for (id, expr) in self.branches.iter().enumerate() {
             if id != 0 {
                 w.write_char('|')?;
             }
             // w.write_start();
-            expr.write_peg(w, info)?;
+            expr.kind.write_peg(w, info)?;
             // w.write_end();
         }
 
@@ -170,12 +193,12 @@ impl WritePeg for ChoiceExpression {
 }
 
 impl WritePeg for ConcatExpression {
-    fn write_peg(&self, w: &mut PegBuffer, info: &GrammarInfo) -> std::fmt::Result {
+    fn write_peg(&self, w: &mut PegCodegen, info: &GrammarInfo) -> std::fmt::Result {
         for (index, expr) in self.sequence.iter().enumerate() {
             if index != 0 {
                 w.write_char('|')?;
             }
-            expr.write_peg(w, info)?;
+            expr.kind.write_peg(w, info)?;
         }
         Ok(())
     }

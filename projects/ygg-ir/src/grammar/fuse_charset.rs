@@ -1,10 +1,12 @@
-use crate::{ChoiceExpression, CodeOptimizer, ExpressionKind, GrammarInfo};
 use yggdrasil_error::{Diagnostic, YggdrasilResult};
+
+use crate::{ChoiceExpression, CodeOptimizer, ExpressionKind, GrammarInfo};
 
 pub struct FuseCharset {}
 
 impl CodeOptimizer for FuseCharset {
     fn optimize(&mut self, info: &GrammarInfo) -> YggdrasilResult<GrammarInfo> {
+        let _ = info;
         self.fuse_choice(todo!())?;
         todo!()
     }

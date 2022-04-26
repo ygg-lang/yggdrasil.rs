@@ -1,4 +1,4 @@
-#[cfg(feature = "peginator")]
+#[allow(unused)]
 mod target_peg;
 #[cfg(feature = "pest")]
 mod target_pest;
@@ -9,5 +9,4 @@ pub use self::target_railroad::Railroad;
 #[cfg(feature = "tree-sitter")]
 pub(crate) mod target_tree_sitter;
 
-#[cfg(feature = "peginator")]
-pub use self::target_peg::as_peg;
+pub use self::target_peg::PegCodegen;

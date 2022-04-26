@@ -1,6 +1,6 @@
 use super::*;
 
-impl Write for PegBuffer {
+impl Write for PegCodegen {
     fn write_str(&mut self, s: &str) -> std::fmt::Result {
         self.buffer.write_str(s)
     }
@@ -14,18 +14,12 @@ impl Write for PegBuffer {
     }
 }
 
-impl PegBuffer {
+impl PegCodegen {
     pub fn write_start(&mut self) {
         self.buffer.push_str("(")
     }
     pub fn write_end(&mut self) {
         self.buffer.push_str(")")
-    }
-    pub fn indent(&mut self) {
-        self.indent += 4;
-    }
-    pub fn dedent(&mut self) {
-        self.indent -= 4;
     }
     pub fn semicolon(&mut self) {
         self.buffer.push_str(";\n\n")
