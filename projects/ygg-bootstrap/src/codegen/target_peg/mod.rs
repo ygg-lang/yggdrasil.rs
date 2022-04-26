@@ -1,11 +1,4 @@
 use fs::read_to_string;
-use peginator::{
-    codegen::{CodegenGrammar, CodegenSettings},
-    grammar::Grammar,
-    PegParser,
-};
-use proc_macro2::{Span, TokenStream};
-use proc_macro_error::emit_error;
 use std::{
     fmt::{Arguments, Write},
     fs,
@@ -13,6 +6,14 @@ use std::{
     io::Write as _,
     path::Path,
 };
+
+use peginator::{
+    codegen::{CodegenGrammar, CodegenSettings},
+    grammar::Grammar,
+    PegParser,
+};
+use proc_macro2::{Span, TokenStream};
+use proc_macro_error::emit_error;
 
 use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
 use yggdrasil_ir::{
@@ -44,7 +45,6 @@ impl PegCodegen {
             None => return Err(YggdrasilError::language_error("ygg dir not found")),
         };
         let mut peg = File::create(path.with_extension("ebnf"))?;
-        println!("{:#?}", path);
         let text = read_to_string(&path)?;
         let Diagnostic { success: info, errors: error1 } = GrammarParser::parse(&text)?;
         let Diagnostic { success: tokens, errors: error2 } = self.generate(&info)?;
@@ -92,14 +92,9 @@ trait WritePeg {
 impl WritePeg for GrammarRule {
     fn write_peg(&self, w: &mut PegCodegen, info: &GrammarInfo) -> std::fmt::Result {
         match self.r#type.to_ascii_lowercase().as_str() {
-            "str" | "string" => {
-                w.write_str("@string\n")?;
-                w.write_str("@position\n")?;
-            }
-            "char" | "character" => {
-                w.write_str("@char\n")?;
-            }
-            _ => {}
+            "str" | "string" => w.write_str("@position @string\n")?,
+            "char" | "character" => w.write_str("@char\n")?,
+            _ => w.write_str("@position\n")?,
         }
         write!(w, "{}{}{} = ", info.rule_prefix, self.name, info.rule_suffix)?;
         self.body.kind.write_peg(w, info)?;
@@ -181,7 +176,7 @@ impl WritePeg for ChoiceExpression {
     fn write_peg(&self, w: &mut PegCodegen, info: &GrammarInfo) -> std::fmt::Result {
         for (id, expr) in self.branches.iter().enumerate() {
             if id != 0 {
-                w.write_char('|')?;
+                w.write_str(" | ")?;
             }
             // w.write_start();
             expr.kind.write_peg(w, info)?;
@@ -194,12 +189,14 @@ impl WritePeg for ChoiceExpression {
 
 impl WritePeg for ConcatExpression {
     fn write_peg(&self, w: &mut PegCodegen, info: &GrammarInfo) -> std::fmt::Result {
+        w.write_start();
         for (index, expr) in self.sequence.iter().enumerate() {
             if index != 0 {
-                w.write_char('|')?;
+                w.write_char(' ')?
             }
             expr.kind.write_peg(w, info)?;
         }
+        w.write_end();
         Ok(())
     }
 }

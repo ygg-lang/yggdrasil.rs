@@ -15,16 +15,16 @@ impl Write for PegCodegen {
 }
 
 impl PegCodegen {
-    pub fn write_start(&mut self) {
+    pub(crate) fn write_start(&mut self) {
         self.buffer.push_str("(")
     }
-    pub fn write_end(&mut self) {
+    pub(crate) fn write_end(&mut self) {
         self.buffer.push_str(")")
     }
-    pub fn semicolon(&mut self) {
+    pub(crate) fn semicolon(&mut self) {
         self.buffer.push_str(";\n\n")
     }
-    pub fn tag(&mut self, tag: &str) {
+    pub(crate) fn tag(&mut self, tag: &str) {
         if tag.is_empty() {
             return;
         }
@@ -33,7 +33,7 @@ impl PegCodegen {
             self.buffer.push(':')
         }
     }
-    pub fn char_token(&mut self, token: char) {
+    pub(crate) fn char_token(&mut self, token: char) {
         if token == '\'' {
             self.buffer.push_str("\"'\"");
         }

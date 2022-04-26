@@ -41,12 +41,8 @@ pub struct GrammarRule {
     ///
     /// ## Examples
     /// ```ygg
-    /// 
+    /// /// this is documents
     /// def rule {
-    ///
-    /// }
-    ///
-    /// def rule() -> char {
     ///
     /// }
     /// ```
@@ -58,15 +54,15 @@ pub struct GrammarRule {
     /// ## Examples
     /// ```ygg
     /// #inline(true)
-    /// def rule {
+    /// def Rule {
     ///
     /// }
     ///
-    /// def inline rule {
+    /// def inline Rule {
     ///
     /// }
     ///
-    /// def _rule {
+    /// def _Rule {
     ///
     /// }
     /// ```
@@ -76,26 +72,58 @@ pub struct GrammarRule {
     /// ## Examples
     /// ```ygg
     /// #boxed(true)
-    /// def rule {
+    /// def Rule {
     ///
     /// }
     ///
-    /// def boxed rule {
+    /// def boxed Rule {
     ///
     /// }
     /// ```
     pub auto_boxed: bool,
+    /// Automatically box when this rule is called
     ///
+    /// ## Examples
+    /// ```ygg
+    /// #capture(true)
+    /// def Rule {
+    ///
+    /// }
+    ///
+    /// def capture Rule {
+    ///
+    /// }
+    /// ```
     pub auto_capture: bool,
     ///
     pub atomic: bool,
     /// The entry of the parser, the name of the parser to be exported
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// #entry(true)
+    /// def Rule {
+    ///
+    /// }
+    ///
+    /// def entry Rule {
+    ///
+    /// }
+    /// ```
     pub entry: bool,
+    /// union struct
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// union Rule {
+    ///
+    /// }
+    /// ```
+    pub union: bool,
     /// Keep export this rule, even if this rule is not used
     pub keep: bool,
     ///
     pub body: ExpressionNode,
-
     /// position of all parts
     pub range: Range<usize>,
 }

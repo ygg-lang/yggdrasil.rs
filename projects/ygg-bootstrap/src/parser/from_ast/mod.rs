@@ -71,6 +71,7 @@ impl DefineStatement {
                 auto_capture: self.annotation("capture", true),
                 atomic: self.annotation("atomic", false),
                 entry: self.annotation("entry", false),
+                union: false,
                 keep: self.annotation("keep", false),
                 body: self.body.as_expr(ctx)?,
                 range: self.position.clone(),

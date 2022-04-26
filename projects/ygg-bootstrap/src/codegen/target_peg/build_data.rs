@@ -31,8 +31,10 @@ impl WritePeg for DataKind {
             DataKind::StringFused(_) => {
                 todo!()
             }
-            DataKind::CharacterBuiltin(_) => {
-                todo!()
+            DataKind::CharacterBuiltin(v) => {
+                w.write_char('"')?;
+                w.write_str(v)?;
+                w.write_char('"')?;
             }
             DataKind::CharacterFused(_) => {
                 todo!()
@@ -44,6 +46,6 @@ impl WritePeg for DataKind {
 
 impl WritePeg for RuleReference {
     fn write_peg(&self, w: &mut PegCodegen, info: &GrammarInfo) -> std::fmt::Result {
-        todo!()
+        w.write_str(&format!("{}{}{}", info.rule_prefix, self.name, info.rule_suffix))
     }
 }
