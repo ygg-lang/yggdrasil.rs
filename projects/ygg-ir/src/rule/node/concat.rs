@@ -1,4 +1,7 @@
-use std::ops::{Add, BitAnd};
+use std::{
+    mem::swap,
+    ops::{Add, BitAnd},
+};
 
 use super::*;
 
@@ -17,22 +20,49 @@ impl ConcatExpression {
         sequence.push(rhs.into());
         Self { sequence }
     }
+    pub fn push(&mut self, rhs: ExpressionNode, soft: bool) {
+        if soft {
+            self.sequence.push(ExpressionNode::ignored())
+        }
+        self.sequence.push(rhs);
+    }
+    pub fn append(&mut self, lhs: ExpressionNode, soft: bool) {
+        let mut v = vec![lhs];
+        swap(&mut v, &mut self.sequence);
+        if soft {
+            self.sequence.push(ExpressionNode::ignored())
+        }
+        self.sequence.extend(v.into_iter())
+    }
 }
 
 impl Add<Self> for ExpressionNode {
     type Output = Self;
 
-    fn add(self, rhs: Self) -> Self::Output {
-        let concat = ConcatExpression::new(self, rhs, true);
-        ExpressionNode { kind: ExpressionKind::Concat(Box::new(concat)), tag: "".to_string() }
+    fn add(mut self, mut other: Self) -> Self::Output {
+        join(self, other, true)
     }
 }
 
 impl BitAnd<Self> for ExpressionNode {
     type Output = Self;
 
-    fn bitand(self, rhs: Self) -> Self::Output {
-        let concat = ConcatExpression::new(self, rhs, false);
-        ExpressionNode { kind: ExpressionKind::Concat(Box::new(concat)), tag: "".to_string() }
+    fn bitand(self, other: Self) -> Self::Output {
+        let mut lhs = self;
+        let mut rhs = other;
+        join(lhs, rhs, false)
+    }
+}
+
+fn join(mut lhs: ExpressionNode, mut rhs: ExpressionNode, soft: bool) -> ExpressionNode {
+    match (&mut lhs.kind, &mut rhs.kind) {
+        (ExpressionKind::Concat(a), _) => {
+            a.extend(rhs.kind, soft);
+            lhs
+        }
+        (_, ExpressionKind::Concat(b)) => {
+            a.push(rhs, soft);
+            lhs
+        }
     }
 }

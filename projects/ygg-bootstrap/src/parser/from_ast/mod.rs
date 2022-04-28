@@ -1,24 +1,37 @@
-use crate::parser::ast::{CharsetNode, ExprStream, Infix, StringLiteral};
-use peginator::PegParser;
 use std::mem::take;
+
+use peginator::PegParser;
+
 use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
 use yggdrasil_ir::{ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule, Operator};
 use yggdrasil_rt::traits::{Affix, PrattParser};
 
-use crate::parser::ast::{ChoiceNode, DefineStatement, ProgramNode, ProgramParser, StatementNode, StringItem};
+use crate::parser::ast::{
+    CharsetNode, ChoiceNode, DefineStatement, ExprStream, Infix, ProgramNode, ProgramParser, StatementNode, StringItem,
+    StringLiteral,
+};
 
 mod charset;
 mod import;
 
 pub struct GrammarParser {
     info: GrammarInfo,
+    atomic: bool,
+    capture: bool,
     docs: String,
     errors: Vec<YggdrasilError>,
 }
 
 impl GrammarParser {
     pub fn parse(input: &str) -> YggdrasilResult<GrammarInfo> {
-        let mut ctx = GrammarParser { info: Default::default(), docs: "".to_string(), errors: vec![] };
+        let mut ctx = GrammarParser {
+            //
+            info: Default::default(),
+            atomic: false,
+            capture: true,
+            docs: "".to_string(),
+            errors: vec![],
+        };
         ProgramParser::parse(input).unwrap().program.translate(&mut ctx)?;
         Ok(Diagnostic { success: ctx.info, errors: ctx.errors })
     }
@@ -44,7 +57,9 @@ impl DefineStatement {
         }
         return field;
     }
-
+    fn is_union(&self) -> bool {
+        if ["union", "enum"].contains(&&*self.define) { true } else { self.annotation("union", false) }
+    }
     fn translate(&self, ctx: &mut GrammarParser) -> Result<(), YggdrasilError> {
         let document = take(&mut ctx.docs);
         let mut name = self.symbol.string.to_owned();
@@ -71,14 +86,13 @@ impl DefineStatement {
                 auto_capture: self.annotation("capture", true),
                 atomic: self.annotation("atomic", false),
                 entry: self.annotation("entry", false),
-                union: false,
+                union: self.is_union(),
                 keep: self.annotation("keep", false),
                 body: self.body.as_expr(ctx)?,
                 range: self.position.clone(),
             };
             ctx.info.rules.insert(rule.name.clone(), rule);
         }
-        ctx.docs.clear();
         Ok(())
     }
 }

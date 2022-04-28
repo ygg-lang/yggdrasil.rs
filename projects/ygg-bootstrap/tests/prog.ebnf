@@ -11,19 +11,19 @@ EmptyStatementNode = EOSNode;
 MacroCallsNode = MacroCallNode;
 
 @position
-MacroCallNode = ("#" MacroNode) | ((("#" "[") MacroNode) "]");
+MacroCallNode = ("#" MacroNode) | ("#" "[" MacroNode "]");
 
 @position
 MacroNode = (IdentifierNode ArgumentsNode);
 
 @position
-ArgumentsNode = (("(" ArgumentValueNode) ")");
+ArgumentsNode = ("(" ArgumentValueNode ")");
 
 @position
 ArgumentValueNode = BooleanNode;
 
 @position
-DefineStatementNode = ((((MacroCallsNode DefineNode) ModifiersNode) IdentifierNode) ArgumentsNode);
+DefineStatementNode = (MacroCallsNode DefineNode ModifiersNode IdentifierNode ArgumentsNode);
 
 @position @string
 DefineNode = "def" | "class" | "union" | "structure" | "struct" | "enumerate" | "enum";
@@ -47,7 +47,7 @@ InfixNode = "|" | ":" | "~";
 SuffixNode = "+" | "*" | "?";
 
 @position
-GroupNode = (("(" ChoiceNode) ")");
+GroupNode = ("(" ChoiceNode ")");
 
 @position
 ModifiersNode = ModifierNode;

@@ -22,9 +22,7 @@ impl WritePeg for DataKind {
                 // w.write_str("..")?;
                 // w.char_token(r.end);
             }
-            DataKind::Ignored => {
-                todo!()
-            }
+            DataKind::Ignored => w.write_str("IGNORED")?,
             DataKind::Boolean(_) => {
                 todo!()
             }
