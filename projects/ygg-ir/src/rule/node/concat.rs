@@ -1,8 +1,3 @@
-use std::{
-    mem::swap,
-    ops::{Add, BitAnd},
-};
-
 use super::*;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
@@ -20,26 +15,32 @@ impl ConcatExpression {
         sequence.push(rhs.into());
         Self { sequence }
     }
-    pub fn push(&mut self, rhs: ExpressionNode, soft: bool) {
+    pub fn push(&mut self, other: ExpressionNode, soft: bool) {
         if soft {
             self.sequence.push(ExpressionNode::ignored())
         }
-        self.sequence.push(rhs);
+        match other.kind {
+            ExpressionKind::Concat(rhs) => self.sequence.extend(rhs.sequence.into_iter()),
+            _ => self.sequence.push(other),
+        }
     }
-    pub fn append(&mut self, lhs: ExpressionNode, soft: bool) {
-        let mut v = vec![lhs];
-        swap(&mut v, &mut self.sequence);
-        if soft {
-            self.sequence.push(ExpressionNode::ignored())
+    pub fn append(&mut self, other: ExpressionNode, soft: bool) {
+        let ignored = if soft { vec![ExpressionNode::ignored()] } else { vec![] };
+        match other.kind {
+            ExpressionKind::Concat(lhs) => {
+                self.sequence = [lhs.sequence, ignored, take(&mut self.sequence)].concat();
+            }
+            _ => {
+                self.sequence = [vec![other], ignored, take(&mut self.sequence)].concat();
+            }
         }
-        self.sequence.extend(v.into_iter())
     }
 }
 
 impl Add<Self> for ExpressionNode {
     type Output = Self;
 
-    fn add(mut self, mut other: Self) -> Self::Output {
+    fn add(self, other: Self) -> Self::Output {
         join(self, other, true)
     }
 }
@@ -48,21 +49,23 @@ impl BitAnd<Self> for ExpressionNode {
     type Output = Self;
 
     fn bitand(self, other: Self) -> Self::Output {
-        let mut lhs = self;
-        let mut rhs = other;
-        join(lhs, rhs, false)
+        join(self, other, false)
     }
 }
 
 fn join(mut lhs: ExpressionNode, mut rhs: ExpressionNode, soft: bool) -> ExpressionNode {
     match (&mut lhs.kind, &mut rhs.kind) {
         (ExpressionKind::Concat(a), _) => {
-            a.extend(rhs.kind, soft);
+            a.push(rhs, soft);
             lhs
         }
         (_, ExpressionKind::Concat(b)) => {
-            a.push(rhs, soft);
-            lhs
+            b.append(lhs, soft);
+            rhs
+        }
+        (_, _) => {
+            let concat = ConcatExpression::new(lhs, rhs, soft);
+            ExpressionNode { kind: ExpressionKind::Concat(Box::new(concat)), tag: "".to_string() }
         }
     }
 }

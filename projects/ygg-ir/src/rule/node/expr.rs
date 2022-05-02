@@ -1,6 +1,4 @@
 use super::*;
-use std::ops::BitXor;
-use yggdrasil_error::YggdrasilError;
 
 impl ExpressionNode {
     pub fn is_choice(&self) -> bool {
