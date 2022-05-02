@@ -1,9 +1,3 @@
-use std::collections::HashSet;
-
-use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
-
-use crate::traits::CodeOptimizer;
-
 use super::*;
 
 pub struct DeadCodeEliminator {

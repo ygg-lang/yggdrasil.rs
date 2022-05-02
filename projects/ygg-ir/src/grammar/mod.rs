@@ -1,12 +1,13 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
-use yggdrasil_error::Url;
+use yggdrasil_error::{Diagnostic, Url, YggdrasilError, YggdrasilResult};
 
-use crate::*;
+use crate::{traits::CodeOptimizer, *};
 
+pub mod auto_tag;
 pub mod dead_code;
 pub mod emit_function;
 pub mod fuse_charset;

@@ -1,4 +1,5 @@
 use super::*;
+use convert_case::{Case, Casing};
 
 impl ExpressionNode {
     pub fn is_choice(&self) -> bool {
@@ -16,12 +17,26 @@ impl ExpressionNode {
     pub fn ignored() -> Self {
         Self { kind: ExpressionKind::Data(Box::new(DataKind::Ignored)), tag: "".to_string() }
     }
+    pub fn remark(&mut self, capture: bool) -> Result<(), YggdrasilError> {
+        let rule = match self.kind.as_rule() {
+            Some(r) => r,
+            None => return Err(YggdrasilError::language_error("can't remark")),
+        };
+        match capture {
+            true => self.tag = rule.name.to_case(Case::Snake),
+            false => self.tag = String::new(),
+        }
+        Ok(())
+    }
 }
 
 impl ExpressionKind {
     pub fn as_tag(&self) -> Option<&str> {
+        self.as_rule().map(|r| r.name.as_str())
+    }
+    pub fn as_rule(&self) -> Option<&RuleReference> {
         match self {
-            ExpressionKind::Rule(r) => Some(&r.name),
+            ExpressionKind::Rule(r) => Some(r),
             _ => None,
         }
     }

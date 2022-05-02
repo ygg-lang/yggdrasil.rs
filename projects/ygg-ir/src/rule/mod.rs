@@ -81,20 +81,6 @@ pub struct GrammarRule {
     /// }
     /// ```
     pub auto_boxed: bool,
-    /// Automatically box when this rule is called
-    ///
-    /// ## Examples
-    /// ```ygg
-    /// #capture(true)
-    /// def Rule {
-    ///
-    /// }
-    ///
-    /// def capture Rule {
-    ///
-    /// }
-    /// ```
-    pub auto_capture: bool,
     ///
     pub atomic: bool,
     /// The entry of the parser, the name of the parser to be exported

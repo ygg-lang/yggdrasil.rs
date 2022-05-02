@@ -60,6 +60,12 @@ impl DefineStatement {
     fn is_union(&self) -> bool {
         if ["union", "enum"].contains(&&*self.define) { true } else { self.annotation("union", false) }
     }
+    fn is_capture(&self, ctx: &mut GrammarParser) {
+        ctx.capture = self.annotation("capture", true)
+    }
+    fn is_atomic(&self, ctx: &mut GrammarParser) {
+        ctx.capture = self.annotation("atomic", true)
+    }
     fn translate(&self, ctx: &mut GrammarParser) -> Result<(), YggdrasilError> {
         let document = take(&mut ctx.docs);
         let mut name = self.symbol.string.to_owned();
@@ -68,6 +74,7 @@ impl DefineStatement {
             auto_inline = true;
             name = name.trim_start_matches("_").to_string()
         }
+        self.is_capture(ctx);
         let mut r#type = String::new();
         if let Some(s) = &self.r#type {
             r#type = s.id.string.to_owned()
@@ -83,7 +90,6 @@ impl DefineStatement {
                 derives: Default::default(),
                 auto_inline,
                 auto_boxed: self.annotation("boxed", false),
-                auto_capture: self.annotation("capture", true),
                 atomic: self.annotation("atomic", false),
                 entry: self.annotation("entry", false),
                 union: self.is_union(),
@@ -178,9 +184,14 @@ impl<'i> PrattParser for ExprParser<'i> {
         }
     }
 
-    fn prefix(&mut self, tree: Self::Input, rhs: Self::Output) -> Result<Self::Output, YggdrasilError> {
+    fn prefix(&mut self, tree: Self::Input, mut rhs: Self::Output) -> Result<Self::Output, YggdrasilError> {
         let op = match tree.as_prefix() {
-            Some("^") => Operator::Remark,
+            Some("^") => {
+                if let Err(e) = rhs.remark(self.ctx.capture) {
+                    self.ctx.errors.push(e)
+                }
+                return Ok(rhs);
+            }
             Some("!") => Operator::Negative,
             _ => unreachable!(),
         };

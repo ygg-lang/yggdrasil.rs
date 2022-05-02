@@ -11,6 +11,7 @@ edition = "2021"
 [dependencies]
 character-set = "0.4.0"
 regex-automata = { version = "0.2.0", features = ["std"] }
+convert_case = "0.6.0"
 indexmap = { version = "1.9.1", features = ["serde"] }
 ucd-trie = "0.1.5"
 ucd-util = "0.1.9"

@@ -24,9 +24,13 @@ impl ChoiceExpression {
         branches.insert(rhs.into());
         Self { branches }
     }
-
-    pub fn push(&mut self, e: impl Into<ExpressionNode>) {
-        self.branches.insert(e.into());
+    pub fn push(&mut self, other: ExpressionNode) {
+        match other.kind {
+            ExpressionKind::Choice(rhs) => self.branches.extend(rhs.branches.into_iter()),
+            _ => {
+                self.branches.insert(other);
+            }
+        }
     }
 }
 
@@ -34,19 +38,23 @@ impl BitOr<Self> for ExpressionNode {
     type Output = Self;
 
     fn bitor(self, other: Self) -> Self::Output {
-        match (self.kind, other.kind) {
-            (ExpressionKind::Choice(mut a), ExpressionKind::Choice(b)) => {
-                a.branches.extend(b.branches.into_iter());
-                ExpressionNode { kind: ExpressionKind::Choice(a), tag: "".to_string() }
-            }
-            (ExpressionKind::Choice(mut a), b) | (b, ExpressionKind::Choice(mut a)) => {
-                a.push(ExpressionNode { kind: b, tag: other.tag });
-                ExpressionNode { kind: ExpressionKind::Choice(a), tag: self.tag }
-            }
-            (a, b) => {
-                let new = ChoiceExpression::new(ExpressionNode { kind: a, tag: self.tag }, ExpressionNode { kind: b, tag: other.tag });
-                ExpressionNode { kind: ExpressionKind::Choice(Box::new(new)), tag: "".to_string() }
-            }
+        bitor_wrapper(self, other)
+    }
+}
+
+fn bitor_wrapper(mut lhs: ExpressionNode, mut rhs: ExpressionNode) -> ExpressionNode {
+    match (&mut lhs.kind, &mut rhs.kind) {
+        (ExpressionKind::Choice(a), _) => {
+            a.push(rhs);
+            lhs
+        }
+        (_, ExpressionKind::Choice(b)) => {
+            b.push(lhs);
+            rhs
+        }
+        (_, _) => {
+            let choice = ChoiceExpression::new(lhs, rhs);
+            ExpressionNode { kind: ExpressionKind::Choice(Box::new(choice)), tag: "".to_string() }
         }
     }
 }
