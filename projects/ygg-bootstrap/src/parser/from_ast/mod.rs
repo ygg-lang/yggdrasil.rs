@@ -79,6 +79,8 @@ impl DefineStatement {
         if let Some(s) = &self.r#type {
             r#type = s.id.string.to_owned()
         }
+        let mut body = self.body.as_expr(ctx)?;
+        body.remark(ctx.capture);
         if self.arguments.is_some() {
             let _ = FunctionRule {};
         }
@@ -186,12 +188,7 @@ impl<'i> PrattParser for ExprParser<'i> {
 
     fn prefix(&mut self, tree: Self::Input, mut rhs: Self::Output) -> Result<Self::Output, YggdrasilError> {
         let op = match tree.as_prefix() {
-            Some("^") => {
-                if let Err(e) = rhs.remark(self.ctx.capture) {
-                    self.ctx.errors.push(e)
-                }
-                return Ok(rhs);
-            }
+            Some("^") => Operator::Remark,
             Some("!") => Operator::Negative,
             _ => unreachable!(),
         };

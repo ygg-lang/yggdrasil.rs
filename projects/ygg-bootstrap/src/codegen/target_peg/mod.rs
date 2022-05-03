@@ -17,8 +17,8 @@ use proc_macro_error::emit_error;
 
 use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
 use yggdrasil_ir::{
-    ChoiceExpression, CodeGenerator, ConcatExpression, DataKind, ExpressionKind, FunctionExpression, GrammarInfo, GrammarRule,
-    Operator, RuleReference, UnaryExpression,
+    ChoiceExpression, CodeGenerator, ConcatExpression, DataKind, ExpressionKind, ExpressionNode, FunctionExpression,
+    GrammarInfo, GrammarRule, Operator, RuleReference, UnaryExpression,
 };
 
 use crate::parser::GrammarParser;
@@ -97,14 +97,16 @@ impl WritePeg for GrammarRule {
             _ => w.write_str("@position\n")?,
         }
         write!(w, "{}{}{} = ", info.rule_prefix, self.name, info.rule_suffix)?;
-        self.body.kind.write_peg(w, info)?;
+        self.body.write_peg(w, info)?;
         w.semicolon();
         Ok(())
     }
 }
-impl WritePeg for ExpressionKind {
+
+impl WritePeg for ExpressionNode {
     fn write_peg(&self, w: &mut PegCodegen, info: &GrammarInfo) -> std::fmt::Result {
-        match self {
+        w.tag(&self.tag);
+        match &self.kind {
             ExpressionKind::Unary(e) => e.write_peg(w, info),
             ExpressionKind::Choice(e) => e.write_peg(w, info),
             ExpressionKind::Concat(e) => e.write_peg(w, info),
@@ -164,7 +166,7 @@ impl WritePeg for UnaryExpression {
         for s in pre {
             w.write_str(s)?
         }
-        self.base.kind.write_peg(w, info)?;
+        self.base.write_peg(w, info)?;
         for s in post {
             w.write_str(s)?
         }
@@ -179,7 +181,7 @@ impl WritePeg for ChoiceExpression {
                 w.write_str(" | ")?;
             }
             // w.write_start();
-            expr.kind.write_peg(w, info)?;
+            expr.write_peg(w, info)?;
             // w.write_end();
         }
 
@@ -194,7 +196,7 @@ impl WritePeg for ConcatExpression {
             if index != 0 {
                 w.write_char(' ')?
             }
-            expr.kind.write_peg(w, info)?;
+            expr.write_peg(w, info)?;
         }
         w.write_end();
         Ok(())

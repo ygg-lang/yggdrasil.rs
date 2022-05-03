@@ -1,5 +1,6 @@
-use super::*;
 use convert_case::{Case, Casing};
+
+use super::*;
 
 impl ExpressionNode {
     pub fn is_choice(&self) -> bool {
@@ -17,16 +18,47 @@ impl ExpressionNode {
     pub fn ignored() -> Self {
         Self { kind: ExpressionKind::Data(Box::new(DataKind::Ignored)), tag: "".to_string() }
     }
-    pub fn remark(&mut self, capture: bool) -> Result<(), YggdrasilError> {
-        let rule = match self.kind.as_rule() {
-            Some(r) => r,
-            None => return Err(YggdrasilError::language_error("can't remark")),
-        };
+    pub fn remark(&mut self, capture: bool) {
         match capture {
-            true => self.tag = rule.name.to_case(Case::Snake),
-            false => self.tag = String::new(),
+            true => self.capture(),
+            false => self.non_capture(),
         }
-        Ok(())
+    }
+    fn capture(&mut self) {
+        match &mut self.kind {
+            ExpressionKind::Choice(e) => {
+                for mut node in take(&mut e.branches) {
+                    node.capture();
+                    e.branches.insert(node);
+                }
+            }
+            ExpressionKind::Concat(e) => e.sequence.iter_mut().for_each(|f| f.capture()),
+            ExpressionKind::Unary(e) => match e.ops.contains(&Operator::Remark) {
+                true => e.base.non_capture(),
+                false => e.base.capture(),
+            },
+            ExpressionKind::Rule(e) => self.tag = e.name.to_case(Case::Snake),
+            ExpressionKind::Function(_) => self.tag.clear(),
+            ExpressionKind::Data(_) => self.tag.clear(),
+        }
+    }
+    fn non_capture(&mut self) {
+        match &mut self.kind {
+            ExpressionKind::Choice(e) => {
+                for mut node in take(&mut e.branches) {
+                    node.non_capture();
+                    e.branches.insert(node);
+                }
+            }
+            ExpressionKind::Concat(e) => e.sequence.iter_mut().for_each(|f| f.non_capture()),
+            ExpressionKind::Unary(e) => match e.ops.contains(&Operator::Remark) {
+                true => e.base.capture(),
+                false => e.base.non_capture(),
+            },
+            ExpressionKind::Function(_) => self.tag.clear(),
+            ExpressionKind::Rule(_) => self.tag.clear(),
+            ExpressionKind::Data(_) => self.tag.clear(),
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 @position
-ProgramNode = StatementNode;
+ProgramNode = statements:StatementNode;
 
 @position
 StatementNode = (DefineStatementNode EOSNode);
@@ -11,7 +11,7 @@ EmptyStatementNode = EOSNode;
 MacroCallsNode = MacroCallNode;
 
 @position
-MacroCallNode = ("#" MacroNode) | ("#" "[" MacroNode "]");
+MacroCallNode = ("#" macros:MacroNode) | ("#" "[" macros:MacroNode "]");
 
 @position
 MacroNode = (IdentifierNode ArgumentsNode);
@@ -23,7 +23,7 @@ ArgumentsNode = ("(" ArgumentValueNode ")");
 ArgumentValueNode = BooleanNode;
 
 @position
-DefineStatementNode = (MacroCallsNode DefineNode ModifiersNode IdentifierNode ArgumentsNode);
+DefineStatementNode = (MacroCallsNode DefineNode ModifiersNode symbol:IdentifierNode ArgumentsNode);
 
 @position @string
 DefineNode = "def" | "class" | "union" | "structure" | "struct" | "enumerate" | "enum";
