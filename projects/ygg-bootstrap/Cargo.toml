@@ -9,7 +9,7 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-proc-macro2 = { version = "1.0.46", features = ["span-locations"] }
+proc-macro2 = { version = "1.0.47", features = ["span-locations"] }
 proc-macro-error = "1.0.4"
 character-set = "0.4.0"
 peginator = "0.3.0"
@@ -32,7 +32,7 @@ features = ["peginator", "ucd-trie"]
 
 
 [dev-dependencies]
-serde_yaml = "0.9.13"
+serde_yaml = "0.9.14"
 json5 = "0.4.1"
 
 [build-dependencies]

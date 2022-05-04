@@ -1,13 +1,9 @@
 #![allow(clippy::needless_return)]
 #![doc = include_str!("../Readme.md")]
 
-#[cfg(feature = "lsp")]
-pub use lsp_types;
+pub use diagnostic::{DiagnosticLevel, FileID, TextStorage};
 
-pub use self::errors::{
-    diagnostic::{Diagnostic, DiagnosticLevel},
-    YggdrasilError, YggdrasilErrorKind, YggdrasilResult,
-};
-pub use url::Url;
+pub use self::errors::{Validation, YggdrasilError, YggdrasilErrorKind, YggdrasilResult};
+
 mod error_3rd;
 mod errors;
