@@ -1,11 +1,10 @@
+use super::*;
 use diagnostic::Diagnostic;
 
-use super::*;
-
 // noinspection RsSelfConvention
-impl RuntimeError {
+impl IOError {
     pub fn as_error(self, level: DiagnosticLevel) -> YggdrasilError {
-        YggdrasilError { error: Box::new(YggdrasilErrorKind::ErrorRuntime(self)), level }
+        YggdrasilError { error: Box::new(YggdrasilErrorKind::ErrorIO(self)), level }
     }
     pub fn as_report(&self, level: DiagnosticLevel) -> Diagnostic {
         Diagnostic::new(level)

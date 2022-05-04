@@ -1,8 +1,10 @@
-use crate::YggdrasilError;
+use diagnostic::DiagnosticLevel;
 use ucd_trie::Error;
+
+use crate::{errors::RuntimeError, YggdrasilError};
 
 impl From<Error> for YggdrasilError {
     fn from(e: Error) -> Self {
-        YggdrasilError::language_error(e.to_string())
+        RuntimeError { message: e.to_string() }.as_error(DiagnosticLevel::Error)
     }
 }

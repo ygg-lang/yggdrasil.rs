@@ -1,9 +1,10 @@
+use diagnostic::DiagnosticLevel;
 use ropey::Error;
 
-use crate::YggdrasilError;
+use crate::{errors::RuntimeError, YggdrasilError};
 
 impl From<Error> for YggdrasilError {
     fn from(e: Error) -> Self {
-        Self::language_error(e.to_string())
+        RuntimeError { message: e.to_string() }.as_error(DiagnosticLevel::Error)
     }
 }

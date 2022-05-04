@@ -1,4 +1,5 @@
 use super::*;
+use yggdrasil_error::Validation;
 
 pub struct DeadCodeEliminator {
     pub panic: bool,
@@ -15,7 +16,7 @@ impl Default for DeadCodeEliminator {
 
 impl CodeOptimizer for DeadCodeEliminator {
     // TODO: Tri-Color mark and sweep algorithm
-    fn optimize(&mut self, info: &GrammarInfo) -> YggdrasilResult<GrammarInfo> {
+    fn optimize(&mut self, info: &GrammarInfo) -> Validation<GrammarInfo> {
         self.find_entry(info);
         self.find_unvisited();
         let mut errors = vec![];
@@ -30,7 +31,7 @@ impl CodeOptimizer for DeadCodeEliminator {
                     }
                     None => {
                         let error = format!("Undefined rule {}", rule);
-                        if self.panic { panic!("{}", error) } else { errors.push(YggdrasilError::language_error(error)) }
+                        if self.panic { panic!("{}", error) } else { errors.push(YggdrasilError::runtime_error(error)) }
                     }
                 }
             }
@@ -38,7 +39,7 @@ impl CodeOptimizer for DeadCodeEliminator {
         }
         let rules = self.find_needed(info);
         self.clear();
-        Ok(Diagnostic { success: GrammarInfo { rules, ..info.clone() }, errors })
+        Validation::Success { value: GrammarInfo { rules, ..info.clone() }, diagnostics: errors }
     }
 }
 

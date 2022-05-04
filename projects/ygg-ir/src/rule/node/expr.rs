@@ -86,7 +86,7 @@ impl BitXor<Self> for ExpressionNode {
                 };
                 Ok(ExpressionNode { kind: rhs.kind, tag: node_tag })
             }
-            None => Err(YggdrasilError::language_error("lhs not a valid tag")),
+            None => Err(YggdrasilError::runtime_error("lhs not a valid tag")),
         }
     }
 }

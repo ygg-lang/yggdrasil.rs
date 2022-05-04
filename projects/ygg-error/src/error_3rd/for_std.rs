@@ -1,9 +1,15 @@
-use super::*;
 use std::{
     env::VarError,
     num::{ParseFloatError, ParseIntError},
     str::Utf8Error,
     sync::PoisonError,
+};
+
+use diagnostic::DiagnosticLevel;
+
+use crate::{
+    errors::{IOError, RuntimeError, SyntaxError},
+    YggdrasilError,
 };
 
 impl From<Utf8Error> for YggdrasilError {
@@ -14,28 +20,29 @@ impl From<Utf8Error> for YggdrasilError {
 }
 
 impl From<ParseIntError> for YggdrasilError {
-    fn from(e: ParseIntError) -> Self {
+    fn from(error: ParseIntError) -> Self {
         let e = SyntaxError { message: error.to_string(), file: Default::default(), span: Default::default() };
         e.as_error(DiagnosticLevel::Error)
     }
 }
 
 impl From<ParseFloatError> for YggdrasilError {
-    fn from(e: ParseFloatError) -> Self {
+    fn from(error: ParseFloatError) -> Self {
         let e = SyntaxError { message: error.to_string(), file: Default::default(), span: Default::default() };
         e.as_error(DiagnosticLevel::Error)
     }
 }
 
 impl From<std::io::Error> for YggdrasilError {
-    fn from(e: std::io::Error) -> Self {
-        Self { error: Box::new(IOError(e)), level: None, range: None }
+    fn from(error: std::io::Error) -> Self {
+        let e = IOError { message: error.to_string(), file: Default::default() };
+        e.as_error(DiagnosticLevel::Error)
     }
 }
 
 impl From<std::fmt::Error> for YggdrasilError {
     fn from(e: std::fmt::Error) -> Self {
-        Self { error: Box::new(FormatError(e)), level: None, range: None }
+        RuntimeError { message: e.to_string() }.as_error(DiagnosticLevel::Error)
     }
 }
 
@@ -53,6 +60,6 @@ impl From<()> for YggdrasilError {
 
 impl From<VarError> for YggdrasilError {
     fn from(e: VarError) -> Self {
-        Self::language_error(e.to_string())
+        RuntimeError { message: e.to_string() }.as_error(DiagnosticLevel::Error)
     }
 }

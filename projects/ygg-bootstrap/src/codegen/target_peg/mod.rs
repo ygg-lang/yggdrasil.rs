@@ -15,7 +15,7 @@ use peginator::{
 use proc_macro2::{Span, TokenStream};
 use proc_macro_error::emit_error;
 
-use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
+use yggdrasil_error::{Validation, YggdrasilError};
 use yggdrasil_ir::{
     ChoiceExpression, CodeGenerator, ConcatExpression, DataKind, ExpressionKind, ExpressionNode, FunctionExpression,
     GrammarInfo, GrammarRule, Operator, RuleReference, UnaryExpression,
@@ -46,8 +46,14 @@ impl PegCodegen {
         };
         let mut peg = File::create(path.with_extension("ebnf"))?;
         let text = read_to_string(&path)?;
-        let Diagnostic { success: info, errors: error1 } = GrammarParser::parse(&text)?;
-        let Diagnostic { success: tokens, errors: error2 } = self.generate(&info)?;
+        let info = match GrammarParser::parse(&text) {
+            Validation::Success { value, diagnostics } => value,
+            Validation::Failure { fatal, diagnostics } => {}
+        };
+        let tokens = match self.generate(&info) {
+            Validation::Success { value, diagnostics } => value,
+            Validation::Failure { fatal, diagnostics } => {}
+        };
         write!(peg, "{}", self.buffer)?;
         for error in error1.into_iter().chain(error2.into_iter()) {
             let span = Span::call_site();
@@ -69,7 +75,7 @@ impl PegCodegen {
 impl CodeGenerator for PegCodegen {
     type Output = TokenStream;
 
-    fn generate(&mut self, info: &GrammarInfo) -> YggdrasilResult<Self::Output> {
+    fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
         let mut errors = vec![];
         for (_, rule) in &info.rules {
             rule.write_peg(self, info)?

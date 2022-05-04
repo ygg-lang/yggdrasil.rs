@@ -1,13 +1,11 @@
+use diagnostic::DiagnosticLevel;
 use url::ParseError;
 
-use crate::{YggdrasilError, YggdrasilErrorKind};
+use crate::{errors::SyntaxError, YggdrasilError};
 
 impl From<ParseError> for YggdrasilError {
-    fn from(_: ParseError) -> Self {
-        Self {
-            error: Box::new(YggdrasilErrorKind::IOError(std::io::Error::from_raw_os_error(10022))),
-            level: None,
-            range: None,
-        }
+    fn from(e: ParseError) -> Self {
+        SyntaxError { message: e.to_string(), file: Default::default(), span: Default::default() }
+            .as_error(DiagnosticLevel::Error)
     }
 }

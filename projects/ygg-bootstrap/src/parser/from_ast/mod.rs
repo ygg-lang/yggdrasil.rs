@@ -2,7 +2,7 @@ use std::mem::take;
 
 use peginator::PegParser;
 
-use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
+use yggdrasil_error::{DiagnosticLevel, FileID, SyntaxError, Validation, YggdrasilError, YggdrasilResult};
 use yggdrasil_ir::{ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule, Operator};
 use yggdrasil_rt::traits::{Affix, PrattParser};
 
@@ -19,21 +19,33 @@ pub struct GrammarParser {
     atomic: bool,
     capture: bool,
     docs: String,
+    file: FileID,
     errors: Vec<YggdrasilError>,
 }
 
 impl GrammarParser {
-    pub fn parse(input: &str) -> YggdrasilResult<GrammarInfo> {
+    pub fn parse(input: &str) -> Validation<GrammarInfo> {
         let mut ctx = GrammarParser {
             //
             info: Default::default(),
             atomic: false,
             capture: true,
             docs: "".to_string(),
+            file: Default::default(),
             errors: vec![],
         };
-        ProgramParser::parse(input).unwrap().program.translate(&mut ctx)?;
-        Ok(Diagnostic { success: ctx.info, errors: ctx.errors })
+        match ProgramParser::parse(input) {
+            Ok(o) => match o.program.translate(&mut ctx) {
+                Ok(_) => {}
+                Err(e) => return Validation::Failure { fatal: e, diagnostics: vec![] },
+            },
+            Err(e) => {
+                let error = SyntaxError { message: e.to_string(), file: Default::default(), span: Default::default() }
+                    .as_error(DiagnosticLevel::Error);
+                return Validation::Failure { fatal: error, diagnostics: vec![] };
+            }
+        };
+        Validation::Success { value: ctx.info, diagnostics: ctx.errors }
     }
 }
 
@@ -45,7 +57,7 @@ impl ProgramNode {
                 StatementNode::EmptyStatement(_) => {}
             }
         }
-        Ok(Diagnostic { success: (), errors: vec![] })
+        Ok(())
     }
 }
 

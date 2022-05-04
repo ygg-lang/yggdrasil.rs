@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use yggdrasil_error::{Diagnostic, YggdrasilResult};
+use yggdrasil_error::Validation;
 
 use crate::*;
 
@@ -18,26 +18,33 @@ pub trait FieldDescriptor {
 }
 
 pub trait CodeOptimizer {
-    fn optimize(&mut self, info: &GrammarInfo) -> YggdrasilResult<GrammarInfo>;
+    fn optimize(&mut self, info: &GrammarInfo) -> Validation<GrammarInfo>;
 }
 
 pub trait CodeGenerator {
     type Output;
-    fn generate(&mut self, info: &GrammarInfo) -> YggdrasilResult<Self::Output>;
+    fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output>;
 }
 
 impl GrammarInfo {
-    pub fn optimize(&self, mut pass: Vec<impl CodeOptimizer>) -> YggdrasilResult<GrammarInfo> {
+    pub fn optimize(&self, mut pass: Vec<impl CodeOptimizer>) -> Validation<GrammarInfo> {
         let mut errors = vec![];
         let mut out = GrammarInfo::default();
         for co in pass.iter_mut() {
-            let step = co.optimize(self)?;
-            out = step.success;
-            errors.extend(step.errors);
+            match co.optimize(self) {
+                Validation::Success { value, diagnostics } => {
+                    out = value;
+                    errors.extend(diagnostics.into_iter())
+                }
+                Validation::Failure { fatal, diagnostics } => {
+                    errors.extend(diagnostics.into_iter());
+                    return Validation::Failure { fatal, diagnostics: errors };
+                }
+            }
         }
-        Ok(Diagnostic { success: out, errors })
+        Validation::Success { value: out, diagnostics: errors }
     }
-    pub fn generate<T>(&self, mut pass: T) -> YggdrasilResult<<T as CodeGenerator>::Output>
+    pub fn generate<T>(&self, mut pass: T) -> Validation<<T as CodeGenerator>::Output>
     where
         T: CodeGenerator,
     {

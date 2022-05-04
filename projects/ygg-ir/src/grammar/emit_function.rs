@@ -2,7 +2,7 @@ use std::mem::take;
 
 use indexmap::IndexMap;
 
-use yggdrasil_error::{Diagnostic, YggdrasilError, YggdrasilResult};
+use yggdrasil_error::{Validation, YggdrasilError};
 
 use crate::{CodeOptimizer, ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule};
 
@@ -18,14 +18,17 @@ impl Default for EmitFunction {
 }
 
 impl CodeOptimizer for EmitFunction {
-    fn optimize(&mut self, info: &GrammarInfo) -> YggdrasilResult<GrammarInfo> {
+    fn optimize(&mut self, info: &GrammarInfo) -> Validation<GrammarInfo> {
         let mut rules = info.rules.clone();
         self.functions = info.functions.clone();
-        self.emit(&mut rules)?;
+        match self.emit(&mut rules) {
+            Ok(_) => {}
+            Err(e) => return Validation::Failure { fatal: e, diagnostics: vec![] },
+        }
         // Reset Progress
         let grammar = GrammarInfo { rules: take(&mut rules), functions: Default::default(), ..info.clone() };
         let errors = take(&mut self.errors);
-        Ok(Diagnostic { success: grammar, errors })
+        Validation::Success { value: grammar, diagnostics: errors }
     }
 }
 

@@ -2,7 +2,7 @@ use railroad::svg::Element;
 pub use railroad::RailroadNode;
 
 pub use helper::*;
-use yggdrasil_error::{Diagnostic, YggdrasilResult};
+use yggdrasil_error::Validation;
 use yggdrasil_ir::{
     ChoiceExpression, CodeGenerator, ConcatExpression, DataKind, ExpressionKind, ExpressionNode, GrammarInfo, GrammarRule,
     Operator, RuleReference, UnaryExpression,
@@ -26,7 +26,7 @@ impl Railroad {}
 impl CodeGenerator for Railroad {
     type Output = Diagram<VerticalGrid>;
 
-    fn generate(&mut self, info: &GrammarInfo) -> YggdrasilResult<Self::Output> {
+    fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
         let grid = VerticalGrid::new(info.rules.iter().map(|(_, rule)| rule.as_railroad()).collect());
         let mut diagram = Diagram::new(grid);
         let mut element = Element::new("style").set("type", "text/css");
@@ -34,7 +34,7 @@ impl CodeGenerator for Railroad {
             element = element.raw_text(&self.css);
         }
         diagram.add_element(element);
-        return Ok(Diagnostic { success: diagram, errors: vec![] });
+        Validation::Success { value: diagram, diagnostics: vec![] }
     }
 }
 

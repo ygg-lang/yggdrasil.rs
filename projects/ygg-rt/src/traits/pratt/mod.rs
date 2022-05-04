@@ -107,7 +107,7 @@ pub trait PrattParser {
             node
         }
         else {
-            Err(YggdrasilError::unexpected_token("EmptyInput"))
+            Err(YggdrasilError::syntax_error("EmptyInput"))
         }
     }
 
@@ -124,8 +124,8 @@ pub trait PrattParser {
                 self.prefix(head, rhs?)
             }
             Affix::None => self.primary(head),
-            Affix::Suffix(_) => Err(YggdrasilError::unexpected_token("Unexpected Postfix")),
-            Affix::Infix(_, _) => Err(YggdrasilError::unexpected_token("Unexpected Infix")),
+            Affix::Suffix(_) => Err(YggdrasilError::syntax_error("Unexpected Postfix")),
+            Affix::Infix(_, _) => Err(YggdrasilError::syntax_error("Unexpected Infix")),
         }
     }
 
@@ -148,8 +148,8 @@ pub trait PrattParser {
                 self.infix(lhs, head, rhs?)
             }
             Affix::Suffix(_) => self.suffix(lhs, head),
-            Affix::None => Err(YggdrasilError::unexpected_token("Unexpected NilFix")),
-            Affix::Prefix(_) => Err(YggdrasilError::unexpected_token("Unexpected Prefix")),
+            Affix::None => Err(YggdrasilError::syntax_error("Unexpected NilFix")),
+            Affix::Prefix(_) => Err(YggdrasilError::syntax_error("Unexpected Prefix")),
         }
     }
 

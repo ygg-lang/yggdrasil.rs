@@ -5,9 +5,8 @@ use std::{
 
 use diagnostic::{DiagnosticLevel, FileID, Span};
 
-use self::YggdrasilErrorKind::*;
-
-pub mod error_std;
+pub mod error_io;
+pub mod error_runtime;
 pub mod error_syntax;
 
 pub type YggdrasilResult<T = ()> = Result<T, YggdrasilError>;
@@ -22,31 +21,41 @@ pub struct YggdrasilError {
 
 #[derive(Debug)]
 pub enum YggdrasilErrorKind {
-    IOError(std::io::Error),
-    FormatError(std::fmt::Error),
+    ErrorIO(IOError),
     ErrorSyntax(SyntaxError),
     ErrorRuntime(RuntimeError),
-    UnexpectedToken(String),
-    InfoMissing(String),
-    /// Some nodes failed to resolve and are being rolled back
-    Unwinding,
-    /// A forbidden cst_node encountered
     Unreachable,
 }
 
+#[derive(Debug)]
 pub struct SyntaxError {
     pub message: String,
     pub file: FileID,
     pub span: Span,
 }
 
+#[derive(Debug)]
 pub struct RuntimeError {
     pub message: String,
 }
 
-impl YggdrasilError {}
+#[derive(Debug)]
+pub struct IOError {
+    pub message: String,
+    pub file: FileID,
+}
 
-impl YggdrasilError {}
+impl YggdrasilError {
+    pub fn unreachable() -> Self {
+        Self { error: Box::new(YggdrasilErrorKind::Unreachable), level: Default::default() }
+    }
+    pub fn syntax_error(msg: impl Into<String>) -> Self {
+        SyntaxError { message: msg.into(), file: Default::default(), span: Default::default() }.as_error(DiagnosticLevel::Error)
+    }
+    pub fn runtime_error(msg: impl Into<String>) -> Self {
+        RuntimeError { message: msg.into() }.as_error(DiagnosticLevel::Error)
+    }
+}
 
 impl Error for YggdrasilError {}
 
