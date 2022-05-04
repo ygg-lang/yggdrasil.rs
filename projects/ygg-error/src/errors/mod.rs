@@ -3,11 +3,12 @@ use std::{
     fmt::{Debug, Display, Formatter},
 };
 
-use diagnostic::DiagnosticLevel;
+use diagnostic::{DiagnosticLevel, FileID, Span};
 
 use self::YggdrasilErrorKind::*;
 
 pub mod error_std;
+pub mod error_syntax;
 
 pub type YggdrasilResult<T = ()> = Result<T, YggdrasilError>;
 
@@ -23,14 +24,24 @@ pub struct YggdrasilError {
 pub enum YggdrasilErrorKind {
     IOError(std::io::Error),
     FormatError(std::fmt::Error),
-    LanguageError(String),
-    StructureError(String),
+    ErrorSyntax(SyntaxError),
+    ErrorRuntime(RuntimeError),
     UnexpectedToken(String),
     InfoMissing(String),
     /// Some nodes failed to resolve and are being rolled back
     Unwinding,
     /// A forbidden cst_node encountered
     Unreachable,
+}
+
+pub struct SyntaxError {
+    pub message: String,
+    pub file: FileID,
+    pub span: Span,
+}
+
+pub struct RuntimeError {
+    pub message: String,
 }
 
 impl YggdrasilError {}

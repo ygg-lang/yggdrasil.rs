@@ -7,20 +7,23 @@ use std::{
 };
 
 impl From<Utf8Error> for YggdrasilError {
-    fn from(e: Utf8Error) -> Self {
-        Self::language_error(e.to_string())
+    fn from(error: Utf8Error) -> Self {
+        let e = SyntaxError { message: error.to_string(), file: Default::default(), span: Default::default() };
+        e.as_error(DiagnosticLevel::Error)
     }
 }
 
 impl From<ParseIntError> for YggdrasilError {
     fn from(e: ParseIntError) -> Self {
-        Self::language_error(e.to_string())
+        let e = SyntaxError { message: error.to_string(), file: Default::default(), span: Default::default() };
+        e.as_error(DiagnosticLevel::Error)
     }
 }
 
 impl From<ParseFloatError> for YggdrasilError {
     fn from(e: ParseFloatError) -> Self {
-        Self::language_error(e.to_string())
+        let e = SyntaxError { message: error.to_string(), file: Default::default(), span: Default::default() };
+        e.as_error(DiagnosticLevel::Error)
     }
 }
 
@@ -30,8 +33,8 @@ impl From<std::io::Error> for YggdrasilError {
     }
 }
 
-impl From<fmt::Error> for YggdrasilError {
-    fn from(e: fmt::Error) -> Self {
+impl From<std::fmt::Error> for YggdrasilError {
+    fn from(e: std::fmt::Error) -> Self {
         Self { error: Box::new(FormatError(e)), level: None, range: None }
     }
 }

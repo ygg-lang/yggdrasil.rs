@@ -9,4 +9,7 @@ mod for_ropey;
 #[cfg(feature = "ucd-trie")]
 mod for_ucd_trie;
 
+#[cfg(feature = "url")]
 mod for_url;
+
+pub use url::Url;

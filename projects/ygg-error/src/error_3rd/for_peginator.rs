@@ -1,15 +1,15 @@
-use std::ops::Range;
-
+use diagnostic::{DiagnosticLevel, Span};
 use peginator::ParseError;
 
-use crate::{YggdrasilError, YggdrasilErrorKind};
+use crate::{errors::SyntaxError, YggdrasilError};
 
 impl From<ParseError> for YggdrasilError {
-    fn from(e: ParseError) -> Self {
-        YggdrasilError {
-            error: Box::new(YggdrasilErrorKind::LanguageError(e.specifics.to_string())),
-            level: None,
-            range: Some(Range { start: e.position, end: e.position }),
-        }
+    fn from(error: ParseError) -> Self {
+        let e = SyntaxError {
+            message: error.specifics.to_string(),
+            file: Default::default(),
+            span: Span { start: error.position, end: error.position },
+        };
+        e.as_error(DiagnosticLevel::Error)
     }
 }

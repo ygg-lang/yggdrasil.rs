@@ -9,7 +9,6 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-url = "2.3.1"
 diagnostic = "0.3.7"
 url = { version = "2.3.1", optional = true }
 lsp-types = { version = "0.93.2", features = ["proposed"], optional = true }
