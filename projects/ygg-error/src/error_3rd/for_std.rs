@@ -33,10 +33,15 @@ impl From<ParseFloatError> for YggdrasilError {
     }
 }
 
+impl From<std::io::Error> for IOError {
+    fn from(error: std::io::Error) -> Self {
+        IOError { message: error.to_string(), file: Default::default() }
+    }
+}
+
 impl From<std::io::Error> for YggdrasilError {
     fn from(error: std::io::Error) -> Self {
-        let e = IOError { message: error.to_string(), file: Default::default() };
-        e.as_error(DiagnosticLevel::Error)
+        IOError::from(error).as_error(DiagnosticLevel::Error)
     }
 }
 

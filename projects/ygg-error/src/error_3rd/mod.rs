@@ -13,5 +13,8 @@ mod for_std;
 #[cfg(feature = "url")]
 mod for_url;
 
+#[cfg(feature = "sled")]
+mod for_sled;
+
 #[cfg(feature = "url")]
 pub use url::Url;

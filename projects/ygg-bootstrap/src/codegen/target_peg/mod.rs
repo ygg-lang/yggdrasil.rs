@@ -12,8 +12,7 @@ use peginator::{
     grammar::Grammar,
     PegParser,
 };
-use proc_macro2::{Span, TokenStream};
-use proc_macro_error::emit_error;
+use proc_macro2::TokenStream;
 
 use yggdrasil_error::{Validation, YggdrasilError};
 use yggdrasil_ir::{
@@ -42,33 +41,20 @@ impl PegCodegen {
         let path = src.as_ref().to_path_buf().canonicalize()?;
         let dir = match path.parent() {
             Some(s) => s,
-            None => return Err(YggdrasilError::language_error("ygg dir not found")),
+            None => return Err(YggdrasilError::runtime_error("ygg dir not found")),
         };
         let mut peg = File::create(path.with_extension("ebnf"))?;
         let text = read_to_string(&path)?;
         let info = match GrammarParser::parse(&text) {
             Validation::Success { value, diagnostics } => value,
-            Validation::Failure { fatal, diagnostics } => {}
+            Validation::Failure { fatal, diagnostics } => return Err(fatal),
         };
         let tokens = match self.generate(&info) {
             Validation::Success { value, diagnostics } => value,
-            Validation::Failure { fatal, diagnostics } => {}
+            Validation::Failure { fatal, diagnostics } => return Err(fatal),
         };
         write!(peg, "{}", self.buffer)?;
-        for error in error1.into_iter().chain(error2.into_iter()) {
-            let span = Span::call_site();
-            println!("{:#?}", span);
-            emit_error!(span, error.to_string());
-        }
-
         Ok(())
-
-        // grammar.write_peg(&mut buffer);
-        // buffer.buffer
-        // fs::write(destination, &generated_code)?;
-        // if self.format {
-        //     Command::new("rustfmt").arg(out_rust).status()?;
-        // };
     }
 }
 
@@ -78,16 +64,22 @@ impl CodeGenerator for PegCodegen {
     fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
         let mut errors = vec![];
         for (_, rule) in &info.rules {
-            rule.write_peg(self, info)?
+            match rule.write_peg(self, info) {
+                Ok(_) => {}
+                Err(e) => return Validation::Failure { fatal: YggdrasilError::from(e), diagnostics: vec![] },
+            }
         }
-        let parsed = Grammar::parse(&self.buffer)?;
+        let parsed = match Grammar::parse(&self.buffer) {
+            Ok(o) => o,
+            Err(e) => return Validation::Failure { fatal: YggdrasilError::from(e), diagnostics: vec![] },
+        };
         let config = CodegenSettings {
             skip_whitespace: false,
             peginator_crate_name: "peginator".into(),
             derives: vec!["Debug".into(), "Clone".into()],
         };
         let success = parsed.generate_code(&config).unwrap();
-        Ok(Diagnostic { success, errors })
+        Validation::Success { value: success, diagnostics: errors }
     }
 }
 

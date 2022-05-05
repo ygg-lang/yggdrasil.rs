@@ -6,7 +6,7 @@ mod publish;
 mod test;
 
 use self::{ast::CommandAST, cst::CommandCST, init::CommandInit, new::CommandNew, publish::CommandPub, test::CommandTest};
-use crate::Options;
+use crate::App;
 use anyhow::Result;
 use clap::Parser;
 use std::{env, fs, path::Path, process::Command};
@@ -22,7 +22,7 @@ pub enum SubCommand {
 }
 
 impl SubCommand {
-    pub fn run(&self, _: &Options) -> Result<()> {
+    pub fn run(&self, _: &App) -> Result<()> {
         Self::calibrate_current_dir()?;
         match self {
             SubCommand::Init(cmd) => cmd.run(),

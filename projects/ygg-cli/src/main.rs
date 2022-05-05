@@ -1,9 +1,10 @@
 #![feature(path_try_exists)]
 #![feature(once_cell)]
+#![feature(fs_try_exists)]
 
 use self::{cache::*, subs::*};
 use anyhow::Result;
-use clap::{crate_authors, crate_version, AppSettings, Parser};
+use clap::Parser;
 
 mod cache;
 mod subs;
@@ -13,7 +14,7 @@ mod subs;
 #[derive(Parser)]
 // #[clap(version = crate_version!(), author = crate_authors!("\n"))]
 // #[clap(setting = AppSettings::ColoredHelp)]
-struct Options {
+pub struct App {
     /// Sets a custom config file. Could have been an Option<T> with no default too
     #[clap(short, long, default_value = "yggdrasil.toml")]
     config: String,
@@ -26,6 +27,6 @@ struct Options {
 }
 
 fn main() -> Result<()> {
-    let opts: Options = Options::parse();
+    let opts: App = App::parse();
     opts.subs.run(&opts)
 }

@@ -12,7 +12,6 @@ use crate::parser::ast::{
 };
 
 mod charset;
-mod import;
 
 pub struct GrammarParser {
     info: GrammarInfo,

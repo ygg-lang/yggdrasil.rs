@@ -7,7 +7,8 @@ pub struct FuseCharset {}
 impl CodeOptimizer for FuseCharset {
     fn optimize(&mut self, info: &GrammarInfo) -> Validation<GrammarInfo> {
         let _ = info;
-        self.fuse_choice(todo!());
+        let e = ChoiceExpression { branches: Default::default() };
+        self.fuse_choice(&e);
         todo!()
     }
 }

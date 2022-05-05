@@ -1,6 +1,6 @@
-use std::{lazy::SyncLazy, sync::RwLock};
+use std::sync::{LazyLock, RwLock};
 
-pub static CACHE_MANAGER: SyncLazy<RwLock<CacheManager>> = SyncLazy::new(|| RwLock::new(CacheManager::new()));
+pub static CACHE_MANAGER: LazyLock<RwLock<CacheManager>> = LazyLock::new(|| RwLock::new(CacheManager::new()));
 
 pub struct CacheManager {}
 

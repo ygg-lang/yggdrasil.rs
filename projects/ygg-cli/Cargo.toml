@@ -1,18 +1,18 @@
 [package]
-name = "yggdrasil-cli"
-version = "0.1.0"
+name = "ycc"
+version = "0.0.0"
 authors = ["Aster <192607617@qq.com>"]
-description = "Yggdrasil Language CLI"
+description = "Yggdrasil Command-line Compiler"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
 readme = "Readme.md"
 license = "MPL-2.0"
 edition = "2021"
 
 [[bin]]
-name = "ygg"
+name = "ycc"
 path = "src/main.rs"
 
 [dependencies]
 yggdrasil-bootstrap = { version = "0.1", path = "../ygg-bootstrap" }
-clap = "4.0.22"
+clap = {version = "4.0.22", features = ["derive"]}
 anyhow = "1.0.66"
