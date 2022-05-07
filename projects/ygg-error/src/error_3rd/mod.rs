@@ -16,5 +16,8 @@ mod for_url;
 #[cfg(feature = "sled")]
 mod for_sled;
 
+#[cfg(feature = "serde-binary")]
+mod for_serde_binary;
+
 #[cfg(feature = "url")]
 pub use url::Url;
