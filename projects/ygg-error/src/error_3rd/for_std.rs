@@ -14,28 +14,19 @@ use crate::{
 
 impl From<Utf8Error> for YggdrasilError {
     fn from(error: Utf8Error) -> Self {
-        let e = SyntaxError { message: error.to_string(), file: Default::default(), span: Default::default() };
-        e.as_error(DiagnosticLevel::Error)
+        SyntaxError::from(error).as_error(DiagnosticLevel::Error)
     }
 }
 
 impl From<ParseIntError> for YggdrasilError {
     fn from(error: ParseIntError) -> Self {
-        let e = SyntaxError { message: error.to_string(), file: Default::default(), span: Default::default() };
-        e.as_error(DiagnosticLevel::Error)
+        SyntaxError::from(error).as_error(DiagnosticLevel::Error)
     }
 }
 
 impl From<ParseFloatError> for YggdrasilError {
     fn from(error: ParseFloatError) -> Self {
-        let e = SyntaxError { message: error.to_string(), file: Default::default(), span: Default::default() };
-        e.as_error(DiagnosticLevel::Error)
-    }
-}
-
-impl From<std::io::Error> for IOError {
-    fn from(error: std::io::Error) -> Self {
-        IOError { message: error.to_string(), file: Default::default() }
+        SyntaxError::from(error).as_error(DiagnosticLevel::Error)
     }
 }
 
@@ -46,25 +37,25 @@ impl From<std::io::Error> for YggdrasilError {
 }
 
 impl From<std::fmt::Error> for YggdrasilError {
-    fn from(e: std::fmt::Error) -> Self {
-        RuntimeError { message: e.to_string() }.as_error(DiagnosticLevel::Error)
+    fn from(error: std::fmt::Error) -> Self {
+        RuntimeError::from(error).as_error(DiagnosticLevel::Error)
     }
 }
 
 impl<T> From<PoisonError<T>> for YggdrasilError {
-    fn from(_: PoisonError<T>) -> Self {
-        Self::unreachable()
+    fn from(error: PoisonError<T>) -> Self {
+        RuntimeError::from(error).as_error(DiagnosticLevel::Error)
+    }
+}
+
+impl From<VarError> for YggdrasilError {
+    fn from(error: VarError) -> Self {
+        RuntimeError::from(error).as_error(DiagnosticLevel::Error)
     }
 }
 
 impl From<()> for YggdrasilError {
     fn from(_: ()) -> Self {
         Self::unreachable()
-    }
-}
-
-impl From<VarError> for YggdrasilError {
-    fn from(e: VarError) -> Self {
-        RuntimeError { message: e.to_string() }.as_error(DiagnosticLevel::Error)
     }
 }

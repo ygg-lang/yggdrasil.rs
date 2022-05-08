@@ -10,3 +10,9 @@ impl IOError {
         Diagnostic::new(level)
     }
 }
+
+impl From<std::io::Error> for IOError {
+    fn from(error: std::io::Error) -> Self {
+        IOError { message: error.to_string(), file: Default::default() }
+    }
+}
