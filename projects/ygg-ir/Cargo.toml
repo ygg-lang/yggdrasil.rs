@@ -12,12 +12,12 @@ edition = "2021"
 character-set = "0.4.0"
 regex-automata = { version = "0.2.0", features = ["std"] }
 convert_case = "0.6.0"
-indexmap = { version = "1.9.1", features = ["serde"] }
+indexmap = { version = "1.9.2", features = ["serde"] }
 ucd-trie = "0.1.5"
 ucd-util = "0.1.9"
 lazy_static = "1.4.0"
 num = { version = "0.4.0", features = ["serde"] }
-serde = { version = "1.0.147", features = ["derive"] }
+serde = { version = "1.0.148", features = ["derive"] }
 url = { version = "2.3.1", features = ["serde"] }
 
 [dependencies.yggdrasil-error]
