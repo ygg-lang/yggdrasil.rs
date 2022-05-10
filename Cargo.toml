@@ -2,7 +2,7 @@
 members = ["projects/*"]
 default-members = [
     "projects/ygg-ir",
-    "projects/ygg-error",
+#    "projects/ygg-error",
 #    "projects/ygg-bootstrap",
 ]
 exclude = [

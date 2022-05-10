@@ -10,19 +10,10 @@ edition = "2021"
 
 [dependencies]
 lsp-types = { version = "0.93.2", features = ["proposed"], optional = true }
-# lsp-document = "0.4.0"
 url = "2.3.1"
-#anyhow = "1.0.65"
-diagnostic = "0.4.3"
-#ropey = "1.5.0"
-#dashmap = "5.4.0"
+diagnostic-quick = "0.2.3"
 peginator = "0.6.0"
 ucd-trie = "0.1.5"
-
-[dependencies.yggdrasil-error]
-version = "0.1.1"
-path = "../ygg-error"
-features = ["ropey"]
 
 [features]
 default = ["lsp"]

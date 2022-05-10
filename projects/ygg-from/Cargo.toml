@@ -12,9 +12,6 @@ edition = "2018"
 pest_meta = "2.5.0"
 anyhow = "1.0.66"
 
-[dependencies]
-
-
 
 [dev-dependencies]
 

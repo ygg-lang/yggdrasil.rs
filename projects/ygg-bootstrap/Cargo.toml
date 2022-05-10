@@ -25,18 +25,9 @@ features = ["lsp"]
 version = "0.1"
 path = "../ygg-ir"
 
-[dependencies.yggdrasil-error]
-version = "0.1.1"
-path = "../ygg-error"
-features = ["peginator", "ucd-trie"]
-
-
 [dev-dependencies]
 serde_yaml = "0.9.14"
 json5 = "0.4.1"
-
-[build-dependencies]
-peginator = "0.6.0"
 
 [features]
 default = ["railroad"]
