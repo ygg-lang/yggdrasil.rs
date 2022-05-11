@@ -43,7 +43,7 @@ impl HintManager {
     }
     pub async fn update(&self, url: &Url) -> Result<HintRef<'_>> {
         FILE_MANAGER.parse_file(&url).await?;
-        HINT_MANAGER.hint_store.get(url).ok_or(YggdrasilError::unreachable())
+        HINT_MANAGER.hint_store.get(url).ok_or(QError::unreachable())
 
         // if let Some(s) = FILE_MANAGER.parse_file(&url).await? {
         //     self.hint_store.insert(url.to_owned(), s);

@@ -1,0 +1,36 @@
+grammar ygg {
+    extension: ["*.yg", "*.ygg", "*.grammar"]
+    ignore: [
+        NEWLINE, WHITESPACE, COMMENT
+    ]
+}
+
+\\ Import the predefined types,
+\\ Otherwise the `String` type of each language will be used directly to represent the atomic expression
+import "literal_types.toml" {
+
+}
+
+\\ right now, first rule will become entry point
+def entry program {
+    ^statement*
+}
+
+\\ `#` will generate named bindings for languages that do not support union type, such as rust
+\\ Union type will be used directly in other languages that support union type, such as ts, scala
+\\ Note that compared to ANTLR, this is not mandatory, but the same name is also forbidden.
+\\ If not specified, a name like `AuxVariant1` will be generated.
+def choice statement {
+    | ^grammar_statement
+}
+
+\\* grammar tsg
+\\* grammar tsg {"*.tsg", }
+rule grammar_statement {
+    grammar ^id _grammar_exts? eos?
+}
+
+def inline grammar_exts {
+    "{" ~ @join(extensions:string, ",", trailing = true)? ~ "}"
+}
+

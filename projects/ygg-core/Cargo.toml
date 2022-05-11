@@ -1,0 +1,33 @@
+[package]
+name = "yggdrasil-core"
+version = "0.1.1"
+authors = ["Aster <192607617@qq.com>"]
+description = "AWSL Window Structure Language"
+repository = "https://github.com/ygg-lang/yggdrasil-rs"
+readme = "Readme.md"
+license = "MPL-2.0"
+edition = "2021"
+
+[dependencies]
+proc-macro2 = "1.0.47"
+character-set = "0.4.0"
+peginator = "0.6.0"
+unicode-xid = "0.2.4"
+railroad = { version = "0.1.1", optional = true }
+reqwest = { version = "0.11.13", features = [] }
+
+[dependencies.yggdrasil-rt]
+version = "0.1"
+path = "../ygg-rt"
+features = ["lsp"]
+
+[dependencies.yggdrasil-ir]
+version = "0.1"
+path = "../ygg-ir"
+
+[dev-dependencies]
+serde_yaml = "0.9.14"
+json5 = "0.4.1"
+
+[features]
+default = ["railroad"]

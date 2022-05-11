@@ -1,0 +1,122 @@
+@export
+
+ProgramParser = program:ProgramNode $;
+
+
+
+@position
+ProgramNode = {statements:StatementNode};
+
+StatementNode =
+    @:DefineStatement [EOS]
+  | @:EmptyStatement
+  ;
+
+EmptyStatement = EOS;
+
+@char
+EOS = ';';
+
+@position
+DefineStatement = MacroCalls define:DefineNode modifiers:Modifiers symbol:Identifier [arguments:Arguments] [type:Typing] '{' body:ChoiceNode '}';
+
+@string
+@no_skip_ws
+DefineNode = 'def' | 'union' | 'class' | 'enum' | 'struct';
+
+
+MacroCalls =
+    { '#' macros:Macro
+    | '#' '[' macros:Macro ']'
+    };
+Macro = id:Identifier ['(' args:ArgumentValue ')'];
+
+@string
+Boolean = 'true' | 'false';
+
+@string
+ArgumentValue =
+    @:Boolean;
+
+@position
+Modifiers = {id:Identifier !('{'|'('|':'|'->'|';')};
+
+@position
+ChoiceNode = ['|'] {terms:ExprStream};
+
+ExprStream =
+    @:Prefix        |
+    @:Suffix        |
+    @:Infix         |
+    @:CharsetNode   |
+    @:StringLiteral |
+    @:Identifier    |
+    @:Group
+    ;
+
+@position
+@string
+Prefix = '^' | '!';
+
+@position
+@string
+Suffix = '+' | '*' | '?';
+
+@position
+@string
+Infix = '|' | ':' | '~';
+
+@position
+Arguments = '(' ')';
+
+@position
+Typing = ('->' | ':') id:Identifier;
+
+@position
+Group = "(" body:ChoiceNode ")";
+
+@position
+@no_skip_ws
+StringLiteral =
+    '"' {!'"' body:StringItem } '"' |
+    "'" {!"'" body:StringItem } "'"
+    ;
+
+@no_skip_ws
+StringItem =
+    @:StringEscaped |
+    @:CharOne
+    ;
+
+StringEscaped = '\\' char:char;
+
+
+@position
+CharsetNode = '[' [neg:CharsetNeg] {items:CharItem} ']';
+
+CharsetNeg = '^';
+CharItem =
+    @:CharRange |
+    @:CharOne
+    ;
+@position
+CharRange = start:char '-' end:char;
+
+@position
+@string
+CharOne = char;
+
+@position
+@string
+@no_skip_ws
+Identifier = (XID_START | '_') {XID_CONTINUE};
+
+
+@char
+@check(unicode_xid::UnicodeXID::is_xid_start)
+XID_START = char;
+
+
+@char
+@check(unicode_xid::UnicodeXID::is_xid_continue)
+XID_CONTINUE = char;

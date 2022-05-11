@@ -4,8 +4,6 @@ use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use yggdrasil_error::YggdrasilError;
-
 use crate::{traits::CodeOptimizer, *};
 
 pub mod auto_tag;

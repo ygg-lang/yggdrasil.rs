@@ -36,7 +36,7 @@ impl FileType {
                 HINT_MANAGER.set(url, hints);
                 Ok(grammar)
             }
-            _ => Err(YggdrasilError::language_error("Not a grammar file")),
+            _ => Err(QError::language_error("Not a grammar file")),
         }
     }
 }

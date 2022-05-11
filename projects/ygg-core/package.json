@@ -1,0 +1,8 @@
+{
+    "private": true,
+    "scripts": {
+        "p": "cargo publish --allow-dirty",
+        "u": "cargo upgrade",
+        "fmt": "cargo fmt"
+    }
+}

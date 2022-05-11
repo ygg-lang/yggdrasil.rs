@@ -14,10 +14,9 @@ use peginator::{
 };
 use proc_macro2::TokenStream;
 
-use yggdrasil_error::{Validation, YggdrasilError};
 use yggdrasil_ir::{
-    ChoiceExpression, CodeGenerator, ConcatExpression, DataKind, ExpressionKind, ExpressionNode, FunctionExpression,
-    GrammarInfo, GrammarRule, Operator, RuleReference, UnaryExpression,
+    ChoiceExpression, CodeGenerator, ConcatExpression, DataKind, ExpressionKind, ExpressionNode, FunctionExpression, GrammarInfo, GrammarRule,
+    Operator, RuleReference, UnaryExpression,
 };
 
 use crate::parser::GrammarParser;
@@ -41,7 +40,7 @@ impl PegCodegen {
         let path = src.as_ref().to_path_buf().canonicalize()?;
         let dir = match path.parent() {
             Some(s) => s,
-            None => return Err(YggdrasilError::runtime_error("ygg dir not found")),
+            None => return Err(QError::runtime_error("ygg dir not found")),
         };
         let mut peg = File::create(path.with_extension("ebnf"))?;
         let text = read_to_string(&path)?;
@@ -66,18 +65,15 @@ impl CodeGenerator for PegCodegen {
         for (_, rule) in &info.rules {
             match rule.write_peg(self, info) {
                 Ok(_) => {}
-                Err(e) => return Validation::Failure { fatal: YggdrasilError::from(e), diagnostics: vec![] },
+                Err(e) => return Validation::Failure { fatal: QError::from(e), diagnostics: vec![] },
             }
         }
         let parsed = match Grammar::parse(&self.buffer) {
             Ok(o) => o,
-            Err(e) => return Validation::Failure { fatal: YggdrasilError::from(e), diagnostics: vec![] },
+            Err(e) => return Validation::Failure { fatal: QError::from(e), diagnostics: vec![] },
         };
-        let config = CodegenSettings {
-            skip_whitespace: false,
-            peginator_crate_name: "peginator".into(),
-            derives: vec!["Debug".into(), "Clone".into()],
-        };
+        let config =
+            CodegenSettings { skip_whitespace: false, peginator_crate_name: "peginator".into(), derives: vec!["Debug".into(), "Clone".into()] };
         let success = parsed.generate_code(&config).unwrap();
         Validation::Success { value: success, diagnostics: errors }
     }

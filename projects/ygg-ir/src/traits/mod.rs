@@ -1,6 +1,5 @@
 use std::collections::HashSet;
-
-use yggdrasil_error::Validation;
+use diagnostic_quick::Validation;
 
 use crate::*;
 

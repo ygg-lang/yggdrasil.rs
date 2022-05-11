@@ -1,5 +1,6 @@
 use std::{iter::Peekable, vec::IntoIter};
-use yggdrasil_error::YggdrasilError;
+
+use diagnostic_quick::{QError, QResult};
 
 pub type PrecedenceNumber = u16;
 
@@ -68,26 +69,22 @@ pub trait PrattParser {
     type Input: Clone;
     type Output: Sized;
 
-    fn query(&mut self, input: &Self::Input) -> Result<Affix, YggdrasilError>;
+    fn query(&mut self, input: &Self::Input) -> QResult<Affix>;
 
-    fn primary(&mut self, input: Self::Input) -> Result<Self::Output, YggdrasilError>;
+    fn primary(&mut self, input: Self::Input) -> QResult<Self::Output>;
 
-    fn infix(&mut self, lhs: Self::Output, op: Self::Input, rhs: Self::Output) -> Result<Self::Output, YggdrasilError>;
+    fn infix(&mut self, lhs: Self::Output, op: Self::Input, rhs: Self::Output) -> QResult<Self::Output>;
 
-    fn prefix(&mut self, op: Self::Input, rhs: Self::Output) -> Result<Self::Output, YggdrasilError>;
+    fn prefix(&mut self, op: Self::Input, rhs: Self::Output) -> QResult<Self::Output>;
 
-    fn suffix(&mut self, lhs: Self::Output, op: Self::Input) -> Result<Self::Output, YggdrasilError>;
+    fn suffix(&mut self, lhs: Self::Output, op: Self::Input) -> QResult<Self::Output>;
 
-    fn parse(&mut self, inputs: &[Self::Input]) -> Result<Self::Output, YggdrasilError> {
+    fn parse(&mut self, inputs: &[Self::Input]) -> QResult<Self::Output> {
         let mut stream = inputs.to_vec().into_iter().peekable();
         self.parse_input(&mut stream, Precedence(0))
     }
 
-    fn parse_input(
-        &mut self,
-        tail: &mut Peekable<IntoIter<Self::Input>>,
-        rbp: Precedence,
-    ) -> Result<Self::Output, YggdrasilError> {
+    fn parse_input(&mut self, tail: &mut Peekable<IntoIter<Self::Input>>, rbp: Precedence) -> QResult<Self::Output> {
         if let Some(head) = tail.next() {
             let info = self.query(&head)?;
             let mut nbp = self.nbp(info);
@@ -107,36 +104,25 @@ pub trait PrattParser {
             node
         }
         else {
-            Err(YggdrasilError::syntax_error("EmptyInput"))
+            Err(QError::syntax_error("EmptyInput"))
         }
     }
 
     /// Null-Denotation
-    fn nud(
-        &mut self,
-        head: Self::Input,
-        tail: &mut Peekable<IntoIter<Self::Input>>,
-        info: Affix,
-    ) -> Result<Self::Output, YggdrasilError> {
+    fn nud(&mut self, head: Self::Input, tail: &mut Peekable<IntoIter<Self::Input>>, info: Affix) -> QResult<Self::Output> {
         match info {
             Affix::Prefix(precedence) => {
                 let rhs = self.parse_input(tail, precedence.normalize().lower());
                 self.prefix(head, rhs?)
             }
             Affix::None => self.primary(head),
-            Affix::Suffix(_) => Err(YggdrasilError::syntax_error("Unexpected Postfix")),
-            Affix::Infix(_, _) => Err(YggdrasilError::syntax_error("Unexpected Infix")),
+            Affix::Suffix(_) => Err(QError::syntax_error("Unexpected Postfix")),
+            Affix::Infix(_, _) => Err(QError::syntax_error("Unexpected Infix")),
         }
     }
 
     /// Left-Denotation
-    fn led(
-        &mut self,
-        head: Self::Input,
-        tail: &mut Peekable<IntoIter<Self::Input>>,
-        info: Affix,
-        lhs: Self::Output,
-    ) -> Result<Self::Output, YggdrasilError> {
+    fn led(&mut self, head: Self::Input, tail: &mut Peekable<IntoIter<Self::Input>>, info: Affix, lhs: Self::Output) -> QResult<Self::Output> {
         match info {
             Affix::Infix(precedence, associativity) => {
                 let precedence = precedence.normalize();
@@ -148,8 +134,8 @@ pub trait PrattParser {
                 self.infix(lhs, head, rhs?)
             }
             Affix::Suffix(_) => self.suffix(lhs, head),
-            Affix::None => Err(YggdrasilError::syntax_error("Unexpected NilFix")),
-            Affix::Prefix(_) => Err(YggdrasilError::syntax_error("Unexpected Prefix")),
+            Affix::None => Err(QError::syntax_error("Unexpected NilFix")),
+            Affix::Prefix(_) => Err(QError::syntax_error("Unexpected Prefix")),
         }
     }
 

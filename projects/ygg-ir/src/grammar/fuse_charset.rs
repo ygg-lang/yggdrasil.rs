@@ -1,5 +1,4 @@
-use yggdrasil_error::Validation;
-
+use diagnostic_quick::Validation;
 use crate::{ChoiceExpression, CodeOptimizer, ExpressionKind, GrammarInfo};
 
 pub struct FuseCharset {}

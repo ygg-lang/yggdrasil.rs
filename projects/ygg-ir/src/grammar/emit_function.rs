@@ -1,14 +1,14 @@
 use std::mem::take;
+use diagnostic_quick::{QError, QResult, Validation};
 
 use indexmap::IndexMap;
 
-use yggdrasil_error::{Validation, YggdrasilError};
 
 use crate::{CodeOptimizer, ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule};
 
 pub struct EmitFunction {
     functions: IndexMap<String, FunctionRule>,
-    errors: Vec<YggdrasilError>,
+    errors: Vec<QError>,
 }
 
 impl Default for EmitFunction {
@@ -33,14 +33,14 @@ impl CodeOptimizer for EmitFunction {
 }
 
 impl EmitFunction {
-    fn emit(&mut self, rules: &mut IndexMap<String, GrammarRule>) -> Result<(), YggdrasilError> {
+    fn emit(&mut self, rules: &mut IndexMap<String, GrammarRule>) -> QResult {
         for (_, rule) in rules.iter_mut() {
             self.emit_expression(&mut rule.body)?;
         }
         Ok(())
     }
 
-    fn emit_expression(&mut self, e: &mut ExpressionNode) -> Result<(), YggdrasilError> {
+    fn emit_expression(&mut self, e: &mut ExpressionNode) -> QResult {
         match &e.kind {
             ExpressionKind::Function(_) => {}
             ExpressionKind::Choice(_) => {}

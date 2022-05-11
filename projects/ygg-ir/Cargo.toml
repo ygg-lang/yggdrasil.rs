@@ -1,9 +1,10 @@
 [package]
 name = "yggdrasil-ir"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Aster <192607617@qq.com>"]
 description = "Yggdrasil Language IR"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
+documentation = "https://docs.rs/yggdrasil-ir"
 readme = "Readme.md"
 license = "MPL-2.0"
 edition = "2021"
@@ -20,3 +21,6 @@ num = { version = "0.4.0", features = ["serde"] }
 serde = { version = "1.0.148", features = ["derive"] }
 url = { version = "2.3.1", features = ["serde"] }
 diagnostic-quick = "0.2.3"
+
+[dev-dependencies]
+peginator_codegen = "0.6.0"

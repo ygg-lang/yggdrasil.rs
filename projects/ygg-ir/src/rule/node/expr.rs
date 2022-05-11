@@ -1,4 +1,5 @@
 use convert_case::{Case, Casing};
+use diagnostic_quick::{QError, QResult};
 
 use super::*;
 
@@ -75,7 +76,7 @@ impl ExpressionKind {
 }
 
 impl BitXor<Self> for ExpressionNode {
-    type Output = Result<Self, YggdrasilError>;
+    type Output = QResult<Self>;
 
     fn bitxor(self, rhs: Self) -> Self::Output {
         match self.kind.as_tag() {
@@ -86,7 +87,7 @@ impl BitXor<Self> for ExpressionNode {
                 };
                 Ok(ExpressionNode { kind: rhs.kind, tag: node_tag })
             }
-            None => Err(YggdrasilError::runtime_error("lhs not a valid tag")),
+            None => Err(QError::runtime_error("lhs not a valid tag")),
         }
     }
 }
