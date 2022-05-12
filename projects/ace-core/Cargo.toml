@@ -1,0 +1,20 @@
+[package]
+name = "yggdrasil-rt"
+version = "0.1.5"
+authors = ["Aster <192607617@qq.com>"]
+description = "Yggdrasil Shared Structure"
+repository = "https://github.com/ygg-lang/yggdrasil-rs"
+readme = "Readme.md"
+license = "MPL-2.0"
+edition = "2021"
+
+[dependencies]
+lsp-types = { version = "0.93.2", features = ["proposed"], optional = true }
+url = "2.3.1"
+diagnostic-quick = "0.2.3"
+peginator = "0.6.0"
+ucd-trie = "0.1.5"
+
+[features]
+default = ["lsp"]
+lsp = ["lsp-types"]
