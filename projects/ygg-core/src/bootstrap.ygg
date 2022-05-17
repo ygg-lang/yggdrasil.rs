@@ -1,36 +1,144 @@
-grammar ygg {
+grammar Yggdrasil {
     extension: ["*.yg", "*.ygg", "*.grammar"]
-    ignore: [
-        NEWLINE, WHITESPACE, COMMENT
-    ]
+    // keep dead code?
+    dead_code: true
 }
 
-\\ Import the predefined types,
-\\ Otherwise the `String` type of each language will be used directly to represent the atomic expression
-import "literal_types.toml" {
+// right now, first rule will become entry point
+#entry class Program {
+    Statements*
+}
+
+union Statements {
+    | GrammarStatement
+    | ClassStatement
+    | UnionStatement
+    | MacroStatement
+}
+// =================================================================================================
+class GrammarStatement {
+    Identifier
+}
+class KW_GRAMMAR {
+    "grammar"
+}
+// =================================================================================================
+class KW_IMPORT {
+    "import" | "using"
+}
+
+// =================================================================================================
+class ClassStatement {
+    ^KW_CLASS
+}
+class KW_CLASS {
+    "class" | "struct" | "rule"
+}
+
+// =================================================================================================
+class UnionStatement {
+
+}
+class KW_UNION {
+    "union" | "enum"
+}
+// =================================================================================================
+class MacroStatement {
+
+}
+class KW_MACRO {
+    "define" | "def" | "function" | "fun" | "fn" | "macro"
+}
+
+
+//* grammar tsg
+//* grammar tsg {"*.tsg", }
+class GrammarStatement {
+    "grammar" Identifier _GrammarExts? EOS?
+}
+
+
+class _GrammarExts {
+    "{" @interval(extensions:String, ",", true)? "}"
+}
+
+class ImportStatement {
+    | "import" (path:StringLiteral) ("as" id)?       #FromPath
+    | "import" (path:StringLiteral) _ImportSelected  #FromPathItems
+}
+
+class _ImportSelected {
+    '{' @join(items:ImportItem, ',')? '}'
+}
+
+class ImportItem {
+    symbol:Identifier (@case_insensitive("as") alias:Identifier)?
+}
+
+union climb Expression {
+    | x:Self y:Self       #Concat
+    | x:Self '~' y:Self   #ConcatSoft
+    | x:Self '|' y:Self   #Choice
+    | '(' '|'? x:Self ')' #Group
+    | x:_Atom             #Atom
+}
+
+class _TagName {
+    "#" (name:Identifier) (mode:[!_^]) (name:Identifier)
+}
+
+// `_` inline a item even if it not mark as automatic inline
+union _Atom {
+    | Identifier
+    | String
+    | Integer    #Integer
+    | Decimal
+    | Regex
+    | MacroCall
+}
+
+
+class Boolean: String {
+    "true" | "false"
+}
+
+class Regex {
 
 }
 
-\\ right now, first rule will become entry point
-def entry program {
-    ^statement*
+class MacroCall {
+
 }
 
-\\ `#` will generate named bindings for languages that do not support union type, such as rust
-\\ Union type will be used directly in other languages that support union type, such as ts, scala
-\\ Note that compared to ANTLR, this is not mandatory, but the same name is also forbidden.
-\\ If not specified, a name like `AuxVariant1` will be generated.
-def choice statement {
-    | ^grammar_statement
+
+class String {
+
+}
+// =================================================================================================
+class Modifiers {
+
 }
 
-\\* grammar tsg
-\\* grammar tsg {"*.tsg", }
-rule grammar_statement {
-    grammar ^id _grammar_exts? eos?
+
+#atomic class Identifier -> str {
+    ("_" | XID_START) XID_CONTINUE*
 }
 
-def inline grammar_exts {
-    "{" ~ @join(extensions:string, ",", trailing = true)? ~ "}"
+// =================================================================================================
+class ignore Whitespace {
+
+}
+
+#ignore class WhiteSpace {
+    UNICODE_WHITESPACE
+}
+
+#ignore class CommentLine {
+"//" (!\n ANY)*
+}
+
+#parser(crate::utils::comment_block)
+#ignore class CommentBlock {
+
 }
 
