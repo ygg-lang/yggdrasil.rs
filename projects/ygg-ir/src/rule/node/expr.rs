@@ -33,7 +33,7 @@ impl ExpressionNode {
                     e.branches.insert(node);
                 }
             }
-            ExpressionKind::Concat(e) => e.sequence.iter_mut().for_each(|f| f.capture()),
+            ExpressionKind::Concat(e) => e.as_mut().into_iter().for_each(|f| f.capture()),
             ExpressionKind::Unary(e) => match e.ops.contains(&Operator::Remark) {
                 true => e.base.non_capture(),
                 false => e.base.capture(),
@@ -51,7 +51,7 @@ impl ExpressionNode {
                     e.branches.insert(node);
                 }
             }
-            ExpressionKind::Concat(e) => e.sequence.iter_mut().for_each(|f| f.non_capture()),
+            ExpressionKind::Concat(e) => e.as_mut().into_iter().for_each(|f| f.non_capture()),
             ExpressionKind::Unary(e) => match e.ops.contains(&Operator::Remark) {
                 true => e.base.capture(),
                 false => e.base.non_capture(),

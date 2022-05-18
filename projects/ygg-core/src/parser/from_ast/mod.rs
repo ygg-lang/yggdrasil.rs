@@ -106,7 +106,7 @@ impl DefineStatement {
                 atomic: self.annotation("atomic", false),
                 entry: self.annotation("entry", false),
                 union: self.is_union(),
-                keep: self.annotation("keep", false),
+                force_export: self.annotation("keep", false),
                 body: self.body.as_expr(ctx)?,
                 range: self.position.clone(),
             };

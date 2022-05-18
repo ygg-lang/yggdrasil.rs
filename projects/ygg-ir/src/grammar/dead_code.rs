@@ -46,7 +46,7 @@ impl CodeOptimizer for DeadCodeEliminator {
 impl DeadCodeEliminator {
     fn find_entry(&mut self, info: &GrammarInfo) {
         for (_, rule) in &info.rules {
-            if rule.keep || rule.entry {
+            if rule.force_export || rule.entry {
                 self.new.insert(rule.name.to_owned());
             }
         }

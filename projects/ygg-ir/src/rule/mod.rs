@@ -13,6 +13,13 @@ pub mod node;
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct FunctionRule {}
 
+/// Temporary value, will be removed after parsing
+#[derive(Copy, Clone, Debug)]
+pub struct GrammarRuleContext {
+    pub capture: bool,
+    pub atomic: bool,
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct GrammarRule {
     /// Automatically inline when this rule is called
@@ -105,7 +112,13 @@ pub struct GrammarRule {
     /// ```
     pub union: bool,
     /// Keep export this rule, even if this rule is not used
-    pub keep: bool,
+    /// ## Examples
+    /// ```ygg
+    /// class keep Rule {
+    ///
+    /// }
+    /// ```
+    pub force_export: bool,
     ///
     pub body: ExpressionNode,
     /// position of all parts

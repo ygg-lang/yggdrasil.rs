@@ -72,7 +72,7 @@ impl FieldDescriptor for ChoiceExpression {
 
 impl FieldDescriptor for ConcatExpression {
     fn get_field_names<'a>(&'a self, buffer: &mut HashSet<&'a String>) {
-        self.sequence.iter().for_each(|f| f.get_field_names(buffer))
+        self.into_iter().for_each(|f| f.get_field_names(buffer))
     }
 
     fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount>) {

@@ -1,8 +1,28 @@
+use std::slice::{Iter, IterMut};
+
 use super::*;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ConcatExpression {
-    pub sequence: Vec<ExpressionNode>,
+    sequence: Vec<ExpressionNode>,
+}
+
+impl<'i> IntoIterator for &'i ConcatExpression {
+    type Item = &'i ExpressionNode;
+    type IntoIter = Iter<'i, ExpressionNode>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.sequence.iter()
+    }
+}
+
+impl<'i> IntoIterator for &'i mut ConcatExpression {
+    type Item = &'i mut ExpressionNode;
+    type IntoIter = IterMut<'i, ExpressionNode>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.sequence.iter_mut()
+    }
 }
 
 impl ConcatExpression {
@@ -15,34 +35,16 @@ impl ConcatExpression {
         sequence.push(rhs.into());
         Self { sequence }
     }
-    pub fn push(&mut self, other: ExpressionNode, soft: bool) {
-        if soft {
-            self.sequence.push(ExpressionNode::ignored())
-        }
-        match other.kind {
-            ExpressionKind::Concat(rhs) => self.sequence.extend(rhs.sequence.into_iter()),
-            _ => self.sequence.push(other),
-        }
-    }
-    pub fn append(&mut self, other: ExpressionNode, soft: bool) {
-        let ignored = if soft { vec![ExpressionNode::ignored()] } else { vec![] };
-        match other.kind {
-            ExpressionKind::Concat(lhs) => {
-                self.sequence = [lhs.sequence, ignored, take(&mut self.sequence)].concat();
-            }
-            _ => {
-                self.sequence = [vec![other], ignored, take(&mut self.sequence)].concat();
-            }
-        }
-    }
     pub fn to_node<S>(self, tag: S) -> ExpressionNode where S: Into<String> {
         ExpressionNode { tag: tag.into(), kind: ExpressionKind::Concat(Box::new(self)) }
     }
 }
 
+
 impl Add<Self> for ExpressionNode {
     type Output = Self;
-
+    /// soft concat
+    #[inline(never)]
     fn add(self, other: Self) -> Self::Output {
         join(self, other, true)
     }
@@ -50,25 +52,49 @@ impl Add<Self> for ExpressionNode {
 
 impl BitAnd<Self> for ExpressionNode {
     type Output = Self;
-
+    /// atomic concat
+    #[inline(never)]
     fn bitand(self, other: Self) -> Self::Output {
         join(self, other, false)
     }
 }
 
+// add extra ignore if is a soft concat
+#[inline(always)]
 fn join(mut lhs: ExpressionNode, mut rhs: ExpressionNode, soft: bool) -> ExpressionNode {
     match (&mut lhs.kind, &mut rhs.kind) {
-        (ExpressionKind::Concat(a), _) => {
-            a.push(rhs, soft);
+        (ExpressionKind::Concat(a), ExpressionKind::Concat(b)) => {
+            if soft {
+                a.sequence.push(ExpressionNode::ignored())
+            }
+            a.sequence.extend(b.sequence.iter().cloned());
             lhs
         }
+        (ExpressionKind::Concat(a), _) => {
+            if soft {
+                a.sequence.push(ExpressionNode::ignored())
+            }
+            a.sequence.push(rhs);
+            lhs
+        }
+        // a:A b:B
         (_, ExpressionKind::Concat(b)) => {
-            b.append(lhs, soft);
-            rhs
+            let mut sequence = vec![];
+            sequence.push(lhs);
+            if soft {
+                sequence.push(ExpressionNode::ignored())
+            }
+            sequence.extend(b.sequence.iter().cloned());
+            ConcatExpression { sequence }.to_node("")
         }
         (_, _) => {
-            let concat = ConcatExpression::new(lhs, rhs, soft);
-            ExpressionNode { kind: ExpressionKind::Concat(Box::new(concat)), tag: "".to_string() }
+            let mut sequence = vec![];
+            sequence.push(lhs);
+            if soft {
+                sequence.push(ExpressionNode::ignored())
+            }
+            sequence.push(rhs);
+            ConcatExpression { sequence }.to_node("")
         }
     }
 }
