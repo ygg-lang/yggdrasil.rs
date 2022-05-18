@@ -1,10 +1,14 @@
-use pest_meta::{
-    ast::{Expr, Rule, RuleType},
-    parser::{self, parse},
-};
-use std::fmt::{Debug, Formatter, Write};
+use std::fmt::{Debug, Write};
 
-pub trait FromPest {
+use pest_meta::ast::RuleType;
+use pest_meta::optimizer::{OptimizedExpr, OptimizedRule};
+use pest_meta::parse_and_optimize;
+
+use yggdrasil_ir::{ExpressionNode, GrammarRule};
+
+pub struct PestConverter {}
+
+trait FromPest {
     fn build_ygg(&self, f: impl Write, soft: bool) -> std::fmt::Result {
         let _ = soft;
         let _ = f;
@@ -12,8 +16,93 @@ pub trait FromPest {
     }
 }
 
-pub fn convert_pest(input: &str) -> std::fmt::Result {
-    parse(parser::Rule)
+#[test]
+pub fn test() {
+    let cvt = PestConverter::default();
+    cvt.parse_pest(include_str!("../../tests/pest.pest"));
+}
+
+impl Default for PestConverter {
+    fn default() -> Self {
+        Self {}
+    }
+}
+
+impl PestConverter {
+    fn parse_pest(&self, text: &str) {
+        let (a, rules) = parse_and_optimize(text).unwrap();
+        println!("{:?}", a);
+        for (index, rule) in rules.iter().enumerate() {
+            let out = self.visit_rule(rule, index);
+            println!("{:?}", rule);
+            println!("{:#?}", out);
+        }
+    }
+}
+
+impl PestConverter {
+    fn visit_rule(&self, rule: &OptimizedRule, index: usize) -> GrammarRule {
+        let entry = index == 0;
+        let atomic = match rule.ty {
+            RuleType::Atomic => { true }
+            RuleType::CompoundAtomic => { true }
+            _ => false
+        };
+        let name = rule.name.clone();
+        rule.expr
+
+        GrammarRule {
+            name,
+            r#type: "".to_string(),
+            document: "".to_string(),
+            derives: Default::default(),
+            auto_inline: false,
+            auto_boxed: false,
+            atomic,
+            entry,
+            union: false,
+            keep: false,
+            body: ExpressionNode::empty(),
+            range: Default::default(),
+        }
+    }
+    fn visit_expr(&self, expr: &OptimizedExpr) -> ExpressionNode {
+        match expr {
+            pest_meta::ast::Expr::Str(s) => {
+                ExpressionNode::empty()
+            }
+            pest_meta::ast::Expr::Ident(s) => {
+                ExpressionNode::empty()
+            }
+            pest_meta::ast::Expr::Seq(s) => {
+                ExpressionNode::empty()
+            }
+            pest_meta::ast::Expr::Choice(s) => {
+                ExpressionNode::empty()
+            }
+            pest_meta::ast::Expr::Opt(s) => {
+                ExpressionNode::empty()
+            }
+            pest_meta::ast::Expr::Rep(s) => {
+                ExpressionNode::empty()
+            }
+            pest_meta::ast::Expr::RepOnce(s) => {
+                ExpressionNode::empty()
+            }
+            pest_meta::ast::Expr::RepMin(s) => {
+                ExpressionNode::empty()
+            }
+            pest_meta::ast::Expr::RepMinMax(s) => {
+                ExpressionNode::empty()
+            }
+            pest_meta::ast::Expr::Push(s) => {
+                ExpressionNode::empty()
+            }
+            pest_meta::ast::Expr::Pop(s) => {
+                ExpressionNode::empty()
+            }
+        }
+    }
 }
 
 // impl FromPest for Rule {

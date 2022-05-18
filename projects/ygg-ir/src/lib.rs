@@ -10,6 +10,7 @@ pub use self::{
     traits::{CodeGenerator, CodeOptimizer, FieldDescriptor},
 };
 pub use indexmap::{IndexMap, IndexSet};
+pub use diagnostic_quick::{Failure, Success, Validation};
 
 mod data;
 mod function;
