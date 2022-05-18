@@ -11,6 +11,15 @@ impl Default for ChoiceExpression {
     }
 }
 
+impl From<ChoiceExpression> for ExpressionNode {
+    fn from(value: ChoiceExpression) -> Self {
+        Self {
+            kind: ExpressionKind::Choice(Box::new(value)),
+            tag: "".to_string(),
+        }
+    }
+}
+
 impl Hash for ChoiceExpression {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.branches.iter().for_each(|e| e.hash(state))
@@ -31,6 +40,9 @@ impl ChoiceExpression {
                 self.branches.insert(other);
             }
         }
+    }
+    pub fn to_node<S>(self, tag: S) -> ExpressionNode where S: Into<String> {
+        ExpressionNode { tag: tag.into(), kind: ExpressionKind::Choice(Box::new(self)) }
     }
 }
 

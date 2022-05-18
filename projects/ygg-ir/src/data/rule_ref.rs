@@ -28,4 +28,7 @@ impl RuleReference {
     pub fn new(name: &str) -> Self {
         Self { name: name.trim_start_matches("_").to_string(), boxed: false, inline: name.starts_with('_') }
     }
+    pub fn to_node<S>(self, tag: S) -> ExpressionNode where S: Into<String> {
+        ExpressionNode { tag: tag.into(), kind: ExpressionKind::Rule(Box::new(self)) }
+    }
 }

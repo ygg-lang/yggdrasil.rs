@@ -81,8 +81,6 @@ pub struct GrammarRule {
     /// }
     /// ```
     pub auto_boxed: bool,
-    ///
-    pub atomic: bool,
     /// The entry of the parser, the name of the parser to be exported
     ///
     /// ## Examples

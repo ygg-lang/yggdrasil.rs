@@ -4,7 +4,7 @@ use pest_meta::ast::RuleType;
 use pest_meta::optimizer::{OptimizedExpr, OptimizedRule};
 use pest_meta::parse_and_optimize;
 
-use yggdrasil_ir::{ExpressionNode, GrammarRule};
+use yggdrasil_ir::{ChoiceExpression, ConcatExpression, DataKind, ExpressionNode, GrammarInfo, GrammarRule, Operator, RuleReference};
 
 pub struct PestConverter {}
 
@@ -29,27 +29,27 @@ impl Default for PestConverter {
 }
 
 impl PestConverter {
-    fn parse_pest(&self, text: &str) {
-        let (a, rules) = parse_and_optimize(text).unwrap();
-        println!("{:?}", a);
+    fn parse_pest(&self, text: &str) -> GrammarInfo {
+        let (_, rules) = parse_and_optimize(text).unwrap();
+        let mut info = GrammarInfo::default();
         for (index, rule) in rules.iter().enumerate() {
             let out = self.visit_rule(rule, index);
-            println!("{:?}", rule);
-            println!("{:#?}", out);
+            info.rules.insert(out.name.clone(), out);
         }
+        return info;
     }
 }
 
 impl PestConverter {
     fn visit_rule(&self, rule: &OptimizedRule, index: usize) -> GrammarRule {
+        let name = rule.name.clone();
         let entry = index == 0;
         let atomic = match rule.ty {
             RuleType::Atomic => { true }
             RuleType::CompoundAtomic => { true }
             _ => false
         };
-        let name = rule.name.clone();
-        rule.expr
+        let body = self.visit_expr(&rule.expr, atomic);
 
         GrammarRule {
             name,
@@ -58,49 +58,41 @@ impl PestConverter {
             derives: Default::default(),
             auto_inline: false,
             auto_boxed: false,
-            atomic,
             entry,
             union: false,
             keep: false,
-            body: ExpressionNode::empty(),
+            body,
             range: Default::default(),
         }
     }
-    fn visit_expr(&self, expr: &OptimizedExpr) -> ExpressionNode {
+    fn visit_expr(&self, expr: &OptimizedExpr, atomic: bool) -> ExpressionNode {
         match expr {
-            pest_meta::ast::Expr::Str(s) => {
-                ExpressionNode::empty()
+            OptimizedExpr::Str(s) => {
+                DataKind::String(s.to_owned()).into()
             }
-            pest_meta::ast::Expr::Ident(s) => {
-                ExpressionNode::empty()
+            OptimizedExpr::Insens(_) => { unreachable!() }
+            OptimizedExpr::Range(_, _) => { unreachable!() }
+            OptimizedExpr::Ident(v) => {
+                RuleReference::new(v).to_node("")
             }
-            pest_meta::ast::Expr::Seq(s) => {
-                ExpressionNode::empty()
+            OptimizedExpr::PeekSlice(_, _) => { unreachable!() }
+            OptimizedExpr::PosPred(_) => { unreachable!() }
+            OptimizedExpr::NegPred(_) => { unreachable!() }
+            OptimizedExpr::Seq(l, r) => {
+                let lhs = self.visit_expr(l, atomic);
+                let rhs = self.visit_expr(r, atomic);
+                ConcatExpression::new(lhs, rhs, false).to_node("")
             }
-            pest_meta::ast::Expr::Choice(s) => {
-                ExpressionNode::empty()
+            OptimizedExpr::Choice(l, r) => {
+                self.visit_expr(l, atomic) | self.visit_expr(r, atomic)
             }
-            pest_meta::ast::Expr::Opt(s) => {
-                ExpressionNode::empty()
+            OptimizedExpr::Opt(v) => { self.visit_expr(v, atomic) + Operator::Optional }
+            OptimizedExpr::Rep(v) => {
+                self.visit_expr(v, atomic) + Operator::Repeats
             }
-            pest_meta::ast::Expr::Rep(s) => {
-                ExpressionNode::empty()
-            }
-            pest_meta::ast::Expr::RepOnce(s) => {
-                ExpressionNode::empty()
-            }
-            pest_meta::ast::Expr::RepMin(s) => {
-                ExpressionNode::empty()
-            }
-            pest_meta::ast::Expr::RepMinMax(s) => {
-                ExpressionNode::empty()
-            }
-            pest_meta::ast::Expr::Push(s) => {
-                ExpressionNode::empty()
-            }
-            pest_meta::ast::Expr::Pop(s) => {
-                ExpressionNode::empty()
-            }
+            OptimizedExpr::Skip(_) => { unreachable!() }
+            OptimizedExpr::Push(_) => { unreachable!() }
+            OptimizedExpr::RestoreOnErr(_) => { unreachable!() }
         }
     }
 }

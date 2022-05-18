@@ -53,4 +53,10 @@ impl Display for DataKind {
     }
 }
 
+impl From<DataKind> for ExpressionNode {
+    fn from(value: DataKind) -> Self {
+        Self { tag: String::new(), kind: ExpressionKind::Data(Box::new(value)) }
+    }
+}
+
 impl DataKind {}
