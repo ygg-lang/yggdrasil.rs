@@ -2,3 +2,5 @@
 pub(crate) mod text_index;
 // pub(crate) mod text_store;
 pub mod cst_node;
+
+pub mod state;
