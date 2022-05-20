@@ -1,18 +1,19 @@
-pub use self::builtin::{parse_char, parse_string_literal};
-use crate::results::{IError, IResult};
 use std::slice::SliceIndex;
+
+use crate::results::{IError, IResult};
 
 mod advance;
 mod builtin;
 mod choice;
+mod concat;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Parsed<'i, T> {
-    pub term: T,
-    pub rest: ParseState<'i>,
+    pub value: T,
+    pub state: ParseState<'i>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ParseState<'i> {
     /// reset part of string
     pub partial_string: &'i str,
@@ -29,6 +30,16 @@ impl<'i> ParseState<'i> {
     pub fn is_empty(&self) -> bool {
         self.partial_string.is_empty()
     }
+    pub fn set_error(&mut self, error: IError) {
+        self.farthest_error = Some(error);
+    }
+    pub fn get_error(self) -> IError {
+        match self.farthest_error {
+            Some(s) => s,
+            None => IError::uninitialized(""),
+        }
+    }
+
     pub fn get_string<R>(&self, range: R) -> Option<&R::Output>
     where
         R: SliceIndex<str>,

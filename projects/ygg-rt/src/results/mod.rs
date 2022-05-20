@@ -1,6 +1,6 @@
 use crate::str2ast::Parsed;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct IError {}
 
 impl IError {
@@ -11,6 +11,9 @@ impl IError {
         Self {}
     }
     pub fn excepted_string(s: &'static str) -> Self {
+        Self {}
+    }
+    pub fn uninitialized(s: &'static str) -> Self {
         Self {}
     }
 }
