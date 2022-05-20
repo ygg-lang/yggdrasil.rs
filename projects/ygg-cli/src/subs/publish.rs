@@ -23,7 +23,7 @@ impl CommandPub {
                 fs::remove_dir_all(&dir_name)?
             };
         }
-        println!("ygg parser does not been unimplemented!");
+        println!("ygg str2ast does not been unimplemented!");
         if self.placeholder {}
         Command::new("cd").args([&dir_name]).spawn()?.wait()?;
         Ok(())

@@ -8,6 +8,7 @@ pub use url::Url;
 pub use crate::records::{cst_node::CSTNode, text_index::*};
 
 pub(crate) mod macros;
-pub mod parser;
 pub(crate) mod records;
+pub mod results;
+pub mod str2ast;
 pub mod traits;

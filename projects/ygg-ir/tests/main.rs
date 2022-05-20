@@ -11,7 +11,7 @@ fn ready() {
 #[test]
 #[ignore]
 fn bootstrap() -> std::io::Result<()> {
-    let dir = current_dir()?.join("../ygg-parser").canonicalize()?;
+    let dir = current_dir()?.join("../ygg-str2ast").canonicalize()?;
 
     let ygg = dir.join("src/ygg.ebnf");
     println!("Source: {}", Url::from_file_path(&ygg).unwrap());

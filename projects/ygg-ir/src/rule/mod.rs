@@ -88,7 +88,7 @@ pub struct GrammarRule {
     /// }
     /// ```
     pub auto_boxed: bool,
-    /// The entry of the parser, the name of the parser to be exported
+    /// The entry of the str2ast, the name of the str2ast to be exported
     ///
     /// ## Examples
     /// ```ygg
