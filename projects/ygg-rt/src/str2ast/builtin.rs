@@ -1,8 +1,9 @@
+use ucd_trie::TrieSet;
+
 use super::*;
 
 impl<'i> ParseState<'i> {
     /// Parses a single character.
-    ///
     pub fn parse_char(self, target: char) -> IResult<'i, char> {
         match self.get_character(0) {
             Some(c) if c.eq(&target) => Ok(Parsed { value: target, state: self.advance(target) }),
@@ -13,6 +14,12 @@ impl<'i> ParseState<'i> {
         match self.get_character(0) {
             Some(c) if c >= start && c <= end => Ok(Parsed { value: c, state: self.advance(c) }),
             _ => Err(IError::excepted_character_range(start, end)),
+        }
+    }
+    pub fn parse_char_set(self, set: TrieSet, name: &'static str) -> IResult<'i, char> {
+        match self.get_character(0) {
+            Some(c) if set.contains_char(c) => Ok(Parsed { value: c, state: self.advance(c) }),
+            _ => Err(IError::excepted_string(name)),
         }
     }
     pub fn parse_string_literal(self, target: &'static str, insensitive: bool) -> IResult<'i, &'static str> {

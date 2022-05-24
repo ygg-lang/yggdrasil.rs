@@ -6,13 +6,6 @@ pub struct SequenceHelper<'a, T> {
     result: Option<Parsed<'a, T>>,
 }
 
-impl<'i> ParseState<'i> {
-    #[inline]
-    pub fn start_sequence<T>(self) -> SequenceHelper<'i, T> {
-        SequenceHelper { state: self, result: None }
-    }
-}
-
 impl<'a, T> SequenceHelper<'a, T> {
     #[inline]
     pub fn new(state: ParseState<'a>) -> Self {
@@ -36,28 +29,5 @@ impl<'a, T> SequenceHelper<'a, T> {
             Some(ok) => Ok(ok),
             None => Err(self.state.get_error()),
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::{
-        results::IResult,
-        str2ast::{ParseState, Parsed},
-    };
-
-    #[derive(Debug)]
-    struct Output {
-        a: Vec<char>,
-    }
-
-    fn parse_output(rest: ParseState) -> IResult<Output> {
-        let Parsed { value: a, state } = rest.parse_repeats(1, 4, |state| state.parse_char('a'))?;
-        Ok(Parsed { value: Output { a }, state })
-    }
-
-    #[test]
-    fn test() {
-        println!("{:#?}", parse_output(ParseState::new("b")));
     }
 }

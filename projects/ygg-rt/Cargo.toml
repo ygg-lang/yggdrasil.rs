@@ -9,11 +9,11 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-lsp-types = { version = "0.93.2", features = ["proposed"], optional = true }
+lsp-types = { version = "0.94.0", features = ["proposed"], optional = true }
 url = "2.3.1"
-diagnostic-quick = "0.2.3"
-peginator = "0.6.0"
+diagnostic-quick = "0.3.6"
 ucd-trie = "0.1.5"
+regex-automata = "0.2.0"
 
 [features]
 default = ["lsp"]

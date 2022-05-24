@@ -1,5 +1,3 @@
-use crate::str2ast::Parsed;
-
 #[derive(Debug, Clone)]
 pub struct IError {}
 
@@ -17,5 +15,3 @@ impl IError {
         Self {}
     }
 }
-
-pub type IResult<'i, T> = Result<Parsed<'i, T>, IError>;

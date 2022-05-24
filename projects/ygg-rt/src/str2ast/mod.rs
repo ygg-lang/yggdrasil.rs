@@ -1,11 +1,13 @@
 use std::slice::SliceIndex;
 
-use crate::results::{IError, IResult};
+use crate::results::IError;
 
 mod advance;
 mod builtin;
 mod choice;
 mod concat;
+
+pub type IResult<'i, T> = Result<Parsed<'i, T>, IError>;
 
 #[derive(Debug, Clone)]
 pub struct Parsed<'i, T> {
@@ -21,6 +23,12 @@ pub struct ParseState<'i> {
     pub start_offset: usize,
     ///
     pub farthest_error: Option<IError>,
+}
+
+impl<'i, T> Parsed<'i, T> {
+    pub fn ok(value: T, state: ParseState<'i>) -> IResult<T> {
+        Ok(Self { value, state })
+    }
 }
 
 impl<'i> ParseState<'i> {
