@@ -25,6 +25,7 @@ pub struct GrammarInfo {
     pub functions: IndexMap<String, FunctionRule>,
     pub rule_prefix: String,
     pub rule_suffix: String,
+    pub range_type: String,
 }
 
 impl Default for GrammarInfo {
@@ -39,6 +40,7 @@ impl Default for GrammarInfo {
             functions: Default::default(),
             rule_prefix: "".to_string(),
             rule_suffix: "Node".to_string(),
+            range_type: "usize".to_string(),
         }
     }
 }

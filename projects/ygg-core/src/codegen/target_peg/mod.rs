@@ -7,12 +7,6 @@ use std::{
     path::Path,
 };
 
-use peginator::{
-    codegen::{CodegenGrammar, CodegenSettings},
-    grammar::Grammar,
-    PegParser,
-};
-
 use yggdrasil_ir::{
     ChoiceExpression, CodeGenerator, ConcatExpression, DataKind, ExpressionKind, ExpressionNode, FunctionExpression,
     GrammarInfo, GrammarRule, Operator, RuleReference, UnaryExpression, Validation,

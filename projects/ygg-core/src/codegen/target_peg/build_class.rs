@@ -10,7 +10,7 @@ fn test() {
     let rule = GrammarRule {
         name: "Test".to_string(),
         r#type: "TestNode".to_string(),
-        document: "".to_string(),
+        document: "aa\nbb\ncccc".to_string(),
         public: true,
         derives: Default::default(),
         auto_inline: false,
@@ -41,6 +41,23 @@ impl WriteRust for GrammarRule {
         Ok(())
     }
     fn write_class(&self, w: &mut RustCodegen, info: &GrammarInfo) -> std::fmt::Result {
-        todo!()
+        for line in self.document.lines() {
+            writeln!(w, "/// {}", line)?;
+        }
+        for derive in &self.derives {
+            writeln!(w, "#[derive({})]", derive)?;
+        }
+        if self.public {
+            w.write_str("pub ")?;
+        }
+        match self.union {
+            true => {
+                writeln!(w, "enum {} {{", self.r#type)?;
+            }
+            false => {
+                writeln!(w, "struct {} {{", self.r#type)?;
+            }
+        }
+        Ok(())
     }
 }

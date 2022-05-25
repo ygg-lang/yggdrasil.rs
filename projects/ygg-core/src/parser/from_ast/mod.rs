@@ -1,7 +1,5 @@
 use std::mem::take;
 
-use peginator::PegParser;
-
 use yggdrasil_error::{DiagnosticLevel, FileID, SyntaxError, Validation, YggdrasilError, YggdrasilResult};
 use yggdrasil_ir::{ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule, Operator};
 use yggdrasil_rt::traits::{Affix, PrattParser};

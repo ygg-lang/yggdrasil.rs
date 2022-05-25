@@ -1,11 +1,13 @@
-use crate::*;
-use indexmap::set::IndexSet;
-use serde::{Deserialize, Serialize};
 use std::{
     fmt::{Debug, Display, Formatter},
     hash::{Hash, Hasher},
     ops::Range,
 };
+
+use indexmap::set::IndexSet;
+use serde::{Deserialize, Serialize};
+
+use crate::{traits::FieldCount, *};
 
 pub mod derive;
 pub mod node;
@@ -18,6 +20,20 @@ pub struct FunctionRule {}
 pub struct GrammarRuleContext {
     pub capture: bool,
     pub atomic: bool,
+}
+
+#[derive(Clone, Debug)]
+pub struct RuleParameter {
+    pub kind: RuleParameterKind,
+    pub name: String,
+    pub typing: String,
+}
+
+#[derive(Copy, Clone, Debug)]
+pub enum RuleParameterKind {
+    Optional,
+    Required,
+    Variadic,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]

@@ -2,10 +2,9 @@ use railroad::svg::Element;
 pub use railroad::RailroadNode;
 
 pub use helper::*;
-use yggdrasil_error::Validation;
 use yggdrasil_ir::{
     ChoiceExpression, CodeGenerator, ConcatExpression, DataKind, ExpressionKind, ExpressionNode, GrammarInfo, GrammarRule,
-    Operator, RuleReference, UnaryExpression,
+    Operator, RuleReference, UnaryExpression, Validation,
 };
 
 mod helper;
