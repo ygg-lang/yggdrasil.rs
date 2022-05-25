@@ -1,6 +1,6 @@
 use super::*;
 
-impl Write for PegCodegen {
+impl Write for RustCodegen {
     fn write_str(&mut self, s: &str) -> std::fmt::Result {
         self.buffer.write_str(s)
     }
@@ -14,7 +14,7 @@ impl Write for PegCodegen {
     }
 }
 
-impl PegCodegen {
+impl RustCodegen {
     pub(crate) fn write_start(&mut self) {
         self.buffer.push_str("(")
     }

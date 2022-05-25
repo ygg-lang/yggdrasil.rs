@@ -9,4 +9,4 @@ pub use self::target_railroad::Railroad;
 #[cfg(feature = "tree-sitter")]
 pub(crate) mod target_tree_sitter;
 
-pub use self::target_peg::PegCodegen;
+pub use self::target_peg::RustCodegen;

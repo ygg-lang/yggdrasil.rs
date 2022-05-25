@@ -54,6 +54,8 @@ pub struct GrammarRule {
     /// }
     /// ```
     pub document: String,
+    /// Whether the generated class is visible
+    pub public: bool,
     ///
     pub derives: RuleDerive,
     /// Automatically inline when this rule is called
