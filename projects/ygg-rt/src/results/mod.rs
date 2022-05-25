@@ -1,7 +1,7 @@
 #[derive(Debug, Clone)]
-pub struct IError {}
+pub struct YError {}
 
-impl IError {
+impl YError {
     pub fn excepted_character(c: char) -> Self {
         Self {}
     }

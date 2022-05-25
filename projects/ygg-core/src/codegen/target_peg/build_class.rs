@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use super::*;
 
 #[test]
@@ -53,9 +55,21 @@ impl WriteRust for GrammarRule {
         match self.union {
             true => {
                 writeln!(w, "enum {} {{", self.r#type)?;
+                for (variant, fields) in self.collect_union_parameters() {
+                    writeln!(w, "    {} {{", variant)?;
+                    for field in fields {
+                        write!(w, "        {},", field)?;
+                    }
+                    writeln!(w, "    }},")?;
+                }
+                writeln!(w, "}}")?;
             }
             false => {
                 writeln!(w, "struct {} {{", self.r#type)?;
+                for field in self.collect_class_parameters() {
+                    write!(w, "    {},", field)?;
+                }
+                writeln!(w, "}}")?;
             }
         }
         Ok(())

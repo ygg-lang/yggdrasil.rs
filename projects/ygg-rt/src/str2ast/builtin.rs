@@ -2,38 +2,38 @@ use ucd_trie::TrieSet;
 
 use super::*;
 
-impl<'i> ParseState<'i> {
+impl<'i> YState<'i> {
     /// Parses a single character.
-    pub fn parse_char(self, target: char) -> IResult<'i, char> {
+    pub fn parse_char(self, target: char) -> YResult<'i, char> {
         match self.get_character(0) {
             Some(c) if c.eq(&target) => Ok(Parsed { value: target, state: self.advance(target) }),
-            _ => Err(IError::excepted_character(target)),
+            _ => Err(YError::excepted_character(target)),
         }
     }
-    pub fn parse_char_range(self, start: char, end: char) -> IResult<'i, char> {
+    pub fn parse_char_range(self, start: char, end: char) -> YResult<'i, char> {
         match self.get_character(0) {
             Some(c) if c >= start && c <= end => Ok(Parsed { value: c, state: self.advance(c) }),
-            _ => Err(IError::excepted_character_range(start, end)),
+            _ => Err(YError::excepted_character_range(start, end)),
         }
     }
-    pub fn parse_char_set(self, set: TrieSet, name: &'static str) -> IResult<'i, char> {
+    pub fn parse_char_set(self, set: TrieSet, name: &'static str) -> YResult<'i, char> {
         match self.get_character(0) {
             Some(c) if set.contains_char(c) => Ok(Parsed { value: c, state: self.advance(c) }),
-            _ => Err(IError::excepted_string(name)),
+            _ => Err(YError::excepted_string(name)),
         }
     }
-    pub fn parse_string_literal(self, target: &'static str, insensitive: bool) -> IResult<'i, &'static str> {
+    pub fn parse_string_literal(self, target: &'static str, insensitive: bool) -> YResult<'i, &'static str> {
         match self.get_string(0..target.len()) {
             Some(s) if insensitive && s.eq_ignore_ascii_case(target) => {
                 Ok(Parsed { value: target, state: self.advance(target) })
             }
             Some(s) if s.eq(target) => Ok(Parsed { value: target, state: self.advance(target) }),
-            _ => Err(IError::excepted_string(target)),
+            _ => Err(YError::excepted_string(target)),
         }
     }
-    pub fn parse_eof(self) -> IResult<'i, ()> {
+    pub fn parse_eof(self) -> YResult<'i, ()> {
         match self.get_character(0) {
-            Some(_) => Err(IError::excepted_character('\0')),
+            Some(_) => Err(YError::excepted_character('\0')),
             None => Ok(Parsed { value: (), state: self }),
         }
     }
@@ -43,9 +43,9 @@ impl<'i> ParseState<'i> {
     /// p+
     /// p{min, max}
     /// ```
-    pub fn parse_repeats<T, F>(self, min: usize, max: usize, parse: F) -> IResult<'i, Vec<T>>
+    pub fn parse_repeats<T, F>(self, min: usize, max: usize, parse: F) -> YResult<'i, Vec<T>>
     where
-        F: Fn(ParseState) -> IResult<T>,
+        F: Fn(YState) -> YResult<T>,
     {
         let mut result = Vec::new();
         let mut count = 0;
@@ -64,9 +64,9 @@ impl<'i> ParseState<'i> {
         }
         if count < min { Err(old.get_error()) } else { Ok(Parsed { value: result, state: old }) }
     }
-    pub fn parse_optional<T, F>(self, parse: F) -> IResult<'i, Option<T>>
+    pub fn parse_optional<T, F>(self, parse: F) -> YResult<'i, Option<T>>
     where
-        F: Fn(ParseState) -> IResult<T>,
+        F: Fn(YState) -> YResult<T>,
     {
         match parse(self.clone()) {
             Ok(Parsed { value, state }) => Ok(Parsed { value: Some(value), state }),

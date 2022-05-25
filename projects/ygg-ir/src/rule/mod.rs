@@ -11,6 +11,7 @@ use crate::{traits::FieldCount, *};
 
 pub mod derive;
 pub mod node;
+pub mod parameter;
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct FunctionRule {}

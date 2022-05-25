@@ -1,4 +1,4 @@
-use yggdrasil_rt::str2ast::{IResult, ParseState, Parsed};
+use yggdrasil_rt::str2ast::{Parsed, YResult, YState};
 
 mod output1;
 mod output2;

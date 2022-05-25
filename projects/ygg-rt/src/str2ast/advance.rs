@@ -21,8 +21,8 @@ impl From<&'static str> for ParseAdvance {
         ParseAdvance::String(s)
     }
 }
-impl<'i> ParseState<'i> {
-    pub fn advance<T>(self, term: T) -> ParseState<'i>
+impl<'i> YState<'i> {
+    pub fn advance<T>(self, term: T) -> YState<'i>
     where
         T: Into<ParseAdvance>,
     {
@@ -31,7 +31,7 @@ impl<'i> ParseState<'i> {
             ParseAdvance::Character(v) => v.len_utf8(),
             ParseAdvance::String(v) => v.len(),
         };
-        ParseState {
+        YState {
             partial_string: &self.partial_string[offset..],
             start_offset: self.start_offset + offset,
             farthest_error: self.farthest_error,

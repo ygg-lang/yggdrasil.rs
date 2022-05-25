@@ -1,50 +1,50 @@
 use std::slice::SliceIndex;
 
-use crate::results::IError;
+use crate::results::YError;
 
 mod advance;
 mod builtin;
 mod choice;
 mod concat;
 
-pub type IResult<'i, T> = Result<Parsed<'i, T>, IError>;
+pub type YResult<'i, T> = Result<Parsed<'i, T>, YError>;
 
 #[derive(Debug, Clone)]
 pub struct Parsed<'i, T> {
     pub value: T,
-    pub state: ParseState<'i>,
+    pub state: YState<'i>,
 }
 
 #[derive(Debug, Clone)]
-pub struct ParseState<'i> {
+pub struct YState<'i> {
     /// reset part of string
     pub partial_string: &'i str,
     ///
     pub start_offset: usize,
     ///
-    pub farthest_error: Option<IError>,
+    pub farthest_error: Option<YError>,
 }
 
 impl<'i, T> Parsed<'i, T> {
-    pub fn ok(value: T, state: ParseState<'i>) -> IResult<T> {
+    pub fn ok(value: T, state: YState<'i>) -> YResult<T> {
         Ok(Self { value, state })
     }
 }
 
-impl<'i> ParseState<'i> {
+impl<'i> YState<'i> {
     pub fn new(input: &'i str) -> Self {
         Self { partial_string: input, start_offset: 0, farthest_error: None }
     }
     pub fn is_empty(&self) -> bool {
         self.partial_string.is_empty()
     }
-    pub fn set_error(&mut self, error: IError) {
+    pub fn set_error(&mut self, error: YError) {
         self.farthest_error = Some(error);
     }
-    pub fn get_error(self) -> IError {
+    pub fn get_error(self) -> YError {
         match self.farthest_error {
             Some(s) => s,
-            None => IError::uninitialized(""),
+            None => YError::uninitialized(""),
         }
     }
 
