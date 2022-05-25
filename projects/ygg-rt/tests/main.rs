@@ -1,3 +1,4 @@
+mod choice;
 mod sequence;
 
 #[test]
