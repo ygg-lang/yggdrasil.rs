@@ -5,10 +5,16 @@
 pub use lsp_types;
 pub use url::Url;
 
-pub use crate::records::{cst_node::CSTNode, text_index::*};
+pub use crate::{
+    cst_mode::{CSTNode, NodeType},
+    records::text_index::*,
+};
 
+pub mod ast_mode;
 pub(crate) mod macros;
 pub(crate) mod records;
 pub mod results;
-pub mod str2ast;
 pub mod traits;
+
+// pub(crate) mod text_store;
+pub mod cst_mode;

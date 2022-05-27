@@ -107,7 +107,7 @@ pub struct GrammarRule {
     /// }
     /// ```
     pub auto_boxed: bool,
-    /// The entry of the str2ast, the name of the str2ast to be exported
+    /// The entry of the ast_mode, the name of the ast_mode to be exported
     ///
     /// ## Examples
     /// ```ygg

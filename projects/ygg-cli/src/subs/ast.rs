@@ -16,7 +16,7 @@ impl CommandAST {
         for name in &self.grammar_name {
             self.build_one(name)?
         }
-        println!("ygg str2ast does not been unimplemented!");
+        println!("ygg ast_mode does not been unimplemented!");
         Ok(())
     }
     pub fn build_one(&self, _name: &str) -> Result<()> {

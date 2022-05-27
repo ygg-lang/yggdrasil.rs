@@ -14,7 +14,7 @@ pub struct CommandTest {
 
 impl CommandTest {
     pub fn run(&self) -> Result<()> {
-        println!("ygg str2ast does not been unimplemented!");
+        println!("ygg ast_mode does not been unimplemented!");
         Ok(())
     }
 }

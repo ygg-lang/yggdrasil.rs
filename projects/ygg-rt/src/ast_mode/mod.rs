@@ -10,10 +10,7 @@ mod concat;
 pub type YResult<'i, T> = Result<Parsed<'i, T>, YError>;
 
 #[derive(Debug, Clone)]
-pub struct Parsed<'i, T> {
-    pub value: T,
-    pub state: YState<'i>,
-}
+pub struct Parsed<'i, T>(pub T, pub YState<'i>);
 
 #[derive(Debug, Clone)]
 pub struct YState<'i> {
@@ -27,7 +24,7 @@ pub struct YState<'i> {
 
 impl<'i, T> Parsed<'i, T> {
     pub fn ok(value: T, state: YState<'i>) -> YResult<T> {
-        Ok(Self { value, state })
+        Ok(Self(value, state))
     }
 }
 
