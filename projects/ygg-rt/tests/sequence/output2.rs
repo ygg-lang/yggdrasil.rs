@@ -9,10 +9,10 @@ struct Output1 {
 
 /// `ab{1,3}c`
 fn parse_output1(state: YState) -> YResult<Output1> {
-    let Parsed { value: a, state } = state.parse_char('a')?;
-    let Parsed { value: b, state } = state.parse_repeats(1, 3, |state| state.parse_char('b'))?;
-    let Parsed { value: c, state } = state.parse_char('c')?;
-    Parsed::ok(Output1 { a, b, c }, state)
+    let Parsed(state, a) = state.parse_char('a')?;
+    let Parsed(state, b) = state.parse_repeats(1, 3, |state| state.parse_char('b'))?;
+    let Parsed(state, c) = state.parse_char('c')?;
+    Parsed::ok(state, Output1 { a, b, c })
 }
 
 #[test]

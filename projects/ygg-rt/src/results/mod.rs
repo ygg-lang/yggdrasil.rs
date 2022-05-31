@@ -1,17 +1,27 @@
-#[derive(Debug, Clone)]
-pub struct YError {}
+use std::{
+    error::Error,
+    fmt::{Display, Formatter},
+};
 
-impl YError {
-    pub fn excepted_character(c: char) -> Self {
-        Self {}
+#[derive(Debug, Clone)]
+pub enum YError {
+    Uninitialized,
+    ExceptedEof,
+    ExceptedCharacter(char),
+    ExceptedCharacterRange(char, char),
+    ExceptedString(&'static str),
+}
+
+impl Default for YError {
+    fn default() -> Self {
+        Self::Uninitialized
     }
-    pub fn excepted_character_range(s: char, e: char) -> Self {
-        Self {}
-    }
-    pub fn excepted_string(s: &'static str) -> Self {
-        Self {}
-    }
-    pub fn uninitialized(s: &'static str) -> Self {
-        Self {}
+}
+
+impl Error for YError {}
+
+impl Display for YError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        todo!()
     }
 }

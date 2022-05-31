@@ -6,33 +6,33 @@ impl<'i> YState<'i> {
     /// Parses a single character.
     pub fn parse_char(self, target: char) -> YResult<'i, char> {
         match self.get_character(0) {
-            Some(c) if c.eq(&target) => Parsed::ok(target, self.advance(target)),
-            _ => Err(YError::excepted_character(target)),
+            Some(c) if c.eq(&target) => Parsed::ok(self.advance(target), target),
+            _ => Err(YError::ExceptedCharacter(target)),
         }
     }
     pub fn parse_char_range(self, start: char, end: char) -> YResult<'i, char> {
         match self.get_character(0) {
-            Some(c) if c >= start && c <= end => Parsed::ok(c, self.advance(c)),
-            _ => Err(YError::excepted_character_range(start, end)),
+            Some(c) if c >= start && c <= end => Parsed::ok(self.advance(c), c),
+            _ => Err(YError::ExceptedCharacterRange(start, end)),
         }
     }
     pub fn parse_char_set(self, set: TrieSet, name: &'static str) -> YResult<'i, char> {
         match self.get_character(0) {
-            Some(c) if set.contains_char(c) => Parsed::ok(c, self.advance(c)),
-            _ => Err(YError::excepted_string(name)),
+            Some(c) if set.contains_char(c) => Parsed::ok(self.advance(c), c),
+            _ => Err(YError::ExceptedString(name)),
         }
     }
     pub fn parse_string_literal(self, target: &'static str, insensitive: bool) -> YResult<'i, &'static str> {
         match self.get_string(0..target.len()) {
-            Some(s) if insensitive && s.eq_ignore_ascii_case(target) => Parsed::ok(target, self.advance(target)),
-            Some(s) if s.eq(target) => Parsed::ok(target, self.advance(target)),
-            _ => Err(YError::excepted_string(target)),
+            Some(s) if insensitive && s.eq_ignore_ascii_case(target) => Parsed::ok(self.advance(target), target),
+            Some(s) if s.eq(target) => Parsed::ok(self.advance(target), target),
+            _ => Err(YError::ExceptedString(target)),
         }
     }
     pub fn parse_eof(self) -> YResult<'i, ()> {
         match self.get_character(0) {
-            Some(_) => Err(YError::excepted_character('\0')),
-            None => Parsed::ok((), self),
+            Some(_) => Err(YError::ExceptedEof),
+            None => Parsed::ok(self, ()),
         }
     }
     /// Parses a sequence of 0 or more repetitions of the given parser.
@@ -49,7 +49,7 @@ impl<'i> YState<'i> {
         let mut count = 0;
         let mut old = self;
         loop {
-            let Parsed(value, new) = match parse(old.clone()) {
+            let Parsed(new, value) = match parse(old.clone()) {
                 Ok(o) => o,
                 Err(_) => break,
             };
@@ -60,15 +60,15 @@ impl<'i> YState<'i> {
                 break;
             }
         }
-        if count < min { Err(old.get_error()) } else { Ok(Parsed { value: result, state: old }) }
+        if count < min { Err(old.get_error()) } else { Parsed::ok(old, result) }
     }
     pub fn parse_optional<T, F>(self, parse: F) -> YResult<'i, Option<T>>
     where
         F: Fn(YState) -> YResult<T>,
     {
         match parse(self.clone()) {
-            Ok(Parsed { value, state }) => Ok(Parsed { value: Some(value), state }),
-            Err(_) => Ok(Parsed { value: None, state: self }),
+            Ok(Parsed(state, value)) => Parsed::ok(state, Some(value)),
+            Err(_) => Parsed::ok(self, None),
         }
     }
 }

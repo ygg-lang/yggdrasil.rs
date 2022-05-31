@@ -10,7 +10,7 @@ mod concat;
 pub type YResult<'i, T> = Result<Parsed<'i, T>, YError>;
 
 #[derive(Debug, Clone)]
-pub struct Parsed<'i, T>(pub T, pub YState<'i>);
+pub struct Parsed<'i, T>(pub YState<'i>, pub T);
 
 #[derive(Debug, Clone)]
 pub struct YState<'i> {
@@ -23,8 +23,8 @@ pub struct YState<'i> {
 }
 
 impl<'i, T> Parsed<'i, T> {
-    pub fn ok(value: T, state: YState<'i>) -> YResult<T> {
-        Ok(Self(value, state))
+    pub fn ok(state: YState<'i>, value: T) -> YResult<T> {
+        Ok(Self(state, value))
     }
 }
 
@@ -41,7 +41,7 @@ impl<'i> YState<'i> {
     pub fn get_error(self) -> YError {
         match self.farthest_error {
             Some(s) => s,
-            None => YError::uninitialized(""),
+            None => YError::Uninitialized,
         }
     }
 
