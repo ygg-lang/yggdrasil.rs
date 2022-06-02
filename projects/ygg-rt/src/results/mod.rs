@@ -6,6 +6,7 @@ use std::{
 #[derive(Debug, Clone)]
 pub enum YError {
     Uninitialized,
+    ExceptRepeats { min: usize, current: usize },
     ExceptedEof,
     ExceptedCharacter(char),
     ExceptedCharacterRange(char, char),

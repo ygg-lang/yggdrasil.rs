@@ -1,18 +1,28 @@
 use ucd_trie::TrieSet;
 
+use crate::CapturedCharacter;
+
 use super::*;
 
 impl<'i> YState<'i> {
     /// Parses a single character.
-    pub fn parse_char(self, target: char) -> YResult<'i, char> {
+    pub fn parse_char(self, target: char) -> YResult<'i, CapturedCharacter> {
+        let start = self.start_offset;
         match self.get_character(0) {
-            Some(c) if c.eq(&target) => Parsed::ok(self.advance(target), target),
+            Some(c) if c.eq(&target) => {
+                let value = CapturedCharacter::new(c, start);
+                Parsed::ok(self.advance(target), value)
+            }
             _ => Err(YError::ExceptedCharacter(target)),
         }
     }
-    pub fn parse_char_range(self, start: char, end: char) -> YResult<'i, char> {
+    pub fn parse_char_range(self, start: char, end: char) -> YResult<'i, CapturedCharacter> {
+        let offset = self.start_offset;
         match self.get_character(0) {
-            Some(c) if c >= start && c <= end => Parsed::ok(self.advance(c), c),
+            Some(c) if c >= start && c <= end => {
+                let value = CapturedCharacter::new(c, offset);
+                Parsed::ok(self.advance(target), value)
+            }
             _ => Err(YError::ExceptedCharacterRange(start, end)),
         }
     }
@@ -60,7 +70,10 @@ impl<'i> YState<'i> {
                 break;
             }
         }
-        if count < min { Err(old.get_error()) } else { Parsed::ok(old, result) }
+        if count < min {
+            Err(YError::ExceptRepeats { min, current: count })?
+        }
+        Parsed::ok(old, result)
     }
     pub fn parse_optional<T, F>(self, parse: F) -> YResult<'i, Option<T>>
     where

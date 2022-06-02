@@ -7,7 +7,7 @@ pub use url::Url;
 
 pub use crate::{
     cst_mode::{CSTNode, NodeType},
-    records::text_index::*,
+    records::{text_index::*, CapturedCharacter, CapturedString},
 };
 
 pub mod ast_mode;
