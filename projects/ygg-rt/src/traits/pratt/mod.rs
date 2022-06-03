@@ -122,7 +122,13 @@ pub trait PrattParser {
     }
 
     /// Left-Denotation
-    fn led(&mut self, head: Self::Input, tail: &mut Peekable<IntoIter<Self::Input>>, info: Affix, lhs: Self::Output) -> QResult<Self::Output> {
+    fn led(
+        &mut self,
+        head: Self::Input,
+        tail: &mut Peekable<IntoIter<Self::Input>>,
+        info: Affix,
+        lhs: Self::Output,
+    ) -> QResult<Self::Output> {
         match info {
             Affix::Infix(precedence, associativity) => {
                 let precedence = precedence.normalize();

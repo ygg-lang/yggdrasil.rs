@@ -1,13 +1,13 @@
 use std::slice::SliceIndex;
 
-use crate::results::YError;
+use crate::results::StopBecause;
 
 mod advance;
 mod builtin;
 mod choice;
 mod concat;
 
-pub type YResult<'i, T> = Result<Parsed<'i, T>, YError>;
+pub type YResult<'i, T> = Result<Parsed<'i, T>, StopBecause>;
 
 #[derive(Debug, Clone)]
 pub struct Parsed<'i, T>(pub YState<'i>, pub T);
@@ -19,7 +19,7 @@ pub struct YState<'i> {
     ///
     pub start_offset: usize,
     ///
-    pub farthest_error: Option<YError>,
+    pub farthest_error: Option<StopBecause>,
 }
 
 impl<'i, T> Parsed<'i, T> {
@@ -35,13 +35,13 @@ impl<'i> YState<'i> {
     pub fn is_empty(&self) -> bool {
         self.partial_string.is_empty()
     }
-    pub fn set_error(&mut self, error: YError) {
+    pub fn set_error(&mut self, error: StopBecause) {
         self.farthest_error = Some(error);
     }
-    pub fn get_error(self) -> YError {
+    pub fn get_error(self) -> StopBecause {
         match self.farthest_error {
             Some(s) => s,
-            None => YError::Uninitialized,
+            None => StopBecause::Uninitialized,
         }
     }
 

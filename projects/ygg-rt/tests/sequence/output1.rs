@@ -5,8 +5,8 @@ use super::*;
 #[derive(Debug)]
 struct Output1 {
     pub a: CapturedCharacter,
-    pub b: Vec<char>,
-    pub c: char,
+    pub b: Vec<CapturedCharacter>,
+    pub c: CapturedCharacter,
     pub range: std::ops::Range<usize>,
 }
 
@@ -14,7 +14,6 @@ struct Output1 {
 fn parse_output1(state: YState) -> YResult<Output1> {
     let start = state.start_offset;
     let Parsed(state, a) = state.parse_char('a')?;
-    let a = CapturedCharacter::new(a, start);
     let Parsed(state, b) = state.parse_repeats(1, 3, |state| state.parse_char('b'))?;
     let Parsed(state, c) = state.parse_char('c')?;
     let range = start..state.start_offset;

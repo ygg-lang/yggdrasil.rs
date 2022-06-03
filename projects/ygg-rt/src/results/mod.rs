@@ -4,24 +4,24 @@ use std::{
 };
 
 #[derive(Debug, Clone)]
-pub enum YError {
+pub enum StopBecause {
     Uninitialized,
-    ExceptRepeats { min: usize, current: usize },
-    ExceptedEof,
-    ExceptedCharacter(char),
-    ExceptedCharacterRange(char, char),
-    ExceptedString(&'static str),
+    MissingEof { position: usize },
+    MissingRepeats { min: usize, current: usize, position: usize },
+    MissingCharacter { expected: char, position: usize },
+    MissingCharacterRange { start: char, end: char, position: usize },
+    MissingString { string: &'static str, position: usize },
 }
 
-impl Default for YError {
+impl Default for StopBecause {
     fn default() -> Self {
         Self::Uninitialized
     }
 }
 
-impl Error for YError {}
+impl Error for StopBecause {}
 
-impl Display for YError {
+impl Display for StopBecause {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         todo!()
     }

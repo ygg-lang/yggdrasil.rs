@@ -3,14 +3,14 @@ use super::*;
 /// `a{1,2}b|a{1,3}c`
 #[derive(Debug)]
 struct Output3 {
-    a: Vec<char>,
-    b: Option<char>,
-    c: Option<char>,
+    pub a: Vec<CapturedCharacter>,
+    pub b: Option<CapturedCharacter>,
+    pub c: Option<CapturedCharacter>,
 }
 
 enum Output3Aux1 {
-    Output3Aux2 { a: Vec<char>, b: char },
-    Output3Aux3 { a: Vec<char>, c: char },
+    Output3Aux2 { a: Vec<CapturedCharacter>, b: CapturedCharacter },
+    Output3Aux3 { a: Vec<CapturedCharacter>, c: CapturedCharacter },
 }
 
 #[test]

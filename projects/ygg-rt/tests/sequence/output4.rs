@@ -3,8 +3,8 @@ use super::*;
 /// `a{1,2}b|a{1,3}c`
 #[derive(Debug)]
 enum Output4 {
-    Output4Aux1 { a: Vec<char>, b: char },
-    Output4Aux2 { a: Vec<char>, c: char },
+    Output4Aux1 { a: Vec<CapturedCharacter>, b: CapturedCharacter },
+    Output4Aux2 { a: Vec<CapturedCharacter>, c: CapturedCharacter },
 }
 
 #[test]
