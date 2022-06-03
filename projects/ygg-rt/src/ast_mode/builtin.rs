@@ -55,6 +55,7 @@ impl<'i> YState<'i> {
     /// p+
     /// p{min, max}
     /// ```
+    #[inline]
     pub fn parse_repeats<T, F>(self, min: usize, max: usize, parse: F) -> YResult<'i, Vec<T>>
     where
         F: Fn(YState) -> YResult<T>,
@@ -93,58 +94,48 @@ impl<'i> YState<'i> {
             Err(_) => Parsed::ok(self, None),
         }
     }
-    /// Parse negative lookahead
+    /// Parse without consuming post-assertions
     /// ```regex
-    /// a b
+    /// !ahead p
+    /// p !after
     /// ```
-    pub fn parse_pair<A, B, T, U>(self, lhs: A, rhs: B) -> YResult<'i, (T, U)>
-    where
-        A: Fn(YState) -> YResult<T>,
-        B: Fn(YState) -> YResult<U>,
-    {
-        let Parsed(ls, lv) = lhs(self)?;
-        let Parsed(rs, rv) = rhs(ls)?;
-        Parsed::ok(rs, (lv, rv))
-    }
-
-    /// braces, square brackets, parentheses
-    /// ```regex
-    /// p
-    /// p,
-    /// p (, p)
-    /// ```
-    pub fn parse_join<D, F, T, U>(self, last: Option<bool>, parse: F, delimiter: D) -> YResult<'i, Vec<T>>
+    pub fn parse_negative<F, T>(self, parse: F, name: &'static str) -> YResult<'i, ()>
     where
         F: Fn(YState) -> YResult<T>,
-        D: Fn(YState) -> YResult<U>,
     {
-        let mut result = Vec::new();
-        let mut old = self;
-        loop {
-            let Parsed(new, (_, value)) = match old.parse_pair(&delimiter, &parse) {
-                Ok(o) => o,
-                Err(_) => break,
-            };
-            result.push(value);
-            old = new;
-            match delimiter(old.clone()) {
-                Ok(_) => {}
-                Err(_) => break,
+        match parse(self.clone()) {
+            Ok(_) => Err(StopBecause::ShouldNotBe { string: name, position: self.start_offset }),
+            Err(_) => Parsed::ok(self, ()),
+        }
+    }
+    /// Parse a comment line
+    /// ```regex
+    /// # comment
+    /// // comment
+    /// ```
+    pub fn parse_comment_line<F, T>(self, start: F) -> YResult<'i, ()>
+    where
+        F: Fn(YState) -> YResult<T>,
+    {
+        let Parsed(state, _) = start(self.clone())?;
+        let mut offset = 0;
+        let mut rest = state.partial_string.chars();
+        while let Some(c) = rest.next() {
+            match c {
+                '\r' => {
+                    match rest.next() {
+                        Some('\n') => offset += 2,
+                        _ => offset += 1,
+                    }
+                    break;
+                }
+                '\n' => {
+                    offset += 1;
+                    break;
+                }
+                _ => {}
             }
         }
-        return match last {
-            // must have last delimiter
-            Some(true) => {
-                todo!()
-            }
-            // forbid last delimiter
-            Some(false) => {
-                todo!()
-            }
-            // allow last delimiter
-            None => {
-                todo!()
-            }
-        };
+        Parsed::ok(state.advance(offset), ())
     }
 }

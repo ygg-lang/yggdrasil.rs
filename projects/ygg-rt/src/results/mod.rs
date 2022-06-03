@@ -11,6 +11,8 @@ pub enum StopBecause {
     MissingCharacter { expected: char, position: usize },
     MissingCharacterRange { start: char, end: char, position: usize },
     MissingString { string: &'static str, position: usize },
+    ShouldNotBe { string: &'static str, position: usize },
+    Custom { message: &'static str, position: usize },
 }
 
 impl Default for StopBecause {
