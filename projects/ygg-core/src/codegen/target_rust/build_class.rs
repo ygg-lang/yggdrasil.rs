@@ -1,14 +1,16 @@
 use std::fmt::Debug;
 
+use yggdrasil_ir::RuleDerive;
+
 use super::*;
 
 #[test]
 fn test() {
     let mut codegen = RustCodegen::default();
     let info = GrammarInfo::default();
-    let a = ExpressionNode::character('a').tag("a");
-    let b = ExpressionNode::character('b').tag("b");
-    let c = ExpressionNode::character('c').tag("c");
+    let a = ExpressionNode::character('a').with_tag("a");
+    let b = ExpressionNode::character('b').with_tag("b");
+    let c = ExpressionNode::character('c').with_tag("c");
     let rule = GrammarRule {
         name: "Test".to_string(),
         r#type: "TestNode".to_string(),
@@ -19,11 +21,12 @@ fn test() {
         auto_boxed: false,
         entry: false,
         union: false,
-        force_export: false,
         body: a | b | c,
         range: Default::default(),
     };
-    rule.write_class(&mut codegen, &info)?;
+
+    rule.write_class(&mut codegen, &info).unwrap();
+    rule.write_rust(&mut codegen, &info).unwrap();
     println!("{}", codegen.buffer);
 }
 // /// `ab{1,3}c`
@@ -38,9 +41,12 @@ fn test() {
 impl WriteRust for GrammarRule {
     fn write_rust(&self, w: &mut RustCodegen, info: &GrammarInfo) -> std::fmt::Result {
         // writeln!(w, "/// {}", info.rule_prefix)?;
-        writeln!(w, "fn {}(state: YState) -> YResult<{}> {{", w.get_class_name(&self.name), self.r#type)?;
+        writeln!(w, "fn {}(state: YState) -> YResult<{}> {{", w.get_parse_name(&self.name), self.r#type)?;
         if w.enable_position {
             writeln!(w, "    let start = state.start_offset;")?;
+        }
+        if self.body.is_choice() {
+            println!("body: {:#?}", self.collect_class_parameters());
         }
         if w.enable_position {
             writeln!(w, "    let range = start..state.start_offset;")?;
@@ -53,13 +59,14 @@ impl WriteRust for GrammarRule {
         for line in self.document.lines() {
             writeln!(w, "/// {}", line)?;
         }
-        writeln!(w, "{}", self.derives)?;
+        self.derives.write_rust(w, info)?;
         if self.public {
             w.write_str("pub ")?;
         }
+        let name = w.get_class_name(&self.name);
         match self.union {
             true => {
-                writeln!(w, "enum {} {{", self.r#type)?;
+                writeln!(w, "enum {} {{", name)?;
                 for (variant, fields) in self.collect_union_parameters() {
                     writeln!(w, "    {} {{", variant)?;
                     for field in fields {
@@ -70,7 +77,7 @@ impl WriteRust for GrammarRule {
                 writeln!(w, "}}")?;
             }
             false => {
-                writeln!(w, "struct {} {{", self.r#type)?;
+                writeln!(w, "struct {} {{", name)?;
                 for field in self.collect_class_parameters() {
                     write!(w, "    {},", field)?;
                 }
@@ -78,5 +85,15 @@ impl WriteRust for GrammarRule {
             }
         }
         Ok(())
+    }
+}
+
+impl WriteRust for RuleDerive {
+    fn write_rust(&self, w: &mut RustCodegen, _: &GrammarInfo) -> std::fmt::Result {
+        let derives = self.derived();
+        if derives.is_empty() {
+            return Ok(());
+        }
+        write!(w, "#[derive({})]", derives.join(", "))
     }
 }

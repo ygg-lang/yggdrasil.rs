@@ -1,4 +1,4 @@
-use std::ops::Range;
+use std::{collections::BTreeMap, ops::Range};
 
 pub trait NodeType: Into<usize> + Copy {}
 

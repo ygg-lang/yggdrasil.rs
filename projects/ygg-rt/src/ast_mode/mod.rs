@@ -44,7 +44,6 @@ impl<'i> YState<'i> {
             None => StopBecause::Uninitialized,
         }
     }
-
     pub fn get_string<R>(&self, range: R) -> Option<&R::Output>
     where
         R: SliceIndex<str>,

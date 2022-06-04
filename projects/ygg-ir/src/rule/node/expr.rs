@@ -22,6 +22,13 @@ impl ExpressionNode {
     pub fn ignored() -> Self {
         Self { kind: ExpressionKind::Data(Box::new(DataKind::Ignored)), tag: "".to_string() }
     }
+    pub fn with_tag<S>(mut self, tag: S) -> Self
+    where
+        S: Into<String>,
+    {
+        self.tag = tag.into();
+        self
+    }
     pub fn remark(&mut self, capture: bool) {
         match capture {
             true => self.capture(),

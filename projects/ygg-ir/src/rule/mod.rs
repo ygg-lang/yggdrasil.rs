@@ -130,14 +130,6 @@ pub struct GrammarRule {
     /// }
     /// ```
     pub union: bool,
-    /// Keep export this rule, even if this rule is not used
-    /// ## Examples
-    /// ```ygg
-    /// class keep Rule {
-    ///
-    /// }
-    /// ```
-    pub force_export: bool,
     ///
     pub body: ExpressionNode,
     /// position of all parts

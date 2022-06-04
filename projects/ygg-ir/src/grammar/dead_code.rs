@@ -1,5 +1,5 @@
-use diagnostic_quick::{QError, Validation};
 use super::*;
+use diagnostic_quick::{QError, Validation};
 
 pub struct DeadCodeEliminator {
     pub panic: bool,
@@ -46,7 +46,7 @@ impl CodeOptimizer for DeadCodeEliminator {
 impl DeadCodeEliminator {
     fn find_entry(&mut self, info: &GrammarInfo) {
         for (_, rule) in &info.rules {
-            if rule.force_export || rule.entry {
+            if info.exports.contains(&rule.name) || rule.entry {
                 self.new.insert(rule.name.to_owned());
             }
         }
