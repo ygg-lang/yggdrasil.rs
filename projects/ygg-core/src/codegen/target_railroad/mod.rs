@@ -86,7 +86,7 @@ impl AsRailroad for ChoiceExpression {
 impl AsRailroad for ConcatExpression {
     fn as_railroad(&self) -> Box<dyn RailroadNode> {
         // TODO: maybe stack
-        box Sequence::new(self.sequence.iter().map(|e| e.as_railroad()).collect())
+        box Sequence::new(self.into_iter().map(|e| e.as_railroad()).collect())
     }
 }
 

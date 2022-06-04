@@ -23,8 +23,6 @@ pub struct GrammarInfo {
     pub exports: Vec<String>,
     pub rules: IndexMap<String, GrammarRule>,
     pub functions: IndexMap<String, FunctionRule>,
-    pub rule_prefix: String,
-    pub rule_suffix: String,
     pub range_type: String,
 }
 
@@ -38,8 +36,6 @@ impl Default for GrammarInfo {
             exports: vec![],
             rules: Default::default(),
             functions: Default::default(),
-            rule_prefix: "".to_string(),
-            rule_suffix: "Node".to_string(),
             range_type: "usize".to_string(),
         }
     }

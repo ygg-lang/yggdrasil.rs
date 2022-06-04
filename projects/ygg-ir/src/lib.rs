@@ -1,4 +1,4 @@
-pub use diagnostic_quick::{Failure, Success, Validation};
+pub use diagnostic_quick::{Failure, QError, QResult, Success, Validation};
 pub use indexmap::{IndexMap, IndexSet};
 
 pub use self::{
