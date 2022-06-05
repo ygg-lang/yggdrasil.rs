@@ -1,4 +1,5 @@
 mod choice;
+mod left_recursion;
 mod sequence;
 
 #[test]

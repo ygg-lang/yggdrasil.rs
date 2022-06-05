@@ -65,7 +65,8 @@ impl ExpressionNode {
             ExpressionKind::Function(_) => unreachable!("Macros should be expand before collecting parameters"),
             ExpressionKind::Rule(rule) => {
                 if !self.tag.is_empty() {
-                    out.insert(self.tag.clone(), RuleParameter::new(self.tag.clone(), rule.typing.clone(), RuleParameterKind::Required));
+                    let rule = RuleParameter { kind: RuleParameterKind::Required, name: "".to_string(), typing: rule.name.clone() };
+                    out.insert(self.tag.clone(), rule);
                 }
             }
             ExpressionKind::Choice(v) => {
@@ -73,7 +74,8 @@ impl ExpressionNode {
                     for (k, v) in branch.collect_parameters() {
                         match out.get_mut(&k) {
                             Some(p) => {
-                                *p |= v;
+                                // *p = p | v;
+                                todo!()
                             }
                             None => {
                                 out.insert(k, v);
@@ -83,11 +85,12 @@ impl ExpressionNode {
                 }
             }
             ExpressionKind::Concat(v) => {
-                for branch in &v.into_iter() {
+                for branch in v.into_iter() {
                     for (k, v) in branch.collect_parameters() {
                         match out.get_mut(&k) {
                             Some(p) => {
-                                *p &= v;
+                                // *p &= v;
+                                todo!()
                             }
                             None => {
                                 out.insert(k, v);
@@ -96,7 +99,9 @@ impl ExpressionNode {
                     }
                 }
             }
-            ExpressionKind::Unary(v) => v.base.collect_parameters(),
+            ExpressionKind::Unary(v) => {
+                todo!()
+            }
             ExpressionKind::Data(_) => {}
         }
         return out;
@@ -104,18 +109,29 @@ impl ExpressionNode {
 }
 
 impl UnaryExpression {
-    pub fn collect_parameters(&self) -> BTreeMap<String, RuleParameter> {
-        let mut out: BTreeMap<String, RuleParameter> = BTreeMap::new();
-        match &self.ops {
-            &_ => {}
+    fn collect_operator_parameters(&self) -> Option<RuleParameterKind> {
+        let mut inner = None;
+        for o in &self.ops {
+            match o {
+                // `(a?)*`, `(a?)+`
+                Operator::Repeats | Operator::Repeat1 => return Some(RuleParameterKind::Optional),
+                Operator::Optional => inner = Some(RuleParameterKind::Optional),
+                Operator::Boxing => {
+                    unreachable!("unsupported now")
+                }
+                Operator::Recursive => {
+                    unreachable!("unsupported now")
+                }
+                Operator::Remark => {
+                    unreachable!("`^p` should be resolved before collecting parameters")
+                }
+
+                Operator::Negative => {}
+
+                Operator::RepeatsBetween(_, _) => {}
+            }
         }
-        return out;
-    }
-    fn collect_operator_parameters(&self) -> RuleParameter {
-        let mut out: BTreeMap<String, RuleParameter> = BTreeMap::new();
-        match &self.ops {
-            &_ => {}
-        }
-        return out;
+        assert_ne!(inner, Some(RuleParameterKind::Required));
+        inner
     }
 }

@@ -9,6 +9,11 @@ mod concat;
 
 pub type YResult<'i, T> = Result<Parsed<'i, T>, StopBecause>;
 
+pub enum YYResult<'i, T> {
+    Pending(YState<'i>, T),
+    Stop(StopBecause),
+}
+
 #[derive(Debug, Clone)]
 pub struct Parsed<'i, T>(pub YState<'i>, pub T);
 
@@ -22,15 +27,12 @@ pub struct YState<'i> {
     pub farthest_error: Option<StopBecause>,
 }
 
-impl<'i, T> Parsed<'i, T> {
-    pub fn ok(state: YState<'i>, value: T) -> YResult<T> {
-        Ok(Self(state, value))
-    }
-}
-
 impl<'i> YState<'i> {
     pub fn new(input: &'i str) -> Self {
         Self { partial_string: input, start_offset: 0, farthest_error: None }
+    }
+    pub fn ok_with<T>(self, value: T) -> YResult<'i, T> {
+        Ok(Parsed(self, value))
     }
     pub fn is_empty(&self) -> bool {
         self.partial_string.is_empty()

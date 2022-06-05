@@ -30,7 +30,7 @@ pub struct RuleParameter {
     pub typing: String,
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum RuleParameterKind {
     Optional,
     Required,

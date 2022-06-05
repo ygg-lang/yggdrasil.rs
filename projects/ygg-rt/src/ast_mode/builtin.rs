@@ -1,47 +1,34 @@
 use ucd_trie::TrieSet;
 
-use crate::{CapturedCharacter, CapturedString};
-
 use super::*;
 
 impl<'i> YState<'i> {
     /// Parses a single character.
-    pub fn parse_char(self, target: char) -> YResult<'i, CapturedCharacter> {
+    pub fn parse_char(self, target: char) -> YResult<'i, char> {
         match self.get_character(0) {
-            Some(c) if c.eq(&target) => {}
+            Some(c) if c.eq(&target) => self.advance(target).ok_with(target),
             _ => Err(StopBecause::MissingCharacter { expected: target, position: self.start_offset })?,
         }
-        let value = CapturedCharacter::new(target, self.start_offset);
-        Parsed::ok(self.advance(target), value)
     }
-    pub fn parse_char_range(self, start: char, end: char) -> YResult<'i, CapturedCharacter> {
-        let offset = self.start_offset;
+    pub fn parse_char_range(self, start: char, end: char) -> YResult<'i, char> {
         match self.get_character(0) {
-            Some(c) if c <= end && c >= start => {
-                let value = CapturedCharacter::new(c, offset);
-                Parsed::ok(self.advance(c), value)
-            }
+            Some(c) if c <= end && c >= start => Parsed::ok(self.advance(c), c),
             _ => Err(StopBecause::MissingCharacterRange { start, end, position: self.start_offset }),
         }
     }
-    pub fn parse_char_set(self, set: TrieSet, name: &'static str) -> YResult<'i, CapturedCharacter> {
-        let offset = self.start_offset;
+    pub fn parse_char_set(self, set: TrieSet, name: &'static str) -> YResult<'i, char> {
         match self.get_character(0) {
-            Some(c) if set.contains_char(c) => {
-                let value = CapturedCharacter::new(c, offset);
-                Parsed::ok(self.advance(c), value)
-            }
+            Some(c) if set.contains_char(c) => Parsed::ok(self.advance(c), c),
             _ => Err(StopBecause::MissingString { string: name, position: self.start_offset }),
         }
     }
-    pub fn parse_string_literal(self, target: &'static str, insensitive: bool) -> YResult<'i, CapturedString> {
+    pub fn parse_string_literal(self, target: &'static str, insensitive: bool) -> YResult<'i, &'static str> {
         match self.get_string(0..target.len()) {
             Some(s) if insensitive && s.eq_ignore_ascii_case(target) => {}
             Some(s) if s.eq(target) => {}
             _ => Err(StopBecause::MissingString { string: target, position: self.start_offset })?,
         }
-        let value = CapturedString::new(target, self.start_offset);
-        Parsed::ok(self.advance(target), value)
+        Parsed::ok(self.advance(target), target)
     }
     pub fn parse_eof(self) -> YResult<'i, ()> {
         match self.get_character(0) {
