@@ -1,57 +1,67 @@
-use std::ops::Try;
-use yggdrasil_rt::ast_mode::{Parsed, YResult, YState};
+use std::str::FromStr;
+
+use yggdrasil_rt::ast_mode::{YResult, YState};
 
 // E  → bE'
 // E' → aE' | ε
 //
 // expr: expr '+' expr #AddExpr
 //     | atom          #Atom
-//
-//
-// expr: atom add_expr
-// add_expr: '+' add_expr | EOF
 #[derive(Debug)]
 enum Expr {
-    Add(Box<AddExpr>),
+    Add { lhs: Box<Expr>, rhs: Box<Expr> },
     Atom(usize),
 }
 
 #[derive(Debug)]
-struct AddExpr {
-    rhs: Expr,
+enum AddExpr {
+    /// '+' expr
+    Continue { expr: Box<Expr> },
+    /// EOF
+    EOF,
 }
 
-/// `atom add_expr`
-fn parse_expr(state: YState) -> YResult<Expr> {
-    let start = state.start_offset;
-    let Parsed(state, atom) = parse_atom(state)?;
-    let Parsed(state, add_expr) = parse_add_expr(state)?;
-    let Parsed(state, c) = state.parse_char('c')?;
-    let range = start..state.start_offset;
-    Parsed::ok(state, Output1 { a, b, c, range })
+impl Expr {
+    pub fn parse(state: YState) -> YResult<Expr> {
+        let (state, atom) = parse_atom(state)?;
+        let (state, add_expr) = AddExpr::parse(state)?;
+        match add_expr {
+            AddExpr::Continue { expr } => state.finish(Expr::Add { lhs: Box::new(Expr::Atom(atom)), rhs: expr }),
+            AddExpr::EOF => state.finish(Expr::Atom(atom)),
+        }
+    }
 }
 
-/// '+' add_expr | EOF
-fn parse_add_expr(state: YState) -> YResult<AddExpr> {
-    let start = state.start_offset;
-    let Parsed(state, atom) = state.parse_char();
-    let Parsed(state, add_expr) = state.parse_repeats(1, 3, |state| state.parse_char('b'))?;
-    let Parsed(state, c) = state.parse_char('c')?;
-    let range = start..state.start_offset;
-    Parsed::ok(state, Output1 { a, b, c, range })
+impl AddExpr {
+    fn parse(state: YState) -> YResult<AddExpr> {
+        let (state, out) = state
+            .begin_choice() //
+            .maybe(AddExpr::parse_axu1)
+            .maybe(AddExpr::parse_aux2)
+            .end_choice()?;
+        state.finish(out)
+    }
+    /// '+' expr
+    fn parse_axu1(state: YState) -> YResult<AddExpr> {
+        let (state, _) = state.parse_char('+')?;
+        let (state, expr) = Expr::parse(state)?;
+        state.finish(AddExpr::Continue { expr: Box::new(expr) })
+    }
+    /// EOF
+    fn parse_aux2(state: YState) -> YResult<AddExpr> {
+        let (state, _) = state.parse_eof()?;
+        state.finish(AddExpr::EOF)
+    }
 }
 
 fn parse_atom(state: YState) -> YResult<usize> {
-    let Parsed(state, atom) = state.parse_repeats(0, usize::MAX, |state| state.parse_char_range('0', '9'));
-
-    Parsed::ok(state, atom.value)
+    let (state, atom) = state.parse_repeats(0, usize::MAX, |state| state.parse_char_range('0', '9'))?;
+    state.finish(usize::from_str(&String::from_iter(atom)).unwrap())
 }
 
 #[test]
 fn test_output_1() {
-    println!("{:#?}", parse_add_expr(YState::new("ac")));
-    println!("{:#?}", parse_add_expr(YState::new("abc")));
-    println!("{:#?}", parse_add_expr(YState::new("abbc")));
-    println!("{:#?}", parse_add_expr(YState::new("abbbc")));
-    println!("{:#?}", parse_add_expr(YState::new("abbbbc")));
+    println!("{:#?}", Expr::parse(YState::new("1")));
+    println!("{:#?}", Expr::parse(YState::new("1+1")));
+    println!("{:#?}", Expr::parse(YState::new("1+1+1")));
 }

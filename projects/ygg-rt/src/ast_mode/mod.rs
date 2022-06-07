@@ -14,8 +14,7 @@ pub enum YYResult<'i, T> {
     Stop(StopBecause),
 }
 
-#[derive(Debug, Clone)]
-pub struct Parsed<'i, T>(pub YState<'i>, pub T);
+pub type Parsed<'i, T> = (YState<'i>, T);
 
 #[derive(Debug, Clone)]
 pub struct YState<'i> {
@@ -24,24 +23,24 @@ pub struct YState<'i> {
     ///
     pub start_offset: usize,
     ///
-    pub farthest_error: Option<StopBecause>,
+    pub stop_reason: Option<StopBecause>,
 }
 
 impl<'i> YState<'i> {
     pub fn new(input: &'i str) -> Self {
-        Self { partial_string: input, start_offset: 0, farthest_error: None }
+        Self { partial_string: input, start_offset: 0, stop_reason: None }
     }
-    pub fn ok_with<T>(self, value: T) -> YResult<'i, T> {
-        Ok(Parsed(self, value))
+    pub fn finish<T>(self, value: T) -> YResult<'i, T> {
+        Ok((self, value))
     }
     pub fn is_empty(&self) -> bool {
         self.partial_string.is_empty()
     }
     pub fn set_error(&mut self, error: StopBecause) {
-        self.farthest_error = Some(error);
+        self.stop_reason = Some(error);
     }
     pub fn get_error(self) -> StopBecause {
-        match self.farthest_error {
+        match self.stop_reason {
             Some(s) => s,
             None => StopBecause::Uninitialized,
         }

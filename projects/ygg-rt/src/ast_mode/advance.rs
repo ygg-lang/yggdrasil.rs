@@ -34,7 +34,7 @@ impl<'i> YState<'i> {
         YState {
             partial_string: &self.partial_string[offset..],
             start_offset: self.start_offset + offset,
-            farthest_error: self.farthest_error,
+            stop_reason: self.stop_reason,
         }
     }
 }

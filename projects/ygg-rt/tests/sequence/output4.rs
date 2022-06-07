@@ -3,8 +3,8 @@ use super::*;
 /// `a{1,2}b|a{1,3}c`
 #[derive(Debug)]
 enum Output4 {
-    Output4Aux1 { a: Vec<CapturedCharacter>, b: CapturedCharacter },
-    Output4Aux2 { a: Vec<CapturedCharacter>, c: CapturedCharacter },
+    Output4Aux1 { a: Vec<char>, b: char },
+    Output4Aux2 { a: Vec<char>, c: char },
 }
 
 #[test]
@@ -18,20 +18,20 @@ fn test_output_1() {
 
 /// `ab{1,3}c`
 fn parse_output3(state: YState) -> YResult<Output4> {
-    let Parsed(state, value) = state.start_choice().or_else(parse_output3_aux2).or_else(parse_output3_aux3).end_choice()?;
-    Parsed::ok(state, value)
+    let (state, value) = state.begin_choice().maybe(parse_output3_aux2).maybe(parse_output3_aux3).end_choice()?;
+    state.finish(value)
 }
 
 /// `a{1,2}b`
 fn parse_output3_aux2(state: YState) -> YResult<Output4> {
-    let Parsed(state, a) = state.parse_repeats(1, 2, |state| state.parse_char('a'))?;
-    let Parsed(state, b) = state.parse_char('b')?;
-    Parsed::ok(state, Output4::Output4Aux1 { a, b })
+    let (state, a) = state.parse_repeats(1, 2, |state| state.parse_char('a'))?;
+    let (state, b) = state.parse_char('b')?;
+    state.finish(Output4::Output4Aux1 { a, b })
 }
 
 /// `a{1,3}c`
 fn parse_output3_aux3(state: YState) -> YResult<Output4> {
-    let Parsed(state, a) = state.parse_repeats(1, 3, |state| state.parse_char('a'))?;
-    let Parsed(state, c) = state.parse_char('c')?;
-    Parsed::ok(state, Output4::Output4Aux2 { a, c })
+    let (state, a) = state.parse_repeats(1, 3, |state| state.parse_char('a'))?;
+    let (state, c) = state.parse_char('c')?;
+    state.finish(Output4::Output4Aux2 { a, c })
 }

@@ -8,7 +8,7 @@ pub struct ChoiceHelper<'a, T> {
 
 impl<'i> YState<'i> {
     #[inline]
-    pub fn start_choice<T>(self) -> ChoiceHelper<'i, T> {
+    pub fn begin_choice<T>(self) -> ChoiceHelper<'i, T> {
         ChoiceHelper { state: self, result: None }
     }
 }
@@ -20,7 +20,7 @@ impl<'a, T> ChoiceHelper<'a, T> {
     }
 
     #[inline]
-    pub fn or_else(mut self, parse_fn: impl FnOnce(YState<'a>) -> YResult<'a, T>) -> Self {
+    pub fn maybe(mut self, parse_fn: impl FnOnce(YState<'a>) -> YResult<'a, T>) -> Self {
         if self.result.is_none() {
             match parse_fn(self.state.clone()) {
                 Ok(ok_result) => self.result = Some(ok_result),
