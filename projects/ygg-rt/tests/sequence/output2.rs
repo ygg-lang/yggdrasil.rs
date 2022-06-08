@@ -12,7 +12,7 @@ struct Output2 {
 fn parse_output2(state: YState) -> YResult<Output2> {
     let start = state.start_offset;
     let (state, a) = state.parse_char('a')?;
-    let (state, b) = state.parse_repeats(1, 3, |state| state.parse_char('b'))?;
+    let (state, b) = state.match_repeat_m_n(1, 3, |state| state.parse_char('b'))?;
     let (state, c) = state.parse_char('c')?;
     let range = start..state.start_offset;
     state.finish(Output2 { a, b, c, range })

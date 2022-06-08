@@ -9,20 +9,28 @@ struct Output1 {
 }
 
 /// `ab{1,3}c`
-fn parse_output1(state: YState) -> YResult<Output1> {
+fn parse_output1(state: YState, min: usize, max: usize) -> YResult<Output1> {
     let start = state.start_offset;
     let (state, a) = state.parse_char('a')?;
-    let (state, b) = state.parse_repeats(1, 3, |state| state.parse_char('b'))?;
+    let (state, b) = state.match_repeat_m_n(min, max, |state| state.parse_char('b'))?;
     let (state, c) = state.parse_char('c')?;
     let range = start..state.start_offset;
     state.finish(Output1 { a, b, c, range })
 }
 
 #[test]
-fn test_output_1() {
-    println!("{:#?}", parse_output1(YState::new("ac")));
-    println!("{:#?}", parse_output1(YState::new("abc")));
-    println!("{:#?}", parse_output1(YState::new("abbc")));
-    println!("{:#?}", parse_output1(YState::new("abbbc")));
-    println!("{:#?}", parse_output1(YState::new("abbbbc")));
+fn test_output_02() {
+    println!("{:#?}", parse_output1(YState::new("ac"), 0, 2));
+    println!("{:#?}", parse_output1(YState::new("abc"), 0, 2));
+    println!("{:#?}", parse_output1(YState::new("abbc"), 0, 2));
+    println!("{:#?}", parse_output1(YState::new("abbbc"), 0, 2));
+}
+
+#[test]
+fn test_output_13() {
+    println!("{:#?}", parse_output1(YState::new("ac"), 1, 3));
+    println!("{:#?}", parse_output1(YState::new("abc"), 1, 3));
+    println!("{:#?}", parse_output1(YState::new("abbc"), 1, 3));
+    println!("{:#?}", parse_output1(YState::new("abbbc"), 1, 3));
+    println!("{:#?}", parse_output1(YState::new("abbbbc"), 1, 3));
 }

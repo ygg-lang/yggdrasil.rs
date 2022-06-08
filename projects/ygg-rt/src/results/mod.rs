@@ -3,7 +3,7 @@ use std::{
     fmt::{Display, Formatter},
 };
 
-#[derive(Debug, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum StopBecause {
     Uninitialized,
     MissingEof { position: usize },

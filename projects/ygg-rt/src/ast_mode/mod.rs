@@ -16,7 +16,7 @@ pub enum YYResult<'i, T> {
 
 pub type Parsed<'i, T> = (YState<'i>, T);
 
-#[derive(Debug, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct YState<'i> {
     /// reset part of string
     pub partial_string: &'i str,

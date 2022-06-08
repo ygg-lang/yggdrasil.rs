@@ -39,11 +39,34 @@ impl<'i> YState<'i> {
     /// Parses a sequence of 0 or more repetitions of the given parser.
     /// ```regex
     /// p*
+    /// p+ <=> p p*
+    /// ```
+    #[inline]
+    pub fn match_repeats<T, F>(self, parse: F) -> YResult<'i, Vec<T>>
+    where
+        F: Fn(YState) -> YResult<T>,
+    {
+        let mut result = Vec::new();
+        let mut state = self;
+        loop {
+            let (new, value) = match parse(state.clone()) {
+                Ok(o) => o,
+                Err(_) => break,
+            };
+            state = new;
+            result.push(value);
+        }
+        state.finish(result)
+    }
+
+    /// Parses a sequence of 0 or more repetitions of the given parser.
+    /// ```regex
+    /// p*
     /// p+
     /// p{min, max}
     /// ```
     #[inline]
-    pub fn parse_repeats<T, F>(self, min: usize, max: usize, parse: F) -> YResult<'i, Vec<T>>
+    pub fn match_repeat_m_n<T, F>(self, min: usize, max: usize, parse: F) -> YResult<'i, Vec<T>>
     where
         F: Fn(YState) -> YResult<T>,
     {
@@ -56,8 +79,8 @@ impl<'i> YState<'i> {
                 Ok(o) => o,
                 Err(_) => break,
             };
-            result.push(value);
             state = new;
+            result.push(value);
             count += 1;
             if count >= max {
                 break;
