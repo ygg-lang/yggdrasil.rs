@@ -25,6 +25,10 @@ features = ["lsp"]
 version = "0.1"
 path = "../ygg-ir"
 
+[dependencies.yggdrasil-parser]
+#version = "0.1.2"
+path = "../ygg-parser"
+
 [dev-dependencies]
 serde_yaml = "0.9.14"
 json5 = "0.4.1"

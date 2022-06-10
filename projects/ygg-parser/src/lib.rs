@@ -1,7 +1,8 @@
-pub use self::ygg::*;
+pub use ygg::*;
 
 #[allow(non_camel_case_types)]
-mod ygg;
+mod bootstrap;
 
-pub mod parser;
-pub mod utils;
+mod utils;
+#[allow(non_camel_case_types)]
+mod ygg;

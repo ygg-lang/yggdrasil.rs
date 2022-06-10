@@ -14,6 +14,7 @@ pub use self::{
 };
 
 mod data;
+mod errors;
 mod function;
 mod grammar;
 mod rule;

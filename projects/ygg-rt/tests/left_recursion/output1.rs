@@ -74,19 +74,19 @@ impl ExprAdd {
     }
     /// '+' expr_lift
     fn parse_axu1(state: YState) -> YResult<ExprAdd> {
-        let (state, _) = state.parse_char('+')?;
+        let (state, _) = state.match_char('+')?;
         let (state, expr) = ExprLifted::parse(state)?;
         state.finish(ExprAdd::Expr { expr: Box::new(expr) })
     }
     /// EOF
     fn parse_aux2(state: YState) -> YResult<ExprAdd> {
-        let (state, _) = state.parse_eof()?;
+        let (state, _) = state.match_eof()?;
         state.finish(ExprAdd::EOF)
     }
 }
 
 fn parse_atom(state: YState) -> YResult<usize> {
-    let (state, atom) = state.match_repeat_m_n(1, usize::MAX, |state| state.parse_char_range('0', '9'))?;
+    let (state, atom) = state.match_repeat_m_n(1, usize::MAX, |state| state.match_char_range('0', '9'))?;
     let num = String::from_iter(atom);
     state.finish(usize::from_str(&num).unwrap())
 }

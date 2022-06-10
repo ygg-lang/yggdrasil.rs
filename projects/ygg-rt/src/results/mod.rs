@@ -10,8 +10,8 @@ pub enum StopBecause {
     MissingRepeats { min: usize, current: usize, position: usize },
     MissingCharacter { expected: char, position: usize },
     MissingCharacterRange { start: char, end: char, position: usize },
-    MissingString { string: &'static str, position: usize },
-    ShouldNotBe { string: &'static str, position: usize },
+    MissingString { message: &'static str, position: usize },
+    ShouldNotBe { message: &'static str, position: usize },
     Custom { message: &'static str, position: usize },
 }
 

@@ -34,14 +34,14 @@ fn parse_output3(state: YState) -> YResult<Output3> {
 
 /// `a{1,2}b`
 fn parse_output3_aux2(state: YState) -> YResult<Output3Aux1> {
-    let (state, a) = state.match_repeat_m_n(1, 2, |state| state.parse_char('a'))?;
-    let (state, b) = state.parse_char('b')?;
+    let (state, a) = state.match_repeat_m_n(1, 2, |state| state.match_char('a'))?;
+    let (state, b) = state.match_char('b')?;
     state.finish(Output3Aux1::Output3Aux2 { a, b })
 }
 
 /// `a{1,3}c`
 fn parse_output3_aux3(state: YState) -> YResult<Output3Aux1> {
-    let (state, a) = state.match_repeat_m_n(1, 3, |state| state.parse_char('a'))?;
-    let (state, c) = state.parse_char('c')?;
+    let (state, a) = state.match_repeat_m_n(1, 3, |state| state.match_char('a'))?;
+    let (state, c) = state.match_char('c')?;
     state.finish(Output3Aux1::Output3Aux3 { a, c })
 }

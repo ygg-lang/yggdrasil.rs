@@ -2,13 +2,12 @@
 
 ProgramParser = program:ProgramNode $;
 
-
-
 @position
 ProgramNode = {statements:StatementNode};
 
 StatementNode =
-    @:DefineStatement [EOS]
+    @:ClassStatement
+  | @:UnionStatement
   | @:EmptyStatement
   ;
 
@@ -24,6 +23,15 @@ DefineStatement = MacroCalls define:DefineNode modifiers:Modifiers symbol:Identi
 @no_skip_ws
 DefineNode = 'def' | 'union' | 'class' | 'enum' | 'struct';
 
+@position
+ClassStatement = modifiers:Modifiers symbol:Identifier '{' body:ChoiceNode '}';
+
+@position
+UnionStatement = modifiers:Modifiers symbol:Identifier '{' body:ChoiceNode '}';
+
+
+KW_CLASS = 'class' | 'struct';
+KW_UNION = 'union' | 'enum';
 
 MacroCalls =
     { '#' macros:Macro
@@ -39,7 +47,7 @@ ArgumentValue =
     @:Boolean;
 
 @position
-Modifiers = {id:Identifier !('{'|'('|':'|'->'|';')};
+Modifiers = {id:Identifier};
 
 @position
 ChoiceNode = ['|'] {terms:ExprStream};

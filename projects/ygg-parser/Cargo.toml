@@ -9,9 +9,9 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-peginator = { version = "0.6.0", default-features = false}
 unicode-xid = "0.2.4"
-
+peginator = { version = "0.6.0" }
+yggdrasil-rt = { path = "../ygg-rt" }
 
 [features]
 default = []

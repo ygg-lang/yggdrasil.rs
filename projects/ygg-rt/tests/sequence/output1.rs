@@ -11,9 +11,9 @@ struct Output1 {
 /// `ab{1,3}c`
 fn parse_output1(state: YState, min: usize, max: usize) -> YResult<Output1> {
     let start = state.start_offset;
-    let (state, a) = state.parse_char('a')?;
-    let (state, b) = state.match_repeat_m_n(min, max, |state| state.parse_char('b'))?;
-    let (state, c) = state.parse_char('c')?;
+    let (state, a) = state.match_char('a')?;
+    let (state, b) = state.match_repeat_m_n(min, max, |state| state.match_char('b'))?;
+    let (state, c) = state.match_char('c')?;
     let range = start..state.start_offset;
     state.finish(Output1 { a, b, c, range })
 }

@@ -56,7 +56,7 @@ impl ExprAdd {
         state.finish(ExprAdd { pow })
     }
     fn parse_aux1(state: YState) -> YResult<ExprPow> {
-        let (state, _) = state.parse_char('+')?;
+        let (state, _) = state.match_char('+')?;
         let (state, pow) = ExprPow::parse(state)?;
         state.finish(pow)
     }
@@ -85,7 +85,7 @@ impl ExprPow {
         expr
     }
     pub fn parse_aux1(state: YState) -> YResult<ExprAtom> {
-        let (state, _) = state.parse_char('^')?;
+        let (state, _) = state.match_char('^')?;
         let (state, atom) = ExprAtom::parse(state)?;
         state.finish(atom)
     }
@@ -107,7 +107,7 @@ impl Debug for Expr {
 
 impl ExprAtom {
     pub fn parse(state: YState) -> YResult<ExprAtom> {
-        let (state, atom) = state.match_repeat_m_n(1, usize::MAX, |state| state.parse_char_range('0', '9'))?;
+        let (state, atom) = state.match_repeat_m_n(1, usize::MAX, |state| state.match_char_range('0', '9'))?;
         let num = String::from_iter(atom);
         state.finish(ExprAtom::Atom(usize::from_str(&num).unwrap()))
     }
