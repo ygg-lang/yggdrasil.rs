@@ -1,4 +1,4 @@
-pub use ygg::*;
+pub use bootstrap::*;
 
 #[allow(non_camel_case_types)]
 mod bootstrap;
