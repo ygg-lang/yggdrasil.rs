@@ -27,7 +27,6 @@ pub enum StatementNode {
 pub struct ClassStatementNode {
     pub modifiers: ModifiersNode,
     pub identifier: IdentifierNode,
-    pub out_type: Option<OutTypeNode>,
     pub position: std::ops::Range<usize>,
 }
 
@@ -53,7 +52,7 @@ pub struct NamepathNode {
 }
 #[derive(Debug, Clone)]
 pub struct IdentifierNode {
-    pub name: String,
+    pub string: String,
     pub position: std::ops::Range<usize>,
 }
 
@@ -78,9 +77,10 @@ mod private_area {
         /// `statement ignore`
         fn consume_aux(s0: YState) -> YResult<StatementNode> {
             let s1 = s0.clone();
-            let (s2, statement) = StatementNode::consume(s1)?;
-            let s3 = s2.skip(IgnoredNode::consume);
-            s3.finish(statement)
+            let s2 = s1.skip(IgnoredNode::consume);
+            let (s3, statement) = StatementNode::consume(s2)?;
+            let s4 = s3.skip(IgnoredNode::consume);
+            s4.finish(statement)
         }
     }
 
@@ -99,6 +99,7 @@ mod private_area {
     }
 
     impl ClassStatementNode {
+        /// m1 m2 class {}
         pub fn consume(s0: YState) -> YResult<ClassStatementNode> {
             let s1 = s0.clone();
             let (s2, modifiers) = ModifiersNode::consume(s1)?;
@@ -106,11 +107,9 @@ mod private_area {
             let (s4, _) = KwClass::consume(s3)?;
             let s5 = s4.skip(IgnoredNode::consume);
             let (s6, identifier) = IdentifierNode::consume(s5)?;
-            let s7 = s6.skip(IgnoredNode::consume);
-            let (s8, out_type) = s7.match_optional(OutTypeNode::consume)?;
-            let s9 = s8.skip(IgnoredNode::consume);
+            let s9 = s6.skip(IgnoredNode::consume);
             let (s10, _) = RuleBodyNode::consume(s9)?;
-            s10.finish(ClassStatementNode { modifiers, identifier, out_type, position: s10.away_from(s0) })
+            s10.finish(ClassStatementNode { modifiers, identifier, position: s10.away_from(s0) })
         }
     }
 
@@ -123,8 +122,10 @@ mod private_area {
 
     impl OutTypeNode {
         fn consume(s0: YState) -> YResult<OutTypeNode> {
-            let (s1, typing) = NamepathNode::consume(s0)?;
-            s1.finish(OutTypeNode { typing, position: s1.away_from(s0) })
+            let s1 = s0.clone();
+            let (s2, _) = s1.match_string(":", false)?;
+            let (s3, typing) = NamepathNode::consume(s2)?;
+            s3.finish(OutTypeNode { typing, position: s1.away_from(s0) })
         }
     }
 
@@ -172,8 +173,8 @@ mod private_area {
     /// xid_start
     impl IdentifierNode {
         fn consume(s0: YState) -> YResult<IdentifierNode> {
-            let (s1, name) = s0.match_string_if(|c| c.is_alphabetic(), "{alphabetic}")?;
-            s1.finish(IdentifierNode { name, position: s1.away_from(s0) })
+            let (s1, name) = s0.match_string_if(|c| c.is_alphabetic(), "<alphabetic>")?;
+            s1.finish(IdentifierNode { string: name, position: s1.away_from(s0) })
         }
     }
 
@@ -187,7 +188,7 @@ mod private_area {
             state.finish(())
         }
         fn consume_whitespace(state: YState) -> YResult<()> {
-            let (state, _) = state.match_repeats(|s| s.match_char_if(|c| c.is_whitespace(), "<Whitespace>"))?;
+            let (state, _) = state.match_string_if(|c| c.is_whitespace() || c == '\r' || c == '\n', "<Whitespace>")?;
             state.finish(())
         }
         fn consume_comment(state: YState) -> YResult<()> {

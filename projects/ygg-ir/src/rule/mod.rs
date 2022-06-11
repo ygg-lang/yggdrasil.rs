@@ -7,7 +7,7 @@ use std::{
 use indexmap::set::IndexSet;
 use serde::{Deserialize, Serialize};
 
-use crate::{traits::FieldCount, *};
+use crate::*;
 
 pub mod derive;
 pub mod node;

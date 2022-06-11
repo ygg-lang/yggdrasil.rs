@@ -1,4 +1,4 @@
-pub use diagnostic_quick::{Failure, QError, QResult, Success, Validation};
+pub use diagnostic_quick::{Failure, QError, QErrorKind, QResult, RuntimeError, Success, SyntaxError, Validation};
 pub use indexmap::{IndexMap, IndexSet};
 
 pub use self::{

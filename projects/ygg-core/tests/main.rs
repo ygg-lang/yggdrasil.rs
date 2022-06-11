@@ -1,8 +1,16 @@
-// #[test]
-// fn ready() {
-//     println!("it, works!")
-// }
-//
+use yggdrasil_core::parse_grammar;
+
+#[test]
+fn ready() {
+    println!("it, works!")
+}
+
+#[test]
+fn test_bootstrap() {
+    let out = parse_grammar(include_str!("../src/bootstrap.ygg")).unwrap();
+    println!("{:#?}", out)
+}
+
 // #[test]
 // fn dumper() -> QResult {
 //     let info1 = GrammarParser::parse(include_str!("prog.ygg"))?.success;

@@ -120,6 +120,7 @@ impl<'i> YState<'i> {
     /// ```regex
     /// p?
     /// ```
+    #[inline]
     pub fn match_optional<T, F>(self, parse: F) -> YResult<'i, Option<T>>
     where
         F: Fn(YState) -> YResult<T>,

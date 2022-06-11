@@ -39,3 +39,21 @@ impl Display for RuleDerive {
         write!(f, "#[derive({})]", self.derived().join(", "))
     }
 }
+
+impl GrammarRule {
+    pub fn new(name: &str, range: &Range<usize>) -> Self {
+        Self {
+            name: name.to_string(),
+            r#type: String::new(),
+            document: String::new(),
+            public: false,
+            derives: RuleDerive::default(),
+            auto_inline: false,
+            auto_boxed: false,
+            entry: false,
+            union: false,
+            body: ExpressionNode::empty(),
+            range: range.clone(),
+        }
+    }
+}
