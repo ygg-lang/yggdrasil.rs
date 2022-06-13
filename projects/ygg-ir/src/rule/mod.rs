@@ -30,16 +30,18 @@ pub struct RuleParameter {
     pub typing: String,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RuleParameterKind {
     Optional,
     Required,
     Variadic,
 }
 
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum GrammarRuleKind {
     Class,
     Union,
+    Climb,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]

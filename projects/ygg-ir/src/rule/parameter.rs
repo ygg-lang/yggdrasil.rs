@@ -45,14 +45,14 @@ impl BitOr<Self> for RuleParameterKind {
 
 impl GrammarRule {
     pub fn collect_class_parameters(&self) -> Vec<RuleParameter> {
-        assert!(!self.kind);
+        assert_eq!(self.kind, GrammarRuleKind::Class);
         let mut parameters = vec![];
 
         return parameters;
     }
 
     pub fn collect_union_parameters(&self) -> BTreeMap<String, Vec<RuleParameter>> {
-        assert!(self.kind);
+        assert_eq!(self.kind, GrammarRuleKind::Union);
         let mut parameters = BTreeMap::new();
         return parameters;
     }

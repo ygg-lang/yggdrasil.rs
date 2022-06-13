@@ -215,42 +215,20 @@ impl<'i> YState<'i> {
             Err(StopBecause::MissingString { message: head, position: self.start_offset })?;
         }
         let mut offset = head.len();
-        let mut rest = self.partial_string[offset..].chars();
+        let mut rest = &self.partial_string[offset..];
         if nested {
             let mut detph = 1;
-            while let Some(c) = rest.next() {
-                match c {
-                    '/' => {
-                        if let Some('*') = rest.next() {
-                            detph += 1;
-                        }
-                    }
-                    '*' => {
-                        if let Some('/') = rest.next() {
-                            detph -= 1;
-                            if detph == 0 {
-                                offset += 3;
-                                break;
-                            }
-                        }
-                    }
-                    _ => {}
-                }
-                offset += c.len_utf8();
+            while let Some(s) = rest.find(head) {
+                offset += s + head.len();
+                rest = &self.partial_string[offset..];
+                detph += 1;
             }
+            unimplemented!("need help to implement nested comment block")
         }
         else {
-            while let Some(c) = rest.next() {
-                match c {
-                    '*' => {
-                        if let Some('/') = rest.next() {
-                            offset += 2;
-                            break;
-                        }
-                    }
-                    _ => {}
-                }
-                offset += c.len_utf8();
+            match rest.find(tail) {
+                Some(s) => offset += s + tail.len(),
+                None => Err(StopBecause::MissingString { message: tail, position: self.start_offset + tail.len() })?,
             }
         }
         self.advance(offset).finish(())

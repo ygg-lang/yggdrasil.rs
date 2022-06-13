@@ -41,7 +41,7 @@ impl Display for RuleDerive {
 }
 
 impl GrammarRule {
-    pub fn new(name: &str, range: &Range<usize>) -> Self {
+    pub fn new(name: &str, range: &Range<usize>, kind: GrammarRuleKind) -> Self {
         Self {
             name: name.to_string(),
             r#type: String::new(),
@@ -51,7 +51,7 @@ impl GrammarRule {
             auto_inline: false,
             auto_boxed: false,
             entry: false,
-            kind: false,
+            kind,
             body: ExpressionNode::empty(),
             range: range.clone(),
         }

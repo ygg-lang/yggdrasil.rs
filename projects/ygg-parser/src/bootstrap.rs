@@ -5,6 +5,7 @@ use yggdrasil_rt::{
 
 pub fn parse_program(input: &str) -> Result<ProgramNode, StopBecause> {
     let mut state = YState::new(input);
+    state.skip(IgnoredNode::consume);
     let (state, program) = ProgramNode::consume(state)?;
     state.match_eof()?;
     Ok(program)
@@ -68,8 +69,9 @@ pub enum ExprNode {
     Choice { lhs: Box<ExprNode>, rhs: Box<ExprNode> },
     SoftConcat { lhs: Box<ExprNode>, rhs: Box<ExprNode> },
     Concat { lhs: Box<ExprNode>, rhs: Box<ExprNode> },
-    Repeat { expr: Box<ExprNode> },
-    Optional { expr: Box<ExprNode> },
+    Suffix { expr: Box<ExprNode>, suffix: Vec<char> },
+    MarkTag { lhs: IdentifierNode, rhs: Box<ExprNode> },
+    Negative { expr: Box<ExprNode> },
     Group { expr: Box<ExprNode> },
     Identifier { identifier: IdentifierNode },
 }
@@ -81,51 +83,43 @@ pub struct ExprChoiceNode {
 
 #[derive(Debug, Clone)]
 pub struct ExprSoftConcatNode {
-    items: Vec<ExprSoftConcatNode>,
+    items: Vec<ExprConcatNode>,
 }
 
 #[derive(Debug, Clone)]
 pub struct ExprConcatNode {
-    items: Vec<ExprRepeatNode>,
+    items: Vec<ExprSuffixNode>,
 }
 
 #[derive(Debug, Clone)]
-pub struct ExprRepeatNode {
+pub struct ExprSuffixNode {
     expr: ExprRest,
-    suffix: Vec<ExprSuffix>,
-}
-
-#[derive(Debug, Clone)]
-pub struct ExprSuffix {
-    expr: char,
+    suffix: Vec<char>,
 }
 
 #[derive(Debug, Clone)]
 pub enum ExprRest {
+    MarkTag { lhs: IdentifierNode, rhs: Box<ExprNode> },
     Negative { expr: Box<ExprNode> },
     Group { expr: Box<ExprNode> },
     Identifier { identifier: IdentifierNode },
 }
 
+pub struct IgnoredNode {}
+
 mod private_area {
     use super::*;
-
-    struct IgnoredNode {
-        pub position: std::ops::Range<usize>,
-    }
-
     impl ProgramNode {
         pub fn consume(i: YState) -> YResult<ProgramNode> {
             let (o, statement) = i.match_repeats(Self::consume_aux)?;
             o.finish(ProgramNode { statement, position: o.away_from(i) })
         }
         /// `statement ignore`
-        fn consume_aux(s0: YState) -> YResult<StatementNode> {
-            let s1 = s0.clone();
-            let s2 = s1.skip(IgnoredNode::consume);
-            let (s3, statement) = StatementNode::consume(s2)?;
-            let s4 = s3.skip(IgnoredNode::consume);
-            s4.finish(statement)
+        fn consume_aux(i: YState) -> YResult<StatementNode> {
+            let o = i.clone();
+            let (o, statement) = StatementNode::consume(o)?;
+            let o = o.skip(IgnoredNode::consume);
+            o.finish(statement)
         }
     }
 
@@ -186,7 +180,12 @@ mod private_area {
         }
     }
 
-    impl ExprNode {}
+    impl ExprNode {
+        fn consume(s0: YState) -> YResult<ExprNode> {
+            let (o, expr) = ExprChoiceNode::consume(s0)?;
+            o.finish(expr.ascent())
+        }
+    }
 
     // item:ExprSoftConcatNode ignore ('|' ignore item:ExprSoftConcatNode ignore)*
     impl ExprChoiceNode {
@@ -194,7 +193,7 @@ mod private_area {
         fn ascent(mut self) -> ExprNode {
             let mut lhs = self.items.remove(0).ascent();
             for rhs in self.items {
-                lhs = ExprNode::Choice { lhs: Box::new(lhs.ascent()), rhs: Box::new(rhs.ascent()) };
+                lhs = ExprNode::Choice { lhs: Box::new(lhs), rhs: Box::new(rhs.ascent()) };
             }
             lhs
         }
@@ -221,11 +220,19 @@ mod private_area {
         pub fn ascent(mut self) -> ExprNode {
             let mut lhs = self.items.remove(0).ascent();
             for rhs in self.items {
-                lhs = ExprNode::SoftConcat { lhs: Box::new(lhs.ascent()), rhs: Box::new(rhs.ascent()) };
+                lhs = ExprNode::SoftConcat { lhs: Box::new(lhs), rhs: Box::new(rhs.ascent()) };
             }
             lhs
         }
-        fn consume(i: YState) -> YResult<Self> {}
+        fn consume(i: YState) -> YResult<Self> {
+            let mut items = vec![];
+            let o = i.clone();
+            let (o, item_1) = ExprConcatNode::consume(o)?;
+            items.push(item_1);
+            let (o, item_2) = o.match_repeats(Self::consume_aux1)?;
+            items.extend(item_2);
+            o.finish(ExprSoftConcatNode { items })
+        }
 
         // '~' ignore item:ExprConcatNode ignore
         fn consume_aux1(i: YState) -> YResult<ExprConcatNode> {
@@ -241,9 +248,9 @@ mod private_area {
     // item:ExprRepeatNode ignore (item:ExprRepeatNode ignore)*
     impl ExprConcatNode {
         pub fn ascent(mut self) -> ExprNode {
-            let mut lhs = self.items.remove(0).ascent();
+            let mut lhs = self.items.remove(0).expr.ascent();
             for rhs in self.items {
-                lhs = ExprNode::Concat { lhs: Box::new(lhs.ascent()), rhs: Box::new(rhs.ascent()) };
+                lhs = ExprNode::Concat { lhs: Box::new(lhs), rhs: Box::new(rhs.expr.ascent()) };
             }
             lhs
         }
@@ -252,7 +259,7 @@ mod private_area {
         fn consume(i: YState) -> YResult<Self> {
             let mut items = vec![];
             let o = i.clone();
-            let (o, item_1) = ExprRepeatNode::consume(o)?;
+            let (o, item_1) = ExprSuffixNode::consume(o)?;
             items.push(item_1);
             let (o, item_2) = o.match_repeats(Self::consume_aux1)?;
             items.extend(item_2);
@@ -260,11 +267,89 @@ mod private_area {
         }
 
         /// `item:ExprRepeatNode ignore`
-        fn consume_aux1(i: YState) -> YResult<ExprConcatNode> {
+        fn consume_aux1(i: YState) -> YResult<ExprSuffixNode> {
             let o = i.clone();
-            let (o, item) = ExprRepeatNode::consume(o)?;
+            let (o, item) = ExprSuffixNode::consume(o)?;
             let o = o.skip(IgnoredNode::consume);
             o.finish(item)
+        }
+    }
+
+    impl ExprSuffixNode {
+        fn consume(i: YState) -> YResult<Self> {
+            let o = i.clone();
+            let (o, item) = ExprRest::consume(o)?;
+            let o = o.skip(IgnoredNode::consume);
+            let (o, suffix) = o.match_repeats(Self::consume_aux1)?;
+            o.finish(ExprSuffixNode { expr: item, suffix })
+        }
+        fn consume_aux1(i: YState) -> YResult<char> {
+            let o = i.clone();
+            let (o, char) = o.match_char_if(|c| c == '*' || c == '+' || c == '?', "suffix")?;
+            let o = o.skip(IgnoredNode::consume);
+            o.finish(char)
+        }
+    }
+
+    impl ExprRest {
+        fn ascent(self) -> ExprNode {
+            match self {
+                ExprRest::MarkTag { lhs, rhs } => ExprNode::MarkTag { lhs, rhs },
+                ExprRest::Negative { expr } => ExprNode::Negative { expr },
+                ExprRest::Group { expr } => ExprNode::Group { expr },
+                ExprRest::Identifier { identifier } => ExprNode::Identifier { identifier },
+            }
+        }
+        // pub enum ExprRest {
+        //     MarkTag { lhs: IdentifierNode, rhs: Box<ExprNode> },
+        //     Negative { expr: Box<ExprNode> },
+        //     Group { expr: Box<ExprNode> },
+        //     Identifier { identifier: IdentifierNode },
+        // }
+        fn consume(i: YState) -> YResult<Self> {
+            let o = i.clone();
+            let (o, expr_rest) = o
+                .begin_choice()
+                .maybe(Self::consume_mark_tag)
+                .maybe(Self::consume_negative)
+                .maybe(Self::consume_group)
+                .maybe(Self::consume_identifier)
+                .end_choice()?;
+            o.finish(expr_rest)
+        }
+        // id ignore : ignore expr:ExprNode
+        fn consume_mark_tag(i: YState) -> YResult<ExprRest> {
+            let o = i.clone();
+            let (o, id) = IdentifierNode::consume(o)?;
+            let o = o.skip(IgnoredNode::consume);
+            let (o, _) = o.match_string(":", false)?;
+            let o = o.skip(IgnoredNode::consume);
+            let (o, expr) = ExprNode::consume(o)?;
+            o.finish(ExprRest::MarkTag { lhs: id, rhs: Box::new(expr) })
+        }
+        // ! ignore expr
+        fn consume_negative(i: YState) -> YResult<ExprRest> {
+            let o = i.clone();
+            let (o, _) = o.match_string("!", false)?;
+            let o = o.skip(IgnoredNode::consume);
+            let (o, expr) = ExprNode::consume(o)?;
+            o.finish(ExprRest::Negative { expr: Box::new(expr) })
+        }
+        // ( ignore expr ignore )
+        fn consume_group(i: YState) -> YResult<ExprRest> {
+            let o = i.clone();
+            let (o, _) = o.match_string("(", false)?;
+            let o = o.skip(IgnoredNode::consume);
+            let (o, expr) = ExprNode::consume(o)?;
+            let o = o.skip(IgnoredNode::consume);
+            let (o, _) = o.match_string(")", false)?;
+            o.finish(ExprRest::Group { expr: Box::new(expr) })
+        }
+        // id
+        fn consume_identifier(i: YState) -> YResult<ExprRest> {
+            let o = i.clone();
+            let (o, id) = IdentifierNode::consume(o)?;
+            o.finish(ExprRest::Identifier { identifier: id })
         }
     }
 
@@ -308,7 +393,7 @@ mod private_area {
     }
 
     impl IgnoredNode {
-        fn consume(state: YState) -> YResult<()> {
+        pub fn consume(state: YState) -> YResult<()> {
             let (state, _) = state //
                 .begin_choice()
                 .maybe(Self::consume_whitespace)

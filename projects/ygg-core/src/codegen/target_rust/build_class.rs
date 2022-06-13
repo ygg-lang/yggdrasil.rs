@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use yggdrasil_ir::RuleDerive;
+use yggdrasil_ir::{GrammarRuleKind, RuleDerive};
 
 use super::*;
 
@@ -64,8 +64,15 @@ impl WriteRust for GrammarRule {
             w.write_str("pub ")?;
         }
         let name = w.get_class_name(&self.name);
-        match self.kind {
-            true => {
+        match &self.kind {
+            GrammarRuleKind::Class => {
+                writeln!(w, "struct {} {{", name)?;
+                for field in self.collect_class_parameters() {
+                    write!(w, "    {},", field)?;
+                }
+                writeln!(w, "}}")?;
+            }
+            GrammarRuleKind::Union => {
                 writeln!(w, "enum {} {{", name)?;
                 for (variant, fields) in self.collect_union_parameters() {
                     writeln!(w, "    {} {{", variant)?;
@@ -76,13 +83,7 @@ impl WriteRust for GrammarRule {
                 }
                 writeln!(w, "}}")?;
             }
-            false => {
-                writeln!(w, "struct {} {{", name)?;
-                for field in self.collect_class_parameters() {
-                    write!(w, "    {},", field)?;
-                }
-                writeln!(w, "}}")?;
-            }
+            GrammarRuleKind::Climb => {}
         }
         Ok(())
     }
