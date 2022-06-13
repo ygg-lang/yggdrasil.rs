@@ -37,6 +37,11 @@ pub enum RuleParameterKind {
     Variadic,
 }
 
+pub enum GrammarRuleKind {
+    Class,
+    Union,
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct GrammarRule {
     /// Automatically inline when this rule is called
@@ -48,6 +53,8 @@ pub struct GrammarRule {
     /// }
     /// ```
     pub name: String,
+    /// Kind of this rule
+    pub kind: GrammarRuleKind,
     /// Automatically inline when this rule is called
     ///
     /// ## Examples
@@ -121,15 +128,6 @@ pub struct GrammarRule {
     /// }
     /// ```
     pub entry: bool,
-    /// union struct
-    ///
-    /// ## Examples
-    /// ```ygg
-    /// union Rule {
-    ///
-    /// }
-    /// ```
-    pub union: bool,
     ///
     pub body: ExpressionNode,
     /// position of all parts

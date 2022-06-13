@@ -20,7 +20,7 @@ fn test() {
         auto_inline: false,
         auto_boxed: false,
         entry: false,
-        union: false,
+        kind: false,
         body: a | b | c,
         range: Default::default(),
     };
@@ -64,7 +64,7 @@ impl WriteRust for GrammarRule {
             w.write_str("pub ")?;
         }
         let name = w.get_class_name(&self.name);
-        match self.union {
+        match self.kind {
             true => {
                 writeln!(w, "enum {} {{", name)?;
                 for (variant, fields) in self.collect_union_parameters() {

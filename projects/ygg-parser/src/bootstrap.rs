@@ -27,6 +27,7 @@ pub enum StatementNode {
 pub struct ClassStatementNode {
     pub modifiers: ModifiersNode,
     pub identifier: IdentifierNode,
+    pub rule_body: RuleBodyNode,
     pub position: std::ops::Range<usize>,
 }
 
@@ -58,8 +59,52 @@ pub struct IdentifierNode {
 
 #[derive(Debug, Clone)]
 pub struct RuleBodyNode {
-    pub items: Vec<char>,
+    pub expr: ExprNode,
     pub position: std::ops::Range<usize>,
+}
+
+#[derive(Debug, Clone)]
+pub enum ExprNode {
+    Choice { lhs: Box<ExprNode>, rhs: Box<ExprNode> },
+    SoftConcat { lhs: Box<ExprNode>, rhs: Box<ExprNode> },
+    Concat { lhs: Box<ExprNode>, rhs: Box<ExprNode> },
+    Repeat { expr: Box<ExprNode> },
+    Optional { expr: Box<ExprNode> },
+    Group { expr: Box<ExprNode> },
+    Identifier { identifier: IdentifierNode },
+}
+
+#[derive(Debug, Clone)]
+pub struct ExprChoiceNode {
+    items: Vec<ExprSoftConcatNode>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ExprSoftConcatNode {
+    items: Vec<ExprSoftConcatNode>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ExprConcatNode {
+    items: Vec<ExprRepeatNode>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ExprRepeatNode {
+    expr: ExprRest,
+    suffix: Vec<ExprSuffix>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ExprSuffix {
+    expr: char,
+}
+
+#[derive(Debug, Clone)]
+pub enum ExprRest {
+    Negative { expr: Box<ExprNode> },
+    Group { expr: Box<ExprNode> },
+    Identifier { identifier: IdentifierNode },
 }
 
 mod private_area {
@@ -108,8 +153,8 @@ mod private_area {
             let s5 = s4.skip(IgnoredNode::consume);
             let (s6, identifier) = IdentifierNode::consume(s5)?;
             let s9 = s6.skip(IgnoredNode::consume);
-            let (s10, _) = RuleBodyNode::consume(s9)?;
-            s10.finish(ClassStatementNode { modifiers, identifier, position: s10.away_from(s0) })
+            let (s10, rule_body) = RuleBodyNode::consume(s9)?;
+            s10.finish(ClassStatementNode { modifiers, identifier, rule_body, position: s10.away_from(s0) })
         }
     }
 
@@ -134,8 +179,92 @@ mod private_area {
             let s1 = s0.clone();
             let (s2, _) = s1.match_string("{", false)?;
             let s3 = s2.skip(IgnoredNode::consume);
-            let (s4, _) = s3.match_string("}", false)?;
-            s4.finish(RuleBodyNode { items: vec![], position: s4.away_from(s0) })
+            let (s4, expr) = ExprNode::consume(s3)?;
+            let s5 = s4.skip(IgnoredNode::consume);
+            let (s6, _) = s5.match_string("}", false)?;
+            s6.finish(RuleBodyNode { expr, position: s6.away_from(s0) })
+        }
+    }
+
+    impl ExprNode {}
+
+    // item:ExprSoftConcatNode ignore ('|' ignore item:ExprSoftConcatNode ignore)*
+    impl ExprChoiceNode {
+        // fold from left
+        fn ascent(mut self) -> ExprNode {
+            let mut lhs = self.items.remove(0).ascent();
+            for rhs in self.items {
+                lhs = ExprNode::Choice { lhs: Box::new(lhs.ascent()), rhs: Box::new(rhs.ascent()) };
+            }
+            lhs
+        }
+        fn consume(i: YState) -> YResult<ExprChoiceNode> {
+            let mut items = vec![];
+            let o = i.clone();
+            let (o, item_1) = ExprSoftConcatNode::consume(o)?;
+            items.push(item_1);
+            let (o, item_2) = o.match_repeats(Self::consume_aux1)?;
+            items.extend(item_2);
+            o.finish(ExprChoiceNode { items })
+        }
+        fn consume_aux1(i: YState) -> YResult<ExprSoftConcatNode> {
+            let o = i.clone();
+            let (o, _) = o.match_string("|", false)?;
+            let o = o.skip(IgnoredNode::consume);
+            let (o, item) = ExprSoftConcatNode::consume(o)?;
+            let o = o.skip(IgnoredNode::consume);
+            o.finish(item)
+        }
+    }
+    // item:ExprConcatNode ignore ('~' ignore item:ExprConcatNode ignore)*
+    impl ExprSoftConcatNode {
+        pub fn ascent(mut self) -> ExprNode {
+            let mut lhs = self.items.remove(0).ascent();
+            for rhs in self.items {
+                lhs = ExprNode::SoftConcat { lhs: Box::new(lhs.ascent()), rhs: Box::new(rhs.ascent()) };
+            }
+            lhs
+        }
+        fn consume(i: YState) -> YResult<Self> {}
+
+        // '~' ignore item:ExprConcatNode ignore
+        fn consume_aux1(i: YState) -> YResult<ExprConcatNode> {
+            let o = i.clone();
+            let (o, _) = o.match_string("~", false)?;
+            let o = o.skip(IgnoredNode::consume);
+            let (o, item) = ExprConcatNode::consume(o)?;
+            let o = o.skip(IgnoredNode::consume);
+            o.finish(item)
+        }
+    }
+
+    // item:ExprRepeatNode ignore (item:ExprRepeatNode ignore)*
+    impl ExprConcatNode {
+        pub fn ascent(mut self) -> ExprNode {
+            let mut lhs = self.items.remove(0).ascent();
+            for rhs in self.items {
+                lhs = ExprNode::Concat { lhs: Box::new(lhs.ascent()), rhs: Box::new(rhs.ascent()) };
+            }
+            lhs
+        }
+
+        // item:ExprRepeatNode ignore (item:ExprRepeatNode ignore)*
+        fn consume(i: YState) -> YResult<Self> {
+            let mut items = vec![];
+            let o = i.clone();
+            let (o, item_1) = ExprRepeatNode::consume(o)?;
+            items.push(item_1);
+            let (o, item_2) = o.match_repeats(Self::consume_aux1)?;
+            items.extend(item_2);
+            o.finish(ExprConcatNode { items })
+        }
+
+        /// `item:ExprRepeatNode ignore`
+        fn consume_aux1(i: YState) -> YResult<ExprConcatNode> {
+            let o = i.clone();
+            let (o, item) = ExprRepeatNode::consume(o)?;
+            let o = o.skip(IgnoredNode::consume);
+            o.finish(item)
         }
     }
 

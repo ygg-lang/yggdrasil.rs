@@ -33,7 +33,7 @@ impl ParseContext {
                 }
             }
         }
-        self.visit_rule_body(&node.rule_body);
+        let expr = self.visit_rule_body(&node.rule_body);
     }
     pub fn visit_rule_body(&mut self, node: &RuleBodyNode) -> ExpressionNode {
         for rule in &node.rules {

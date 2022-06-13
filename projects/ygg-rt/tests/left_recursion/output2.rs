@@ -70,10 +70,10 @@ struct ExprPow {
 impl ExprPow {
     pub fn parse(state: YState) -> YResult<ExprPow> {
         let mut atom = vec![];
-        let (state, atom1) = ExprAtom::parse(state)?;
-        atom.push(atom1);
-        let (state, atom2) = state.match_repeat_m_n(0, usize::MAX, ExprPow::parse_aux1)?;
-        atom.extend(atom2);
+        let (state, atom1) = state.match_repeats(ExprPow::parse_aux1)?;
+        atom.extend(atom1);
+        let (state, atom2) = ExprAtom::parse(state)?;
+        atom.push(atom2);
         state.finish(ExprPow { atom })
     }
     // fold tree by right
@@ -84,9 +84,10 @@ impl ExprPow {
         }
         expr
     }
+    // atom '^'
     pub fn parse_aux1(state: YState) -> YResult<ExprAtom> {
-        let (state, _) = state.match_char('^')?;
         let (state, atom) = ExprAtom::parse(state)?;
+        let (state, _) = state.match_char('^')?;
         state.finish(atom)
     }
 }

@@ -41,7 +41,7 @@ impl Expr {
     }
 }
 
-// expr_lift: atom add_expr
+// expr_lift: (lhs:atom +) rhs:atom
 #[derive(Debug)]
 struct ExprLifted {
     atom: usize,

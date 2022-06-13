@@ -1,13 +1,23 @@
 use super::*;
 
 impl<'i> YState<'i> {
-    /// Parses a single character.
+    /// Parsing a single character.
+    ///
+    /// ```ygg
+    /// 'c'
+    /// ```
+    #[inline]
     pub fn match_char(self, target: char) -> YResult<'i, char> {
         match self.get_character(0) {
             Some(c) if c.eq(&target) => self.advance(target).finish(target),
             _ => Err(StopBecause::MissingCharacter { expected: target, position: self.start_offset })?,
         }
     }
+    /// Parsing a character in given range.
+    ///
+    /// ```ygg
+    /// [a-z]
+    /// ```
     #[inline]
     pub fn match_char_range(self, start: char, end: char) -> YResult<'i, char> {
         match self.get_character(0) {
@@ -21,6 +31,10 @@ impl<'i> YState<'i> {
             Some(c) if predicate(c) => self.advance(c).finish(c),
             _ => Err(StopBecause::MissingString { message, position: self.start_offset })?,
         }
+    }
+    #[inline]
+    pub fn match_char_any(self) -> YResult<'i, char> {
+        self.match_char_if(|_| true, "ANY")
     }
     #[inline]
     pub fn parse_char_set(self, set: TrieSet, message: &'static str) -> YResult<'i, char> {
@@ -201,8 +215,44 @@ impl<'i> YState<'i> {
             Err(StopBecause::MissingString { message: head, position: self.start_offset })?;
         }
         let mut offset = head.len();
-        let mut _rest = self.partial_string[offset..].chars();
-        todo!();
+        let mut rest = self.partial_string[offset..].chars();
+        if nested {
+            let mut detph = 1;
+            while let Some(c) = rest.next() {
+                match c {
+                    '/' => {
+                        if let Some('*') = rest.next() {
+                            detph += 1;
+                        }
+                    }
+                    '*' => {
+                        if let Some('/') = rest.next() {
+                            detph -= 1;
+                            if detph == 0 {
+                                offset += 3;
+                                break;
+                            }
+                        }
+                    }
+                    _ => {}
+                }
+                offset += c.len_utf8();
+            }
+        }
+        else {
+            while let Some(c) = rest.next() {
+                match c {
+                    '*' => {
+                        if let Some('/') = rest.next() {
+                            offset += 2;
+                            break;
+                        }
+                    }
+                    _ => {}
+                }
+                offset += c.len_utf8();
+            }
+        }
         self.advance(offset).finish(())
     }
 }

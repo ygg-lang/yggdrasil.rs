@@ -51,7 +51,7 @@ impl GrammarRule {
             auto_inline: false,
             auto_boxed: false,
             entry: false,
-            union: false,
+            kind: false,
             body: ExpressionNode::empty(),
             range: range.clone(),
         }
