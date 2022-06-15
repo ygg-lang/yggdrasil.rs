@@ -50,12 +50,10 @@ impl<'i> YState<'i> {
         self.advance(target).finish(target)
     }
     #[inline]
-    pub fn match_string_if(self, predicate: impl Fn(char) -> bool, message: &'static str) -> YResult<'i, String> {
+    pub fn match_str_if(self, predicate: impl Fn(char) -> bool, message: &'static str) -> YResult<'i, &'i str> {
         let mut offset = 0;
-        let mut result = String::new();
         for char in self.partial_string.chars() {
             if predicate(char) {
-                result.push(char);
                 offset += char.len_utf8();
             }
             else {
@@ -65,7 +63,7 @@ impl<'i> YState<'i> {
         if offset == 0 {
             Err(StopBecause::MissingString { message, position: self.start_offset })?;
         }
-        self.advance(offset).finish(result)
+        self.advance(offset).finish(&self.partial_string[..offset])
     }
 
     #[inline]
@@ -178,29 +176,15 @@ impl<'i> YState<'i> {
     /// // comment
     /// ```
     #[inline]
-    pub fn match_comment_line(self, head: &'static str) -> YResult<'i, ()> {
+    pub fn match_comment_line(self, head: &'static str) -> YResult<'i, &'i str> {
         if !self.partial_string.starts_with(head) {
             Err(StopBecause::MissingString { message: head, position: self.start_offset })?;
         }
-        let mut offset = head.len();
-        let mut rest = self.partial_string[offset..].chars();
-        while let Some(c) = rest.next() {
-            match c {
-                '\r' => {
-                    match rest.next() {
-                        Some('\n') => offset += 2,
-                        _ => offset += 1,
-                    }
-                    break;
-                }
-                '\n' => {
-                    offset += 1;
-                    break;
-                }
-                _ => {}
-            }
-        }
-        self.advance(offset).finish(())
+        let offset = match self.partial_string.find(|c| c == '\r' || c == '\n') {
+            Some(s) => s,
+            None => self.partial_string.len(),
+        };
+        self.advance(offset).finish(&self.partial_string[..offset])
     }
     /// Parse the comment block
     ///

@@ -4,10 +4,10 @@ use yggdrasil_rt::{
 };
 
 pub fn parse_program(input: &str) -> Result<ProgramNode, StopBecause> {
-    let mut state = YState::new(input);
-    state.skip(IgnoredNode::consume);
-    let (state, program) = ProgramNode::consume(state)?;
-    state.match_eof()?;
+    let o = YState::new(input);
+    let o = o.skip(IgnoredNode::consume);
+    let (o, program) = ProgramNode::consume(o)?;
+    o.match_eof()?;
     Ok(program)
 }
 
@@ -60,7 +60,7 @@ pub struct IdentifierNode {
 
 #[derive(Debug, Clone)]
 pub struct RuleBodyNode {
-    pub expr: ExprNode,
+    pub expr: Option<ExprNode>,
     pub position: std::ops::Range<usize>,
 }
 
@@ -109,6 +109,7 @@ pub struct IgnoredNode {}
 
 mod private_area {
     use super::*;
+
     impl ProgramNode {
         pub fn consume(i: YState) -> YResult<ProgramNode> {
             let (o, statement) = i.match_repeats(Self::consume_aux)?;
@@ -173,7 +174,7 @@ mod private_area {
             let s1 = s0.clone();
             let (s2, _) = s1.match_string("{", false)?;
             let s3 = s2.skip(IgnoredNode::consume);
-            let (s4, expr) = ExprNode::consume(s3)?;
+            let (s4, expr) = s3.match_optional(ExprNode::consume)?;
             let s5 = s4.skip(IgnoredNode::consume);
             let (s6, _) = s5.match_string("}", false)?;
             s6.finish(RuleBodyNode { expr, position: s6.away_from(s0) })
@@ -387,13 +388,17 @@ mod private_area {
     /// xid_start
     impl IdentifierNode {
         fn consume(s0: YState) -> YResult<IdentifierNode> {
-            let (s1, name) = s0.match_string_if(|c| c.is_alphabetic(), "<alphabetic>")?;
-            s1.finish(IdentifierNode { string: name, position: s1.away_from(s0) })
+            let (s1, name) = s0.match_str_if(|c| c.is_alphabetic(), "<alphabetic>")?;
+            s1.finish(IdentifierNode { string: name.to_string(), position: s1.away_from(s0) })
         }
     }
 
     impl IgnoredNode {
         pub fn consume(state: YState) -> YResult<()> {
+            let (state, _) = state.match_repeats(Self::consume_one)?;
+            state.finish(())
+        }
+        fn consume_one(state: YState) -> YResult<()> {
             let (state, _) = state //
                 .begin_choice()
                 .maybe(Self::consume_whitespace)
@@ -402,7 +407,7 @@ mod private_area {
             state.finish(())
         }
         fn consume_whitespace(state: YState) -> YResult<()> {
-            let (state, _) = state.match_string_if(|c| c.is_whitespace() || c == '\r' || c == '\n', "<Whitespace>")?;
+            let (state, _) = state.match_str_if(|c| c.is_whitespace() || c == '\r' || c == '\n', "<Whitespace>")?;
             state.finish(())
         }
         fn consume_comment(state: YState) -> YResult<()> {

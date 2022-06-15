@@ -8,7 +8,7 @@ fn ready() {
 
 #[test]
 fn test_bootstrap2() {
-    let state = YState::new("entry class  Aaa { \n }  ");
+    let state = YState::new("entry class Aaa { \n }  ");
     let out = ClassStatementNode::consume(state);
     println!("{:#?}", out)
 }
