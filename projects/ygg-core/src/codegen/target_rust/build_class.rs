@@ -20,7 +20,7 @@ fn test() {
         auto_inline: false,
         auto_boxed: false,
         entry: false,
-        kind: false,
+        kind: GrammarRuleKind::Class,
         body: a | b | c,
         range: Default::default(),
     };

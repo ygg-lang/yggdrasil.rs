@@ -22,7 +22,7 @@ impl RustCodegen {
         name.to_case(Case::Pascal)
     }
     pub fn get_parse_name(&self, name: &str) -> String {
-        let name = format!("parse_{}_{}_{}", self.rule_prefix, name, self.rule_suffix);
+        let name = format!("consume_{}_{}", self.rule_prefix, name);
         name.to_case(Case::Snake)
     }
     pub(crate) fn write_start(&mut self) {

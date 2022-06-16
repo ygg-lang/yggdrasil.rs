@@ -11,6 +11,7 @@ use yggdrasil_ir::{CodeGenerator, ExpressionNode, GrammarInfo, GrammarRule, QErr
 
 mod build_class;
 mod build_data;
+mod build_ignored;
 mod build_symbol;
 
 pub struct RustCodegen {

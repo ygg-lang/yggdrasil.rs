@@ -14,7 +14,7 @@ character-set = "0.4.0"
 unicode-xid = "0.2.4"
 railroad = { version = "0.1.1", optional = true }
 convert_case = "0.6.0"
-
+askama = "0.11.1"
 
 [dependencies.yggdrasil-rt]
 version = "0.1"

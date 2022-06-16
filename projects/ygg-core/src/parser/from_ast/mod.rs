@@ -40,7 +40,7 @@ impl ParseContext {
         self.out.rules.insert(rule.name.clone(), rule);
     }
     pub fn visit_rule_body(&mut self, node: &RuleBodyNode, atomic: bool) -> ExpressionNode {
-        self.visit_expr(&node.expr, atomic)
+        todo!()
     }
     pub fn visit_expr(&mut self, node: &ExprNode, atomic: bool) -> ExpressionNode {
         match node {
@@ -48,6 +48,8 @@ impl ParseContext {
             ExprNode::SoftConcat { lhs, rhs } => self.visit_expr(lhs, atomic) + self.visit_expr(rhs, atomic),
             ExprNode::Concat { lhs, rhs } if atomic => self.visit_expr(lhs, atomic) & self.visit_expr(rhs, atomic),
             ExprNode::Concat { lhs, rhs } => self.visit_expr(lhs, atomic) + self.visit_expr(rhs, atomic),
+            /// a* => (a ignore)*
+            /// a+ => a ignore (a ignore)*
             ExprNode::Suffix { expr, suffix } => {
                 todo!()
             }

@@ -7,7 +7,7 @@ pub fn parse_program(input: &str) -> Result<ProgramNode, StopBecause> {
     let o = YState::new(input);
     let o = o.skip(IgnoredNode::consume);
     let (o, program) = ProgramNode::consume(o)?;
-    o.match_eof()?;
+    // o.match_eof()?;
     Ok(program)
 }
 
@@ -104,6 +104,10 @@ pub enum ExprRest {
     Group { expr: Box<ExprNode> },
     Identifier { identifier: IdentifierNode },
 }
+
+pub struct WhitespaceNode {}
+
+pub struct CommentLineNode {}
 
 pub struct IgnoredNode {}
 
@@ -394,23 +398,33 @@ mod private_area {
     }
 
     impl IgnoredNode {
+        #[inline]
         pub fn consume(state: YState) -> YResult<()> {
-            let (state, _) = state.match_repeats(Self::consume_one)?;
+            let (state, _) = state.match_repeats(|state| {
+                state.begin_choice().maybe(Self::consume_whitespace).maybe(Self::consume_comment_line).end_choice()
+            })?;
             state.finish(())
         }
-        fn consume_one(state: YState) -> YResult<()> {
-            let (state, _) = state //
-                .begin_choice()
-                .maybe(Self::consume_whitespace)
-                .maybe(Self::consume_comment)
-                .end_choice()?;
-            state.finish(())
-        }
+        #[inline(always)]
         fn consume_whitespace(state: YState) -> YResult<()> {
+            let (state, _) = WhitespaceNode::consume(state)?;
+            state.finish(())
+        }
+        #[inline(always)]
+        fn consume_comment_line(state: YState) -> YResult<()> {
+            let (state, _) = CommentLineNode::consume(state)?;
+            state.finish(())
+        }
+    }
+
+    impl WhitespaceNode {
+        fn consume(state: YState) -> YResult<()> {
             let (state, _) = state.match_str_if(|c| c.is_whitespace() || c == '\r' || c == '\n', "<Whitespace>")?;
             state.finish(())
         }
-        fn consume_comment(state: YState) -> YResult<()> {
+    }
+    impl CommentLineNode {
+        fn consume(state: YState) -> YResult<()> {
             let (state, _) = state.match_comment_line("//")?;
             state.finish(())
         }

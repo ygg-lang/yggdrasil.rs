@@ -1,4 +1,4 @@
-use yggdrasil_parser::{parse_program, ClassStatementNode};
+use yggdrasil_parser::{parse_program, ClassStatementNode, IgnoredNode, ProgramNode};
 use yggdrasil_rt::ast_mode::YState;
 
 #[test]
@@ -15,6 +15,8 @@ fn test_bootstrap2() {
 
 #[test]
 fn test_bootstrap() {
-    let out = parse_program(include_str!("../src/bootstrap.ygg")).unwrap();
+    let state = YState::new(include_str!("../src/bootstrap.ygg"));
+    let (out, _) = IgnoredNode::consume(state).unwrap();
+    let out = ProgramNode::consume(out);
     println!("{:#?}", out)
 }
