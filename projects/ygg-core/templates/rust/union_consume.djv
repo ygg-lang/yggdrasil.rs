@@ -1,0 +1,30 @@
+    impl {{ node_name }} {
+        #[inline]
+        pub fn consume(state: YState) -> YResult<Self> {
+            let (state, {{ name }}) = state
+                .begin_choice()
+{%- for item in branches %}
+                .maybe(Self::{{ item.consume_branch_name }})
+{%- endfor %}
+                .end_choice()?;
+            state.finish(statement)
+        }
+{%- for item in branches %}
+        #[inline(always)]
+        fn {{ item.branch_lower }}(state: YState) -> YResult<Self> {
+            let (state, {{ branch_name }}) = {{ branch_node }}::consume(state)?;
+            state.finish(Self::{{ item.branch_upper }}(Box::new({{ item.branch_lower }})))
+        }
+{%- endfor %}
+    }
+{% if debug %}
+    impl Debug for {{ node_name }} {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            match self {
+{%- for item in branches %}
+                {{ node_name }}::{{ branch_name }}(branch) => Debug::fmt(branch, f),
+{%- endfor %}
+            }
+        }
+    }
+{% endif %}

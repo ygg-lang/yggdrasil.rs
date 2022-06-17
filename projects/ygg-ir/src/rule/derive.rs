@@ -2,19 +2,19 @@ use super::*;
 
 #[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct RuleDerive {
-    pub(crate) parser: Option<String>,
-    pub(crate) debug: Option<String>,
-    pub(crate) display: Option<String>,
-    pub(crate) eq: bool,
-    pub(crate) eq_partial: Option<String>,
-    pub(crate) ord: bool,
-    pub(crate) ord_partial: Option<String>,
-    pub(crate) hash: Option<String>,
+    pub parser: Option<String>,
+    pub debug: bool,
+    pub display: Option<String>,
+    pub eq: bool,
+    pub eq_partial: Option<String>,
+    pub ord: bool,
+    pub ord_partial: Option<String>,
+    pub hash: Option<String>,
 }
 
 impl Default for RuleDerive {
     fn default() -> Self {
-        Self { parser: None, debug: None, display: None, eq: false, eq_partial: None, ord: false, ord_partial: None, hash: None }
+        Self { parser: None, debug: true, display: None, eq: false, eq_partial: None, ord: false, ord_partial: None, hash: None }
     }
 }
 

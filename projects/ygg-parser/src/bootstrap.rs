@@ -17,7 +17,7 @@ pub struct ProgramNode {
     pub position: std::ops::Range<usize>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub enum StatementNode {
     Class(Box<ClassStatementNode>),
 }
@@ -112,6 +112,8 @@ pub struct CommentLineNode {}
 pub struct IgnoredNode {}
 
 mod private_area {
+    use std::fmt::{Debug, Formatter};
+
     use super::*;
 
     impl ProgramNode {
@@ -139,6 +141,13 @@ mod private_area {
         fn consume_class(state: YState) -> YResult<Self> {
             let (state, class) = ClassStatementNode::consume(state)?;
             state.finish(Self::Class(Box::new(class)))
+        }
+    }
+    impl Debug for StatementNode {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            match self {
+                StatementNode::Class(v) => Debug::fmt(v, f),
+            }
         }
     }
 

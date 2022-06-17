@@ -13,10 +13,7 @@ impl Default for ChoiceExpression {
 
 impl From<ChoiceExpression> for ExpressionNode {
     fn from(value: ChoiceExpression) -> Self {
-        Self {
-            kind: ExpressionKind::Choice(Box::new(value)),
-            tag: "".to_string(),
-        }
+        Self { kind: ExpressionKind::Choice(Box::new(value)), tag: "".to_string() }
     }
 }
 
@@ -41,8 +38,26 @@ impl ChoiceExpression {
             }
         }
     }
-    pub fn to_node<S>(self, tag: S) -> ExpressionNode where S: Into<String> {
+    pub fn to_node<S>(self, tag: S) -> ExpressionNode
+    where
+        S: Into<String>,
+    {
         ExpressionNode { tag: tag.into(), kind: ExpressionKind::Choice(Box::new(self)) }
+    }
+}
+
+impl GrammarRule {
+    pub fn get_branches(&self) -> IndexMap<String, ExpressionNode> {
+        let mut out = IndexMap::default();
+        match &self.body.kind {
+            ExpressionKind::Choice(v) => {
+                for branch in v.branches {
+                    out.insert(branch.tag.clone(), branch);
+                }
+            }
+            _ => {}
+        }
+        out
     }
 }
 
