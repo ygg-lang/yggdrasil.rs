@@ -1,3 +1,5 @@
+use crate::ygg::StatementNode::ClassStatement;
+use std::fmt::{Debug, Formatter};
 use yggdrasil_rt::{
     ast_mode::{YResult, YState},
     results::StopBecause,
@@ -112,7 +114,6 @@ pub struct CommentLineNode {}
 pub struct IgnoredNode {}
 
 mod private_area {
-    use std::fmt::{Debug, Formatter};
 
     use super::*;
 

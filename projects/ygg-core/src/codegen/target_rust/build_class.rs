@@ -41,7 +41,7 @@ fn test() {
 impl WriteRust for GrammarRule {
     fn write_rust(&self, w: &mut RustCodegen, info: &GrammarInfo) -> std::fmt::Result {
         // writeln!(w, "/// {}", info.rule_prefix)?;
-        writeln!(w, "fn {}(state: YState) -> YResult<{}> {{", w.get_parse_name(&self.name), self.r#type)?;
+        writeln!(w, "fn {}(state: YState) -> YResult<{}> {{", w.consume_name(&self.name), self.r#type)?;
         if w.enable_position {
             writeln!(w, "    let start = state.start_offset;")?;
         }
@@ -63,7 +63,7 @@ impl WriteRust for GrammarRule {
         if self.public {
             w.write_str("pub ")?;
         }
-        let name = w.get_class_name(&self.name);
+        let name = w.node_name(&self.name);
         match &self.kind {
             GrammarRuleKind::Class => {
                 writeln!(w, "struct {} {{", name)?;

@@ -17,14 +17,6 @@ impl Write for RustCodegen {
 }
 
 impl RustCodegen {
-    pub fn get_class_name(&self, name: &str) -> String {
-        let name = format!("{}_{}_{}", self.rule_prefix, name, self.rule_suffix);
-        name.to_case(Case::Pascal)
-    }
-    pub fn get_parse_name(&self, name: &str) -> String {
-        let name = format!("consume_{}_{}", self.rule_prefix, name);
-        name.to_case(Case::Snake)
-    }
     pub(crate) fn write_start(&mut self) {
         self.buffer.push_str("(")
     }

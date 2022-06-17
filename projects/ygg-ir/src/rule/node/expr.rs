@@ -4,15 +4,30 @@ use diagnostic_quick::{QError, QResult};
 use super::*;
 
 impl ExpressionNode {
+    #[inline]
     pub fn is_choice(&self) -> bool {
         matches!(self.kind, ExpressionKind::Choice(_))
     }
+    #[inline]
     pub fn is_concat(&self) -> bool {
         matches!(self.kind, ExpressionKind::Concat(_))
     }
+    #[inline]
     pub fn is_unary(&self) -> bool {
         matches!(self.kind, ExpressionKind::Unary(_))
     }
+    #[inline]
+    pub fn as_rule(&self) -> Option<&RuleReference> {
+        match &self.kind {
+            ExpressionKind::Rule(r) => Some(r.as_ref()),
+            _ => None,
+        }
+    }
+    #[inline]
+    pub fn is_rule(&self) -> bool {
+        self.as_rule().is_some()
+    }
+    #[inline]
     pub fn empty() -> Self {
         Self { kind: ExpressionKind::Choice(Box::new(Default::default())), tag: "".to_string() }
     }

@@ -47,15 +47,17 @@ impl ChoiceExpression {
 }
 
 impl GrammarRule {
-    pub fn get_branches(&self) -> IndexMap<String, ExpressionNode> {
+    pub fn get_branches(&self) -> IndexMap<&str, &ExpressionNode> {
         let mut out = IndexMap::default();
-        match &self.body.kind {
-            ExpressionKind::Choice(v) => {
-                for branch in v.branches {
-                    out.insert(branch.tag.clone(), branch);
+        if self.kind == GrammarRuleKind::Union {
+            match &self.body.kind {
+                ExpressionKind::Choice(v) => {
+                    for branch in &v.branches {
+                        out.insert(branch.tag.as_str(), branch);
+                    }
                 }
+                _ => {}
             }
-            _ => {}
         }
         out
     }

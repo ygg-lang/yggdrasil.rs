@@ -1,8 +1,9 @@
 use std::ops::Range;
 
 use askama::Template;
+use convert_case::{Case, Casing};
 
-use yggdrasil_ir::{GrammarInfo, GrammarRule, GrammarRuleKind};
+use yggdrasil_ir::{GrammarInfo, GrammarRule, GrammarRuleKind, RuleReference};
 
 use crate::codegen::RustCodegen;
 
@@ -10,12 +11,14 @@ use crate::codegen::RustCodegen;
 #[template(path = "rust/union_consume.djv", escape = "none")]
 struct UnionConsume {
     derive_debug: bool,
-    name: String,
+    name_upper: String,
+    name_lower: String,
     node_name: String,
     branches: Vec<UnionBranchItem>,
 }
 
 struct UnionBranchItem {
+    target_node: String,
     consume_lower: String,
     branch_upper: String,
     branch_lower: String,
@@ -38,21 +41,60 @@ impl RustCodegen {
             items: info
                 .ignores
                 .iter()
-                .map(|name| IgnoredItem { class: self.get_class_name(name), consume: self.get_parse_name(name) })
+                .map(|name| IgnoredItem { class: self.node_name(name), consume: self.consume_name(name) })
                 .collect(),
         }
     }
-    fn consume_union(&self, rule: &GrammarRule, info: &GrammarInfo) -> UnionConsume {
+    fn consume_union(&self, rule: &GrammarRule) -> UnionConsume {
         assert_eq!(rule.kind, GrammarRuleKind::Union);
         let mut branches = vec![];
-        for (name, _) in rule.get_branches() {}
-
+        for (name, node) in rule.get_branches() {
+            let target_node = match node.as_rule() {
+                Some(s) => self.node_name(&s.name),
+                None => unreachable!("Must build proxy node first"),
+            };
+            branches.push(UnionBranchItem {
+                target_node,
+                consume_lower: format!("consume_{name}").to_case(Case::Snake),
+                branch_upper: name.to_case(Case::Pascal),
+                branch_lower: name.to_case(Case::Snake),
+            })
+        }
         UnionConsume {
             derive_debug: rule.derives.debug,
-            name: rule.name.clone(),
-            node_name: self.get_class_name(&rule.name),
-            branches: vec![],
+            name_upper: self.upper_name(&rule.name),
+            name_lower: self.lower_name(&rule.name),
+            node_name: self.node_name(&rule.name),
+            branches,
         }
+    }
+}
+
+impl RustCodegen {
+    pub fn node_name(&self, name: &str) -> String {
+        let name = format!("{}_{}_{}", self.rule_prefix, name, self.rule_suffix);
+        name.to_case(Case::Pascal)
+    }
+    /// never be a keyword
+    pub fn consume_name(&self, name: &str) -> String {
+        let name = format!("consume_{}", name);
+        name.to_case(Case::Snake)
+    }
+    pub fn upper_name(&self, name: &str) -> String {
+        name.to_case(Case::Pascal)
+    }
+    pub fn lower_name(&self, name: &str) -> String {
+        self.prevent_keyword(name.to_case(Case::Snake))
+    }
+    fn prevent_keyword(&self, mut name: String) -> String {
+        let keywords = &[
+            "abstract", "alignof", "as", "become", "box", "break", "const", "continue", "crate", "do", "else", "enum",
+            "extern", "false", "final", "fn", "for", "if", "impl", "in", "let", "loop", "macro", "match", "mod", "move", "mut",
+            "offsetof", "override", "priv", "proc", "pub", "pure", "ref", "return", "Self", "self", "sizeof", "static",
+            "struct", "super", "trait", "true", "type", "typeof", "unsafe", "unsized", "use", "virtual", "where", "while",
+            "yield",
+        ];
+        if keywords.contains(&name.as_str()) { format!("r#{name}") } else { name }
     }
 }
 
@@ -69,13 +111,11 @@ fn test() {
 
 #[test]
 fn test2() {
-    let mut info = GrammarInfo::default();
-    info.ignores.insert("Whitespace".to_string());
-    info.ignores.insert("CommentLine".to_string());
     let codegen = RustCodegen::default();
     let mut rule = GrammarRule::new("Statement", &Range::default(), GrammarRuleKind::Union);
-
-    let items = codegen.ignored_rules(&info);
+    let expr = RuleReference::new("ClassStatement").to_node("Class") | RuleReference::new("UnionStatement").to_node("Union");
+    rule.body = expr;
+    let items = codegen.consume_union(&rule);
     let result = items.render().unwrap();
     println!("{}", result);
 }
