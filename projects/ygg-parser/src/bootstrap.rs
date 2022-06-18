@@ -1,5 +1,5 @@
-use crate::ygg::StatementNode::ClassStatement;
 use std::fmt::{Debug, Formatter};
+
 use yggdrasil_rt::{
     ast_mode::{YResult, YState},
     results::StopBecause,
@@ -114,7 +114,6 @@ pub struct CommentLineNode {}
 pub struct IgnoredNode {}
 
 mod private_area {
-
     use super::*;
 
     impl ProgramNode {
@@ -153,17 +152,23 @@ mod private_area {
     }
 
     impl ClassStatementNode {
+        // pub struct ClassStatementNode {
+        //     pub modifiers: ModifiersNode,
+        //     pub identifier: IdentifierNode,
+        //     pub rule_body: RuleBodyNode,
+        //     pub position: std::ops::Range<usize>,
         /// m1 m2 class {}
-        pub fn consume(s0: YState) -> YResult<ClassStatementNode> {
-            let s1 = s0.clone();
-            let (s2, modifiers) = ModifiersNode::consume(s1)?;
-            let s3 = s2.skip(IgnoredNode::consume);
-            let (s4, _) = KwClass::consume(s3)?;
+        pub fn consume(state: YState) -> YResult<ClassStatementNode> {
+            let y = state.clone();
+            let (y, modifiers) = ModifiersNode::consume(y)?;
+            let (y, _) = IgnoredNode::consume(y)?;
+            let (y, c) = y.match_char_any()?;
+            let (s4, _) = KwClass::consume(y)?;
             let s5 = s4.skip(IgnoredNode::consume);
             let (s6, identifier) = IdentifierNode::consume(s5)?;
             let s9 = s6.skip(IgnoredNode::consume);
-            let (s10, rule_body) = RuleBodyNode::consume(s9)?;
-            s10.finish(ClassStatementNode { modifiers, identifier, rule_body, position: s10.away_from(s0) })
+            let (y, rule_body) = RuleBodyNode::consume(s9)?;
+            y.finish(ClassStatementNode { modifiers, identifier, rule_body, position: y.away_from(state) })
         }
     }
 

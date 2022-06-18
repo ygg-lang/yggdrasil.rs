@@ -31,8 +31,8 @@ pub enum DataKind {
     StringFused(Regex),
     CharacterAny,
     Character(char),
-    CharacterBuiltin(String),
     CharacterRange(RangeInclusive<char>),
+    CharacterBuiltin(String),
     CharacterFused(CharacterSet),
 }
 
