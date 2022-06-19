@@ -1,0 +1,25 @@
+// =================================================================================================
+climb Expr {
+    | Atom                    #Atom
+    | lhs:Self '^' rhs:Self   #Pow
+    | lhs:Self '*' rhs:Self   #Mul
+    | lhs:Self '+' rhs:Self   #Add
+}
+// =================================================================================================
+class ExprAtom {
+    Atom
+}
+class ExprPow {
+    lhs:ExprAtom '^' rhs:ExprPow
+}
+class ExprMul {
+    lhs:ExprPow '*' rhs:ExprPow
+}
+class ExprAdd {
+    lhs:ExprMul '+' rhs:ExprMul
+}
+// =================================================================================================
+#external
+class Atom {
+
+}
