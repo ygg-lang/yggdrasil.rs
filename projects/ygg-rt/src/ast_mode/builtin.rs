@@ -1,7 +1,12 @@
+use crate::{
+    records::{CapturedString, SurroundedString},
+    YResult,
+};
+
 use super::*;
 
 impl<'i> YState<'i> {
-    /// Parsing a single character.
+    /// Match a single character.
     ///
     /// ```ygg
     /// 'c'
@@ -13,7 +18,7 @@ impl<'i> YState<'i> {
             _ => Err(StopBecause::MissingCharacter { expected: target, position: self.start_offset })?,
         }
     }
-    /// Parsing a character in given range.
+    /// Match a character in given range.
     ///
     /// ```ygg
     /// [a-z]
@@ -25,21 +30,25 @@ impl<'i> YState<'i> {
             _ => Err(StopBecause::MissingCharacterRange { start, end, position: self.start_offset }),
         }
     }
+    /// Parsing a character with given rule.
     #[inline]
     pub fn match_char_if(self, predicate: impl Fn(char) -> bool, message: &'static str) -> YResult<'i, char> {
         match self.get_character(0) {
             Some(c) if predicate(c) => self.advance(c).finish(c),
-            _ => Err(StopBecause::MissingString { message, position: self.start_offset })?,
+            _ => Err(StopBecause::MustBe { message, position: self.start_offset })?,
         }
     }
+    /// Match any character, except `EOF`.
     #[inline]
     pub fn match_char_any(self) -> YResult<'i, char> {
         self.match_char_if(|_| true, "ANY")
     }
+    /// Match a character with given set.
     #[inline]
     pub fn parse_char_set(self, set: TrieSet, message: &'static str) -> YResult<'i, char> {
         self.match_char_if(|c| set.contains_char(c), message)
     }
+    /// Match a static string.
     #[inline]
     pub fn match_str_static(self, target: &'static str, insensitive: bool) -> YResult<'i, &'i str> {
         let s = match self.get_string(0..target.len()) {
@@ -49,6 +58,7 @@ impl<'i> YState<'i> {
         };
         self.advance_view(s)
     }
+    /// Match a string with given rule.
     #[inline]
     pub fn match_str_if(self, predicate: impl Fn(char) -> bool, message: &'static str) -> YResult<'i, &'i str> {
         let mut offset = 0;
@@ -70,7 +80,7 @@ impl<'i> YState<'i> {
     #[inline]
     pub fn match_eof(self) -> YResult<'i, ()> {
         match self.get_character(0) {
-            Some(_) => Err(StopBecause::MissingEof { position: self.start_offset }),
+            Some(_) => Err(StopBecause::ExpectEof { position: self.start_offset }),
             None => self.finish(()),
         }
     }
@@ -133,7 +143,7 @@ impl<'i> YState<'i> {
             }
         }
         if count < min {
-            Err(StopBecause::MissingRepeats { min, current: count, position })?
+            Err(StopBecause::ExpectRepeats { min, current: count, position })?
         }
         state.finish(result)
     }
@@ -151,6 +161,7 @@ impl<'i> YState<'i> {
             Err(_) => self.finish(None),
         }
     }
+    /// Match but does not return the result
     #[inline]
     pub fn skip<F, T>(self, parse: F) -> YState<'i>
     where
@@ -219,7 +230,7 @@ impl<'i> YState<'i> {
     /// /* */
     /// ```
     #[inline]
-    pub fn match_comment_block<F, T>(self, head: &'static str, tail: &'static str, nested: bool) -> YResult<'i, ()>
+    pub fn match_comment_block<F, T>(self, head: &'static str, tail: &'static str) -> YResult<'i, ()>
     where
         F: Fn(YState) -> YResult<T>,
     {
@@ -228,21 +239,43 @@ impl<'i> YState<'i> {
         }
         let mut offset = head.len();
         let mut rest = &self.partial_string[offset..];
-        if nested {
-            let mut detph = 1;
-            while let Some(s) = rest.find(head) {
-                offset += s + head.len();
-                rest = &self.partial_string[offset..];
-                detph += 1;
-            }
-            unimplemented!("need help to implement nested comment block")
-        }
-        else {
-            match rest.find(tail) {
-                Some(s) => offset += s + tail.len(),
-                None => Err(StopBecause::MissingString { message: tail, position: self.start_offset + tail.len() })?,
-            }
+        match rest.find(tail) {
+            Some(s) => offset += s + tail.len(),
+            None => Err(StopBecause::MissingString { message: tail, position: self.start_offset + tail.len() })?,
         }
         self.advance(offset).finish(())
+    }
+
+    /// Parse the comment block
+    ///
+    /// ```ygg
+    /// r#" "#
+    /// r##" "##
+    /// r###" "###
+    /// ```
+    pub fn match_surround<F, T>(self, delimiter: char, min: usize) -> YResult<'i, ()>
+    where
+        F: Fn(YState) -> YResult<T>,
+    {
+        let mut count = 0;
+        for c in self.partial_string.chars() {
+            match c == delimiter {
+                true => count += 1,
+                false => break,
+            }
+        }
+        if count == 0 {
+            Err(StopBecause::MissingString { message: "r#", position: self.start_offset })?;
+        }
+        if count < min {
+            Err(StopBecause::MissingString { message: "r##", position: self.start_offset })?;
+        }
+        let head = count * delimiter.len_utf8();
+        let rest = &self.partial_string[head..];
+        let end = delimiter.to_string().repeat(count);
+        match rest.find(&end) {
+            Some(s) => self.advance(s + count * delimiter.len_utf8()).finish(()),
+            None => Err(StopBecause::MissingString { message: "match_raw_paired", position: self.start_offset + count }),
+        }
     }
 }

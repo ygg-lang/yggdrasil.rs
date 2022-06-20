@@ -1,14 +1,27 @@
+mod y_result;
 use std::{
     error::Error,
     fmt::{Display, Formatter},
     ops::Range,
 };
 
+use crate::ast_mode::YState;
+
+pub type Parsed<'i, T> = (YState<'i>, T);
+
+pub type YResult<'i, T> = Result<Parsed<'i, T>, StopBecause>;
+
+/// will change [`YResult`] to [`YYResult`] if try 2.0 is stable
+pub enum YYResult<'i, T> {
+    Pending(YState<'i>, T),
+    Stop(StopBecause),
+}
+
 #[derive(Copy, Clone, Debug)]
 pub enum StopBecause {
     Uninitialized,
-    MissingEof { position: usize },
-    MissingRepeats { min: usize, current: usize, position: usize },
+    ExpectEof { position: usize },
+    ExpectRepeats { min: usize, current: usize, position: usize },
     MissingCharacter { expected: char, position: usize },
     MissingCharacterRange { start: char, end: char, position: usize },
     MissingString { message: &'static str, position: usize },
@@ -29,39 +42,34 @@ impl Display for StopBecause {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             StopBecause::Uninitialized => f.write_str("Uninitialized"),
-            StopBecause::MissingEof { position } => f.write_fmt(format_args!("Missing EOF at position {}", position)),
-            StopBecause::MissingRepeats { min, current, position } => {
-                f.write_fmt(format_args!("Missing at least {} repeats (got {}) at position {}", min, current, position))
+            StopBecause::ExpectEof { .. } => f.write_str("Expect end of file"),
+            StopBecause::ExpectRepeats { min, current, .. } => {
+                f.write_fmt(format_args!("Expect at least {} repeats (got {})", min, current))
             }
-            StopBecause::MissingCharacter { expected, position } => {
-                f.write_fmt(format_args!("Missing character '{}' at position {}", expected, position))
+            StopBecause::MissingCharacter { expected, .. } => f.write_fmt(format_args!("Missing character '{}'", expected)),
+            StopBecause::MissingCharacterRange { start, end, .. } => {
+                f.write_fmt(format_args!("Expect character in range '{}'..='{}'", start, end))
             }
-            StopBecause::MissingCharacterRange { start, end, position } => {
-                f.write_fmt(format_args!("Missing character in range '{}'..='{}' at position {}", start, end, position))
-            }
-            StopBecause::MissingString { message, position } => {
-                f.write_fmt(format_args!("Missing string '{}' at position {}", message, position))
-            }
-            StopBecause::ShouldNotBe { message, position } => {
-                f.write_fmt(format_args!("Should not be '{}' at position {}", message, position))
-            }
-            StopBecause::Custom { message, position } => {
-                f.write_fmt(format_args!("Custom error '{}' at position {}", message, position))
-            }
+            StopBecause::MissingString { message, .. } => f.write_fmt(format_args!("Missing string '{}'", message)),
+            StopBecause::MustBe { message, .. } => f.write_fmt(format_args!("Must be `{}`", message)),
+            StopBecause::ShouldNotBe { message, .. } => f.write_fmt(format_args!("Should not be `{}`", message)),
+            StopBecause::Custom { message, .. } => f.write_str(message),
         }
     }
 }
+
 impl StopBecause {
     pub fn range(&self) -> Range<usize> {
-        match self {
+        match *self {
             StopBecause::Uninitialized => 0..0,
-            StopBecause::MissingEof { position } => *position..*position,
-            StopBecause::MissingRepeats { min: _, current: _, position } => *position..*position,
-            StopBecause::MissingCharacter { expected, position } => *position..*position + expected.len_utf8(),
-            StopBecause::MissingCharacterRange { start: _, end: _, position } => *position..*position + 1,
-            StopBecause::MissingString { message, position } => *position..*position + message.len(),
-            StopBecause::ShouldNotBe { message: _, position } => *position..*position + 1,
-            StopBecause::Custom { message: _, position } => *position..*position + 1,
+            StopBecause::ExpectEof { position } => position..position + 1,
+            StopBecause::ExpectRepeats { min: _, current: _, position } => position..position + 1,
+            StopBecause::MissingCharacter { expected, position } => position..position + expected.len_utf8(),
+            StopBecause::MissingCharacterRange { start: _, end: _, position } => position..position + 1,
+            StopBecause::MissingString { message, position } => position..position + message.len(),
+            StopBecause::MustBe { message: _, position } => position..position + 1,
+            StopBecause::ShouldNotBe { message: _, position } => position..position + 1,
+            StopBecause::Custom { message: _, position } => position..position + 1,
         }
     }
 }

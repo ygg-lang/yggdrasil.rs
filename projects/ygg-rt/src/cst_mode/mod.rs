@@ -1,5 +1,7 @@
 use std::ops::Range;
 
+use crate::{ast_mode::YState, YResult};
+
 pub trait NodeType: Into<usize> + Copy {}
 
 /// The basic unit of semantic analysis.
@@ -39,6 +41,7 @@ pub struct CSTNode {
 }
 
 impl CSTNode {
+    /// Create a new cst node
     pub fn new(id: usize) -> Self {
         Self { id, kind: 0, nodes: vec![], range: 0..0 }
     }
@@ -82,7 +85,7 @@ impl CSTNode {
         N: NodeType,
     {
         for node in &self.nodes {
-            if self.isa(types) {
+            if self.is_a(types) {
                 return Some(node);
             }
         }
@@ -93,7 +96,7 @@ impl CSTNode {
         N: NodeType,
         's: 'i,
     {
-        self.nodes.iter().filter(|child| child.isa(types))
+        self.nodes.iter().filter(|child| child.is_a(types))
     }
 
     /// Check if the node is one of the given types
@@ -113,9 +116,9 @@ impl CSTNode {
     ///     Array,
     /// }
     /// let node = CSTNode::new(0).with_kind(JsonNode::Object);
-    /// assert!(node.isa(&[JsonNode::Object]));
+    /// assert!(node.is_a(&[JsonNode::Object]));
     /// ```
-    pub fn isa<N>(&self, kind: &[N]) -> bool
+    pub fn is_a<N>(&self, kind: &[N]) -> bool
     where
         N: NodeType,
     {

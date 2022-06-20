@@ -1,37 +1,38 @@
 use std::{ops::Range, slice::SliceIndex};
 
-use crate::results::StopBecause;
 use ucd_trie::TrieSet;
+
+use crate::{results::StopBecause, YResult};
+
 mod advance;
 mod builtin;
 mod choice;
 mod concat;
 
-pub type YResult<'i, T> = Result<Parsed<'i, T>, StopBecause>;
-
-/// will change [`YResult`] to [`ZResult`] if try 2.0 is stable
-pub enum ZResult<'i, T> {
-    Pending(YState<'i>, T),
-    Stop(StopBecause),
-}
-
-pub type Parsed<'i, T> = (YState<'i>, T);
-
+/// The state of parsing
 #[derive(Copy, Clone, Debug)]
 pub struct YState<'i> {
-    /// reset part of string
+    /// Rest part of string
     pub partial_string: &'i str,
-    ///
+    /// Start offset of the string
     pub start_offset: usize,
-    ///
+    /// Stop reason
     pub stop_reason: Option<StopBecause>,
 }
 
 impl<'i> YState<'i> {
+    /// Create a new state
     #[inline(always)]
     pub fn new(input: &'i str) -> Self {
         Self { partial_string: input, start_offset: 0, stop_reason: None }
     }
+    /// Reset the cursor offset
+    #[inline(always)]
+    pub fn with_start_offset(mut self, offset: usize) -> Self {
+        self.start_offset = offset;
+        self
+    }
+    /// Finish with given value
     #[inline(always)]
     pub fn finish<T>(self, value: T) -> YResult<'i, T> {
         Ok((self, value))
@@ -41,10 +42,7 @@ impl<'i> YState<'i> {
     pub fn is_empty(&self) -> bool {
         self.partial_string.is_empty()
     }
-    #[inline(always)]
-    pub fn set_error(&mut self, error: StopBecause) {
-        self.stop_reason = Some(error);
-    }
+    /// Get inner error
     #[inline(always)]
     pub fn get_error(self) -> StopBecause {
         match self.stop_reason {
@@ -52,6 +50,12 @@ impl<'i> YState<'i> {
             None => StopBecause::Uninitialized,
         }
     }
+    /// Set inner error
+    #[inline(always)]
+    pub fn set_error(&mut self, error: StopBecause) {
+        self.stop_reason = Some(error);
+    }
+    /// Get a string view
     #[inline(always)]
     pub fn get_string<R>(&self, range: R) -> Option<&R::Output>
     where
@@ -59,25 +63,14 @@ impl<'i> YState<'i> {
     {
         self.partial_string.get(range)
     }
+    /// Get nth character
     #[inline(always)]
     pub fn get_character(&self, nth: usize) -> Option<char> {
         self.partial_string.chars().nth(nth)
     }
+    /// Get range away from start state
     #[inline(always)]
     pub fn away_from(&self, start: YState) -> Range<usize> {
         start.start_offset..self.start_offset
-    }
-}
-
-impl<'i, T> ZResult<'i, T> {
-    #[inline(always)]
-    fn map_inner<F, U>(self, f: F) -> ZResult<'i, U>
-    where
-        F: FnOnce(T) -> U,
-    {
-        match self {
-            ZResult::Pending(state, value) => ZResult::Pending(state, f(value)),
-            ZResult::Stop(reason) => ZResult::Stop(reason),
-        }
     }
 }

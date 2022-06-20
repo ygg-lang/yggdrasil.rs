@@ -1,4 +1,5 @@
 use super::*;
+use crate::{Parsed, YResult};
 
 #[derive(Debug, Clone)]
 pub struct ChoiceHelper<'a, T> {
@@ -7,6 +8,7 @@ pub struct ChoiceHelper<'a, T> {
 }
 
 impl<'i> YState<'i> {
+    /// Begin a choice
     #[inline]
     pub fn begin_choice<T>(self) -> ChoiceHelper<'i, T> {
         ChoiceHelper { state: self, result: None }
@@ -14,11 +16,13 @@ impl<'i> YState<'i> {
 }
 
 impl<'a, T> ChoiceHelper<'a, T> {
+    /// Create a new choice helper
     #[inline]
     pub fn new(state: YState<'a>) -> Self {
         Self { state, result: None }
     }
 
+    /// Try to parse a value
     #[inline]
     pub fn maybe(mut self, parse_fn: impl FnOnce(YState<'a>) -> YResult<'a, T>) -> Self {
         if self.result.is_none() {
@@ -29,7 +33,7 @@ impl<'a, T> ChoiceHelper<'a, T> {
         }
         self
     }
-
+    /// End choice
     #[inline]
     pub fn end_choice(self) -> YResult<'a, T> {
         match self.result {

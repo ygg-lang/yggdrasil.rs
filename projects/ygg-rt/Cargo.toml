@@ -11,7 +11,7 @@ edition = "2021"
 [dependencies]
 lsp-types = { version = "0.94.0", features = ["proposed"], optional = true }
 url = "2.3.1"
-diagnostic-quick = "0.3.6"
+diagnostic-quick = "0.4.0"
 ucd-trie = "0.1.5"
 regex-automata = "0.2.0"
 
