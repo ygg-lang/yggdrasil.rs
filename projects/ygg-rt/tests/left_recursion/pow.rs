@@ -62,37 +62,75 @@ impl ExprAtom {
 struct ExprPow {
     lhs: Option<ExprAtom>,
     rhs: ExprPow,
+    has_lhs: bool,
 }
 /// `lhs:ExprAtom '^'`
-struct ExprPowAux1 {
+struct ExprPowLhs {
     lhs: ExprAtom,
 }
 
 impl ExprPow {
-    // fold tree by left
     fn ascent(mut self) -> Expr {
-        if self.lhs.is_none() {
-            self.rhs.ascent();
+        if !self.has_lhs {
+            return self.rhs.ascent();
         }
         #[rustfmt::skip]
         unsafe {
             Expr::Pow {
                 lhs: Box::new(self.lhs.unwrap_unchecked().ascent()),
-                rhs: Box::new(self.rhs.ascent())
+                rhs: Box::new(self.rhs.ascent()),
             }
         }
     }
-    fn parse(state: YState) -> YResult<Self> {
+    fn consume(state: YState) -> YResult<Self> {
         let mut lhs = None;
-        let (state, pow1) = ExprPow::parse_aux1(state)?;
-        lhs.push(pow1);
-        let (state, pow2) = state.match_repeat_m_n(0, usize::MAX, ExprAdd::parse_aux1)?;
-        lhs.extend(pow2);
-        state.finish(ExprAdd { pow: lhs })
+
+        let (state, expr_pow_lhs) = state.match_optional(ExprPow::parse_lhs)?;
+        let (state, expr_pow) = ExprPow::consume(state)?;
+        let expr_pow = match expr_pow_lhs {
+            Some(s) => ExprPow { lhs: Some(s.lhs), rhs: expr_pow, has_lhs: true },
+            None => ExprPow { lhs: None, rhs: expr_pow, has_lhs: false },
+        };
+        state.finish(expr_pow)
     }
-    fn parse_aux1(state: YState) -> YResult<ExprPowAux1> {
+    fn parse_lhs(state: YState) -> YResult<ExprPowLhs> {
         let (state, lhs) = ExprAtom::parse(state)?;
-        state.finish(ExprPowAux1 { lhs })
+        state.finish(ExprPowLhs { lhs })
+    }
+}
+
+/// `lhs:ExprPow ('*' rhs:ExprPow)?`
+struct ExprMul {
+    lhs: ExprPow,
+    rhs: Option<ExprPow>,
+    has_rhs: bool,
+}
+
+struct ExprMulRhs {
+    rhs: ExprPow,
+}
+
+impl ExprMul {
+    pub fn ascent(mut self) -> Expr {
+        let mut expr = self.lhs.remove(self.lhs.len() - 1).ascent();
+        for atom in self.lhs.into_iter().rev() {
+            expr = Expr::Pow { lhs: Box::new(atom.ascent()), rhs: Box::new(expr) };
+        }
+        expr
+    }
+    pub fn consume(state: YState) -> YResult<Self> {
+        let mut atom = vec![];
+        let (state, atom1) = state.match_parse(ExprPow::parse_lhs)?;
+        atom.extend(atom1);
+        let (state, atom2) = ExprAtom::parse(state)?;
+        atom.push(atom2);
+        state.finish(Self {})
+    }
+    // '*' rhs:ExprPow
+    pub fn parse_aux1(state: YState) -> YResult<ExprMulRhs> {
+        let (state, _) = state.match_char('*')?;
+        let (state, expr_pow) = ExprPow::consume(state)?;
+        state.finish(ExprMulRhs { rhs: expr_pow })
     }
 }
 
@@ -112,7 +150,7 @@ impl ExprAdd {
     }
     fn parse(state: YState) -> YResult<ExprAdd> {
         let mut pow = vec![];
-        let (state, pow1) = ExprPow::parse(state)?;
+        let (state, pow1) = ExprPow::consume(state)?;
         pow.push(pow1);
         let (state, pow2) = state.match_repeat_m_n(0, usize::MAX, ExprAdd::parse_aux1)?;
         pow.extend(pow2);
@@ -120,38 +158,8 @@ impl ExprAdd {
     }
     fn parse_aux1(state: YState) -> YResult<ExprPow> {
         let (state, _) = state.match_char('+')?;
-        let (state, pow) = ExprPow::parse(state)?;
+        let (state, pow) = ExprPow::consume(state)?;
         state.finish(pow)
-    }
-}
-
-/// `atom ('^' atom)*`
-struct ExprMul {
-    atom: Vec<ExprAtom>,
-}
-
-impl ExprMul {
-    pub fn parse(state: YState) -> YResult<ExprPow> {
-        let mut atom = vec![];
-        let (state, atom1) = state.match_repeats(ExprPow::parse_aux1)?;
-        atom.extend(atom1);
-        let (state, atom2) = ExprAtom::parse(state)?;
-        atom.push(atom2);
-        state.finish(ExprPow { atom })
-    }
-    // fold tree by right
-    pub fn ascent(mut self) -> Expr {
-        let mut expr = self.atom.remove(self.atom.len() - 1).ascent();
-        for atom in self.atom.into_iter().rev() {
-            expr = Expr::Pow { lhs: Box::new(atom.ascent()), rhs: Box::new(expr) };
-        }
-        expr
-    }
-    // atom '^'
-    pub fn parse_aux1(state: YState) -> YResult<ExprAtom> {
-        let (state, atom) = ExprAtom::parse(state)?;
-        let (state, _) = state.match_char('^')?;
-        state.finish(atom)
     }
 }
 

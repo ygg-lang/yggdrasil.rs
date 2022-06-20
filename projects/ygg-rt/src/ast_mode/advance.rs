@@ -22,6 +22,8 @@ impl From<&'static str> for ParseAdvance {
     }
 }
 impl<'i> YState<'i> {
+    /// Advance the parser to a new state.
+    #[inline]
     pub fn advance<T>(self, term: T) -> YState<'i>
     where
         T: Into<ParseAdvance>,
@@ -36,5 +38,16 @@ impl<'i> YState<'i> {
             start_offset: self.start_offset + offset,
             stop_reason: self.stop_reason,
         }
+    }
+    /// Advance the parser state and return the view of these string.
+    #[inline]
+    pub fn advance_view(self, offset: usize) -> YResult<'i, &'i str> {
+        let view = &self.partial_string[0..offset];
+        YState {
+            partial_string: &self.partial_string[offset..],
+            start_offset: self.start_offset + offset,
+            stop_reason: self.stop_reason,
+        }
+        .finish(view)
     }
 }

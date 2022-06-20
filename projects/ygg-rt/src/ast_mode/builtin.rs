@@ -41,23 +41,21 @@ impl<'i> YState<'i> {
         self.match_char_if(|c| set.contains_char(c), message)
     }
     #[inline]
-    pub fn match_string(self, target: &'static str, insensitive: bool) -> YResult<'i, &'static str> {
-        match self.get_string(0..target.len()) {
-            Some(s) if insensitive && s.eq_ignore_ascii_case(target) => {}
-            Some(s) if s.eq(target) => {}
+    pub fn match_str_static(self, target: &'static str, insensitive: bool) -> YResult<'i, &'i str> {
+        let s = match self.get_string(0..target.len()) {
+            Some(s) if insensitive && s.eq_ignore_ascii_case(target) => s.len(),
+            Some(s) if s.eq(target) => s.len(),
             _ => Err(StopBecause::MissingString { message: target, position: self.start_offset })?,
-        }
-        self.advance(target).finish(target)
+        };
+        self.advance_view(s)
     }
     #[inline]
     pub fn match_str_if(self, predicate: impl Fn(char) -> bool, message: &'static str) -> YResult<'i, &'i str> {
         let mut offset = 0;
         for char in self.partial_string.chars() {
-            if predicate(char) {
-                offset += char.len_utf8();
-            }
-            else {
-                break;
+            match predicate(char) {
+                true => offset += char.len_utf8(),
+                false => break,
             }
         }
         if offset == 0 {
@@ -65,13 +63,24 @@ impl<'i> YState<'i> {
         }
         self.advance(offset).finish(&self.partial_string[..offset])
     }
-
+    /// Assert end of file
+    /// ```ygg
+    /// p $
+    /// ```
     #[inline]
     pub fn match_eof(self) -> YResult<'i, ()> {
         match self.get_character(0) {
             Some(_) => Err(StopBecause::MissingEof { position: self.start_offset }),
             None => self.finish(()),
         }
+    }
+    /// Simple suffix call form
+    #[inline]
+    pub fn match_parse<T, F>(self, parse: F) -> YResult<'i, T>
+    where
+        F: Fn(YState) -> YResult<T>,
+    {
+        parse(self)
     }
     /// Parses a sequence of 0 or more repetitions of the given parser.
     /// ```regex
@@ -152,12 +161,30 @@ impl<'i> YState<'i> {
             Err(_) => self,
         }
     }
-
-    /// Parse without consuming post-assertions
+    /// Zero-width positive match, does not consume input
+    ///
+    /// Used to be a external rule, which used as assert
+    ///
+    /// ```regex
+    /// &ahead p
+    /// p &after
+    /// ```
+    #[inline]
+    pub fn match_positive<F, T>(self, parse: F, message: &'static str) -> YResult<'i, ()>
+    where
+        F: Fn(YState) -> YResult<T>,
+    {
+        match parse(self.clone()) {
+            Ok(_) => self.finish(()),
+            Err(_) => Err(StopBecause::MustBe { message, position: self.start_offset }),
+        }
+    }
+    /// Zero-width negative match, does not consume input
     /// ```regex
     /// !ahead p
     /// p !after
     /// ```
+    #[inline]
     pub fn match_negative<F, T>(self, parse: F, message: &'static str) -> YResult<'i, ()>
     where
         F: Fn(YState) -> YResult<T>,
@@ -191,6 +218,7 @@ impl<'i> YState<'i> {
     /// ```ygg
     /// /* */
     /// ```
+    #[inline]
     pub fn match_comment_block<F, T>(self, head: &'static str, tail: &'static str, nested: bool) -> YResult<'i, ()>
     where
         F: Fn(YState) -> YResult<T>,

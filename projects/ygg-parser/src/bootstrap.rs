@@ -174,7 +174,7 @@ mod private_area {
 
     impl KwClass {
         fn consume(s0: YState) -> YResult<Self> {
-            let (o, _) = s0.match_string("class", false)?;
+            let (o, _) = s0.match_str_static("class", false)?;
             o.finish(KwClass { string: "class".to_string(), position: o.away_from(s0) })
         }
     }
@@ -182,7 +182,7 @@ mod private_area {
     impl OutTypeNode {
         fn consume(s0: YState) -> YResult<OutTypeNode> {
             let s1 = s0.clone();
-            let (s2, _) = s1.match_string(":", false)?;
+            let (s2, _) = s1.match_str_static(":", false)?;
             let (s3, typing) = NamepathNode::consume(s2)?;
             s3.finish(OutTypeNode { typing, position: s1.away_from(s0) })
         }
@@ -191,11 +191,11 @@ mod private_area {
     impl RuleBodyNode {
         fn consume(s0: YState) -> YResult<RuleBodyNode> {
             let s1 = s0.clone();
-            let (s2, _) = s1.match_string("{", false)?;
+            let (s2, _) = s1.match_str_static("{", false)?;
             let s3 = s2.skip(IgnoredNode::consume);
             let (s4, expr) = s3.match_optional(ExprNode::consume)?;
             let s5 = s4.skip(IgnoredNode::consume);
-            let (s6, _) = s5.match_string("}", false)?;
+            let (s6, _) = s5.match_str_static("}", false)?;
             s6.finish(RuleBodyNode { expr, position: s6.away_from(s0) })
         }
     }
@@ -228,7 +228,7 @@ mod private_area {
         }
         fn consume_aux1(i: YState) -> YResult<ExprSoftConcatNode> {
             let o = i.clone();
-            let (o, _) = o.match_string("|", false)?;
+            let (o, _) = o.match_str_static("|", false)?;
             let o = o.skip(IgnoredNode::consume);
             let (o, item) = ExprSoftConcatNode::consume(o)?;
             let o = o.skip(IgnoredNode::consume);
@@ -257,7 +257,7 @@ mod private_area {
         // '~' ignore item:ExprConcatNode ignore
         fn consume_aux1(i: YState) -> YResult<ExprConcatNode> {
             let o = i.clone();
-            let (o, _) = o.match_string("~", false)?;
+            let (o, _) = o.match_str_static("~", false)?;
             let o = o.skip(IgnoredNode::consume);
             let (o, item) = ExprConcatNode::consume(o)?;
             let o = o.skip(IgnoredNode::consume);
@@ -342,7 +342,7 @@ mod private_area {
             let o = i.clone();
             let (o, id) = IdentifierNode::consume(o)?;
             let o = o.skip(IgnoredNode::consume);
-            let (o, _) = o.match_string(":", false)?;
+            let (o, _) = o.match_str_static(":", false)?;
             let o = o.skip(IgnoredNode::consume);
             let (o, expr) = ExprNode::consume(o)?;
             o.finish(ExprRest::MarkTag { lhs: id, rhs: Box::new(expr) })
@@ -350,7 +350,7 @@ mod private_area {
         // ! ignore expr
         fn consume_negative(i: YState) -> YResult<ExprRest> {
             let o = i.clone();
-            let (o, _) = o.match_string("!", false)?;
+            let (o, _) = o.match_str_static("!", false)?;
             let o = o.skip(IgnoredNode::consume);
             let (o, expr) = ExprNode::consume(o)?;
             o.finish(ExprRest::Negative { expr: Box::new(expr) })
@@ -358,11 +358,11 @@ mod private_area {
         // ( ignore expr ignore )
         fn consume_group(i: YState) -> YResult<ExprRest> {
             let o = i.clone();
-            let (o, _) = o.match_string("(", false)?;
+            let (o, _) = o.match_str_static("(", false)?;
             let o = o.skip(IgnoredNode::consume);
             let (o, expr) = ExprNode::consume(o)?;
             let o = o.skip(IgnoredNode::consume);
-            let (o, _) = o.match_string(")", false)?;
+            let (o, _) = o.match_str_static(")", false)?;
             o.finish(ExprRest::Group { expr: Box::new(expr) })
         }
         // id
