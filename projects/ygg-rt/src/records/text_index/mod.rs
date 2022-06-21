@@ -1,5 +1,6 @@
 // pub(crate) mod as_peg;
 pub(crate) mod line_column;
+#[cfg(feature = "lsp-types")]
 pub(crate) mod lsp;
 pub(crate) mod text_change;
 pub(crate) mod text_indexed;

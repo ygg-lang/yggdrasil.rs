@@ -1,9 +1,10 @@
 [package]
 name = "yggdrasil-rt"
-version = "0.1.5"
+version = "0.0.0"
 authors = ["Aster <192607617@qq.com>"]
 description = "Yggdrasil Shared Structure"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
+documentation = "https://docs.rs/yggdrasil-rt"
 readme = "Readme.md"
 license = "MPL-2.0"
 edition = "2021"
@@ -16,5 +17,5 @@ ucd-trie = "0.1.5"
 regex-automata = "0.2.0"
 
 [features]
-default = ["lsp"]
+default = []
 lsp = ["lsp-types"]
