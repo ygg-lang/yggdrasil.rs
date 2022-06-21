@@ -1,5 +1,5 @@
 use super::*;
-use crate::YResult;
+use crate::SResult;
 
 pub enum ParseAdvance {
     Offset(usize),
@@ -42,7 +42,7 @@ impl<'i> YState<'i> {
     }
     /// Advance the parser state and return the view of these string.
     #[inline]
-    pub fn advance_view(self, offset: usize) -> YResult<'i, &'i str> {
+    pub fn advance_view(self, offset: usize) -> SResult<'i, &'i str> {
         let view = &self.partial_string[0..offset];
         YState {
             partial_string: &self.partial_string[offset..],

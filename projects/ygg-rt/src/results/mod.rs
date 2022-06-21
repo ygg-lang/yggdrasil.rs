@@ -1,4 +1,3 @@
-mod y_result;
 use std::{
     error::Error,
     fmt::{Display, Formatter},
@@ -7,12 +6,12 @@ use std::{
 
 use crate::ast_mode::YState;
 
+mod y_result;
+
 pub type Parsed<'i, T> = (YState<'i>, T);
 
-pub type YResult<'i, T> = Result<Parsed<'i, T>, StopBecause>;
-
-/// will change [`YResult`] to [`YYResult`] if try 2.0 is stable
-pub enum YYResult<'i, T> {
+/// will change [`SResult`] to [`SResult`] if try 2.0 is stable
+pub enum SResult<'i, T> {
     Pending(YState<'i>, T),
     Stop(StopBecause),
 }

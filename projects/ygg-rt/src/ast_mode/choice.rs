@@ -1,5 +1,5 @@
 use super::*;
-use crate::{Parsed, YResult};
+use crate::{Parsed, SResult};
 
 #[derive(Debug, Clone)]
 pub struct ChoiceHelper<'a, T> {
@@ -24,7 +24,7 @@ impl<'a, T> ChoiceHelper<'a, T> {
 
     /// Try to parse a value
     #[inline]
-    pub fn maybe(mut self, parse_fn: impl FnOnce(YState<'a>) -> YResult<'a, T>) -> Self {
+    pub fn maybe(mut self, parse_fn: impl FnOnce(YState<'a>) -> SResult<'a, T>) -> Self {
         if self.result.is_none() {
             match parse_fn(self.state.clone()) {
                 Ok(ok_result) => self.result = Some(ok_result),
@@ -35,7 +35,7 @@ impl<'a, T> ChoiceHelper<'a, T> {
     }
     /// End choice
     #[inline]
-    pub fn end_choice(self) -> YResult<'a, T> {
+    pub fn end_choice(self) -> SResult<'a, T> {
         match self.result {
             Some(ok) => Ok(ok),
             None => Err(self.state.get_error()),

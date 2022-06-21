@@ -1,7 +1,7 @@
 use std::fmt::{Debug, Formatter};
 
 use yggdrasil_rt::{
-    ast_mode::{YResult, YState},
+    ast_mode::{SResult, YState},
     results::StopBecause,
 };
 

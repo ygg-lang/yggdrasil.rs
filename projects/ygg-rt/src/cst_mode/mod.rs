@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-use crate::{ast_mode::YState, YResult};
+use crate::{ast_mode::YState, SResult};
 
 pub trait NodeType: Into<usize> + Copy {}
 

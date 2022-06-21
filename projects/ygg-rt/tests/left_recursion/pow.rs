@@ -3,7 +3,7 @@ use std::{
     str::FromStr,
 };
 
-use yggdrasil_rt::ast_mode::{YResult, YState};
+use yggdrasil_rt::{YResult, YState};
 
 /// ```ygg
 /// climb Expr {
@@ -61,7 +61,7 @@ impl ExprAtom {
 /// `(lhs:ExprAtom '^')? rhs:ExprPow`
 struct ExprPow {
     lhs: Option<ExprAtom>,
-    rhs: ExprPow,
+    rhs: Box<ExprPow>,
     has_lhs: bool,
 }
 /// `lhs:ExprAtom '^'`
@@ -70,11 +70,11 @@ struct ExprPowLhs {
 }
 
 impl ExprPow {
+    #[rustfmt::skip]
     fn ascent(mut self) -> Expr {
         if !self.has_lhs {
             return self.rhs.ascent();
         }
-        #[rustfmt::skip]
         unsafe {
             Expr::Pow {
                 lhs: Box::new(self.lhs.unwrap_unchecked().ascent()),

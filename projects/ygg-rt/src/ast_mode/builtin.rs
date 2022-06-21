@@ -1,6 +1,6 @@
 use crate::{
     records::{CapturedString, SurroundedString},
-    YResult,
+    SResult,
 };
 
 use super::*;
@@ -12,7 +12,7 @@ impl<'i> YState<'i> {
     /// 'c'
     /// ```
     #[inline]
-    pub fn match_char(self, target: char) -> YResult<'i, char> {
+    pub fn match_char(self, target: char) -> SResult<'i, char> {
         match self.get_character(0) {
             Some(c) if c.eq(&target) => self.advance(target).finish(target),
             _ => Err(StopBecause::MissingCharacter { expected: target, position: self.start_offset })?,
@@ -24,7 +24,7 @@ impl<'i> YState<'i> {
     /// [a-z]
     /// ```
     #[inline]
-    pub fn match_char_range(self, start: char, end: char) -> YResult<'i, char> {
+    pub fn match_char_range(self, start: char, end: char) -> SResult<'i, char> {
         match self.get_character(0) {
             Some(c) if c <= end && c >= start => self.advance(c).finish(c),
             _ => Err(StopBecause::MissingCharacterRange { start, end, position: self.start_offset }),
@@ -32,7 +32,7 @@ impl<'i> YState<'i> {
     }
     /// Parsing a character with given rule.
     #[inline]
-    pub fn match_char_if(self, predicate: impl Fn(char) -> bool, message: &'static str) -> YResult<'i, char> {
+    pub fn match_char_if(self, predicate: impl Fn(char) -> bool, message: &'static str) -> SResult<'i, char> {
         match self.get_character(0) {
             Some(c) if predicate(c) => self.advance(c).finish(c),
             _ => Err(StopBecause::MustBe { message, position: self.start_offset })?,
@@ -40,17 +40,17 @@ impl<'i> YState<'i> {
     }
     /// Match any character, except `EOF`.
     #[inline]
-    pub fn match_char_any(self) -> YResult<'i, char> {
+    pub fn match_char_any(self) -> SResult<'i, char> {
         self.match_char_if(|_| true, "ANY")
     }
     /// Match a character with given set.
     #[inline]
-    pub fn parse_char_set(self, set: TrieSet, message: &'static str) -> YResult<'i, char> {
+    pub fn parse_char_set(self, set: TrieSet, message: &'static str) -> SResult<'i, char> {
         self.match_char_if(|c| set.contains_char(c), message)
     }
     /// Match a static string.
     #[inline]
-    pub fn match_str_static(self, target: &'static str, insensitive: bool) -> YResult<'i, &'i str> {
+    pub fn match_str_static(self, target: &'static str, insensitive: bool) -> SResult<'i, &'i str> {
         let s = match self.get_string(0..target.len()) {
             Some(s) if insensitive && s.eq_ignore_ascii_case(target) => s.len(),
             Some(s) if s.eq(target) => s.len(),
@@ -60,7 +60,7 @@ impl<'i> YState<'i> {
     }
     /// Match a string with given rule.
     #[inline]
-    pub fn match_str_if(self, predicate: impl Fn(char) -> bool, message: &'static str) -> YResult<'i, &'i str> {
+    pub fn match_str_if(self, predicate: impl Fn(char) -> bool, message: &'static str) -> SResult<'i, &'i str> {
         let mut offset = 0;
         for char in self.partial_string.chars() {
             match predicate(char) {
@@ -78,7 +78,7 @@ impl<'i> YState<'i> {
     /// p $
     /// ```
     #[inline]
-    pub fn match_eof(self) -> YResult<'i, ()> {
+    pub fn match_eof(self) -> SResult<'i, ()> {
         match self.get_character(0) {
             Some(_) => Err(StopBecause::ExpectEof { position: self.start_offset }),
             None => self.finish(()),
@@ -86,9 +86,9 @@ impl<'i> YState<'i> {
     }
     /// Simple suffix call form
     #[inline]
-    pub fn match_parse<T, F>(self, parse: F) -> YResult<'i, T>
+    pub fn match_parse<T, F>(self, parse: F) -> SResult<'i, T>
     where
-        F: Fn(YState) -> YResult<T>,
+        F: Fn(YState) -> SResult<T>,
     {
         parse(self)
     }
@@ -98,9 +98,9 @@ impl<'i> YState<'i> {
     /// p+ <=> p p*
     /// ```
     #[inline]
-    pub fn match_repeats<T, F>(self, parse: F) -> YResult<'i, Vec<T>>
+    pub fn match_repeats<T, F>(self, parse: F) -> SResult<'i, Vec<T>>
     where
-        F: Fn(YState) -> YResult<T>,
+        F: Fn(YState) -> SResult<T>,
     {
         let mut result = Vec::new();
         let mut state = self;
@@ -122,9 +122,9 @@ impl<'i> YState<'i> {
     /// p{min, max}
     /// ```
     #[inline]
-    pub fn match_repeat_m_n<T, F>(self, min: usize, max: usize, parse: F) -> YResult<'i, Vec<T>>
+    pub fn match_repeat_m_n<T, F>(self, min: usize, max: usize, parse: F) -> SResult<'i, Vec<T>>
     where
-        F: Fn(YState) -> YResult<T>,
+        F: Fn(YState) -> SResult<T>,
     {
         let mut result = Vec::new();
         let mut count = 0;
@@ -152,9 +152,9 @@ impl<'i> YState<'i> {
     /// p?
     /// ```
     #[inline]
-    pub fn match_optional<T, F>(self, parse: F) -> YResult<'i, Option<T>>
+    pub fn match_optional<T, F>(self, parse: F) -> SResult<'i, Option<T>>
     where
-        F: Fn(YState) -> YResult<T>,
+        F: Fn(YState) -> SResult<T>,
     {
         match parse(self.clone()) {
             Ok((state, value)) => state.finish(Some(value)),
@@ -165,7 +165,7 @@ impl<'i> YState<'i> {
     #[inline]
     pub fn skip<F, T>(self, parse: F) -> YState<'i>
     where
-        F: Fn(YState) -> YResult<T>,
+        F: Fn(YState) -> SResult<T>,
     {
         match parse(self.clone()) {
             Ok((new, _)) => new,
@@ -181,9 +181,9 @@ impl<'i> YState<'i> {
     /// p &after
     /// ```
     #[inline]
-    pub fn match_positive<F, T>(self, parse: F, message: &'static str) -> YResult<'i, ()>
+    pub fn match_positive<F, T>(self, parse: F, message: &'static str) -> SResult<'i, ()>
     where
-        F: Fn(YState) -> YResult<T>,
+        F: Fn(YState) -> SResult<T>,
     {
         match parse(self.clone()) {
             Ok(_) => self.finish(()),
@@ -196,9 +196,9 @@ impl<'i> YState<'i> {
     /// p !after
     /// ```
     #[inline]
-    pub fn match_negative<F, T>(self, parse: F, message: &'static str) -> YResult<'i, ()>
+    pub fn match_negative<F, T>(self, parse: F, message: &'static str) -> SResult<'i, ()>
     where
-        F: Fn(YState) -> YResult<T>,
+        F: Fn(YState) -> SResult<T>,
     {
         match parse(self.clone()) {
             Ok(_) => Err(StopBecause::ShouldNotBe { message, position: self.start_offset }),
@@ -214,7 +214,7 @@ impl<'i> YState<'i> {
     /// // comment
     /// ```
     #[inline]
-    pub fn match_comment_line(self, head: &'static str) -> YResult<'i, &'i str> {
+    pub fn match_comment_line(self, head: &'static str) -> SResult<'i, &'i str> {
         if !self.partial_string.starts_with(head) {
             Err(StopBecause::MissingString { message: head, position: self.start_offset })?;
         }
@@ -230,9 +230,9 @@ impl<'i> YState<'i> {
     /// /* */
     /// ```
     #[inline]
-    pub fn match_comment_block<F, T>(self, head: &'static str, tail: &'static str) -> YResult<'i, ()>
+    pub fn match_comment_block<F, T>(self, head: &'static str, tail: &'static str) -> SResult<'i, ()>
     where
-        F: Fn(YState) -> YResult<T>,
+        F: Fn(YState) -> SResult<T>,
     {
         if !self.partial_string.starts_with(head) {
             Err(StopBecause::MissingString { message: head, position: self.start_offset })?;
@@ -253,9 +253,9 @@ impl<'i> YState<'i> {
     /// r##" "##
     /// r###" "###
     /// ```
-    pub fn match_surround<F, T>(self, delimiter: char, min: usize) -> YResult<'i, ()>
+    pub fn match_surround<F, T>(self, delimiter: char, min: usize) -> SResult<'i, ()>
     where
-        F: Fn(YState) -> YResult<T>,
+        F: Fn(YState) -> SResult<T>,
     {
         let mut count = 0;
         for c in self.partial_string.chars() {

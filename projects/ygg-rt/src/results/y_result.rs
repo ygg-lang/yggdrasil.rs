@@ -1,32 +1,29 @@
 use super::*;
 
-impl<'i, T> YYResult<'i, T> {
+impl<'i, T> SResult<'i, T> {
     #[inline(always)]
-    pub fn map_inner<F, U>(self, f: F) -> YYResult<'i, U>
+    pub fn map_inner<F, U>(self, f: F) -> SResult<'i, U>
     where
         F: FnOnce(T) -> U,
     {
         match self {
-            YYResult::Pending(state, value) => YYResult::Pending(state, f(value)),
-            YYResult::Stop(reason) => YYResult::Stop(reason),
+            SResult::Pending(state, value) => SResult::Pending(state, f(value)),
+            SResult::Stop(reason) => SResult::Stop(reason),
         }
     }
 }
 
-#[cfg(nightly)]
-mod nightly {
-    use std::ops::{ControlFlow, Try};
+use std::ops::{ControlFlow, Try};
 
-    impl<'i, T> Try for YYResult<'i, T> {
-        type Output = ();
-        type Residual = ();
+impl<'i, T> Try for YYResult<'i, T> {
+    type Output = ();
+    type Residual = ();
 
-        fn from_output(output: Self::Output) -> Self {
-            todo!()
-        }
+    fn from_output(output: Self::Output) -> Self {
+        todo!()
+    }
 
-        fn branch(self) -> ControlFlow<Self::Residual, Self::Output> {
-            todo!()
-        }
+    fn branch(self) -> ControlFlow<Self::Residual, Self::Output> {
+        todo!()
     }
 }

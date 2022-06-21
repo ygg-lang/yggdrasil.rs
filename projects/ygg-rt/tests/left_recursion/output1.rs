@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use yggdrasil_rt::ast_mode::{YResult, YState};
+use yggdrasil_rt::{YResult, YState};
 
 // P  →  Pα | β
 // P  →  βP'

@@ -1,4 +1,4 @@
-use yggdrasil_rt::ast_mode::{Parsed, YResult, YState};
+use yggdrasil_rt::{Parsed, YResult, YState};
 
 mod output1;
 mod output2;
