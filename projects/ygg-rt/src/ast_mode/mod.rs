@@ -2,7 +2,7 @@ use std::{ops::Range, slice::SliceIndex};
 
 use ucd_trie::TrieSet;
 
-use crate::{results::StopBecause, SResult};
+use crate::{results::StopBecause, SResult, SResult::Pending};
 
 mod advance;
 mod builtin;
@@ -35,7 +35,7 @@ impl<'i> YState<'i> {
     /// Finish with given value
     #[inline(always)]
     pub fn finish<T>(self, value: T) -> SResult<'i, T> {
-        Ok((self, value))
+        Pending(self, value)
     }
     /// Check if the string is depleted
     #[inline(always)]

@@ -1,7 +1,4 @@
-use crate::{
-    records::{CapturedString, SurroundedString},
-    SResult,
-};
+use crate::{SResult, SResult::Stop};
 
 use super::*;
 
@@ -15,7 +12,7 @@ impl<'i> YState<'i> {
     pub fn match_char(self, target: char) -> SResult<'i, char> {
         match self.get_character(0) {
             Some(c) if c.eq(&target) => self.advance(target).finish(target),
-            _ => Err(StopBecause::MissingCharacter { expected: target, position: self.start_offset })?,
+            _ => Stop(StopBecause::MissingCharacter { expected: target, position: self.start_offset }),
         }
     }
     /// Match a character in given range.
@@ -27,7 +24,7 @@ impl<'i> YState<'i> {
     pub fn match_char_range(self, start: char, end: char) -> SResult<'i, char> {
         match self.get_character(0) {
             Some(c) if c <= end && c >= start => self.advance(c).finish(c),
-            _ => Err(StopBecause::MissingCharacterRange { start, end, position: self.start_offset }),
+            _ => Stop(StopBecause::MissingCharacterRange { start, end, position: self.start_offset }),
         }
     }
     /// Parsing a character with given rule.
@@ -35,7 +32,7 @@ impl<'i> YState<'i> {
     pub fn match_char_if(self, predicate: impl Fn(char) -> bool, message: &'static str) -> SResult<'i, char> {
         match self.get_character(0) {
             Some(c) if predicate(c) => self.advance(c).finish(c),
-            _ => Err(StopBecause::MustBe { message, position: self.start_offset })?,
+            _ => Stop(StopBecause::MustBe { message, position: self.start_offset }),
         }
     }
     /// Match any character, except `EOF`.
@@ -54,7 +51,7 @@ impl<'i> YState<'i> {
         let s = match self.get_string(0..target.len()) {
             Some(s) if insensitive && s.eq_ignore_ascii_case(target) => s.len(),
             Some(s) if s.eq(target) => s.len(),
-            _ => Err(StopBecause::MissingString { message: target, position: self.start_offset })?,
+            _ => Stop(StopBecause::MissingString { message: target, position: self.start_offset })?.1,
         };
         self.advance_view(s)
     }
@@ -80,7 +77,7 @@ impl<'i> YState<'i> {
     #[inline]
     pub fn match_eof(self) -> SResult<'i, ()> {
         match self.get_character(0) {
-            Some(_) => Err(StopBecause::ExpectEof { position: self.start_offset }),
+            Some(_) => Stop(StopBecause::ExpectEof { position: self.start_offset })?.1,
             None => self.finish(()),
         }
     }
@@ -106,8 +103,8 @@ impl<'i> YState<'i> {
         let mut state = self;
         loop {
             let (new, value) = match parse(state) {
-                Ok(o) => o,
-                Err(_) => break,
+                Pending(o, v) => (o, v),
+                Stop(_) => break,
             };
             state = new;
             result.push(value);
@@ -132,8 +129,8 @@ impl<'i> YState<'i> {
         let mut state = self;
         loop {
             let (new, value) = match parse(state.clone()) {
-                Ok(o) => o,
-                Err(_) => break,
+                Pending(o, v) => (o, v),
+                Stop(_) => break,
             };
             state = new;
             result.push(value);
@@ -157,8 +154,8 @@ impl<'i> YState<'i> {
         F: Fn(YState) -> SResult<T>,
     {
         match parse(self.clone()) {
-            Ok((state, value)) => state.finish(Some(value)),
-            Err(_) => self.finish(None),
+            Pending(state, value) => state.finish(Some(value)),
+            Stop(_) => self.finish(None),
         }
     }
     /// Match but does not return the result
@@ -168,8 +165,8 @@ impl<'i> YState<'i> {
         F: Fn(YState) -> SResult<T>,
     {
         match parse(self.clone()) {
-            Ok((new, _)) => new,
-            Err(_) => self,
+            Pending(new, _) => new,
+            Stop(_) => self,
         }
     }
     /// Zero-width positive match, does not consume input
@@ -186,8 +183,8 @@ impl<'i> YState<'i> {
         F: Fn(YState) -> SResult<T>,
     {
         match parse(self.clone()) {
-            Ok(_) => self.finish(()),
-            Err(_) => Err(StopBecause::MustBe { message, position: self.start_offset }),
+            Pending(..) => self.finish(()),
+            Stop(_) => Stop(StopBecause::MustBe { message, position: self.start_offset }),
         }
     }
     /// Zero-width negative match, does not consume input
@@ -201,8 +198,8 @@ impl<'i> YState<'i> {
         F: Fn(YState) -> SResult<T>,
     {
         match parse(self.clone()) {
-            Ok(_) => Err(StopBecause::ShouldNotBe { message, position: self.start_offset }),
-            Err(_) => self.finish(()),
+            Pending(..) => Stop(StopBecause::ShouldNotBe { message, position: self.start_offset }),
+            Stop(_) => self.finish(()),
         }
     }
 }
@@ -216,7 +213,7 @@ impl<'i> YState<'i> {
     #[inline]
     pub fn match_comment_line(self, head: &'static str) -> SResult<'i, &'i str> {
         if !self.partial_string.starts_with(head) {
-            Err(StopBecause::MissingString { message: head, position: self.start_offset })?;
+            Stop::<&'i str>(StopBecause::MissingString { message: head, position: self.start_offset })?.1;
         }
         let offset = match self.partial_string.find(|c| c == '\r' || c == '\n') {
             Some(s) => s,
@@ -235,13 +232,13 @@ impl<'i> YState<'i> {
         F: Fn(YState) -> SResult<T>,
     {
         if !self.partial_string.starts_with(head) {
-            Err(StopBecause::MissingString { message: head, position: self.start_offset })?;
+            Stop::<()>(StopBecause::MissingString { message: head, position: self.start_offset })?;
         }
         let mut offset = head.len();
         let mut rest = &self.partial_string[offset..];
         match rest.find(tail) {
             Some(s) => offset += s + tail.len(),
-            None => Err(StopBecause::MissingString { message: tail, position: self.start_offset + tail.len() })?,
+            None => Stop(StopBecause::MissingString { message: tail, position: self.start_offset + tail.len() })?.1,
         }
         self.advance(offset).finish(())
     }
@@ -265,17 +262,17 @@ impl<'i> YState<'i> {
             }
         }
         if count == 0 {
-            Err(StopBecause::MissingString { message: "r#", position: self.start_offset })?;
+            Stop::<()>(StopBecause::MissingString { message: "r#", position: self.start_offset })?;
         }
         if count < min {
-            Err(StopBecause::MissingString { message: "r##", position: self.start_offset })?;
+            Stop::<()>(StopBecause::MissingString { message: "r##", position: self.start_offset })?;
         }
         let head = count * delimiter.len_utf8();
         let rest = &self.partial_string[head..];
         let end = delimiter.to_string().repeat(count);
         match rest.find(&end) {
             Some(s) => self.advance(s + count * delimiter.len_utf8()).finish(()),
-            None => Err(StopBecause::MissingString { message: "match_raw_paired", position: self.start_offset + count }),
+            None => Stop(StopBecause::MissingString { message: "match_raw_paired", position: self.start_offset + count }),
         }
     }
 }
