@@ -32,16 +32,22 @@ pub struct CSTNode {
     id: usize,
     /// An enum that implements the [`NodeType`]
     kind: usize,
-    /// Children nodes, be leaf if empty
-    nodes: Vec<CSTNode>,
     /// The offset in raw bytes, life time erased
-    range: Range<usize>,
+    start: usize,
+    end: usize,
 }
+
+
 
 impl CSTNode {
     /// Create a new cst node
     pub fn new(id: usize) -> Self {
-        Self { id, kind: 0, nodes: vec![], range: 0..0 }
+        Self {
+            id,
+            kind: 0,
+            start: 0,
+            end: 0,
+        }
     }
     pub fn with_kind<N>(mut self, kind: N) -> Self
     where
@@ -50,16 +56,13 @@ impl CSTNode {
         self.kind = kind.into();
         self
     }
-    pub fn with_nodes(mut self, nodes: Vec<CSTNode>) -> Self {
-        self.nodes = nodes;
-        self
-    }
     pub fn get_range(&self) -> Range<usize> {
-        self.range.clone()
+        self.start..self.end
     }
     pub fn with_range(mut self, start: usize, end: usize) -> Self {
         // range not copy
-        self.range = Range { start, end };
+        self.start = start;
+        self.end = end;
         self
     }
 }

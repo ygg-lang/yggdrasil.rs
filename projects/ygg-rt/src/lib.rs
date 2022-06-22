@@ -25,6 +25,7 @@ pub mod ast_mode;
 mod errors;
 pub(crate) mod records;
 mod results;
+mod managers;
 ///
 pub mod traits;
 
