@@ -9,7 +9,6 @@ pub(crate) mod text_indexed;
 mod test;
 
 use std::ops::Range;
-use text_indexed::TextMap;
 
 /// A combo of [`TextMap`] + [`TextAdapter`]. Wraps the original text and
 /// provides all the conversion methods.

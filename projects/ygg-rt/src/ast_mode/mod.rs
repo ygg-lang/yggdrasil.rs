@@ -37,6 +37,10 @@ impl<'i> YState<'i> {
     pub fn finish<T>(self, value: T) -> SResult<'i, T> {
         Pending(self, value)
     }
+    /// Finish with given value
+    pub fn finish_drop(self) -> SResult<'i, ()> {
+        self.finish(())
+    }
     /// Check if the string is depleted
     #[inline(always)]
     pub fn is_empty(&self) -> bool {

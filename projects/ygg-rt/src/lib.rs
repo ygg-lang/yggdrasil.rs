@@ -1,19 +1,22 @@
 #![feature(try_trait_v2)]
-#![feature(try_trait_v2_residual)]
-#![feature(yeet_expr)]
 // #![forbid(missing_docs)]
 #![allow(clippy::needless_return)]
 #![doc = include_str!("../Readme.md")]
+
+#[cfg(feature = "lsp")]
+pub use lsp_types;
+pub use url::Url;
 
 pub use crate::{
     ast_mode::YState,
     cst_mode::{CSTNode, NodeType},
     records::text_index::*,
-    results::{Parsed, SResult},
+    results::{
+        Parsed,
+        SResult::{self, Pending, Stop},
+        StopBecause,
+    },
 };
-#[cfg(feature = "lsp")]
-pub use lsp_types;
-pub use url::Url;
 
 pub use self::errors::{YError, YErrorKind, YResult};
 
