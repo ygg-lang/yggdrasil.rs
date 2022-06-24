@@ -1,8 +1,12 @@
+use dashmap::DashMap;
+use crate::CSTNode;
 
 
+pub type NodeID = usize;
+
+#[derive(Clone, Debug)]
 pub struct NodeManager {
+    arena: Vec<CSTNode>,
     /// The root node of the cst
-    parents: Dashmap<usize, usize>,
-    /// The raw input
-    input: String,
+    parents: DashMap<NodeID, NodeID>,
 }

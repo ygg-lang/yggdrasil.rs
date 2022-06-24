@@ -1,4 +1,5 @@
-use std::ops::Range;
+use crate::NodeID;
+use std::{num::NonZeroUsize, ops::Range, rc::Weak, sync::Arc};
 
 pub trait NodeType: Into<usize> + Copy {}
 
@@ -29,77 +30,52 @@ pub struct CSTNode {
     ///     cache: BTreeMap<usize, LanguageID>,
     /// }
     /// ```
-    id: usize,
     /// An enum that implements the [`NodeType`]
+    id: usize,
     kind: usize,
+    parent: Option<NonZeroUsize>,
     /// The offset in raw bytes, life time erased
     start: usize,
+    /// The offset in raw bytes, life time erased
     end: usize,
 }
 
-
-
 impl CSTNode {
     /// Create a new cst node
-    pub fn new(id: usize) -> Self {
-        Self {
-            id,
-            kind: 0,
-            start: 0,
-            end: 0,
-        }
-    }
-    pub fn with_kind<N>(mut self, kind: N) -> Self
+    pub fn new<N>(id: NodeID, kind: N) -> Self
     where
         N: NodeType,
     {
-        self.kind = kind.into();
+        Self { id, kind: <N as Into<usize>>::into(kind), parent: None, start: 0, end: 0 }
+    }
+    pub fn get_id(&self) -> NodeID {
+        self.id
+    }
+    pub fn get_parent(&self) -> Option<NodeID> {
+        self.parent.map(|p| p.get())
+    }
+    pub fn set_parent(&mut self, parent: Option<NodeID>) {
+        self.parent = parent.map(|p| NonZeroUsize::new(p).unwrap());
+    }
+    /// Get the id of the node
+    pub fn with_parent(mut self, parent: Option<NodeID>) -> Self {
+        self.set_parent(parent);
         self
     }
     pub fn get_range(&self) -> Range<usize> {
         self.start..self.end
     }
-    pub fn with_range(mut self, start: usize, end: usize) -> Self {
-        // range not copy
+    pub fn set_range(&mut self, start: usize, end: usize) {
         self.start = start;
         self.end = end;
+    }
+    pub fn with_range(mut self, start: usize, end: usize) -> Self {
+        self.set_range(start, end);
         self
     }
 }
 
 impl CSTNode {
-    pub fn view<'i>(&self, input: &'i str) -> &'i str {
-        &input[self.range.clone()]
-    }
-    pub fn get_id(&self) -> usize {
-        self.id
-    }
-    pub fn collect_ids(&self) -> Vec<usize> {
-        let mut ids = vec![self.id];
-        for node in self.nodes.iter() {
-            ids.extend(node.collect_ids());
-        }
-        ids
-    }
-    pub fn find<N>(&self, types: &[N]) -> Option<&CSTNode>
-    where
-        N: NodeType,
-    {
-        for node in &self.nodes {
-            if self.is_a(types) {
-                return Some(node);
-            }
-        }
-        return None;
-    }
-    pub fn filter<'s, 'i, N>(&'s self, types: &'i [N]) -> impl Iterator<Item = &CSTNode> + 'i
-    where
-        N: NodeType,
-        's: 'i,
-    {
-        self.nodes.iter().filter(|child| child.is_a(types))
-    }
-
     /// Check if the node is one of the given types
     ///
     /// # Arguments
