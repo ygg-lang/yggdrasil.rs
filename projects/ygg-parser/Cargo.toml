@@ -10,7 +10,7 @@ edition = "2021"
 
 [dependencies]
 unicode-xid = "0.2.4"
-peginator = "0.6.0"
+#peginator = "0.6.0"
 yggdrasil-rt = { path = "../ygg-rt" }
 
 [features]

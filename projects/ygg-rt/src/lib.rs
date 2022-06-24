@@ -9,9 +9,10 @@ pub use url::Url;
 
 pub use crate::{
     ast_mode::YState,
-    cst_mode::{CSTNode, NodeType},
+    cst_mode::CSTNode,
     managers::{
-        node_manager::{NodeID, NodeManager},
+        language_manager::{LanguageID, LanguageManager},
+        node_manager::{NodeID, NodeManager, NodeType},
         text_manager::TextManager,
     },
     records::text_index::*,

@@ -1,7 +1,5 @@
-use crate::NodeID;
-use std::{num::NonZeroUsize, ops::Range, rc::Weak, sync::Arc};
-
-pub trait NodeType: Into<usize> + Copy {}
+use crate::{NodeID, NodeType};
+use std::ops::Range;
 
 /// The basic unit of semantic analysis.
 ///
@@ -20,7 +18,7 @@ pub trait NodeType: Into<usize> + Copy {}
 /// **This node is immutable**
 ///
 /// If a modification occurs, a new clone must be generated.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct CSTNode {
     /// meta information provided by environment
     /// ```
@@ -32,8 +30,8 @@ pub struct CSTNode {
     /// ```
     /// An enum that implements the [`NodeType`]
     id: usize,
+    /// The kind of the node
     kind: usize,
-    parent: Option<NonZeroUsize>,
     /// The offset in raw bytes, life time erased
     start: usize,
     /// The offset in raw bytes, life time erased
@@ -42,33 +40,45 @@ pub struct CSTNode {
 
 impl CSTNode {
     /// Create a new cst node
-    pub fn new<N>(id: NodeID, kind: N) -> Self
-    where
-        N: NodeType,
-    {
-        Self { id, kind: <N as Into<usize>>::into(kind), parent: None, start: 0, end: 0 }
+    pub fn new(id: NodeID) -> Self {
+        Self { id, kind: 0, start: 0, end: 0 }
     }
+    /// Get the id of the node
     pub fn get_id(&self) -> NodeID {
         self.id
     }
-    pub fn get_parent(&self) -> Option<NodeID> {
-        self.parent.map(|p| p.get())
+    /// Get the kind of the node
+    pub fn get_kind<N>(&self) -> N
+    where
+        N: NodeType,
+    {
+        <N as From<usize>>::from(self.kind)
     }
-    pub fn set_parent(&mut self, parent: Option<NodeID>) {
-        self.parent = parent.map(|p| NonZeroUsize::new(p).unwrap());
+    /// Set the kind of the node
+    pub fn set_kind<N>(&mut self, kind: N)
+    where
+        N: NodeType,
+    {
+        self.kind = <N as Into<usize>>::into(kind);
     }
-    /// Get the id of the node
-    pub fn with_parent(mut self, parent: Option<NodeID>) -> Self {
-        self.set_parent(parent);
+    /// Set the kind of the node
+    pub fn with_kind<N>(mut self, kind: N) -> Self
+    where
+        N: NodeType,
+    {
+        self.set_kind(kind);
         self
     }
+    /// Get the range of the node
     pub fn get_range(&self) -> Range<usize> {
         self.start..self.end
     }
+    /// Set the range of the node
     pub fn set_range(&mut self, start: usize, end: usize) {
         self.start = start;
         self.end = end;
     }
+    /// Set the range of the node
     pub fn with_range(mut self, start: usize, end: usize) -> Self {
         self.set_range(start, end);
         self
