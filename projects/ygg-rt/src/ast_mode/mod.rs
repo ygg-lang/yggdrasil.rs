@@ -2,8 +2,6 @@ use std::{ops::Range, slice::SliceIndex};
 
 use ucd_trie::TrieSet;
 
-use crate::{results::StopBecause, SResult, SResult::Pending};
-
 mod advance;
 mod builtin;
 mod choice;

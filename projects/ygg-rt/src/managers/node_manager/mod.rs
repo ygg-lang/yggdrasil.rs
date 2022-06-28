@@ -21,7 +21,7 @@ impl NodeManager {
         self.arena.get(&id).map(|x| x.value().clone())
     }
     /// Add new node to the arena
-    pub fn add_node(&mut self, node: CSTNode, parent: Option<NodeID>) -> NodeID {
+    pub fn add_node(&self, node: CSTNode, parent: Option<NodeID>) -> NodeID {
         let id = node.get_id();
         self.arena.insert(id, node);
         if let Some(parent) = parent {

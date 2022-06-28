@@ -7,8 +7,8 @@
 pub use lsp_types;
 pub use url::Url;
 
+pub use self::errors::{YError, YErrorKind, YResult};
 pub use crate::{
-    ast_mode::YState,
     cst_mode::CSTNode,
     managers::{
         language_manager::{LanguageID, LanguageManager},
@@ -16,21 +16,16 @@ pub use crate::{
         text_manager::TextManager,
     },
     records::text_index::*,
-    results::{
-        Parsed,
-        SResult::{self, Pending, Stop},
-        StopBecause,
-    },
+};
+pub use pex::{
+    ParseResult::{self, Pending, Stop},
+    ParseState, Parsed, StopBecause,
 };
 
-pub use self::errors::{YError, YErrorKind, YResult};
-
 ///
-pub mod ast_mode;
 mod errors;
 mod managers;
 pub(crate) mod records;
-mod results;
 ///
 pub mod traits;
 
