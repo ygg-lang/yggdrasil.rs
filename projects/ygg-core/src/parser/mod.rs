@@ -2,7 +2,7 @@ mod from_ast;
 use std::ops::Range;
 
 use yggdrasil_ir::{GrammarInfo, GrammarRule, QError, Validation};
-use yggdrasil_parser::{parse_program, ClassStatementNode, ProgramNode, StatementNode};
+use yggdrasil_parser::{parse_namespace, ClassStatementNode, ProgramNode, StatementNode};
 
 pub struct ParseContext {
     out: GrammarInfo,
@@ -11,7 +11,7 @@ pub struct ParseContext {
 
 pub fn parse_grammar(input: &str) -> Validation<GrammarInfo> {
     let mut parser = ParseContext { out: GrammarInfo::default(), errors: Vec::new() };
-    let out = parse_program(input);
+    let out = parse_namespace(input);
     match out {
         Ok(out) => {
             parser.visit_program(out);

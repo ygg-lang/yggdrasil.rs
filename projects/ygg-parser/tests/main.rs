@@ -1,5 +1,4 @@
 // use yggdrasil_parser::{parse_program, ClassStatementNode, IgnoredNode, ProgramNode};
-use yggdrasil_rt::ast_mode::YState;
 
 #[test]
 fn ready() {

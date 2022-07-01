@@ -18,8 +18,8 @@ use std::ops::Range;
 /// **This node is immutable**
 ///
 /// If a modification occurs, a new clone must be generated.
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub struct CSTNode {
+#[derive(Clone, Debug)]
+pub struct CstNode {
     /// meta information provided by environment
     /// ```
     /// # use std::collections::BTreeMap;
@@ -29,19 +29,18 @@ pub struct CSTNode {
     /// }
     /// ```
     /// An enum that implements the [`NodeType`]
-    id: usize,
+    id: NodeID,
     /// The kind of the node
-    kind: usize,
+    kind: i16,
+    children: Vec<NodeID>,
     /// The offset in raw bytes, life time erased
-    start: usize,
-    /// The offset in raw bytes, life time erased
-    end: usize,
+    range: Range<u32>,
 }
 
-impl CSTNode {
+impl CstNode {
     /// Create a new cst node
     pub fn new(id: NodeID) -> Self {
-        Self { id, kind: 0, start: 0, end: 0 }
+        Self { id, kind: 0, children: Vec::new(), range: 0..0 }
     }
     /// Get the id of the node
     pub fn get_id(&self) -> NodeID {
@@ -52,14 +51,14 @@ impl CSTNode {
     where
         N: NodeType,
     {
-        <N as From<usize>>::from(self.kind)
+        <N as From<i16>>::from(self.kind)
     }
     /// Set the kind of the node
     pub fn set_kind<N>(&mut self, kind: N)
     where
         N: NodeType,
     {
-        self.kind = <N as Into<usize>>::into(kind);
+        self.kind = <N as Into<i16>>::into(kind);
     }
     /// Set the kind of the node
     pub fn with_kind<N>(mut self, kind: N) -> Self
@@ -69,14 +68,30 @@ impl CSTNode {
         self.set_kind(kind);
         self
     }
+    /// Get the children of the node
+    pub fn get_children(&self) -> &[NodeID] {
+        &self.children
+    }
+    /// Add a child to the node
+    pub fn add_child(&mut self, child: NodeID) {
+        self.children.push(child);
+    }
+    /// Add a child to the node
+    pub fn set_children(&mut self, children: Vec<NodeID>) {
+        self.children = children;
+    }
+    /// Add a child to the node
+    pub fn with_children(mut self, children: Vec<NodeID>) -> Self {
+        self.set_children(children);
+        self
+    }
     /// Get the range of the node
     pub fn get_range(&self) -> Range<usize> {
-        self.start..self.end
+        Range { start: self.range.start as usize, end: self.range.end as usize }
     }
     /// Set the range of the node
     pub fn set_range(&mut self, start: usize, end: usize) {
-        self.start = start;
-        self.end = end;
+        self.range = Range { start: start as u32, end: end as u32 };
     }
     /// Set the range of the node
     pub fn with_range(mut self, start: usize, end: usize) -> Self {
@@ -85,7 +100,7 @@ impl CSTNode {
     }
 }
 
-impl CSTNode {
+impl CstNode {
     /// Check if the node is one of the given types
     ///
     /// # Arguments
@@ -97,12 +112,12 @@ impl CSTNode {
     /// # Examples
     ///
     /// ```
-    /// # use yggdrasil_rt::CSTNode;
+    /// # use yggdrasil_rt::CstNode;
     /// enum JsonNode {
     ///     Object,
     ///     Array,
     /// }
-    /// let node = CSTNode::new(0).with_kind(JsonNode::Object);
+    /// let node = CstNode::new(0).with_kind(JsonNode::Object);
     /// assert!(node.is_a(&[JsonNode::Object]));
     /// ```
     pub fn is_a<N>(&self, kind: &[N]) -> bool
@@ -110,7 +125,7 @@ impl CSTNode {
         N: NodeType,
     {
         for node in kind {
-            if self.kind == <N as Into<usize>>::into(*node) {
+            if self.kind == <N as Into<i16>>::into(*node) {
                 return true;
             }
         }

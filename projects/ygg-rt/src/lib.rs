@@ -9,10 +9,11 @@ pub use url::Url;
 
 pub use self::errors::{YError, YErrorKind, YResult};
 pub use crate::{
-    cst_mode::CSTNode,
+    cst_mode::CstNode,
     managers::{
         language_manager::{LanguageID, LanguageManager},
         node_manager::{NodeID, NodeManager, NodeType},
+        parse_context::CstContext,
         text_manager::TextManager,
     },
     records::text_index::*,
@@ -21,6 +22,7 @@ pub use pex::{
     ParseResult::{self, Pending, Stop},
     ParseState, Parsed, StopBecause,
 };
+pub use rand::{rngs::SmallRng, Rng, SeedableRng};
 
 ///
 mod errors;

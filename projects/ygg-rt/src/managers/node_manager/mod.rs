@@ -1,27 +1,42 @@
-use crate::{CSTNode, LanguageID};
+use crate::{CstNode, LanguageID};
 use dashmap::DashMap;
+use rand::{rngs::SmallRng, Rng, SeedableRng};
+use std::sync::Mutex;
 
-pub type NodeID = usize;
+pub type NodeID = u32;
 
-pub trait NodeType: Copy + Into<usize> + From<usize> {
+pub trait NodeType: Copy + Into<i16> + From<i16> {
     fn get_language_id(&self) -> LanguageID;
     fn is_ignored(&self) -> bool;
 }
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct NodeManager {
-    arena: DashMap<NodeID, CSTNode>,
+    random: Mutex<SmallRng>,
+    arena: DashMap<NodeID, CstNode>,
     /// The root node of the cst
     parents: DashMap<NodeID, NodeID>,
 }
 
+impl Default for NodeManager {
+    fn default() -> Self {
+        Self { random: Mutex::new(SmallRng::from_entropy()), arena: DashMap::new(), parents: DashMap::new() }
+    }
+}
+
 impl NodeManager {
+    pub fn random_id(&self) -> NodeID {
+        match self.random.try_lock() {
+            Ok(mut o) => o.gen(),
+            Err(_) => NodeID::default(),
+        }
+    }
     /// Get the node from the arena
-    pub fn get_node(&self, id: NodeID) -> Option<CSTNode> {
+    pub fn get_node(&self, id: NodeID) -> Option<CstNode> {
         self.arena.get(&id).map(|x| x.value().clone())
     }
     /// Add new node to the arena
-    pub fn add_node(&self, node: CSTNode, parent: Option<NodeID>) -> NodeID {
+    pub fn add_node(&self, node: CstNode, parent: Option<NodeID>) -> NodeID {
         let id = node.get_id();
         self.arena.insert(id, node);
         if let Some(parent) = parent {
@@ -81,9 +96,9 @@ impl NodeManager {
         }
         descendants
     }
-    pub fn filter_child<F>(&self, id: NodeID, filter: F) -> Option<CSTNode>
+    pub fn filter_child<F>(&self, id: NodeID, filter: F) -> Option<CstNode>
     where
-        F: Fn(&CSTNode) -> bool,
+        F: Fn(&CstNode) -> bool,
     {
         for child in self.find_children(id) {
             if let Some(node) = self.get_node(child) {
@@ -94,9 +109,9 @@ impl NodeManager {
         }
         None
     }
-    pub fn filter_children<F>(&self, id: NodeID, filter: F) -> Vec<CSTNode>
+    pub fn filter_children<F>(&self, id: NodeID, filter: F) -> Vec<CstNode>
     where
-        F: Fn(&CSTNode) -> bool,
+        F: Fn(&CstNode) -> bool,
     {
         let mut out = Vec::new();
         for child in self.find_children(id) {
