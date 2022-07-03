@@ -1,64 +1,68 @@
 use crate::{CstNode, LanguageID};
 use dashmap::DashMap;
-use rand::{rngs::SmallRng, Rng, SeedableRng};
-use std::sync::Mutex;
+use std::fmt::Debug;
+
+use std::ops::Range;
 
 pub type NodeID = u32;
 
-pub trait NodeType: Copy + Into<i16> + From<i16> {
+pub trait NodeType: Copy + Debug + Into<i16> + From<i16> {
     fn get_language_id(&self) -> LanguageID;
     fn is_ignored(&self) -> bool;
 }
 
 #[derive(Debug)]
 pub struct NodeManager {
-    random: Mutex<SmallRng>,
     arena: DashMap<NodeID, CstNode>,
-    /// The root node of the cst
-    parents: DashMap<NodeID, NodeID>,
 }
 
 impl Default for NodeManager {
     fn default() -> Self {
-        Self { random: Mutex::new(SmallRng::from_entropy()), arena: DashMap::new(), parents: DashMap::new() }
+        Self { arena: DashMap::new() }
     }
 }
 
 impl NodeManager {
-    pub fn random_id(&self) -> NodeID {
-        match self.random.try_lock() {
-            Ok(mut o) => o.gen(),
-            Err(_) => NodeID::default(),
-        }
-    }
     /// Get the node from the arena
     pub fn get_node(&self, id: NodeID) -> Option<CstNode> {
         self.arena.get(&id).map(|x| x.value().clone())
     }
     /// Add new node to the arena
-    pub fn add_node(&self, node: CstNode, parent: Option<NodeID>) -> NodeID {
+    pub fn add_node(&self, node: CstNode) -> NodeID {
         let id = node.get_id();
         self.arena.insert(id, node);
-        if let Some(parent) = parent {
-            self.parents.insert(id, parent);
-        }
         id
+    }
+    pub fn contains(&self, id: NodeID) -> bool {
+        self.arena.contains_key(&id)
     }
     /// Check if the node has no children
     pub fn is_leaf(&self, id: NodeID) -> bool {
-        self.parents.iter().find(|x| x.key() == &id).is_none()
+        self.find_child(id).is_none()
     }
     /// Check if the node is in the arena
     pub fn is_node(&self, id: NodeID) -> bool {
-        !self.is_leaf(id)
+        self.find_child(id).is_some()
     }
     /// Check if the node has no parent
     pub fn is_root(&self, id: NodeID) -> bool {
-        self.parents.iter().find(|x| x.value() == &id).is_none()
+        self.find_parent(id).is_none()
     }
     /// Find the parent of the node
     pub fn find_parent(&self, id: NodeID) -> Option<NodeID> {
-        self.parents.get(&id).map(|x| *x.value())
+        let mut find = None;
+        for node in self.arena.iter() {
+            if node.value().children.contains(&id) {
+                if cfg!(debug_assertions) {
+                    match find {
+                        Some(_) => panic!("Node has multiple parents"),
+                        None => find = Some(node.key().clone()),
+                    }
+                }
+                return Some(node.key().clone());
+            }
+        }
+        find
     }
     /// Find the ancestors of the node
     pub fn find_ancestors(&self, id: NodeID, depth: usize) -> Vec<NodeID> {
@@ -74,11 +78,14 @@ impl NodeManager {
     }
     /// Find the first child of the node
     pub fn find_child(&self, id: NodeID) -> Option<NodeID> {
-        self.parents.iter().find(|x| x.value() == &id).map(|x| *x.key())
+        self.get_node(id)?.get_children().first().copied()
     }
     /// Find all the children of the node
     pub fn find_children(&self, id: NodeID) -> Vec<NodeID> {
-        self.parents.iter().filter(|x| x.value() == &id).map(|x| *x.key()).collect()
+        match self.get_node(id) {
+            Some(s) => s.get_children().to_vec(),
+            None => vec![],
+        }
     }
     /// Find the descendants of the node
     pub fn find_descendants(&self, id: NodeID, depth: usize) -> Vec<NodeID> {
@@ -122,5 +129,28 @@ impl NodeManager {
             }
         }
         out
+    }
+    pub fn get_range(&self, id: NodeID) -> Option<Range<usize>> {
+        Some(self.get_node(id)?.get_range())
+    }
+    pub fn in_range(&self, offset: usize, id: NodeID) -> bool {
+        match self.get_node(id) {
+            Some(node) => node.get_range().contains(&offset),
+            None => false,
+        }
+    }
+    pub fn update_range(&self, node: &mut CstNode) -> bool {
+        let out: Option<(u32, u32)> = try {
+            let first = self.arena.get(node.children.first()?)?.value().range.start;
+            let last = self.arena.get(node.children.last()?)?.value().range.end;
+            (first, last)
+        };
+        match out {
+            Some((start, end)) => {
+                node.range = start..end;
+                true
+            }
+            None => false,
+        }
     }
 }

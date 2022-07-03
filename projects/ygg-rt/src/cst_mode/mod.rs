@@ -29,12 +29,12 @@ pub struct CstNode {
     /// }
     /// ```
     /// An enum that implements the [`NodeType`]
-    id: NodeID,
+    pub(crate) id: NodeID,
     /// The kind of the node
-    kind: i16,
-    children: Vec<NodeID>,
+    pub(crate) kind: i16,
+    pub(crate) children: Vec<NodeID>,
     /// The offset in raw bytes, life time erased
-    range: Range<u32>,
+    pub(crate) range: Range<u32>,
 }
 
 impl CstNode {

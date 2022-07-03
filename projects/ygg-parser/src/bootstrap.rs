@@ -1,8 +1,5 @@
-use std::hash::{Hash, Hasher};
-use yggdrasil_rt::{
-    CstContext, CstNode, LanguageID, LanguageManager, NodeID, NodeManager, NodeType, ParseResult, ParseState, Rng, SeedableRng,
-    SmallRng,
-};
+use std::hash::Hash;
+use yggdrasil_rt::{CstContext, CstNode, LanguageID, LanguageManager, NodeID, NodeManager, NodeType, ParseResult, ParseState};
 
 #[repr(i16)]
 #[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash)]
@@ -11,6 +8,7 @@ pub enum YggdrasilType {
     Statement = 1,
     Expression = 2,
     Identifier = 3,
+    IgnoredText = 9998,
     Ignored = 9999,
 }
 
@@ -32,7 +30,7 @@ impl NodeType for YggdrasilType {
     }
 
     fn is_ignored(&self) -> bool {
-        todo!()
+        matches!(self, YggdrasilType::Ignored | YggdrasilType::IgnoredText)
     }
 }
 
@@ -45,7 +43,7 @@ pub fn parse_namespace<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseRe
     todo!()
 }
 
-/// `a::b::c`
+/// `a :: b :: c`
 pub fn parse_namespace_aux1<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, ()> {
     let o = i;
     let (o, _) = o.match_fn(|i1| parse_identifier(i1, ctx))?;
@@ -60,9 +58,18 @@ pub fn parse_ignored<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResu
     o.finish(())
 }
 
-pub fn parse_identifier<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, ()> {
+pub fn parse_identifier<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, CstNode> {
     let id = ctx.random_id();
-    let (o, _) = i.match_char_if(|c| c.is_alphabetic(), "IDENTIFIER")?;
-    let id = ctx.add_node(id, YggdrasilType::Identifier, i, o);
-    i.finish(())
+    let o = i;
+    let (o, _) = o.match_str_if(|c| c.is_alphabetic(), "IDENTIFIER")?;
+    o.finish(CstNode::new(id).with_kind(YggdrasilType::Identifier).with_range(i.start_offset, o.start_offset))
+}
+
+#[test]
+fn test() {
+    let text = ParseState::new("a::b::c");
+    let manager = NodeManager::default();
+    let mut ctx = ParseContext::new(&manager);
+    let out = parse_identifier(text, &mut ctx);
+    println!("{:?}", out);
 }

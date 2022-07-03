@@ -1,4 +1,4 @@
-#![feature(try_trait_v2)]
+#![feature(try_blocks)]
 // #![forbid(missing_docs)]
 #![allow(clippy::needless_return)]
 #![doc = include_str ! ("../Readme.md")]

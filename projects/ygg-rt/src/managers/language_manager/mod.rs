@@ -19,4 +19,7 @@ impl LanguageManager {
         name.to_lowercase().hash(&mut hasher);
         hasher.finish()
     }
+    pub fn get_language_id(&self, id: NodeID) -> LanguageID {
+        *self.cache.get(&id).unwrap()
+    }
 }
