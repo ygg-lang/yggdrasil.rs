@@ -1,24 +1,20 @@
 use crate::{CstNode, LanguageID};
-use dashmap::DashMap;
+use dashmap::{DashMap, DashSet};
 use std::fmt::Debug;
 
 use std::ops::Range;
 
 pub type NodeID = u32;
 
-pub trait NodeType: Copy + Debug + Into<i16> + From<i16> {
-    fn get_language_id(&self) -> LanguageID;
-    fn is_ignored(&self) -> bool;
-}
-
 #[derive(Debug)]
 pub struct NodeManager {
+    roots: DashSet<NodeID>,
     arena: DashMap<NodeID, CstNode>,
 }
 
 impl Default for NodeManager {
     fn default() -> Self {
-        Self { arena: DashMap::new() }
+        Self { roots: Default::default(), arena: DashMap::new() }
     }
 }
 
@@ -26,6 +22,15 @@ impl NodeManager {
     /// Get the node from the arena
     pub fn get_node(&self, id: NodeID) -> Option<CstNode> {
         self.arena.get(&id).map(|x| x.value().clone())
+    }
+    pub fn set_root(&self, id: NodeID) {
+        self.roots.insert(id);
+    }
+    pub fn add_root(&self, node: CstNode) -> NodeID {
+        let id = node.get_id();
+        self.roots.insert(id);
+        self.arena.insert(id, node);
+        id
     }
     /// Add new node to the arena
     pub fn add_node(&self, node: CstNode) -> NodeID {
@@ -46,7 +51,7 @@ impl NodeManager {
     }
     /// Check if the node has no parent
     pub fn is_root(&self, id: NodeID) -> bool {
-        self.find_parent(id).is_none()
+        self.roots.contains(&id)
     }
     /// Find the parent of the node
     pub fn find_parent(&self, id: NodeID) -> Option<NodeID> {
@@ -59,7 +64,9 @@ impl NodeManager {
                         None => find = Some(node.key().clone()),
                     }
                 }
-                return Some(node.key().clone());
+                else {
+                    return Some(node.key().clone());
+                }
             }
         }
         find
@@ -130,8 +137,11 @@ impl NodeManager {
         }
         out
     }
-    pub fn get_range(&self, id: NodeID) -> Option<Range<usize>> {
-        Some(self.get_node(id)?.get_range())
+    pub fn get_range(&self, id: NodeID) -> Range<usize> {
+        match self.get_node(id) {
+            Some(s) => s.get_range(),
+            None => Default::default(),
+        }
     }
     pub fn in_range(&self, offset: usize, id: NodeID) -> bool {
         match self.get_node(id) {
@@ -152,5 +162,10 @@ impl NodeManager {
             }
             None => false,
         }
+    }
+    pub fn garbage_collect(&mut self) {
+        let new = DashMap::new();
+        // TODO: collect from roots recursively
+        self.arena = new;
     }
 }

@@ -32,9 +32,9 @@ pub struct CstNode {
     pub(crate) id: NodeID,
     /// The kind of the node
     pub(crate) kind: i16,
-    pub(crate) children: Vec<NodeID>,
     /// The offset in raw bytes, life time erased
     pub(crate) range: Range<u32>,
+    pub(crate) children: Vec<NodeID>,
 }
 
 impl CstNode {

@@ -12,11 +12,12 @@ pub use crate::{
     cst_mode::CstNode,
     managers::{
         language_manager::{LanguageID, LanguageManager},
-        node_manager::{NodeID, NodeManager, NodeType},
+        node_manager::{NodeID, NodeManager},
         parse_context::CstContext,
         text_manager::TextManager,
     },
     records::text_index::*,
+    traits::{AstNode, NodeType},
 };
 pub use pex::{
     ParseResult::{self, Pending, Stop},

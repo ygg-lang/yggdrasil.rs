@@ -1,7 +1,6 @@
-use crate::{CstNode, NodeID, NodeManager, NodeType};
-use pex::ParseState;
+use crate::{AstNode, CstNode, NodeID, NodeManager, NodeType};
 use rand::{rngs::SmallRng, Rng, SeedableRng};
-use std::marker::PhantomData;
+use std::{marker::PhantomData, ops::Range};
 
 pub struct CstContext<'a, N: NodeType> {
     manager: &'a NodeManager,
@@ -23,13 +22,62 @@ impl<'a, N: NodeType> CstContext<'a, N> {
         id
     }
     pub fn end_scope(&mut self) -> CstNode {
-        self.node_stack.pop().unwrap()
+        if cfg!(debug_assertions) {
+            assert!(!self.node_stack.is_empty());
+        }
+        unsafe { self.node_stack.pop().unwrap_unchecked() }
     }
     pub fn get_scope(&self) -> Option<NodeID> {
         self.node_stack.last().map(|n| n.id)
     }
-    pub fn add_node(&mut self, id: NodeID, kind: N, start: ParseState, end: ParseState) -> NodeID {
-        let node = CstNode::new(id).with_kind(kind).with_range(start.start_offset, end.start_offset);
-        self.manager.add_node(node)
+    pub fn add_option(&mut self, node: Option<CstNode>) {
+        match node {
+            Some(node) => {
+                self.add_node(node);
+            }
+            None => {}
+        }
+    }
+    pub fn get_node(&self, id: NodeID) -> Option<CstNode> {
+        self.manager.get_node(id)
+    }
+    pub fn add_node(&mut self, node: CstNode) -> NodeID {
+        if cfg!(debug_assertions) {
+            assert!(!self.node_stack.is_empty());
+        }
+        let id = self.manager.add_node(node);
+        unsafe {
+            self.node_stack.last_mut().unwrap_unchecked().add_child(id);
+        }
+        id
+    }
+    pub fn add_root(&mut self, node: CstNode) -> NodeID {
+        self.manager.add_root(node)
+    }
+    pub fn find_range(&self, node: NodeID) -> Range<usize> {
+        self.manager.get_range(node)
+    }
+    pub fn find_child<F>(&self, id: NodeID, filter: F) -> Option<CstNode>
+    where
+        F: Fn(&CstNode) -> bool,
+    {
+        self.manager.filter_child(id, filter)
+    }
+    pub fn find_children<A>(&self, parent: NodeID) -> Vec<A>
+    where
+        A: AstNode<NodeType = N>,
+    {
+        match self.get_node(parent) {
+            Some(s) => {
+                let mut out = Vec::with_capacity(s.children.len());
+                for child in s.children.iter() {
+                    out.push(A::from_cst(self, *child))
+                }
+                out
+            }
+            None => {
+                vec![]
+            }
+        }
     }
 }
