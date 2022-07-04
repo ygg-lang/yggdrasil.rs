@@ -8,6 +8,7 @@ pub use lsp_types;
 pub use url::Url;
 
 pub use self::errors::{YError, YErrorKind, YResult};
+pub(crate) use crate::cst_mode::CstTyped;
 pub use crate::{
     cst_mode::CstNode,
     managers::{

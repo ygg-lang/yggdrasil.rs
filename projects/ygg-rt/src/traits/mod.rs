@@ -2,7 +2,7 @@ mod position;
 mod pratt;
 
 pub use self::pratt::{Affix, PrattParser};
-use crate::{CstContext, LanguageID, NodeID};
+use crate::{CstContext, CstNode, LanguageID, NodeID};
 use std::{fmt::Debug, ops::Range};
 
 pub trait NodeType: Copy + Debug + Into<i16> + From<i16> {

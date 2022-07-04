@@ -1,6 +1,10 @@
-use crate::{AstNode, CstNode, NodeID, NodeManager, NodeType};
+use crate::{cst_mode::CstTyped, AstNode, CstNode, NodeID, NodeManager, NodeType};
 use rand::{rngs::SmallRng, Rng, SeedableRng};
-use std::{marker::PhantomData, ops::Range};
+use std::{
+    fmt::{Debug, Formatter},
+    marker::PhantomData,
+    ops::Range,
+};
 
 pub struct CstContext<'a, N: NodeType> {
     manager: &'a NodeManager,
@@ -39,7 +43,7 @@ impl<'a, N: NodeType> CstContext<'a, N> {
         }
     }
     pub fn get_node(&self, id: NodeID) -> Option<CstNode> {
-        self.manager.get_node(id)
+        self.manager.get_node(&id)
     }
     pub fn add_node(&mut self, node: CstNode) -> NodeID {
         if cfg!(debug_assertions) {
@@ -57,27 +61,36 @@ impl<'a, N: NodeType> CstContext<'a, N> {
     pub fn find_range(&self, node: NodeID) -> Range<usize> {
         self.manager.get_range(node)
     }
-    pub fn find_child<F>(&self, id: NodeID, filter: F) -> Option<CstNode>
+    pub fn filter_child<F>(&self, node: NodeID, filter: F) -> Option<CstNode>
     where
         F: Fn(&CstNode) -> bool,
     {
-        self.manager.filter_child(id, filter)
+        let s = self.get_node(node)?;
+        s.children.iter().filter_map(|c| self.get_node(*c)).find(filter)
     }
-    pub fn find_children<A>(&self, parent: NodeID) -> Vec<A>
+    pub fn filter_children<F>(&self, node: NodeID, filter: F) -> Vec<CstNode>
     where
-        A: AstNode<NodeType = N>,
+        F: Fn(&CstNode) -> bool,
     {
-        match self.get_node(parent) {
-            Some(s) => {
-                let mut out = Vec::with_capacity(s.children.len());
-                for child in s.children.iter() {
-                    out.push(A::from_cst(self, *child))
-                }
-                out
-            }
+        match self.get_node(node) {
+            Some(s) => s.children.iter().filter_map(|c| self.get_node(*c)).filter(filter).collect(),
             None => {
                 vec![]
             }
         }
+    }
+    pub fn get_child<A>(&self, node: NodeID) -> Option<A>
+    where
+        A: AstNode<NodeType = N>,
+    {
+        let n = self.filter_child(node, |n| n.is_a(&[A::KIND]))?;
+        Some(A::from_cst(self, n.id))
+    }
+
+    pub fn get_children<A>(&self, node: NodeID) -> Vec<A>
+    where
+        A: AstNode<NodeType = N>,
+    {
+        self.filter_children(node, |n| n.is_a(&[A::KIND])).into_iter().map(|c| A::from_cst(self, c.id)).collect()
     }
 }

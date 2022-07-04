@@ -1,5 +1,9 @@
-use crate::{NodeID, NodeType};
-use std::ops::Range;
+use crate::{NodeID, NodeManager, NodeType};
+use std::{
+    fmt::{Debug, Formatter},
+    ops::Range,
+};
+mod display;
 
 /// The basic unit of semantic analysis.
 ///
@@ -35,6 +39,15 @@ pub struct CstNode {
     /// The offset in raw bytes, life time erased
     pub(crate) range: Range<u32>,
     pub(crate) children: Vec<NodeID>,
+}
+
+pub struct CstTyped<N: NodeType> {
+    id: NodeID,
+    /// The kind of the node
+    kind: N,
+    /// The offset in raw bytes, life time erased
+    range: Range<usize>,
+    children: Vec<CstTyped<N>>,
 }
 
 impl CstNode {
@@ -97,6 +110,18 @@ impl CstNode {
     pub fn with_range(mut self, start: usize, end: usize) -> Self {
         self.set_range(start, end);
         self
+    }
+    /// Get the typed node
+    pub fn get_typed<N>(&self, manager: &NodeManager) -> CstTyped<N>
+    where
+        N: NodeType,
+    {
+        CstTyped {
+            id: self.id,
+            kind: N::from(self.kind),
+            range: self.get_range(),
+            children: self.children.iter().filter_map(|id| manager.get_node(id).map(|node| node.get_typed(manager))).collect(),
+        }
     }
 }
 

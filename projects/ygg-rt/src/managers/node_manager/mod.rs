@@ -1,7 +1,8 @@
-use crate::{CstNode, LanguageID};
+use crate::{CstNode, LanguageID, NodeType};
 use dashmap::{DashMap, DashSet};
 use std::fmt::Debug;
 
+use crate::cst_mode::CstTyped;
 use std::ops::Range;
 
 pub type NodeID = u32;
@@ -20,8 +21,21 @@ impl Default for NodeManager {
 
 impl NodeManager {
     /// Get the node from the arena
-    pub fn get_node(&self, id: NodeID) -> Option<CstNode> {
-        self.arena.get(&id).map(|x| x.value().clone())
+    pub fn get_node(&self, id: &NodeID) -> Option<CstNode> {
+        self.arena.get(id).map(|x| x.value().clone())
+    }
+    pub fn get_typed<N>(&self, id: &NodeID) -> Option<CstTyped<N>>
+    where
+        N: NodeType,
+    {
+        self.arena.get(id).map(|x| x.value().get_typed(self))
+    }
+
+    /// Add new node to the arena
+    pub fn add_node(&self, node: CstNode) -> NodeID {
+        let id = node.get_id();
+        self.arena.insert(id, node);
+        id
     }
     pub fn set_root(&self, id: NodeID) {
         self.roots.insert(id);
@@ -32,12 +46,7 @@ impl NodeManager {
         self.arena.insert(id, node);
         id
     }
-    /// Add new node to the arena
-    pub fn add_node(&self, node: CstNode) -> NodeID {
-        let id = node.get_id();
-        self.arena.insert(id, node);
-        id
-    }
+
     pub fn contains(&self, id: NodeID) -> bool {
         self.arena.contains_key(&id)
     }
@@ -85,11 +94,11 @@ impl NodeManager {
     }
     /// Find the first child of the node
     pub fn find_child(&self, id: NodeID) -> Option<NodeID> {
-        self.get_node(id)?.get_children().first().copied()
+        self.get_node(&id)?.get_children().first().copied()
     }
     /// Find all the children of the node
     pub fn find_children(&self, id: NodeID) -> Vec<NodeID> {
-        match self.get_node(id) {
+        match self.get_node(&id) {
             Some(s) => s.get_children().to_vec(),
             None => vec![],
         }
@@ -115,7 +124,7 @@ impl NodeManager {
         F: Fn(&CstNode) -> bool,
     {
         for child in self.find_children(id) {
-            if let Some(node) = self.get_node(child) {
+            if let Some(node) = self.get_node(&child) {
                 if filter(&node) {
                     return Some(node);
                 }
@@ -129,7 +138,7 @@ impl NodeManager {
     {
         let mut out = Vec::new();
         for child in self.find_children(id) {
-            if let Some(node) = self.get_node(child) {
+            if let Some(node) = self.get_node(&child) {
                 if filter(&node) {
                     out.push(node);
                 }
@@ -138,13 +147,13 @@ impl NodeManager {
         out
     }
     pub fn get_range(&self, id: NodeID) -> Range<usize> {
-        match self.get_node(id) {
+        match self.get_node(&id) {
             Some(s) => s.get_range(),
             None => Default::default(),
         }
     }
     pub fn in_range(&self, offset: usize, id: NodeID) -> bool {
-        match self.get_node(id) {
+        match self.get_node(&id) {
             Some(node) => node.get_range().contains(&offset),
             None => false,
         }

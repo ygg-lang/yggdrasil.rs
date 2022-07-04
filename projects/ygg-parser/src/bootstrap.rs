@@ -110,7 +110,7 @@ pub struct IdentifierNode {
 
 impl NamepathNode {
     fn from_manager(ctx: &ParseContext, parent: NodeID) -> Self {
-        let identifier = ctx.find_children(parent);
+        let identifier = ctx.get_children(parent);
         let range = ctx.find_range(parent);
         Self { identifier, range }
     }
@@ -120,9 +120,9 @@ impl AstNode for NamepathNode {
     type NodeType = YggdrasilType;
     const KIND: Self::NodeType = YggdrasilType::Namespace;
 
-    fn from_cst(ctx: &ParseContext, parent: NodeID) -> Self {
-        let identifier = ctx.find_children::<IdentifierNode>(parent);
-        let range = ctx.find_range(parent);
+    fn from_cst(ctx: &ParseContext, node: NodeID) -> Self {
+        let identifier = ctx.get_children::<IdentifierNode>(node);
+        let range = ctx.find_range(node);
         Self { identifier, range }
     }
 
@@ -135,9 +135,10 @@ impl AstNode for IdentifierNode {
     type NodeType = YggdrasilType;
     const KIND: Self::NodeType = YggdrasilType::Identifier;
 
-    fn from_cst(ctx: &ParseContext, parent: NodeID) -> Self {
-        let range = ctx.find_range(parent);
-        Self { range }
+    fn from_cst(ctx: &ParseContext, node: NodeID) -> Self {
+        let leaf = ctx.get_node(node).expect("Missing node");
+        assert!(leaf.is_a(&[YggdrasilType::Identifier]));
+        Self { range: leaf.get_range() }
     }
 
     fn get_range(&self) -> Range<usize> {
@@ -151,6 +152,9 @@ fn test() {
     let manager = NodeManager::default();
     let mut ctx = ParseContext::new(&manager);
     let out = parse_namespace(text, &mut ctx);
-    let out = NamepathNode::from_manager(&ctx, out.as_result().unwrap().1);
+    let root_id = out.as_result().unwrap().1;
+    println!("{:#?}", manager.get_typed::<YggdrasilType>(&root_id));
+    println!("{:#?}", ctx.filter_children(root_id, |_| true));
+    let out = NamepathNode::from_manager(&ctx, root_id);
     println!("{:#?}", out);
 }
