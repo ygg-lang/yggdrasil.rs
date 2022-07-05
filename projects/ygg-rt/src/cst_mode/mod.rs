@@ -1,9 +1,19 @@
-use crate::{NodeID, NodeManager, NodeType};
+use crate::{AstNode, NodeID, NodeManager, NodeType, NODE_MANAGER};
+use rand::{rngs::SmallRng, Rng, SeedableRng};
 use std::{
     fmt::{Debug, Formatter},
-    ops::Range,
+    marker::PhantomData,
+    ops::{Deref, Range},
 };
+
+mod context;
 mod display;
+
+pub struct CstContext<N: NodeType> {
+    random: SmallRng,
+    node_stack: Vec<CstNode>,
+    node_type: PhantomData<N>,
+}
 
 /// The basic unit of semantic analysis.
 ///
@@ -45,6 +55,7 @@ pub struct CstTyped<N: NodeType> {
     id: NodeID,
     /// The kind of the node
     kind: N,
+    text: String,
     /// The offset in raw bytes, life time erased
     range: Range<usize>,
     children: Vec<CstTyped<N>>,
@@ -112,15 +123,16 @@ impl CstNode {
         self
     }
     /// Get the typed node
-    pub fn get_typed<N>(&self, manager: &NodeManager) -> CstTyped<N>
+    pub fn get_typed<N>(&self) -> CstTyped<N>
     where
         N: NodeType,
     {
         CstTyped {
             id: self.id,
             kind: N::from(self.kind),
+            text: "".to_string(),
             range: self.get_range(),
-            children: self.children.iter().filter_map(|id| manager.get_node(id).map(|node| node.get_typed(manager))).collect(),
+            children: self.children.iter().map(|child| NODE_MANAGER.get_typed(child)).collect(),
         }
     }
 }

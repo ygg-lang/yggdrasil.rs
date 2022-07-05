@@ -1,11 +1,13 @@
-use crate::{CstNode, LanguageID, NodeType};
+use crate::{CstNode, NodeType};
 use dashmap::{DashMap, DashSet};
 use std::fmt::Debug;
 
 use crate::cst_mode::CstTyped;
-use std::ops::Range;
+use std::{ops::Range, sync::LazyLock};
 
 pub type NodeID = u32;
+
+pub static NODE_MANAGER: LazyLock<NodeManager> = LazyLock::new(|| NodeManager::default());
 
 #[derive(Debug)]
 pub struct NodeManager {
@@ -24,13 +26,12 @@ impl NodeManager {
     pub fn get_node(&self, id: &NodeID) -> Option<CstNode> {
         self.arena.get(id).map(|x| x.value().clone())
     }
-    pub fn get_typed<N>(&self, id: &NodeID) -> Option<CstTyped<N>>
+    pub fn get_typed<N>(&self, id: &NodeID) -> CstTyped<N>
     where
         N: NodeType,
     {
-        self.arena.get(id).map(|x| x.value().get_typed(self))
+        self.arena.get(id).map(|x| x.value().get_typed()).unwrap_or_default()
     }
-
     /// Add new node to the arena
     pub fn add_node(&self, node: CstNode) -> NodeID {
         let id = node.get_id();

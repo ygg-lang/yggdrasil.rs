@@ -1,7 +1,5 @@
-use std::{hash::Hash, ops::Range};
-use yggdrasil_rt::{
-    AstNode, CstContext, CstNode, LanguageID, LanguageManager, NodeID, NodeManager, NodeType, ParseResult, ParseState,
-};
+use std::hash::Hash;
+use yggdrasil_rt::{CstContext, CstNode, LanguageID, LanguageManager, NodeID, NodeType, ParseResult, ParseState};
 
 #[repr(i16)]
 #[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash)]
@@ -11,8 +9,9 @@ pub enum YggdrasilType {
     Expression = 2,
     Identifier = 3,
     Namespace = 4,
-    IgnoredText = 9998,
-    Ignored = 9999,
+    Error = -1,
+    Ignored = -2,
+    IgnoredText = -3,
 }
 
 impl From<i16> for YggdrasilType {
@@ -37,7 +36,7 @@ impl NodeType for YggdrasilType {
     }
 }
 
-pub type ParseContext<'a> = CstContext<'a, YggdrasilType>;
+pub type ParseContext = CstContext<YggdrasilType>;
 
 pub fn parse_namespace<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, NodeID> {
     let o = i;
@@ -95,66 +94,4 @@ pub fn consume_identifier<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> Pars
     let o = i;
     let (o, _) = o.match_str_if(|c| c.is_alphabetic(), "IDENTIFIER")?;
     o.finish(CstNode::new(id).with_kind(YggdrasilType::Identifier).with_range(i.start_offset, o.start_offset))
-}
-
-#[derive(Clone, Debug)]
-pub struct NamepathNode {
-    pub identifier: Vec<IdentifierNode>,
-    pub range: Range<usize>,
-}
-
-#[derive(Clone, Debug)]
-pub struct IdentifierNode {
-    pub range: Range<usize>,
-}
-
-impl NamepathNode {
-    fn from_manager(ctx: &ParseContext, parent: NodeID) -> Self {
-        let identifier = ctx.get_children(parent);
-        let range = ctx.find_range(parent);
-        Self { identifier, range }
-    }
-}
-
-impl AstNode for NamepathNode {
-    type NodeType = YggdrasilType;
-    const KIND: Self::NodeType = YggdrasilType::Namespace;
-
-    fn from_cst(ctx: &ParseContext, node: NodeID) -> Self {
-        let identifier = ctx.get_children::<IdentifierNode>(node);
-        let range = ctx.find_range(node);
-        Self { identifier, range }
-    }
-
-    fn get_range(&self) -> Range<usize> {
-        self.range.clone()
-    }
-}
-
-impl AstNode for IdentifierNode {
-    type NodeType = YggdrasilType;
-    const KIND: Self::NodeType = YggdrasilType::Identifier;
-
-    fn from_cst(ctx: &ParseContext, node: NodeID) -> Self {
-        let leaf = ctx.get_node(node).expect("Missing node");
-        assert!(leaf.is_a(&[YggdrasilType::Identifier]));
-        Self { range: leaf.get_range() }
-    }
-
-    fn get_range(&self) -> Range<usize> {
-        self.range.clone()
-    }
-}
-
-#[test]
-fn test() {
-    let text = ParseState::new("a::b:: c");
-    let manager = NodeManager::default();
-    let mut ctx = ParseContext::new(&manager);
-    let out = parse_namespace(text, &mut ctx);
-    let root_id = out.as_result().unwrap().1;
-    println!("{:#?}", manager.get_typed::<YggdrasilType>(&root_id));
-    println!("{:#?}", ctx.filter_children(root_id, |_| true));
-    let out = NamepathNode::from_manager(&ctx, root_id);
-    println!("{:#?}", out);
 }
