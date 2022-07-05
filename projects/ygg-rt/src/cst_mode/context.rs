@@ -19,10 +19,10 @@ impl<N: NodeType> CstContext<N> {
     }
     pub fn random_scope(&mut self) -> NodeID {
         let id = self.random_id();
-        self.node_stack.push(CstNode::new(id));
+        self.node_stack.push(CSTNode::new(id));
         id
     }
-    pub fn end_scope(&mut self) -> CstNode {
+    pub fn end_scope(&mut self) -> CSTNode {
         if cfg!(debug_assertions) {
             assert!(!self.node_stack.is_empty());
         }
@@ -31,7 +31,7 @@ impl<N: NodeType> CstContext<N> {
     pub fn get_scope(&self) -> Option<NodeID> {
         self.node_stack.last().map(|n| n.id)
     }
-    pub fn add_option(&mut self, node: Option<CstNode>) {
+    pub fn add_option(&mut self, node: Option<CSTNode>) {
         match node {
             Some(node) => {
                 self.add_node(node);
@@ -42,7 +42,7 @@ impl<N: NodeType> CstContext<N> {
     pub fn get_typed(&self, id: NodeID) -> CstTyped<N> {
         NODE_MANAGER.get_typed(&id)
     }
-    pub fn add_node(&mut self, node: CstNode) -> NodeID {
+    pub fn add_node(&mut self, node: CSTNode) -> NodeID {
         if cfg!(debug_assertions) {
             assert!(!self.node_stack.is_empty());
         }
@@ -51,24 +51,6 @@ impl<N: NodeType> CstContext<N> {
             self.node_stack.last_mut().unwrap_unchecked().add_child(id);
         }
         id
-    }
-    pub fn filter_child<F>(&self, node: NodeID, filter: F) -> Option<CstNode>
-    where
-        F: Fn(&CstNode) -> bool,
-    {
-        let s = self.get_node(&node)?;
-        s.children.iter().filter_map(|c| self.get_node(c)).find(filter)
-    }
-    pub fn filter_children<F>(&self, node: NodeID, filter: F) -> Vec<CstNode>
-    where
-        F: Fn(&CstNode) -> bool,
-    {
-        match self.get_node(&node) {
-            Some(s) => s.children.iter().filter_map(|c| self.get_node(c)).filter(filter).collect(),
-            None => {
-                vec![]
-            }
-        }
     }
     pub fn get_child<A>(&self, node: NodeID) -> Option<A>
     where

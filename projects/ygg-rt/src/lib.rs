@@ -10,10 +10,9 @@ pub use url::Url;
 
 pub use self::errors::{YError, YErrorKind, YResult};
 pub use crate::{
-    cst_mode::{CstContext, CstNode, CstTyped},
+    cst_mode::{CSTNode, CstContext},
     managers::{
         language_manager::{LanguageID, LanguageManager},
-        node_manager::{NodeID, NodeManager, NODE_MANAGER},
         text_manager::{TextManager, TEXT_MANAGER},
     },
     records::text_index::*,

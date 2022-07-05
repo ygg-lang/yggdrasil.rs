@@ -11,7 +11,7 @@ mod display;
 
 pub struct CstContext<N: NodeType> {
     random: SmallRng,
-    node_stack: Vec<CstNode>,
+    node_stack: Vec<CSTNode>,
     node_type: PhantomData<N>,
 }
 
@@ -33,35 +33,15 @@ pub struct CstContext<N: NodeType> {
 ///
 /// If a modification occurs, a new clone must be generated.
 #[derive(Clone, Debug)]
-pub struct CstNode {
-    /// meta information provided by environment
-    /// ```
-    /// # use std::collections::BTreeMap;
-    /// type LanguageID = usize;
-    /// struct LanguageManager {
-    ///     cache: BTreeMap<usize, LanguageID>,
-    /// }
-    /// ```
-    /// An enum that implements the [`NodeType`]
-    pub(crate) id: NodeID,
+pub struct CSTNode {
     /// The kind of the node
-    pub(crate) kind: i16,
+    pub(crate) kind: i32,
     /// The offset in raw bytes, life time erased
     pub(crate) range: Range<u32>,
-    pub(crate) children: Vec<NodeID>,
+    pub(crate) children: Vec<CSTNode>,
 }
 
-pub struct CstTyped<N: NodeType> {
-    id: NodeID,
-    /// The kind of the node
-    kind: N,
-    text: String,
-    /// The offset in raw bytes, life time erased
-    range: Range<usize>,
-    children: Vec<CstTyped<N>>,
-}
-
-impl CstNode {
+impl CSTNode {
     /// Create a new cst node
     pub fn new(id: NodeID) -> Self {
         Self { id, kind: 0, children: Vec::new(), range: 0..0 }
@@ -130,14 +110,14 @@ impl CstNode {
         CstTyped {
             id: self.id,
             kind: N::from(self.kind),
-            text: "".to_string(),
+            slice: "".to_string(),
             range: self.get_range(),
             children: self.children.iter().map(|child| NODE_MANAGER.get_typed(child)).collect(),
         }
     }
 }
 
-impl CstNode {
+impl CSTNode {
     /// Check if the node is one of the given types
     ///
     /// # Arguments
@@ -149,12 +129,12 @@ impl CstNode {
     /// # Examples
     ///
     /// ```
-    /// # use yggdrasil_rt::CstNode;
+    /// # use yggdrasil_rt::CSTNode;
     /// enum JsonNode {
     ///     Object,
     ///     Array,
     /// }
-    /// let node = CstNode::new(0).with_kind(JsonNode::Object);
+    /// let node = CSTNode::new(0).with_kind(JsonNode::Object);
     /// assert!(node.is_a(&[JsonNode::Object]));
     /// ```
     pub fn is_a<N>(&self, kind: &[N]) -> bool
