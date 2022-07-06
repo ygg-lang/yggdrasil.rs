@@ -1,5 +1,5 @@
 use std::hash::Hash;
-use yggdrasil_rt::{CstContext, CstNode, LanguageID, LanguageManager, NodeID, NodeType, ParseResult, ParseState};
+use yggdrasil_rt::{cst_mode::NodeID, ConcreteNode, NodeType, ParseResult, ParseState};
 
 #[repr(i16)]
 #[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash)]
@@ -9,9 +9,9 @@ pub enum YggdrasilType {
     Expression = 2,
     Identifier = 3,
     Namespace = 4,
-    Error = -1,
+    BadNode = -1,
     Ignored = -2,
-    IgnoredText = -3,
+    IgnoredA = -3,
 }
 
 impl From<i16> for YggdrasilType {
@@ -27,16 +27,12 @@ impl Into<i16> for YggdrasilType {
 }
 
 impl NodeType for YggdrasilType {
-    fn get_language_id(&self) -> LanguageID {
-        LanguageManager::id_from_name("Yggdrasil")
-    }
-
     fn is_ignored(&self) -> bool {
-        matches!(self, YggdrasilType::Ignored | YggdrasilType::IgnoredText)
+        matches!(self, YggdrasilType::Ignored | YggdrasilType::IgnoredA)
     }
 }
 
-pub type ParseContext = CstContext<YggdrasilType>;
+pub struct ParseContext {}
 
 pub fn parse_namespace<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, NodeID> {
     let o = i;
@@ -46,7 +42,7 @@ pub fn parse_namespace<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseRe
 }
 
 #[inline]
-pub fn consume_namespace<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, CstNode> {
+pub fn consume_namespace<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, ConcreteNode> {
     ctx.random_scope();
     let o = i;
     let (o, n) = o.match_fn(|i1| consume_identifier(i1, ctx))?;
@@ -72,26 +68,26 @@ pub fn consume_namespace_aux1<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> 
 }
 
 #[inline]
-pub fn consume_ignored<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, CstNode> {
+pub fn consume_ignored<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, ConcreteNode> {
     let this = ctx.random_id();
     let (o, _) = i.match_char_if(|c| c.is_whitespace(), "IGNORED")?;
-    let node = CstNode::new(this).with_kind(YggdrasilType::Ignored);
+    let node = ConcreteNode::new(this).with_kind(YggdrasilType::Ignored);
     o.finish(node)
 }
 
 #[inline]
 #[rustfmt::skip]
-pub fn consume_str_static<'i>(i: ParseState<'i>, ctx: &mut ParseContext, s: &'static str, insensitive: bool) -> ParseResult<'i, CstNode> {
+pub fn consume_str_static<'i>(i: ParseState<'i>, ctx: &mut ParseContext, s: &'static str, insensitive: bool) -> ParseResult<'i, ConcreteNode> {
     let this = ctx.random_id();
     let (o, _) = i.match_str_static(s, insensitive)?;
-    let node = CstNode::new(this).with_kind(YggdrasilType::Ignored);
+    let node = ConcreteNode::new(this).with_kind(YggdrasilType::Ignored);
     o.finish(node)
 }
 
 #[inline]
-pub fn consume_identifier<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, CstNode> {
+pub fn consume_identifier<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, ConcreteNode> {
     let id = ctx.random_id();
     let o = i;
     let (o, _) = o.match_str_if(|c| c.is_alphabetic(), "IDENTIFIER")?;
-    o.finish(CstNode::new(id).with_kind(YggdrasilType::Identifier).with_range(i.start_offset, o.start_offset))
+    o.finish(ConcreteNode::new(id).with_kind(YggdrasilType::Identifier).with_range(i.start_offset, o.start_offset))
 }

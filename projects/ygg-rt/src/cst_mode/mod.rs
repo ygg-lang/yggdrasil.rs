@@ -1,4 +1,4 @@
-use crate::{AstNode, NodeID, NodeManager, NodeType, NODE_MANAGER};
+use crate::{AstNode, NodeType};
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 use std::{
     fmt::{Debug, Formatter},
@@ -6,14 +6,10 @@ use std::{
     ops::{Deref, Range},
 };
 
-mod context;
+pub mod context;
 mod display;
 
-pub struct CstContext<N: NodeType> {
-    random: SmallRng,
-    node_stack: Vec<CSTNode>,
-    node_type: PhantomData<N>,
-}
+pub type NodeID = u32;
 
 /// The basic unit of semantic analysis.
 ///
@@ -33,23 +29,15 @@ pub struct CstContext<N: NodeType> {
 ///
 /// If a modification occurs, a new clone must be generated.
 #[derive(Clone, Debug)]
-pub struct CSTNode {
+pub struct ConcreteNode {
     /// The kind of the node
-    pub(crate) kind: i32,
+    pub(crate) kind: i16,
     /// The offset in raw bytes, life time erased
     pub(crate) range: Range<u32>,
-    pub(crate) children: Vec<CSTNode>,
+    pub(crate) children: Vec<ConcreteNode>,
 }
 
-impl CSTNode {
-    /// Create a new cst node
-    pub fn new(id: NodeID) -> Self {
-        Self { id, kind: 0, children: Vec::new(), range: 0..0 }
-    }
-    /// Get the id of the node
-    pub fn get_id(&self) -> NodeID {
-        self.id
-    }
+impl ConcreteNode {
     /// Get the kind of the node
     pub fn get_kind<N>(&self) -> N
     where
@@ -73,19 +61,19 @@ impl CSTNode {
         self
     }
     /// Get the children of the node
-    pub fn get_children(&self) -> &[NodeID] {
+    pub fn get_children(&self) -> &[ConcreteNode] {
         &self.children
     }
     /// Add a child to the node
-    pub fn add_child(&mut self, child: NodeID) {
+    pub fn add_child(&mut self, child: ConcreteNode) {
         self.children.push(child);
     }
     /// Add a child to the node
-    pub fn set_children(&mut self, children: Vec<NodeID>) {
+    pub fn set_children(&mut self, children: Vec<ConcreteNode>) {
         self.children = children;
     }
     /// Add a child to the node
-    pub fn with_children(mut self, children: Vec<NodeID>) -> Self {
+    pub fn with_children(mut self, children: Vec<ConcreteNode>) -> Self {
         self.set_children(children);
         self
     }
@@ -102,22 +90,9 @@ impl CSTNode {
         self.set_range(start, end);
         self
     }
-    /// Get the typed node
-    pub fn get_typed<N>(&self) -> CstTyped<N>
-    where
-        N: NodeType,
-    {
-        CstTyped {
-            id: self.id,
-            kind: N::from(self.kind),
-            slice: "".to_string(),
-            range: self.get_range(),
-            children: self.children.iter().map(|child| NODE_MANAGER.get_typed(child)).collect(),
-        }
-    }
 }
 
-impl CSTNode {
+impl ConcreteNode {
     /// Check if the node is one of the given types
     ///
     /// # Arguments
@@ -129,12 +104,12 @@ impl CSTNode {
     /// # Examples
     ///
     /// ```
-    /// # use yggdrasil_rt::CSTNode;
+    /// # use yggdrasil_rt::ConcreteNode;
     /// enum JsonNode {
     ///     Object,
     ///     Array,
     /// }
-    /// let node = CSTNode::new(0).with_kind(JsonNode::Object);
+    /// let node = ConcreteNode::new(0).with_kind(JsonNode::Object);
     /// assert!(node.is_a(&[JsonNode::Object]));
     /// ```
     pub fn is_a<N>(&self, kind: &[N]) -> bool
