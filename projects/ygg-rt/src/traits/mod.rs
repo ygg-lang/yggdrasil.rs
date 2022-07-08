@@ -4,7 +4,7 @@ mod pratt;
 pub use self::pratt::{Affix, PrattParser};
 use std::{fmt::Debug, ops::Range};
 
-pub trait NodeType: Copy + Debug + Into<i16> + From<i16> {
+pub trait NodeType: Copy + Debug + Into<u32> + From<u32> {
     fn is_ignored(&self) -> bool;
 }
 

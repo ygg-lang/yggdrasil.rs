@@ -10,7 +10,7 @@ pub use url::Url;
 
 pub use self::errors::{YError, YErrorKind, YResult};
 pub use crate::{
-    cst_mode::{context::ConcreteContext, ConcreteNode},
+    cst_mode::{context::ConcreteTree, ConcreteNode},
     managers::text_manager::{TextManager, TEXT_MANAGER},
     records::text_index::*,
     traits::{AstNode, NodeType},

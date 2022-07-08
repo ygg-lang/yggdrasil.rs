@@ -1,5 +1,5 @@
 use std::hash::Hash;
-use yggdrasil_rt::{cst_mode::NodeID, ConcreteNode, NodeType, ParseResult, ParseState};
+use yggdrasil_rt::{cst_mode::NodeID, ConcreteNode, ConcreteTree, NodeType, ParseResult, ParseState};
 
 #[repr(i16)]
 #[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash)]
@@ -32,7 +32,7 @@ impl NodeType for YggdrasilType {
     }
 }
 
-pub struct ParseContext {}
+pub type ParseContext = ConcreteTree<YggdrasilType>;
 
 pub fn parse_namespace<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, NodeID> {
     let o = i;

@@ -1,5 +1,4 @@
-use crate::{AstNode, NodeType};
-use rand::{rngs::SmallRng, Rng, SeedableRng};
+use crate::NodeType;
 use std::{
     fmt::{Debug, Formatter},
     marker::PhantomData,
@@ -31,10 +30,17 @@ pub type NodeID = u32;
 #[derive(Clone, Debug)]
 pub struct ConcreteNode {
     /// The kind of the node
-    pub(crate) kind: i16,
+    pub(crate) kind: u32,
+    pub(crate) children: Vec<ConcreteNode>,
     /// The offset in raw bytes, life time erased
     pub(crate) range: Range<u32>,
-    pub(crate) children: Vec<ConcreteNode>,
+}
+
+pub struct ConcreteTyped<K> {
+    kind: K,
+    text: String,
+    children: Vec<ConcreteNode>,
+    range: Range<u32>,
 }
 
 impl ConcreteNode {
@@ -43,14 +49,14 @@ impl ConcreteNode {
     where
         N: NodeType,
     {
-        <N as From<i16>>::from(self.kind)
+        <N as From<u32>>::from(self.kind)
     }
     /// Set the kind of the node
     pub fn set_kind<N>(&mut self, kind: N)
     where
         N: NodeType,
     {
-        self.kind = <N as Into<i16>>::into(kind);
+        self.kind = <N as Into<u32>>::into(kind);
     }
     /// Set the kind of the node
     pub fn with_kind<N>(mut self, kind: N) -> Self
@@ -117,7 +123,7 @@ impl ConcreteNode {
         N: NodeType,
     {
         for node in kind {
-            if self.kind == <N as Into<i16>>::into(*node) {
+            if self.kind == <N as Into<u32>>::into(*node) {
                 return true;
             }
         }
