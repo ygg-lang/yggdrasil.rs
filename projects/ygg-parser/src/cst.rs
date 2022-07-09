@@ -1,93 +1,74 @@
 use std::hash::Hash;
-use yggdrasil_rt::{cst_mode::NodeID, ConcreteNode, ConcreteTree, NodeType, ParseResult, ParseState};
+use yggdrasil_rt::{ConcreteNode, ConcreteTree, NodeId, NodeType, ParseResult, ParseState};
 
-#[repr(i16)]
+#[repr(u16)]
 #[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash)]
 pub enum YggdrasilType {
     Program = 0,
-    Statement = 1,
-    Expression = 2,
-    Identifier = 3,
-    Namespace = 4,
-    BadNode = -1,
-    Ignored = -2,
-    IgnoredA = -3,
-}
-
-impl From<i16> for YggdrasilType {
-    fn from(value: i16) -> Self {
-        unsafe { std::mem::transmute(value) }
-    }
-}
-
-impl Into<i16> for YggdrasilType {
-    fn into(self) -> i16 {
-        self as i16
-    }
+    Identifier = 10,
+    Namespace = 100,
+    WhiteSpace = 1000,
 }
 
 impl NodeType for YggdrasilType {
     fn is_ignored(&self) -> bool {
-        matches!(self, YggdrasilType::Ignored | YggdrasilType::IgnoredA)
+        todo!()
     }
 }
 
-pub type ParseContext = ConcreteTree<YggdrasilType>;
-
-pub fn parse_namespace<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, NodeID> {
-    let o = i;
-    let (o, n) = o.match_fn(|i1| consume_namespace(i1, ctx))?;
-    let r = ctx.add_root(n);
-    o.finish(r)
+pub struct CalculateCST {
+    tree: ConcreteTree<YggdrasilType>,
 }
 
-#[inline]
-pub fn consume_namespace<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, ConcreteNode> {
-    ctx.random_scope();
-    let o = i;
-    let (o, n) = o.match_fn(|i1| consume_identifier(i1, ctx))?;
-    ctx.add_node(n);
-    let (o, _) = o.match_repeats(|i1| consume_namespace_aux1(i1, ctx))?;
-    let r = ctx.end_scope().with_kind(YggdrasilType::Namespace).with_range(i.start_offset, o.start_offset);
-    o.finish(r)
+impl CalculateCST {
+    // namepath = identifier ~ ("::" ~ identifier)*
+    fn parse_namepath<'a, 'b>(&'a mut self, state0: ParseState<'b>, parent: NodeId) -> ParseResult<'b, ()> {
+        let namepath = self.tree.place_holder_node(parent, YggdrasilType::Namespace);
+        match self.try_parse_namepath(state0, namepath) {
+            ParseResult::Pending(state, data) => {
+                self.tree.update_node(namepath, ConcreteNode::new(YggdrasilType::Namespace));
+                ParseResult::Pending(state, data)
+            }
+            ParseResult::Stop(stop) => {
+                self.tree.drop_node(namepath);
+                ParseResult::Stop(stop)
+            }
+        }
+    }
+    fn try_parse_namepath<'a, 'b>(&'a mut self, state0: ParseState<'b>, namepath: NodeId) -> ParseResult<'b, ()> {
+        // identifier
+        let (state1, node1) = self.parse_identifier(state0, namepath)?;
+        self.tree.append_node(namepath, node1);
+        // ~
+        let (state2, node2) = self.parse_ignore_space(state1, namepath)?;
+        self.tree.append_node(namepath, node2);
+        state2.finish(())
+    }
+
+    // identifier = [a-zA-Z][a-zA-Z0-9_]*
+    fn parse_identifier<'a, 'b>(&'a mut self, state0: ParseState<'b>, parent: NodeId) -> ParseResult<'b, NodeId> {
+        let (state1, node) = state0 //
+            .match_str_if(|c| c.is_alphabetic(), "Identifier")
+            .map_inner(|_| ConcreteNode::new(YggdrasilType::Identifier))?;
+        let id = node.append_to(&mut self.tree, parent);
+        state1.finish(id)
+    }
+    // ignore_space = [ \t\n\r]*
+    fn parse_ignore_space<'a, 'b>(&'a mut self, state0: ParseState<'b>, parent: NodeId) -> ParseResult<'b, NodeId> {
+        let (state1, node) = state0 //
+            .match_str_if(|c| c.is_whitespace(), "IgnoreSpace")
+            .map_inner(|_| ConcreteNode::new(YggdrasilType::WhiteSpace))?;
+        let id = node.append_to(&mut self.tree, parent);
+        state1.finish(id)
+    }
 }
 
-/// `a ( :: b)*`
-#[inline]
-pub fn consume_namespace_aux1<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, ()> {
-    let o = i;
-    let (o, n) = o.match_optional(|i1| consume_ignored(i1, ctx))?;
-    ctx.add_option(n);
-    let (o, n) = o.match_fn(|i1| consume_str_static(i1, ctx, "::", false))?;
-    ctx.add_node(n);
-    let (o, n) = o.match_optional(|i1| consume_ignored(i1, ctx))?;
-    ctx.add_option(n);
-    let (o, n) = o.match_fn(|i1| consume_identifier(i1, ctx))?;
-    ctx.add_node(n);
-    o.finish(())
-}
-
-#[inline]
-pub fn consume_ignored<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, ConcreteNode> {
-    let this = ctx.random_id();
-    let (o, _) = i.match_char_if(|c| c.is_whitespace(), "IGNORED")?;
-    let node = ConcreteNode::new(this).with_kind(YggdrasilType::Ignored);
-    o.finish(node)
-}
-
-#[inline]
-#[rustfmt::skip]
-pub fn consume_str_static<'i>(i: ParseState<'i>, ctx: &mut ParseContext, s: &'static str, insensitive: bool) -> ParseResult<'i, ConcreteNode> {
-    let this = ctx.random_id();
-    let (o, _) = i.match_str_static(s, insensitive)?;
-    let node = ConcreteNode::new(this).with_kind(YggdrasilType::Ignored);
-    o.finish(node)
-}
-
-#[inline]
-pub fn consume_identifier<'i>(i: ParseState<'i>, ctx: &mut ParseContext) -> ParseResult<'i, ConcreteNode> {
-    let id = ctx.random_id();
-    let o = i;
-    let (o, _) = o.match_str_if(|c| c.is_alphabetic(), "IDENTIFIER")?;
-    o.finish(ConcreteNode::new(id).with_kind(YggdrasilType::Identifier).with_range(i.start_offset, o.start_offset))
+#[test]
+fn test() {
+    let text = "1 + 1";
+    let state = ParseState::new(text);
+    let mut tree = CalculateCST { tree: ConcreteTree::<YggdrasilType>::new(text) };
+    let root = tree.tree.create_root_node(ConcreteNode::new(YggdrasilType::Program));
+    let result = tree.parse_identifier(state, root);
+    println!("{:?}", result);
 }

@@ -4,22 +4,22 @@
 #![allow(clippy::needless_return)]
 #![doc = include_str!("../Readme.md")]
 
-#[cfg(feature = "lsp")]
-pub use lsp_types;
-pub use url::Url;
-
 pub use self::errors::{YError, YErrorKind, YResult};
 pub use crate::{
-    cst_mode::{context::ConcreteTree, ConcreteNode},
+    cst_mode::{ConcreteNode, ConcreteTree},
     managers::text_manager::{TextManager, TEXT_MANAGER},
     records::text_index::*,
     traits::{AstNode, NodeType},
 };
+pub use indextree::NodeId;
+#[cfg(feature = "lsp")]
+pub use lsp_types;
 pub use pex::{
     ParseResult::{self, Pending, Stop},
     ParseState, Parsed, StopBecause,
 };
 pub use rand::{rngs::SmallRng, Rng, SeedableRng};
+pub use url::Url;
 
 ///
 mod errors;
