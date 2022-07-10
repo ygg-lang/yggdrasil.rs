@@ -4,7 +4,7 @@ mod pratt;
 pub use self::pratt::{Affix, PrattParser};
 use std::{fmt::Debug, ops::Range};
 
-pub trait NodeType: Copy + Debug {
+pub trait NodeType: Copy + Debug + Default {
     fn is_ignored(&self) -> bool;
 }
 

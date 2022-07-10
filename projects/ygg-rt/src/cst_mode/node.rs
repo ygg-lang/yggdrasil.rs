@@ -5,9 +5,8 @@ impl<K> ConcreteNode<K> {
     pub fn new(kind: K) -> Self {
         Self { kind, node_tag: "", branch: "", range: Default::default() }
     }
-    pub fn append_to(self, tree: &mut ConcreteTree<K>, parent: NodeId) -> NodeId {
-        let this = tree.arena.new_node(self);
-        parent.append(this, &mut tree.arena);
-        this
+    pub fn with_offset(mut self, old: ParseState, new: ParseState) -> Self {
+        self.range = new.away_from(old);
+        self
     }
 }
