@@ -152,6 +152,7 @@ fn test() {
     let mut tree = CalculateCST { tree: ConcreteTree::<YggdrasilType>::new(text) };
     let root = tree.tree.create_node(ConcreteNode::new(YggdrasilType::Program));
     let result = tree.parse_namepath(state, root).as_result().unwrap();
+    println!("{}", tree.tree);
     println!("{:#?}", result);
     let ns = tree.extract_namespace(result.1);
     println!("{:#?}", ns);

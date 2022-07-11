@@ -1,13 +1,12 @@
 use crate::NodeType;
-use std::{fmt::Debug, ops::Range};
-
-use indextree::{Arena, Node, NodeId};
-use pex::{ParseResult, ParseState};
 use std::{
-    cell::RefCell,
-    mem::transmute,
-    num::{NonZeroU16, NonZeroU32},
+    fmt::{Debug, Formatter},
+    ops::Range,
 };
+
+use indextree::{Arena, NodeId};
+use pex::ParseState;
+use std::cell::RefCell;
 
 pub mod context;
 mod display;
@@ -24,6 +23,6 @@ pub struct ConcreteTree<K> {
 pub struct ConcreteNode<K> {
     pub kind: K,
     pub node_tag: &'static str,
-    pub branch: &'static str,
+    pub branch_tag: &'static str,
     pub range: Range<usize>,
 }

@@ -1,34 +1,36 @@
 use super::*;
 
-impl<K> ConcreteTree<K> {
+impl<K> ConcreteTree<K>
+where
+    K: NodeType,
+{
     pub fn new<S: ToString>(text: S) -> Self {
         Self { text: text.to_string(), arena: RefCell::new(Arena::new()) }
     }
     pub fn parse_state(&self) -> ParseState {
         ParseState::new(self.text.as_str())
     }
-    pub fn create_node(&self, data: ConcreteNode<K>) -> NodeId
-    where
-        K: NodeType,
-    {
+    pub fn create_root(&self, data: ConcreteNode<K>) -> NodeId {
+        self.arena.borrow_mut().new_root(data)
+    }
+    pub fn create_node(&self, data: ConcreteNode<K>) -> NodeId {
         self.arena.borrow_mut().new_node(data)
     }
-    pub fn get_root(&self) -> NodeId {
-        self.arena.borrow().root_id()
+    pub fn get_root(&self) -> ConcreteNode<K> {
+        match self.arena.borrow().iter().next() {
+            Some(s) => s.get().clone(),
+            None => {
+                panic!("ConcreteTree: No root node found");
+            }
+        }
     }
-    pub fn get_node(&self, node: NodeId) -> Option<ConcreteNode<K>>
-    where
-        K: NodeType,
-    {
+    pub fn get_node(&self, node: NodeId) -> Option<ConcreteNode<K>> {
         Some(self.arena.borrow().get(node)?.get().clone())
     }
     /// An allocation is always required when converting an ast, so no iterators are used here
-    pub fn children(&self, node: NodeId) -> Vec<(NodeId, ConcreteNode<K>)>
-    where
-        K: NodeType,
-    {
-        /// should at least greater than 2, for filling binary expressions
-        let mut out = Vec::with_capacity(4);
+    pub fn children(&self, node: NodeId) -> Vec<(NodeId, ConcreteNode<K>)> {
+        // for filling binary like expressions (a + b) => (a ~ + ~ b ~)
+        let mut out = Vec::with_capacity(6);
         for child in node.children(&self.arena.borrow()) {
             match self.get_node(child) {
                 Some(s) => out.push((child, s)),
@@ -61,15 +63,11 @@ impl<K> ConcreteTree<K> {
         out.push_str(&text[text.len() - END_LENGTH..]);
         out
     }
-
-    pub fn place_holder_node(&self, parent: NodeId) -> NodeId
-    where
-        K: Default,
-    {
+    pub fn place_holder_node(&self, parent: NodeId) -> NodeId {
         let empty = self.arena.borrow_mut().new_node(ConcreteNode {
             kind: K::default(),
             node_tag: "",
-            branch: "",
+            branch_tag: "",
             range: Default::default(),
         });
         parent.append(empty, &mut self.arena.borrow_mut());
