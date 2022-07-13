@@ -47,8 +47,27 @@ where
     //  ├─ op "+"
     //  └─ val "z"
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let root = self.get_root();
-        writeln!(f, "{}", root)?;
+        let root = self.root.and_then(|s| self.get_node(s));
+        match root {
+            Some(s) => {
+                let mut stack = vec![(s, 0)];
+                while let Some((node, level)) = stack.pop() {
+                    for _ in 0..level {
+                        write!(f, "│  ")?;
+                    }
+                    if level > 0 {
+                        write!(f, "├─ ")?;
+                    }
+                    writeln!(f, "{}", node)?;
+                    for child in node.children(&self.arena.borrow()) {
+                        stack.push((child, level + 1));
+                    }
+                }
+            }
+            None => {
+                f.write_str("Empty Tree")?;
+            }
+        }
 
         Ok(())
     }

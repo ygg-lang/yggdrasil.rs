@@ -14,6 +14,7 @@ pub mod node;
 
 pub struct ConcreteTree<K> {
     text: String,
+    root: Option<NodeId>,
     /// HACK: use [RefCell] to skip mutable borrow check
     arena: RefCell<Arena<ConcreteNode<K>>>,
 }

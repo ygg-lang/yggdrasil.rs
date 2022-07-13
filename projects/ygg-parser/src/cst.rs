@@ -149,11 +149,11 @@ impl CalculateCST {
 fn test() {
     let text = "c::i + j";
     let state = ParseState::new(text);
-    let mut tree = CalculateCST { tree: ConcreteTree::<YggdrasilType>::new(text) };
-    let root = tree.tree.create_node(ConcreteNode::new(YggdrasilType::Program));
-    let result = tree.parse_namepath(state, root).as_result().unwrap();
-    println!("{}", tree.tree);
+    let mut ctx = CalculateCST { tree: ConcreteTree::<YggdrasilType>::new(text) };
+    let root = ctx.tree.create_root();
+    let result = ctx.parse_namepath(state, root).as_result().unwrap();
+    println!("{}", ctx.tree);
     println!("{:#?}", result);
-    let ns = tree.extract_namespace(result.1);
+    let ns = ctx.extract_namespace(result.1);
     println!("{:#?}", ns);
 }

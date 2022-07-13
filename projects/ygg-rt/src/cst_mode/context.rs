@@ -5,24 +5,28 @@ where
     K: NodeType,
 {
     pub fn new<S: ToString>(text: S) -> Self {
-        Self { text: text.to_string(), arena: RefCell::new(Arena::new()) }
+        Self { text: text.to_string(), root: None, arena: RefCell::new(Arena::new()) }
     }
-    pub fn parse_state(&self) -> ParseState {
+    pub fn initial_state(&self) -> ParseState {
         ParseState::new(self.text.as_str())
     }
-    pub fn create_root(&self, data: ConcreteNode<K>) -> NodeId {
-        self.arena.borrow_mut().new_root(data)
+    pub fn create_root(&mut self) -> NodeId {
+        match self.root {
+            Some(_) => panic!("ConcreteTree: Root node already exists"),
+            None => {
+                let empty = self.empty_node();
+                self.root = Some(empty);
+                empty
+            }
+        }
+    }
+    pub fn get_root(&self) -> Option<(NodeId, ConcreteNode<K>)> {
+        let id = self.root?;
+        let node = self.get_node(id)?;
+        Some((id, node))
     }
     pub fn create_node(&self, data: ConcreteNode<K>) -> NodeId {
         self.arena.borrow_mut().new_node(data)
-    }
-    pub fn get_root(&self) -> ConcreteNode<K> {
-        match self.arena.borrow().iter().next() {
-            Some(s) => s.get().clone(),
-            None => {
-                panic!("ConcreteTree: No root node found");
-            }
-        }
     }
     pub fn get_node(&self, node: NodeId) -> Option<ConcreteNode<K>> {
         Some(self.arena.borrow().get(node)?.get().clone())
@@ -64,12 +68,7 @@ where
         out
     }
     pub fn place_holder_node(&self, parent: NodeId) -> NodeId {
-        let empty = self.arena.borrow_mut().new_node(ConcreteNode {
-            kind: K::default(),
-            node_tag: "",
-            branch_tag: "",
-            range: Default::default(),
-        });
+        let empty = self.empty_node();
         parent.append(empty, &mut self.arena.borrow_mut());
         empty
     }
@@ -90,5 +89,19 @@ where
     }
     pub fn drop_node(&self, node: NodeId) {
         node.remove_subtree(&mut self.arena.borrow_mut());
+    }
+}
+
+impl<K> ConcreteTree<K>
+where
+    K: NodeType,
+{
+    fn empty_node(&self) -> NodeId {
+        self.arena.borrow_mut().new_node(ConcreteNode {
+            kind: K::default(),
+            node_tag: "",
+            branch_tag: "",
+            range: Default::default(),
+        })
     }
 }
