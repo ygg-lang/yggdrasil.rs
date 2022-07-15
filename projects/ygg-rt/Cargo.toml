@@ -10,11 +10,8 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-smallvec = "1.10.0"
 indextree = "4.6.0"
-slab_tree = "0.3.2"
-rand = { version = "0.8.5", features = ["small_rng"] }
-pex = { version = "0.0.11", features = ["ucd-trie"] }
+pex = { version = "0.0.11", features = ["ucd-trie", "regex-automata"] }
 lsp-types = { version = "0.94.0", features = ["proposed"], optional = true }
 url = "2.3.1"
 diagnostic-quick = "0.4.0"

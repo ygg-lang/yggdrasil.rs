@@ -81,11 +81,9 @@ impl CalculateCST {
         debug_assert!(cst.kind == YggdrasilType::Namespace, "Expected `YggdrasilType::Namespace`, got `{:?}`", cst.kind);
         let mut identifiers = Vec::new();
         for (id, child) in self.tree.children(id) {
-            if child.kind == YggdrasilType::Namespace {
+            if child.kind == YggdrasilType::Identifier {
                 match self.extract_identifier(id) {
-                    Some(s) => {
-                        identifiers.push(s);
-                    }
+                    Some(s) => identifiers.push(s),
                     None => {}
                 }
             }
@@ -116,7 +114,7 @@ impl CalculateCST {
         let (state1, node) = state0 //
             .match_str_if(|c| c.is_alphabetic(), "Identifier")
             .map_inner(|_| ConcreteNode::new(YggdrasilType::Identifier))?;
-        let this = self.tree.create_node(node);
+        let this = self.tree.create_node(node.with_offset(state0, state1));
         self.tree.append_node(parent, this);
         state1.finish(())
     }
@@ -129,7 +127,7 @@ impl CalculateCST {
         let (state1, node) = state0 //
             .match_str(text)
             .map_inner(|_| ConcreteNode::new(YggdrasilType::Literal))?;
-        let this = self.tree.create_node(node);
+        let this = self.tree.create_node(node.with_offset(state0, state1));
         self.tree.append_node(parent, this);
         state1.finish(())
     }
@@ -139,7 +137,7 @@ impl CalculateCST {
         let (state1, node) = state0 //
             .match_str_if(|c| c.is_whitespace(), "IgnoreSpace")
             .map_inner(|_| ConcreteNode::new(YggdrasilType::WhiteSpace))?;
-        let this = self.tree.create_node(node);
+        let this = self.tree.create_node(node.with_offset(state0, state1));
         self.tree.append_node(parent, this);
         state1.finish(())
     }
@@ -150,7 +148,7 @@ fn test() {
     let text = "c::i + j";
     let state = ParseState::new(text);
     let mut ctx = CalculateCST { tree: ConcreteTree::<YggdrasilType>::new(text) };
-    let root = ctx.tree.create_root();
+    let root = ctx.tree.create_root(YggdrasilType::Program);
     let result = ctx.parse_namepath(state, root).as_result().unwrap();
     println!("{}", ctx.tree);
     println!("{:#?}", result);

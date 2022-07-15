@@ -10,13 +10,15 @@ where
     pub fn initial_state(&self) -> ParseState {
         ParseState::new(self.text.as_str())
     }
-    pub fn create_root(&mut self) -> NodeId {
+    pub fn create_root(&mut self, kind: K) -> NodeId {
         match self.root {
             Some(_) => panic!("ConcreteTree: Root node already exists"),
             None => {
-                let empty = self.empty_node();
-                self.root = Some(empty);
-                empty
+                let mut empty = ConcreteNode::new(kind);
+                empty.range = 0..self.text.len();
+                let root_id = self.create_node(empty);
+                self.root = Some(root_id);
+                root_id
             }
         }
     }

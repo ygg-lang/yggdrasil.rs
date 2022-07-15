@@ -18,7 +18,6 @@ pub use pex::{
     ParseResult::{self, Pending, Stop},
     ParseState, Parsed, StopBecause,
 };
-pub use rand::{rngs::SmallRng, Rng, SeedableRng};
 pub use url::Url;
 
 ///
