@@ -4,22 +4,33 @@ mod extensions;
 mod trait_bounds;
 
 pub use self::extensions::*;
-use std::{hash::Hash, ops::Range};
+use std::{
+    fmt::{Debug, Display, Formatter},
+    hash::Hash,
+    ops::Range,
+};
 use yggdrasil_rt::{AstNode, ConcreteNode, ConcreteTree, NodeId, NodeType, ParseResult, ParseState};
 
-#[repr(u16)]
+#[repr(i16)]
 #[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash)]
 pub enum YggdrasilType {
-    Program = 0,
+    Program = 2,
     Identifier = 10,
     Namespace = 100,
-    WhiteSpace = 1000,
+    Number = 777,
     Literal = 11111,
-    Missing = 666,
+    Uninitialized = 0,
+    WhiteSpace = -1,
 }
 
 pub struct YggdrasilCST {
     tree: ConcreteTree<YggdrasilType>,
+}
+
+#[derive(Debug)]
+pub enum YggdrasilValue {
+    Namespace(YggdrasilNamespace),
+    Number(YggdrasilNumber),
 }
 
 #[derive(Debug)]
@@ -37,15 +48,22 @@ pub struct YggdrasilIdentifier {
     pub range: Range<usize>,
 }
 
+#[derive(Debug)]
+pub struct YggdrasilNumber {
+    #[cfg(debug_assertions)]
+    pub text: String,
+    pub range: Range<usize>,
+}
+
 #[test]
 fn test() {
-    let text = "c::i + j";
+    let text = "c::i + 1";
     let state = ParseState::new(text);
     let mut ctx = YggdrasilCST { tree: ConcreteTree::<YggdrasilType>::new(text) };
     let root = ctx.tree.create_root(YggdrasilType::Program);
-    let result = ctx.parse_namepath(state, root).as_result().unwrap();
+    let result = ctx.parse_value(state, root).as_result().unwrap();
     println!("{}", ctx.tree);
     println!("{:#?}", result);
-    let ns = ctx.extract_namespace(result.1);
+    let ns = ctx.extract_value(result.1);
     println!("{:#?}", ns);
 }

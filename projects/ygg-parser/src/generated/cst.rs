@@ -1,6 +1,16 @@
 use super::*;
+use yggdrasil_rt::helpers::dec_str;
 
 impl YggdrasilCST {
+    /// id | num
+    pub fn parse_value<'a, 'b>(&'a mut self, state0: ParseState<'b>, this: NodeId) -> ParseResult<'b, NodeId> {
+        let (state1, id) = state0
+            .begin_choice()
+            .or_else(|s| self.parse_namepath(s, this))
+            .or_else(|s| self.parse_number(s, this))
+            .end_choice()?;
+        state1.finish(id)
+    }
     /// @transaction [parse_namepath_0]()
     pub fn parse_namepath<'a, 'b>(&'a mut self, state0: ParseState<'b>, parent: NodeId) -> ParseResult<'b, NodeId> {
         let this = self.tree.place_holder_node(parent);
@@ -30,35 +40,42 @@ impl YggdrasilCST {
 
 impl YggdrasilCST {
     /// `[a-zA-Z][a-zA-Z0-9_]*`
-    pub fn parse_identifier<'a, 'b>(&'a mut self, state0: ParseState<'b>, parent: NodeId) -> ParseResult<'b, ()> {
+    pub fn parse_identifier<'a, 'b>(&'a mut self, state0: ParseState<'b>, parent: NodeId) -> ParseResult<'b, NodeId> {
         let (state1, node) = state0 //
             .match_str_if(|c| c.is_alphabetic(), "Identifier")
             .map_inner(|_| ConcreteNode::new(YggdrasilType::Identifier))?;
         let this = self.tree.create_node(node.with_offset(state0, state1));
         self.tree.append_node(parent, this);
-        state1.finish(())
+        state1.finish(this)
     }
     pub fn parse_ignore_text<'a, 'b>(
         &'a mut self,
         state0: ParseState<'b>,
         parent: NodeId,
         text: &'static str,
-    ) -> ParseResult<'b, ()> {
+    ) -> ParseResult<'b, NodeId> {
         let (state1, node) = state0 //
             .match_str(text)
             .map_inner(|_| ConcreteNode::new(YggdrasilType::Literal))?;
         let this = self.tree.create_node(node.with_offset(state0, state1));
         self.tree.append_node(parent, this);
-        state1.finish(())
+        state1.finish(this)
     }
-
+    pub fn parse_number<'a, 'b>(&'a mut self, state0: ParseState<'b>, parent: NodeId) -> ParseResult<'b, NodeId> {
+        let (state1, node) = state0 //
+            .match_fn(dec_str)
+            .map_inner(|_| ConcreteNode::new(YggdrasilType::Number))?;
+        let this = self.tree.create_node(node.with_offset(state0, state1));
+        self.tree.append_node(parent, this);
+        state1.finish(this)
+    }
     // ignore_space = [ \t\n\r]*
-    pub fn parse_ignore_space<'a, 'b>(&'a mut self, state0: ParseState<'b>, parent: NodeId) -> ParseResult<'b, ()> {
+    pub fn parse_ignore_space<'a, 'b>(&'a mut self, state0: ParseState<'b>, parent: NodeId) -> ParseResult<'b, NodeId> {
         let (state1, node) = state0 //
             .match_str_if(|c| c.is_whitespace(), "IgnoreSpace")
             .map_inner(|_| ConcreteNode::new(YggdrasilType::WhiteSpace))?;
         let this = self.tree.create_node(node.with_offset(state0, state1));
         self.tree.append_node(parent, this);
-        state1.finish(())
+        state1.finish(this)
     }
 }

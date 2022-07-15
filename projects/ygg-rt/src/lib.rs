@@ -22,10 +22,10 @@ pub use url::Url;
 
 ///
 mod errors;
+pub mod helpers;
 mod managers;
 pub(crate) mod records;
 ///
 pub mod traits;
-
 // pub(crate) mod text_store;
 pub mod cst_mode;
