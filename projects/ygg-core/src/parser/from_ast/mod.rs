@@ -1,5 +1,5 @@
 use yggdrasil_ir::{ExpressionNode, GrammarRuleKind, QErrorKind, SyntaxError};
-use yggdrasil_parser::{ExprNode, IdentifierNode, RuleBodyNode};
+use yggdrasil_parser::{ExprNode, RuleBodyNode, YggdrasilIdentifier};
 
 use super::*;
 
@@ -67,7 +67,7 @@ impl ParseContext {
         }
     }
 
-    pub fn visit_identifier(&mut self, node: &IdentifierNode) -> String {
+    pub fn visit_identifier(&mut self, node: &YggdrasilIdentifier) -> String {
         node.string.clone()
     }
 }

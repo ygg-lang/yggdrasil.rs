@@ -1,4 +1,4 @@
-#![feature(box_syntax)]
+#![feature(rustc_box)]
 
 pub use crate::parser::parse_grammar;
 

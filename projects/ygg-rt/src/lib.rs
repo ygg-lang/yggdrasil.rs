@@ -1,10 +1,10 @@
 #![feature(try_blocks)]
-#![feature(once_cell)]
+#![feature(lazy_cell)]
 // #![forbid(missing_docs)]
 #![allow(clippy::needless_return)]
 #![doc = include_str!("../Readme.md")]
 
-pub use self::errors::{YError, YErrorKind, YResult};
+pub use self::errors::{syntax_error::SyntaxError, YError, YErrorKind, YResult};
 pub use crate::{
     cst_mode::{ConcreteNode, ConcreteTree},
     managers::text_manager::{TextManager, TEXT_MANAGER},
@@ -18,6 +18,7 @@ pub use pex::{
     ParseResult::{self, Pending, Stop},
     ParseState, Parsed, StopBecause,
 };
+#[cfg(feature = "url")]
 pub use url::Url;
 
 ///
