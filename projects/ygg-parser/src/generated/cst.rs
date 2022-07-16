@@ -1,5 +1,4 @@
 use super::*;
-use yggdrasil_rt::helpers::dec_str;
 
 impl YggdrasilCST {
     /// id | num
@@ -30,7 +29,7 @@ impl YggdrasilCST {
     }
     /// `::` [~]() [identifier](YggdrasilCST::parse_identifier) [~]()
     pub fn parse_namepath_1<'a, 'b>(&'a mut self, state0: ParseState<'b>, this: NodeId) -> ParseResult<'b, ()> {
-        let (state1, _) = state0.match_fn(|s| self.parse_identifier(s, this))?;
+        let (state1, _) = state0.match_fn(|s| self.parse_ignore_text(s, this, "::"))?;
         let (state2, _) = state1.match_optional(|s| self.parse_ignore_space(s, this))?;
         let (state3, _) = state2.match_fn(|s| self.parse_identifier(s, this))?;
         let (state4, _) = state3.match_optional(|s| self.parse_ignore_space(s, this))?;
@@ -39,7 +38,7 @@ impl YggdrasilCST {
 }
 
 impl YggdrasilCST {
-    /// `[a-zA-Z][a-zA-Z0-9_]*`
+    /// @atomic `[a-zA-Z][a-zA-Z0-9_]*`
     pub fn parse_identifier<'a, 'b>(&'a mut self, state0: ParseState<'b>, parent: NodeId) -> ParseResult<'b, NodeId> {
         let (state1, node) = state0 //
             .match_str_if(|c| c.is_alphabetic(), "Identifier")
@@ -48,6 +47,7 @@ impl YggdrasilCST {
         self.tree.append_node(parent, this);
         state1.finish(this)
     }
+    /// @atomic `TEXT`
     pub fn parse_ignore_text<'a, 'b>(
         &'a mut self,
         state0: ParseState<'b>,
@@ -61,6 +61,7 @@ impl YggdrasilCST {
         self.tree.append_node(parent, this);
         state1.finish(this)
     }
+    /// @atomic `NUMBER`
     pub fn parse_number<'a, 'b>(&'a mut self, state0: ParseState<'b>, parent: NodeId) -> ParseResult<'b, NodeId> {
         let (state1, node) = state0 //
             .match_fn(dec_str)
@@ -69,7 +70,7 @@ impl YggdrasilCST {
         self.tree.append_node(parent, this);
         state1.finish(this)
     }
-    // ignore_space = [ \t\n\r]*
+    // @atomic `[ \t\n\r]*`
     pub fn parse_ignore_space<'a, 'b>(&'a mut self, state0: ParseState<'b>, parent: NodeId) -> ParseResult<'b, NodeId> {
         let (state1, node) = state0 //
             .match_str_if(|c| c.is_whitespace(), "IgnoreSpace")

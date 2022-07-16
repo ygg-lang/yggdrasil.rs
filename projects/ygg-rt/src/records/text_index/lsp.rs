@@ -1,4 +1,5 @@
 use super::*;
+use crate::records::text_index::text_indexed::TextMap;
 use lsp_types::{Position, Range, TextDocumentContentChangeEvent};
 
 /// Defines operations to convert between native text types and [`lsp_types`].

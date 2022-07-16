@@ -1,6 +1,6 @@
 [package]
 name = "yggdrasil-rt"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Aster <192607617@qq.com>"]
 description = "Yggdrasil Shared Structure"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
@@ -15,7 +15,7 @@ pex = { version = "0.1.0", features = ["ucd-trie"] }
 regex-automata = { version = "0.2.0", optional = true }
 lsp-types = { version = "0.94.0", features = ["proposed"], optional = true }
 url = "2.3.1"
-diagnostic-quick = "0.4.0"
+#diagnostic-quick = "0.4.0"
 
 [features]
 default = []

@@ -4,14 +4,18 @@ version = "0.0.1"
 authors = ["Aster <192607617@qq.com>"]
 description = "AWSL Window Structure Language"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
+documentation = "https://docs.rs/yggdrasil-parser"
 readme = "Readme.md"
 license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-unicode-xid = "0.2.4"
+#unicode-xid = "0.2.4"
 #peginator = "0.6.0"
-yggdrasil-rt = { path = "../ygg-rt" }
+
+[dependencies.yggdrasil-rt]
+version = "0.0.2"
+path = "../ygg-rt"
 
 [features]
 default = []

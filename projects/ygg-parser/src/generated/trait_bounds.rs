@@ -21,13 +21,31 @@ impl Default for YggdrasilType {
 impl NodeType for YggdrasilType {
     fn is_ignored(&self) -> bool {
         match self {
-            YggdrasilType::Program => false,
-            YggdrasilType::Identifier => false,
-            YggdrasilType::Namespace => false,
             YggdrasilType::WhiteSpace => true,
             YggdrasilType::Literal => true,
             YggdrasilType::Uninitialized => true,
-            YggdrasilType::Number => false,
+            _ => false,
+        }
+    }
+}
+
+impl Debug for YggdrasilValue {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            YggdrasilValue::Namespace(v) => Debug::fmt(v, f),
+            YggdrasilValue::Number(v) => Debug::fmt(v, f),
+        }
+    }
+}
+
+impl AstNode for YggdrasilValue {
+    type NodeType = YggdrasilType;
+    const KIND: Self::NodeType = YggdrasilType::Value;
+
+    fn get_range(&self) -> Range<usize> {
+        match self {
+            YggdrasilValue::Namespace(v) => v.get_range(),
+            YggdrasilValue::Number(v) => v.get_range(),
         }
     }
 }
@@ -35,6 +53,15 @@ impl NodeType for YggdrasilType {
 impl AstNode for YggdrasilNamespace {
     type NodeType = YggdrasilType;
     const KIND: Self::NodeType = YggdrasilType::Namespace;
+
+    fn get_range(&self) -> Range<usize> {
+        self.range.clone()
+    }
+}
+
+impl AstNode for YggdrasilNumber {
+    type NodeType = YggdrasilType;
+    const KIND: Self::NodeType = YggdrasilType::Number;
 
     fn get_range(&self) -> Range<usize> {
         self.range.clone()

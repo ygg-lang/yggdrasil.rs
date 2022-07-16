@@ -3,7 +3,7 @@ mod cst;
 mod extensions;
 mod trait_bounds;
 
-pub use self::extensions::*;
+use self::extensions::*;
 use std::{
     fmt::{Debug, Display, Formatter},
     hash::Hash,
@@ -18,6 +18,7 @@ pub enum YggdrasilType {
     Identifier = 10,
     Namespace = 100,
     Number = 777,
+    Value = 1000,
     Literal = 11111,
     Uninitialized = 0,
     WhiteSpace = -1,
@@ -27,7 +28,6 @@ pub struct YggdrasilCST {
     tree: ConcreteTree<YggdrasilType>,
 }
 
-#[derive(Debug)]
 pub enum YggdrasilValue {
     Namespace(YggdrasilNamespace),
     Number(YggdrasilNumber),
