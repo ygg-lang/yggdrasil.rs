@@ -1,5 +1,4 @@
 use crate::SyntaxError;
-use std::{ops::Range, path::PathBuf};
 
 pub mod syntax_error;
 

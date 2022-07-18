@@ -1,9 +1,14 @@
-/// comment
+
 entry class ClassStatement {
 
 }
 
-///
+
+class ImportStatement {
+    | "import" (path:String) ("as" Identifier)?   #FromPath
+    | "import" (path:String) _ImportSelected      #FromPathItems
+}
+
 class KW_CLASS {
 
 }

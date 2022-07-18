@@ -86,6 +86,20 @@ where
             }
         }
     }
+    pub fn update_tag(&self, id: NodeId, node: &'static str, branch: &'static str) {
+        match self.arena.borrow_mut().get_mut(id) {
+            Some(s) => {
+                let m = s.get_mut();
+                m.node_tag = node;
+                m.branch_tag = branch;
+            }
+            None => {
+                if cfg!(debug_assertions) {
+                    panic!("update_node_tag: node {node} not found");
+                }
+            }
+        }
+    }
     pub fn append_node(&self, parent: NodeId, child: NodeId) {
         parent.append(child, &mut self.arena.borrow_mut());
     }

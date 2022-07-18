@@ -14,7 +14,7 @@ edition = "2021"
 #peginator = "0.6.0"
 
 [dependencies.yggdrasil-rt]
-version = "0.0.2"
+version = "0.0.3"
 path = "../ygg-rt"
 
 [features]

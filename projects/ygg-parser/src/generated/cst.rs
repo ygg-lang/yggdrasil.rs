@@ -1,5 +1,10 @@
 use super::*;
 
+// class ImportStatement {
+//     | "import" (path:String) ("as" Identifier)?   #FromPath
+//     | "import" (path:String) _ImportSelected      #FromPathItems
+// }
+
 impl YggdrasilCST {
     /// id | num
     pub fn parse_value<'a, 'b>(&'a mut self, state0: ParseState<'b>, this: NodeId) -> ParseResult<'b, NodeId> {

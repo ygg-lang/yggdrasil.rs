@@ -2,7 +2,6 @@ use crate::{YError, YErrorKind};
 use std::{
     fmt::{Debug, Display, Formatter},
     ops::Range,
-    path::PathBuf,
 };
 
 #[derive(Debug)]
