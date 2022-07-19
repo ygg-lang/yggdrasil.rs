@@ -1,20 +1,22 @@
 use super::*;
+use quote::{ToTokens, __private::TokenStream};
 
-#[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
+// #[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct RuleDerive {
-    pub parser: Option<String>,
+    pub copy: bool,
+    pub clone: bool,
     pub debug: bool,
-    pub display: Option<String>,
     pub eq: bool,
-    pub eq_partial: Option<String>,
-    pub ord: bool,
-    pub ord_partial: Option<String>,
-    pub hash: Option<String>,
+    pub partial_eq: bool,
+    pub hash: bool,
+    pub serialize: bool,
+    pub deserialize: bool,
+    pub custom: Vec<String>,
 }
 
 impl Default for RuleDerive {
     fn default() -> Self {
-        Self { parser: None, debug: true, display: None, eq: false, eq_partial: None, ord: false, ord_partial: None, hash: None }
+        todo!()
     }
 }
 

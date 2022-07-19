@@ -69,7 +69,7 @@ impl YggdrasilCST {
     /// @atomic `NUMBER`
     pub fn parse_number<'a, 'b>(&'a mut self, state0: ParseState<'b>, parent: NodeId) -> ParseResult<'b, NodeId> {
         let (state1, node) = state0 //
-            .match_fn(dec_str)
+            .match_fn(decimal_string)
             .map_inner(|_| ConcreteNode::new(YggdrasilType::Number))?;
         let this = self.tree.create_node(node.with_offset(state0, state1));
         self.tree.append_node(parent, this);

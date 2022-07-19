@@ -1,11 +1,20 @@
-use std::collections::HashSet;
 use diagnostic_quick::Validation;
+use std::collections::{BTreeMap, HashSet};
 
 use crate::*;
 
 mod field_descriptor;
 
+pub type FieldMap = BTreeMap<String, FieldCount>;
+
+#[derive(Debug, Default)]
 pub enum FieldCount {
+    Optional,
+    One,
+    Many,
+}
+
+pub enum FieldCount2 {
     Optional(RuleReference),
     One(RuleReference),
     Many(RuleReference),
@@ -13,7 +22,7 @@ pub enum FieldCount {
 
 pub trait FieldDescriptor {
     fn get_field_names<'a>(&'a self, buffer: &mut HashSet<&'a String>);
-    fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount>);
+    fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount2>);
 }
 
 pub trait CodeOptimizer {

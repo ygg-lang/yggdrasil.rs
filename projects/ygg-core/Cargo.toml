@@ -9,6 +9,7 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
+serde = "1.0.163"
 pex-trie = "0.0.1"
 proc-macro2 = "1.0.52"
 character-set = "0.4.0"
@@ -16,6 +17,9 @@ unicode-xid = "0.2.4"
 railroad = { version = "0.2.0", optional = true }
 convert_case = "0.6.0"
 askama = "0.12.0"
+# rust code generator
+quote = "1.0.27"
+syn = "2.0.15"
 
 [dependencies.yggdrasil-rt]
 #version = "0.1"

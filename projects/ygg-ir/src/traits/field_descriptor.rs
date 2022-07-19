@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use crate::{
     rule::node::ExpressionKind,
-    traits::{FieldCount, FieldDescriptor},
+    traits::{FieldCount2, FieldDescriptor},
     ChoiceExpression, ConcatExpression, DataKind, ExpressionNode, FunctionExpression, GrammarRule, RuleReference, UnaryExpression,
 };
 
@@ -11,7 +11,7 @@ impl FieldDescriptor for GrammarRule {
         self.body.get_field_names(buffer)
     }
 
-    fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount>) {
+    fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount2>) {
         self.body.get_field_count(buffer)
     }
 }
@@ -21,7 +21,7 @@ impl FieldDescriptor for ExpressionNode {
         self.kind.get_field_names(buffer)
     }
 
-    fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount>) {
+    fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount2>) {
         self.kind.get_field_count(buffer)
     }
 }
@@ -38,7 +38,7 @@ impl FieldDescriptor for ExpressionKind {
         }
     }
 
-    fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount>) {
+    fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount2>) {
         match self {
             ExpressionKind::Choice(e) => e.get_field_count(buffer),
             ExpressionKind::Concat(e) => e.get_field_count(buffer),
@@ -55,7 +55,7 @@ impl FieldDescriptor for FunctionExpression {
         todo!()
     }
 
-    fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount>) {
+    fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount2>) {
         todo!()
     }
 }
@@ -65,7 +65,7 @@ impl FieldDescriptor for ChoiceExpression {
         self.branches.iter().for_each(|f| f.get_field_names(buffer))
     }
 
-    fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount>) {
+    fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount2>) {
         todo!()
     }
 }
@@ -75,7 +75,7 @@ impl FieldDescriptor for ConcatExpression {
         self.into_iter().for_each(|f| f.get_field_names(buffer))
     }
 
-    fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount>) {
+    fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount2>) {
         todo!()
     }
 }
@@ -85,7 +85,7 @@ impl FieldDescriptor for UnaryExpression {
         self.base.get_field_names(buffer)
     }
 
-    fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount>) {
+    fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount2>) {
         todo!()
     }
 }
@@ -93,7 +93,7 @@ impl FieldDescriptor for UnaryExpression {
 impl FieldDescriptor for DataKind {
     fn get_field_names<'a>(&'a self, _: &mut HashSet<&'a String>) {}
 
-    fn get_field_count(&self, _: &mut HashSet<String, FieldCount>) {}
+    fn get_field_count(&self, _: &mut HashSet<String, FieldCount2>) {}
 }
 
 impl FieldDescriptor for RuleReference {
@@ -101,7 +101,7 @@ impl FieldDescriptor for RuleReference {
         buffer.insert(&self.name);
     }
 
-    fn get_field_count(&self, _: &mut HashSet<String, FieldCount>) {
+    fn get_field_count(&self, _: &mut HashSet<String, FieldCount2>) {
         unreachable!()
     }
 }

@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 use crate::*;
 
 pub mod derive;
+pub mod derive_custom;
 pub mod node;
 pub mod parameter;
 

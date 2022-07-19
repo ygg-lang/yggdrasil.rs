@@ -10,7 +10,7 @@ pub use crate::{
         node::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression, ExpressionKind, ExpressionNode, Operator},
         FunctionRule, GrammarRule, GrammarRuleContext, GrammarRuleKind, RuleParameter, RuleParameterKind,
     },
-    traits::{CodeGenerator, CodeOptimizer, FieldDescriptor},
+    traits::{CodeGenerator, CodeOptimizer, FieldCount, FieldDescriptor, FieldMap},
 };
 
 mod data;

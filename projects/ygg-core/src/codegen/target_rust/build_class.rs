@@ -1,8 +1,33 @@
+use proc_macro2::TokenStream;
+use quote::{quote, ToTokens};
 use std::fmt::Debug;
 
-use yggdrasil_ir::{GrammarRuleKind, RuleDerive};
+use yggdrasil_ir::{FieldMap, GrammarRuleKind, RuleDerive};
 
 use super::*;
+
+#[derive(Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct YggdrasilNamespace {
+    #[cfg(debug_assertions)]
+    pub snippet: String,
+    pub identifiers: Vec<YggdrasilIdentifier>,
+    pub range: Range<usize>,
+}
+
+pub struct ClassObject {
+    name: String,
+    derives: RuleDerive,
+    file: FieldMap,
+}
+
+impl ToTokens for ClassObject {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let name = &self.name;
+        let derives = &self.derives;
+        let file = &self.file;
+    }
+}
 
 #[test]
 fn test() {

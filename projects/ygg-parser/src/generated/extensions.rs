@@ -1,1 +1,1 @@
-pub use yggdrasil_rt::helpers::dec_str;
+pub use yggdrasil_rt::helpers::decimal_string;

@@ -1,5 +1,3 @@
-#![feature(rustc_box)]
-
 pub use crate::parser::parse_grammar;
 
 // noinspection DuplicatedCode
