@@ -1,7 +1,7 @@
 use super::*;
-use quote::{ToTokens, __private::TokenStream};
+use crate::rule::derive_custom::CustomDerive;
 
-// #[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct RuleDerive {
     pub copy: bool,
     pub clone: bool,
@@ -11,7 +11,7 @@ pub struct RuleDerive {
     pub hash: bool,
     pub serialize: bool,
     pub deserialize: bool,
-    pub custom: Vec<String>,
+    pub custom: Vec<CustomDerive>,
 }
 
 impl Default for RuleDerive {

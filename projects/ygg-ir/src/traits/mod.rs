@@ -7,7 +7,7 @@ mod field_descriptor;
 
 pub type FieldMap = BTreeMap<String, FieldCount>;
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub enum FieldCount {
     Optional,
     One,
