@@ -1,44 +1,27 @@
 use super::*;
 use crate::rule::derive_custom::CustomDerive;
+use std::collections::BTreeSet;
 
-#[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct RuleDerive {
-    pub copy: bool,
-    pub clone: bool,
-    pub debug: bool,
-    pub eq: bool,
-    pub partial_eq: bool,
-    pub hash: bool,
-    pub serialize: bool,
-    pub deserialize: bool,
-    pub custom: Vec<CustomDerive>,
+    pub derives: BTreeSet<CustomDerive>,
 }
 
 impl Default for RuleDerive {
     fn default() -> Self {
-        todo!()
-    }
-}
-
-impl RuleDerive {
-    pub fn derived(&self) -> Vec<String> {
-        let mut derived = vec![];
-        if self.eq {
-            derived.push("Eq".to_string())
-        }
-        derived
-    }
-}
-
-impl Debug for RuleDerive {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.debug_list().entries(self.derived().iter()).finish()
+        let mut derives = BTreeSet::new();
+        derives.insert(CustomDerive::builtin());
+        derives.insert(CustomDerive::serde());
+        Self { derives }
     }
 }
 
 impl Display for RuleDerive {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "#[derive({})]", self.derived().join(", "))
+        for derive in &self.derives {
+            writeln!(f, "{}", derive)?;
+        }
+        Ok(())
     }
 }
 
@@ -58,4 +41,10 @@ impl GrammarRule {
             range: range.clone(),
         }
     }
+}
+
+#[test]
+fn test_rule_derive() {
+    let mut derives = RuleDerive::default();
+    println!("{}", derives);
 }

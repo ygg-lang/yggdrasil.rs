@@ -6,12 +6,24 @@ use std::{
 };
 
 /// Add custom derive to the rule
-#[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct CustomDerive {
     /// Feature condition, empty if no feature needed
     pub feature: String,
     /// Custom derive names
     pub custom: BTreeSet<String>,
+}
+
+impl Display for CustomDerive {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let derives = self.custom.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", ");
+        if self.feature.is_empty() {
+            write!(f, "#[derive({derives})]",)
+        }
+        else {
+            write!(f, r#"#[cfg_attr(feature = "{}", derive({derives}))]"#, self.feature,)
+        }
+    }
 }
 
 impl PartialOrd<Self> for CustomDerive {
@@ -30,15 +42,9 @@ impl Ord for CustomDerive {
     }
 }
 
-impl Display for CustomDerive {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let derives = self.custom.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", ");
-        if self.feature.is_empty() {
-            write!(f, "#[derive({derives})]",)
-        }
-        else {
-            write!(f, r#"#[cfg_attr(feature = "{}", derive({derives}))]"#, self.feature,)
-        }
+impl Default for CustomDerive {
+    fn default() -> Self {
+        Self::new(&[])
     }
 }
 
@@ -46,6 +52,9 @@ impl CustomDerive {
     /// Derive `serde::{Serialize, Deserialize}`
     pub fn serde() -> Self {
         Self::new(&["serde::Serialize", "serde::Deserialize"]).with_feature("serde")
+    }
+    pub fn builtin() -> Self {
+        Self::new(&["Clone", "Debug", "Eq", "PartialEq", "Hash"])
     }
     /// Create new custom derive
     pub fn new(custom: &[&str]) -> Self {
@@ -59,14 +68,4 @@ impl CustomDerive {
     pub fn with_custom(&mut self, custom: &str) {
         self.custom.insert(custom.to_string());
     }
-}
-
-#[test]
-fn test_serde() {
-    let custom = CustomDerive::serde();
-    assert_eq!(custom.to_string(), "#[cfg_attr(serde, derive(serde::Serialize, serde::Deserialize))]");
-    let custom = CustomDerive::new(&["serde::Serialize", "serde::Deserialize"]);
-    assert_eq!(custom.to_string(), "#[derive(serde::Serialize, serde::Deserialize)]");
-    let custom = CustomDerive::new(&["serde::Serialize", "serde::Deserialize"]).with_feature("serde");
-    assert_eq!(custom.to_string(), "#[cfg_attr(serde, derive(serde::Serialize, serde::Deserialize))]");
 }
