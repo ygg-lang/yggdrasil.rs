@@ -1,5 +1,3 @@
-use std::slice::{Iter, IterMut};
-
 use super::*;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
@@ -35,11 +33,13 @@ impl ConcatExpression {
         sequence.push(rhs.into());
         Self { sequence }
     }
-    pub fn to_node<S>(self, tag: S) -> ExpressionNode where S: Into<String> {
+    pub fn to_node<S>(self, tag: S) -> ExpressionNode
+    where
+        S: Into<String>,
+    {
         ExpressionNode { tag: tag.into(), kind: ExpressionKind::Concat(Box::new(self)) }
     }
 }
-
 
 impl Add<Self> for ExpressionNode {
     type Output = Self;

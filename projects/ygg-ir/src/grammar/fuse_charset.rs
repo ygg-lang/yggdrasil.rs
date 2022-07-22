@@ -1,5 +1,4 @@
-use diagnostic_quick::Validation;
-use crate::{ChoiceExpression, CodeOptimizer, ExpressionKind, GrammarInfo};
+use super::*;
 
 pub struct FuseCharset {}
 

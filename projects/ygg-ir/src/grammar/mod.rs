@@ -1,17 +1,23 @@
-use std::collections::{BTreeMap, HashSet};
-
+use crate::{
+    nodes::{ExpressionKind, ExpressionNode},
+    rule::{FunctionRule, GrammarRule},
+    traits::CodeOptimizer,
+};
+use diagnostic_quick::{QError, QResult, Validation};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
+use std::{
+    collections::{BTreeMap, HashSet},
+    mem::take,
+};
 use url::Url;
 
-use crate::{traits::CodeOptimizer, *};
-
-pub mod auto_tag;
-pub mod dead_code;
-pub mod emit_function;
-pub mod fuse_charset;
-pub mod fuse_rule;
-pub mod inlining;
+mod auto_tag;
+mod dead_code;
+mod emit_function;
+mod fuse_charset;
+mod fuse_rule;
+mod inlining;
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct GrammarInfo {

@@ -1,3 +1,8 @@
+pub use self::{
+    derive::RuleDerive,
+    parameter::{RuleParameter, RuleParameterKind},
+};
+use crate::{nodes::ExpressionNode, GrammarInfo};
 use indexmap::set::IndexSet;
 use serde::{Deserialize, Serialize};
 use std::{
@@ -7,10 +12,7 @@ use std::{
     ops::Range,
 };
 
-use crate::*;
-
 pub mod derive;
-pub mod node;
 pub mod parameter;
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
@@ -21,20 +23,6 @@ pub struct FunctionRule {}
 pub struct GrammarRuleContext {
     pub capture: bool,
     pub atomic: bool,
-}
-
-#[derive(Clone, Debug)]
-pub struct RuleParameter {
-    pub kind: RuleParameterKind,
-    pub name: String,
-    pub typing: String,
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-pub enum RuleParameterKind {
-    Optional,
-    Required,
-    Variadic,
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]

@@ -5,6 +5,28 @@ use std::{
 
 use super::*;
 
+/// A rule parameter
+#[derive(Clone, Debug)]
+pub struct RuleParameter {
+    /// Parameter kind
+    pub kind: RuleParameterKind,
+    /// Parameter name
+    pub name: String,
+    /// Parameter typing
+    pub typing: String,
+}
+
+/// Parameter kind
+// #[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum RuleParameterKind {
+    /// A required parameter, equivalent to `T` in rust.
+    Required,
+    /// An optional parameter, equivalent to `Option<T>` in rust.
+    Optional,
+    /// A variadic parameter, equivalent to `Vec<T>` in rust.
+    Variadic,
+}
+
 impl Display for RuleParameter {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self.kind {

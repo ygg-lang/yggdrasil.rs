@@ -1,10 +1,4 @@
-use std::mem::take;
-use diagnostic_quick::{QError, QResult, Validation};
-
-use indexmap::IndexMap;
-
-
-use crate::{CodeOptimizer, ExpressionKind, ExpressionNode, FunctionRule, GrammarInfo, GrammarRule};
+use super::*;
 
 pub struct EmitFunction {
     functions: IndexMap<String, FunctionRule>,

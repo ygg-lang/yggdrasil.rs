@@ -1,4 +1,4 @@
-use crate::ExpressionNode;
+use crate::rule::ExpressionNode;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
