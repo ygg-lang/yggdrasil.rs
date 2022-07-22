@@ -1,50 +1,82 @@
 use super::*;
-use crate::rule::derive_custom::CustomDerive;
-use std::collections::BTreeSet;
 
+/// Add custom derive to the rule
+///
+/// # Examples
+///
+/// Derive `Clone`, `Debug`, `Eq`, `PartialEq`, `Hash` and `serde::{Serialize, Deserialize}`:
+///
+/// ```
+/// use yggdrasil_ir::RuleDerive;
+/// let mut derive = RuleDerive::default();
+/// derive.insert_derive("Clone", "");
+/// derive.insert_derive("Debug", "");
+/// derive.insert_derive("Eq", "");
+/// derive.insert_derive("PartialEq", "");
+/// derive.insert_derive("Hash", "");
+/// derive.insert_derive("serde::Serialize", "serde");
+/// derive.insert_derive("serde::Deserialize", "serde");
+/// ```
+///
+/// Equivalent to:
+///
+/// ```ignore
+/// #[derive(Clone, Debug, Eq, Hash, PartialEq)]
+/// #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+/// ```
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct RuleDerive {
-    pub derives: BTreeSet<CustomDerive>,
+    derives: BTreeMap<String, String>,
 }
 
 impl Default for RuleDerive {
     fn default() -> Self {
-        let mut derives = BTreeSet::new();
-        derives.insert(CustomDerive::builtin());
-        derives.insert(CustomDerive::serde());
-        Self { derives }
+        RuleDerive { derives: Default::default() }
     }
 }
 
 impl Display for RuleDerive {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        for derive in &self.derives {
-            writeln!(f, "{}", derive)?;
+        for (feature, derives) in self.reverse_table() {
+            let derives = derives.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", ");
+            if feature.is_empty() {
+                writeln!(f, "#[derive({derives})]")?
+            }
+            else {
+                writeln!(f, r#"#[cfg_attr(feature = "{}", derive({derives}))]"#, feature)?
+            }
         }
         Ok(())
     }
 }
 
-impl GrammarRule {
-    pub fn new(name: &str, range: &Range<usize>, kind: GrammarRuleKind) -> Self {
-        Self {
-            name: name.to_string(),
-            r#type: String::new(),
-            document: String::new(),
-            public: false,
-            derives: RuleDerive::default(),
-            auto_inline: false,
-            auto_boxed: false,
-            entry: false,
-            kind,
-            body: ExpressionNode::empty(),
-            range: range.clone(),
-        }
+impl RuleDerive {
+    /// Derive common derive traits
+    pub fn builtin() -> Self {
+        let mut derive = RuleDerive::default();
+        derive.insert_derive("Clone", "");
+        derive.insert_derive("Debug", "");
+        derive.insert_derive("Eq", "");
+        derive.insert_derive("PartialEq", "");
+        derive.insert_derive("Hash", "");
+        derive.insert_derive("serde::Serialize", "serde");
+        derive.insert_derive("serde::Deserialize", "serde");
+        derive
     }
-}
-
-#[test]
-fn test_rule_derive() {
-    let mut derives = RuleDerive::default();
-    println!("{}", derives);
+    /// Create the reverse condition table
+    pub fn reverse_table(&self) -> BTreeMap<String, BTreeSet<String>> {
+        let mut derives = BTreeMap::new();
+        for (derive, feature) in &self.derives {
+            derives.entry(feature.clone()).or_insert_with(BTreeSet::new).insert(derive.clone());
+        }
+        derives
+    }
+    /// Insert new derive to the set
+    pub fn insert_derive(&mut self, derive: &str, feature: &str) {
+        self.derives.insert(derive.to_string(), feature.to_string());
+    }
+    /// Remove derive from the set
+    pub fn remove_derive(&mut self, derive: &str) {
+        self.derives.remove(derive);
+    }
 }

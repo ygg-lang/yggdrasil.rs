@@ -1,16 +1,15 @@
+use indexmap::set::IndexSet;
+use serde::{Deserialize, Serialize};
 use std::{
+    collections::{BTreeMap, BTreeSet},
     fmt::{Debug, Display, Formatter},
     hash::{Hash, Hasher},
     ops::Range,
 };
 
-use indexmap::set::IndexSet;
-use serde::{Deserialize, Serialize};
-
 use crate::*;
 
 pub mod derive;
-pub mod derive_custom;
 pub mod node;
 pub mod parameter;
 
@@ -138,3 +137,21 @@ pub struct GrammarRule {
 }
 
 impl GrammarInfo {}
+
+impl GrammarRule {
+    pub fn new(name: &str, range: &Range<usize>, kind: GrammarRuleKind) -> Self {
+        Self {
+            name: name.to_string(),
+            r#type: String::new(),
+            document: String::new(),
+            public: false,
+            derives: RuleDerive::default(),
+            auto_inline: false,
+            auto_boxed: false,
+            entry: false,
+            kind,
+            body: ExpressionNode::empty(),
+            range: range.clone(),
+        }
+    }
+}
