@@ -7,7 +7,7 @@ use super::*;
 /// Derive `Clone`, `Debug`, `Eq`, `PartialEq`, `Hash` and `serde::{Serialize, Deserialize}`:
 ///
 /// ```
-/// use yggdrasil_ir::RuleDerive;
+/// use yggdrasil_ir::rule::RuleDerive;
 /// let mut derive = RuleDerive::default();
 /// derive.insert_derive("Clone", "");
 /// derive.insert_derive("Debug", "");

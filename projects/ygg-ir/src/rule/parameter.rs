@@ -1,9 +1,5 @@
-use std::{
-    collections::BTreeMap,
-    ops::{BitAnd, BitOr},
-};
-
 use super::*;
+use crate::nodes::UnaryExpression;
 
 /// A rule parameter
 #[derive(Clone, Debug)]
@@ -17,7 +13,7 @@ pub struct RuleParameter {
 }
 
 /// Parameter kind
-// #[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RuleParameterKind {
     /// A required parameter, equivalent to `T` in rust.
     Required,

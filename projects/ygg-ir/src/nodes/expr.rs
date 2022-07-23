@@ -1,4 +1,5 @@
 use super::*;
+use crate::data::RuleReference;
 
 impl ExpressionNode {
     #[inline]

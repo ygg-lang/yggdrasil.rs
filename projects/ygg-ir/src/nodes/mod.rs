@@ -1,14 +1,15 @@
+pub use self::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression};
 use crate::{
-    data::DataKind,
-    nodes::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression},
+    data::{DataKind, RuleReference},
     rule::{GrammarRule, GrammarRuleKind},
     FunctionExpression,
 };
 use convert_case::{Case, Casing};
 use diagnostic_quick::{QError, QResult};
-use indexmap::IndexMap;
+use indexmap::{IndexMap, IndexSet};
 use serde::{Deserialize, Serialize};
 use std::{
+    hash::{Hash, Hasher},
     mem::take,
     ops::{Add, BitAnd, BitOr, BitXor},
     slice::{Iter, IterMut},

@@ -1,7 +1,12 @@
+pub use self::{
+    rule_ref::RuleReference,
+    symbol::{Symbol, SymbolAlias},
+};
 use crate::{
     data::charset::{char_range_display, char_set_display, string_display},
     nodes::{ExpressionKind, ExpressionNode},
 };
+
 use character_set::CharacterSet;
 use num::BigInt;
 use regex_automata::dfa::regex::Regex;
@@ -16,6 +21,7 @@ use std::{
     hash::{BuildHasher, Hash, Hasher},
     ops::{Range, RangeInclusive},
 };
+
 mod builtin;
 mod charset;
 mod rule_ref;

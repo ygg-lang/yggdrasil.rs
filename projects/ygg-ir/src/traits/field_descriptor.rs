@@ -1,10 +1,5 @@
-use std::collections::HashSet;
-
-use crate::{
-    rule::node::ExpressionKind,
-    traits::{FieldCount2, FieldDescriptor},
-    ChoiceExpression, ConcatExpression, DataKind, ExpressionNode, FunctionExpression, GrammarRule, RuleReference, UnaryExpression,
-};
+use super::*;
+use crate::data::RuleReference;
 
 impl FieldDescriptor for GrammarRule {
     fn get_field_names<'a>(&'a self, buffer: &mut HashSet<&'a String>) {

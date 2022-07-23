@@ -1,5 +1,6 @@
 use crate::{
-    nodes::{ExpressionKind, ExpressionNode},
+    data::SymbolAlias,
+    nodes::{ChoiceExpression, ExpressionKind, ExpressionNode},
     rule::{FunctionRule, GrammarRule},
     traits::CodeOptimizer,
 };

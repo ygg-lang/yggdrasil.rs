@@ -1,4 +1,5 @@
 use super::*;
+use crate::traits::FieldDescriptor;
 use diagnostic_quick::{QError, Validation};
 
 pub struct DeadCodeEliminator {

@@ -2,14 +2,17 @@ pub use self::{
     derive::RuleDerive,
     parameter::{RuleParameter, RuleParameterKind},
 };
-use crate::{nodes::ExpressionNode, GrammarInfo};
+use crate::{
+    grammar::GrammarInfo,
+    nodes::{ExpressionKind, ExpressionNode, Operator},
+};
 use indexmap::set::IndexSet;
 use serde::{Deserialize, Serialize};
 use std::{
     collections::{BTreeMap, BTreeSet},
     fmt::{Debug, Display, Formatter},
     hash::{Hash, Hasher},
-    ops::Range,
+    ops::{BitAnd, BitOr, Range},
 };
 
 pub mod derive;
