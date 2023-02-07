@@ -7,7 +7,9 @@ use std::{
     path::Path,
 };
 
-use yggdrasil_ir::{CodeGenerator, ExpressionNode, GrammarInfo, GrammarRule, QError, QResult, Validation};
+use yggdrasil_ir::{
+    traits::CodeGenerator, CodeGenerator, ExpressionNode, GrammarInfo, GrammarRule, QError, QResult, Validation,
+};
 
 mod build_class;
 mod build_data;

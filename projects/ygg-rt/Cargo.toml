@@ -10,14 +10,7 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-pratt = "0.4.0"
-indextree = "4.6.0"
-pex = { version = "0.1.6", features = ["ucd-trie", "regex-automata"] }
-regex-automata = { version = "0.2.0" }
-lsp-types = { version = "0.94.0", features = ["proposed"], optional = true }
-url = { version = "2.3.1", optional = true }
-#diagnostic-quick = "0.4.0"
 
 [features]
 default = []
-lsp = ["lsp-types", "url"]
+#lsp = ["lsp-types", "url"]

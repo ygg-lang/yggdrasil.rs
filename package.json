@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "u": "cargo upgrade --workspace",
+        "u": "cargo upgrade --offline --incompatible",
         "p": "cargo publish --allow-dirty",
         "t": "wee generate -t && wee test",
         "test": "cd projects/tree-sitter-ygg && tree-sitter test",

@@ -9,33 +9,33 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-serde = "1.0.163"
-pex-trie = "0.0.1"
-proc-macro2 = "1.0.52"
+serde = "1.0.188"
+pex-trie = "0.0.3"
+proc-macro2 = "1.0.68"
 character-set = "0.4.0"
 unicode-xid = "0.2.4"
 railroad = { version = "0.2.0", optional = true }
 convert_case = "0.6.0"
-askama = "0.12.0"
+askama = "0.12.1"
 # rust code generator
-quote = "1.0.27"
-syn = "2.0.15"
+quote = "1.0.33"
+syn = "2.0.38"
 
-[dependencies.yggdrasil-rt]
+#[dependencies.yggdrasil-rt]
+##version = "0.1"
+#path = "../ygg-rt"
+#features = ["lsp"]
+#
+#[dependencies.yggdrasil-ir]
 #version = "0.1"
-path = "../ygg-rt"
-features = ["lsp"]
-
-[dependencies.yggdrasil-ir]
-version = "0.1"
-path = "../ygg-ir"
-
-[dependencies.yggdrasil-parser]
-#version = "0.1.2"
-path = "../ygg-parser"
+#path = "../ygg-ir"
+#
+#[dependencies.yggdrasil-parser]
+##version = "0.1.2"
+#path = "../ygg-parser"
 
 [dev-dependencies]
-serde_yaml = "0.9.19"
+serde_yaml = "0.9.25"
 json5 = "0.4.1"
 
 [features]

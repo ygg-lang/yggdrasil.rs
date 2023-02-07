@@ -1,3 +1,14 @@
+grammar language {
+    // name: "Yggdrasil"
+}
+
+using std;
+// cast to same shape
+#cast(std::Namespace)
+// add value to structure
+#attach(a: true)
+
+
 entry class Program {
     Statement*
 }
@@ -14,17 +25,15 @@ class GrammarStatement {
 class KW_GRAMMAR {
     "grammar"
 }
+
+
 // =================================================================================================
-class KW_IMPORT {
-    "import" | "using"
-}
+// import
 // =================================================================================================
 class ClassStatement {
     Modifiers ^KW_CLASS Identifier OutType? RuleBody
 }
-class KW_CLASS {
-    "class" | "struct" | "rule"
-}
+
 class RuleBody {
     '{' ('|'? Expr)? '}'
 }
@@ -32,31 +41,20 @@ class RuleBody {
 class UnionStatement {
     Modifiers ^KW_UNION Identifier OutType? RuleBody
 }
-#string
-class KW_UNION {
-    "union" | "enum"
-}
 
 class OutType {
     "->" Namepath
 }
 // =================================================================================================
-class KW_CLIMB {
-    "climb"
-}
-// =================================================================================================
 class MacroStatement {
     KW_MACRO
-}
-class KW_MACRO {
-    "define" | "def" | "function" | "fun" | "fn" | "macro"
 }
 // =================================================================================================
 atomic class EOS {
     ";"
 }
 
-class ImportStatement {
+union ImportStatement {
     | "import" (path:String) ("as" Identifier)?   #FromPath
     | "import" (path:String) _ImportSelected      #FromPathItems
 }
@@ -138,11 +136,24 @@ atomic class Identifier {
 class Boolean {
     "true" | "false"
 }
+class AnyThing {
+    "any"
+}
+// =================================================================================================
+atomic token keywords {
+    KW_GRAMMAR: "grammar"
+    KW_IMPORT: "import" | "using"
+    KW_CLASS: "class" | "struct" | "rule"
+    KW_UNION: "union" | "enum"
+    KW_CLIMB: "climb"
+    KW_MACRO: "define" | "def" | "function" | "fun" | "fn" | "macro"
+}
 // =================================================================================================
 #ignored
 class WhiteSpace {
     UNICODE_WHITESPACE
 }
+
 #ignored
 atomic class CommentLine {
     (!"///" "//") (!\n ANY)*
