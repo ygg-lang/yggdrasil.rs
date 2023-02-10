@@ -1,6 +1,7 @@
-#![feature(lazy_cell)]
+pub(crate) mod antlr;
 
-#[allow(non_camel_case_types)]
-mod generated;
+mod ast;
 
-pub use generated::*;
+mod traits;
+
+pub use self::ast::YggdrasilParser;

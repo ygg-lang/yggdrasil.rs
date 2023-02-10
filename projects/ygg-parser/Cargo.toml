@@ -10,12 +10,22 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-#unicode-xid = "0.2.4"
-#peginator = "0.6.0"
+tracing = "0.1.37"
 
-[dependencies.yggdrasil-rt]
-version = "0.0.3"
-path = "../ygg-rt"
+[dependencies.antlr-rust]
+version = "0.3.0-beta"
 
-[features]
-default = []
+[dependencies.yggdrasil-ir]
+version = "0.1.*"
+#features = ["pretty-print", "std", "lispify"]
+path = "../ygg-ir"
+
+#[dependencies.nyar-error]
+#features = []
+#version = "0.1.4"
+#path = 'C:\Users\Dell\CLionProjects\nyar-vm\projects\nyar-error'
+
+[dev-dependencies]
+
+
+[build-dependencies]

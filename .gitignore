@@ -14,13 +14,14 @@ node_modules
 *.test.js
 package-lock.json
 
+
 # Antlr
+*.jar
 *.zip
 *.antlr
 *.ps1
 *.m
 *.nb
-*.g4
 projects/tree-sitter-ygg/bindings/**/*
 projects/tree-sitter-ygg/src/grammar.json
 projects/tree-sitter-ygg/src/node-types.json

@@ -26,13 +26,13 @@ syn = "2.0.38"
 #path = "../ygg-rt"
 #features = ["lsp"]
 #
-#[dependencies.yggdrasil-ir]
-#version = "0.1"
-#path = "../ygg-ir"
+[dependencies.yggdrasil-ir]
+version = "0.1"
+path = "../ygg-ir"
 #
-#[dependencies.yggdrasil-parser]
-##version = "0.1.2"
-#path = "../ygg-parser"
+[dependencies.yggdrasil-parser]
+#version = "0.1.2"
+path = "../ygg-parser"
 
 [dev-dependencies]
 serde_yaml = "0.9.25"
