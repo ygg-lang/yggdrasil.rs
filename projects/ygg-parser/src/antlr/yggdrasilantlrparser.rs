@@ -1978,6 +1978,8 @@ impl<'input> CSoftContextAttrs<'input> for CSoftContext<'input> {}
 
 pub struct CSoftContextExt<'input> {
     base: Class_expressionContextExt<'input>,
+    pub lhs: Option<Rc<Class_expressionContextAll<'input>>>,
+    pub rhs: Option<Rc<Class_expressionContextAll<'input>>>,
     ph: PhantomData<&'input str>,
 }
 
@@ -2028,7 +2030,7 @@ impl<'input> CSoftContextExt<'input> {
     fn new(ctx: &dyn Class_expressionContextAttrs<'input>) -> Rc<Class_expressionContextAll<'input>> {
         Rc::new(Class_expressionContextAll::CSoftContext(BaseParserRuleContext::copy_from(
             ctx,
-            CSoftContextExt { base: ctx.borrow().clone(), ph: PhantomData },
+            CSoftContextExt { lhs: None, rhs: None, base: ctx.borrow().clone(), ph: PhantomData },
         )))
     }
 }
@@ -2036,6 +2038,14 @@ impl<'input> CSoftContextExt<'input> {
 pub type CHardContext<'input> = BaseParserRuleContext<'input, CHardContextExt<'input>>;
 
 pub trait CHardContextAttrs<'input>: YggdrasilAntlrParserContext<'input> {
+    /// Retrieves first TerminalNode corresponding to token OP_CONCAT
+    /// Returns `None` if there is no child corresponding to token OP_CONCAT
+    fn OP_CONCAT(&self) -> Option<Rc<TerminalNode<'input, YggdrasilAntlrParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(OP_CONCAT, 0)
+    }
     fn class_expression_all(&self) -> Vec<Rc<Class_expressionContextAll<'input>>>
     where
         Self: Sized,
@@ -2048,20 +2058,14 @@ pub trait CHardContextAttrs<'input>: YggdrasilAntlrParserContext<'input> {
     {
         self.child_of_type(i)
     }
-    /// Retrieves first TerminalNode corresponding to token OP_CONCAT
-    /// Returns `None` if there is no child corresponding to token OP_CONCAT
-    fn OP_CONCAT(&self) -> Option<Rc<TerminalNode<'input, YggdrasilAntlrParserContextType>>>
-    where
-        Self: Sized,
-    {
-        self.get_token(OP_CONCAT, 0)
-    }
 }
 
 impl<'input> CHardContextAttrs<'input> for CHardContext<'input> {}
 
 pub struct CHardContextExt<'input> {
     base: Class_expressionContextExt<'input>,
+    pub lhs: Option<Rc<Class_expressionContextAll<'input>>>,
+    pub rhs: Option<Rc<Class_expressionContextAll<'input>>>,
     ph: PhantomData<&'input str>,
 }
 
@@ -2112,7 +2116,7 @@ impl<'input> CHardContextExt<'input> {
     fn new(ctx: &dyn Class_expressionContextAttrs<'input>) -> Rc<Class_expressionContextAll<'input>> {
         Rc::new(Class_expressionContextAll::CHardContext(BaseParserRuleContext::copy_from(
             ctx,
-            CHardContextExt { base: ctx.borrow().clone(), ph: PhantomData },
+            CHardContextExt { lhs: None, rhs: None, base: ctx.borrow().clone(), ph: PhantomData },
         )))
     }
 }
@@ -2120,6 +2124,14 @@ impl<'input> CHardContextExt<'input> {
 pub type CPatternContext<'input> = BaseParserRuleContext<'input, CPatternContextExt<'input>>;
 
 pub trait CPatternContextAttrs<'input>: YggdrasilAntlrParserContext<'input> {
+    /// Retrieves first TerminalNode corresponding to token OP_OR
+    /// Returns `None` if there is no child corresponding to token OP_OR
+    fn OP_OR(&self) -> Option<Rc<TerminalNode<'input, YggdrasilAntlrParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(OP_OR, 0)
+    }
     fn class_expression_all(&self) -> Vec<Rc<Class_expressionContextAll<'input>>>
     where
         Self: Sized,
@@ -2132,20 +2144,14 @@ pub trait CPatternContextAttrs<'input>: YggdrasilAntlrParserContext<'input> {
     {
         self.child_of_type(i)
     }
-    /// Retrieves first TerminalNode corresponding to token OP_OR
-    /// Returns `None` if there is no child corresponding to token OP_OR
-    fn OP_OR(&self) -> Option<Rc<TerminalNode<'input, YggdrasilAntlrParserContextType>>>
-    where
-        Self: Sized,
-    {
-        self.get_token(OP_OR, 0)
-    }
 }
 
 impl<'input> CPatternContextAttrs<'input> for CPatternContext<'input> {}
 
 pub struct CPatternContextExt<'input> {
     base: Class_expressionContextExt<'input>,
+    pub lhs: Option<Rc<Class_expressionContextAll<'input>>>,
+    pub rhs: Option<Rc<Class_expressionContextAll<'input>>>,
     ph: PhantomData<&'input str>,
 }
 
@@ -2196,7 +2202,7 @@ impl<'input> CPatternContextExt<'input> {
     fn new(ctx: &dyn Class_expressionContextAttrs<'input>) -> Rc<Class_expressionContextAll<'input>> {
         Rc::new(Class_expressionContextAll::CPatternContext(BaseParserRuleContext::copy_from(
             ctx,
-            CPatternContextExt { base: ctx.borrow().clone(), ph: PhantomData },
+            CPatternContextExt { lhs: None, rhs: None, base: ctx.borrow().clone(), ph: PhantomData },
         )))
     }
 }
@@ -2583,6 +2589,14 @@ where
                                             _parentctx.clone(),
                                             _parentState,
                                         ));
+                                        if let Class_expressionContextAll::CHardContext(ctx) =
+                                            cast_mut::<_, Class_expressionContextAll>(&mut tmp)
+                                        {
+                                            ctx.lhs = Some(_prevctx.clone());
+                                        }
+                                        else {
+                                            unreachable!("cant cast");
+                                        }
                                         recog.push_new_recursion_context(tmp.clone(), _startState, RULE_class_expression);
                                         _localctx = tmp;
                                         recog.base.set_state(139);
@@ -2598,7 +2612,15 @@ where
 
                                         // InvokeRule class_expression
                                         recog.base.set_state(141);
-                                        recog.class_expression_rec(7)?;
+                                        let tmp = recog.class_expression_rec(7)?;
+                                        if let Class_expressionContextAll::CHardContext(ctx) =
+                                            cast_mut::<_, Class_expressionContextAll>(&mut _localctx)
+                                        {
+                                            ctx.rhs = Some(tmp.clone());
+                                        }
+                                        else {
+                                            unreachable!("cant cast");
+                                        }
                                     }
                                 }
                                 2 => {
@@ -2608,6 +2630,14 @@ where
                                             _parentctx.clone(),
                                             _parentState,
                                         ));
+                                        if let Class_expressionContextAll::CSoftContext(ctx) =
+                                            cast_mut::<_, Class_expressionContextAll>(&mut tmp)
+                                        {
+                                            ctx.lhs = Some(_prevctx.clone());
+                                        }
+                                        else {
+                                            unreachable!("cant cast");
+                                        }
                                         recog.push_new_recursion_context(tmp.clone(), _startState, RULE_class_expression);
                                         _localctx = tmp;
                                         recog.base.set_state(142);
@@ -2620,7 +2650,15 @@ where
                                         }
                                         // InvokeRule class_expression
                                         recog.base.set_state(143);
-                                        recog.class_expression_rec(6)?;
+                                        let tmp = recog.class_expression_rec(6)?;
+                                        if let Class_expressionContextAll::CSoftContext(ctx) =
+                                            cast_mut::<_, Class_expressionContextAll>(&mut _localctx)
+                                        {
+                                            ctx.rhs = Some(tmp.clone());
+                                        }
+                                        else {
+                                            unreachable!("cant cast");
+                                        }
                                     }
                                 }
                                 3 => {
@@ -2630,6 +2668,14 @@ where
                                             _parentctx.clone(),
                                             _parentState,
                                         ));
+                                        if let Class_expressionContextAll::CPatternContext(ctx) =
+                                            cast_mut::<_, Class_expressionContextAll>(&mut tmp)
+                                        {
+                                            ctx.lhs = Some(_prevctx.clone());
+                                        }
+                                        else {
+                                            unreachable!("cant cast");
+                                        }
                                         recog.push_new_recursion_context(tmp.clone(), _startState, RULE_class_expression);
                                         _localctx = tmp;
                                         recog.base.set_state(144);
@@ -2645,7 +2691,15 @@ where
 
                                         // InvokeRule class_expression
                                         recog.base.set_state(146);
-                                        recog.class_expression_rec(5)?;
+                                        let tmp = recog.class_expression_rec(5)?;
+                                        if let Class_expressionContextAll::CPatternContext(ctx) =
+                                            cast_mut::<_, Class_expressionContextAll>(&mut _localctx)
+                                        {
+                                            ctx.rhs = Some(tmp.clone());
+                                        }
+                                        else {
+                                            unreachable!("cant cast");
+                                        }
                                     }
                                 }
                                 4 => {
@@ -4372,6 +4426,8 @@ pub type Tag_pairContext<'input> = BaseParserRuleContext<'input, Tag_pairContext
 
 #[derive(Clone)]
 pub struct Tag_pairContextExt<'input> {
+    pub lhs: Option<Rc<IdentifierContextAll<'input>>>,
+    pub rhs: Option<Rc<IdentifierContextAll<'input>>>,
     ph: PhantomData<&'input str>,
 }
 
@@ -4409,11 +4465,23 @@ impl<'input> Tag_pairContextExt<'input> {
         parent: Option<Rc<dyn YggdrasilAntlrParserContext<'input> + 'input>>,
         invoking_state: isize,
     ) -> Rc<Tag_pairContextAll<'input>> {
-        Rc::new(BaseParserRuleContext::new_parser_ctx(parent, invoking_state, Tag_pairContextExt { ph: PhantomData }))
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Tag_pairContextExt { lhs: None, rhs: None, ph: PhantomData },
+        ))
     }
 }
 
 pub trait Tag_pairContextAttrs<'input>: YggdrasilAntlrParserContext<'input> + BorrowMut<Tag_pairContextExt<'input>> {
+    /// Retrieves first TerminalNode corresponding to token COLON
+    /// Returns `None` if there is no child corresponding to token COLON
+    fn COLON(&self) -> Option<Rc<TerminalNode<'input, YggdrasilAntlrParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(COLON, 0)
+    }
     fn identifier_all(&self) -> Vec<Rc<IdentifierContextAll<'input>>>
     where
         Self: Sized,
@@ -4425,14 +4493,6 @@ pub trait Tag_pairContextAttrs<'input>: YggdrasilAntlrParserContext<'input> + Bo
         Self: Sized,
     {
         self.child_of_type(i)
-    }
-    /// Retrieves first TerminalNode corresponding to token COLON
-    /// Returns `None` if there is no child corresponding to token COLON
-    fn COLON(&self) -> Option<Rc<TerminalNode<'input, YggdrasilAntlrParserContextType>>>
-    where
-        Self: Sized,
-    {
-        self.get_token(COLON, 0)
     }
     fn suffix(&self) -> Option<Rc<SuffixContextAll<'input>>>
     where
@@ -4461,14 +4521,16 @@ where
             {
                 // InvokeRule identifier
                 recog.base.set_state(234);
-                recog.identifier()?;
+                let tmp = recog.identifier()?;
+                cast_mut::<_, Tag_pairContext>(&mut _localctx).lhs = Some(tmp.clone());
 
                 recog.base.set_state(235);
                 recog.base.match_token(COLON, &mut recog.err_handler)?;
 
                 // InvokeRule identifier
                 recog.base.set_state(236);
-                recog.identifier()?;
+                let tmp = recog.identifier()?;
+                cast_mut::<_, Tag_pairContext>(&mut _localctx).rhs = Some(tmp.clone());
 
                 recog.base.set_state(238);
                 recog.err_handler.sync(&mut recog.base)?;
@@ -6456,7 +6518,52 @@ where
     }
 }
 //------------------- atomic ----------------
-pub type AtomicContextAll<'input> = AtomicContext<'input>;
+#[derive(Debug)]
+pub enum AtomicContextAll<'input> {
+    AIntContext(AIntContext<'input>),
+    AReContext(AReContext<'input>),
+    ACharContext(ACharContext<'input>),
+    ATupleContext(ATupleContext<'input>),
+    ASpecialContext(ASpecialContext<'input>),
+    AIdContext(AIdContext<'input>),
+    AStringContext(AStringContext<'input>),
+    Error(AtomicContext<'input>),
+}
+antlr_rust::tid! {AtomicContextAll<'a>}
+
+impl<'input> antlr_rust::parser_rule_context::DerefSeal for AtomicContextAll<'input> {}
+
+impl<'input> YggdrasilAntlrParserContext<'input> for AtomicContextAll<'input> {}
+
+impl<'input> Deref for AtomicContextAll<'input> {
+    type Target = dyn AtomicContextAttrs<'input> + 'input;
+    fn deref(&self) -> &Self::Target {
+        use AtomicContextAll::*;
+        match self {
+            AIntContext(inner) => inner,
+            AReContext(inner) => inner,
+            ACharContext(inner) => inner,
+            ATupleContext(inner) => inner,
+            ASpecialContext(inner) => inner,
+            AIdContext(inner) => inner,
+            AStringContext(inner) => inner,
+            Error(inner) => inner,
+        }
+    }
+}
+impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for AtomicContextAll<'input> {
+    fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
+        self.deref().accept(visitor)
+    }
+}
+impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for AtomicContextAll<'input> {
+    fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        self.deref().enter(listener)
+    }
+    fn exit(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        self.deref().exit(listener)
+    }
+}
 
 pub type AtomicContext<'input> = BaseParserRuleContext<'input, AtomicContextExt<'input>>;
 
@@ -6467,22 +6574,9 @@ pub struct AtomicContextExt<'input> {
 
 impl<'input> YggdrasilAntlrParserContext<'input> for AtomicContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for AtomicContext<'input> {
-    fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
-        listener.enter_atomic(self);
-    }
-    fn exit(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
-        listener.exit_atomic(self);
-        listener.exit_every_rule(self);
-    }
-}
+impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for AtomicContext<'input> {}
 
-impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for AtomicContext<'input> {
-    fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
-        visitor.visit_atomic(self);
-    }
-}
+impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for AtomicContext<'input> {}
 
 impl<'input> CustomRuleContext<'input> for AtomicContextExt<'input> {
     type TF = LocalTokenFactory<'input>;
@@ -6499,35 +6593,21 @@ impl<'input> AtomicContextExt<'input> {
         parent: Option<Rc<dyn YggdrasilAntlrParserContext<'input> + 'input>>,
         invoking_state: isize,
     ) -> Rc<AtomicContextAll<'input>> {
-        Rc::new(BaseParserRuleContext::new_parser_ctx(parent, invoking_state, AtomicContextExt { ph: PhantomData }))
+        Rc::new(AtomicContextAll::Error(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            AtomicContextExt { ph: PhantomData },
+        )))
     }
 }
 
-pub trait AtomicContextAttrs<'input>: YggdrasilAntlrParserContext<'input> + BorrowMut<AtomicContextExt<'input>> {
-    fn tuple_call(&self) -> Option<Rc<Tuple_callContextAll<'input>>>
-    where
-        Self: Sized,
-    {
-        self.child_of_type(0)
-    }
-    fn string(&self) -> Option<Rc<StringContextAll<'input>>>
-    where
-        Self: Sized,
-    {
-        self.child_of_type(0)
-    }
-    fn namepath(&self) -> Option<Rc<NamepathContextAll<'input>>>
-    where
-        Self: Sized,
-    {
-        self.child_of_type(0)
-    }
-    fn regex(&self) -> Option<Rc<RegexContextAll<'input>>>
-    where
-        Self: Sized,
-    {
-        self.child_of_type(0)
-    }
+pub trait AtomicContextAttrs<'input>: YggdrasilAntlrParserContext<'input> + BorrowMut<AtomicContextExt<'input>> {}
+
+impl<'input> AtomicContextAttrs<'input> for AtomicContext<'input> {}
+
+pub type AIntContext<'input> = BaseParserRuleContext<'input, AIntContextExt<'input>>;
+
+pub trait AIntContextAttrs<'input>: YggdrasilAntlrParserContext<'input> {
     /// Retrieves first TerminalNode corresponding to token INTEGER
     /// Returns `None` if there is no child corresponding to token INTEGER
     fn INTEGER(&self) -> Option<Rc<TerminalNode<'input, YggdrasilAntlrParserContextType>>>
@@ -6536,14 +6616,140 @@ pub trait AtomicContextAttrs<'input>: YggdrasilAntlrParserContext<'input> + Borr
     {
         self.get_token(INTEGER, 0)
     }
-    /// Retrieves first TerminalNode corresponding to token SPECIAL
-    /// Returns `None` if there is no child corresponding to token SPECIAL
-    fn SPECIAL(&self) -> Option<Rc<TerminalNode<'input, YggdrasilAntlrParserContextType>>>
+}
+
+impl<'input> AIntContextAttrs<'input> for AIntContext<'input> {}
+
+pub struct AIntContextExt<'input> {
+    base: AtomicContextExt<'input>,
+    ph: PhantomData<&'input str>,
+}
+
+antlr_rust::tid! {AIntContextExt<'a>}
+
+impl<'input> YggdrasilAntlrParserContext<'input> for AIntContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for AIntContext<'input> {
+    fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.enter_every_rule(self);
+        listener.enter_AInt(self);
+    }
+    fn exit(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.exit_AInt(self);
+        listener.exit_every_rule(self);
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for AIntContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
+        visitor.visit_AInt(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for AIntContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YggdrasilAntlrParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_atomic
+    }
+    // fn type_rule_index() -> usize where Self: Sized { RULE_atomic }
+}
+
+impl<'input> Borrow<AtomicContextExt<'input>> for AIntContext<'input> {
+    fn borrow(&self) -> &AtomicContextExt<'input> {
+        &self.base
+    }
+}
+impl<'input> BorrowMut<AtomicContextExt<'input>> for AIntContext<'input> {
+    fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
+        &mut self.base
+    }
+}
+
+impl<'input> AtomicContextAttrs<'input> for AIntContext<'input> {}
+
+impl<'input> AIntContextExt<'input> {
+    fn new(ctx: &dyn AtomicContextAttrs<'input>) -> Rc<AtomicContextAll<'input>> {
+        Rc::new(AtomicContextAll::AIntContext(BaseParserRuleContext::copy_from(
+            ctx,
+            AIntContextExt { base: ctx.borrow().clone(), ph: PhantomData },
+        )))
+    }
+}
+
+pub type AReContext<'input> = BaseParserRuleContext<'input, AReContextExt<'input>>;
+
+pub trait AReContextAttrs<'input>: YggdrasilAntlrParserContext<'input> {
+    fn regex(&self) -> Option<Rc<RegexContextAll<'input>>>
     where
         Self: Sized,
     {
-        self.get_token(SPECIAL, 0)
+        self.child_of_type(0)
     }
+}
+
+impl<'input> AReContextAttrs<'input> for AReContext<'input> {}
+
+pub struct AReContextExt<'input> {
+    base: AtomicContextExt<'input>,
+    ph: PhantomData<&'input str>,
+}
+
+antlr_rust::tid! {AReContextExt<'a>}
+
+impl<'input> YggdrasilAntlrParserContext<'input> for AReContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for AReContext<'input> {
+    fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.enter_every_rule(self);
+        listener.enter_ARe(self);
+    }
+    fn exit(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.exit_ARe(self);
+        listener.exit_every_rule(self);
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for AReContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
+        visitor.visit_ARe(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for AReContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YggdrasilAntlrParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_atomic
+    }
+    // fn type_rule_index() -> usize where Self: Sized { RULE_atomic }
+}
+
+impl<'input> Borrow<AtomicContextExt<'input>> for AReContext<'input> {
+    fn borrow(&self) -> &AtomicContextExt<'input> {
+        &self.base
+    }
+}
+impl<'input> BorrowMut<AtomicContextExt<'input>> for AReContext<'input> {
+    fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
+        &mut self.base
+    }
+}
+
+impl<'input> AtomicContextAttrs<'input> for AReContext<'input> {}
+
+impl<'input> AReContextExt<'input> {
+    fn new(ctx: &dyn AtomicContextAttrs<'input>) -> Rc<AtomicContextAll<'input>> {
+        Rc::new(AtomicContextAll::AReContext(BaseParserRuleContext::copy_from(
+            ctx,
+            AReContextExt { base: ctx.borrow().clone(), ph: PhantomData },
+        )))
+    }
+}
+
+pub type ACharContext<'input> = BaseParserRuleContext<'input, ACharContextExt<'input>>;
+
+pub trait ACharContextAttrs<'input>: YggdrasilAntlrParserContext<'input> {
     /// Retrieves first TerminalNode corresponding to token ESCAPED
     /// Returns `None` if there is no child corresponding to token ESCAPED
     fn ESCAPED(&self) -> Option<Rc<TerminalNode<'input, YggdrasilAntlrParserContextType>>>
@@ -6554,7 +6760,346 @@ pub trait AtomicContextAttrs<'input>: YggdrasilAntlrParserContext<'input> + Borr
     }
 }
 
-impl<'input> AtomicContextAttrs<'input> for AtomicContext<'input> {}
+impl<'input> ACharContextAttrs<'input> for ACharContext<'input> {}
+
+pub struct ACharContextExt<'input> {
+    base: AtomicContextExt<'input>,
+    ph: PhantomData<&'input str>,
+}
+
+antlr_rust::tid! {ACharContextExt<'a>}
+
+impl<'input> YggdrasilAntlrParserContext<'input> for ACharContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for ACharContext<'input> {
+    fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.enter_every_rule(self);
+        listener.enter_AChar(self);
+    }
+    fn exit(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.exit_AChar(self);
+        listener.exit_every_rule(self);
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for ACharContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
+        visitor.visit_AChar(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for ACharContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YggdrasilAntlrParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_atomic
+    }
+    // fn type_rule_index() -> usize where Self: Sized { RULE_atomic }
+}
+
+impl<'input> Borrow<AtomicContextExt<'input>> for ACharContext<'input> {
+    fn borrow(&self) -> &AtomicContextExt<'input> {
+        &self.base
+    }
+}
+impl<'input> BorrowMut<AtomicContextExt<'input>> for ACharContext<'input> {
+    fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
+        &mut self.base
+    }
+}
+
+impl<'input> AtomicContextAttrs<'input> for ACharContext<'input> {}
+
+impl<'input> ACharContextExt<'input> {
+    fn new(ctx: &dyn AtomicContextAttrs<'input>) -> Rc<AtomicContextAll<'input>> {
+        Rc::new(AtomicContextAll::ACharContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ACharContextExt { base: ctx.borrow().clone(), ph: PhantomData },
+        )))
+    }
+}
+
+pub type ATupleContext<'input> = BaseParserRuleContext<'input, ATupleContextExt<'input>>;
+
+pub trait ATupleContextAttrs<'input>: YggdrasilAntlrParserContext<'input> {
+    fn tuple_call(&self) -> Option<Rc<Tuple_callContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+}
+
+impl<'input> ATupleContextAttrs<'input> for ATupleContext<'input> {}
+
+pub struct ATupleContextExt<'input> {
+    base: AtomicContextExt<'input>,
+    ph: PhantomData<&'input str>,
+}
+
+antlr_rust::tid! {ATupleContextExt<'a>}
+
+impl<'input> YggdrasilAntlrParserContext<'input> for ATupleContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for ATupleContext<'input> {
+    fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.enter_every_rule(self);
+        listener.enter_ATuple(self);
+    }
+    fn exit(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.exit_ATuple(self);
+        listener.exit_every_rule(self);
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for ATupleContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
+        visitor.visit_ATuple(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for ATupleContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YggdrasilAntlrParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_atomic
+    }
+    // fn type_rule_index() -> usize where Self: Sized { RULE_atomic }
+}
+
+impl<'input> Borrow<AtomicContextExt<'input>> for ATupleContext<'input> {
+    fn borrow(&self) -> &AtomicContextExt<'input> {
+        &self.base
+    }
+}
+impl<'input> BorrowMut<AtomicContextExt<'input>> for ATupleContext<'input> {
+    fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
+        &mut self.base
+    }
+}
+
+impl<'input> AtomicContextAttrs<'input> for ATupleContext<'input> {}
+
+impl<'input> ATupleContextExt<'input> {
+    fn new(ctx: &dyn AtomicContextAttrs<'input>) -> Rc<AtomicContextAll<'input>> {
+        Rc::new(AtomicContextAll::ATupleContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ATupleContextExt { base: ctx.borrow().clone(), ph: PhantomData },
+        )))
+    }
+}
+
+pub type ASpecialContext<'input> = BaseParserRuleContext<'input, ASpecialContextExt<'input>>;
+
+pub trait ASpecialContextAttrs<'input>: YggdrasilAntlrParserContext<'input> {
+    /// Retrieves first TerminalNode corresponding to token SPECIAL
+    /// Returns `None` if there is no child corresponding to token SPECIAL
+    fn SPECIAL(&self) -> Option<Rc<TerminalNode<'input, YggdrasilAntlrParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(SPECIAL, 0)
+    }
+}
+
+impl<'input> ASpecialContextAttrs<'input> for ASpecialContext<'input> {}
+
+pub struct ASpecialContextExt<'input> {
+    base: AtomicContextExt<'input>,
+    ph: PhantomData<&'input str>,
+}
+
+antlr_rust::tid! {ASpecialContextExt<'a>}
+
+impl<'input> YggdrasilAntlrParserContext<'input> for ASpecialContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for ASpecialContext<'input> {
+    fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.enter_every_rule(self);
+        listener.enter_ASpecial(self);
+    }
+    fn exit(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.exit_ASpecial(self);
+        listener.exit_every_rule(self);
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for ASpecialContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
+        visitor.visit_ASpecial(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for ASpecialContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YggdrasilAntlrParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_atomic
+    }
+    // fn type_rule_index() -> usize where Self: Sized { RULE_atomic }
+}
+
+impl<'input> Borrow<AtomicContextExt<'input>> for ASpecialContext<'input> {
+    fn borrow(&self) -> &AtomicContextExt<'input> {
+        &self.base
+    }
+}
+impl<'input> BorrowMut<AtomicContextExt<'input>> for ASpecialContext<'input> {
+    fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
+        &mut self.base
+    }
+}
+
+impl<'input> AtomicContextAttrs<'input> for ASpecialContext<'input> {}
+
+impl<'input> ASpecialContextExt<'input> {
+    fn new(ctx: &dyn AtomicContextAttrs<'input>) -> Rc<AtomicContextAll<'input>> {
+        Rc::new(AtomicContextAll::ASpecialContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ASpecialContextExt { base: ctx.borrow().clone(), ph: PhantomData },
+        )))
+    }
+}
+
+pub type AIdContext<'input> = BaseParserRuleContext<'input, AIdContextExt<'input>>;
+
+pub trait AIdContextAttrs<'input>: YggdrasilAntlrParserContext<'input> {
+    fn identifier(&self) -> Option<Rc<IdentifierContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+}
+
+impl<'input> AIdContextAttrs<'input> for AIdContext<'input> {}
+
+pub struct AIdContextExt<'input> {
+    base: AtomicContextExt<'input>,
+    ph: PhantomData<&'input str>,
+}
+
+antlr_rust::tid! {AIdContextExt<'a>}
+
+impl<'input> YggdrasilAntlrParserContext<'input> for AIdContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for AIdContext<'input> {
+    fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.enter_every_rule(self);
+        listener.enter_AId(self);
+    }
+    fn exit(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.exit_AId(self);
+        listener.exit_every_rule(self);
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for AIdContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
+        visitor.visit_AId(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for AIdContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YggdrasilAntlrParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_atomic
+    }
+    // fn type_rule_index() -> usize where Self: Sized { RULE_atomic }
+}
+
+impl<'input> Borrow<AtomicContextExt<'input>> for AIdContext<'input> {
+    fn borrow(&self) -> &AtomicContextExt<'input> {
+        &self.base
+    }
+}
+impl<'input> BorrowMut<AtomicContextExt<'input>> for AIdContext<'input> {
+    fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
+        &mut self.base
+    }
+}
+
+impl<'input> AtomicContextAttrs<'input> for AIdContext<'input> {}
+
+impl<'input> AIdContextExt<'input> {
+    fn new(ctx: &dyn AtomicContextAttrs<'input>) -> Rc<AtomicContextAll<'input>> {
+        Rc::new(AtomicContextAll::AIdContext(BaseParserRuleContext::copy_from(
+            ctx,
+            AIdContextExt { base: ctx.borrow().clone(), ph: PhantomData },
+        )))
+    }
+}
+
+pub type AStringContext<'input> = BaseParserRuleContext<'input, AStringContextExt<'input>>;
+
+pub trait AStringContextAttrs<'input>: YggdrasilAntlrParserContext<'input> {
+    fn string(&self) -> Option<Rc<StringContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+}
+
+impl<'input> AStringContextAttrs<'input> for AStringContext<'input> {}
+
+pub struct AStringContextExt<'input> {
+    base: AtomicContextExt<'input>,
+    ph: PhantomData<&'input str>,
+}
+
+antlr_rust::tid! {AStringContextExt<'a>}
+
+impl<'input> YggdrasilAntlrParserContext<'input> for AStringContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for AStringContext<'input> {
+    fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.enter_every_rule(self);
+        listener.enter_AString(self);
+    }
+    fn exit(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
+        listener.exit_AString(self);
+        listener.exit_every_rule(self);
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for AStringContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
+        visitor.visit_AString(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for AStringContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YggdrasilAntlrParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_atomic
+    }
+    // fn type_rule_index() -> usize where Self: Sized { RULE_atomic }
+}
+
+impl<'input> Borrow<AtomicContextExt<'input>> for AStringContext<'input> {
+    fn borrow(&self) -> &AtomicContextExt<'input> {
+        &self.base
+    }
+}
+impl<'input> BorrowMut<AtomicContextExt<'input>> for AStringContext<'input> {
+    fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
+        &mut self.base
+    }
+}
+
+impl<'input> AtomicContextAttrs<'input> for AStringContext<'input> {}
+
+impl<'input> AStringContextExt<'input> {
+    fn new(ctx: &dyn AtomicContextAttrs<'input>) -> Rc<AtomicContextAll<'input>> {
+        Rc::new(AtomicContextAll::AStringContext(BaseParserRuleContext::copy_from(
+            ctx,
+            AStringContextExt { base: ctx.borrow().clone(), ph: PhantomData },
+        )))
+    }
+}
 
 impl<'input, I, H> YggdrasilAntlrParser<'input, I, H>
 where
@@ -6572,8 +7117,9 @@ where
             recog.err_handler.sync(&mut recog.base)?;
             match recog.base.input.la(1) {
                 OP_AT => {
-                    // recog.base.enter_outer_alt(_localctx.clone(), 1);
-                    recog.base.enter_outer_alt(None, 1);
+                    let tmp = ATupleContextExt::new(&**_localctx);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 1);
+                    _localctx = tmp;
                     {
                         // InvokeRule tuple_call
                         recog.base.set_state(329);
@@ -6582,8 +7128,9 @@ where
                 }
 
                 STRING_SINGLE | STRING_DOUBLE => {
-                    // recog.base.enter_outer_alt(_localctx.clone(), 2);
-                    recog.base.enter_outer_alt(None, 2);
+                    let tmp = AStringContextExt::new(&**_localctx);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 2);
+                    _localctx = tmp;
                     {
                         // InvokeRule string
                         recog.base.set_state(330);
@@ -6592,18 +7139,20 @@ where
                 }
 
                 RAW_ID | UNICODE_ID => {
-                    // recog.base.enter_outer_alt(_localctx.clone(), 3);
-                    recog.base.enter_outer_alt(None, 3);
+                    let tmp = AIdContextExt::new(&**_localctx);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 3);
+                    _localctx = tmp;
                     {
-                        // InvokeRule namepath
+                        // InvokeRule identifier
                         recog.base.set_state(331);
-                        recog.namepath()?;
+                        recog.identifier()?;
                     }
                 }
 
                 REGEX_RANGE | REGEX_FREE => {
-                    // recog.base.enter_outer_alt(_localctx.clone(), 4);
-                    recog.base.enter_outer_alt(None, 4);
+                    let tmp = AReContextExt::new(&**_localctx);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 4);
+                    _localctx = tmp;
                     {
                         // InvokeRule regex
                         recog.base.set_state(332);
@@ -6612,8 +7161,9 @@ where
                 }
 
                 INTEGER => {
-                    // recog.base.enter_outer_alt(_localctx.clone(), 5);
-                    recog.base.enter_outer_alt(None, 5);
+                    let tmp = AIntContextExt::new(&**_localctx);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 5);
+                    _localctx = tmp;
                     {
                         recog.base.set_state(333);
                         recog.base.match_token(INTEGER, &mut recog.err_handler)?;
@@ -6621,8 +7171,9 @@ where
                 }
 
                 SPECIAL => {
-                    // recog.base.enter_outer_alt(_localctx.clone(), 6);
-                    recog.base.enter_outer_alt(None, 6);
+                    let tmp = ASpecialContextExt::new(&**_localctx);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 6);
+                    _localctx = tmp;
                     {
                         recog.base.set_state(334);
                         recog.base.match_token(SPECIAL, &mut recog.err_handler)?;
@@ -6630,8 +7181,9 @@ where
                 }
 
                 ESCAPED => {
-                    // recog.base.enter_outer_alt(_localctx.clone(), 7);
-                    recog.base.enter_outer_alt(None, 7);
+                    let tmp = ACharContextExt::new(&**_localctx);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 7);
+                    _localctx = tmp;
                     {
                         recog.base.set_state(335);
                         recog.base.match_token(ESCAPED, &mut recog.err_handler)?;
@@ -7358,7 +7910,7 @@ const _serializedATN: &'static str = "\x03\u{608b}\u{a72a}\u{8133}\u{b9ed}\u{417
 	\u{148}\u{14a}\x07\x09\x02\x02\u{149}\u{142}\x03\x02\x02\x02\u{149}\u{143}\
 	\x03\x02\x02\x02\u{149}\u{144}\x03\x02\x02\x02\u{149}\u{146}\x03\x02\x02\
 	\x02\u{149}\u{147}\x03\x02\x02\x02\u{14a}\x2f\x03\x02\x02\x02\u{14b}\u{153}\
-	\x05\x2a\x16\x02\u{14c}\u{153}\x05\x36\x1c\x02\u{14d}\u{153}\x05\x34\x1b\
+	\x05\x2a\x16\x02\u{14c}\u{153}\x05\x36\x1c\x02\u{14d}\u{153}\x05\x38\x1d\
 	\x02\u{14e}\u{153}\x05\x32\x1a\x02\u{14f}\u{153}\x07\x1f\x02\x02\u{150}\
 	\u{153}\x07\x20\x02\x02\u{151}\u{153}\x07\x21\x02\x02\u{152}\u{14b}\x03\
 	\x02\x02\x02\u{152}\u{14c}\x03\x02\x02\x02\u{152}\u{14d}\x03\x02\x02\x02\

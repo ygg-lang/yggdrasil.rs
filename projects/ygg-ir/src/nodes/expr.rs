@@ -61,7 +61,10 @@ impl ExpressionNode {
                 true => e.base.non_capture(),
                 false => e.base.capture(),
             },
-            ExpressionKind::Rule(e) => self.tag = e.name.to_case(Case::Snake),
+            ExpressionKind::Rule(e) => {
+                todo!();
+                // self.tag = e.name.to_case(Case::Snake)
+            }
             ExpressionKind::Function(_) => self.tag.clear(),
             ExpressionKind::Data(_) => self.tag.clear(),
         }
@@ -88,7 +91,7 @@ impl ExpressionNode {
 
 impl ExpressionKind {
     pub fn as_tag(&self) -> Option<&str> {
-        self.as_rule().map(|r| r.name.as_str())
+        self.as_rule().map(|r| r.name.name.as_str())
     }
     pub fn as_rule(&self) -> Option<&RuleReference> {
         match self {

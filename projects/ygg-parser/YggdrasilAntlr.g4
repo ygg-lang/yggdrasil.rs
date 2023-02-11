@@ -28,9 +28,9 @@ class_expression
     | tag_pair                                            # CETag
     | OP_UNTAG class_expression                           # CUntag
     | OP_NOT class_expression                             # CNot
-    | class_expression OP_CONCAT class_expression         # CHard
-    | class_expression class_expression                   # CSoft
-    | class_expression OP_OR class_expression             # CPattern
+    | lhs=class_expression OP_CONCAT rhs=class_expression         # CHard
+    | lhs=class_expression rhs=class_expression                   # CSoft
+    | lhs=class_expression OP_OR rhs=class_expression             # CPattern
     | PARENTHESES_L OP_OR? class_expression PARENTHESES_R # CGroup
     | tuple_call                                          # CCall
     | atomic                                              # Atom
@@ -52,7 +52,7 @@ union_expression
     ;
 // =================================================================================================
 define_climb: macro_call* (mods += identifier)* KW_CLIMB name = identifier union_block;
-tag_pair:     identifier COLON identifier suffix?;
+tag_pair:     lhs=identifier COLON rhs=identifier suffix?;
 tag_branch:   OP_HASH identifier OP_GT?;
 // =================================================================================================
 define_token: macro_call* (mods += identifier)* KW_TOKEN name = identifier? token_block;
@@ -74,7 +74,7 @@ suffix
     | MATCH_MANY MATCH_OPTIONAL  # Many
     ;
 // =================================================================================================
-atomic:     tuple_call | string | namepath | regex | INTEGER | SPECIAL | ESCAPED;
+atomic:     tuple_call #ATuple | string #AString | identifier #AId | regex #ARe | INTEGER #AInt | SPECIAL #ASpecial | ESCAPED #AChar ;
 regex:      REGEX_RANGE | REGEX_FREE;
 namepath:   identifier ((OP_PROPORTION | DOT) identifier)*;
 string:     STRING_SINGLE | STRING_DOUBLE;

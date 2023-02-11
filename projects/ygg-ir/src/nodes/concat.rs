@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct ConcatExpression {
     sequence: Vec<ExpressionNode>,
 }

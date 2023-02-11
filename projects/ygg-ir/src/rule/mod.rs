@@ -17,6 +17,10 @@ use std::{
 pub mod derive;
 pub mod parameter;
 
+mod identifier;
+
+pub use self::identifier::YggdrasilIdentifier;
+
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct FunctionRule {}
 
@@ -36,13 +40,6 @@ pub enum GrammarRuleKind {
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", Serialize, Deserialize)]
-pub struct IdentifierNode {
-    pub name: String,
-    pub span: Range<usize>,
-}
-
-#[derive(Debug, Clone, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", Serialize, Deserialize)]
 pub struct GrammarRule {
     /// Automatically inline when this rule is called
     ///
@@ -52,7 +49,7 @@ pub struct GrammarRule {
     ///
     /// }
     /// ```
-    pub name: IdentifierNode,
+    pub name: YggdrasilIdentifier,
     /// Kind of this rule
     pub kind: GrammarRuleKind,
     /// Automatically inline when this rule is called
@@ -137,7 +134,7 @@ pub struct GrammarRule {
 impl GrammarInfo {}
 
 impl GrammarRule {
-    pub fn new(name: IdentifierNode, range: &Range<usize>, kind: GrammarRuleKind) -> Self {
+    pub fn new(name: YggdrasilIdentifier, range: &Range<usize>, kind: GrammarRuleKind) -> Self {
         Self {
             name,
             r#type: String::new(),

@@ -1,9 +1,12 @@
 use super::*;
+use crate::{nodes::Operator, rule::YggdrasilIdentifier};
 
 //
-#[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", Serialize, Deserialize)]
 pub struct RuleReference {
-    pub name: String,
+    pub name: YggdrasilIdentifier,
+    pub tag: Option<YggdrasilIdentifier>,
     pub boxed: bool,
     pub inline: bool,
 }
@@ -16,7 +19,7 @@ impl Display for RuleReference {
         if self.inline {
             write!(f, "_")?
         }
-        write!(f, "{}", self.name)?;
+        write!(f, "{}", self.name.name)?;
         if self.boxed {
             write!(f, ")")?
         }
@@ -25,10 +28,16 @@ impl Display for RuleReference {
 }
 
 impl RuleReference {
-    pub fn new(name: &str) -> Self {
-        Self { name: name.trim_start_matches("_").to_string(), boxed: false, inline: name.starts_with('_') }
+    pub fn new(rule_name: YggdrasilIdentifier) -> Self {
+        Self { name: rule_name.trim_underscore(), tag: None, boxed: false, inline: rule_name.is_ignore() }
     }
-    pub fn to_node<S>(self, tag: S) -> ExpressionNode where S: Into<String> {
+    pub fn with_tag(self, tag: YggdrasilIdentifier) -> Self {
+        Self { tag: Some(tag), ..self }
+    }
+    pub fn to_node<S>(self, tag: S) -> ExpressionNode
+    where
+        S: Into<String>,
+    {
         ExpressionNode { tag: tag.into(), kind: ExpressionKind::Rule(Box::new(self)) }
     }
 }

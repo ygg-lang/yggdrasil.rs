@@ -5,7 +5,9 @@ impl ExpressionKind {
         let data = match name {
             "ANY" => DataKind::CharacterAny,
             "XID_START" | "XID_CONTINUE" => DataKind::CharacterBuiltin(name.to_string()),
-            _ => return Self::Rule(Box::new(RuleReference::new(name))),
+            _ => {
+                todo!();
+            }
         };
         Self::Data(Box::new(data))
     }

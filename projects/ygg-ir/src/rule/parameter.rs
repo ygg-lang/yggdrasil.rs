@@ -83,7 +83,7 @@ impl ExpressionNode {
             ExpressionKind::Function(_) => unreachable!("Macros should be expand before collecting parameters"),
             ExpressionKind::Rule(rule) => {
                 if !self.tag.is_empty() {
-                    let rule = RuleParameter { kind: RuleParameterKind::Required, name: "".to_string(), typing: rule.name.clone() };
+                    let rule = RuleParameter { kind: RuleParameterKind::Required, name: "".to_string(), typing: rule.name.name.clone() };
                     out.insert(self.tag.clone(), rule);
                 }
             }

@@ -17,9 +17,7 @@ unicode-xid = "0.2.4"
 railroad = { version = "0.2.0", optional = true }
 convert_case = "0.6.0"
 askama = "0.12.1"
-# rust code generator
-quote = "1.0.33"
-syn = "2.0.38"
+itertools = "0.11.0"
 
 #[dependencies.yggdrasil-rt]
 ##version = "0.1"

@@ -1,8 +1,12 @@
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
-use std::fmt::Debug;
-
-use yggdrasil_ir::{FieldMap, GrammarRuleKind, RuleDerive};
+use std::{fmt::Debug, ops::Range};
+use yggdrasil_ir::{
+    grammar::GrammarInfo,
+    nodes::ExpressionNode,
+    rule::{GrammarRule, GrammarRuleKind, RuleDerive, YggdrasilIdentifier},
+    traits::FieldMap,
+};
 
 use super::*;
 
@@ -37,7 +41,7 @@ fn test() {
     let b = ExpressionNode::character('b').with_tag("b");
     let c = ExpressionNode::character('c').with_tag("c");
     let rule = GrammarRule {
-        name: "Test".to_string(),
+        name: YggdrasilIdentifier { name: "Test".to_string(), span: Default::default() },
         r#type: "TestNode".to_string(),
         document: "aa\nbb\ncccc".to_string(),
         public: true,
@@ -66,7 +70,7 @@ fn test() {
 impl WriteRust for GrammarRule {
     fn write_rust(&self, w: &mut RustCodegen, info: &GrammarInfo) -> std::fmt::Result {
         // writeln!(w, "/// {}", info.rule_prefix)?;
-        writeln!(w, "fn {}(state: YState) -> YResult<{}> {{", w.consume_name(&self.name), self.r#type)?;
+        writeln!(w, "fn {}(state: YState) -> YResult<{}> {{", w.consume_name(&self.name.name), self.r#type)?;
         if w.enable_position {
             writeln!(w, "    let start = state.start_offset;")?;
         }
@@ -88,7 +92,7 @@ impl WriteRust for GrammarRule {
         if self.public {
             w.write_str("pub ")?;
         }
-        let name = w.node_name(&self.name);
+        let name = w.node_name(&self.name.name);
         match &self.kind {
             GrammarRuleKind::Class => {
                 writeln!(w, "struct {} {{", name)?;
@@ -116,10 +120,14 @@ impl WriteRust for GrammarRule {
 
 impl WriteRust for RuleDerive {
     fn write_rust(&self, w: &mut RustCodegen, _: &GrammarInfo) -> std::fmt::Result {
-        let derives = self.derived();
-        if derives.is_empty() {
-            return Ok(());
+        for (key, value) in self.derives.iter() {
+            if key.is_empty() {
+                writeln!(w, "#[derive({})]", value.iter().join(", "))?
+            }
+            else {
+                writeln!(w, "#[cfg_attr(feature = \"{}\", derive({}))]", key, value.iter().join(", "))?
+            }
         }
-        write!(w, "#[derive({})]", derives.join(", "))
+        Ok(())
     }
 }

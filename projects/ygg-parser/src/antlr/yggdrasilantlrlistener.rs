@@ -326,12 +326,62 @@ pub trait YggdrasilAntlrListener<'input>: ParseTreeListener<'input, YggdrasilAnt
     /// labeled alternative in {@link YggdrasilAntlrParser#suffix}.
     /// @param ctx the parse tree
     fn exit_Many(&mut self, _ctx: &ManyContext<'input>) {}
-    /// Enter a parse tree produced by {@link YggdrasilAntlrParser#atomic}.
+    /// Enter a parse tree produced by the {@code ATuple}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
     /// @param ctx the parse tree
-    fn enter_atomic(&mut self, _ctx: &AtomicContext<'input>) {}
-    /// Exit a parse tree produced by {@link YggdrasilAntlrParser#atomic}.
+    fn enter_ATuple(&mut self, _ctx: &ATupleContext<'input>) {}
+    /// Exit a parse tree produced by the {@code ATuple}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
     /// @param ctx the parse tree
-    fn exit_atomic(&mut self, _ctx: &AtomicContext<'input>) {}
+    fn exit_ATuple(&mut self, _ctx: &ATupleContext<'input>) {}
+    /// Enter a parse tree produced by the {@code AString}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn enter_AString(&mut self, _ctx: &AStringContext<'input>) {}
+    /// Exit a parse tree produced by the {@code AString}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn exit_AString(&mut self, _ctx: &AStringContext<'input>) {}
+    /// Enter a parse tree produced by the {@code AId}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn enter_AId(&mut self, _ctx: &AIdContext<'input>) {}
+    /// Exit a parse tree produced by the {@code AId}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn exit_AId(&mut self, _ctx: &AIdContext<'input>) {}
+    /// Enter a parse tree produced by the {@code ARe}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn enter_ARe(&mut self, _ctx: &AReContext<'input>) {}
+    /// Exit a parse tree produced by the {@code ARe}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn exit_ARe(&mut self, _ctx: &AReContext<'input>) {}
+    /// Enter a parse tree produced by the {@code AInt}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn enter_AInt(&mut self, _ctx: &AIntContext<'input>) {}
+    /// Exit a parse tree produced by the {@code AInt}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn exit_AInt(&mut self, _ctx: &AIntContext<'input>) {}
+    /// Enter a parse tree produced by the {@code ASpecial}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn enter_ASpecial(&mut self, _ctx: &ASpecialContext<'input>) {}
+    /// Exit a parse tree produced by the {@code ASpecial}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn exit_ASpecial(&mut self, _ctx: &ASpecialContext<'input>) {}
+    /// Enter a parse tree produced by the {@code AChar}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn enter_AChar(&mut self, _ctx: &ACharContext<'input>) {}
+    /// Exit a parse tree produced by the {@code AChar}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn exit_AChar(&mut self, _ctx: &ACharContext<'input>) {}
     /// Enter a parse tree produced by {@link YggdrasilAntlrParser#regex}.
     /// @param ctx the parse tree
     fn enter_regex(&mut self, _ctx: &RegexContext<'input>) {}

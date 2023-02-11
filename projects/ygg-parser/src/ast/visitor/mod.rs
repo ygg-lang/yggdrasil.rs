@@ -3,7 +3,7 @@ use antlr_rust::tree::{ErrorNode, VisitChildren};
 use yggdrasil_ir::{
     data::DataKind,
     nodes::{ExpressionKind, ExpressionNode},
-    rule::{GrammarRule, GrammarRuleKind, IdentifierNode},
+    rule::{GrammarRule, GrammarRuleKind, YggdrasilIdentifier},
 };
 
 mod atomic;
@@ -38,7 +38,7 @@ impl YggdrasilAntlrVisitor<'_> for YggdrasilParser {
 
 impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
     fn take_one(node: &Define_unionContext<'i>) -> Option<Self> {
-        let id = IdentifierNode::take(node.name.clone())?;
+        let id = YggdrasilIdentifier::take(node.name.clone())?;
         let expr = ExpressionNode::take(node.union_block())?;
         Some(GrammarRule {
             name: id,

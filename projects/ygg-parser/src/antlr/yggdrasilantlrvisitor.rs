@@ -302,9 +302,52 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#atomic}.
+    /// Visit a parse tree produced by the {@code ATuple}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
     /// @param ctx the parse tree
-    fn visit_atomic(&mut self, ctx: &AtomicContext<'input>) {
+    fn visit_ATuple(&mut self, ctx: &ATupleContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code AString}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_AString(&mut self, ctx: &AStringContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code AId}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_AId(&mut self, ctx: &AIdContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code ARe}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_ARe(&mut self, ctx: &AReContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code AInt}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_AInt(&mut self, ctx: &AIntContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code ASpecial}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_ASpecial(&mut self, ctx: &ASpecialContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code AChar}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_AChar(&mut self, ctx: &ACharContext<'input>) {
         self.visit_children(ctx)
     }
 
@@ -630,9 +673,52 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#atomic}.
+    /// Visit a parse tree produced by the {@code ATuple}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
     /// @param ctx the parse tree
-    fn visit_atomic(&mut self, ctx: &AtomicContext<'input>) -> Self::Return {
+    fn visit_ATuple(&mut self, ctx: &ATupleContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code AString}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_AString(&mut self, ctx: &AStringContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code AId}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_AId(&mut self, ctx: &AIdContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code ARe}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_ARe(&mut self, ctx: &AReContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code AInt}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_AInt(&mut self, ctx: &AIntContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code ASpecial}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_ASpecial(&mut self, ctx: &ASpecialContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code AChar}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_AChar(&mut self, ctx: &ACharContext<'input>) -> Self::Return {
         self.visit_children(ctx)
     }
 
@@ -890,8 +976,38 @@ where
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
-    fn visit_atomic(&mut self, ctx: &AtomicContext<'input>) {
-        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_atomic(self, ctx);
+    fn visit_ATuple(&mut self, ctx: &ATupleContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_ATuple(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_AString(&mut self, ctx: &AStringContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_AString(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_AId(&mut self, ctx: &AIdContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_AId(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_ARe(&mut self, ctx: &AReContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_ARe(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_AInt(&mut self, ctx: &AIntContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_AInt(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_ASpecial(&mut self, ctx: &ASpecialContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_ASpecial(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_AChar(&mut self, ctx: &ACharContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_AChar(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 

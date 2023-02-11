@@ -26,7 +26,7 @@ use super::*;
 /// ```
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct RuleDerive {
-    derives: BTreeMap<String, String>,
+    pub derives: BTreeMap<String, BTreeSet<String>>,
 }
 
 impl Default for RuleDerive {
@@ -69,11 +69,11 @@ impl RuleDerive {
         for (derive, feature) in &self.derives {
             derives.entry(feature.clone()).or_insert_with(BTreeSet::new).insert(derive.clone());
         }
-        derives
+        todo!()
     }
     /// Insert new derive to the set
     pub fn insert_derive(&mut self, derive: &str, feature: &str) {
-        self.derives.insert(derive.to_string(), feature.to_string());
+        self.derives.insert(derive.to_string(), todo!());
     }
     /// Remove derive from the set
     pub fn remove_derive(&mut self, derive: &str) {

@@ -2,8 +2,12 @@ use std::ops::Range;
 
 use askama::Template;
 use convert_case::{Case, Casing};
-
-use yggdrasil_ir::{DataKind, ExpressionKind, ExpressionNode, GrammarInfo, GrammarRule, GrammarRuleKind, RuleReference};
+use yggdrasil_ir::{
+    data::DataKind,
+    grammar::GrammarInfo,
+    nodes::{ExpressionKind, ExpressionNode},
+    rule::{GrammarRule, GrammarRuleKind},
+};
 
 use crate::codegen::RustCodegen;
 
@@ -50,7 +54,7 @@ impl RustCodegen {
         let mut branches = vec![];
         for (name, node) in rule.get_branches() {
             let target_node = match node.as_rule() {
-                Some(s) => self.node_name(&s.name),
+                Some(s) => self.node_name(&s.name.name),
                 None => unreachable!("Must build proxy node first"),
             };
             branches.push(UnionBranchItem {
@@ -61,10 +65,10 @@ impl RustCodegen {
             })
         }
         UnionConsume {
-            derive_debug: rule.derives.debug,
-            name_upper: self.upper_name(&rule.name),
-            name_lower: self.lower_name(&rule.name),
-            node_name: self.node_name(&rule.name),
+            derive_debug: true,
+            name_upper: self.upper_name(&rule.name.name),
+            name_lower: self.lower_name(&rule.name.name),
+            node_name: self.node_name(&rule.name.name),
             branches,
         }
     }

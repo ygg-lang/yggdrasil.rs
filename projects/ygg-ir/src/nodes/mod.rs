@@ -7,6 +7,7 @@ use crate::{
 use convert_case::{Case, Casing};
 use diagnostic_quick::{QError, QResult};
 use indexmap::{IndexMap, IndexSet};
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::{
     hash::{Hash, Hasher},
@@ -21,13 +22,13 @@ mod debug;
 mod expr;
 mod unary;
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct ExpressionNode {
     pub kind: ExpressionKind,
     pub tag: String,
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum ExpressionKind {
     Function(Box<FunctionExpression>),
     Choice(Box<ChoiceExpression>),
@@ -35,6 +36,12 @@ pub enum ExpressionKind {
     Unary(Box<UnaryExpression>),
     Rule(Box<RuleReference>),
     Data(Box<DataKind>),
+}
+
+impl From<RuleReference> for ExpressionNode {
+    fn from(value: RuleReference) -> Self {
+        Self { kind: ExpressionKind::Rule(Box::new(value)), tag: "".to_string() }
+    }
 }
 
 impl ExpressionNode {
@@ -49,7 +56,7 @@ impl ExpressionNode {
     }
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum Operator {
     /// ```ygg
     /// !e

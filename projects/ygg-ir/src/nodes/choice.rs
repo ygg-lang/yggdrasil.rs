@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct ChoiceExpression {
     pub branches: IndexSet<ExpressionNode>,
 }
