@@ -37,6 +37,18 @@ pub enum ExpressionKind {
     Data(Box<DataKind>),
 }
 
+impl ExpressionNode {
+    pub fn unary(mut base: ExpressionNode, o: Operator) -> Self {
+        match base.kind {
+            ExpressionKind::Unary(ref mut v) if base.tag.is_empty() => {
+                v.ops.push(o);
+                base
+            }
+            _ => Self { kind: ExpressionKind::Unary(Box::new(UnaryExpression { base, ops: vec![o] })), tag: "".to_string() },
+        }
+    }
+}
+
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub enum Operator {
     /// ```ygg

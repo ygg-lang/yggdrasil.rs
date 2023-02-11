@@ -18,7 +18,8 @@ use yggdrasil_ir::grammar::GrammarInfo;
 
 #[derive(Clone, Debug, Default)]
 pub struct YggdrasilParser {
-    statements: GrammarInfo,
+    grammar: GrammarInfo,
+    dirty: (),
 }
 
 impl YggdrasilParser {
@@ -31,6 +32,6 @@ impl YggdrasilParser {
         let root = parser.program()?;
         let mut state = YggdrasilParser::default();
         state.visit(&*root);
-        Ok(state.statements)
+        Ok(state.grammar)
     }
 }

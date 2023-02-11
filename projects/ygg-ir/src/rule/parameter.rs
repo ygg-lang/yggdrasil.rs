@@ -13,7 +13,7 @@ pub struct RuleParameter {
 }
 
 /// Parameter kind
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum RuleParameterKind {
     /// A required parameter, equivalent to `T` in rust.
     Required,

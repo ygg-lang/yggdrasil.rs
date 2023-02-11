@@ -1,12 +1,13 @@
 use super::*;
+use antlr_rust::tree::{ErrorNode, VisitChildren};
 use yggdrasil_ir::{
-    nodes::ExpressionNode,
-    rule::{GrammarRule, GrammarRuleKind},
+    data::DataKind,
+    nodes::{ExpressionKind, ExpressionNode},
+    rule::{GrammarRule, GrammarRuleKind, IdentifierNode},
 };
 
-// mod atomic;
-// mod looping;
-//
+mod atomic;
+mod classes;
 // mod calls;
 // mod collection;
 // mod let_binding;
@@ -17,56 +18,30 @@ impl ParseTreeVisitorCompat<'_> for YggdrasilParser {
     type Return = ();
 
     fn temp_result(&mut self) -> &mut Self::Return {
-        unreachable!()
-    }
-    fn visit(&mut self, node: &<Self::Node as ParserNodeType<'_>>::Type) -> Self::Return {
-        node.accept_dyn(self);
+        &mut self.dirty
     }
 }
 
 /// Convert weakly typed ast to strongly typed ast
 impl YggdrasilAntlrVisitor<'_> for YggdrasilParser {
-    fn visit_program(&mut self, ctx: &ProgramContext<'_>) {
-        for node in ctx.get_children() {
-            if let Some(s) = node.downcast_ref::<Define_classContextAll>().and_then(GrammarRule::take_one) {
-                self.statements.push(s.into());
-                continue;
-            }
-            if let Some(s) = node.downcast_ref::<Define_unionContextAll>().and_then(GrammarRule::take_one) {
-                self.statements.push(s.into());
-                continue;
-            }
+    fn visit_define_class(&mut self, ctx: &Define_classContext<'_>) {
+        if let Some(s) = GrammarRule::take_one(ctx) {
+            self.grammar.insert(s);
         }
     }
-    fn visit_class_block(&mut self, ctx: &Class_blockContext<'_>) {
-        todo!()
+    fn visit_define_union(&mut self, ctx: &Define_unionContext<'_>) {
+        if let Some(s) = GrammarRule::take_one(ctx) {
+            self.grammar.insert(s);
+        }
     }
 }
 
-impl<'i> Extractor<Define_classContextAll<'i>> for GrammarRule {
-    fn take_one(node: &Define_classContextAll<'i>) -> Option<Self> {
-        let span = Range { start: node.start().start as usize, end: node.stop().stop as usize };
-        Some(Self {
-            name: "".to_string(),
-            kind: GrammarRuleKind::Class,
-            r#type: "".to_string(),
-            document: "".to_string(),
-            public: false,
-            derives: Default::default(),
-            auto_inline: false,
-            auto_boxed: false,
-            entry: false,
-            body: ExpressionNode { kind: (), tag: "".to_string() },
-            range: span,
-        })
-    }
-}
-
-impl<'i> Extractor<Define_unionContextAll<'i>> for GrammarRule {
-    fn take_one(node: &Define_unionContextAll<'i>) -> Option<Self> {
-        let span = Range { start: node.start().start as usize, end: node.stop().stop as usize };
-        Some(Self {
-            name: "".to_string(),
+impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
+    fn take_one(node: &Define_unionContext<'i>) -> Option<Self> {
+        let id = IdentifierNode::take(node.name.clone())?;
+        let expr = ExpressionNode::take(node.union_block())?;
+        Some(GrammarRule {
+            name: id,
             kind: GrammarRuleKind::Union,
             r#type: "".to_string(),
             document: "".to_string(),
@@ -75,8 +50,13 @@ impl<'i> Extractor<Define_unionContextAll<'i>> for GrammarRule {
             auto_inline: false,
             auto_boxed: false,
             entry: false,
-            body: ExpressionNode { kind: (), tag: "".to_string() },
-            range: span,
+            body: expr,
+            range: Default::default(),
         })
+    }
+}
+impl<'i> Extractor<Union_blockContextAll<'i>> for ExpressionNode {
+    fn take_one(node: &Union_blockContextAll<'i>) -> Option<Self> {
+        None
     }
 }

@@ -1,0 +1,169 @@
+grammar language {
+// name: "Yggdrasil"
+}
+
+using std;
+// cast to same shape
+// #cast(std::Namespace)
+// add value to structure
+// #attach(a: true)
+
+
+entry class Program {
+    Statement*
+}
+
+union Statement {
+    | ClassStatement #Class
+    | UnionStatement #Union
+    | MacroStatement #Macro
+}
+// =================================================================================================
+class GrammarStatement {
+    Identifier
+}
+class KW_GRAMMAR {
+    "grammar"
+}
+
+
+// =================================================================================================
+// import
+// =================================================================================================
+class ClassStatement {
+    Modifiers ^KW_CLASS Identifier OutType? RuleBody
+}
+
+class RuleBody {
+    '{' ('|'? Expr)? '}'
+}
+// =================================================================================================
+class UnionStatement {
+    Modifiers ^KW_UNION Identifier OutType? RuleBody
+}
+
+class OutType {
+    "->" Namepath
+}
+// =================================================================================================
+class MacroStatement {
+    KW_MACRO
+}
+// =================================================================================================
+atomic class EOS {
+    ";"
+}
+
+union ImportStatement {
+    | "import" (path:String) ("as" Identifier)?   #FromPath
+    | "import" (path:String) _ImportSelected      #FromPathItems
+}
+
+class _ImportSelected {
+    '{' @join(items:ImportItem, ',')? '}'
+}
+
+class ImportItem {
+    symbol:Identifier ("as" alias:Identifier)?
+}
+// =================================================================================================
+#rewrite
+climb Expr {
+    | Atom                                             #Atom
+    | '(' '|'? x:Self ')'                              #Group
+    | '!' x:Self                                       #Negative
+    | '^' x:Self                                       #Remark
+    | x:Self '{' s:Integer? ',' e:Integer? '}'         #Range
+    | x:Self '+'                                       #Repeat1
+    | x:Self '*'                                       #Repeats
+    | x:Self '?'                                       #Optional
+    | x:Self y:Self                                    #Concat
+    | x:Self '~' y:Self                                #ConcatSoft
+    | x:Self xm:BranchMark? '|' y:Self ym:BranchMark?  #Choice
+}
+// =================================================================================================
+class BranchMark {
+    '#' Identifier RightAssociate?
+}
+class RightAssociate {
+    '>'
+}
+// `_` inline a item even if it not mark as automatic inline
+union Atom {
+    | Identifier
+    | String
+    | Integer
+    | Decimal
+    | Regex
+    | MacroCall
+}
+// =================================================================================================
+class String {
+    | '"' '"'
+    | "'" "'"
+}
+// =================================================================================================
+class Regex {
+    '/' '/'
+}
+
+class MacroCall {
+    '@' Identifier _MacroCallArgument?
+}
+class _MacroCallArgument {
+    '(' ')'
+}
+
+// =================================================================================================
+atomic class Integer {
+    0 | [1-9][_0-9]
+}
+atomic class Decimal {
+    Integer '.' Integer
+}
+// =================================================================================================
+class Modifiers {
+    (!(KW_CLASS | KW_UNION | KW_MACRO | KW_CLIMB) Identifier)*
+}
+class Namepath {
+    Identifier (("::" | ".") Identifier)*
+}
+#string
+atomic class Identifier {
+    ("_" | XID_START) XID_CONTINUE*
+}
+#string
+class Boolean {
+    "true" | "false"
+}
+class AnyThing {
+    "any"
+}
+// =================================================================================================
+atomic token keywords {
+    KW_GRAMMAR: "grammar"
+    KW_IMPORT: "import" | "using"
+    KW_CLASS: "class" | "struct" | "rule"
+    KW_UNION: "union" | "enum"
+    KW_CLIMB: "climb"
+    KW_MACRO: "define" | "def" | "function" | "fun" | "fn" | "macro"
+}
+// =================================================================================================
+#ignored
+class WhiteSpace {
+    UNICODE_WHITESPACE
+}
+
+#ignored
+atomic class CommentLine {
+    (!"///" "//") (!\n ANY)*
+}
+atomic class CommentDocument {
+    "///" (!\n ANY)*
+}
+
+#parser(crate::utils::comment_block)
+ignore class CommentBlock {
+
+}
+

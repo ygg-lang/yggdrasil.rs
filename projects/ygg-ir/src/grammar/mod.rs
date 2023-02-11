@@ -6,6 +6,7 @@ use crate::{
 };
 use diagnostic_quick::{QError, QResult, Validation};
 use indexmap::IndexMap;
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::{
     collections::{BTreeMap, HashSet},
@@ -20,7 +21,8 @@ mod fuse_charset;
 mod fuse_rule;
 mod inlining;
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", Serialize, Deserialize)]
 pub struct GrammarInfo {
     /// File path of the grammar
     pub url: Option<Url>,
@@ -53,5 +55,9 @@ impl Default for GrammarInfo {
 impl GrammarInfo {
     pub fn ignored_rules(&self) -> Vec<GrammarRule> {
         todo!()
+    }
+    pub fn insert(&mut self, rule: GrammarRule) -> Option<GrammarRule> {
+        let key = rule.name.name.clone();
+        self.rules.insert(key, rule)
     }
 }

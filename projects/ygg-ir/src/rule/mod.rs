@@ -6,19 +6,18 @@ use crate::{
     grammar::GrammarInfo,
     nodes::{ExpressionKind, ExpressionNode, Operator},
 };
-use indexmap::set::IndexSet;
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::{
     collections::{BTreeMap, BTreeSet},
     fmt::{Debug, Display, Formatter},
-    hash::{Hash, Hasher},
     ops::{BitAnd, BitOr, Range},
 };
 
 pub mod derive;
 pub mod parameter;
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct FunctionRule {}
 
 /// Temporary value, will be removed after parsing
@@ -28,14 +27,22 @@ pub struct GrammarRuleContext {
     pub atomic: bool,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum GrammarRuleKind {
     Class,
     Union,
     Climb,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", Serialize, Deserialize)]
+pub struct IdentifierNode {
+    pub name: String,
+    pub span: Range<usize>,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", Serialize, Deserialize)]
 pub struct GrammarRule {
     /// Automatically inline when this rule is called
     ///
@@ -45,7 +52,7 @@ pub struct GrammarRule {
     ///
     /// }
     /// ```
-    pub name: String,
+    pub name: IdentifierNode,
     /// Kind of this rule
     pub kind: GrammarRuleKind,
     /// Automatically inline when this rule is called
@@ -130,9 +137,9 @@ pub struct GrammarRule {
 impl GrammarInfo {}
 
 impl GrammarRule {
-    pub fn new(name: &str, range: &Range<usize>, kind: GrammarRuleKind) -> Self {
+    pub fn new(name: IdentifierNode, range: &Range<usize>, kind: GrammarRuleKind) -> Self {
         Self {
-            name: name.to_string(),
+            name,
             r#type: String::new(),
             document: String::new(),
             public: false,
