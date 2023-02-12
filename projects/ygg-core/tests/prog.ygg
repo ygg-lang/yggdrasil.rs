@@ -1,95 +1,10 @@
-class entry Program {
-    statements:Statement
-}
-
-union Statement {
-    | ^DefineStatement EOS?
-    | ^EmptyStatement
-}
-
-class EmptyStatement {
-    EOS
-}
-
-class MacroCalls {
-    _MacroCall+
-}
-class _MacroCall {
-    | '#' macros:Macro
-    | '#' '[' macros:Macro ']'
-}
-
-class Macro {
-    Identifier Arguments?
-}
-
-class Arguments {
-    '(' ArgumentValue ')'
-}
-
-union ArgumentValue {
-    | Boolean
-}
-
-class DefineStatement {
-    MacroCalls Define Modifiers symbol:Identifier Arguments? Typing? '{' body:Choice '}'
-}
-
-class Define -> string {
-    "def" | "class" | "union" | "structure" | "struct" | "enumerate" | "enum"
-}
-
-class Typing {
-    '->' Identifier
-}
-
-class Choice {
-    '|'? stream:ExprStream
-}
-
-union ExprStream {
-    | Prefix
-    | Infix
-    | Suffix
-    | CharsetNode
-    | StringLiteral
-    | Identifier
-    | Group
-}
-
-def Prefix -> string {
-    '^' | '!'
-}
-
-def Infix -> string {
-    '|' | ':' | '~'
-}
-
-def Suffix -> string {
-    '+' | '*' | '?'
-}
-
-def Group {
-    '(' Choice ')'
-}
-
-class Modifiers {
-    _Modifier+
-}
-
-class _Modifier {
-    Identifier !('{'|'('|':'|'->'|';')
-}
 
 
-class Boolean -> string {
-    "true" | "false"
-}
 
-class Identifier {
-    (XID_START | '_') XID_CONTINUE*
-}
 
-class EOS -> string {
-    ';'
+
+
+
+entry class Json {
+
 }

@@ -1,4 +1,6 @@
-use yggdrasil_core::parse_grammar;
+use std::{fs::File, io::Write};
+use yggdrasil_core::codegen::RustCodegen;
+use yggdrasil_parser::YggdrasilParser;
 
 #[test]
 fn ready() {
@@ -7,8 +9,11 @@ fn ready() {
 
 #[test]
 fn test_bootstrap() {
-    let out = parse_grammar(include_str!("../src/bootstrap.ygg")).unwrap();
-    println!("{:#?}", out)
+    let input = include_str!("prog.ygg");
+    let info = YggdrasilParser::parse(input).expect("fail");
+    let out = info.generate(RustCodegen::default());
+    let mut output = File::create("tests/json/mod.rs").unwrap();
+    output.write_all(out.unwrap().as_bytes()).unwrap();
 }
 
 // #[test]

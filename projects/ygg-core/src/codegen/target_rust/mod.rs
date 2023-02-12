@@ -1,3 +1,4 @@
+use askama::Template;
 use fs::read_to_string;
 use std::{
     fmt::{Arguments, Write},
@@ -6,7 +7,6 @@ use std::{
     io::Write as _,
     path::Path,
 };
-
 use yggdrasil_ir::{grammar::GrammarInfo, traits::CodeGenerator, QError, QResult, Validation};
 
 mod build_class;
@@ -51,11 +51,23 @@ impl RustCodegen {
     }
 }
 
+#[derive(Template)]
+#[template(path = "rust/main.djv", escape = "none")]
+pub struct RustWrite<'i> {
+    grammar: &'i GrammarInfo,
+}
+
 impl CodeGenerator for RustCodegen {
     type Output = String;
 
     fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
-        todo!()
+        Validation::Success { value: RustWrite { grammar: info }.render().unwrap(), diagnostics: vec![] }
+    }
+}
+
+impl<'i> RustWrite<'i> {
+    pub fn rule_names(&self) -> Vec<String> {
+        self.grammar.rules.keys().cloned().collect()
     }
 }
 

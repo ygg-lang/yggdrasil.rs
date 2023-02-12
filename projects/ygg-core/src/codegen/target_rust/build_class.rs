@@ -1,5 +1,4 @@
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
 use std::{fmt::Debug, ops::Range};
 use yggdrasil_ir::{
     grammar::GrammarInfo,
@@ -23,14 +22,6 @@ pub struct ClassObject {
     name: String,
     derives: RuleDerive,
     file: FieldMap,
-}
-
-impl ToTokens for ClassObject {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
-        let name = &self.name;
-        let derives = &self.derives;
-        let file = &self.file;
-    }
 }
 
 #[test]
@@ -120,14 +111,6 @@ impl WriteRust for GrammarRule {
 
 impl WriteRust for RuleDerive {
     fn write_rust(&self, w: &mut RustCodegen, _: &GrammarInfo) -> std::fmt::Result {
-        for (key, value) in self.derives.iter() {
-            if key.is_empty() {
-                writeln!(w, "#[derive({})]", value.iter().join(", "))?
-            }
-            else {
-                writeln!(w, "#[cfg_attr(feature = \"{}\", derive({}))]", key, value.iter().join(", "))?
-            }
-        }
-        Ok(())
+        write!(w, "{}", self)
     }
 }

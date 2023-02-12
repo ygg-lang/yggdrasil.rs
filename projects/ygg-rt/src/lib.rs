@@ -8,8 +8,8 @@
 // modified, or distributed except according to those terms.
 #![no_std]
 #![doc(
-html_logo_url = "https://raw.githubusercontent.com/pest-parser/pest/master/pest-logo.svg",
-html_favicon_url = "https://raw.githubusercontent.com/pest-parser/pest/master/pest-logo.svg"
+    html_logo_url = "https://raw.githubusercontent.com/pest-parser/pest/master/pest-logo.svg",
+    html_favicon_url = "https://raw.githubusercontent.com/pest-parser/pest/master/pest-logo.svg"
 )]
 #![warn(missing_docs, unused_qualifications)]
 //! # pest. The Elegant Parser
@@ -352,8 +352,8 @@ mod parser_state;
 mod position;
 pub mod pratt_parser;
 #[deprecated(
-since = "2.4.0",
-note = "Use `pest::pratt_parser` instead (it is an equivalent which also supports unary prefix/suffix operators).
+    since = "2.4.0",
+    note = "Use `pest::pratt_parser` instead (it is an equivalent which also supports unary prefix/suffix operators).
 While prec_climber is going to be kept in 2.x minor and patch releases, it may be removed in a future major release."
 )]
 pub mod prec_climber;
@@ -373,11 +373,7 @@ pub mod unicode;
 /// aliases are implemented, this may be replaced by one.
 pub trait YggdrasilRule: Copy + Debug + Eq + Hash + Ord {
     /// xxx
-    fn all_rules() -> &'static [Self] {
-        &[]
-    }
+    fn all_rules() -> &'static [Self];
     /// xxx
-    fn is_ignore(&self) -> bool {
-        false
-    }
+    fn is_ignore(&self) -> bool;
 }

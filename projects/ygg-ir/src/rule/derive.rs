@@ -26,7 +26,7 @@ use super::*;
 /// ```
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct RuleDerive {
-    pub derives: BTreeMap<String, BTreeSet<String>>,
+    derives: BTreeMap<String, BTreeSet<String>>,
 }
 
 impl Default for RuleDerive {
@@ -37,13 +37,13 @@ impl Default for RuleDerive {
 
 impl Display for RuleDerive {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        for (feature, derives) in self.reverse_table() {
+        for (feature, derives) in &self.derives {
             let derives = derives.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", ");
             if feature.is_empty() {
                 writeln!(f, "#[derive({derives})]")?
             }
             else {
-                writeln!(f, r#"#[cfg_attr(feature = "{}", derive({derives}))]"#, feature)?
+                writeln!(f, "#[cfg_attr(feature = \"{}\", derive({derives}))]", feature)?
             }
         }
         Ok(())
@@ -63,20 +63,17 @@ impl RuleDerive {
         derive.insert_derive("serde::Deserialize", "serde");
         derive
     }
-    /// Create the reverse condition table
-    pub fn reverse_table(&self) -> BTreeMap<String, BTreeSet<String>> {
-        let mut derives = BTreeMap::new();
-        for (derive, feature) in &self.derives {
-            derives.entry(feature.clone()).or_insert_with(BTreeSet::new).insert(derive.clone());
-        }
-        todo!()
-    }
     /// Insert new derive to the set
     pub fn insert_derive(&mut self, derive: &str, feature: &str) {
-        self.derives.insert(derive.to_string(), todo!());
-    }
-    /// Remove derive from the set
-    pub fn remove_derive(&mut self, derive: &str) {
-        self.derives.remove(derive);
+        match self.derives.get_mut(feature) {
+            Some(s) => {
+                s.insert(derive.to_string());
+            }
+            None => {
+                let mut set = BTreeSet::default();
+                set.insert(derive.to_string());
+                self.derives.insert(feature.to_string(), set);
+            }
+        }
     }
 }
