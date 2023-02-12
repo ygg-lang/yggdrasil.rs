@@ -1,10 +1,11 @@
-
-
-
-
-
-
-
 entry class Json {
+
+}
+
+class String {
+
+}
+
+class Number {
 
 }

@@ -17,7 +17,9 @@ use alloc::{
 };
 use core::{cmp, fmt, mem};
 
-use crate::{position::Position, span::TextSpan, YggdrasilRule};
+use crate::{iterators::TokenTree, position::Position, span::TextSpan, YggdrasilRule};
+
+pub type OutputResult<'i, R> = Result<TokenTree<'i, R>, YggdrasilError<R>>;
 
 /// Parse-related error type.
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]

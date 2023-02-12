@@ -344,7 +344,7 @@ pub use crate::{
 };
 use core::{fmt::Debug, hash::Hash};
 
-pub mod error;
+pub mod errors;
 pub mod iterators;
 mod macros;
 mod parser;
@@ -360,7 +360,7 @@ pub mod prec_climber;
 mod span;
 mod stack;
 mod token;
-
+pub use crate::errors::OutputResult;
 #[doc(hidden)]
 pub mod unicode;
 

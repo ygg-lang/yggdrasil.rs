@@ -1,76 +1,48 @@
-use std::collections::HashMap;
-use yggdrasil_rt::{
-    consumes_to,
-    error::YggdrasilError,
-    iterators::{Pair, TokenTree},
-    parses_to, state, State, TextSpan, YggdrasilParser, YggdrasilRule,
-};
+#![allow(dead_code, non_camel_case_types)]
 
-type Input<'i> = Box<State<'i, JsonRule>>;
-type Output<'i> = Result<Box<State<'i, JsonRule>>, Box<State<'i, JsonRule>>>;
+use yggdrasil_rt::{errors::YggdrasilError, iterators::TokenTree, *};
+
+type Input<'i> = Box<State<'i, TestLanguageRule>>;
+type Output<'i> = Result<Box<State<'i, TestLanguageRule>>, Box<State<'i, TestLanguageRule>>>;
 
 #[derive(Default)]
-pub struct JsonParser {}
+pub struct TestLanguageParser {}
 
-#[allow(dead_code, non_camel_case_types)]
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub enum JsonRule {
-
-    json,
-    object,
-    pair,
-    array,
-    value,
-    string,
-    escape,
-    unicode,
-    hex,
-    number,
-    int,
-    exp,
-    bool,
-    null,
+pub enum TestLanguageRule {
+    Json,
+    String,
+    Number,
 }
 
-impl YggdrasilRule for JsonRule {
+impl YggdrasilRule for TestLanguageRule {
     fn all_rules() -> &'static [Self] {
-        &[Self::json]
+        &[Self::Json, Self::String, Self::Number]
     }
 
     fn is_ignore(&self) -> bool {
-        matches!(self, Self::json | Self::object)
+        matches!(self, Self::Json | Self::String)
     }
 }
 
-impl YggdrasilParser for JsonParser {
-    type Rule = JsonRule;
+impl YggdrasilParser for TestLanguageParser {
+    type Rule = TestLanguageRule;
     #[allow(clippy::almost_complete_range)]
-    fn parse(rule: JsonRule, input: &str) -> Result<TokenTree<JsonRule>, YggdrasilError<JsonRule>> {
+    fn parse(rule: TestLanguageRule, input: &str) -> OutputResult<TestLanguageRule> {
         state(input, |state| match rule {
-            JsonRule::json => json(state),
-            JsonRule::object => object(state),
-            JsonRule::pair => pair(state),
-            JsonRule::array => array(state),
-            JsonRule::value => value(state),
-            JsonRule::string => string(state),
-            JsonRule::escape => escape(state),
-            JsonRule::unicode => unicode(state),
-            JsonRule::hex => hex(state),
-            JsonRule::number => number(state),
-            JsonRule::int => int(state),
-            JsonRule::exp => exp(state),
-            JsonRule::bool => bool(state),
-            JsonRule::null => null(state),
+            TestLanguageRule::Json => parse_Json(state),
+            TestLanguageRule::String => parse_String(state),
+            TestLanguageRule::Number => parse_Number(state),
         })
     }
 }
 
-fn json(state: Input) -> Output {
+fn parse_Json(state: Input) -> Output {
     value(state)
 }
 
 fn object(state: Input) -> Output {
-    state.rule(JsonRule::object, |s| {
+    state.rule(TestLanguageRule::object, |s| {
         s.sequence(|s| {
             s.match_string("{")
                 .and_then(ignore)
@@ -86,13 +58,13 @@ fn object(state: Input) -> Output {
 }
 
 fn pair(state: Input) -> Output {
-    state.rule(JsonRule::pair, |s| {
+    state.rule(TestLanguageRule::pair, |s| {
         s.sequence(|s| string(s).and_then(ignore).and_then(|s| s.match_string(":")).and_then(ignore).and_then(value))
     })
 }
 
 fn array(state: Input) -> Output {
-    state.rule(JsonRule::array, |s| {
+    state.rule(TestLanguageRule::array, |s| {
         s.sequence(|s| {
             s.match_string("[")
                 .and_then(ignore)
@@ -108,11 +80,12 @@ fn array(state: Input) -> Output {
 }
 
 fn value(state: Input) -> Output {
-    state.rule(JsonRule::value, |s| string(s).or_else(number).or_else(object).or_else(array).or_else(bool).or_else(null))
+    state
+        .rule(TestLanguageRule::value, |s| string(s).or_else(number).or_else(object).or_else(array).or_else(bool).or_else(null))
 }
 
 fn string(state: Input) -> Output {
-    state.rule(JsonRule::string, |s| {
+    state.rule(TestLanguageRule::string, |s| {
         s.match_string("\"")
             .and_then(|s| {
                 s.repeat(|s| {
@@ -153,7 +126,7 @@ fn hex(state: Input) -> Output {
 }
 
 fn number(state: Input) -> Output {
-    state.rule(JsonRule::number, |s| {
+    state.rule(TestLanguageRule::number, |s| {
         s.sequence(|s| {
             s.optional(|s| s.match_string("-")).and_then(int).and_then(|s| {
                 s.optional(|s| {
@@ -186,11 +159,11 @@ fn exp(state: Input) -> Output {
 }
 
 fn bool(state: Input) -> Output {
-    state.rule(JsonRule::bool, |s| s.match_string("true").or_else(|s| s.match_string("false")))
+    state.rule(TestLanguageRule::bool, |s| s.match_string("true").or_else(|s| s.match_string("false")))
 }
 
 fn null(state: Input) -> Output {
-    state.rule(JsonRule::null, |s| s.match_string("null"))
+    state.rule(TestLanguageRule::null, |s| s.match_string("null"))
 }
 
 fn ignore(state: Input) -> Output {

@@ -296,7 +296,7 @@ macro_rules! fails_with {
             let error = $parser::parse($rules::$rule, $string).unwrap_err();
 
             match error.variant {
-                $crate::error::ErrorKind::ParsingError { positives, negatives } => {
+                $crate::errors::ErrorKind::ParsingError { positives, negatives } => {
                     assert_eq!(positives, $positives, "positives");
                     assert_eq!(negatives, $negatives, "negatives");
                 }
@@ -304,7 +304,7 @@ macro_rules! fails_with {
             };
 
             match error.location {
-                $crate::error::InputLocation::Pos(pos) => assert_eq!(pos, $pos, "pos"),
+                $crate::errors::InputLocation::Pos(pos) => assert_eq!(pos, $pos, "pos"),
                 _ => unreachable!(),
             }
         }
@@ -313,7 +313,7 @@ macro_rules! fails_with {
 
 #[cfg(test)]
 pub mod tests {
-    use super::super::{error::YggdrasilError, iterators::TokenTree, state, YggdrasilParser};
+    use super::super::{errors::YggdrasilError, iterators::TokenTree, state, YggdrasilParser};
     use crate::YggdrasilRule;
     use alloc::{format, vec, vec::Vec};
 

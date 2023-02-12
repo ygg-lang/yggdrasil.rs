@@ -55,18 +55,29 @@ impl RustCodegen {
 #[template(path = "rust/main.djv", escape = "none")]
 pub struct RustWrite<'i> {
     grammar: &'i GrammarInfo,
+    rule_name: String,
+    parser_name: String,
 }
 
 impl CodeGenerator for RustCodegen {
     type Output = String;
 
     fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
-        Validation::Success { value: RustWrite { grammar: info }.render().unwrap(), diagnostics: vec![] }
+        let inner = RustWrite {
+            grammar: info,
+            rule_name: "TestLanguageRule".to_string(),
+            parser_name: "TestLanguageParser".to_string(),
+        };
+        Validation::Success { value: inner.render().unwrap(), diagnostics: vec![] }
     }
 }
 
 impl<'i> RustWrite<'i> {
+    pub fn language_name(&self) -> &str {
+        "TestLanguage"
+    }
     pub fn rule_names(&self) -> Vec<String> {
+        println!("{:#?}", self.grammar.rules);
         self.grammar.rules.keys().cloned().collect()
     }
 }

@@ -11,7 +11,7 @@ use alloc::{boxed::Box, rc::Rc, vec, vec::Vec};
 use core::ops::Range;
 
 use crate::{
-    error::{ErrorKind, YggdrasilError},
+    errors::{ErrorKind, YggdrasilError},
     iterators::{pairs, TokenQueue},
     position::{self, Position},
     span::TextSpan,

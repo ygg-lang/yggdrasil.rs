@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use yggdrasil_rt::{
     consumes_to,
-    error::YggdrasilError,
+    errors::YggdrasilError,
     iterators::{Pair, TokenTree},
     parses_to, state, State, TextSpan, YggdrasilParser, YggdrasilRule,
 };

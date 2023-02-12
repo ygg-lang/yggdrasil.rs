@@ -25,7 +25,7 @@ impl<'i> Extractor<Class_blockContextAll<'i>> for ExpressionNode {
     fn take_one(node: &Class_blockContextAll<'i>) -> Option<Self> {
         let terms = ExpressionNode::take_many(&node.class_expression_all());
         println!("{:?}", terms);
-        None
+        Some(ExpressionNode::empty())
     }
 }
 

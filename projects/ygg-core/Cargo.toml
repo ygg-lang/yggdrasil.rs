@@ -19,18 +19,17 @@ convert_case = "0.6.0"
 askama = "0.12.1"
 itertools = "0.11.0"
 
-#[dependencies.yggdrasil-rt]
-##version = "0.1"
-#path = "../ygg-rt"
-#features = ["lsp"]
-#
 [dependencies.yggdrasil-ir]
 version = "0.1"
 path = "../ygg-ir"
-#
+
 [dependencies.yggdrasil-parser]
 #version = "0.1.2"
 path = "../ygg-parser"
+
+[dev-dependencies.yggdrasil-rt]
+#version = "0.1"
+path = "../ygg-rt"
 
 [dev-dependencies]
 serde_yaml = "0.9.25"
