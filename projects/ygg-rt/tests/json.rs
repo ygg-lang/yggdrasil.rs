@@ -3,7 +3,7 @@ use yggdrasil_rt::{
     consumes_to,
     errors::YggdrasilError,
     iterators::{Pair, TokenTree},
-    parses_to, state, State, TextSpan, YggdrasilParser, YggdrasilRule,
+    parses_to, state, OutputResult, State, TextSpan, YggdrasilParser, YggdrasilRule,
 };
 
 type Input<'i> = Box<State<'i, JsonRule>>;
@@ -44,7 +44,7 @@ impl YggdrasilRule for JsonRule {
 impl YggdrasilParser for JsonParser {
     type Rule = JsonRule;
     #[allow(clippy::almost_complete_range)]
-    fn parse(rule: JsonRule, input: &str) -> Result<TokenTree<JsonRule>, YggdrasilError<JsonRule>> {
+    fn parse(rule: JsonRule, input: &str) -> OutputResult<JsonRule> {
         state(input, |state| match rule {
             JsonRule::json => json(state),
             JsonRule::object => object(state),

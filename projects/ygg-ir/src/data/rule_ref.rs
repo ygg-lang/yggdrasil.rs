@@ -1,5 +1,4 @@
 use super::*;
-use crate::{nodes::Operator, rule::YggdrasilIdentifier};
 
 //
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]

@@ -14,7 +14,7 @@ fn test_bootstrap() {
     let input = include_str!("prog.ygg");
     let info = YggdrasilParser::parse(input).expect("fail");
     let out = info.generate(RustCodegen::default());
-    let mut output = File::create("tests/json/mod.rs").unwrap();
+    let mut output = File::create("../ygg-rt/tests/json2.rs").unwrap();
     output.write_all(out.unwrap().as_bytes()).unwrap();
 }
 

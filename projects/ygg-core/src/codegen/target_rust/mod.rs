@@ -1,18 +1,22 @@
 use askama::Template;
 use fs::read_to_string;
+use itertools::Itertools;
 use std::{
+    collections::btree_map::Values,
     fmt::{Arguments, Write},
     fs,
     fs::File,
     io::Write as _,
     path::Path,
 };
-use yggdrasil_ir::{grammar::GrammarInfo, traits::CodeGenerator, QError, QResult, Validation};
+use yggdrasil_ir::{grammar::GrammarInfo, rule::GrammarRule, traits::CodeGenerator, QError, QResult, Validation};
 
-mod build_class;
 mod build_data;
 mod build_ignored;
-mod build_symbol;
+mod grammar_ext;
+mod rule_ext;
+
+use self::{grammar_ext::GrammarExt, rule_ext::RuleExt};
 
 pub struct RustCodegen {
     buffer: String,
@@ -52,7 +56,7 @@ impl RustCodegen {
 }
 
 #[derive(Template)]
-#[template(path = "rust/main.djv", escape = "none")]
+#[template(path = "rust/main.jinja", escape = "none")]
 pub struct RustWrite<'i> {
     grammar: &'i GrammarInfo,
     rule_name: String,
@@ -76,9 +80,11 @@ impl<'i> RustWrite<'i> {
     pub fn language_name(&self) -> &str {
         "TestLanguage"
     }
-    pub fn rule_names(&self) -> Vec<String> {
-        println!("{:#?}", self.grammar.rules);
-        self.grammar.rules.keys().cloned().collect()
+    pub fn rules(&self) -> Vec<GrammarRule> {
+        self.grammar.rules.values().cloned().collect_vec()
+    }
+    pub fn ignore_rules(&self) -> String {
+        "Self::Object".to_string()
     }
 }
 

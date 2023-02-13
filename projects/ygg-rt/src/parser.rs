@@ -14,5 +14,5 @@ pub trait YggdrasilParser {
     /// xxx
     type Rule: YggdrasilRule;
     /// Parses a `&str` starting from `rule`.
-    fn parse(rule: Self::Rule, input: &str) -> Result<TokenTree<Self::Rule>, YggdrasilError<Self::Rule>>;
+    fn parse(input: &str, rule: Self::Rule) -> Result<TokenTree<Self::Rule>, YggdrasilError<Self::Rule>>;
 }

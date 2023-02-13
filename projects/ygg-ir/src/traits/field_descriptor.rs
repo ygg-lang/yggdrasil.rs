@@ -30,6 +30,9 @@ impl FieldDescriptor for ExpressionKind {
             ExpressionKind::Data(e) => e.get_field_names(buffer),
             ExpressionKind::Rule(e) => e.get_field_names(buffer),
             ExpressionKind::Function(e) => e.get_field_names(buffer),
+            ExpressionKind::Regex(_) => {
+                todo!()
+            }
         }
     }
 
@@ -41,6 +44,9 @@ impl FieldDescriptor for ExpressionKind {
             ExpressionKind::Data(e) => e.get_field_count(buffer),
             ExpressionKind::Rule(e) => e.get_field_count(buffer),
             ExpressionKind::Function(e) => e.get_field_count(buffer),
+            ExpressionKind::Regex(_) => {
+                todo!()
+            }
         }
     }
 }

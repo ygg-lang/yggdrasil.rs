@@ -1,6 +1,9 @@
 use super::*;
 use std::ops::Add;
-use yggdrasil_ir::{data::RuleReference, nodes::Operator};
+use yggdrasil_ir::{
+    data::{RegularExpression, RuleReference},
+    nodes::Operator,
+};
 
 impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
     fn take_one(node: &Define_classContext<'i>) -> Option<Self> {
@@ -24,8 +27,17 @@ impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
 impl<'i> Extractor<Class_blockContextAll<'i>> for ExpressionNode {
     fn take_one(node: &Class_blockContextAll<'i>) -> Option<Self> {
         let terms = ExpressionNode::take_many(&node.class_expression_all());
-        println!("{:?}", terms);
-        Some(ExpressionNode::empty())
+        let expr = match terms.as_slice() {
+            [head, rest @ ..] => {
+                let mut out = head.clone();
+                for item in rest {
+                    out &= item.clone();
+                }
+                out
+            }
+            _ => ExpressionNode::empty(),
+        };
+        Some(expr)
     }
 }
 
@@ -52,12 +64,12 @@ impl<'i> Extractor<Class_expressionContextAll<'i>> for ExpressionNode {
             Class_expressionContextAll::CSoftContext(v) => {
                 let lhs = ExpressionNode::take(v.lhs.clone())?;
                 let rhs = ExpressionNode::take(v.rhs.clone())?;
-                Some(lhs + rhs)
+                Some(lhs & rhs)
             }
             Class_expressionContextAll::CHardContext(v) => {
                 let lhs = ExpressionNode::take(v.lhs.clone())?;
                 let rhs = ExpressionNode::take(v.rhs.clone())?;
-                Some(lhs & rhs)
+                Some(lhs + rhs)
             }
             Class_expressionContextAll::CPatternContext(_) => {
                 todo!()
@@ -90,7 +102,7 @@ impl<'i> Extractor<AtomicContextAll<'i>> for ExpressionNode {
     fn take_one(node: &AtomicContextAll<'i>) -> Option<Self> {
         match node {
             AtomicContextAll::AIntContext(_) => todo!(),
-            AtomicContextAll::AReContext(_) => todo!(),
+            AtomicContextAll::AReContext(r) => Some(RegularExpression::take(r.regex())?.into()),
             AtomicContextAll::ACharContext(_) => todo!(),
             AtomicContextAll::ATupleContext(_) => todo!(),
             AtomicContextAll::ASpecialContext(_) => todo!(),
@@ -100,7 +112,11 @@ impl<'i> Extractor<AtomicContextAll<'i>> for ExpressionNode {
         }
     }
 }
-
+impl<'i> Extractor<RegexContextAll<'i>> for RegularExpression {
+    fn take_one(node: &RegexContextAll<'i>) -> Option<Self> {
+        None
+    }
+}
 // impl<'i> Extractor<NamepathContextAll<'i>> for RuleReference {
 //     fn take_one(node: &NamepathContextAll<'i>) -> Option<Self> {
 //         // node.identifier_all()

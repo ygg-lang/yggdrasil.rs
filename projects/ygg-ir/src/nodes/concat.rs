@@ -1,8 +1,18 @@
 use super::*;
+use std::ops::{AddAssign, BitAndAssign};
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct ConcatExpression {
     sequence: Vec<ExpressionNode>,
+}
+
+impl<T> FromIterator<T> for ConcatExpression
+where
+    T: Into<ExpressionNode>,
+{
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        Self { sequence: iter.into_iter().map(|v| v.into()).collect() }
+    }
 }
 
 impl<'i> IntoIterator for &'i ConcatExpression {
@@ -37,7 +47,7 @@ impl ConcatExpression {
     where
         S: Into<String>,
     {
-        ExpressionNode { tag: tag.into(), kind: ExpressionKind::Concat(Box::new(self)) }
+        ExpressionNode { tag: tag.into(), kind: ExpressionKind::Concat(self) }
     }
 }
 
@@ -50,12 +60,35 @@ impl Add<Self> for ExpressionNode {
     }
 }
 
+/// a ~ b ~ c
+impl AddAssign for ExpressionNode {
+    /// - atomic:  a b = a b
+    /// - combine: a b = a ignore b
+    fn add_assign(&mut self, rhs: Self) {}
+}
+
 impl BitAnd<Self> for ExpressionNode {
     type Output = Self;
-    /// atomic concat
-    #[inline(never)]
-    fn bitand(self, other: Self) -> Self::Output {
-        join(self, other, false)
+    fn bitand(mut self, other: Self) -> Self::Output {
+        self += other;
+        self
+    }
+}
+
+impl BitAndAssign for ExpressionNode {
+    /// p:a q:(b c) | d e
+    fn bitand_assign(&mut self, rhs: Self) {
+        match &mut self.kind {
+            ExpressionKind::Concat(this) if self.tag.is_empty() && rhs.tag.is_empty() => {
+                match rhs.kind {
+                    ExpressionKind::Concat(that) => this.sequence.extend(that.sequence),
+                    _ => this.sequence.push(rhs),
+                }
+                return;
+            }
+            _ => {}
+        }
+        *self = ConcatExpression { sequence: vec![self.clone(), rhs] }.into()
     }
 }
 

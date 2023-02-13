@@ -1,10 +1,10 @@
 pub use self::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression};
 use crate::{
-    data::{DataKind, RuleReference},
+    data::{DataKind, RegularExpression, RuleReference},
     rule::{GrammarRule, GrammarRuleKind},
     FunctionExpression,
 };
-use convert_case::{Case, Casing};
+use convert_case::Casing;
 use diagnostic_quick::{QError, QResult};
 use indexmap::{IndexMap, IndexSet};
 #[cfg(feature = "serde")]
@@ -32,15 +32,27 @@ pub struct ExpressionNode {
 pub enum ExpressionKind {
     Function(Box<FunctionExpression>),
     Choice(Box<ChoiceExpression>),
-    Concat(Box<ConcatExpression>),
+    Concat(ConcatExpression),
     Unary(Box<UnaryExpression>),
     Rule(Box<RuleReference>),
+    Regex(RegularExpression),
     Data(Box<DataKind>),
+}
+impl From<ConcatExpression> for ExpressionNode {
+    fn from(value: ConcatExpression) -> Self {
+        Self { kind: ExpressionKind::Concat(value), tag: "".to_string() }
+    }
 }
 
 impl From<RuleReference> for ExpressionNode {
     fn from(value: RuleReference) -> Self {
         Self { kind: ExpressionKind::Rule(Box::new(value)), tag: "".to_string() }
+    }
+}
+
+impl From<RegularExpression> for ExpressionNode {
+    fn from(value: RegularExpression) -> Self {
+        Self { kind: ExpressionKind::Regex(value), tag: "".to_string() }
     }
 }
 

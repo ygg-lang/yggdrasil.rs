@@ -1,4 +1,5 @@
 use crate::nodes::ExpressionNode;
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]

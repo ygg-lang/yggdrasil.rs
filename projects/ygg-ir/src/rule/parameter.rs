@@ -121,6 +121,7 @@ impl ExpressionNode {
                 todo!()
             }
             ExpressionKind::Data(_) => {}
+            ExpressionKind::Regex(_) => {}
         }
         return out;
     }

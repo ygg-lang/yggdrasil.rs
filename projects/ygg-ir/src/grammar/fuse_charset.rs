@@ -22,6 +22,7 @@ impl FuseCharset {
                 ExpressionKind::Rule(_) => {}
                 ExpressionKind::Data(_) => todo!(),
                 ExpressionKind::Function(_) => {}
+                ExpressionKind::Regex(_) => {}
             }
         }
         Validation::Success { value: ChoiceExpression { branches: Default::default() }, diagnostics: errors }

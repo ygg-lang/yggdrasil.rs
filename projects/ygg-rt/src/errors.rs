@@ -19,6 +19,7 @@ use core::{cmp, fmt, mem};
 
 use crate::{iterators::TokenTree, position::Position, span::TextSpan, YggdrasilRule};
 
+/// Output result alias
 pub type OutputResult<'i, R> = Result<TokenTree<'i, R>, YggdrasilError<R>>;
 
 /// Parse-related error type.

@@ -1,48 +1,68 @@
-#![allow(dead_code, non_camel_case_types)]
+#![allow(dead_code, unused_imports, non_camel_case_types)]
 
-use yggdrasil_rt::{errors::YggdrasilError, iterators::TokenTree, *};
+use yggdrasil_rt::*;
 
-type Input<'i> = Box<State<'i, TestLanguageRule>>;
-type Output<'i> = Result<Box<State<'i, TestLanguageRule>>, Box<State<'i, TestLanguageRule>>>;
+type Input<'i> = Box<State<'i, {{ self.rule_name }}>>;
+type Output<'i> = Result<Box<State<'i, {{ self.language_name() }}Rule>>, Box<State<'i, {{ self.rule_name }}>>>;
 
 #[derive(Default)]
-pub struct TestLanguageParser {}
+pub struct {{ self.language_name() }} {}
 
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub enum TestLanguageRule {
-    Json,
-    String,
-    Number,
+pub enum {{ self.rule_name }} {
+{%- for rule in self.rules() %}
+    {{ rule.safe_rule_name() }},
+{%- endfor %}
 }
 
-impl YggdrasilRule for TestLanguageRule {
+impl YggdrasilRule for {{ self.rule_name }} {
     fn all_rules() -> &'static [Self] {
-        &[Self::Json, Self::String, Self::Number]
+        &[
+{%- for rule in self.rules() %}
+            Self::{{ rule.safe_rule_name() }},
+{%- endfor %}
+        ]
     }
 
     fn is_ignore(&self) -> bool {
-        matches!(self, Self::Json | Self::String)
+        matches!(self, {{ self.ignore_rules() }})
     }
 }
 
-impl YggdrasilParser for TestLanguageParser {
-    type Rule = TestLanguageRule;
+impl YggdrasilParser for {{ self.language_name() }} {
+    type Rule = {{ self.rule_name }};
     #[allow(clippy::almost_complete_range)]
-    fn parse(rule: TestLanguageRule, input: &str) -> OutputResult<TestLanguageRule> {
+    fn parse(rule: {{ self.rule_name }}, input: &str) -> OutputResult<{{ self.rule_name }}> {
         state(input, |state| match rule {
-            TestLanguageRule::Json => parse_Json(state),
-            TestLanguageRule::String => parse_String(state),
-            TestLanguageRule::Number => parse_Number(state),
+{%- for rule in self.rules() %}
+            {{ self.rule_name }}::{{ rule.safe_rule_name() }} => {{ rule.parser_name() }}(state),
+{%- endfor %}
         })
     }
 }
 
-fn parse_Json(state: Input) -> Output {
+{%- for rule in self.rules() %}
+#[inline]
+fn {{ rule.parser_name() }}(state: Input) -> Output {
+    state.rule({{ self.rule_name }}::{{ rule.safe_rule_name() }}, |s| {
+        // 
+        value(s)
+    })
+}
+{%- endfor %}
+
+fn parse_ignore(state: Input) -> Output {
+    value(state)
+}
+
+// =================================================================================================
+
+fn json(state: Input) -> Output {
     value(state)
 }
 
 fn object(state: Input) -> Output {
-    state.rule(TestLanguageRule::object, |s| {
+    state.rule({{ self.rule_name }}::object, |s| {
         s.sequence(|s| {
             s.match_string("{")
                 .and_then(ignore)
@@ -58,13 +78,13 @@ fn object(state: Input) -> Output {
 }
 
 fn pair(state: Input) -> Output {
-    state.rule(TestLanguageRule::pair, |s| {
+    state.rule({{ self.rule_name }}::pair, |s| {
         s.sequence(|s| string(s).and_then(ignore).and_then(|s| s.match_string(":")).and_then(ignore).and_then(value))
     })
 }
 
 fn array(state: Input) -> Output {
-    state.rule(TestLanguageRule::array, |s| {
+    state.rule({{ self.rule_name }}::array, |s| {
         s.sequence(|s| {
             s.match_string("[")
                 .and_then(ignore)
@@ -80,12 +100,11 @@ fn array(state: Input) -> Output {
 }
 
 fn value(state: Input) -> Output {
-    state
-        .rule(TestLanguageRule::value, |s| string(s).or_else(number).or_else(object).or_else(array).or_else(bool).or_else(null))
+    state.rule({{ self.rule_name }}::value, |s| string(s).or_else(number).or_else(object).or_else(array).or_else(bool).or_else(null))
 }
 
 fn string(state: Input) -> Output {
-    state.rule(TestLanguageRule::string, |s| {
+    state.rule({{ self.rule_name }}::string, |s| {
         s.match_string("\"")
             .and_then(|s| {
                 s.repeat(|s| {
@@ -126,7 +145,7 @@ fn hex(state: Input) -> Output {
 }
 
 fn number(state: Input) -> Output {
-    state.rule(TestLanguageRule::number, |s| {
+    state.rule({{ self.rule_name }}::number, |s| {
         s.sequence(|s| {
             s.optional(|s| s.match_string("-")).and_then(int).and_then(|s| {
                 s.optional(|s| {
@@ -159,11 +178,11 @@ fn exp(state: Input) -> Output {
 }
 
 fn bool(state: Input) -> Output {
-    state.rule(TestLanguageRule::bool, |s| s.match_string("true").or_else(|s| s.match_string("false")))
+    state.rule({{ self.rule_name }}::bool, |s| s.match_string("true").or_else(|s| s.match_string("false")))
 }
 
 fn null(state: Input) -> Output {
-    state.rule(TestLanguageRule::null, |s| s.match_string("null"))
+    state.rule({{ self.rule_name }}::null, |s| s.match_string("null"))
 }
 
 fn ignore(state: Input) -> Output {

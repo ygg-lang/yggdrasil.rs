@@ -1,3 +1,4 @@
+use convert_case::{Case, Casing};
 use proc_macro2::TokenStream;
 use std::{fmt::Debug, ops::Range};
 use yggdrasil_ir::{
@@ -8,6 +9,21 @@ use yggdrasil_ir::{
 };
 
 use super::*;
+
+pub(super) trait RuleExt {
+    fn safe_rule_name(&self) -> String;
+    fn parser_name(&self) -> String;
+}
+
+impl RuleExt for GrammarRule {
+    fn safe_rule_name(&self) -> String {
+        self.name.name.to_string()
+    }
+
+    fn parser_name(&self) -> String {
+        format!("parse_{}", self.name.name).to_case(Case::Snake)
+    }
+}
 
 #[derive(Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

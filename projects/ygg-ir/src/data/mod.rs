@@ -1,3 +1,9 @@
+mod builtin;
+mod charset;
+mod rule_ref;
+mod serder;
+mod symbol;
+
 pub use self::{
     rule_ref::RuleReference,
     symbol::{Symbol, SymbolAlias},
@@ -7,6 +13,7 @@ use crate::{
     nodes::{ExpressionKind, ExpressionNode},
 };
 
+use crate::rule::YggdrasilIdentifier;
 use character_set::CharacterSet;
 use num::BigInt;
 use regex_automata::dfa::regex::Regex;
@@ -22,12 +29,6 @@ use std::{
     ops::{Range, RangeInclusive},
 };
 
-mod builtin;
-mod charset;
-mod rule_ref;
-mod serder;
-mod symbol;
-
 //
 #[derive(Debug, Clone)]
 pub enum DataKind {
@@ -41,6 +42,11 @@ pub enum DataKind {
     CharacterRange(RangeInclusive<char>),
     CharacterBuiltin(String),
     CharacterFused(CharacterSet),
+}
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+pub struct RegularExpression {
+    pub text: String,
+    pub span: Range<usize>,
 }
 
 impl Display for DataKind {
