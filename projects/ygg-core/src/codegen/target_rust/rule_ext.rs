@@ -17,11 +17,11 @@ pub(super) trait RuleExt {
 
 impl RuleExt for GrammarRule {
     fn safe_rule_name(&self) -> String {
-        self.name.name.to_string()
+        self.name.text.to_string()
     }
 
     fn parser_name(&self) -> String {
-        format!("parse_{}", self.name.name).to_case(Case::Snake)
+        format!("parse_{}", self.name.text).to_case(Case::Snake)
     }
 }
 
@@ -48,7 +48,7 @@ fn test() {
     let b = ExpressionNode::character('b').with_tag("b");
     let c = ExpressionNode::character('c').with_tag("c");
     let rule = GrammarRule {
-        name: YggdrasilIdentifier { name: "Test".to_string(), span: Default::default() },
+        name: YggdrasilIdentifier { text: "Test".to_string(), span: Default::default() },
         r#type: "TestNode".to_string(),
         document: "aa\nbb\ncccc".to_string(),
         public: true,
@@ -77,7 +77,7 @@ fn test() {
 impl WriteRust for GrammarRule {
     fn write_rust(&self, w: &mut RustCodegen, info: &GrammarInfo) -> std::fmt::Result {
         // writeln!(w, "/// {}", info.rule_prefix)?;
-        writeln!(w, "fn {}(state: YState) -> YResult<{}> {{", w.consume_name(&self.name.name), self.r#type)?;
+        writeln!(w, "fn {}(state: YState) -> YResult<{}> {{", w.consume_name(&self.name.text), self.r#type)?;
         if w.enable_position {
             writeln!(w, "    let start = state.start_offset;")?;
         }
@@ -99,7 +99,7 @@ impl WriteRust for GrammarRule {
         if self.public {
             w.write_str("pub ")?;
         }
-        let name = w.node_name(&self.name.name);
+        let name = w.node_name(&self.name.text);
         match &self.kind {
             GrammarRuleKind::Class => {
                 writeln!(w, "struct {} {{", name)?;

@@ -57,7 +57,7 @@ impl GrammarInfo {
         todo!()
     }
     pub fn insert(&mut self, rule: GrammarRule) -> Option<GrammarRule> {
-        let key = rule.name.name.clone();
+        let key = rule.name.text.clone();
         self.rules.insert(key, rule)
     }
 }

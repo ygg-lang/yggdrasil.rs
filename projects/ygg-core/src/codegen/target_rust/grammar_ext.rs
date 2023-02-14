@@ -12,6 +12,12 @@ impl GrammarExt for GrammarInfo {
     }
 }
 
+impl<'i> RustWrite<'i> {
+    pub fn rule_name(&self) -> String {
+        format!("{}Rule", self.grammar.name)
+    }
+}
+
 impl Write for RustCodegen {
     fn write_str(&mut self, s: &str) -> std::fmt::Result {
         self.buffer.write_str(s)

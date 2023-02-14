@@ -2,7 +2,7 @@ use askama::Template;
 use fs::read_to_string;
 use itertools::Itertools;
 use std::{
-    collections::btree_map::Values,
+    collections::{btree_map::Values, BTreeMap},
     fmt::{Arguments, Write},
     fs,
     fs::File,
@@ -59,19 +59,13 @@ impl RustCodegen {
 #[template(path = "rust/main.jinja", escape = "none")]
 pub struct RustWrite<'i> {
     grammar: &'i GrammarInfo,
-    rule_name: String,
-    parser_name: String,
 }
 
 impl CodeGenerator for RustCodegen {
     type Output = String;
 
     fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
-        let inner = RustWrite {
-            grammar: info,
-            rule_name: "TestLanguageRule".to_string(),
-            parser_name: "TestLanguageParser".to_string(),
-        };
+        let inner = RustWrite { grammar: info };
         Validation::Success { value: inner.render().unwrap(), diagnostics: vec![] }
     }
 }
@@ -80,11 +74,11 @@ impl<'i> RustWrite<'i> {
     pub fn language_name(&self) -> &str {
         "TestLanguage"
     }
-    pub fn rules(&self) -> Vec<GrammarRule> {
-        self.grammar.rules.values().cloned().collect_vec()
+    pub fn rules(&self) -> impl Iterator<Item = GrammarRule> + '_ {
+        self.grammar.rules.values().sorted().cloned()
     }
     pub fn ignore_rules(&self) -> String {
-        "Self::Object".to_string()
+        "Self::WhiteSpace".to_string()
     }
 }
 

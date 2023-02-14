@@ -99,7 +99,7 @@ impl FieldDescriptor for DataKind {
 
 impl FieldDescriptor for RuleReference {
     fn get_field_names<'a>(&'a self, buffer: &mut HashSet<&'a String>) {
-        buffer.insert(&self.name.name);
+        buffer.insert(&self.name.text);
     }
 
     fn get_field_count(&self, _: &mut HashSet<String, FieldCount2>) {

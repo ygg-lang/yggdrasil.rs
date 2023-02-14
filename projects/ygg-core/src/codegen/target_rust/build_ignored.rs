@@ -54,7 +54,7 @@ impl RustCodegen {
         let mut branches = vec![];
         for (name, node) in rule.get_branches() {
             let target_node = match node.as_rule() {
-                Some(s) => self.node_name(&s.name.name),
+                Some(s) => self.node_name(&s.name.text),
                 None => unreachable!("Must build proxy node first"),
             };
             branches.push(UnionBranchItem {
@@ -66,9 +66,9 @@ impl RustCodegen {
         }
         UnionConsume {
             derive_debug: true,
-            name_upper: self.upper_name(&rule.name.name),
-            name_lower: self.lower_name(&rule.name.name),
-            node_name: self.node_name(&rule.name.name),
+            name_upper: self.upper_name(&rule.name.text),
+            name_lower: self.lower_name(&rule.name.text),
+            node_name: self.node_name(&rule.name.text),
             branches,
         }
     }

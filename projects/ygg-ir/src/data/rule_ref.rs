@@ -18,7 +18,7 @@ impl Display for RuleReference {
         if self.inline {
             write!(f, "_")?
         }
-        write!(f, "{}", self.name.name)?;
+        write!(f, "{}", self.name.text)?;
         if self.boxed {
             write!(f, ")")?
         }

@@ -93,7 +93,7 @@ impl ExpressionNode {
 
 impl ExpressionKind {
     pub fn as_tag(&self) -> Option<&str> {
-        self.as_rule().map(|r| r.name.name.as_str())
+        self.as_rule().map(|r| r.name.text.as_str())
     }
     pub fn as_rule(&self) -> Option<&RuleReference> {
         match self {

@@ -9,6 +9,7 @@ use crate::{
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::{
+    cmp::Ordering,
     collections::{BTreeMap, BTreeSet},
     fmt::{Debug, Display, Formatter},
     ops::{BitAnd, BitOr, Range},
@@ -129,6 +130,18 @@ pub struct GrammarRule {
     pub body: ExpressionNode,
     /// position of all parts
     pub range: Range<usize>,
+}
+
+impl Ord for GrammarRule {
+    fn cmp(&self, other: &Self) -> Ordering {
+        other.name.text.cmp(&other.name.text)
+    }
+}
+
+impl PartialOrd for GrammarRule {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        other.name.text.partial_cmp(&other.name.text)
+    }
 }
 
 impl GrammarInfo {}
