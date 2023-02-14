@@ -16,7 +16,7 @@ mod build_ignored;
 mod grammar_ext;
 mod rule_ext;
 
-use self::{grammar_ext::GrammarExt, rule_ext::RuleExt};
+use self::rule_ext::RuleExt;
 
 pub struct RustCodegen {
     buffer: String,
@@ -67,18 +67,6 @@ impl CodeGenerator for RustCodegen {
     fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
         let inner = RustWrite { grammar: info };
         Validation::Success { value: inner.render().unwrap(), diagnostics: vec![] }
-    }
-}
-
-impl<'i> RustWrite<'i> {
-    pub fn language_name(&self) -> &str {
-        "TestLanguage"
-    }
-    pub fn rules(&self) -> impl Iterator<Item = GrammarRule> + '_ {
-        self.grammar.rules.values().sorted().cloned()
-    }
-    pub fn ignore_rules(&self) -> String {
-        "Self::WhiteSpace".to_string()
     }
 }
 

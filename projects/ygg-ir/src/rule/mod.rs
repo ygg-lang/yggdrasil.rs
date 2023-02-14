@@ -126,6 +126,20 @@ pub struct GrammarRule {
     /// }
     /// ```
     pub entry: bool,
+    /// Ignore this node in ast mode.
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// #ignore(true)
+    /// class Rule {
+    ///
+    /// }
+    ///
+    /// ignore class Rule {
+    ///
+    /// }
+    /// ```
+    pub ignored: bool,
     ///
     pub body: ExpressionNode,
     /// position of all parts
@@ -157,6 +171,7 @@ impl GrammarRule {
             auto_inline: false,
             auto_boxed: false,
             entry: false,
+            ignored: false,
             kind,
             body: ExpressionNode::empty(),
             range: range.clone(),

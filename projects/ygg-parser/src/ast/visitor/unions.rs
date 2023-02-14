@@ -14,6 +14,7 @@ impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
             auto_inline: false,
             auto_boxed: false,
             entry: false,
+            ignored: false,
             body: expr,
             range: Default::default(),
         })

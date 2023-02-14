@@ -2,14 +2,14 @@
 
 use yggdrasil_rt::*;
 
-type Input<'i> = Box<State<'i, {{ self.rule_name()}}>>;
-type Output<'i> = Result<Box<State<'i, {{ self.language_name() }}Rule>>, Box<State<'i, {{ self.rule_name()}}>>>;
+type Input<'i> = Box<State<'i, {{ self.rule_name() }}>>;
+type Output<'i> = Result<Box<State<'i, {{ self.rule_name() }}>>, Box<State<'i, {{ self.rule_name()}}>>>;
 
 #[derive(Default)]
 pub struct {{ self.language_name() }} {}
 
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub enum {{ self.rule_name()}} {
+pub enum {{ self.rule_name() }} {
 {%- for rule in self.rules() %}
     {{ rule.safe_rule_name() }},
 {%- endfor %}
@@ -25,13 +25,12 @@ impl YggdrasilRule for {{ self.rule_name()}} {
     }
 
     fn is_ignore(&self) -> bool {
-        matches!(self, {{ self.ignore_rules() }})
+        matches!(self, {{ self.ignore_rule_pattern() }})
     }
 }
 
 impl YggdrasilParser for {{ self.language_name() }} {
     type Rule = {{ self.rule_name() }};
-    #[allow(clippy::almost_complete_range)]
     fn parse(input: &str, rule: {{ self.rule_name() }}) -> OutputResult<{{ self.rule_name()}}> {
         state(input, |state| match rule {
 {%- for rule in self.rules() %}
@@ -52,5 +51,11 @@ fn {{ rule.parser_name() }}(state: Input) -> Output {
 {%- endfor %}
 
 fn parse_ignore(state: Input) -> Output {
-    value(state)
+{%- if self.ignore_rules_empty() %}
+    Ok(state)
+{%- else %}
+    state.repeat(|s| {
+        {{ self.ignore_rule_match() }}
+    })
+{% endif %}
 }
