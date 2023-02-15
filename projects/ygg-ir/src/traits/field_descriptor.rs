@@ -33,6 +33,7 @@ impl FieldDescriptor for ExpressionKind {
             ExpressionKind::Regex(_) => {
                 todo!()
             }
+            ExpressionKind::Text(_) => {}
         }
     }
 
@@ -47,6 +48,7 @@ impl FieldDescriptor for ExpressionKind {
             ExpressionKind::Regex(_) => {
                 todo!()
             }
+            ExpressionKind::Text(_) => {}
         }
     }
 }

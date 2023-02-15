@@ -43,6 +43,7 @@ impl EmitFunction {
             ExpressionKind::Rule(_) => {}
             ExpressionKind::Data(_) => {}
             ExpressionKind::Regex(_) => {}
+            ExpressionKind::Text(_) => {}
         }
         Ok(())
     }

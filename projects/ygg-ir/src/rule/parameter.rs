@@ -122,6 +122,7 @@ impl ExpressionNode {
             }
             ExpressionKind::Data(_) => {}
             ExpressionKind::Regex(_) => {}
+            ExpressionKind::Text(_) => {}
         }
         return out;
     }

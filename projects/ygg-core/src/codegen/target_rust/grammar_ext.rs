@@ -4,6 +4,9 @@ impl<'i> RustWrite<'i> {
     pub fn language_name(&self) -> String {
         format!("{}Language", self.grammar.name)
     }
+    pub fn rule_name(&self) -> String {
+        format!("{}Rule", self.grammar.name)
+    }
     pub fn rules(&self) -> impl Iterator<Item = GrammarRule> + '_ {
         self.grammar.rules.values().sorted().cloned()
     }
@@ -29,11 +32,6 @@ impl<'i> RustWrite<'i> {
             _ => {}
         }
         out
-    }
-}
-impl<'i> RustWrite<'i> {
-    pub fn rule_name(&self) -> String {
-        format!("{}Rule", self.grammar.name)
     }
 }
 

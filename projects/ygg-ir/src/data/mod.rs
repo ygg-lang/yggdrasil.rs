@@ -43,6 +43,13 @@ pub enum DataKind {
     CharacterBuiltin(String),
     CharacterFused(CharacterSet),
 }
+
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+pub struct YggdrasilText {
+    pub text: String,
+    pub span: Range<usize>,
+}
+
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct RegularExpression {
     pub text: String,

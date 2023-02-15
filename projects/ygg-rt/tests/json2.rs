@@ -19,11 +19,17 @@ pub enum Rule {
 
 impl YggdrasilRule for Rule {
     fn all_rules() -> &'static [Self] {
-        &[Self::Json, Self::String, Self::Number, Self::Null, Self::WhiteSpace]
+        &[
+            Self::Json,
+            Self::String,
+            Self::Number,
+            Self::Null,
+            Self::WhiteSpace,
+        ]
     }
 
     fn is_ignore(&self) -> bool {
-        matches!(self,)
+        false
     }
 }
 
@@ -42,39 +48,35 @@ impl YggdrasilParser for Language {
 #[inline]
 fn parse_json(state: Input) -> Output {
     state.rule(Rule::Json, |s| {
-        //
-        value(s)
+        parse_Choice(s)
     })
 }
 #[inline]
 fn parse_string(state: Input) -> Output {
     state.rule(Rule::String, |s| {
-        //
-        value(s)
+        parse_Choice(s)
     })
 }
 #[inline]
 fn parse_number(state: Input) -> Output {
     state.rule(Rule::Number, |s| {
-        //
-        value(s)
+        parse_Choice(s)
     })
 }
 #[inline]
 fn parse_null(state: Input) -> Output {
     state.rule(Rule::Null, |s| {
-        //
-        value(s)
+        s.match_string("null")
     })
 }
 #[inline]
 fn parse_white_space(state: Input) -> Output {
     state.rule(Rule::WhiteSpace, |s| {
-        //
-        value(s)
+        parse_Choice(s)
     })
 }
 
+/// All rules ignored in ast mode, inline is not recommended
 fn parse_ignore(state: Input) -> Output {
     Ok(state)
 }

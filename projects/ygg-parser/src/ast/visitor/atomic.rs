@@ -1,4 +1,5 @@
 use super::*;
+use yggdrasil_ir::data::{RegularExpression, YggdrasilText};
 
 impl<'i> Extractor<IdentifierContextAll<'i>> for YggdrasilIdentifier {
     fn take_one(node: &IdentifierContextAll<'i>) -> Option<Self> {
@@ -15,5 +16,24 @@ impl<'i> Extractor<IdentifierContextAll<'i>> for YggdrasilIdentifier {
             });
         }
         None
+    }
+}
+impl<'i> Extractor<RegexContextAll<'i>> for RegularExpression {
+    fn take_one(node: &RegexContextAll<'i>) -> Option<Self> {
+        None
+    }
+}
+
+impl<'i> Extractor<StringContextAll<'i>> for YggdrasilText {
+    fn take_one(node: &StringContextAll<'i>) -> Option<Self> {
+        let span = Range { start: node.start().start as usize, end: node.stop().stop as usize };
+        let mut buffer = String::new();
+        if let Some(s) = node.STRING_SINGLE() {
+            buffer = s.get_text().trim_matches('\'').to_string()
+        }
+        if let Some(s) = node.STRING_DOUBLE() {
+            buffer = s.get_text().trim_matches('"').to_string()
+        }
+        Some(Self { text: buffer, span })
     }
 }

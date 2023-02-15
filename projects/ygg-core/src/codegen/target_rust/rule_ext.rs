@@ -3,7 +3,7 @@ use proc_macro2::TokenStream;
 use std::{fmt::Debug, ops::Range};
 use yggdrasil_ir::{
     grammar::GrammarInfo,
-    nodes::ExpressionNode,
+    nodes::{ExpressionKind, ExpressionNode},
     rule::{GrammarRule, GrammarRuleKind, RuleDerive, YggdrasilIdentifier},
     traits::FieldMap,
 };
@@ -13,6 +13,8 @@ use super::*;
 pub(super) trait RuleExt {
     fn safe_rule_name(&self) -> String;
     fn parser_name(&self) -> String;
+
+    fn parser_expression(&self) -> String;
 }
 
 impl RuleExt for GrammarRule {
@@ -22,6 +24,21 @@ impl RuleExt for GrammarRule {
 
     fn parser_name(&self) -> String {
         format!("parse_{}", self.name.text).to_case(Case::Snake)
+    }
+
+    fn parser_expression(&self) -> String {
+        match &self.body.kind {
+            ExpressionKind::Function(_) => "parse_Function(s)".to_string(),
+            ExpressionKind::Choice(_) => "parse_Choice(s)".to_string(),
+            ExpressionKind::Concat(_) => "parse_Concat(s)".to_string(),
+            ExpressionKind::Unary(_) => "parse_Unary(s)".to_string(),
+            ExpressionKind::Rule(_) => "parse_Rule(s)".to_string(),
+            ExpressionKind::Text(v) => {
+                format!("s.match_string({:?})", v.text)
+            }
+            ExpressionKind::Regex(_) => "parse_Regex(s)".to_string(),
+            ExpressionKind::Data(_) => "parse_Data(s)".to_string(),
+        }
     }
 }
 

@@ -1,10 +1,9 @@
 pub use self::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression};
 use crate::{
-    data::{DataKind, RegularExpression, RuleReference},
+    data::{DataKind, RegularExpression, RuleReference, YggdrasilText},
     rule::{GrammarRule, GrammarRuleKind},
     FunctionExpression,
 };
-use convert_case::Casing;
 use diagnostic_quick::{QError, QResult};
 use indexmap::{IndexMap, IndexSet};
 #[cfg(feature = "serde")]
@@ -12,7 +11,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     hash::{Hash, Hasher},
     mem::take,
-    ops::{Add, BitAnd, BitOr, BitXor},
+    ops::{Add, BitAnd, BitOr, BitXor, Range},
     slice::{Iter, IterMut},
 };
 
@@ -35,9 +34,17 @@ pub enum ExpressionKind {
     Concat(ConcatExpression),
     Unary(Box<UnaryExpression>),
     Rule(Box<RuleReference>),
+    Text(YggdrasilText),
     Regex(RegularExpression),
     Data(Box<DataKind>),
 }
+
+impl From<YggdrasilText> for ExpressionNode {
+    fn from(value: YggdrasilText) -> Self {
+        Self { kind: ExpressionKind::Text(value), tag: "".to_string() }
+    }
+}
+
 impl From<ConcatExpression> for ExpressionNode {
     fn from(value: ConcatExpression) -> Self {
         Self { kind: ExpressionKind::Concat(value), tag: "".to_string() }

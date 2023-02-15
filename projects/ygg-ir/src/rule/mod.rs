@@ -131,13 +131,7 @@ pub struct GrammarRule {
     /// ## Examples
     /// ```ygg
     /// #ignore(true)
-    /// class Rule {
-    ///
-    /// }
-    ///
-    /// ignore class Rule {
-    ///
-    /// }
+    /// ignore class Rule { }
     /// ```
     pub ignored: bool,
     ///

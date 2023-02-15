@@ -1,7 +1,7 @@
 use super::*;
 use std::ops::Add;
 use yggdrasil_ir::{
-    data::{RegularExpression, RuleReference},
+    data::{RegularExpression, RuleReference, YggdrasilText},
     nodes::Operator,
 };
 
@@ -108,16 +108,12 @@ impl<'i> Extractor<AtomicContextAll<'i>> for ExpressionNode {
             AtomicContextAll::ATupleContext(_) => todo!(),
             AtomicContextAll::ASpecialContext(_) => todo!(),
             AtomicContextAll::AIdContext(s) => None,
-            AtomicContextAll::AStringContext(s) => None,
+            AtomicContextAll::AStringContext(s) => Some(YggdrasilText::take(s.string())?.into()),
             AtomicContextAll::Error(_) => None,
         }
     }
 }
-impl<'i> Extractor<RegexContextAll<'i>> for RegularExpression {
-    fn take_one(node: &RegexContextAll<'i>) -> Option<Self> {
-        None
-    }
-}
+
 // impl<'i> Extractor<NamepathContextAll<'i>> for RuleReference {
 //     fn take_one(node: &NamepathContextAll<'i>) -> Option<Self> {
 //         // node.identifier_all()

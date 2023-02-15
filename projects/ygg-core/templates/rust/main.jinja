@@ -25,7 +25,11 @@ impl YggdrasilRule for {{ self.rule_name()}} {
     }
 
     fn is_ignore(&self) -> bool {
+{%- if self.ignore_rules_empty() %}
+        false
+{%- else %}
         matches!(self, {{ self.ignore_rule_pattern() }})
+{% endif %}
     }
 }
 
@@ -44,12 +48,12 @@ impl YggdrasilParser for {{ self.language_name() }} {
 #[inline]
 fn {{ rule.parser_name() }}(state: Input) -> Output {
     state.rule({{ self.rule_name() }}::{{ rule.safe_rule_name() }}, |s| {
-        // 
-        value(s)
+        {{ rule.parser_expression() }}
     })
 }
 {%- endfor %}
 
+/// All rules ignored in ast mode, inline is not recommended
 fn parse_ignore(state: Input) -> Output {
 {%- if self.ignore_rules_empty() %}
     Ok(state)

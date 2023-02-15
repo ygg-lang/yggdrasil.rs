@@ -364,16 +364,10 @@ pub use crate::errors::OutputResult;
 #[doc(hidden)]
 pub mod unicode;
 
-/// A trait which parser rules must implement.
-///
-/// This trait is set up so that any struct that implements all of its required traits will
-/// automatically implement this trait as well.
-///
-/// This is essentially a [trait alias](https://github.com/rust-lang/rfcs/pull/1733). When trait
-/// aliases are implemented, this may be replaced by one.
+/// Define rules subject to Yggdrasil
 pub trait YggdrasilRule: Copy + Debug + Eq + Hash + Ord {
-    /// xxx
+    /// Go through all the rules
     fn all_rules() -> &'static [Self];
-    /// xxx
+    /// Nodes ignored in ast, such as spaces, carriage returns, comments, etc.
     fn is_ignore(&self) -> bool;
 }

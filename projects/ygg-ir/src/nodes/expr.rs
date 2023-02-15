@@ -68,6 +68,7 @@ impl ExpressionNode {
             ExpressionKind::Function(_) => self.tag.clear(),
             ExpressionKind::Data(_) => self.tag.clear(),
             ExpressionKind::Regex(_) => self.tag.clear(),
+            ExpressionKind::Text(_) => {}
         }
     }
     fn non_capture(&mut self) {
@@ -87,6 +88,7 @@ impl ExpressionNode {
             ExpressionKind::Rule(_) => self.tag.clear(),
             ExpressionKind::Data(_) => self.tag.clear(),
             ExpressionKind::Regex(_) => self.tag.clear(),
+            ExpressionKind::Text(_) => {}
         }
     }
 }
