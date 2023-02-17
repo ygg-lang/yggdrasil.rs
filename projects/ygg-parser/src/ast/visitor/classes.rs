@@ -57,7 +57,7 @@ impl<'i> Extractor<Class_expressionContextAll<'i>> for ExpressionNode {
                 let tag = e.tag_pair()?;
                 let name = YggdrasilIdentifier::take(tag.lhs.clone())?;
                 let rule = YggdrasilIdentifier::take(tag.rhs.clone())?;
-                Some(RuleReference::new(name).with_tag(rule).into())
+                Some(RuleReference::new(name).into())
             }
             Class_expressionContextAll::CUntagContext(_) => {
                 todo!()

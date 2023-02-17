@@ -33,7 +33,7 @@ pub enum ExpressionKind {
     Choice(Box<ChoiceExpression>),
     Concat(ConcatExpression),
     Unary(Box<UnaryExpression>),
-    Rule(Box<RuleReference>),
+    Rule(RuleReference),
     Text(YggdrasilText),
     Regex(RegularExpression),
     Data(Box<DataKind>),
@@ -53,7 +53,7 @@ impl From<ConcatExpression> for ExpressionNode {
 
 impl From<RuleReference> for ExpressionNode {
     fn from(value: RuleReference) -> Self {
-        Self { kind: ExpressionKind::Rule(Box::new(value)), tag: "".to_string() }
+        Self { kind: ExpressionKind::Rule(value), tag: "".to_string() }
     }
 }
 

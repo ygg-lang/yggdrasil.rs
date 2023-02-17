@@ -5,7 +5,6 @@ use super::*;
 #[cfg_attr(feature = "serde", Serialize, Deserialize)]
 pub struct RuleReference {
     pub name: YggdrasilIdentifier,
-    pub tag: Option<YggdrasilIdentifier>,
     pub boxed: bool,
     pub inline: bool,
 }
@@ -28,15 +27,13 @@ impl Display for RuleReference {
 
 impl RuleReference {
     pub fn new(rule_name: YggdrasilIdentifier) -> Self {
-        Self { name: rule_name.trim_underscore(), tag: None, boxed: false, inline: rule_name.is_ignore() }
+        Self { name: rule_name.trim_underscore(), boxed: false, inline: rule_name.is_ignore() }
     }
-    pub fn with_tag(self, tag: YggdrasilIdentifier) -> Self {
-        Self { tag: Some(tag), ..self }
-    }
+
     pub fn to_node<S>(self, tag: S) -> ExpressionNode
     where
         S: Into<String>,
     {
-        ExpressionNode { tag: tag.into(), kind: ExpressionKind::Rule(Box::new(self)) }
+        ExpressionNode { tag: tag.into(), kind: ExpressionKind::Rule(self) }
     }
 }

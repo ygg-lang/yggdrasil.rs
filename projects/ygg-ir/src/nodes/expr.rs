@@ -17,7 +17,7 @@ impl ExpressionNode {
     #[inline]
     pub fn as_rule(&self) -> Option<&RuleReference> {
         match &self.kind {
-            ExpressionKind::Rule(r) => Some(r.as_ref()),
+            ExpressionKind::Rule(r) => Some(r),
             _ => None,
         }
     }

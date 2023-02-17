@@ -20,7 +20,7 @@ pub mod parameter;
 
 mod identifier;
 
-pub use self::identifier::YggdrasilIdentifier;
+pub use self::identifier::{YggdrasilIdentifier, YggdrasilNamepath};
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct FunctionRule {}

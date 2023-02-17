@@ -42,15 +42,6 @@ impl RuleExt for GrammarRule {
     }
 }
 
-#[derive(Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct YggdrasilNamespace {
-    #[cfg(debug_assertions)]
-    pub snippet: String,
-    pub identifiers: Vec<YggdrasilIdentifier>,
-    pub range: Range<usize>,
-}
-
 pub struct ClassObject {
     name: String,
     derives: RuleDerive,

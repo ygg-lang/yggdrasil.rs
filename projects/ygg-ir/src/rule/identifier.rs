@@ -1,6 +1,13 @@
 use super::*;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct YggdrasilNamepath {
+    pub identifiers: Vec<YggdrasilIdentifier>,
+    pub range: Range<usize>,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", Serialize, Deserialize)]
 pub struct YggdrasilIdentifier {
     pub text: String,
