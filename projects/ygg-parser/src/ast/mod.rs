@@ -7,11 +7,9 @@ use crate::{
 use antlr_rust::{
     common_token_stream::CommonTokenStream,
     errors::ANTLRError,
-    parser::ParserNodeType,
     parser_rule_context::ParserRuleContext,
-    token::Token,
-    tree::{ParseTree, ParseTreeVisitorCompat, TerminalNode, Tree, VisitableDyn},
-    CoerceTo, InputStream, TidExt,
+    tree::{ParseTree, ParseTreeVisitorCompat},
+    InputStream,
 };
 use std::{ops::Range, rc::Rc, str::FromStr};
 use yggdrasil_ir::grammar::GrammarInfo;

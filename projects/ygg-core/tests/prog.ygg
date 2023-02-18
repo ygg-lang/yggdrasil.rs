@@ -1,13 +1,29 @@
-entry class Json {
+grammar Json5 {}
 
+entry union Value {
+    | Object  #Object
+    | Array   #Array
+    | String  #String
+    | Number  #Number
+    | Boolean #Boolean
+    | Null    #Null
 }
 
-class String {
-
+class Object {
+    '{' Value? '}'
 }
 
-class Number {
-    [0-9]
+class Array {
+    '[' Value? ']'
+}
+
+atomic class String {
+    | "'" "'"
+    | "\"" "\""
+}
+
+atomic class Number {
+    [1-9][0-9]
 }
 
 union Boolean {
@@ -18,7 +34,6 @@ union Boolean {
 class Null {
     "null"
 }
-
 
 ignore class WhiteSpace {
     UNICODE_WHITE_SPACE

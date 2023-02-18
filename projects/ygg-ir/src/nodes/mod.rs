@@ -1,7 +1,7 @@
 pub use self::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression};
 use crate::{
     data::{DataKind, RegularExpression, RuleReference, YggdrasilText},
-    rule::{GrammarRule, GrammarRuleKind},
+    rule::{GrammarRule, GrammarRuleKind, YggdrasilIdentifier},
     FunctionExpression,
 };
 use diagnostic_quick::{QError, QResult};
@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     hash::{Hash, Hasher},
     mem::take,
-    ops::{Add, BitAnd, BitOr, BitXor, Range},
+    ops::{Add, BitAnd, BitOr, BitXor},
     slice::{Iter, IterMut},
 };
 
@@ -48,12 +48,6 @@ impl From<YggdrasilText> for ExpressionNode {
 impl From<ConcatExpression> for ExpressionNode {
     fn from(value: ConcatExpression) -> Self {
         Self { kind: ExpressionKind::Concat(value), tag: "".to_string() }
-    }
-}
-
-impl From<RuleReference> for ExpressionNode {
-    fn from(value: RuleReference) -> Self {
-        Self { kind: ExpressionKind::Rule(value), tag: "".to_string() }
     }
 }
 

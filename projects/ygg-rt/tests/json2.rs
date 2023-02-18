@@ -11,6 +11,7 @@ pub struct Language {}
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum Rule {
     Json,
+    Object,
     String,
     Number,
     Null,
@@ -21,6 +22,7 @@ impl YggdrasilRule for Rule {
     fn all_rules() -> &'static [Self] {
         &[
             Self::Json,
+            Self::Object,
             Self::String,
             Self::Number,
             Self::Null,
@@ -38,6 +40,7 @@ impl YggdrasilParser for Language {
     fn parse(input: &str, rule: Rule) -> OutputResult<Rule> {
         state(input, |state| match rule {
             Rule::Json => parse_json(state),
+            Rule::Object => parse_object(state),
             Rule::String => parse_string(state),
             Rule::Number => parse_number(state),
             Rule::Null => parse_null(state),
@@ -49,6 +52,12 @@ impl YggdrasilParser for Language {
 fn parse_json(state: Input) -> Output {
     state.rule(Rule::Json, |s| {
         parse_Choice(s)
+    })
+}
+#[inline]
+fn parse_object(state: Input) -> Output {
+    state.rule(Rule::Object, |s| {
+        s.match_string("{")
     })
 }
 #[inline]
@@ -72,7 +81,7 @@ fn parse_null(state: Input) -> Output {
 #[inline]
 fn parse_white_space(state: Input) -> Output {
     state.rule(Rule::WhiteSpace, |s| {
-        parse_Choice(s)
+        parse_unicode_white_space(s)
     })
 }
 

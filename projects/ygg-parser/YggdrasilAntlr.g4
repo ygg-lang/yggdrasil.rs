@@ -44,8 +44,8 @@ union_expression
     | tag_pair                                            # UETag
     | OP_UNTAG union_expression                           # UUntag
     | OP_NOT union_expression                             # UNot
-    | union_expression OP_CONCAT union_expression         # UHard
-    | union_expression union_expression                   # USoft
+    | lhs=union_expression OP_CONCAT rhs=union_expression         # UHard
+    | lhs=union_expression rhs=union_expression                   # USoft
     | PARENTHESES_L OP_OR? class_expression PARENTHESES_R # UGroup
     | tuple_call                                          # UCall
     | atomic                                              # Utom

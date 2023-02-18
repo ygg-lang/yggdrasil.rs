@@ -1,6 +1,30 @@
 use super::*;
-use yggdrasil_ir::data::{RegularExpression, YggdrasilText};
+use yggdrasil_ir::{
+    data::{RegularExpression, YggdrasilText},
+    rule::YggdrasilNamepath,
+};
 
+impl<'i> Extractor<AtomicContextAll<'i>> for ExpressionNode {
+    fn take_one(node: &AtomicContextAll<'i>) -> Option<Self> {
+        match node {
+            AtomicContextAll::AIntContext(_) => todo!(),
+            AtomicContextAll::AReContext(r) => Some(RegularExpression::take(r.regex())?.into()),
+            AtomicContextAll::ACharContext(_) => todo!(),
+            AtomicContextAll::ATupleContext(_) => todo!(),
+            AtomicContextAll::ASpecialContext(_) => todo!(),
+            AtomicContextAll::AIdContext(s) => Some(YggdrasilIdentifier::take(s.identifier())?.into()),
+            AtomicContextAll::AStringContext(s) => Some(YggdrasilText::take(s.string())?.into()),
+            AtomicContextAll::Error(_) => None,
+        }
+    }
+}
+
+impl<'i> Extractor<NamepathContextAll<'i>> for YggdrasilNamepath {
+    fn take_one(node: &NamepathContextAll<'i>) -> Option<Self> {
+        let span = Range { start: node.start().start as usize, end: node.stop().stop as usize };
+        Some(Self { identifiers: YggdrasilIdentifier::take_many(&node.identifier_all()), range: span })
+    }
+}
 impl<'i> Extractor<IdentifierContextAll<'i>> for YggdrasilIdentifier {
     fn take_one(node: &IdentifierContextAll<'i>) -> Option<Self> {
         if let Some(s) = node.UNICODE_ID() {

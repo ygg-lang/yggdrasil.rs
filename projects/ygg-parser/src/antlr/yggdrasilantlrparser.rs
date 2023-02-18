@@ -6,6 +6,7 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 #![allow(unused_braces)]
+
 use super::{yggdrasilantlrlistener::*, yggdrasilantlrvisitor::*};
 use antlr_rust::{
     atn::{ATN, INVALID_ALT},
@@ -317,6 +318,7 @@ where
 }
 
 impl<'input> YggdrasilAntlrParserContext<'input> for TerminalNode<'input, YggdrasilAntlrParserContextType> {}
+
 impl<'input> YggdrasilAntlrParserContext<'input> for ErrorNode<'input, YggdrasilAntlrParserContextType> {}
 
 antlr_rust::tid! { impl<'input> TidAble<'input> for dyn YggdrasilAntlrParserContext<'input> + 'input }
@@ -1606,11 +1608,13 @@ impl<'input> Deref for Class_expressionContextAll<'input> {
         }
     }
 }
+
 impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for Class_expressionContextAll<'input> {
     fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
         self.deref().accept(visitor)
     }
 }
+
 impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for Class_expressionContextAll<'input> {
     fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
         self.deref().enter(listener)
@@ -1722,6 +1726,7 @@ impl<'input> Borrow<Class_expressionContextExt<'input>> for CSuffixContext<'inpu
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Class_expressionContextExt<'input>> for CSuffixContext<'input> {
     fn borrow_mut(&mut self) -> &mut Class_expressionContextExt<'input> {
         &mut self.base
@@ -1792,6 +1797,7 @@ impl<'input> Borrow<Class_expressionContextExt<'input>> for CCallContext<'input>
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Class_expressionContextExt<'input>> for CCallContext<'input> {
     fn borrow_mut(&mut self) -> &mut Class_expressionContextExt<'input> {
         &mut self.base
@@ -1862,6 +1868,7 @@ impl<'input> Borrow<Class_expressionContextExt<'input>> for CETagContext<'input>
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Class_expressionContextExt<'input>> for CETagContext<'input> {
     fn borrow_mut(&mut self) -> &mut Class_expressionContextExt<'input> {
         &mut self.base
@@ -1940,6 +1947,7 @@ impl<'input> Borrow<Class_expressionContextExt<'input>> for CUntagContext<'input
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Class_expressionContextExt<'input>> for CUntagContext<'input> {
     fn borrow_mut(&mut self) -> &mut Class_expressionContextExt<'input> {
         &mut self.base
@@ -2018,6 +2026,7 @@ impl<'input> Borrow<Class_expressionContextExt<'input>> for CSoftContext<'input>
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Class_expressionContextExt<'input>> for CSoftContext<'input> {
     fn borrow_mut(&mut self) -> &mut Class_expressionContextExt<'input> {
         &mut self.base
@@ -2104,6 +2113,7 @@ impl<'input> Borrow<Class_expressionContextExt<'input>> for CHardContext<'input>
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Class_expressionContextExt<'input>> for CHardContext<'input> {
     fn borrow_mut(&mut self) -> &mut Class_expressionContextExt<'input> {
         &mut self.base
@@ -2190,6 +2200,7 @@ impl<'input> Borrow<Class_expressionContextExt<'input>> for CPatternContext<'inp
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Class_expressionContextExt<'input>> for CPatternContext<'input> {
     fn borrow_mut(&mut self) -> &mut Class_expressionContextExt<'input> {
         &mut self.base
@@ -2284,6 +2295,7 @@ impl<'input> Borrow<Class_expressionContextExt<'input>> for CGroupContext<'input
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Class_expressionContextExt<'input>> for CGroupContext<'input> {
     fn borrow_mut(&mut self) -> &mut Class_expressionContextExt<'input> {
         &mut self.base
@@ -2354,6 +2366,7 @@ impl<'input> Borrow<Class_expressionContextExt<'input>> for AtomContext<'input> 
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Class_expressionContextExt<'input>> for AtomContext<'input> {
     fn borrow_mut(&mut self) -> &mut Class_expressionContextExt<'input> {
         &mut self.base
@@ -2432,6 +2445,7 @@ impl<'input> Borrow<Class_expressionContextExt<'input>> for CNotContext<'input> 
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Class_expressionContextExt<'input>> for CNotContext<'input> {
     fn borrow_mut(&mut self) -> &mut Class_expressionContextExt<'input> {
         &mut self.base
@@ -3260,11 +3274,13 @@ impl<'input> Deref for Union_expressionContextAll<'input> {
         }
     }
 }
+
 impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for Union_expressionContextAll<'input> {
     fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
         self.deref().accept(visitor)
     }
 }
+
 impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for Union_expressionContextAll<'input> {
     fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
         self.deref().enter(listener)
@@ -3320,6 +3336,14 @@ impl<'input> Union_expressionContextAttrs<'input> for Union_expressionContext<'i
 pub type UHardContext<'input> = BaseParserRuleContext<'input, UHardContextExt<'input>>;
 
 pub trait UHardContextAttrs<'input>: YggdrasilAntlrParserContext<'input> {
+    /// Retrieves first TerminalNode corresponding to token OP_CONCAT
+    /// Returns `None` if there is no child corresponding to token OP_CONCAT
+    fn OP_CONCAT(&self) -> Option<Rc<TerminalNode<'input, YggdrasilAntlrParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(OP_CONCAT, 0)
+    }
     fn union_expression_all(&self) -> Vec<Rc<Union_expressionContextAll<'input>>>
     where
         Self: Sized,
@@ -3332,20 +3356,14 @@ pub trait UHardContextAttrs<'input>: YggdrasilAntlrParserContext<'input> {
     {
         self.child_of_type(i)
     }
-    /// Retrieves first TerminalNode corresponding to token OP_CONCAT
-    /// Returns `None` if there is no child corresponding to token OP_CONCAT
-    fn OP_CONCAT(&self) -> Option<Rc<TerminalNode<'input, YggdrasilAntlrParserContextType>>>
-    where
-        Self: Sized,
-    {
-        self.get_token(OP_CONCAT, 0)
-    }
 }
 
 impl<'input> UHardContextAttrs<'input> for UHardContext<'input> {}
 
 pub struct UHardContextExt<'input> {
     base: Union_expressionContextExt<'input>,
+    pub lhs: Option<Rc<Union_expressionContextAll<'input>>>,
+    pub rhs: Option<Rc<Union_expressionContextAll<'input>>>,
     ph: PhantomData<&'input str>,
 }
 
@@ -3384,6 +3402,7 @@ impl<'input> Borrow<Union_expressionContextExt<'input>> for UHardContext<'input>
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Union_expressionContextExt<'input>> for UHardContext<'input> {
     fn borrow_mut(&mut self) -> &mut Union_expressionContextExt<'input> {
         &mut self.base
@@ -3396,7 +3415,7 @@ impl<'input> UHardContextExt<'input> {
     fn new(ctx: &dyn Union_expressionContextAttrs<'input>) -> Rc<Union_expressionContextAll<'input>> {
         Rc::new(Union_expressionContextAll::UHardContext(BaseParserRuleContext::copy_from(
             ctx,
-            UHardContextExt { base: ctx.borrow().clone(), ph: PhantomData },
+            UHardContextExt { lhs: None, rhs: None, base: ctx.borrow().clone(), ph: PhantomData },
         )))
     }
 }
@@ -3462,6 +3481,7 @@ impl<'input> Borrow<Union_expressionContextExt<'input>> for UUntagContext<'input
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Union_expressionContextExt<'input>> for UUntagContext<'input> {
     fn borrow_mut(&mut self) -> &mut Union_expressionContextExt<'input> {
         &mut self.base
@@ -3538,6 +3558,7 @@ impl<'input> Borrow<Union_expressionContextExt<'input>> for USuffixContext<'inpu
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Union_expressionContextExt<'input>> for USuffixContext<'input> {
     fn borrow_mut(&mut self) -> &mut Union_expressionContextExt<'input> {
         &mut self.base
@@ -3632,6 +3653,7 @@ impl<'input> Borrow<Union_expressionContextExt<'input>> for UGroupContext<'input
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Union_expressionContextExt<'input>> for UGroupContext<'input> {
     fn borrow_mut(&mut self) -> &mut Union_expressionContextExt<'input> {
         &mut self.base
@@ -3702,6 +3724,7 @@ impl<'input> Borrow<Union_expressionContextExt<'input>> for UETagContext<'input>
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Union_expressionContextExt<'input>> for UETagContext<'input> {
     fn borrow_mut(&mut self) -> &mut Union_expressionContextExt<'input> {
         &mut self.base
@@ -3772,6 +3795,7 @@ impl<'input> Borrow<Union_expressionContextExt<'input>> for UtomContext<'input> 
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Union_expressionContextExt<'input>> for UtomContext<'input> {
     fn borrow_mut(&mut self) -> &mut Union_expressionContextExt<'input> {
         &mut self.base
@@ -3850,6 +3874,7 @@ impl<'input> Borrow<Union_expressionContextExt<'input>> for UNotContext<'input> 
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Union_expressionContextExt<'input>> for UNotContext<'input> {
     fn borrow_mut(&mut self) -> &mut Union_expressionContextExt<'input> {
         &mut self.base
@@ -3888,6 +3913,8 @@ impl<'input> USoftContextAttrs<'input> for USoftContext<'input> {}
 
 pub struct USoftContextExt<'input> {
     base: Union_expressionContextExt<'input>,
+    pub lhs: Option<Rc<Union_expressionContextAll<'input>>>,
+    pub rhs: Option<Rc<Union_expressionContextAll<'input>>>,
     ph: PhantomData<&'input str>,
 }
 
@@ -3926,6 +3953,7 @@ impl<'input> Borrow<Union_expressionContextExt<'input>> for USoftContext<'input>
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Union_expressionContextExt<'input>> for USoftContext<'input> {
     fn borrow_mut(&mut self) -> &mut Union_expressionContextExt<'input> {
         &mut self.base
@@ -3938,7 +3966,7 @@ impl<'input> USoftContextExt<'input> {
     fn new(ctx: &dyn Union_expressionContextAttrs<'input>) -> Rc<Union_expressionContextAll<'input>> {
         Rc::new(Union_expressionContextAll::USoftContext(BaseParserRuleContext::copy_from(
             ctx,
-            USoftContextExt { base: ctx.borrow().clone(), ph: PhantomData },
+            USoftContextExt { lhs: None, rhs: None, base: ctx.borrow().clone(), ph: PhantomData },
         )))
     }
 }
@@ -3996,6 +4024,7 @@ impl<'input> Borrow<Union_expressionContextExt<'input>> for UCallContext<'input>
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Union_expressionContextExt<'input>> for UCallContext<'input> {
     fn borrow_mut(&mut self) -> &mut Union_expressionContextExt<'input> {
         &mut self.base
@@ -4153,6 +4182,14 @@ where
                                             _parentctx.clone(),
                                             _parentState,
                                         ));
+                                        if let Union_expressionContextAll::UHardContext(ctx) =
+                                            cast_mut::<_, Union_expressionContextAll>(&mut tmp)
+                                        {
+                                            ctx.lhs = Some(_prevctx.clone());
+                                        }
+                                        else {
+                                            unreachable!("cant cast");
+                                        }
                                         recog.push_new_recursion_context(tmp.clone(), _startState, RULE_union_expression);
                                         _localctx = tmp;
                                         recog.base.set_state(206);
@@ -4168,7 +4205,15 @@ where
 
                                         // InvokeRule union_expression
                                         recog.base.set_state(208);
-                                        recog.union_expression_rec(6)?;
+                                        let tmp = recog.union_expression_rec(6)?;
+                                        if let Union_expressionContextAll::UHardContext(ctx) =
+                                            cast_mut::<_, Union_expressionContextAll>(&mut _localctx)
+                                        {
+                                            ctx.rhs = Some(tmp.clone());
+                                        }
+                                        else {
+                                            unreachable!("cant cast");
+                                        }
                                     }
                                 }
                                 2 => {
@@ -4178,6 +4223,14 @@ where
                                             _parentctx.clone(),
                                             _parentState,
                                         ));
+                                        if let Union_expressionContextAll::USoftContext(ctx) =
+                                            cast_mut::<_, Union_expressionContextAll>(&mut tmp)
+                                        {
+                                            ctx.lhs = Some(_prevctx.clone());
+                                        }
+                                        else {
+                                            unreachable!("cant cast");
+                                        }
                                         recog.push_new_recursion_context(tmp.clone(), _startState, RULE_union_expression);
                                         _localctx = tmp;
                                         recog.base.set_state(209);
@@ -4190,7 +4243,15 @@ where
                                         }
                                         // InvokeRule union_expression
                                         recog.base.set_state(210);
-                                        recog.union_expression_rec(5)?;
+                                        let tmp = recog.union_expression_rec(5)?;
+                                        if let Union_expressionContextAll::USoftContext(ctx) =
+                                            cast_mut::<_, Union_expressionContextAll>(&mut _localctx)
+                                        {
+                                            ctx.rhs = Some(tmp.clone());
+                                        }
+                                        else {
+                                            unreachable!("cant cast");
+                                        }
                                     }
                                 }
                                 3 => {
@@ -5210,11 +5271,13 @@ impl<'input> Deref for Token_expressionContextAll<'input> {
         }
     }
 }
+
 impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for Token_expressionContextAll<'input> {
     fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
         self.deref().accept(visitor)
     }
 }
+
 impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for Token_expressionContextAll<'input> {
     fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
         self.deref().enter(listener)
@@ -5334,6 +5397,7 @@ impl<'input> Borrow<Token_expressionContextExt<'input>> for TOrContext<'input> {
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Token_expressionContextExt<'input>> for TOrContext<'input> {
     fn borrow_mut(&mut self) -> &mut Token_expressionContextExt<'input> {
         &mut self.base
@@ -5404,6 +5468,7 @@ impl<'input> Borrow<Token_expressionContextExt<'input>> for TAtomContext<'input>
         &self.base
     }
 }
+
 impl<'input> BorrowMut<Token_expressionContextExt<'input>> for TAtomContext<'input> {
     fn borrow_mut(&mut self) -> &mut Token_expressionContextExt<'input> {
         &mut self.base
@@ -6002,11 +6067,13 @@ impl<'input> Deref for SuffixContextAll<'input> {
         }
     }
 }
+
 impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for SuffixContextAll<'input> {
     fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
         self.deref().accept(visitor)
     }
 }
+
 impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for SuffixContextAll<'input> {
     fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
         self.deref().enter(listener)
@@ -6119,6 +6186,7 @@ impl<'input> Borrow<SuffixContextExt<'input>> for MaybeContext<'input> {
         &self.base
     }
 }
+
 impl<'input> BorrowMut<SuffixContextExt<'input>> for MaybeContext<'input> {
     fn borrow_mut(&mut self) -> &mut SuffixContextExt<'input> {
         &mut self.base
@@ -6191,6 +6259,7 @@ impl<'input> Borrow<SuffixContextExt<'input>> for OptionalContext<'input> {
         &self.base
     }
 }
+
 impl<'input> BorrowMut<SuffixContextExt<'input>> for OptionalContext<'input> {
     fn borrow_mut(&mut self) -> &mut SuffixContextExt<'input> {
         &mut self.base
@@ -6263,6 +6332,7 @@ impl<'input> Borrow<SuffixContextExt<'input>> for MaybeGreedyContext<'input> {
         &self.base
     }
 }
+
 impl<'input> BorrowMut<SuffixContextExt<'input>> for MaybeGreedyContext<'input> {
     fn borrow_mut(&mut self) -> &mut SuffixContextExt<'input> {
         &mut self.base
@@ -6335,6 +6405,7 @@ impl<'input> Borrow<SuffixContextExt<'input>> for ManyGreedyContext<'input> {
         &self.base
     }
 }
+
 impl<'input> BorrowMut<SuffixContextExt<'input>> for ManyGreedyContext<'input> {
     fn borrow_mut(&mut self) -> &mut SuffixContextExt<'input> {
         &mut self.base
@@ -6415,6 +6486,7 @@ impl<'input> Borrow<SuffixContextExt<'input>> for ManyContext<'input> {
         &self.base
     }
 }
+
 impl<'input> BorrowMut<SuffixContextExt<'input>> for ManyContext<'input> {
     fn borrow_mut(&mut self) -> &mut SuffixContextExt<'input> {
         &mut self.base
@@ -6551,11 +6623,13 @@ impl<'input> Deref for AtomicContextAll<'input> {
         }
     }
 }
+
 impl<'input, 'a> Visitable<dyn YggdrasilAntlrVisitor<'input> + 'a> for AtomicContextAll<'input> {
     fn accept(&self, visitor: &mut (dyn YggdrasilAntlrVisitor<'input> + 'a)) {
         self.deref().accept(visitor)
     }
 }
+
 impl<'input, 'a> Listenable<dyn YggdrasilAntlrListener<'input> + 'a> for AtomicContextAll<'input> {
     fn enter(&self, listener: &mut (dyn YggdrasilAntlrListener<'input> + 'a)) {
         self.deref().enter(listener)
@@ -6660,6 +6734,7 @@ impl<'input> Borrow<AtomicContextExt<'input>> for AIntContext<'input> {
         &self.base
     }
 }
+
 impl<'input> BorrowMut<AtomicContextExt<'input>> for AIntContext<'input> {
     fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
         &mut self.base
@@ -6730,6 +6805,7 @@ impl<'input> Borrow<AtomicContextExt<'input>> for AReContext<'input> {
         &self.base
     }
 }
+
 impl<'input> BorrowMut<AtomicContextExt<'input>> for AReContext<'input> {
     fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
         &mut self.base
@@ -6802,6 +6878,7 @@ impl<'input> Borrow<AtomicContextExt<'input>> for ACharContext<'input> {
         &self.base
     }
 }
+
 impl<'input> BorrowMut<AtomicContextExt<'input>> for ACharContext<'input> {
     fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
         &mut self.base
@@ -6872,6 +6949,7 @@ impl<'input> Borrow<AtomicContextExt<'input>> for ATupleContext<'input> {
         &self.base
     }
 }
+
 impl<'input> BorrowMut<AtomicContextExt<'input>> for ATupleContext<'input> {
     fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
         &mut self.base
@@ -6944,6 +7022,7 @@ impl<'input> Borrow<AtomicContextExt<'input>> for ASpecialContext<'input> {
         &self.base
     }
 }
+
 impl<'input> BorrowMut<AtomicContextExt<'input>> for ASpecialContext<'input> {
     fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
         &mut self.base
@@ -7014,6 +7093,7 @@ impl<'input> Borrow<AtomicContextExt<'input>> for AIdContext<'input> {
         &self.base
     }
 }
+
 impl<'input> BorrowMut<AtomicContextExt<'input>> for AIdContext<'input> {
     fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
         &mut self.base
@@ -7084,6 +7164,7 @@ impl<'input> Borrow<AtomicContextExt<'input>> for AStringContext<'input> {
         &self.base
     }
 }
+
 impl<'input> BorrowMut<AtomicContextExt<'input>> for AStringContext<'input> {
     fn borrow_mut(&mut self) -> &mut AtomicContextExt<'input> {
         &mut self.base

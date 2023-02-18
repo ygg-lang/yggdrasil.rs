@@ -1,4 +1,5 @@
 use super::*;
+use crate::rule::YggdrasilNamepath;
 
 //
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
@@ -25,6 +26,18 @@ impl Display for RuleReference {
     }
 }
 
+impl From<YggdrasilIdentifier> for ExpressionNode {
+    fn from(value: YggdrasilIdentifier) -> Self {
+        let rule = RuleReference { name: value, boxed: false, inline: false };
+        Self { kind: ExpressionKind::Rule(rule), tag: "".to_string() }
+    }
+}
+
+impl From<RuleReference> for ExpressionNode {
+    fn from(value: RuleReference) -> Self {
+        Self { kind: ExpressionKind::Rule(value), tag: "".to_string() }
+    }
+}
 impl RuleReference {
     pub fn new(rule_name: YggdrasilIdentifier) -> Self {
         Self { name: rule_name.trim_underscore(), boxed: false, inline: rule_name.is_ignore() }

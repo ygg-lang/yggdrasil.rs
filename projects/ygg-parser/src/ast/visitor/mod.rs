@@ -1,8 +1,7 @@
 use super::*;
-use antlr_rust::tree::{ErrorNode, VisitChildren};
+
 use yggdrasil_ir::{
-    data::DataKind,
-    nodes::{ExpressionKind, ExpressionNode},
+    nodes::ExpressionNode,
     rule::{GrammarRule, GrammarRuleKind, YggdrasilIdentifier},
 };
 
@@ -25,6 +24,11 @@ impl ParseTreeVisitorCompat<'_> for YggdrasilParser {
 
 /// Convert weakly typed ast to strongly typed ast
 impl YggdrasilAntlrVisitor<'_> for YggdrasilParser {
+    fn visit_define_grammar(&mut self, ctx: &Define_grammarContext<'_>) {
+        ctx.grammar_block()
+
+        todo!()
+    }
     fn visit_define_class(&mut self, ctx: &Define_classContext<'_>) {
         if let Some(s) = GrammarRule::take_one(ctx) {
             self.grammar.insert(s);

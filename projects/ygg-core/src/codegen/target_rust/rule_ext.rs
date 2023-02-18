@@ -27,18 +27,23 @@ impl RuleExt for GrammarRule {
     }
 
     fn parser_expression(&self) -> String {
-        match &self.body.kind {
-            ExpressionKind::Function(_) => "parse_Function(s)".to_string(),
-            ExpressionKind::Choice(_) => "parse_Choice(s)".to_string(),
-            ExpressionKind::Concat(_) => "parse_Concat(s)".to_string(),
-            ExpressionKind::Unary(_) => "parse_Unary(s)".to_string(),
-            ExpressionKind::Rule(_) => "parse_Rule(s)".to_string(),
-            ExpressionKind::Text(v) => {
-                format!("s.match_string({:?})", v.text)
+        let mut w = String::new();
+        let _: std::fmt::Result = try {
+            match &self.body.kind {
+                ExpressionKind::Function(_) => w.push_str("parse_Function(s)"),
+                ExpressionKind::Choice(_) => w.push_str("parse_Choice(s)"),
+                ExpressionKind::Concat(_) => w.push_str("parse_Concat(s)"),
+                ExpressionKind::Unary(_) => w.push_str("parse_Unary(s)"),
+                ExpressionKind::Rule(r) => {
+                    let name = format!("parse_{}", r.name.text).to_case(Case::Snake);
+                    write!(w, "{name}(s)")?
+                }
+                ExpressionKind::Text(v) => write!(w, "s.match_string({:?})", v.text)?,
+                ExpressionKind::Regex(_) => w.push_str("parse_Regex(s)"),
+                ExpressionKind::Data(_) => w.push_str("parse_Unary(s)"),
             }
-            ExpressionKind::Regex(_) => "parse_Regex(s)".to_string(),
-            ExpressionKind::Data(_) => "parse_Data(s)".to_string(),
-        }
+        };
+        w
     }
 }
 

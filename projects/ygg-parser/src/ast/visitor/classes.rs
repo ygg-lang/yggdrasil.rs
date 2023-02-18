@@ -99,21 +99,6 @@ impl<'i> Extractor<SuffixContextAll<'i>> for Operator {
     }
 }
 
-impl<'i> Extractor<AtomicContextAll<'i>> for ExpressionNode {
-    fn take_one(node: &AtomicContextAll<'i>) -> Option<Self> {
-        match node {
-            AtomicContextAll::AIntContext(_) => todo!(),
-            AtomicContextAll::AReContext(r) => Some(RegularExpression::take(r.regex())?.into()),
-            AtomicContextAll::ACharContext(_) => todo!(),
-            AtomicContextAll::ATupleContext(_) => todo!(),
-            AtomicContextAll::ASpecialContext(_) => todo!(),
-            AtomicContextAll::AIdContext(s) => None,
-            AtomicContextAll::AStringContext(s) => Some(YggdrasilText::take(s.string())?.into()),
-            AtomicContextAll::Error(_) => None,
-        }
-    }
-}
-
 // impl<'i> Extractor<NamepathContextAll<'i>> for RuleReference {
 //     fn take_one(node: &NamepathContextAll<'i>) -> Option<Self> {
 //         // node.identifier_all()
