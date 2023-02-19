@@ -18,8 +18,8 @@ class Array {
 }
 
 atomic class String {
-    | "'" "'"
-    | "\"" "\""
+    // | "'" "'"
+    // | "\"" "\""
 }
 
 atomic class Number {

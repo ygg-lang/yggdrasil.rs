@@ -72,8 +72,10 @@ impl<'i> Extractor<Class_expressionContextAll<'i>> for ExpressionNode {
                 let rhs = ExpressionNode::take(v.rhs.clone())?;
                 Some(lhs + rhs)
             }
-            Class_expressionContextAll::CPatternContext(_) => {
-                todo!()
+            Class_expressionContextAll::CPatternContext(v) => {
+                let lhs = ExpressionNode::take(v.lhs.clone())?;
+                let rhs = ExpressionNode::take(v.rhs.clone())?;
+                Some(lhs | rhs)
             }
             Class_expressionContextAll::CGroupContext(_) => {
                 todo!()

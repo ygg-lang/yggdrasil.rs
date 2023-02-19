@@ -135,7 +135,7 @@ pub struct GrammarRule {
     /// ```
     pub ignored: bool,
     ///
-    pub body: ExpressionNode,
+    pub body: Option<ExpressionNode>,
     /// position of all parts
     pub range: Range<usize>,
 }

@@ -1,7 +1,7 @@
 use crate::{
     data::SymbolAlias,
     nodes::{ChoiceExpression, ExpressionKind, ExpressionNode},
-    rule::{FunctionRule, GrammarRule},
+    rule::{FunctionRule, GrammarRule, YggdrasilIdentifier},
     traits::CodeOptimizer,
 };
 use diagnostic_quick::{QError, QResult, Validation};
@@ -26,7 +26,7 @@ mod inlining;
 pub struct GrammarInfo {
     /// File path of the grammar
     pub url: Option<Url>,
-    pub name: String,
+    pub name: YggdrasilIdentifier,
     pub extensions: Vec<String>,
     pub imports: BTreeMap<Url, Vec<SymbolAlias>>,
     pub exports: Vec<String>,
@@ -40,7 +40,7 @@ impl Default for GrammarInfo {
     fn default() -> Self {
         Self {
             url: None,
-            name: "".to_string(),
+            name: Default::default(),
             extensions: vec![],
             imports: Default::default(),
             exports: vec![],

@@ -2,32 +2,27 @@
 
 use yggdrasil_rt::*;
 
-type Input<'i> = Box<State<'i, Rule>>;
-type Output<'i> = Result<Box<State<'i, Rule>>, Box<State<'i, Rule>>>;
+type Input<'i> = Box<State<'i, Json5Rule>>;
+type Output<'i> = Result<Box<State<'i, Json5Rule>>, Box<State<'i, Json5Rule>>>;
 
 #[derive(Default)]
-pub struct Language {}
+pub struct Json5Language {}
 
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub enum Rule {
-    Json,
+pub enum Json5Rule {
+    Value,
     Object,
+    Array,
     String,
     Number,
+    Boolean,
     Null,
     WhiteSpace,
 }
 
-impl YggdrasilRule for Rule {
+impl YggdrasilRule for Json5Rule {
     fn all_rules() -> &'static [Self] {
-        &[
-            Self::Json,
-            Self::Object,
-            Self::String,
-            Self::Number,
-            Self::Null,
-            Self::WhiteSpace,
-        ]
+        &[Self::Value, Self::Object, Self::Array, Self::String, Self::Number, Self::Boolean, Self::Null, Self::WhiteSpace]
     }
 
     fn is_ignore(&self) -> bool {
@@ -35,54 +30,54 @@ impl YggdrasilRule for Rule {
     }
 }
 
-impl YggdrasilParser for Language {
-    type Rule = Rule;
-    fn parse(input: &str, rule: Rule) -> OutputResult<Rule> {
+impl YggdrasilParser for Json5Language {
+    type Rule = Json5Rule;
+    fn parse(input: &str, rule: Json5Rule) -> OutputResult<Json5Rule> {
         state(input, |state| match rule {
-            Rule::Json => parse_json(state),
-            Rule::Object => parse_object(state),
-            Rule::String => parse_string(state),
-            Rule::Number => parse_number(state),
-            Rule::Null => parse_null(state),
-            Rule::WhiteSpace => parse_white_space(state),
+            Json5Rule::Value => parse_value(state),
+            Json5Rule::Object => parse_object(state),
+            Json5Rule::Array => parse_array(state),
+            Json5Rule::String => parse_string(state),
+            Json5Rule::Number => parse_number(state),
+            Json5Rule::Boolean => parse_boolean(state),
+            Json5Rule::Null => parse_null(state),
+            Json5Rule::WhiteSpace => parse_white_space(state),
         })
     }
 }
 #[inline]
-fn parse_json(state: Input) -> Output {
-    state.rule(Rule::Json, |s| {
-        parse_Choice(s)
-    })
+fn parse_value(state: Input) -> Output {
+    state.rule(Json5Rule::Value, |s| parse_Choice(s))
 }
 #[inline]
 fn parse_object(state: Input) -> Output {
-    state.rule(Rule::Object, |s| {
-        s.match_string("{")
-    })
+    state.rule(Json5Rule::Object, |s| s.match_string("{"))
+}
+
+#[inline]
+fn parse_array(state: Input) -> Output {
+    state.rule(Json5Rule::Array, |s| s.match_string("["))
 }
 #[inline]
 fn parse_string(state: Input) -> Output {
-    state.rule(Rule::String, |s| {
-        parse_Choice(s)
-    })
+    state.rule(Json5Rule::String, |s| parse_Choice(s))
 }
 #[inline]
 fn parse_number(state: Input) -> Output {
-    state.rule(Rule::Number, |s| {
-        parse_Choice(s)
-    })
+    state.rule(Json5Rule::Number, |s| parse_Choice(s))
+}
+
+#[inline]
+fn parse_boolean(state: Input) -> Output {
+    state.rule(Json5Rule::Boolean, |s| parse_Choice(s))
 }
 #[inline]
 fn parse_null(state: Input) -> Output {
-    state.rule(Rule::Null, |s| {
-        s.match_string("null")
-    })
+    state.rule(Json5Rule::Null, |s| s.match_string("null"))
 }
 #[inline]
 fn parse_white_space(state: Input) -> Output {
-    state.rule(Rule::WhiteSpace, |s| {
-        parse_unicode_white_space(s)
-    })
+    state.rule(Json5Rule::WhiteSpace, |s| parse_unicode_white_space(s))
 }
 
 /// All rules ignored in ast mode, inline is not recommended

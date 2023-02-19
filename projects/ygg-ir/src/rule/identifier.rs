@@ -15,7 +15,7 @@ impl Display for YggdrasilNamepath {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Default, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", Serialize, Deserialize)]
 pub struct YggdrasilIdentifier {
     pub text: String,

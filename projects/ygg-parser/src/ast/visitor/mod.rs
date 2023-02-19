@@ -25,9 +25,7 @@ impl ParseTreeVisitorCompat<'_> for YggdrasilParser {
 /// Convert weakly typed ast to strongly typed ast
 impl YggdrasilAntlrVisitor<'_> for YggdrasilParser {
     fn visit_define_grammar(&mut self, ctx: &Define_grammarContext<'_>) {
-        ctx.grammar_block()
-
-        todo!()
+        self.grammar.name = YggdrasilIdentifier::take(ctx.identifier()).unwrap();
     }
     fn visit_define_class(&mut self, ctx: &Define_classContext<'_>) {
         if let Some(s) = GrammarRule::take_one(ctx) {

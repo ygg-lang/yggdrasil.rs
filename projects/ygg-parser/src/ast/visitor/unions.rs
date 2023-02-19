@@ -22,6 +22,6 @@ impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
 }
 impl<'i> Extractor<Union_blockContextAll<'i>> for ExpressionNode {
     fn take_one(node: &Union_blockContextAll<'i>) -> Option<Self> {
-        None
+        Some(ExpressionNode::empty())
     }
 }

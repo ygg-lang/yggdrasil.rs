@@ -47,7 +47,7 @@ pub enum DataKind {
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct YggdrasilText {
     pub text: String,
-    pub span: Range<usize>,
+    pub range: Range<usize>,
 }
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]

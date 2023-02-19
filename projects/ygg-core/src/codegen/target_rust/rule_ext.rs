@@ -31,7 +31,7 @@ impl RuleExt for GrammarRule {
         let _: std::fmt::Result = try {
             match &self.body.kind {
                 ExpressionKind::Function(_) => w.push_str("parse_Function(s)"),
-                ExpressionKind::Choice(_) => w.push_str("parse_Choice(s)"),
+                ExpressionKind::Choice(v) => w.push_str("parse_Choice(s)"),
                 ExpressionKind::Concat(_) => w.push_str("parse_Concat(s)"),
                 ExpressionKind::Unary(_) => w.push_str("parse_Unary(s)"),
                 ExpressionKind::Rule(r) => {

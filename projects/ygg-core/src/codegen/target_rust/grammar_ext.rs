@@ -2,10 +2,10 @@ use super::*;
 
 impl<'i> RustWrite<'i> {
     pub fn language_name(&self) -> String {
-        format!("{}Language", self.grammar.name)
+        format!("{}Language", self.grammar.name.text)
     }
     pub fn rule_name(&self) -> String {
-        format!("{}Rule", self.grammar.name)
+        format!("{}Rule", self.grammar.name.text)
     }
     pub fn rules(&self) -> impl Iterator<Item = GrammarRule> + '_ {
         self.grammar.rules.values().sorted().cloned()
