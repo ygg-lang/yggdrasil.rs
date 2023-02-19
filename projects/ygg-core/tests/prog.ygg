@@ -14,7 +14,7 @@ class Object {
 }
 
 class Array {
-    '[' Value? ']'
+    '[' (Value (',' Value)* ',')? ']'
 }
 
 atomic class String {

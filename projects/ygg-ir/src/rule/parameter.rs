@@ -131,7 +131,7 @@ impl ExpressionNode {
 impl UnaryExpression {
     fn collect_operator_parameters(&self) -> Option<RuleParameterKind> {
         let mut inner = None;
-        for o in &self.ops {
+        for o in &self.operators {
             match o {
                 // `(a?)*`, `(a?)+`
                 Operator::Repeats | Operator::Repeat1 => return Some(RuleParameterKind::Optional),

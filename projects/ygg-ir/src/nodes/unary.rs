@@ -3,7 +3,7 @@ use super::*;
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct UnaryExpression {
     pub base: ExpressionNode,
-    pub ops: Vec<Operator>,
+    pub operators: Vec<Operator>,
 }
 
 impl From<UnaryExpression> for ExpressionKind {
@@ -18,13 +18,13 @@ impl Add<Operator> for ExpressionNode {
     fn add(self, o: Operator) -> Self::Output {
         match self.kind {
             ExpressionKind::Unary(node) => {
-                let mut ops = node.ops;
+                let mut ops = node.operators;
                 ops.push(o);
-                let unary = UnaryExpression { base: node.base, ops };
+                let unary = UnaryExpression { base: node.base, operators: ops };
                 ExpressionNode { kind: ExpressionKind::Unary(Box::new(unary)), tag: self.tag }
             }
             _ => {
-                let unary = UnaryExpression { base: self, ops: vec![o] };
+                let unary = UnaryExpression { base: self, operators: vec![o] };
                 ExpressionNode { kind: ExpressionKind::Unary(Box::new(unary)), tag: "".to_string() }
             }
         }

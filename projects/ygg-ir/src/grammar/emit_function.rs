@@ -29,7 +29,7 @@ impl CodeOptimizer for EmitFunction {
 impl EmitFunction {
     fn emit(&mut self, rules: &mut IndexMap<String, GrammarRule>) -> QResult {
         for (_, rule) in rules.iter_mut() {
-            self.emit_expression(&mut rule.body)?;
+            // self.emit_expression(&mut rule.body)?;
         }
         Ok(())
     }

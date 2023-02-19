@@ -167,7 +167,7 @@ impl GrammarRule {
             entry: false,
             ignored: false,
             kind,
-            body: ExpressionNode::empty(),
+            body: None,
             range: range.clone(),
         }
     }

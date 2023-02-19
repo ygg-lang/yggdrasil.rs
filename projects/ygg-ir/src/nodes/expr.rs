@@ -57,7 +57,7 @@ impl ExpressionNode {
                 }
             }
             ExpressionKind::Concat(e) => e.into_iter().for_each(|f| f.capture()),
-            ExpressionKind::Unary(e) => match e.ops.contains(&Operator::Remark) {
+            ExpressionKind::Unary(e) => match e.operators.contains(&Operator::Remark) {
                 true => e.base.non_capture(),
                 false => e.base.capture(),
             },
@@ -80,7 +80,7 @@ impl ExpressionNode {
                 }
             }
             ExpressionKind::Concat(e) => e.into_iter().for_each(|f| f.non_capture()),
-            ExpressionKind::Unary(e) => match e.ops.contains(&Operator::Remark) {
+            ExpressionKind::Unary(e) => match e.operators.contains(&Operator::Remark) {
                 true => e.base.capture(),
                 false => e.base.non_capture(),
             },

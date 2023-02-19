@@ -61,10 +61,10 @@ impl ExpressionNode {
     pub fn unary(mut base: ExpressionNode, o: Operator) -> Self {
         match base.kind {
             ExpressionKind::Unary(ref mut v) if base.tag.is_empty() => {
-                v.ops.push(o);
+                v.operators.push(o);
                 base
             }
-            _ => Self { kind: ExpressionKind::Unary(Box::new(UnaryExpression { base, ops: vec![o] })), tag: "".to_string() },
+            _ => Self { kind: ExpressionKind::Unary(Box::new(UnaryExpression { base, operators: vec![o] })), tag: "".to_string() },
         }
     }
 }

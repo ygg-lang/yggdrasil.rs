@@ -3,11 +3,11 @@ use crate::data::RuleReference;
 
 impl FieldDescriptor for GrammarRule {
     fn get_field_names<'a>(&'a self, buffer: &mut HashSet<&'a String>) {
-        self.body.get_field_names(buffer)
+        // self.body.get_field_names(buffer)
     }
 
     fn get_field_count(&self, buffer: &mut HashSet<String, FieldCount2>) {
-        self.body.get_field_count(buffer)
+        // self.body.get_field_count(buffer)
     }
 }
 

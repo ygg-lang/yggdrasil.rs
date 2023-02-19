@@ -3,7 +3,7 @@ use super::*;
 impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
     fn take_one(node: &Define_unionContext<'i>) -> Option<Self> {
         let id = YggdrasilIdentifier::take(node.name.clone())?;
-        let expr = ExpressionNode::take(node.union_block())?;
+        let expr = ExpressionNode::take(node.union_block());
         Some(GrammarRule {
             name: id,
             kind: GrammarRuleKind::Union,

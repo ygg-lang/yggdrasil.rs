@@ -49,34 +49,48 @@ impl ConcatExpression {
     {
         ExpressionNode { tag: tag.into(), kind: ExpressionKind::Concat(self) }
     }
-}
-
-impl Add<Self> for ExpressionNode {
-    type Output = Self;
-    /// soft concat
-    #[inline(never)]
-    fn add(self, other: Self) -> Self::Output {
-        join(self, other, true)
+    pub fn split(&self) -> (&ExpressionNode, &[ExpressionNode]) {
+        self.sequence.split_first().expect("empty is invalid")
     }
 }
 
-/// a ~ b ~ c
-impl AddAssign for ExpressionNode {
-    /// - atomic:  a b = a b
-    /// - combine: a b = a ignore b
-    fn add_assign(&mut self, rhs: Self) {}
-}
-
-impl BitAnd<Self> for ExpressionNode {
+impl Add for ExpressionNode {
     type Output = Self;
-    fn bitand(mut self, other: Self) -> Self::Output {
+    /// `a ~ b`
+    fn add(mut self, other: Self) -> Self::Output {
         self += other;
         self
     }
 }
 
+impl AddAssign for ExpressionNode {
+    /// `a ~ b ~ c`
+    fn add_assign(&mut self, rhs: Self) {
+        match &mut self.kind {
+            ExpressionKind::Concat(this) if self.tag.is_empty() && rhs.tag.is_empty() => {
+                match rhs.kind {
+                    ExpressionKind::Concat(that) => this.sequence.extend(that.sequence),
+                    _ => this.sequence.push(rhs),
+                }
+                return;
+            }
+            _ => {}
+        }
+        *self = ConcatExpression { sequence: vec![self.clone(), rhs] }.into()
+    }
+}
+
+impl BitAnd<Self> for ExpressionNode {
+    type Output = Self;
+    /// `a b`
+    fn bitand(mut self, other: Self) -> Self::Output {
+        self &= other;
+        self
+    }
+}
+
 impl BitAndAssign for ExpressionNode {
-    /// p:a q:(b c) | d e
+    /// `p:a q:(b c) | d e`
     fn bitand_assign(&mut self, rhs: Self) {
         match &mut self.kind {
             ExpressionKind::Concat(this) if self.tag.is_empty() && rhs.tag.is_empty() => {

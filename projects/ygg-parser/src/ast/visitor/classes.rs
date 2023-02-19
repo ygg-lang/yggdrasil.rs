@@ -8,7 +8,7 @@ use yggdrasil_ir::{
 impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
     fn take_one(node: &Define_classContext<'i>) -> Option<Self> {
         let id = YggdrasilIdentifier::take(node.name.clone())?;
-        let expr = ExpressionNode::take(node.class_block())?;
+        let expr = ExpressionNode::take(node.class_block());
         Some(GrammarRule {
             name: id,
             kind: GrammarRuleKind::Class,
@@ -28,6 +28,7 @@ impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
 impl<'i> Extractor<Class_blockContextAll<'i>> for ExpressionNode {
     fn take_one(node: &Class_blockContextAll<'i>) -> Option<Self> {
         let terms = ExpressionNode::take_many(&node.class_expression_all());
+        println!("{:?}", terms.as_slice());
         let expr = match terms.as_slice() {
             [head, rest @ ..] => {
                 let mut out = head.clone();
@@ -36,7 +37,7 @@ impl<'i> Extractor<Class_blockContextAll<'i>> for ExpressionNode {
                 }
                 out
             }
-            _ => ExpressionNode::empty(),
+            _ => return None,
         };
         Some(expr)
     }
