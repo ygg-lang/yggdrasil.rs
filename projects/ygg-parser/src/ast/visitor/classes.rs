@@ -78,9 +78,7 @@ impl<'i> Extractor<Class_expressionContextAll<'i>> for ExpressionNode {
                 let rhs = ExpressionNode::take(v.rhs.clone())?;
                 Some(lhs | rhs)
             }
-            Class_expressionContextAll::CGroupContext(_) => {
-                todo!()
-            }
+            Class_expressionContextAll::CGroupContext(v) => ExpressionNode::take(v.class_expression()),
             Class_expressionContextAll::AtomContext(s) => ExpressionNode::take(s.atomic()),
             Class_expressionContextAll::CNotContext(_) => {
                 todo!()

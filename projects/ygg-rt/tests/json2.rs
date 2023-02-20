@@ -52,11 +52,7 @@ fn parse_value(state: Input) -> Output {
 #[inline]
 fn parse_object(state: Input) -> Output {
     state.rule(Json5Rule::Object, |s| {
-        s.sequence(|s| {
-            s.match_string("{")
-                .and_then(|s| s.optional(|s| s.optional(|s| s.optional(|s| parse_value(s)))))
-                .and_then(|s| s.match_string("}"))
-        })
+        s.sequence(|s| s.match_string("{").and_then(|s| s.optional(|s| parse_value(s))).and_then(|s| s.match_string("}")))
     })
 }
 #[inline]
@@ -64,7 +60,15 @@ fn parse_array(state: Input) -> Output {
     state.rule(Json5Rule::Array, |s| {
         s.sequence(|s| {
             s.match_string("[")
-                .and_then(|s| s.optional(|s| s.optional(|s| s.optional(|s| parse_value(s)))))
+                .and_then(|s| {
+                    s.optional(|s| {
+                        s.sequence(|s| {
+                            parse_value(s)
+                                .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(",").and_then(|s| parse_value(s)))))
+                                .and_then(|s| s.match_string(","))
+                        })
+                    })
+                })
                 .and_then(|s| s.match_string("]"))
         })
     })
@@ -91,6 +95,6 @@ fn parse_white_space(state: Input) -> Output {
 }
 
 /// All rules ignored in ast mode, inline is not recommended
-fn parse_ignore(state: Input) -> Output {
+fn builtin_ignore(state: Input) -> Output {
     Ok(state)
 }

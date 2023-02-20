@@ -489,10 +489,39 @@ where
     /// assert_eq!(result.unwrap_err().position().pos(), 0);
     /// ```
     #[inline]
-    pub fn match_string(mut self: Box<Self>, string: &str) -> Either<Box<Self>> {
+    pub fn match_string_exact(mut self: Box<Self>, string: &str) -> Either<Box<Self>> {
         if self.position.match_string(string) { Ok(self) } else { Err(self) }
     }
 
+    /// Attempts to match the given string. Returns `Ok` with the updated `Box<ParserState>` if
+    /// successful, or `Err` with the updated `Box<ParserState>` otherwise.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use pest;
+    /// # #[allow(non_camel_case_types)]
+    /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+    /// enum Rule {}
+    ///
+    /// let input = "ab";
+    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut result = state.match_string("ab");
+    /// assert!(result.is_ok());
+    /// assert_eq!(result.unwrap().position().pos(), 2);
+    ///
+    /// state = pest::State::new(input);
+    /// result = state.match_string("ac");
+    /// assert!(result.is_err());
+    /// assert_eq!(result.unwrap_err().position().pos(), 0);
+    /// ```
+    #[inline]
+    pub fn match_string(self: Box<Self>, string: &str, insensitive: bool) -> Either<Box<Self>> {
+        match insensitive {
+            true => self.match_insensitive(string),
+            false => self.match_string_exact(string),
+        }
+    }
     /// Attempts to case-insensitively match the given string. Returns `Ok` with the updated
     /// `Box<ParserState>` if successful, or `Err` with the updated `Box<ParserState>` otherwise.
     ///
@@ -779,7 +808,7 @@ where
     #[inline]
     pub fn stack_peek(self: Box<Self>) -> Either<Box<Self>> {
         let string = self.stack.peek().expect("peek was called on empty stack").as_str();
-        self.match_string(string)
+        self.match_string_exact(string)
     }
 
     /// Pops the top of the stack and attempts to match the string. Returns `Ok(Box<ParserState>)`
@@ -803,7 +832,7 @@ where
     #[inline]
     pub fn stack_pop(mut self: Box<Self>) -> Either<Box<Self>> {
         let string = self.stack.pop().expect("pop was called on empty stack").as_str();
-        self.match_string(string)
+        self.match_string_exact(string)
     }
 
     /// Matches part of the state of the stack.

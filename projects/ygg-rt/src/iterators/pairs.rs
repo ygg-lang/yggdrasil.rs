@@ -615,7 +615,7 @@ mod tests {
                 state.sequence(|state| {
                     number(state)
                         .and_then(|state| state.tag_node("lhs"))
-                        .and_then(|state| state.match_string(o))
+                        .and_then(|state| state.match_string_exact(o))
                         .and_then(number)
                         .and_then(|state| state.tag_node("rhs"))
                 })

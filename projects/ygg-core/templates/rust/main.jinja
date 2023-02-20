@@ -54,7 +54,7 @@ fn {{ rule.parser_name() }}(state: Input) -> Output {
 {%- endfor %}
 
 /// All rules ignored in ast mode, inline is not recommended
-fn parse_ignore(state: Input) -> Output {
+fn builtin_ignore(state: Input) -> Output {
 {%- if self.ignore_rules_empty() %}
     Ok(state)
 {%- else %}

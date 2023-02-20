@@ -71,38 +71,38 @@ fn json(state: Input) -> Output {
 fn object(state: Input) -> Output {
     state.rule(JsonRule::object, |s| {
         s.sequence(|s| {
-            s.match_string("{")
+            s.match_string_exact("{")
                 .and_then(ignore)
                 .and_then(pair)
                 .and_then(ignore)
                 .and_then(|s| {
-                    s.repeat(|s| s.sequence(|s| s.match_string(",").and_then(ignore).and_then(pair).and_then(ignore)))
+                    s.repeat(|s| s.sequence(|s| s.match_string_exact(",").and_then(ignore).and_then(pair).and_then(ignore)))
                 })
-                .and_then(|s| s.match_string("}"))
+                .and_then(|s| s.match_string_exact("}"))
         })
-        .or_else(|s| s.sequence(|s| s.match_string("{").and_then(ignore).and_then(|s| s.match_string("}"))))
+        .or_else(|s| s.sequence(|s| s.match_string_exact("{").and_then(ignore).and_then(|s| s.match_string_exact("}"))))
     })
 }
 
 fn pair(state: Input) -> Output {
     state.rule(JsonRule::pair, |s| {
-        s.sequence(|s| string(s).and_then(ignore).and_then(|s| s.match_string(":")).and_then(ignore).and_then(value))
+        s.sequence(|s| string(s).and_then(ignore).and_then(|s| s.match_string_exact(":")).and_then(ignore).and_then(value))
     })
 }
 
 fn array(state: Input) -> Output {
     state.rule(JsonRule::array, |s| {
         s.sequence(|s| {
-            s.match_string("[")
+            s.match_string_exact("[")
                 .and_then(ignore)
                 .and_then(value)
                 .and_then(ignore)
                 .and_then(|s| {
-                    s.repeat(|s| s.sequence(|s| s.match_string(",").and_then(ignore).and_then(value).and_then(ignore)))
+                    s.repeat(|s| s.sequence(|s| s.match_string_exact(",").and_then(ignore).and_then(value).and_then(ignore)))
                 })
-                .and_then(|s| s.match_string("]"))
+                .and_then(|s| s.match_string_exact("]"))
         })
-        .or_else(|s| s.sequence(|s| s.match_string("[").and_then(ignore).and_then(|s| s.match_string("]"))))
+        .or_else(|s| s.sequence(|s| s.match_string_exact("[").and_then(ignore).and_then(|s| s.match_string_exact("]"))))
     })
 }
 
@@ -112,39 +112,39 @@ fn value(state: Input) -> Output {
 
 fn string(state: Input) -> Output {
     state.rule(JsonRule::string, |s| {
-        s.match_string("\"")
+        s.match_string_exact("\"")
             .and_then(|s| {
                 s.repeat(|s| {
                     escape(s).or_else(|s| {
                         s.sequence(|s| {
-                            s.lookahead(false, |s| s.match_string("\"").or_else(|s| s.match_string("\\")))
+                            s.lookahead(false, |s| s.match_string_exact("\"").or_else(|s| s.match_string_exact("\\")))
                                 .and_then(|s| s.skip(1))
                         })
                     })
                 })
             })
-            .and_then(|pos| pos.match_string("\""))
+            .and_then(|pos| pos.match_string_exact("\""))
     })
 }
 
 fn escape(state: Input) -> Output {
     state.sequence(|s| {
-        s.match_string("\\").and_then(|s| {
-            s.match_string("\"")
-                .or_else(|s| s.match_string("\\"))
-                .or_else(|s| s.match_string("/"))
-                .or_else(|s| s.match_string("b"))
-                .or_else(|s| s.match_string("f"))
-                .or_else(|s| s.match_string("n"))
-                .or_else(|s| s.match_string("r"))
-                .or_else(|s| s.match_string("t"))
+        s.match_string_exact("\\").and_then(|s| {
+            s.match_string_exact("\"")
+                .or_else(|s| s.match_string_exact("\\"))
+                .or_else(|s| s.match_string_exact("/"))
+                .or_else(|s| s.match_string_exact("b"))
+                .or_else(|s| s.match_string_exact("f"))
+                .or_else(|s| s.match_string_exact("n"))
+                .or_else(|s| s.match_string_exact("r"))
+                .or_else(|s| s.match_string_exact("t"))
                 .or_else(unicode)
         })
     })
 }
 
 fn unicode(state: Input) -> Output {
-    state.sequence(|s| s.match_string("u").and_then(hex).and_then(hex).and_then(hex))
+    state.sequence(|s| s.match_string_exact("u").and_then(hex).and_then(hex).and_then(hex))
 }
 
 fn hex(state: Input) -> Output {
@@ -154,10 +154,10 @@ fn hex(state: Input) -> Output {
 fn number(state: Input) -> Output {
     state.rule(JsonRule::number, |s| {
         s.sequence(|s| {
-            s.optional(|s| s.match_string("-")).and_then(int).and_then(|s| {
+            s.optional(|s| s.match_string_exact("-")).and_then(int).and_then(|s| {
                 s.optional(|s| {
                     s.sequence(|s| {
-                        s.match_string(".")
+                        s.match_string_exact(".")
                             .and_then(|s| s.match_range('0'..'9'))
                             .and_then(|s| s.repeat(|s| s.match_range('0'..'9')))
                             .and_then(|s| s.optional(exp))
@@ -171,33 +171,33 @@ fn number(state: Input) -> Output {
 
 fn int(state: Input) -> Output {
     state
-        .match_string("0")
+        .match_string_exact("0")
         .or_else(|s| s.sequence(|s| s.match_range('1'..'9').and_then(|s| s.repeat(|s| s.match_range('0'..'9')))))
 }
 
 fn exp(state: Input) -> Output {
     state.sequence(|s| {
-        s.match_string("E")
-            .or_else(|s| s.match_string("e"))
-            .and_then(|s| s.optional(|s| s.match_string("+").or_else(|s| s.match_string("-"))))
+        s.match_string_exact("E")
+            .or_else(|s| s.match_string_exact("e"))
+            .and_then(|s| s.optional(|s| s.match_string_exact("+").or_else(|s| s.match_string_exact("-"))))
             .and_then(int)
     })
 }
 
 fn bool(state: Input) -> Output {
-    state.rule(JsonRule::bool, |s| s.match_string("true").or_else(|s| s.match_string("false")))
+    state.rule(JsonRule::bool, |s| s.match_string_exact("true").or_else(|s| s.match_string_exact("false")))
 }
 
 fn null(state: Input) -> Output {
-    state.rule(JsonRule::null, |s| s.match_string("null"))
+    state.rule(JsonRule::null, |s| s.match_string_exact("null"))
 }
 
 fn ignore(state: Input) -> Output {
     state.repeat(|s| {
-        s.match_string(" ")
-            .or_else(|s| s.match_string("\t"))
-            .or_else(|s| s.match_string("\r"))
-            .or_else(|s| s.match_string("\n"))
+        s.match_string_exact(" ")
+            .or_else(|s| s.match_string_exact("\t"))
+            .or_else(|s| s.match_string_exact("\r"))
+            .or_else(|s| s.match_string_exact("\n"))
     })
 }
 

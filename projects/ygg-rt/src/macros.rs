@@ -336,8 +336,8 @@ pub mod tests {
             state(input, |state| {
                 state
                     .rule(TestRule::a, |s| s.skip(1).unwrap().rule(TestRule::b, |s| s.skip(1)).unwrap().skip(1))
-                    .and_then(|s| s.skip(1).unwrap().rule(TestRule::c, |s| s.match_string("e")))
-                    .and_then(|s| s.optional(|s| s.rule(TestRule::d, |s| s.match_string("fgh"))))
+                    .and_then(|s| s.skip(1).unwrap().rule(TestRule::c, |s| s.match_string_exact("e")))
+                    .and_then(|s| s.optional(|s| s.rule(TestRule::d, |s| s.match_string_exact("fgh"))))
             })
         }
     }
