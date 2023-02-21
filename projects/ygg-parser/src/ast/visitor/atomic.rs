@@ -15,7 +15,6 @@ impl<'i> Extractor<AtomicContextAll<'i>> for YggdrasilExpression {
                 Some(
                     YggdrasilText {
                         text: match char {
-                            '\\' => "\\".to_string(),
                             'r' => "\r".to_string(),
                             'n' => "\n".to_string(),
                             _ => char.to_string(),

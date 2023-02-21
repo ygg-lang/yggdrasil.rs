@@ -28,7 +28,7 @@ atomic class String {
 }
 
 atomic class StringEscaped {
-    '\\' ANY
+'\' ANY
 }
 
 atomic class Number {

@@ -1,4 +1,5 @@
 use super::*;
+use yggdrasil_ir::nodes::ConcatExpression;
 
 impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
     fn take_one(node: &Define_classContext<'i>) -> Option<Self> {
@@ -14,17 +15,7 @@ impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
 impl<'i> Extractor<Class_blockContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &Class_blockContextAll<'i>) -> Option<Self> {
         let terms = YggdrasilExpression::take_many(&node.class_expression_all());
-        let expr = match terms.as_slice() {
-            [head, rest @ ..] => {
-                let mut out = head.clone();
-                for item in rest {
-                    out &= item.clone();
-                }
-                out
-            }
-            _ => return None,
-        };
-        Some(expr)
+        Some(ConcatExpression { sequence: terms }.into())
     }
 }
 
@@ -71,6 +62,7 @@ impl<'i> Extractor<Class_expressionContextAll<'i>> for YggdrasilExpression {
         }
     }
 }
+
 impl<'i> Extractor<SuffixContextAll<'i>> for Operator {
     fn take_one(node: &SuffixContextAll<'i>) -> Option<Self> {
         match node {

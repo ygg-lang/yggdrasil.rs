@@ -5,10 +5,15 @@ use yggdrasil_rt::*;
 type Input<'i> = Box<State<'i, Json5Rule>>;
 type Output<'i> = Result<Box<State<'i, Json5Rule>>, Box<State<'i, Json5Rule>>>;
 
-#[derive(Default)]
+#[doc = include_str!("readme.md")]
+#[repr(C)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Ord, PartialOrd, Hash)]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Json5Language {}
 
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+#[repr(u32)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd, Hash)]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Json5Rule {
     Value,
     Object,
@@ -68,7 +73,14 @@ impl YggdrasilParser for Json5Language {
 }
 #[inline]
 fn parse_value(state: Input) -> Output {
-    state.rule(Json5Rule::Value, |s| s.match_char_by(|_| true))
+    state.rule(Json5Rule::Value, |s| {
+        s.sequence(|s| parse_object(s))
+            .or_else(|s| s.sequence(|s| parse_array(s)))
+            .or_else(|s| s.sequence(|s| parse_string(s)))
+            .or_else(|s| s.sequence(|s| parse_number(s)))
+            .or_else(|s| s.sequence(|s| parse_boolean(s)))
+            .or_else(|s| s.sequence(|s| parse_null(s)))
+    })
 }
 #[inline]
 fn parse_object(state: Input) -> Output {
@@ -103,8 +115,18 @@ fn parse_object(state: Input) -> Output {
 
 #[inline]
 fn parse_object_pair(state: Input) -> Output {
-    state.rule(Json5Rule::ObjectPair, |s| s.match_char_by(|_| true))
+    state.rule(Json5Rule::ObjectPair, |s| {
+        s.sequence(|s| {
+            s.sequence(|s| parse_identifier(s).and_then(|s| builtin_text::<false>(s, ":")).and_then(|s| parse_value(s)))
+        })
+        .or_else(|s| {
+            s.sequence(|s| {
+                s.sequence(|s| parse_string(s).and_then(|s| builtin_text::<false>(s, ":")).and_then(|s| parse_value(s)))
+            })
+        })
+    })
 }
+
 #[inline]
 fn parse_array(state: Input) -> Output {
     state.rule(Json5Rule::Array, |s| {
@@ -135,6 +157,7 @@ fn parse_array(state: Input) -> Output {
         })
     })
 }
+
 #[inline]
 fn parse_string(state: Input) -> Output {
     state.rule(Json5Rule::String, |s| {
@@ -151,22 +174,25 @@ fn parse_string(state: Input) -> Output {
 #[inline]
 fn parse_string_escaped(state: Input) -> Output {
     state.rule(Json5Rule::StringEscaped, |s| {
-        s.sequence(|s| builtin_text::<false>(s, "\\\\").and_then(|s| s.match_char_by(|_| true)))
+        s.sequence(|s| builtin_text::<false>(s, "\\").and_then(|s| s.match_char_by(|_| true)))
     })
 }
+
 #[inline]
 fn parse_number(state: Input) -> Output {
     state.rule(Json5Rule::Number, |s| parse_Bug(s))
 }
+
 #[inline]
 fn parse_boolean(state: Input) -> Output {
-    state.rule(Json5Rule::Boolean, |s| s.match_char_by(|_| true))
+    state.rule(Json5Rule::Boolean, |s| {
+        s.sequence(|s| builtin_text::<false>(s, "true")).or_else(|s| s.sequence(|s| builtin_text::<false>(s, "false")))
+    })
 }
 #[inline]
 fn parse_null(state: Input) -> Output {
     state.rule(Json5Rule::Null, |s| builtin_text::<false>(s, "null"))
 }
-
 #[inline]
 fn parse_identifier(state: Input) -> Output {
     state.rule(Json5Rule::Identifier, |s| parse_Bug(s))

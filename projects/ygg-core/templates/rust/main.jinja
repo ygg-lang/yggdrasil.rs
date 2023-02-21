@@ -5,10 +5,15 @@ use yggdrasil_rt::*;
 type Input<'i> = Box<State<'i, {{ self.rule_name() }}>>;
 type Output<'i> = Result<Box<State<'i, {{ self.rule_name() }}>>, Box<State<'i, {{ self.rule_name()}}>>>;
 
-#[derive(Default)]
+#[doc = include_str!("readme.md")]
+#[repr(C)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct {{ self.language_name() }} {}
 
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+#[repr(u32)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum {{ self.rule_name() }} {
 {%- for rule in self.rules() %}
     {{ rule.safe_rule_name() }},
