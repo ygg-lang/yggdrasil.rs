@@ -18,6 +18,8 @@ pub enum Json5Rule {
     Boolean,
     Null,
     WhiteSpace,
+    /// Label for text literal
+    IgnoreText,
 }
 
 impl YggdrasilRule for Json5Rule {
@@ -42,6 +44,7 @@ impl YggdrasilParser for Json5Language {
             Json5Rule::Boolean => parse_boolean(state),
             Json5Rule::Null => parse_null(state),
             Json5Rule::WhiteSpace => parse_white_space(state),
+            Json5Rule::IgnoreText => unreachable!(),
         })
     }
 }
@@ -52,24 +55,42 @@ fn parse_value(state: Input) -> Output {
 #[inline]
 fn parse_object(state: Input) -> Output {
     state.rule(Json5Rule::Object, |s| {
-        s.sequence(|s| s.match_string("{").and_then(|s| s.optional(|s| parse_value(s))).and_then(|s| s.match_string("}")))
+        s.sequence(|s| {
+            builtin_text(s, "{", true)
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| s.optional(|s| parse_value(s)))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, "}", true))
+        })
     })
 }
 #[inline]
 fn parse_array(state: Input) -> Output {
     state.rule(Json5Rule::Array, |s| {
         s.sequence(|s| {
-            s.match_string("[")
+            builtin_text(s, "[", true)
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| {
                     s.optional(|s| {
                         s.sequence(|s| {
                             parse_value(s)
-                                .and_then(|s| s.optional(|s| s.sequence(|s| s.match_string(",").and_then(|s| parse_value(s)))))
-                                .and_then(|s| s.match_string(","))
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| {
+                                    s.optional(|s| {
+                                        s.sequence(|s| {
+                                            builtin_text(s, ",", true)
+                                                .and_then(|s| builtin_ignore(s))
+                                                .and_then(|s| parse_value(s))
+                                        })
+                                    })
+                                })
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| builtin_text(s, ",", true))
                         })
                     })
                 })
-                .and_then(|s| s.match_string("]"))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, "]", true))
         })
     })
 }
@@ -87,7 +108,7 @@ fn parse_boolean(state: Input) -> Output {
 }
 #[inline]
 fn parse_null(state: Input) -> Output {
-    state.rule(Json5Rule::Null, |s| s.match_string("null"))
+    state.rule(Json5Rule::Null, |s| builtin_text(s, "null", true))
 }
 #[inline]
 fn parse_white_space(state: Input) -> Output {
@@ -97,4 +118,8 @@ fn parse_white_space(state: Input) -> Output {
 /// All rules ignored in ast mode, inline is not recommended
 fn builtin_ignore(state: Input) -> Output {
     Ok(state)
+}
+
+fn builtin_text<'i>(state: Input, text: &'static str, insensitive: bool) -> Output<'i> {
+    state.rule(Json5Rule::IgnoreText, |s| s.match_string(text, insensitive))
 }

@@ -3,7 +3,7 @@ use std::ops::{AddAssign, BitAndAssign};
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct ConcatExpression {
-    sequence: Vec<ExpressionNode>,
+    pub sequence: Vec<ExpressionNode>,
 }
 
 impl<T> FromIterator<T> for ConcatExpression

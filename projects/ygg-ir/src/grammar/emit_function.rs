@@ -33,20 +33,6 @@ impl EmitFunction {
         }
         Ok(())
     }
-
-    fn emit_expression(&mut self, e: &mut ExpressionNode) -> QResult {
-        match &e.kind {
-            ExpressionKind::Function(_) => {}
-            ExpressionKind::Choice(_) => {}
-            ExpressionKind::Concat(_) => {}
-            ExpressionKind::Unary(_) => {}
-            ExpressionKind::Rule(_) => {}
-            ExpressionKind::Data(_) => {}
-            ExpressionKind::Regex(_) => {}
-            ExpressionKind::Text(_) => {}
-        }
-        Ok(())
-    }
 }
 
 impl ExpressionNode {}

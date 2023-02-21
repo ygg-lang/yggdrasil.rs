@@ -34,6 +34,7 @@ impl FieldDescriptor for ExpressionKind {
                 todo!()
             }
             ExpressionKind::Text(_) => {}
+            ExpressionKind::Ignored => {}
         }
     }
 
@@ -49,6 +50,7 @@ impl FieldDescriptor for ExpressionKind {
                 todo!()
             }
             ExpressionKind::Text(_) => {}
+            ExpressionKind::Ignored => {}
         }
     }
 }

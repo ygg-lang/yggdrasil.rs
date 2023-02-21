@@ -29,6 +29,7 @@ pub struct ExpressionNode {
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum ExpressionKind {
+    Ignored,
     Function(Box<FunctionExpression>),
     Choice(Box<ChoiceExpression>),
     Concat(ConcatExpression),

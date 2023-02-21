@@ -47,6 +47,7 @@ trait NodeExt {
 impl NodeExt for ExpressionNode {
     fn write(&self, w: &mut String, ctx: &GrammarRule) -> std::fmt::Result {
         match &self.kind {
+            ExpressionKind::Ignored => w.push_str("builtin_ignore(s)"),
             ExpressionKind::Function(_) => w.push_str("parse_Function(s)"),
             ExpressionKind::Choice(v) => {
                 for branch in &v.branches {
@@ -88,9 +89,9 @@ impl NodeExt for ExpressionNode {
                 let name = format!("parse_{}", r.name.text).to_case(Case::Snake);
                 write!(w, "{name}(s)")?
             }
-            ExpressionKind::Text(v) => write!(w, "s.match_string({:?})", v.text)?,
+            ExpressionKind::Text(v) => write!(w, "builtin_text(s, {:?}, true)", v.text)?,
             ExpressionKind::Regex(_) => w.push_str("parse_Regex(s)"),
-            ExpressionKind::Data(_) => w.push_str("parse_Unary(s)"),
+            ExpressionKind::Data(_) => w.push_str("parse_Data(s)"),
         }
         Ok(())
     }

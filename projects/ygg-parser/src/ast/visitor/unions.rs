@@ -1,4 +1,5 @@
 use super::*;
+use yggdrasil_ir::rule::GrammarAtomic;
 
 impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
     fn take_one(node: &Define_unionContext<'i>) -> Option<Self> {
@@ -11,6 +12,7 @@ impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
             document: "".to_string(),
             public: false,
             derives: Default::default(),
+            atomic: GrammarAtomic::Combined,
             auto_inline: false,
             auto_boxed: false,
             entry: false,

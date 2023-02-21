@@ -13,6 +13,8 @@ pub enum {{ self.rule_name() }} {
 {%- for rule in self.rules() %}
     {{ rule.safe_rule_name() }},
 {%- endfor %}
+    /// Label for text literal
+    IgnoreText,
 }
 
 impl YggdrasilRule for {{ self.rule_name()}} {
@@ -40,6 +42,7 @@ impl YggdrasilParser for {{ self.language_name() }} {
 {%- for rule in self.rules() %}
             {{ self.rule_name() }}::{{ rule.safe_rule_name() }} => {{ rule.parser_name() }}(state),
 {%- endfor %}
+            {{ self.rule_name() }}::IgnoreText => unreachable!(),
         })
     }
 }
@@ -62,4 +65,8 @@ fn builtin_ignore(state: Input) -> Output {
         {{ self.ignore_rule_match() }}
     })
 {% endif %}
+}
+
+fn builtin_text<'i>(state: Input, text: &'static str, insensitive: bool) -> Output<'i> {
+    state.rule(Json5Rule::IgnoreText, |s| s.match_string(text, insensitive))
 }

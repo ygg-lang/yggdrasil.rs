@@ -25,7 +25,6 @@ impl DataKind {
             DataKind::CharacterBuiltin(_) => {
                 todo!()
             }
-            DataKind::Ignored => {}
             DataKind::Boolean(_) => {}
             DataKind::StringFused(_) => {}
         }

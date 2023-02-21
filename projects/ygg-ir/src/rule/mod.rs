@@ -41,6 +41,20 @@ pub enum GrammarRuleKind {
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", Serialize, Deserialize)]
+pub enum GrammarAtomic {
+    Optimized,
+    Atomic,
+    Combined,
+}
+
+impl GrammarAtomic {
+    pub fn optimize(&mut self) {
+        *self = GrammarAtomic::Optimized
+    }
+}
+
+#[derive(Debug, Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", Serialize, Deserialize)]
 pub struct GrammarRule {
     /// Automatically inline when this rule is called
     ///
@@ -80,6 +94,14 @@ pub struct GrammarRule {
     pub public: bool,
     ///
     pub derives: RuleDerive,
+    /// Ignore this node in ast mode.
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// #atomic(true)
+    /// atomic class Rule { }
+    /// ```
+    pub atomic: GrammarAtomic,
     /// Automatically inline when this rule is called
     ///
     /// ## Examples
@@ -162,6 +184,7 @@ impl GrammarRule {
             document: String::new(),
             public: false,
             derives: RuleDerive::default(),
+            atomic: GrammarAtomic::Atomic,
             auto_inline: false,
             auto_boxed: false,
             entry: false,

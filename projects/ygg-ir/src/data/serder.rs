@@ -3,7 +3,6 @@ use super::*;
 impl Hash for DataKind {
     fn hash<H: Hasher>(&self, state: &mut H) {
         match self {
-            DataKind::Ignored => state.write("DataKind::Ignored".as_bytes()),
             DataKind::Boolean(v) => {
                 state.write("DataKind::Boolean".as_bytes());
                 state.write(&[*v as u8])
@@ -57,7 +56,6 @@ impl Serialize for DataKind {
         S: Serializer,
     {
         match self {
-            DataKind::Ignored => serializer.serialize_unit_struct("Null"),
             DataKind::Boolean(v) => serializer.serialize_bool(*v),
             DataKind::Integer(_) => {
                 unimplemented!()
@@ -88,7 +86,7 @@ impl<'de> Deserialize<'de> for DataKind {
     where
         D: Deserializer<'de>,
     {
-        deserializer.deserialize_any(DataKind::Ignored)
+        todo!()
     }
 }
 

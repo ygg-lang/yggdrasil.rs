@@ -32,7 +32,6 @@ use std::{
 //
 #[derive(Debug, Clone)]
 pub enum DataKind {
-    Ignored,
     Boolean(bool),
     Integer(BigInt),
     String(String),
@@ -59,7 +58,6 @@ pub struct RegularExpression {
 impl Display for DataKind {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DataKind::Ignored => write!(f, "IGNORED"),
             DataKind::Boolean(v) => write!(f, "{}", v),
             DataKind::Integer(v) => write!(f, "{}", v),
             DataKind::String(v) => string_display(v, f),

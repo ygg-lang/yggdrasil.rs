@@ -33,7 +33,7 @@ impl ExpressionNode {
         Self { kind: ExpressionKind::Data(Box::new(DataKind::Character(c))), tag: "".to_string() }
     }
     pub fn ignored() -> Self {
-        Self { kind: ExpressionKind::Data(Box::new(DataKind::Ignored)), tag: "".to_string() }
+        Self { kind: ExpressionKind::Ignored, tag: "".to_string() }
     }
     pub fn with_tag<S>(mut self, tag: S) -> Self
     where
@@ -69,6 +69,7 @@ impl ExpressionNode {
             ExpressionKind::Data(_) => self.tag.clear(),
             ExpressionKind::Regex(_) => self.tag.clear(),
             ExpressionKind::Text(_) => {}
+            ExpressionKind::Ignored => {}
         }
     }
     fn non_capture(&mut self) {
@@ -89,6 +90,7 @@ impl ExpressionNode {
             ExpressionKind::Data(_) => self.tag.clear(),
             ExpressionKind::Regex(_) => self.tag.clear(),
             ExpressionKind::Text(_) => {}
+            ExpressionKind::Ignored => {}
         }
     }
 }

@@ -1,5 +1,6 @@
 use std::{fs::File, io::Write};
 use yggdrasil_core::codegen::RustCodegen;
+use yggdrasil_ir::grammar::InsertIgnore;
 use yggdrasil_parser::YggdrasilParser;
 
 // mod json;
@@ -12,7 +13,7 @@ fn ready() {
 #[test]
 fn test_bootstrap() {
     let input = include_str!("prog.ygg");
-    let info = YggdrasilParser::parse(input).expect("fail");
+    let info = YggdrasilParser::parse(input).expect("fail").optimize(vec![InsertIgnore::default()]).unwrap();
     let out = info.generate(RustCodegen::default());
     let mut output = File::create("../ygg-rt/tests/json2.rs").unwrap();
     output.write_all(out.unwrap().as_bytes()).unwrap();

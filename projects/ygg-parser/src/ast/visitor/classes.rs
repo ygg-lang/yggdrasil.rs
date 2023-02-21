@@ -3,6 +3,7 @@ use std::ops::Add;
 use yggdrasil_ir::{
     data::{RegularExpression, RuleReference, YggdrasilText},
     nodes::Operator,
+    rule::GrammarAtomic,
 };
 
 impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
@@ -16,6 +17,7 @@ impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
             document: "".to_string(),
             public: false,
             derives: Default::default(),
+            atomic: GrammarAtomic::Combined,
             auto_inline: false,
             auto_boxed: false,
             entry: false,

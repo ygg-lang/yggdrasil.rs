@@ -14,12 +14,16 @@ use std::{
 };
 use url::Url;
 
+pub use self::insert_ignore::InsertIgnore;
+
 mod auto_tag;
 mod dead_code;
 mod emit_function;
 mod fuse_charset;
 mod fuse_rule;
 mod inlining;
+
+mod insert_ignore;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", Serialize, Deserialize)]

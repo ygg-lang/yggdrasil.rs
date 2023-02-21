@@ -14,18 +14,7 @@ impl CodeOptimizer for FuseCharset {
 impl FuseCharset {
     fn fuse_choice(&mut self, choice: &ChoiceExpression) -> Validation<ChoiceExpression> {
         let mut errors = vec![];
-        for branch in &choice.branches {
-            match &branch.kind {
-                ExpressionKind::Choice(_) => {}
-                ExpressionKind::Concat(_) => {}
-                ExpressionKind::Unary(_) => {}
-                ExpressionKind::Rule(_) => {}
-                ExpressionKind::Data(_) => todo!(),
-                ExpressionKind::Function(_) => {}
-                ExpressionKind::Regex(_) => {}
-                ExpressionKind::Text(_) => {}
-            }
-        }
+        for branch in &choice.branches {}
         Validation::Success { value: ChoiceExpression { branches: Default::default() }, diagnostics: errors }
     }
 }
