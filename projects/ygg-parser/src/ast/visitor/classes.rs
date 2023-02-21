@@ -1,36 +1,19 @@
 use super::*;
-use std::ops::Add;
-use yggdrasil_ir::{
-    data::{RegularExpression, RuleReference, YggdrasilText},
-    nodes::Operator,
-    rule::GrammarAtomic,
-};
 
 impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
     fn take_one(node: &Define_classContext<'i>) -> Option<Self> {
         let id = YggdrasilIdentifier::take(node.name.clone())?;
-        let expr = ExpressionNode::take(node.class_block());
-        Some(GrammarRule {
-            name: id,
-            kind: GrammarRuleKind::Class,
-            r#type: "".to_string(),
-            document: "".to_string(),
-            public: false,
-            derives: Default::default(),
-            atomic: GrammarAtomic::Combined,
-            auto_inline: false,
-            auto_boxed: false,
-            entry: false,
-            ignored: false,
-            body: expr,
-            range: Default::default(),
-        })
+        let modifiers = YggdrasilIdentifier::take_many(&node.mods);
+        let anno = YggdrasilAnnotations { macros: vec![], modifiers };
+        let expr = YggdrasilExpression::take(node.class_block());
+        let range = Range { start: node.start().start as usize, end: node.stop().stop as usize };
+        Some(GrammarRule::create_class(id, range).with_annotation(&anno).with_expression(expr))
     }
 }
-impl<'i> Extractor<Class_blockContextAll<'i>> for ExpressionNode {
+
+impl<'i> Extractor<Class_blockContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &Class_blockContextAll<'i>) -> Option<Self> {
-        let terms = ExpressionNode::take_many(&node.class_expression_all());
-        println!("{:?}", terms.as_slice());
+        let terms = YggdrasilExpression::take_many(&node.class_expression_all());
         let expr = match terms.as_slice() {
             [head, rest @ ..] => {
                 let mut out = head.clone();
@@ -45,43 +28,42 @@ impl<'i> Extractor<Class_blockContextAll<'i>> for ExpressionNode {
     }
 }
 
-impl<'i> Extractor<Class_expressionContextAll<'i>> for ExpressionNode {
+impl<'i> Extractor<Class_expressionContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &Class_expressionContextAll<'i>) -> Option<Self> {
         match node {
             Class_expressionContextAll::CSuffixContext(s) => {
                 let suffix = Operator::take(s.suffix())?;
                 let base = Self::take(s.class_expression())?;
-                Some(ExpressionNode::unary(base, suffix))
+                Some(YggdrasilExpression::unary(base, suffix))
             }
             Class_expressionContextAll::CCallContext(_) => {
                 todo!()
             }
             Class_expressionContextAll::CETagContext(e) => {
-                let tag = e.tag_pair()?;
-                let name = YggdrasilIdentifier::take(tag.lhs.clone())?;
-                let rule = YggdrasilIdentifier::take(tag.rhs.clone())?;
-                Some(RuleReference::new(name).into())
+                let name = YggdrasilIdentifier::take(e.identifier())?;
+                let rule = YggdrasilExpression::take(e.class_expression())?;
+                Some(rule.with_tag(name))
             }
             Class_expressionContextAll::CUntagContext(_) => {
                 todo!()
             }
             Class_expressionContextAll::CSoftContext(v) => {
-                let lhs = ExpressionNode::take(v.lhs.clone())?;
-                let rhs = ExpressionNode::take(v.rhs.clone())?;
+                let lhs = YggdrasilExpression::take(v.lhs.clone())?;
+                let rhs = YggdrasilExpression::take(v.rhs.clone())?;
                 Some(lhs & rhs)
             }
             Class_expressionContextAll::CHardContext(v) => {
-                let lhs = ExpressionNode::take(v.lhs.clone())?;
-                let rhs = ExpressionNode::take(v.rhs.clone())?;
+                let lhs = YggdrasilExpression::take(v.lhs.clone())?;
+                let rhs = YggdrasilExpression::take(v.rhs.clone())?;
                 Some(lhs + rhs)
             }
             Class_expressionContextAll::CPatternContext(v) => {
-                let lhs = ExpressionNode::take(v.lhs.clone())?;
-                let rhs = ExpressionNode::take(v.rhs.clone())?;
+                let lhs = YggdrasilExpression::take(v.lhs.clone())?;
+                let rhs = YggdrasilExpression::take(v.rhs.clone())?;
                 Some(lhs | rhs)
             }
-            Class_expressionContextAll::CGroupContext(v) => ExpressionNode::take(v.class_expression()),
-            Class_expressionContextAll::AtomContext(s) => ExpressionNode::take(s.atomic()),
+            Class_expressionContextAll::CGroupContext(v) => YggdrasilExpression::take(v.class_expression()),
+            Class_expressionContextAll::AtomContext(s) => YggdrasilExpression::take(s.atomic()),
             Class_expressionContextAll::CNotContext(_) => {
                 todo!()
             }

@@ -1,9 +1,10 @@
-use itertools::Itertools;
 use super::*;
+
+use std::ops::BitOrAssign;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct ChoiceExpression {
-    pub branches: IndexSet<ExpressionNode>,
+    pub branches: Vec<YggdrasilExpression>,
 }
 
 impl Default for ChoiceExpression {
@@ -12,9 +13,9 @@ impl Default for ChoiceExpression {
     }
 }
 
-impl From<ChoiceExpression> for ExpressionNode {
+impl From<ChoiceExpression> for YggdrasilExpression {
     fn from(value: ChoiceExpression) -> Self {
-        Self { kind: ExpressionKind::Choice(Box::new(value)), tag: "".to_string() }
+        ExpressionKind::Choice(value).into()
     }
 }
 
@@ -25,30 +26,16 @@ impl Hash for ChoiceExpression {
 }
 
 impl ChoiceExpression {
-    pub fn new(lhs: impl Into<ExpressionNode>, rhs: impl Into<ExpressionNode>) -> Self {
-        let mut branches = IndexSet::default();
-        branches.insert(lhs.into());
-        branches.insert(rhs.into());
-        Self { branches }
+    pub fn new(lhs: impl Into<YggdrasilExpression>, rhs: impl Into<YggdrasilExpression>) -> Self {
+        Self { branches: vec![lhs.into(), rhs.into()] }
     }
-    pub fn push(&mut self, other: ExpressionNode) {
-        match other.kind {
-            ExpressionKind::Choice(rhs) => self.branches.extend(rhs.branches.into_iter()),
-            _ => {
-                self.branches.insert(other);
-            }
-        }
-    }
-    pub fn to_node<S>(self, tag: S) -> ExpressionNode
-    where
-        S: Into<String>,
-    {
-        ExpressionNode { tag: tag.into(), kind: ExpressionKind::Choice(Box::new(self)) }
+    pub fn split(&self) -> (&YggdrasilExpression, &[YggdrasilExpression]) {
+        self.branches.split_first().expect("invalid branches")
     }
 }
 
 impl GrammarRule {
-    pub fn get_branches(&self) -> IndexMap<&str, &ExpressionNode> {
+    pub fn get_branches(&self) -> IndexMap<&str, &YggdrasilExpression> {
         let mut out = IndexMap::default();
         if self.kind == GrammarRuleKind::Union {
             // match &self.body.kind {
@@ -64,27 +51,27 @@ impl GrammarRule {
     }
 }
 
-impl BitOr<Self> for ExpressionNode {
+impl BitOr<Self> for YggdrasilExpression {
     type Output = Self;
-
-    fn bitor(self, other: Self) -> Self::Output {
-        bitor_wrapper(self, other)
+    /// `a | b`
+    fn bitor(mut self, other: Self) -> Self::Output {
+        self += other;
+        self
     }
 }
 
-fn bitor_wrapper(mut lhs: ExpressionNode, mut rhs: ExpressionNode) -> ExpressionNode {
-    match (&mut lhs.kind, &mut rhs.kind) {
-        (ExpressionKind::Choice(a), _) => {
-            a.push(rhs);
-            lhs
+impl BitOrAssign for YggdrasilExpression {
+    fn bitor_assign(&mut self, mut rhs: Self) {
+        match &mut self.kind {
+            ExpressionKind::Choice(this) if self.tag.is_none() && rhs.tag.is_none() => {
+                match rhs.kind {
+                    ExpressionKind::Concat(that) => this.branches.extend(that.sequence),
+                    _ => this.branches.push(rhs),
+                }
+                return;
+            }
+            _ => {}
         }
-        (_, ExpressionKind::Choice(b)) => {
-            b.push(lhs);
-            rhs
-        }
-        (_, _) => {
-            let choice = ChoiceExpression::new(lhs, rhs);
-            ExpressionNode { kind: ExpressionKind::Choice(Box::new(choice)), tag: "".to_string() }
-        }
+        *self = ChoiceExpression { branches: vec![self.clone(), rhs] }.into()
     }
 }

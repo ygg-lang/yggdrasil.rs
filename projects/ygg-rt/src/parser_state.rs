@@ -516,8 +516,8 @@ where
     /// assert_eq!(result.unwrap_err().position().pos(), 0);
     /// ```
     #[inline]
-    pub fn match_string(self: Box<Self>, string: &str, insensitive: bool) -> Either<Box<Self>> {
-        match insensitive {
+    pub fn match_string<const INSENSITIVE: bool>(self: Box<Self>, string: &str) -> Either<Box<Self>> {
+        match INSENSITIVE {
             true => self.match_insensitive(string),
             false => self.match_string_exact(string),
         }

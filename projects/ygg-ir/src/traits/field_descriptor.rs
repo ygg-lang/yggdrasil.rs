@@ -11,7 +11,7 @@ impl FieldDescriptor for GrammarRule {
     }
 }
 
-impl FieldDescriptor for ExpressionNode {
+impl FieldDescriptor for YggdrasilExpression {
     fn get_field_names<'a>(&'a self, buffer: &mut HashSet<&'a String>) {
         self.kind.get_field_names(buffer)
     }
@@ -33,8 +33,7 @@ impl FieldDescriptor for ExpressionKind {
             ExpressionKind::Regex(_) => {
                 todo!()
             }
-            ExpressionKind::Text(_) => {}
-            ExpressionKind::Ignored => {}
+            _ => {}
         }
     }
 
@@ -49,8 +48,7 @@ impl FieldDescriptor for ExpressionKind {
             ExpressionKind::Regex(_) => {
                 todo!()
             }
-            ExpressionKind::Text(_) => {}
-            ExpressionKind::Ignored => {}
+            _ => {}
         }
     }
 }
@@ -77,7 +75,7 @@ impl FieldDescriptor for ChoiceExpression {
 
 impl FieldDescriptor for ConcatExpression {
     fn get_field_names<'a>(&'a self, buffer: &mut HashSet<&'a String>) {
-        self.into_iter().for_each(|f| f.get_field_names(buffer))
+        todo!()
     }
 
     fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount2>) {

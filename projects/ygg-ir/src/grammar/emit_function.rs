@@ -35,4 +35,4 @@ impl EmitFunction {
     }
 }
 
-impl ExpressionNode {}
+impl YggdrasilExpression {}

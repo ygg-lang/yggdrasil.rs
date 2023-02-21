@@ -1,6 +1,6 @@
 use crate::{
     data::SymbolAlias,
-    nodes::{ChoiceExpression, ExpressionKind, ExpressionNode},
+    nodes::{ChoiceExpression, ExpressionKind, YggdrasilExpression},
     rule::{FunctionRule, GrammarRule, YggdrasilIdentifier},
     traits::CodeOptimizer,
 };

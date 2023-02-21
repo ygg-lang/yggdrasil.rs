@@ -1,7 +1,7 @@
 use crate::{
     data::{DataKind, RuleReference},
     grammar::GrammarInfo,
-    nodes::{ChoiceExpression, ConcatExpression, ExpressionKind, ExpressionNode, UnaryExpression},
+    nodes::{ChoiceExpression, ConcatExpression, ExpressionKind, UnaryExpression, YggdrasilExpression},
     rule::GrammarRule,
     FunctionExpression,
 };

@@ -9,7 +9,6 @@ impl DataKind {
                     unsafe { *self = DataKind::Character(s.chars().nth(0).unwrap_unchecked()) }
                 }
             }
-            DataKind::CharacterAny => {}
             DataKind::Character(_) => {}
             DataKind::CharacterRange(r) => {
                 if r.start() == r.end() {
@@ -25,7 +24,6 @@ impl DataKind {
             DataKind::CharacterBuiltin(_) => {
                 todo!()
             }
-            DataKind::Boolean(_) => {}
             DataKind::StringFused(_) => {}
         }
     }

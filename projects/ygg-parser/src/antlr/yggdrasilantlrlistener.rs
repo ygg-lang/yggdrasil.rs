@@ -222,12 +222,6 @@ pub trait YggdrasilAntlrListener<'input>: ParseTreeListener<'input, YggdrasilAnt
     /// Exit a parse tree produced by {@link YggdrasilAntlrParser#define_climb}.
     /// @param ctx the parse tree
     fn exit_define_climb(&mut self, _ctx: &Define_climbContext<'input>) {}
-    /// Enter a parse tree produced by {@link YggdrasilAntlrParser#tag_pair}.
-    /// @param ctx the parse tree
-    fn enter_tag_pair(&mut self, _ctx: &Tag_pairContext<'input>) {}
-    /// Exit a parse tree produced by {@link YggdrasilAntlrParser#tag_pair}.
-    /// @param ctx the parse tree
-    fn exit_tag_pair(&mut self, _ctx: &Tag_pairContext<'input>) {}
     /// Enter a parse tree produced by {@link YggdrasilAntlrParser#tag_branch}.
     /// @param ctx the parse tree
     fn enter_tag_branch(&mut self, _ctx: &Tag_branchContext<'input>) {}

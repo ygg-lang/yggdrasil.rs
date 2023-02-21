@@ -5,14 +5,12 @@ use crate::{
     FunctionExpression,
 };
 use diagnostic_quick::{QError, QResult};
-use indexmap::{IndexMap, IndexSet};
+use indexmap::IndexMap;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::{
     hash::{Hash, Hasher},
-    mem::take,
     ops::{Add, BitAnd, BitOr, BitXor},
-    slice::{Iter, IterMut},
 };
 
 mod choice;
@@ -22,51 +20,55 @@ mod expr;
 mod unary;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
-pub struct ExpressionNode {
+pub struct YggdrasilExpression {
     pub kind: ExpressionKind,
-    pub tag: String,
+    /// If it's a `^rule`
+    pub untag: bool,
+    /// If it's a `tag:Rule`
+    pub tag: Option<YggdrasilIdentifier>,
 }
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum ExpressionKind {
+    /// Any ignored rule
     Ignored,
     Function(Box<FunctionExpression>),
-    Choice(Box<ChoiceExpression>),
+    Choice(ChoiceExpression),
     Concat(ConcatExpression),
     Unary(Box<UnaryExpression>),
     Rule(RuleReference),
     Text(YggdrasilText),
+    /// Any character
+    CharacterAny,
+    Boolean(bool),
     Regex(RegularExpression),
     Data(Box<DataKind>),
 }
 
-impl From<YggdrasilText> for ExpressionNode {
-    fn from(value: YggdrasilText) -> Self {
-        Self { kind: ExpressionKind::Text(value), tag: "".to_string() }
+impl From<ExpressionKind> for YggdrasilExpression {
+    fn from(value: ExpressionKind) -> Self {
+        Self { kind: value, untag: false, tag: None }
     }
 }
 
-impl From<ConcatExpression> for ExpressionNode {
-    fn from(value: ConcatExpression) -> Self {
-        Self { kind: ExpressionKind::Concat(value), tag: "".to_string() }
-    }
-}
-
-impl From<RegularExpression> for ExpressionNode {
-    fn from(value: RegularExpression) -> Self {
-        Self { kind: ExpressionKind::Regex(value), tag: "".to_string() }
-    }
-}
-
-impl ExpressionNode {
-    pub fn unary(mut base: ExpressionNode, o: Operator) -> Self {
+impl YggdrasilExpression {
+    pub fn unary(mut base: YggdrasilExpression, o: Operator) -> Self {
         match base.kind {
-            ExpressionKind::Unary(ref mut v) if base.tag.is_empty() => {
+            ExpressionKind::Unary(ref mut v) if base.tag.is_none() => {
                 v.operators.push(o);
                 base
             }
-            _ => Self { kind: ExpressionKind::Unary(Box::new(UnaryExpression { base, operators: vec![o] })), tag: "".to_string() },
+            _ => ExpressionKind::Unary(Box::new(UnaryExpression { base, operators: vec![o] })).into(),
         }
+    }
+    pub fn ignored() -> Self {
+        ExpressionKind::Ignored.into()
+    }
+    pub fn any() -> Self {
+        ExpressionKind::CharacterAny.into()
+    }
+    pub fn boolean(bool: bool) -> Self {
+        ExpressionKind::Boolean(bool).into()
     }
 }
 

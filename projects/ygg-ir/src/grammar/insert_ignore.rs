@@ -37,7 +37,7 @@ impl CodeOptimizer for InsertIgnore {
 }
 
 impl InsertIgnore {
-    fn update_node(&mut self, info: &mut ExpressionNode) {
+    fn update_node(&mut self, info: &mut YggdrasilExpression) {
         match &mut info.kind {
             ExpressionKind::Choice(node) => self.update_choice(node),
             ExpressionKind::Concat(node) => self.update_concat(node),
@@ -57,7 +57,7 @@ impl InsertIgnore {
             if index == 0 {
             }
             else {
-                new.push(ExpressionNode::ignored())
+                new.push(YggdrasilExpression::ignored())
             }
             self.update_node(&mut old);
             new.push(old)

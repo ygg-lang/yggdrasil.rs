@@ -76,15 +76,14 @@ impl GrammarRule {
     }
 }
 
-impl ExpressionNode {
+impl YggdrasilExpression {
     pub fn collect_parameters(&self) -> BTreeMap<String, RuleParameter> {
         let mut out: BTreeMap<String, RuleParameter> = BTreeMap::new();
         match &self.kind {
             ExpressionKind::Function(_) => unreachable!("Macros should be expand before collecting parameters"),
             ExpressionKind::Rule(rule) => {
-                if !self.tag.is_empty() {
-                    let rule = RuleParameter { kind: RuleParameterKind::Required, name: "".to_string(), typing: rule.name.text.clone() };
-                    out.insert(self.tag.clone(), rule);
+                if !self.tag.is_none() {
+                    todo!()
                 }
             }
             ExpressionKind::Choice(v) => {
@@ -103,27 +102,12 @@ impl ExpressionNode {
                 }
             }
             ExpressionKind::Concat(v) => {
-                for branch in v.into_iter() {
-                    for (k, v) in branch.collect_parameters() {
-                        match out.get_mut(&k) {
-                            Some(p) => {
-                                // *p &= v;
-                                todo!()
-                            }
-                            None => {
-                                out.insert(k, v);
-                            }
-                        }
-                    }
-                }
+                todo!()
             }
             ExpressionKind::Unary(v) => {
                 todo!()
             }
-            ExpressionKind::Data(_) => {}
-            ExpressionKind::Regex(_) => {}
-            ExpressionKind::Text(_) => {}
-            ExpressionKind::Ignored => {}
+            _ => {}
         }
         return out;
     }

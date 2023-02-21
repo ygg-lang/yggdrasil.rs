@@ -4,7 +4,7 @@ use std::{fmt::Debug, ops::Range};
 use yggdrasil_ir::{
     data::RuleReference,
     grammar::GrammarInfo,
-    nodes::{ExpressionKind, ExpressionNode, Operator},
+    nodes::{ExpressionKind, Operator, YggdrasilExpression},
     rule::{GrammarRule, GrammarRuleKind, RuleDerive, YggdrasilIdentifier},
     traits::FieldMap,
 };
@@ -20,7 +20,15 @@ pub(super) trait RuleExt {
 
 impl RuleExt for GrammarRule {
     fn safe_rule_name(&self) -> String {
-        self.name.text.to_string()
+        let raw = self.name.text.as_str();
+        let keywords = &[
+            "abstract", "alignof", "as", "become", "box", "break", "const", "continue", "crate", "do", "else", "enum",
+            "extern", "false", "final", "fn", "for", "if", "impl", "in", "let", "loop", "macro", "match", "mod", "move", "mut",
+            "offsetof", "override", "priv", "proc", "pub", "pure", "ref", "return", "Self", "self", "sizeof", "static",
+            "struct", "super", "trait", "true", "type", "typeof", "unsafe", "unsized", "use", "virtual", "where", "while",
+            "yield",
+        ];
+        if keywords.contains(&raw) { format!("r#{raw}") } else { raw.to_string() }
     }
 
     fn parser_name(&self) -> String {
@@ -44,14 +52,18 @@ trait NodeExt {
     fn write(&self, w: &mut String, ctx: &GrammarRule) -> std::fmt::Result;
 }
 
-impl NodeExt for ExpressionNode {
+impl NodeExt for YggdrasilExpression {
     fn write(&self, w: &mut String, ctx: &GrammarRule) -> std::fmt::Result {
         match &self.kind {
             ExpressionKind::Ignored => w.push_str("builtin_ignore(s)"),
             ExpressionKind::Function(_) => w.push_str("parse_Function(s)"),
             ExpressionKind::Choice(v) => {
-                for branch in &v.branches {
-                    writeln!(w, "// {:?}", branch)?
+                let (head, rest) = v.split();
+                head.write(w, ctx)?;
+                for pat in rest {
+                    w.push_str(".or_else(|s|");
+                    pat.write(w, ctx)?;
+                    w.push_str(")");
                 }
             }
             ExpressionKind::Concat(v) => {
@@ -89,9 +101,12 @@ impl NodeExt for ExpressionNode {
                 let name = format!("parse_{}", r.name.text).to_case(Case::Snake);
                 write!(w, "{name}(s)")?
             }
-            ExpressionKind::Text(v) => write!(w, "builtin_text(s, {:?}, true)", v.text)?,
+            ExpressionKind::Text(v) if v.insensitive => write!(w, "builtin_text::<true>(s, {:?})", v.text)?,
+            ExpressionKind::Text(v) => write!(w, "builtin_text::<false>(s, {:?})", v.text)?,
             ExpressionKind::Regex(_) => w.push_str("parse_Regex(s)"),
             ExpressionKind::Data(_) => w.push_str("parse_Data(s)"),
+            ExpressionKind::CharacterAny => w.push_str("s.match_char_by(|_| true)"),
+            ExpressionKind::Boolean(_) => {}
         }
         Ok(())
     }

@@ -10,7 +10,12 @@ entry union Value {
 }
 
 class Object {
-    '{' Value? '}'
+    '{' (ObjectPair (',' ObjectPair)* ',')? '}'
+}
+
+union ObjectPair {
+    | Identifier ':' Value  #IdentifierKey
+    | String ':' Value      #StringKey
 }
 
 class Array {
@@ -18,12 +23,16 @@ class Array {
 }
 
 atomic class String {
-    // | "'" "'"
-    // | "\"" "\""
+    | "'"  "'"
+    | "'" (StringEscaped | ANY) "'"
+}
+
+atomic class StringEscaped {
+    '\\' ANY
 }
 
 atomic class Number {
-    [1-9][0-9]
+/+?(0|[1-9][0-9]*)/
 }
 
 union Boolean {
@@ -35,6 +44,11 @@ class Null {
     "null"
 }
 
-ignore class WhiteSpace {
-    UNICODE_WHITE_SPACE
+class Identifier {
+/[_\p{XID_start}][\p{XID_continue}]*/
+}
+
+atomic ignore class WhiteSpace {
+// UNICODE_WHITE_SPACE
+' ' | '\n' | '\r'
 }

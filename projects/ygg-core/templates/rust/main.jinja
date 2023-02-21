@@ -67,6 +67,6 @@ fn builtin_ignore(state: Input) -> Output {
 {% endif %}
 }
 
-fn builtin_text<'i>(state: Input, text: &'static str, insensitive: bool) -> Output<'i> {
-    state.rule(Json5Rule::IgnoreText, |s| s.match_string(text, insensitive))
+fn builtin_text<'i, const INSENSITIVE: bool>(state: Input, text: &'static str) -> Output<'i> {
+    state.rule(Json5Rule::IgnoreText, |s| s.match_string::<INSENSITIVE>(text))
 }

@@ -14,10 +14,14 @@ impl<'i> RustWrite<'i> {
         self.rules().filter(|v| v.ignored)
     }
     pub fn ignore_rules_empty(&self) -> bool {
-        self.ignore_rules().count() == 0
+        false
     }
     pub fn ignore_rule_pattern(&self) -> String {
-        self.ignore_rules().map(|s| format!("Self::{}", s.safe_rule_name())).join(" | ")
+        let mut out = String::from("Self::IgnoreText");
+        for ignore in self.ignore_rules() {
+            out.push_str(&format!(" | Self::{}", ignore.safe_rule_name()))
+        }
+        out
     }
     pub fn ignore_rule_match(&self) -> String {
         let rules = self.ignore_rules().collect_vec();

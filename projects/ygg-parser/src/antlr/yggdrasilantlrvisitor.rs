@@ -205,12 +205,6 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#tag_pair}.
-    /// @param ctx the parse tree
-    fn visit_tag_pair(&mut self, ctx: &Tag_pairContext<'input>) {
-        self.visit_children(ctx)
-    }
-
     /// Visit a parse tree produced by {@link YggdrasilAntlrParser#tag_branch}.
     /// @param ctx the parse tree
     fn visit_tag_branch(&mut self, ctx: &Tag_branchContext<'input>) {
@@ -576,12 +570,6 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#tag_pair}.
-    /// @param ctx the parse tree
-    fn visit_tag_pair(&mut self, ctx: &Tag_pairContext<'input>) -> Self::Return {
-        self.visit_children(ctx)
-    }
-
     /// Visit a parse tree produced by {@link YggdrasilAntlrParser#tag_branch}.
     /// @param ctx the parse tree
     fn visit_tag_branch(&mut self, ctx: &Tag_branchContext<'input>) -> Self::Return {
@@ -898,11 +886,6 @@ where
 
     fn visit_define_climb(&mut self, ctx: &Define_climbContext<'input>) {
         let result = <Self as YggdrasilAntlrVisitorCompat>::visit_define_climb(self, ctx);
-        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
-    }
-
-    fn visit_tag_pair(&mut self, ctx: &Tag_pairContext<'input>) {
-        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_tag_pair(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 

@@ -5,7 +5,7 @@ use convert_case::{Case, Casing};
 use yggdrasil_ir::{
     data::DataKind,
     grammar::GrammarInfo,
-    nodes::{ExpressionKind, ExpressionNode},
+    nodes::{ExpressionKind, YggdrasilExpression},
     rule::{GrammarRule, GrammarRuleKind},
 };
 
@@ -91,14 +91,7 @@ impl RustCodegen {
         self.prevent_keyword(name.to_case(Case::Snake))
     }
     fn prevent_keyword(&self, mut name: String) -> String {
-        let keywords = &[
-            "abstract", "alignof", "as", "become", "box", "break", "const", "continue", "crate", "do", "else", "enum",
-            "extern", "false", "final", "fn", "for", "if", "impl", "in", "let", "loop", "macro", "match", "mod", "move", "mut",
-            "offsetof", "override", "priv", "proc", "pub", "pure", "ref", "return", "Self", "self", "sizeof", "static",
-            "struct", "super", "trait", "true", "type", "typeof", "unsafe", "unsized", "use", "virtual", "where", "while",
-            "yield",
-        ];
-        if keywords.contains(&name.as_str()) { format!("r#{name}") } else { name }
+        todo!()
     }
 }
 
@@ -109,17 +102,6 @@ fn test() {
     info.ignores.insert("CommentLine".to_string());
     let codegen = RustCodegen::default();
     let items = codegen.ignored_rules(&info);
-    let result = items.render().unwrap();
-    println!("{}", result);
-}
-
-#[test]
-fn test2() {
-    let codegen = RustCodegen::default();
-    let mut rule = GrammarRule::new("Statement", &Range::default(), GrammarRuleKind::Union);
-    let expr = RuleReference::new("ClassStatement").to_node("Class") | RuleReference::new("UnionStatement").to_node("Union");
-    rule.body = expr;
-    let items = codegen.consume_union(&rule);
     let result = items.render().unwrap();
     println!("{}", result);
 }

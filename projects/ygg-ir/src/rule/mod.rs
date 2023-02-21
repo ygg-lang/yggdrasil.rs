@@ -4,7 +4,7 @@ pub use self::{
 };
 use crate::{
     grammar::GrammarInfo,
-    nodes::{ExpressionKind, ExpressionNode, Operator},
+    nodes::{ExpressionKind, Operator, YggdrasilExpression},
 };
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -20,8 +20,12 @@ pub mod parameter;
 
 mod identifier;
 
-pub use self::identifier::{YggdrasilIdentifier, YggdrasilNamepath};
+mod modifiers;
 
+pub use self::{
+    identifier::{YggdrasilIdentifier, YggdrasilNamepath},
+    modifiers::YggdrasilAnnotations,
+};
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct FunctionRule {}
 
@@ -65,6 +69,8 @@ pub struct GrammarRule {
     /// }
     /// ```
     pub name: YggdrasilIdentifier,
+    /// Redirect to other rules when parsing is successful
+    pub redirect: Option<YggdrasilIdentifier>,
     /// Kind of this rule
     pub kind: GrammarRuleKind,
     /// Automatically inline when this rule is called
@@ -157,7 +163,7 @@ pub struct GrammarRule {
     /// ```
     pub ignored: bool,
     ///
-    pub body: Option<ExpressionNode>,
+    pub body: Option<YggdrasilExpression>,
     /// position of all parts
     pub range: Range<usize>,
 }
@@ -176,10 +182,10 @@ impl PartialOrd for GrammarRule {
 
 impl GrammarInfo {}
 
-impl GrammarRule {
-    pub fn new(name: YggdrasilIdentifier, range: &Range<usize>, kind: GrammarRuleKind) -> Self {
+impl Default for GrammarRule {
+    fn default() -> Self {
         Self {
-            name,
+            name: Default::default(),
             r#type: String::new(),
             document: String::new(),
             public: false,
@@ -189,9 +195,28 @@ impl GrammarRule {
             auto_boxed: false,
             entry: false,
             ignored: false,
-            kind,
+            kind: GrammarRuleKind::Class,
             body: None,
-            range: range.clone(),
+            range: Default::default(),
+            redirect: None,
         }
+    }
+}
+
+impl GrammarRule {
+    pub fn create_class(name: YggdrasilIdentifier, range: Range<usize>) -> Self {
+        Self { kind: GrammarRuleKind::Class, name, range, ..Default::default() }
+    }
+    pub fn create_union(name: YggdrasilIdentifier, range: Range<usize>) -> Self {
+        Self { kind: GrammarRuleKind::Union, name, range, ..Default::default() }
+    }
+    pub fn with_annotation(mut self, extra: &YggdrasilAnnotations) -> Self {
+        self.atomic = extra.get_atomic();
+        self.ignored = extra.get_ignored();
+        self
+    }
+    pub fn with_expression(mut self, extra: Option<YggdrasilExpression>) -> Self {
+        self.body = extra;
+        self
     }
 }

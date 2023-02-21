@@ -2,7 +2,7 @@ use super::*;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct UnaryExpression {
-    pub base: ExpressionNode,
+    pub base: YggdrasilExpression,
     pub operators: Vec<Operator>,
 }
 
@@ -12,7 +12,7 @@ impl From<UnaryExpression> for ExpressionKind {
     }
 }
 
-impl Add<Operator> for ExpressionNode {
+impl Add<Operator> for YggdrasilExpression {
     type Output = Self;
 
     fn add(self, o: Operator) -> Self::Output {
@@ -21,11 +21,11 @@ impl Add<Operator> for ExpressionNode {
                 let mut ops = node.operators;
                 ops.push(o);
                 let unary = UnaryExpression { base: node.base, operators: ops };
-                ExpressionNode { kind: ExpressionKind::Unary(Box::new(unary)), tag: self.tag }
+                YggdrasilExpression { kind: ExpressionKind::Unary(Box::new(unary)), untag: self.untag, tag: self.tag }
             }
             _ => {
                 let unary = UnaryExpression { base: self, operators: vec![o] };
-                ExpressionNode { kind: ExpressionKind::Unary(Box::new(unary)), tag: "".to_string() }
+                ExpressionKind::Unary(Box::new(unary)).into()
             }
         }
     }

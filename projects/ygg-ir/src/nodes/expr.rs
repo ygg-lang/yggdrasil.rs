@@ -1,7 +1,7 @@
 use super::*;
 use crate::data::RuleReference;
 
-impl ExpressionNode {
+impl YggdrasilExpression {
     #[inline]
     pub fn is_choice(&self) -> bool {
         matches!(self.kind, ExpressionKind::Choice(_))
@@ -25,21 +25,8 @@ impl ExpressionNode {
     pub fn is_rule(&self) -> bool {
         self.as_rule().is_some()
     }
-    #[inline]
-    pub fn empty() -> Self {
-        Self { kind: ExpressionKind::Choice(Box::new(Default::default())), tag: "".to_string() }
-    }
-    pub fn character(c: char) -> Self {
-        Self { kind: ExpressionKind::Data(Box::new(DataKind::Character(c))), tag: "".to_string() }
-    }
-    pub fn ignored() -> Self {
-        Self { kind: ExpressionKind::Ignored, tag: "".to_string() }
-    }
-    pub fn with_tag<S>(mut self, tag: S) -> Self
-    where
-        S: Into<String>,
-    {
-        self.tag = tag.into();
+    pub fn with_tag(mut self, tag: YggdrasilIdentifier) -> Self {
+        self.tag = Some(tag);
         self
     }
     pub fn remark(&mut self, capture: bool) {
@@ -51,12 +38,9 @@ impl ExpressionNode {
     fn capture(&mut self) {
         match &mut self.kind {
             ExpressionKind::Choice(e) => {
-                for mut node in take(&mut e.branches) {
-                    node.capture();
-                    e.branches.insert(node);
-                }
+                todo!()
             }
-            ExpressionKind::Concat(e) => e.into_iter().for_each(|f| f.capture()),
+            ExpressionKind::Concat(e) => todo!(),
             ExpressionKind::Unary(e) => match e.operators.contains(&Operator::Remark) {
                 true => e.base.non_capture(),
                 false => e.base.capture(),
@@ -65,32 +49,39 @@ impl ExpressionNode {
                 todo!();
                 // self.tag = e.name.to_case(Case::Snake)
             }
-            ExpressionKind::Function(_) => self.tag.clear(),
-            ExpressionKind::Data(_) => self.tag.clear(),
-            ExpressionKind::Regex(_) => self.tag.clear(),
-            ExpressionKind::Text(_) => {}
-            ExpressionKind::Ignored => {}
+            ExpressionKind::Function(_) => {
+                self.tag.take();
+            }
+            _ => {
+                self.tag.take();
+            }
         }
     }
     fn non_capture(&mut self) {
         match &mut self.kind {
             ExpressionKind::Choice(e) => {
-                for mut node in take(&mut e.branches) {
-                    node.non_capture();
-                    e.branches.insert(node);
-                }
+                todo!()
             }
-            ExpressionKind::Concat(e) => e.into_iter().for_each(|f| f.non_capture()),
+            ExpressionKind::Concat(e) => todo!(),
             ExpressionKind::Unary(e) => match e.operators.contains(&Operator::Remark) {
                 true => e.base.capture(),
                 false => e.base.non_capture(),
             },
-            ExpressionKind::Function(_) => self.tag.clear(),
-            ExpressionKind::Rule(_) => self.tag.clear(),
-            ExpressionKind::Data(_) => self.tag.clear(),
-            ExpressionKind::Regex(_) => self.tag.clear(),
-            ExpressionKind::Text(_) => {}
-            ExpressionKind::Ignored => {}
+            ExpressionKind::Function(_) => {
+                self.tag.take();
+            }
+            ExpressionKind::Rule(_) => {
+                self.tag.take();
+            }
+            ExpressionKind::Data(_) => {
+                self.tag.take();
+            }
+            ExpressionKind::Regex(_) => {
+                self.tag.take();
+            }
+            _ => {
+                self.tag.take();
+            }
         }
     }
 }
@@ -107,19 +98,10 @@ impl ExpressionKind {
     }
 }
 
-impl BitXor<Self> for ExpressionNode {
+impl BitXor<Self> for YggdrasilExpression {
     type Output = QResult<Self>;
 
     fn bitxor(self, rhs: Self) -> Self::Output {
-        match self.kind.as_tag() {
-            Some(s) => {
-                let node_tag = match s {
-                    "_" => "".to_string(),
-                    _ => s.to_string(),
-                };
-                Ok(ExpressionNode { kind: rhs.kind, tag: node_tag })
-            }
-            None => Err(QError::runtime_error("lhs not a valid tag")),
-        }
+        todo!()
     }
 }

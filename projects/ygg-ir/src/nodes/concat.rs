@@ -3,58 +3,40 @@ use std::ops::{AddAssign, BitAndAssign};
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct ConcatExpression {
-    pub sequence: Vec<ExpressionNode>,
+    pub sequence: Vec<YggdrasilExpression>,
 }
 
 impl<T> FromIterator<T> for ConcatExpression
 where
-    T: Into<ExpressionNode>,
+    T: Into<YggdrasilExpression>,
 {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         Self { sequence: iter.into_iter().map(|v| v.into()).collect() }
     }
 }
 
-impl<'i> IntoIterator for &'i ConcatExpression {
-    type Item = &'i ExpressionNode;
-    type IntoIter = Iter<'i, ExpressionNode>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.sequence.iter()
-    }
-}
-
-impl<'i> IntoIterator for &'i mut ConcatExpression {
-    type Item = &'i mut ExpressionNode;
-    type IntoIter = IterMut<'i, ExpressionNode>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.sequence.iter_mut()
+impl From<ConcatExpression> for YggdrasilExpression {
+    fn from(value: ConcatExpression) -> Self {
+        ExpressionKind::Concat(value).into()
     }
 }
 
 impl ConcatExpression {
-    pub fn new(lhs: impl Into<ExpressionNode>, rhs: impl Into<ExpressionNode>, soft: bool) -> Self {
+    pub fn new(lhs: impl Into<YggdrasilExpression>, rhs: impl Into<YggdrasilExpression>, soft: bool) -> Self {
         let mut sequence = vec![];
         sequence.push(lhs.into());
         if soft {
-            sequence.push(ExpressionNode::ignored())
+            sequence.push(YggdrasilExpression::ignored())
         }
         sequence.push(rhs.into());
         Self { sequence }
     }
-    pub fn to_node<S>(self, tag: S) -> ExpressionNode
-    where
-        S: Into<String>,
-    {
-        ExpressionNode { tag: tag.into(), kind: ExpressionKind::Concat(self) }
-    }
-    pub fn split(&self) -> (&ExpressionNode, &[ExpressionNode]) {
+    pub fn split(&self) -> (&YggdrasilExpression, &[YggdrasilExpression]) {
         self.sequence.split_first().expect("empty is invalid")
     }
 }
 
-impl Add for ExpressionNode {
+impl Add for YggdrasilExpression {
     type Output = Self;
     /// `a ~ b`
     fn add(mut self, other: Self) -> Self::Output {
@@ -63,11 +45,11 @@ impl Add for ExpressionNode {
     }
 }
 
-impl AddAssign for ExpressionNode {
+impl AddAssign for YggdrasilExpression {
     /// `a ~ b ~ c`
     fn add_assign(&mut self, rhs: Self) {
         match &mut self.kind {
-            ExpressionKind::Concat(this) if self.tag.is_empty() && rhs.tag.is_empty() => {
+            ExpressionKind::Concat(this) if self.tag.is_none() && rhs.tag.is_none() => {
                 match rhs.kind {
                     ExpressionKind::Concat(that) => this.sequence.extend(that.sequence),
                     _ => this.sequence.push(rhs),
@@ -80,7 +62,7 @@ impl AddAssign for ExpressionNode {
     }
 }
 
-impl BitAnd<Self> for ExpressionNode {
+impl BitAnd<Self> for YggdrasilExpression {
     type Output = Self;
     /// `a b`
     fn bitand(mut self, other: Self) -> Self::Output {
@@ -89,11 +71,11 @@ impl BitAnd<Self> for ExpressionNode {
     }
 }
 
-impl BitAndAssign for ExpressionNode {
+impl BitAndAssign for YggdrasilExpression {
     /// `p:a q:(b c) | d e`
     fn bitand_assign(&mut self, rhs: Self) {
         match &mut self.kind {
-            ExpressionKind::Concat(this) if self.tag.is_empty() && rhs.tag.is_empty() => {
+            ExpressionKind::Concat(this) if self.tag.is_none() && rhs.tag.is_none() => {
                 match rhs.kind {
                     ExpressionKind::Concat(that) => this.sequence.extend(that.sequence),
                     _ => this.sequence.push(rhs),
@@ -103,45 +85,5 @@ impl BitAndAssign for ExpressionNode {
             _ => {}
         }
         *self = ConcatExpression { sequence: vec![self.clone(), rhs] }.into()
-    }
-}
-
-// add extra ignore if is a soft concat
-#[inline(always)]
-fn join(mut lhs: ExpressionNode, mut rhs: ExpressionNode, soft: bool) -> ExpressionNode {
-    match (&mut lhs.kind, &mut rhs.kind) {
-        (ExpressionKind::Concat(a), ExpressionKind::Concat(b)) => {
-            if soft {
-                a.sequence.push(ExpressionNode::ignored())
-            }
-            a.sequence.extend(b.sequence.iter().cloned());
-            lhs
-        }
-        (ExpressionKind::Concat(a), _) => {
-            if soft {
-                a.sequence.push(ExpressionNode::ignored())
-            }
-            a.sequence.push(rhs);
-            lhs
-        }
-        // a:A b:B
-        (_, ExpressionKind::Concat(b)) => {
-            let mut sequence = vec![];
-            sequence.push(lhs);
-            if soft {
-                sequence.push(ExpressionNode::ignored())
-            }
-            sequence.extend(b.sequence.iter().cloned());
-            ConcatExpression { sequence }.to_node("")
-        }
-        (_, _) => {
-            let mut sequence = vec![];
-            sequence.push(lhs);
-            if soft {
-                sequence.push(ExpressionNode::ignored())
-            }
-            sequence.push(rhs);
-            ConcatExpression { sequence }.to_node("")
-        }
     }
 }

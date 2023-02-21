@@ -39,7 +39,7 @@ BRACE_L:       '{';
 BRACE_R:       '}';
 
 INTEGER:     '0' | [1-9][0-9]*;
-SPECIAL:     [Tt][Rr][Uu][Ee] | [Ff][Aa][Ll][Ss][Ee] | [Aa][Nn][Yy];
+SPECIAL:     'true' | 'false' | 'ANY';
 ESCAPED:     '\\' .;
 REGEX_RANGE: '[' ~[\]]* ']';
 REGEX_FREE:  '/' ~[/]* '/';
@@ -48,7 +48,7 @@ STRING_SINGLE: '\'' ~[']* '\'';
 STRING_DOUBLE: '"' ~["]* '"';
 // identifier
 RAW_ID:     '`' ~[`]* '`';
-UNICODE_ID: [_\p{XID_start}] [\p{XID_continue}]*;
+UNICODE_ID: [_\p{XID_start}][\p{XID_continue}]*;
 // skip
 WHITE_SPACE:     [\p{White_Space}]+ -> channel(HIDDEN);
 LINE_COMMENT:    '//' ~[\n\r]* -> channel(HIDDEN);

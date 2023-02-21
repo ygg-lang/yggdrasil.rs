@@ -4,7 +4,7 @@ use yggdrasil_ir::{
     rule::YggdrasilNamepath,
 };
 
-impl<'i> Extractor<AtomicContextAll<'i>> for ExpressionNode {
+impl<'i> Extractor<AtomicContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &AtomicContextAll<'i>) -> Option<Self> {
         match node {
             AtomicContextAll::AIntContext(_) => todo!(),
@@ -15,17 +15,24 @@ impl<'i> Extractor<AtomicContextAll<'i>> for ExpressionNode {
                 Some(
                     YggdrasilText {
                         text: match char {
+                            '\\' => "\\".to_string(),
                             'r' => "\r".to_string(),
                             'n' => "\n".to_string(),
                             _ => char.to_string(),
                         },
+                        insensitive: false,
                         range,
                     }
                     .into(),
                 )
             }
             AtomicContextAll::ATupleContext(_) => todo!(),
-            AtomicContextAll::ASpecialContext(_) => todo!(),
+            AtomicContextAll::ASpecialContext(v) => match v.get_text().as_str() {
+                "true" => Some(YggdrasilExpression::boolean(true)),
+                "false" => Some(YggdrasilExpression::boolean(true)),
+                "ANY" => Some(YggdrasilExpression::any()),
+                _ => None,
+            },
             AtomicContextAll::AIdContext(s) => Some(YggdrasilIdentifier::take(s.identifier())?.into()),
             AtomicContextAll::AStringContext(s) => Some(YggdrasilText::take(s.string())?.into()),
             AtomicContextAll::Error(_) => None,
@@ -72,6 +79,6 @@ impl<'i> Extractor<StringContextAll<'i>> for YggdrasilText {
         if let Some(s) = node.STRING_DOUBLE() {
             buffer = s.get_text().trim_matches('"').to_string()
         }
-        Some(Self { text: buffer, range: span })
+        Some(Self { text: buffer, insensitive: false, range: span })
     }
 }

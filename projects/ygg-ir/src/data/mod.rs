@@ -1,27 +1,25 @@
 mod builtin;
 mod charset;
+mod regex_category;
 mod rule_ref;
 mod serder;
 mod symbol;
 
 pub use self::{
+    regex_category::RegularExpression,
     rule_ref::RuleReference,
     symbol::{Symbol, SymbolAlias},
 };
 use crate::{
     data::charset::{char_range_display, char_set_display, string_display},
-    nodes::{ExpressionKind, ExpressionNode},
+    nodes::{ExpressionKind, YggdrasilExpression},
 };
 
 use crate::rule::YggdrasilIdentifier;
 use character_set::CharacterSet;
 use num::BigInt;
 use regex_automata::dfa::regex::Regex;
-use serde::{
-    de::{Error, Visitor},
-    ser::SerializeTupleStruct,
-    Deserialize, Deserializer, Serialize, Serializer,
-};
+use serde::{de::Visitor, ser::SerializeTupleStruct, Deserialize, Deserializer, Serialize, Serializer};
 use std::{
     collections::hash_map::RandomState,
     fmt::{Debug, Display, Formatter, Write},
@@ -32,11 +30,9 @@ use std::{
 //
 #[derive(Debug, Clone)]
 pub enum DataKind {
-    Boolean(bool),
     Integer(BigInt),
     String(String),
     StringFused(Regex),
-    CharacterAny,
     Character(char),
     CharacterRange(RangeInclusive<char>),
     CharacterBuiltin(String),
@@ -46,23 +42,22 @@ pub enum DataKind {
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct YggdrasilText {
     pub text: String,
+    pub insensitive: bool,
     pub range: Range<usize>,
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
-pub struct RegularExpression {
-    pub text: String,
-    pub span: Range<usize>,
+impl From<YggdrasilText> for YggdrasilExpression {
+    fn from(value: YggdrasilText) -> Self {
+        ExpressionKind::Text(value).into()
+    }
 }
 
 impl Display for DataKind {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DataKind::Boolean(v) => write!(f, "{}", v),
             DataKind::Integer(v) => write!(f, "{}", v),
             DataKind::String(v) => string_display(v, f),
             DataKind::StringFused(_) => write!(f, "FUSED_STRING"),
-            DataKind::CharacterAny => write!(f, "ANY"),
             DataKind::Character(c) => write!(f, "{:?}", c),
             DataKind::CharacterRange(range) => char_range_display(range, f),
             DataKind::CharacterBuiltin(set) => write!(f, "{}", set),
@@ -71,9 +66,9 @@ impl Display for DataKind {
     }
 }
 
-impl From<DataKind> for ExpressionNode {
+impl From<DataKind> for YggdrasilExpression {
     fn from(value: DataKind) -> Self {
-        Self { tag: String::new(), kind: ExpressionKind::Data(Box::new(value)) }
+        ExpressionKind::Data(Box::new(value)).into()
     }
 }
 

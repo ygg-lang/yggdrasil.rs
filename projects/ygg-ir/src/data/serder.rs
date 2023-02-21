@@ -3,10 +3,6 @@ use super::*;
 impl Hash for DataKind {
     fn hash<H: Hasher>(&self, state: &mut H) {
         match self {
-            DataKind::Boolean(v) => {
-                state.write("DataKind::Boolean".as_bytes());
-                state.write(&[*v as u8])
-            }
             DataKind::Integer(_) => {
                 state.write("DataKind::Integer".as_bytes());
             }
@@ -17,7 +13,6 @@ impl Hash for DataKind {
             DataKind::StringFused(_) => {
                 state.write("DataKind::StringFused".as_bytes());
             }
-            DataKind::CharacterAny => state.write("DataKind::CharacterAny".as_bytes()),
             DataKind::Character(v) => {
                 state.write("DataKind::Character".as_bytes());
                 state.write_u32(*v as u32);
@@ -56,7 +51,6 @@ impl Serialize for DataKind {
         S: Serializer,
     {
         match self {
-            DataKind::Boolean(v) => serializer.serialize_bool(*v),
             DataKind::Integer(_) => {
                 unimplemented!()
             }
@@ -64,7 +58,6 @@ impl Serialize for DataKind {
             DataKind::StringFused(_) => {
                 unimplemented!()
             }
-            DataKind::CharacterAny => serializer.serialize_unit_struct("CharacterAny"),
             DataKind::Character(v) => serializer.serialize_char(*v),
             DataKind::CharacterBuiltin(v) => {
                 let mut state = serializer.serialize_tuple_struct("CharacterBuiltin", 1)?;
@@ -95,11 +88,5 @@ impl<'de> Visitor<'de> for DataKind {
 
     fn expecting(&self, formatter: &mut Formatter) -> std::fmt::Result {
         write!(formatter, "Unknown type")
-    }
-    fn visit_bool<E>(self, v: bool) -> Result<Self::Value, E>
-    where
-        E: Error,
-    {
-        Ok(Self::Boolean(v))
     }
 }
