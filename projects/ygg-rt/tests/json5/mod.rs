@@ -6,6 +6,7 @@ type Input<'i> = Box<State<'i, Json5Rule>>;
 type Output<'i> = Result<Box<State<'i, Json5Rule>>, Box<State<'i, Json5Rule>>>;
 
 #[doc = include_str!("readme.md")]
+#[doc = include_str!("railway.svg")]
 #[repr(C)]
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Ord, PartialOrd, Hash)]
 // #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -51,6 +52,8 @@ impl YggdrasilRule for Json5Rule {
         matches!(self, Self::IgnoreText | Self::WhiteSpace)
     }
 }
+
+use super::*;
 
 impl YggdrasilParser for Json5Language {
     type Rule = Json5Rule;
@@ -180,7 +183,7 @@ fn parse_string_escaped(state: Input) -> Output {
 
 #[inline]
 fn parse_number(state: Input) -> Output {
-    state.rule(Json5Rule::Number, |s| parse_Bug(s))
+    state.rule(Json5Rule::Number, |s| Ok(s))
 }
 
 #[inline]
@@ -195,7 +198,7 @@ fn parse_null(state: Input) -> Output {
 }
 #[inline]
 fn parse_identifier(state: Input) -> Output {
-    state.rule(Json5Rule::Identifier, |s| parse_Bug(s))
+    state.rule(Json5Rule::Identifier, |s| Ok(s))
 }
 #[inline]
 fn parse_white_space(state: Input) -> Output {
@@ -213,6 +216,6 @@ fn builtin_ignore(state: Input) -> Output {
     state.repeat(|s| parse_white_space(s))
 }
 
-fn builtin_text<'i, const INSENSITIVE: bool>(state: Input, text: &'static str) -> Output<'i> {
+fn builtin_text<'i, const INSENSITIVE: bool>(state: Input<'i>, text: &'static str) -> Output<'i> {
     state.rule(Json5Rule::IgnoreText, |s| s.match_string::<INSENSITIVE>(text))
 }

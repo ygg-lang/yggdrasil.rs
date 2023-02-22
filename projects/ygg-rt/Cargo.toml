@@ -19,6 +19,8 @@ const_prec_climber = []
 ucd-trie = { version = "0.1.5", default-features = false }
 serde = { version = "1.0.145", optional = true }
 memchr = { version = "2", optional = true }
+regex-automata = "0.3.9"
+daachorse = "1.0.0"
 
 [dev-dependencies]
 criterion = { version = "0.5.1", features = ["html_reports"] }

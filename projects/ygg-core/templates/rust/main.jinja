@@ -1,11 +1,12 @@
 #![allow(dead_code, unused_imports, non_camel_case_types)]
+#![doc = include_str!("readme.md")]
 
 use yggdrasil_rt::*;
 
 type Input<'i> = Box<State<'i, {{ self.rule_name() }}>>;
 type Output<'i> = Result<Box<State<'i, {{ self.rule_name() }}>>, Box<State<'i, {{ self.rule_name()}}>>>;
 
-#[doc = include_str!("readme.md")]
+
 #[repr(C)]
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -40,6 +41,9 @@ impl YggdrasilRule for {{ self.rule_name()}} {
     }
 }
 
+// ===================================================
+use super::*;
+
 impl YggdrasilParser for {{ self.language_name() }} {
     type Rule = {{ self.rule_name() }};
     fn parse(input: &str, rule: {{ self.rule_name() }}) -> OutputResult<{{ self.rule_name()}}> {
@@ -72,6 +76,6 @@ fn builtin_ignore(state: Input) -> Output {
 {% endif %}
 }
 
-fn builtin_text<'i, const INSENSITIVE: bool>(state: Input, text: &'static str) -> Output<'i> {
-    state.rule(Json5Rule::IgnoreText, |s| s.match_string::<INSENSITIVE>(text))
+fn builtin_text<'i, const INSENSITIVE: bool>(state: Input<'i>, text: &'static str) -> Output<'i> {
+    state.rule({{ self.rule_name() }}::IgnoreText, |s| s.match_string::<INSENSITIVE>(text))
 }

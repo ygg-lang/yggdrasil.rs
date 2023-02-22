@@ -17,13 +17,7 @@ version = "0.3.0-beta"
 
 [dependencies.yggdrasil-ir]
 version = "0.1.*"
-#features = ["pretty-print", "std", "lispify"]
 path = "../ygg-ir"
-
-#[dependencies.nyar-error]
-#features = []
-#version = "0.1.4"
-#path = 'C:\Users\Dell\CLionProjects\nyar-vm\projects\nyar-error'
 
 [dev-dependencies]
 
