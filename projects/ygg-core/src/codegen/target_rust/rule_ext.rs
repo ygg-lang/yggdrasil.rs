@@ -80,16 +80,30 @@ impl NodeExt for YggdrasilExpression {
             ExpressionKind::Unary(v) => {
                 for o in &v.operators {
                     match o {
-                        Operator::Negative => {}
+                        Operator::Negative => {
+                            todo!()
+                        }
                         Operator::Optional => {
                             w.push_str("s.optional(|s|");
                         }
-                        Operator::Repeats => {}
-                        Operator::Repeat1 => {}
-                        Operator::Boxing => {}
-                        Operator::RepeatsBetween(_, _) => {}
-                        Operator::Remark => {}
-                        Operator::Recursive => {}
+                        Operator::Repeats => {
+                            todo!()
+                        }
+                        Operator::Repeat1 => {
+                            todo!()
+                        }
+                        Operator::Boxing => {
+                            todo!()
+                        }
+                        Operator::RepeatsBetween(_, _) => {
+                            todo!()
+                        }
+                        Operator::Remark => {
+                            todo!()
+                        }
+                        Operator::Recursive => {
+                            todo!()
+                        }
                     }
                 }
                 v.base.write(w, ctx)?;
@@ -103,7 +117,7 @@ impl NodeExt for YggdrasilExpression {
             }
             ExpressionKind::Text(v) if v.insensitive => write!(w, "builtin_text::<true>(s, {:?})", v.text)?,
             ExpressionKind::Text(v) => write!(w, "builtin_text::<false>(s, {:?})", v.text)?,
-            ExpressionKind::Regex(_) => w.push_str("parse_Regex(s)"),
+            ExpressionKind::Regex(r) => w.push_str("parse_Regex(s)"),
             ExpressionKind::Data(_) => w.push_str("parse_Data(s)"),
             ExpressionKind::CharacterAny => w.push_str("s.match_char_by(|_| true)"),
             ExpressionKind::Boolean(_) => {}

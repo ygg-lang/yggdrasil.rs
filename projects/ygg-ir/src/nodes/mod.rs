@@ -1,6 +1,6 @@
 pub use self::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression};
 use crate::{
-    data::{DataKind, RegularExpression, RuleReference, YggdrasilText},
+    data::{DataKind, RuleReference, YggdrasilRegex, YggdrasilText},
     rule::{GrammarRule, GrammarRuleKind, YggdrasilIdentifier},
     FunctionExpression,
 };
@@ -41,7 +41,7 @@ pub enum ExpressionKind {
     /// Any character
     CharacterAny,
     Boolean(bool),
-    Regex(RegularExpression),
+    Regex(YggdrasilRegex),
     Data(Box<DataKind>),
 }
 

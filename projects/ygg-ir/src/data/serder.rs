@@ -10,9 +10,6 @@ impl Hash for DataKind {
                 state.write("DataKind::String".as_bytes());
                 state.write(s.as_bytes())
             }
-            DataKind::StringFused(_) => {
-                state.write("DataKind::StringFused".as_bytes());
-            }
             DataKind::Character(v) => {
                 state.write("DataKind::Character".as_bytes());
                 state.write_u32(*v as u32);
@@ -55,9 +52,6 @@ impl Serialize for DataKind {
                 unimplemented!()
             }
             DataKind::String(v) => serializer.serialize_str(v),
-            DataKind::StringFused(_) => {
-                unimplemented!()
-            }
             DataKind::Character(v) => serializer.serialize_char(*v),
             DataKind::CharacterBuiltin(v) => {
                 let mut state = serializer.serialize_tuple_struct("CharacterBuiltin", 1)?;

@@ -24,7 +24,6 @@ impl DataKind {
             DataKind::CharacterBuiltin(_) => {
                 todo!()
             }
-            DataKind::StringFused(_) => {}
         }
     }
 }

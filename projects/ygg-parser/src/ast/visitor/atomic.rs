@@ -1,6 +1,6 @@
 use super::*;
 use yggdrasil_ir::{
-    data::{RegularExpression, YggdrasilText},
+    data::{YggdrasilRegex, YggdrasilText},
     rule::YggdrasilNamepath,
 };
 
@@ -8,7 +8,7 @@ impl<'i> Extractor<AtomicContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &AtomicContextAll<'i>) -> Option<Self> {
         match node {
             AtomicContextAll::AIntContext(_) => todo!(),
-            AtomicContextAll::AReContext(r) => Some(RegularExpression::take(r.regex())?.into()),
+            AtomicContextAll::AReContext(r) => Some(YggdrasilRegex::take(r.regex())?.into()),
             AtomicContextAll::ACharContext(escape) => {
                 let range = Range { start: escape.start().start as usize, end: escape.stop().stop as usize };
                 let char = escape.get_text().chars().last()?;
@@ -62,7 +62,8 @@ impl<'i> Extractor<IdentifierContextAll<'i>> for YggdrasilIdentifier {
         None
     }
 }
-impl<'i> Extractor<RegexContextAll<'i>> for RegularExpression {
+
+impl<'i> Extractor<RegexContextAll<'i>> for YggdrasilRegex {
     fn take_one(node: &RegexContextAll<'i>) -> Option<Self> {
         None
     }
