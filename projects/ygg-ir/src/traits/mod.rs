@@ -40,7 +40,7 @@ pub trait CodeGenerator {
 }
 
 impl GrammarInfo {
-    pub fn optimize(&self, mut pass: Vec<impl CodeOptimizer>) -> Validation<GrammarInfo> {
+    pub fn optimize(&self, mut pass: Vec<Box<dyn CodeOptimizer>>) -> Validation<GrammarInfo> {
         let mut errors = vec![];
         let mut out = GrammarInfo::default();
         for co in pass.iter_mut() {

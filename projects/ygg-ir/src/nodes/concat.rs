@@ -31,8 +31,11 @@ impl ConcatExpression {
         sequence.push(rhs.into());
         Self { sequence }
     }
-    pub fn split(&self) -> (&YggdrasilExpression, &[YggdrasilExpression]) {
-        self.sequence.split_first().expect("empty is invalid")
+    pub fn split(&self) -> (YggdrasilExpression, Vec<YggdrasilExpression>) {
+        match self.sequence.split_first() {
+            Some((head, rest)) => (head.clone(), rest.to_vec()),
+            None => unreachable!("invalid empty"),
+        }
     }
 }
 
