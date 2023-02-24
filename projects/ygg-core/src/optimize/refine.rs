@@ -1,18 +1,17 @@
 use super::*;
-use diagnostic_quick::Validation;
 
-pub struct InlineRules {
+pub struct RefineRules {
     grammar: GrammarInfo,
     recursion_limit: usize,
 }
 
-impl Default for InlineRules {
+impl Default for RefineRules {
     fn default() -> Self {
         Self { grammar: Default::default(), recursion_limit: 1024 }
     }
 }
 
-impl CodeOptimizer for InlineRules {
+impl CodeOptimizer for RefineRules {
     fn optimize(&mut self, info: &GrammarInfo) -> Validation<GrammarInfo> {
         self.grammar = info.clone();
         let mut out = info.clone();
@@ -20,7 +19,7 @@ impl CodeOptimizer for InlineRules {
     }
 }
 
-impl InlineRules {
+impl RefineRules {
     fn inline_node(&mut self, info: &mut YggdrasilExpression, depth: usize) -> Result<(), QError> {
         todo!()
     }

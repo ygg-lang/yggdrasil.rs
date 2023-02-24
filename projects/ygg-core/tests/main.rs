@@ -1,6 +1,5 @@
 use std::{fs::File, io::Write};
-use yggdrasil_core::codegen::RustCodegen;
-use yggdrasil_ir::grammar::InsertIgnore;
+use yggdrasil_core::{codegen::RustCodegen, optimize::InsertIgnore};
 use yggdrasil_parser::YggdrasilParser;
 
 // mod json;

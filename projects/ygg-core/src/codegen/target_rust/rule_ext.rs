@@ -115,10 +115,16 @@ impl NodeExt for YggdrasilExpression {
                 let name = format!("parse_{}", r.name.text).to_case(Case::Snake);
                 write!(w, "{name}(s)")?
             }
-            ExpressionKind::Text(v) if v.insensitive => write!(w, "builtin_text::<true>(s, {:?})", v.text)?,
-            ExpressionKind::Text(v) => write!(w, "builtin_text::<false>(s, {:?})", v.text)?,
+            ExpressionKind::Text(v) if root => match v.insensitive {
+                true => write!(w, "builtin_text::<true>(s, {:?})", v.text)?,
+                false => write!(w, "builtin_text::<false>(s, {:?})", v.text)?,
+            },
+            ExpressionKind::Text(v) => match v.insensitive {
+                true => write!(w, "builtin_text::<true>(s, {:?})", v.text)?,
+                false => write!(w, "builtin_text::<false>(s, {:?})", v.text)?,
+            },
             ExpressionKind::Regex(r) if root => {
-                w.push_str("builtin_regex(s,{static REGEX:OnceLock<Regex>=OnceLock::new();REGEX.get_or_init(||Regex::new(");
+                w.push_str("s.match_regex({static REGEX:OnceLock<Regex>=OnceLock::new();REGEX.get_or_init(|| Regex::new(");
                 write!(w, "{:?}", r.raw)?;
                 w.push_str(").unwrap())})");
             }
