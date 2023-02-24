@@ -32,7 +32,7 @@ atomic class StringEscaped {
 }
 
 atomic class Number {
-/+?(0|[1-9][0-9]*)/
+    /[+-]?(0|[1-9][0-9]*)/
 }
 
 union Boolean {
@@ -45,7 +45,7 @@ class Null {
 }
 
 class Identifier {
-/[_\p{XID_start}][\p{XID_continue}]*/
+    /[_\p{XID_start}][\p{XID_continue}]*/
 }
 
 atomic ignore class WhiteSpace {

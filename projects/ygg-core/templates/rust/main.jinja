@@ -2,10 +2,10 @@
 #![doc = include_str!("readme.md")]
 
 use yggdrasil_rt::*;
+use std::sync::OnceLock;
 
 type Input<'i> = Box<State<'i, {{ self.rule_name() }}>>;
 type Output<'i> = Result<Box<State<'i, {{ self.rule_name() }}>>, Box<State<'i, {{ self.rule_name()}}>>>;
-
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Ord, PartialOrd, Hash)]
@@ -21,6 +21,8 @@ pub enum {{ self.rule_name() }} {
 {%- endfor %}
     /// Label for text literal
     IgnoreText,
+    /// Label for regex literal
+    IgnoreRegex,
 }
 
 impl YggdrasilRule for {{ self.rule_name()}} {
@@ -52,6 +54,7 @@ impl YggdrasilParser for {{ self.language_name() }} {
             {{ self.rule_name() }}::{{ rule.safe_rule_name() }} => {{ rule.parser_name() }}(state),
 {%- endfor %}
             {{ self.rule_name() }}::IgnoreText => unreachable!(),
+            {{ self.rule_name() }}::IgnoreRegex => unreachable!(),
         })
     }
 }
@@ -78,4 +81,8 @@ fn builtin_ignore(state: Input) -> Output {
 
 fn builtin_text<'i, const INSENSITIVE: bool>(state: Input<'i>, text: &'static str) -> Output<'i> {
     state.rule({{ self.rule_name() }}::IgnoreText, |s| s.match_string::<INSENSITIVE>(text))
+}
+
+fn builtin_regex<'i, 'r>(state: Input<'i>, regex: &'r Regex) -> Output<'i> {
+    state.rule({{ self.rule_name() }}::IgnoreRegex, |s| s.match_regex(regex))
 }

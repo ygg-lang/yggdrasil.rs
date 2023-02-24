@@ -14,6 +14,7 @@ use core::{
     ops::Range,
     ptr, str,
 };
+use regex_automata::dfa::regex::Regex;
 use span::TextSpan;
 
 use crate::span;
@@ -442,6 +443,21 @@ impl<'i> Position<'i> {
         }
 
         false
+    }
+
+    #[inline]
+    pub(crate) fn match_regex(&mut self, regex: &Regex) -> bool {
+        match regex.find(self.rest_text()) {
+            Some(s) => {
+                self.position += s.end();
+                true
+            }
+            None => false,
+        }
+    }
+
+    fn rest_text(&self) -> &str {
+        &self.input[self.position..]
     }
 }
 

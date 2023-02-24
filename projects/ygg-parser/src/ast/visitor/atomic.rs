@@ -1,8 +1,4 @@
 use super::*;
-use yggdrasil_ir::{
-    data::{YggdrasilRegex, YggdrasilText},
-    rule::YggdrasilNamepath,
-};
 
 impl<'i> Extractor<AtomicContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &AtomicContextAll<'i>) -> Option<Self> {
@@ -65,6 +61,13 @@ impl<'i> Extractor<IdentifierContextAll<'i>> for YggdrasilIdentifier {
 
 impl<'i> Extractor<RegexContextAll<'i>> for YggdrasilRegex {
     fn take_one(node: &RegexContextAll<'i>) -> Option<Self> {
+        let span = Range { start: node.start().start as usize, end: node.stop().stop as usize };
+        if let Some(s) = node.REGEX_RANGE() {
+            return Some(Self::new(s.get_text(), span));
+        }
+        if let Some(s) = node.REGEX_FREE() {
+            return Some(Self::new(s.get_text().trim_matches('/'), span));
+        }
         None
     }
 }

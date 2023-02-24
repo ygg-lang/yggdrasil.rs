@@ -1,4 +1,8 @@
 use super::*;
+use crate::{
+    grammar::GrammarInfo,
+    rule::GrammarRule,
+};
 
 #[derive(Debug, Clone)]
 pub struct YggdrasilRegex {
@@ -53,6 +57,11 @@ impl YggdrasilRegex {
         self.reverse_be = rev_bytes[rev_pad..].to_vec();
         Ok(())
     }
+    pub fn built(&self) -> Result<Self, BuildError> {
+        let mut out = self.clone();
+        out.build()?;
+        Ok(out)
+    }
 }
 
 impl Hash for YggdrasilRegex {
@@ -64,23 +73,56 @@ impl Hash for YggdrasilRegex {
     }
 }
 
-impl YggdrasilRegex {
-    pub fn constant_name(&self) -> String {}
-}
-
 impl Display for YggdrasilRegex {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "/// `{}`", self.raw)?;
         writeln!(f, "#[rustfmt::skip]")?;
-        let mut hasher = DefaultHasher::new();
-        self.hash(&mut hasher);
-        let id = hasher.finish();
-        writeln!(f, "const REGEX_{:X}: RegexCompiled = RegexCompiled {{", id)?;
+        writeln!(f, "const {}: RegexCompiled = RegexCompiled {{", self.constant_name())?;
         writeln!(f, "    forward_le: &{:?},", self.forward_le)?;
         writeln!(f, "    reverse_le: &{:?},", self.reverse_le)?;
         writeln!(f, "    forward_be: &{:?},", self.forward_be)?;
         writeln!(f, "    reverse_be: &{:?},", self.reverse_be)?;
         f.write_str("};")?;
         Ok(())
+    }
+}
+
+impl YggdrasilRegex {
+    pub fn constant_name(&self) -> String {
+        let mut hasher = DefaultHasher::new();
+        self.hash(&mut hasher);
+        let id = hasher.finish();
+        format!("REGEX_{:X}", id)
+    }
+}
+
+impl GrammarInfo {
+    pub fn collect_regex(&self) -> Vec<YggdrasilRegex> {
+        let mut regex = vec![];
+        for (_, v) in &self.rules {
+            v.collect_regex(&mut regex)
+        }
+        regex
+    }
+}
+
+impl GrammarRule {
+    fn collect_regex(&self, all: &mut Vec<YggdrasilRegex>) {
+        match &self.body {
+            Some(s) => s.collect_regex(all),
+            None => {}
+        }
+    }
+}
+
+impl YggdrasilExpression {
+    fn collect_regex(&self, all: &mut Vec<YggdrasilRegex>) {
+        match &self.kind {
+            ExpressionKind::Choice(v) => v.branches.iter().for_each(|s| s.collect_regex(all)),
+            ExpressionKind::Concat(v) => v.sequence.iter().for_each(|s| s.collect_regex(all)),
+            ExpressionKind::Unary(v) => v.base.collect_regex(all),
+            ExpressionKind::Regex(r) => all.push(r.clone()),
+            _ => {}
+        }
     }
 }

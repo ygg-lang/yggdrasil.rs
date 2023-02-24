@@ -216,7 +216,18 @@ impl GrammarRule {
         self
     }
     pub fn with_expression(mut self, extra: Option<YggdrasilExpression>) -> Self {
+        let empty = match &extra {
+            Some(s) => match &s.kind {
+                ExpressionKind::Choice(v) => v.branches.is_empty(),
+                ExpressionKind::Concat(v) => v.sequence.is_empty(),
+                _ => false,
+            },
+            None => true,
+        };
         self.body = extra;
+        if empty {
+            self.body = None
+        }
         self
     }
 }

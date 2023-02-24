@@ -2,13 +2,18 @@ use regex_automata::dfa::{dense::DFA, regex::Regex};
 
 /// A precompiled regular expression state machine
 pub struct RegexCompiled {
+    /// FWD
     pub forward_le: &'static [u8],
+    /// FWD
     pub reverse_le: &'static [u8],
+    /// FWD
     pub forward_be: &'static [u8],
+    /// FWD
     pub reverse_be: &'static [u8],
 }
 
 impl RegexCompiled {
+    /// FWD
     pub fn regex(&self) -> Regex<DFA<&[u32]>> {
         unsafe {
             if cfg!(target_endian = "little") {

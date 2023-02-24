@@ -17,7 +17,7 @@ impl<'i> RustWrite<'i> {
         false
     }
     pub fn ignore_rule_pattern(&self) -> String {
-        let mut out = String::from("Self::IgnoreText");
+        let mut out = String::from("Self::IgnoreText | Self::IgnoreRegex");
         for ignore in self.ignore_rules() {
             out.push_str(&format!(" | Self::{}", ignore.safe_rule_name()))
         }

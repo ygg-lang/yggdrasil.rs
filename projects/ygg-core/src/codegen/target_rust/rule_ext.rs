@@ -38,7 +38,7 @@ impl RuleExt for GrammarRule {
     fn parser_expression(&self) -> String {
         let mut w = String::new();
         match &self.body {
-            Some(s) => match s.write(&mut w, self) {
+            Some(s) => match s.write(&mut w, self, true) {
                 Ok(_) => {}
                 Err(_) => w.push_str("parse_Bug(s)"),
             },
@@ -49,30 +49,30 @@ impl RuleExt for GrammarRule {
 }
 
 trait NodeExt {
-    fn write(&self, w: &mut String, ctx: &GrammarRule) -> std::fmt::Result;
+    fn write(&self, w: &mut String, ctx: &GrammarRule, root: bool) -> std::fmt::Result;
 }
 
 impl NodeExt for YggdrasilExpression {
-    fn write(&self, w: &mut String, ctx: &GrammarRule) -> std::fmt::Result {
+    fn write(&self, w: &mut String, ctx: &GrammarRule, root: bool) -> std::fmt::Result {
         match &self.kind {
             ExpressionKind::Ignored => w.push_str("builtin_ignore(s)"),
             ExpressionKind::Function(_) => w.push_str("parse_Function(s)"),
             ExpressionKind::Choice(v) => {
                 let (head, rest) = v.split();
-                head.write(w, ctx)?;
+                head.write(w, ctx, false)?;
                 for pat in rest {
                     w.push_str(".or_else(|s|");
-                    pat.write(w, ctx)?;
+                    pat.write(w, ctx, false)?;
                     w.push_str(")");
                 }
             }
             ExpressionKind::Concat(v) => {
                 let (head, rest) = v.split();
                 w.push_str("s.sequence(|s|");
-                head.write(w, ctx)?;
+                head.write(w, ctx, false)?;
                 for pat in rest {
                     w.push_str(".and_then(|s|");
-                    pat.write(w, ctx)?;
+                    pat.write(w, ctx, false)?;
                     w.push_str(")");
                 }
                 w.push_str(")")
@@ -106,7 +106,7 @@ impl NodeExt for YggdrasilExpression {
                         }
                     }
                 }
-                v.base.write(w, ctx)?;
+                v.base.write(w, ctx, false)?;
                 for _ in &v.operators {
                     w.push_str(")")
                 }
@@ -117,9 +117,18 @@ impl NodeExt for YggdrasilExpression {
             }
             ExpressionKind::Text(v) if v.insensitive => write!(w, "builtin_text::<true>(s, {:?})", v.text)?,
             ExpressionKind::Text(v) => write!(w, "builtin_text::<false>(s, {:?})", v.text)?,
-            ExpressionKind::Regex(r) => w.push_str("parse_Regex(s)"),
+            ExpressionKind::Regex(r) if root => {
+                w.push_str("builtin_regex(s,{static REGEX:OnceLock<Regex>=OnceLock::new();REGEX.get_or_init(||Regex::new(");
+                write!(w, "{:?}", r.raw)?;
+                w.push_str(").unwrap())})");
+            }
+            ExpressionKind::Regex(r) => {
+                w.push_str("builtin_regex(s,{static REGEX:OnceLock<Regex>=OnceLock::new();REGEX.get_or_init(||Regex::new(");
+                write!(w, "{:?}", r.raw)?;
+                w.push_str(").unwrap())})");
+            }
             ExpressionKind::Data(_) => w.push_str("parse_Data(s)"),
-            ExpressionKind::CharacterAny => w.push_str("s.match_char_by(|_| true)"),
+            ExpressionKind::CharacterAny => w.push_str("s.match_char_if(|_| true)"),
             ExpressionKind::Boolean(_) => {}
         }
         Ok(())

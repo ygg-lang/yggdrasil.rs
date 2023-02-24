@@ -1,10 +1,11 @@
 use super::*;
 
 use yggdrasil_ir::{
-    data::RuleReference,
+    data::{YggdrasilRegex, YggdrasilText},
     nodes::{Operator, YggdrasilExpression},
-    rule::{GrammarRule, YggdrasilAnnotations, YggdrasilIdentifier},
+    rule::{GrammarRule, YggdrasilAnnotations, YggdrasilIdentifier, YggdrasilNamepath},
 };
+
 mod atomic;
 mod classes;
 mod unions;

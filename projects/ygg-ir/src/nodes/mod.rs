@@ -4,7 +4,7 @@ use crate::{
     rule::{GrammarRule, GrammarRuleKind, YggdrasilIdentifier},
     FunctionExpression,
 };
-use diagnostic_quick::{QError, QResult};
+use diagnostic_quick::QResult;
 use indexmap::IndexMap;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};

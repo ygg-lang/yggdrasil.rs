@@ -1,10 +1,5 @@
 use super::*;
-use crate::{
-    nodes::{ConcatExpression, UnaryExpression},
-    rule::GrammarAtomic,
-};
 use diagnostic_quick::Validation;
-use itertools::Itertools;
 
 pub struct InlineRules {
     grammar: GrammarInfo,

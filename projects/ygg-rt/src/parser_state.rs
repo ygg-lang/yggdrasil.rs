@@ -9,6 +9,7 @@
 
 use alloc::{boxed::Box, rc::Rc, vec, vec::Vec};
 use core::ops::Range;
+use regex_automata::dfa::regex::Regex;
 
 use crate::{
     errors::{ErrorKind, YggdrasilError},
@@ -459,7 +460,7 @@ where
     /// assert_eq!(result.unwrap_err().position().pos(), 0);
     /// ```
     #[inline]
-    pub fn match_char_by<F>(mut self: Box<Self>, f: F) -> Either<Box<Self>>
+    pub fn match_char_if<F>(mut self: Box<Self>, f: F) -> Either<Box<Self>>
     where
         F: FnOnce(char) -> bool,
     {
@@ -577,6 +578,35 @@ where
     #[inline]
     pub fn match_range(mut self: Box<Self>, range: Range<char>) -> Either<Box<Self>> {
         if self.position.match_range(range) { Ok(self) } else { Err(self) }
+    }
+    /// Attempts to match a single character from the given range. Returns `Ok` with the updated
+    /// `Box<ParserState>` if successful, or `Err` with the updated `Box<ParserState>` otherwise.
+    ///
+    /// # Caution
+    /// The provided `range` is interpreted as inclusive.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use pest;
+    /// # #[allow(non_camel_case_types)]
+    /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+    /// enum Rule {}
+    ///
+    /// let input = "ab";
+    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut result = state.match_range('a'..'z');
+    /// assert!(result.is_ok());
+    /// assert_eq!(result.unwrap().position().pos(), 1);
+    ///
+    /// state = pest::State::new(input);
+    /// result = state.match_range('A'..'Z');
+    /// assert!(result.is_err());
+    /// assert_eq!(result.unwrap_err().position().pos(), 0);
+    /// ```
+    #[inline]
+    pub fn match_regex(mut self: Box<Self>, regex: &Regex) -> Either<Box<Self>> {
+        if self.position.match_regex(regex) { Ok(self) } else { Err(self) }
     }
 
     /// Attempts to skip `n` characters forward. Returns `Ok` with the updated `Box<ParserState>`
