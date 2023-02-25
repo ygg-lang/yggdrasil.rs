@@ -42,11 +42,11 @@ pub trait CodeGenerator {
 impl GrammarInfo {
     pub fn optimize(&self, mut pass: Vec<Box<dyn CodeOptimizer>>) -> Validation<GrammarInfo> {
         let mut errors = vec![];
-        let mut out = GrammarInfo::default();
+        let mut current = self.clone();
         for co in pass.iter_mut() {
             match co.optimize(self) {
                 Validation::Success { value, diagnostics } => {
-                    out = value;
+                    current = value;
                     errors.extend(diagnostics.into_iter())
                 }
                 Validation::Failure { fatal, diagnostics } => {
@@ -55,7 +55,7 @@ impl GrammarInfo {
                 }
             }
         }
-        Validation::Success { value: out, diagnostics: errors }
+        Validation::Success { value: current, diagnostics: errors }
     }
     pub fn generate<T>(&self, mut pass: T) -> Validation<<T as CodeGenerator>::Output>
     where

@@ -94,19 +94,27 @@ fn parse_object(state: Input) -> Output {
     state.rule(Json5Rule::Object, |s| {
         s.sequence(|s| {
             builtin_text::<false>(s, "{")
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| {
                     s.optional(|s| {
                         s.sequence(|s| {
                             parse_object_pair(s)
+                                .and_then(|s| builtin_ignore(s))
                                 .and_then(|s| {
                                     s.optional(|s| {
-                                        s.sequence(|s| builtin_text::<false>(s, ",").and_then(|s| parse_object_pair(s)))
+                                        s.sequence(|s| {
+                                            builtin_text::<false>(s, ",")
+                                                .and_then(|s| builtin_ignore(s))
+                                                .and_then(|s| parse_object_pair(s))
+                                        })
                                     })
                                 })
+                                .and_then(|s| builtin_ignore(s))
                                 .and_then(|s| builtin_text::<false>(s, ","))
                         })
                     })
                 })
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| builtin_text::<false>(s, "}"))
         })
     })
@@ -124,17 +132,27 @@ fn parse_array(state: Input) -> Output {
     state.rule(Json5Rule::Array, |s| {
         s.sequence(|s| {
             builtin_text::<false>(s, "[")
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| {
                     s.optional(|s| {
                         s.sequence(|s| {
                             parse_value(s)
+                                .and_then(|s| builtin_ignore(s))
                                 .and_then(|s| {
-                                    s.optional(|s| s.sequence(|s| builtin_text::<false>(s, ",").and_then(|s| parse_value(s))))
+                                    s.optional(|s| {
+                                        s.sequence(|s| {
+                                            builtin_text::<false>(s, ",")
+                                                .and_then(|s| builtin_ignore(s))
+                                                .and_then(|s| parse_value(s))
+                                        })
+                                    })
                                 })
+                                .and_then(|s| builtin_ignore(s))
                                 .and_then(|s| builtin_text::<false>(s, ","))
                         })
                     })
                 })
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| builtin_text::<false>(s, "]"))
         })
     })

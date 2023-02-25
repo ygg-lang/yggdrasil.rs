@@ -29,9 +29,9 @@ impl ChoiceExpression {
     pub fn new(lhs: impl Into<YggdrasilExpression>, rhs: impl Into<YggdrasilExpression>) -> Self {
         Self { branches: vec![lhs.into(), rhs.into()] }
     }
-    pub fn split(&self) -> (YggdrasilExpression, Vec<YggdrasilExpression>) {
+    pub fn split(&self) -> (YggdrasilExpression, &[YggdrasilExpression]) {
         match self.branches.split_first() {
-            Some((head, rest)) => (head.clone(), rest.to_vec()),
+            Some((head, rest)) => (head.clone(), rest),
             None => unreachable!("invalid empty"),
         }
     }

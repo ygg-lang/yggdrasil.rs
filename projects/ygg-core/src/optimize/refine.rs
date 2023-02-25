@@ -37,7 +37,7 @@ impl RefineRules {
                 }
                 let (mut head, rest) = v.split();
                 for term in rest {
-                    head |= term;
+                    head |= term.clone();
                 }
                 *node = head
             }
@@ -46,10 +46,8 @@ impl RefineRules {
                     self.refine_node(child)?;
                 }
                 let (mut head, rest) = v.split();
-                self.refine_node(&mut head)?;
-                for mut term in rest {
-                    self.refine_node(&mut term)?;
-                    head &= term;
+                for term in rest {
+                    head &= term.clone();
                 }
                 *node = head
             }

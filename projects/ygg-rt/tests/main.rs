@@ -5,6 +5,6 @@ mod json5;
 
 #[test]
 fn test() {
-    let out = Json5Language::parse("1", Json5Rule::Number).unwrap();
+    let out = Json5Language::parse("[1]", Json5Rule::Array).unwrap();
     println!("{:#?}", out)
 }

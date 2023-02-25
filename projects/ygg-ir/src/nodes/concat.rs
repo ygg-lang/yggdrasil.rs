@@ -31,9 +31,9 @@ impl ConcatExpression {
         sequence.push(rhs.into());
         Self { sequence }
     }
-    pub fn split(&self) -> (YggdrasilExpression, Vec<YggdrasilExpression>) {
+    pub fn split(&self) -> (YggdrasilExpression, &[YggdrasilExpression]) {
         match self.sequence.split_first() {
-            Some((head, rest)) => (head.clone(), rest.to_vec()),
+            Some((head, rest)) => (head.clone(), rest),
             None => unreachable!("invalid empty"),
         }
     }

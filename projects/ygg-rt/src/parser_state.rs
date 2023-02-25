@@ -125,9 +125,9 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{State};
     /// let input = "";
-    /// let state: Box<pest::State<&str>> = pest::State::new(input);
+    /// let state: Box<State<&str>> = State::new(input);
     /// ```
     pub fn new(input: &'i str) -> Box<Self> {
         Box::new(State {
@@ -146,7 +146,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -154,7 +163,7 @@ where
     /// }
     ///
     /// let input = "ab";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<State<'_, Rule>> = State::new(input);
     /// let position = state.position();
     /// assert_eq!(position.pos(), 0);
     /// ```
@@ -168,7 +177,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -176,8 +194,7 @@ where
     /// }
     ///
     /// let input = "a";
-    /// let pairs: Vec<_> =
-    ///     pest::state(input, |state| state.rule(Rule::a, |s| Ok(s))).unwrap().collect();
+    /// let pairs: Vec<_> = state(input, |state| state.rule(Rule::a, |s| Ok(s))).unwrap().collect();
     ///
     /// assert_eq!(pairs.len(), 1);
     /// ```
@@ -249,9 +266,19 @@ where
     /// Try to recognize the one specified in a set of characters
     ///
     /// ```
-    /// use pest::{iterators::Pair, state, Either, State};
-    /// #[allow(non_camel_case_types)]
-    /// #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+    /// # use yggdrasil_rt::{Either, state, State, YggdrasilRule};
+    /// use yggdrasil_rt::iterators::Pair;
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
+    /// # #[allow(non_camel_case_types)]
+    /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
     ///     character,
     /// }
@@ -260,7 +287,7 @@ where
     ///         character(state)
     ///             .and_then(|state| character(state))
     ///             .and_then(|state| character(state))
-    ///             .and_then(|state| state.tag_node(std::borrow::Cow::Borrowed("c")))
+    ///             .and_then(|state| state.tag_node("c"))
     ///             .and_then(|state| character(state))
     ///     })
     /// }
@@ -325,7 +352,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -333,7 +369,7 @@ where
     /// }
     ///
     /// let input = "a";
-    /// let pairs: Vec<_> = pest::state(input, |state| {
+    /// let pairs: Vec<_> = state(input, |state| {
     ///     state
     ///         .sequence(|s| s.rule(Rule::a, |s| Ok(s)).and_then(|s| s.match_string("b")))
     ///         .or_else(|s| Ok(s))
@@ -364,29 +400,38 @@ where
         }
     }
 
-    /// Repeatedly applies the transformation provided by `f` from the `Box<ParserState>`. Returns
-    /// `Ok` with the updated `Box<ParserState>` returned by `f` wrapped up in an `Err`.
+    /// Match `rule*`, elements can appear any number of times
     ///
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
-    ///     ab,
+    ///     a,
     /// }
     ///
     /// let input = "aab";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
-    /// let mut result = state.repeat(|s| s.match_string("a"));
+    /// let mut state: Box<State<'_, Rule>> = State::new(input);
+    /// let mut result = state.repeat(|s| s.match_string_exact("a"));
     /// assert!(result.is_ok());
-    /// assert_eq!(result.unwrap().position().pos(), 2);
+    /// assert_eq!(result.unwrap().position().offset(), 2);
     ///
-    /// state = pest::State::new(input);
-    /// result = state.repeat(|s| s.match_string("b"));
+    /// let input = "b";
+    /// let mut state: Box<State<'_, Rule>> = State::new(input);
+    /// let mut result = state.repeat(|s| s.match_string_exact("a"));
     /// assert!(result.is_ok());
-    /// assert_eq!(result.unwrap().position().pos(), 0);
+    /// assert_eq!(result.unwrap().position().offset(), 0);
     /// ```
     #[inline]
     pub fn repeat<F>(self: Box<Self>, mut f: F) -> Either<Box<Self>>
@@ -409,7 +454,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -442,7 +496,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -473,34 +536,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
-    /// # #[allow(non_camel_case_types)]
-    /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-    /// enum Rule {}
-    ///
-    /// let input = "ab";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
-    /// let mut result = state.match_string("ab");
-    /// assert!(result.is_ok());
-    /// assert_eq!(result.unwrap().position().pos(), 2);
-    ///
-    /// state = pest::State::new(input);
-    /// result = state.match_string("ac");
-    /// assert!(result.is_err());
-    /// assert_eq!(result.unwrap_err().position().pos(), 0);
-    /// ```
-    #[inline]
-    pub fn match_string_exact(mut self: Box<Self>, string: &str) -> Either<Box<Self>> {
-        if self.position.match_string(string) { Ok(self) } else { Err(self) }
-    }
-
-    /// Attempts to match the given string. Returns `Ok` with the updated `Box<ParserState>` if
-    /// successful, or `Err` with the updated `Box<ParserState>` otherwise.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -523,13 +568,59 @@ where
             false => self.match_string_exact(string),
         }
     }
+
+    /// Attempts to match the given string. Returns `Ok` with the updated `Box<ParserState>` if
+    /// successful, or `Err` with the updated `Box<ParserState>` otherwise.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
+    /// # #[allow(non_camel_case_types)]
+    /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+    /// enum Rule {}
+    ///
+    /// let input = "ab";
+    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut result = state.match_string("ab");
+    /// assert!(result.is_ok());
+    /// assert_eq!(result.unwrap().position().pos(), 2);
+    ///
+    /// state = pest::State::new(input);
+    /// result = state.match_string("ac");
+    /// assert!(result.is_err());
+    /// assert_eq!(result.unwrap_err().position().pos(), 0);
+    /// ```
+    #[inline]
+    pub fn match_string_exact(mut self: Box<Self>, string: &str) -> Either<Box<Self>> {
+        if self.position.match_string(string) { Ok(self) } else { Err(self) }
+    }
+
     /// Attempts to case-insensitively match the given string. Returns `Ok` with the updated
     /// `Box<ParserState>` if successful, or `Err` with the updated `Box<ParserState>` otherwise.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -559,7 +650,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -588,7 +688,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -615,7 +724,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -642,7 +760,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -665,7 +792,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -691,7 +827,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -719,7 +864,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -789,7 +943,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -823,7 +986,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -847,7 +1019,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -870,7 +1051,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest::{self, MatchDir};
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -923,7 +1113,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -947,7 +1146,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -987,7 +1195,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -1013,7 +1230,16 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule {
+    /// #    fn all_rules() -> &'static [Self] {
+    /// #        &[]
+    /// #    }
+    /// #
+    /// #    fn is_ignore(&self) -> bool {
+    /// #        false
+    /// #    }
+    /// # }
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
