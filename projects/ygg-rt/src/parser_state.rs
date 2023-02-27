@@ -7,7 +7,7 @@
 // option. All files in the project carrying such notice may not be copied,
 // modified, or distributed except according to those terms.
 
-use alloc::{boxed::Box, rc::Rc, vec, vec::Vec};
+use alloc::{borrow::Cow, boxed::Box, rc::Rc, vec, vec::Vec};
 use core::ops::Range;
 use regex_automata::dfa::regex::Regex;
 
@@ -302,7 +302,7 @@ where
     /// assert_eq!(find[0].as_str(), "c")
     /// ```
     #[inline]
-    pub fn tag_node(mut self: Box<Self>, tag: &'static str) -> Either<Box<Self>> {
+    pub fn tag_node(mut self: Box<Self>, tag: Cow<'static, str>) -> Either<Box<Self>> {
         if let Some(TokenQueue::End { tag: old, .. }) = self.queue.last_mut() {
             *old = Some(tag)
         }

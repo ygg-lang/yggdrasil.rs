@@ -160,13 +160,12 @@ fn parse_array(state: Input) -> Output {
 #[inline]
 fn parse_string(state: Input) -> Output {
     state.rule(Json5Rule::String, |s| {
-        s.sequence(|s| {
-            builtin_text::<false>(s, "'")
-                .and_then(|s| builtin_text::<false>(s, "'"))
-                .and_then(|s| builtin_text::<false>(s, "'"))
-                .and_then(|s| parse_string_escaped(s))
-                .and_then(|s| s.match_char_if(|_| true))
-                .and_then(|s| builtin_text::<false>(s, "'"))
+        s.sequence(|s| builtin_text::<false>(s, "'").and_then(|s| builtin_text::<false>(s, "'"))).or_else(|s| {
+            s.sequence(|s| {
+                builtin_text::<false>(s, "'")
+                    .and_then(|s| parse_string_escaped(s).or_else(|s| s.match_char_if(|_| true)))
+                    .and_then(|s| builtin_text::<false>(s, "'"))
+            })
         })
     })
 }
@@ -203,13 +202,9 @@ fn parse_identifier(state: Input) -> Output {
     })
 }
 #[inline]
-fn parse_white_space(state: Input) -> Output {
+pub(crate) fn parse_white_space(state: Input) -> Output {
     state.rule(Json5Rule::WhiteSpace, |s| {
-        s.sequence(|s| {
-            builtin_text::<false>(s, " ")
-                .and_then(|s| builtin_text::<false>(s, "\\n"))
-                .and_then(|s| builtin_text::<false>(s, "\\r"))
-        })
+        builtin_text::<false>(s, " ").or_else(|s| builtin_text::<false>(s, "\\n")).or_else(|s| builtin_text::<false>(s, "\\r"))
     })
 }
 

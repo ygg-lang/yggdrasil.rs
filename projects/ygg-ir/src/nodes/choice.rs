@@ -58,13 +58,13 @@ impl BitOr<Self> for YggdrasilExpression {
     type Output = Self;
     /// `a | b`
     fn bitor(mut self, other: Self) -> Self::Output {
-        self += other;
+        self |= other;
         self
     }
 }
 
 impl BitOrAssign for YggdrasilExpression {
-    fn bitor_assign(&mut self, mut rhs: Self) {
+    fn bitor_assign(&mut self, rhs: Self) {
         match &mut self.kind {
             ExpressionKind::Choice(this) if self.tag.is_none() && rhs.tag.is_none() => {
                 match rhs.kind {
