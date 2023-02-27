@@ -13,7 +13,7 @@ use regex_automata::dfa::regex::Regex;
 
 use crate::{
     errors::{ErrorKind, YggdrasilError},
-    iterators::{pairs, TokenQueue},
+    iterators::{TokenQueue, TokenTree},
     position::{self, Position},
     span::TextSpan,
     stack::Stack,
@@ -80,12 +80,12 @@ where
 /// # Examples
 ///
 /// ```
-/// # use pest;
+/// # use yggdrasil_rt::{state};
 /// let input = "";
-/// pest::state::<(), _>(input, |s| Ok(s)).unwrap();
+/// state::<(), _>(input, |s| Ok(s)).unwrap();
 /// ```
 #[allow(clippy::perf)]
-pub fn state<'i, R, F>(input: &'i str, f: F) -> Result<pairs::TokenTree<'i, R>, YggdrasilError<R>>
+pub fn state<'i, R, F>(input: &'i str, f: F) -> Result<TokenTree<'i, R>, YggdrasilError<R>>
 where
     F: FnOnce(Box<State<'i, R>>) -> Either<Box<State<'i, R>>>,
     R: YggdrasilRule,
@@ -95,7 +95,7 @@ where
     match f(state) {
         Ok(state) => {
             let len = state.queue.len();
-            Ok(pairs::new(Rc::new(state.queue), input, 0, len))
+            Ok(TokenTree::new(Rc::new(state.queue), input, 0, len))
         }
         Err(mut state) => {
             let variant = {
@@ -216,7 +216,7 @@ where
 
         if self.lookahead == Lookahead::None {
             // Pair's position will only be known after running the closure.
-            self.queue.push(TokenQueue::Start { end_token_index: 0, input_pos: actual_pos });
+            self.queue.push(TokenQueue::Start { end_token_index: 0, input_offset: actual_pos });
         }
 
         let attempts = self.attempts_at(actual_pos);
@@ -240,7 +240,7 @@ where
 
                     let new_pos = new_state.position.offset();
 
-                    new_state.queue.push(TokenQueue::End { start_token_index: index, rule, tag: None, input_pos: new_pos });
+                    new_state.queue.push(TokenQueue::End { start_token_index: index, rule, tag: None, input_offset: new_pos });
                 }
 
                 Ok(new_state)

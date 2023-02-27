@@ -9,6 +9,7 @@
 
 use core::{
     fmt,
+    fmt::{Display, Formatter},
     hash::{Hash, Hasher},
     ops::{Bound, RangeBounds},
     ptr, str,
@@ -31,6 +32,13 @@ pub struct TextSpan<'i> {
     ///
     /// Must be a valid character boundary index into `input`.
     end: usize,
+}
+
+impl<'i> Display for TextSpan<'i> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let view = &self.input[self.start..self.end];
+        write!(f, "({}, {}): \x1b[32m{:?}\x1b[0m", self.start, self.end, view)
+    }
 }
 
 impl<'i> TextSpan<'i> {

@@ -34,7 +34,7 @@ pub fn new<'i, R: YggdrasilRule>(queue: Rc<Vec<TokenQueue<R>>>, input: &'i str, 
     if cfg!(debug_assertions) {
         for tok in queue.iter() {
             match *tok {
-                TokenQueue::Start { input_pos, .. } | TokenQueue::End { input_pos, .. } => {
+                TokenQueue::Start { input_offset: input_pos, .. } | TokenQueue::End { input_offset: input_pos, .. } => {
                     assert!(input.get(input_pos..).is_some(), "💥 UNSAFE `Tokens` CREATED 💥")
                 }
             }
@@ -47,7 +47,7 @@ pub fn new<'i, R: YggdrasilRule>(queue: Rc<Vec<TokenQueue<R>>>, input: &'i str, 
 impl<'i, R: YggdrasilRule> Tokens<'i, R> {
     fn create_token(&self, index: usize) -> Token<'i, R> {
         match self.queue[index] {
-            TokenQueue::Start { end_token_index, input_pos } => {
+            TokenQueue::Start { end_token_index, input_offset: input_pos } => {
                 let rule = match self.queue[end_token_index] {
                     TokenQueue::End { rule, .. } => rule,
                     _ => unreachable!(),
@@ -59,7 +59,7 @@ impl<'i, R: YggdrasilRule> Tokens<'i, R> {
                     pos: unsafe { position::Position::new_unchecked(self.input, input_pos) },
                 }
             }
-            TokenQueue::End { rule, input_pos, .. } => {
+            TokenQueue::End { rule, input_offset: input_pos, .. } => {
                 Token::End {
                     rule,
                     // QueueableTokens are safely created.

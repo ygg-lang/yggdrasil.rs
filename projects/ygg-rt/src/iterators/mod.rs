@@ -1,19 +1,16 @@
-// pest. The Elegant Parser
-// Copyright (c) 2018 Dragoș Tiselice
-//
-// Licensed under the Apache License, Version 2.0
-// <LICENSE-APACHE or http://www.apache.org/licenses/LICENSE-2.0> or the MIT
-// license <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
-// option. All files in the project carrying such notice may not be copied,
-// modified, or distributed except according to those terms.
-
-//! Types and iterators for parser output.
-
 mod flat_pairs;
 mod pair;
-pub(crate) mod pairs;
 mod queueable_token;
+mod token_tree;
 mod tokens;
 
 pub(crate) use self::queueable_token::TokenQueue;
-pub use self::{flat_pairs::TokenStream, pair::Pair, pairs::TokenTree, tokens::Tokens};
+pub use self::{flat_pairs::TokenStream, pair::Pair, token_tree::TokenTree, tokens::Tokens};
+use crate::YggdrasilRule;
+use alloc::{format, rc::Rc, string::String, vec::Vec};
+use core::{
+    fmt::{Debug, Display, Formatter},
+    hash::{Hash, Hasher},
+    iter::Filter,
+    ptr,
+};

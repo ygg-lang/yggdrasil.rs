@@ -17,6 +17,6 @@ use alloc::borrow::Cow;
 //     and can easily be stored instead of recomputed
 #[derive(Debug)]
 pub enum TokenQueue<R> {
-    Start { end_token_index: usize, input_pos: usize },
-    End { start_token_index: usize, rule: R, tag: Option<Cow<'static, str>>, input_pos: usize },
+    Start { end_token_index: usize, input_offset: usize },
+    End { start_token_index: usize, input_offset: usize, rule: R, tag: Option<Cow<'static, str>> },
 }

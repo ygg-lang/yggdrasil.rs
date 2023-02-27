@@ -1,30 +1,6 @@
-// pest. The Elegant Parser
-// Copyright (c) 2018 Dragoș Tiselice
-//
-// Licensed under the Apache License, Version 2.0
-// <LICENSE-APACHE or http://www.apache.org/licenses/LICENSE-2.0> or the MIT
-// license <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
-// option. All files in the project carrying such notice may not be copied,
-// modified, or distributed except according to those terms.
+use super::*;
 
-use alloc::{format, rc::Rc, string::String, vec::Vec};
-use core::{
-    fmt,
-    hash::{Hash, Hasher},
-    iter::Filter,
-    ptr, str,
-};
-
-#[cfg(feature = "pretty-print")]
-use serde::ser::SerializeStruct;
-
-use super::{
-    flat_pairs::{self, TokenStream},
-    pair::{self, Pair},
-    queueable_token::TokenQueue,
-    tokens::{self, Tokens},
-};
-use crate::YggdrasilRule;
+mod display;
 
 /// An iterator over [`Pair`]s. It is created by [`pest::state`] and [`Pair::into_inner`].
 ///
@@ -40,18 +16,23 @@ pub struct TokenTree<'i, R> {
     pairs_count: usize,
 }
 
-pub fn new<R: YggdrasilRule>(queue: Rc<Vec<TokenQueue<R>>>, input: &str, start: usize, end: usize) -> TokenTree<R> {
-    let mut pairs_count = 0;
-    let mut cursor = start;
-    while cursor < end {
-        cursor = match queue[cursor] {
-            TokenQueue::Start { end_token_index, .. } => end_token_index,
-            _ => unreachable!(),
-        } + 1;
-        pairs_count += 1;
+impl<'i, R> TokenTree<'i, R>
+where
+    R: YggdrasilRule,
+{
+    /// Create a new token tree from token stream
+    pub fn new(queue: Rc<Vec<TokenQueue<R>>>, input: &'i str, start: usize, end: usize) -> Self {
+        let mut pairs_count = 0;
+        let mut cursor = start;
+        while cursor < end {
+            cursor = match queue[cursor] {
+                TokenQueue::Start { end_token_index, .. } => end_token_index,
+                _ => unreachable!(),
+            } + 1;
+            pairs_count += 1;
+        }
+        Self { queue, input, start, end, pairs_count }
     }
-
-    TokenTree { queue, input, start, end, pairs_count }
 }
 
 impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
@@ -324,13 +305,6 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
         if self.start < self.end { Some(unsafe { pair::new(Rc::clone(&self.queue), self.input, self.start) }) } else { None }
     }
 
-    /// Generates a string that stores the lexical information of `self` in
-    /// a pretty-printed JSON format.
-    #[cfg(feature = "pretty-print")]
-    pub fn to_json(&self) -> String {
-        ::serde_json::to_string_pretty(self).expect("Failed to pretty-print Pairs to json.")
-    }
-
     fn pair(&self) -> usize {
         match self.queue[self.start] {
             TokenQueue::Start { end_token_index, .. } => end_token_index,
@@ -347,7 +321,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
 
     fn pos(&self, index: usize) -> usize {
         match self.queue[index] {
-            TokenQueue::Start { input_pos, .. } | TokenQueue::End { input_pos, .. } => input_pos,
+            TokenQueue::Start { input_offset: input_pos, .. } | TokenQueue::End { input_offset: input_pos, .. } => input_pos,
         }
     }
 }
@@ -388,18 +362,6 @@ impl<'i, R: YggdrasilRule> DoubleEndedIterator for TokenTree<'i, R> {
         let pair = unsafe { pair::new(Rc::clone(&self.queue), self.input, self.end) };
 
         Some(pair)
-    }
-}
-
-impl<'i, R: YggdrasilRule> fmt::Debug for TokenTree<'i, R> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_list().entries(self.clone()).finish()
-    }
-}
-
-impl<'i, R: YggdrasilRule> fmt::Display for TokenTree<'i, R> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "[{}]", self.clone().map(|pair| format!("{}", pair)).collect::<Vec<_>>().join(", "))
     }
 }
 

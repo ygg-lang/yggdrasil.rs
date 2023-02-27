@@ -17,12 +17,9 @@ use core::{
     ptr, str,
 };
 
-#[cfg(feature = "pretty-print")]
-use serde::ser::SerializeStruct;
-
 use super::{
-    pairs::{self, TokenTree},
     queueable_token::TokenQueue,
+    token_tree::TokenTree,
     tokens::{self, Tokens},
 };
 use crate::{span::TextSpan, YggdrasilRule};
@@ -49,7 +46,7 @@ pub struct Pair<'i, R> {
 /// # Safety
 ///
 /// All `QueueableToken`s' `input_pos` must be valid character boundary indices into `input`.
-pub unsafe fn new<'i, R: YggdrasilRule>(queue: Rc<Vec<TokenQueue<R>>>, input: &'i str, start: usize) -> Pair<'i, R> {
+pub unsafe fn new<R: YggdrasilRule>(queue: Rc<Vec<TokenQueue<R>>>, input: &str, start: usize) -> Pair<R> {
     Pair { queue, input, start }
 }
 
@@ -223,8 +220,34 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     #[inline]
     pub fn into_inner(self) -> TokenTree<'i, R> {
         let pair = self.pair();
-
-        pairs::new(self.queue, self.input, self.start + 1, pair)
+        TokenTree::new(self.queue, self.input, self.start + 1, pair)
+    }
+    /// Returns the inner `Pairs` between the `Pair`, consuming it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::rc::Rc;
+    /// # use pest;
+    /// # #[allow(non_camel_case_types)]
+    /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+    /// enum Rule {
+    ///     a,
+    /// }
+    ///
+    /// let input = "";
+    /// let pair = pest::state(input, |state| {
+    ///     // generating Token pair with Rule::a ...
+    /// #     state.rule(Rule::a, |s| Ok(s))
+    /// })
+    /// .unwrap()
+    /// .next()
+    /// .unwrap();
+    ///
+    /// assert!(pair.into_inner().next().is_none());
+    /// ```
+    pub fn has_child(&self) -> bool {
+        self.clone().into_inner().len() != 0
     }
 
     /// Returns the `Tokens` for the `Pair`.
@@ -259,13 +282,6 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
         tokens::new(self.queue, self.input, self.start, end + 1)
     }
 
-    /// Generates a string that stores the lexical information of `self` in
-    /// a pretty-printed JSON format.
-    #[cfg(feature = "pretty-print")]
-    pub fn to_json(&self) -> String {
-        ::serde_json::to_string_pretty(self).expect("Failed to pretty-print Pair to json.")
-    }
-
     fn pair(&self) -> usize {
         match self.queue[self.start] {
             TokenQueue::Start { end_token_index, .. } => end_token_index,
@@ -275,7 +291,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
 
     fn pos(&self, index: usize) -> usize {
         match self.queue[index] {
-            TokenQueue::Start { input_pos, .. } | TokenQueue::End { input_pos, .. } => input_pos,
+            TokenQueue::Start { input_offset: input_pos, .. } | TokenQueue::End { input_offset: input_pos, .. } => input_pos,
         }
     }
 }
@@ -284,7 +300,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     /// Create a new `Pairs` iterator containing just the single `Pair`.
     pub fn single(pair: Pair<'i, R>) -> Self {
         let end = pair.pair();
-        pairs::new(pair.queue, pair.input, pair.start, end)
+        TokenTree::new(pair.queue, pair.input, pair.start, end)
     }
 }
 
