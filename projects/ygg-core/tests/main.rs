@@ -4,7 +4,7 @@ use yggdrasil_core::{
     optimize::{InsertIgnore, RefineRules},
 };
 use yggdrasil_ir::traits::CodeOptimizer;
-use yggdrasil_parser::YggdrasilParser;
+use yggdrasil_parser::YggdrasilANTLR;
 
 // mod json;
 
@@ -16,7 +16,7 @@ fn ready() {
 #[test]
 fn test_bootstrap() {
     let input = include_str!("prog.ygg");
-    let mut info = YggdrasilParser::parse(input).expect("fail");
+    let mut info = YggdrasilANTLR::parse(input).expect("fail");
     info = InsertIgnore::default().optimize(&info).unwrap();
     info = RefineRules::default().optimize(&info).unwrap();
     let out = info.generate(RustCodegen::default());

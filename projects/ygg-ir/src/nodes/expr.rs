@@ -36,53 +36,10 @@ impl YggdrasilExpression {
         }
     }
     fn capture(&mut self) {
-        match &mut self.kind {
-            ExpressionKind::Choice(e) => {
-                todo!()
-            }
-            ExpressionKind::Concat(e) => todo!(),
-            ExpressionKind::Unary(e) => match e.operators.contains(&Operator::Remark) {
-                true => e.base.non_capture(),
-                false => e.base.capture(),
-            },
-            ExpressionKind::Rule(e) => {
-                todo!();
-                // self.tag = e.name.to_case(Case::Snake)
-            }
-            ExpressionKind::Function(_) => {
-                self.tag.take();
-            }
-            _ => {
-                self.tag.take();
-            }
-        }
+        todo!()
     }
     fn non_capture(&mut self) {
-        match &mut self.kind {
-            ExpressionKind::Choice(e) => {
-                todo!()
-            }
-            ExpressionKind::Concat(e) => todo!(),
-            ExpressionKind::Unary(e) => match e.operators.contains(&Operator::Remark) {
-                true => e.base.capture(),
-                false => e.base.non_capture(),
-            },
-            ExpressionKind::Function(_) => {
-                self.tag.take();
-            }
-            ExpressionKind::Rule(_) => {
-                self.tag.take();
-            }
-            ExpressionKind::Data(_) => {
-                self.tag.take();
-            }
-            ExpressionKind::Regex(_) => {
-                self.tag.take();
-            }
-            _ => {
-                self.tag.take();
-            }
-        }
+        todo!()
     }
 }
 

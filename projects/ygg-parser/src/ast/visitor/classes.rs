@@ -23,7 +23,7 @@ impl<'i> Extractor<Class_expressionContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &Class_expressionContextAll<'i>) -> Option<Self> {
         match node {
             Class_expressionContextAll::CSuffixContext(s) => {
-                let suffix = Operator::take(s.suffix())?;
+                let suffix = YggdrasilOperator::take(s.suffix())?;
                 let base = Self::take(s.class_expression())?;
                 Some(YggdrasilExpression::unary(base, suffix))
             }
@@ -63,14 +63,14 @@ impl<'i> Extractor<Class_expressionContextAll<'i>> for YggdrasilExpression {
     }
 }
 
-impl<'i> Extractor<SuffixContextAll<'i>> for Operator {
+impl<'i> Extractor<SuffixContextAll<'i>> for YggdrasilOperator {
     fn take_one(node: &SuffixContextAll<'i>) -> Option<Self> {
         match node {
-            SuffixContextAll::OptionalContext(_) => Some(Operator::Optional),
-            SuffixContextAll::MaybeContext(_) => Some(Operator::Optional),
-            SuffixContextAll::MaybeGreedyContext(_) => Some(Operator::Optional),
-            SuffixContextAll::ManyGreedyContext(_) => Some(Operator::Optional),
-            SuffixContextAll::ManyContext(_) => Some(Operator::Optional),
+            SuffixContextAll::OptionalContext(_) => Some(YggdrasilOperator::Optional),
+            SuffixContextAll::MaybeContext(_) => Some(YggdrasilOperator::Optional),
+            SuffixContextAll::MaybeGreedyContext(_) => Some(YggdrasilOperator::Optional),
+            SuffixContextAll::ManyGreedyContext(_) => Some(YggdrasilOperator::Optional),
+            SuffixContextAll::ManyContext(_) => Some(YggdrasilOperator::Optional),
             SuffixContextAll::Error(_) => None,
         }
     }

@@ -1,1 +1,1 @@
-pub struct FuseRule {}
+pub struct FusionRule {}

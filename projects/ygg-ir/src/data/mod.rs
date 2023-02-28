@@ -2,7 +2,6 @@ mod builtin;
 mod charset;
 mod regex_category;
 mod rule_ref;
-mod serder;
 mod symbol;
 
 pub use self::{
@@ -31,8 +30,6 @@ use std::{
 #[derive(Debug, Clone)]
 pub enum DataKind {
     Integer(BigInt),
-    String(String),
-    Character(char),
     CharacterRange(RangeInclusive<char>),
     CharacterBuiltin(String),
     CharacterFused(CharacterSet),

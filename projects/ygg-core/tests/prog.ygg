@@ -3,7 +3,7 @@ grammar Json5 {}
 entry union Value {
     | Object  #Object
     | Array   #Array
-    | String  #String
+    // | String  #String
     | Number  #Number
     | Boolean #Boolean
     | Null    #Null
@@ -49,6 +49,6 @@ class Identifier {
 }
 
 atomic ignore class WhiteSpace {
-// UNICODE_WHITE_SPACE
-' ' | '\n' | '\r'
+    // UNICODE_WHITE_SPACE
+    ' ' | '\n' | '\r'
 }

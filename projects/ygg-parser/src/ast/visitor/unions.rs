@@ -1,7 +1,6 @@
 use super::*;
 use yggdrasil_ir::{
     nodes::{ChoiceExpression, ConcatExpression},
-    rule::GrammarAtomic,
 };
 
 impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {

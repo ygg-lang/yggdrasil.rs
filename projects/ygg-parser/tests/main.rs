@@ -1,4 +1,4 @@
-use yggdrasil_parser::YggdrasilParser;
+use yggdrasil_parser::YggdrasilANTLR;
 
 #[test]
 fn ready() {
@@ -8,6 +8,6 @@ fn ready() {
 #[test]
 fn test_common() {
     let input = include_str!("common.ygg");
-    let info = YggdrasilParser::parse(input).expect("fail");
+    let info = YggdrasilANTLR::parse(input).expect("fail");
     println!("{:#?}", info)
 }

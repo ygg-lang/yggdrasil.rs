@@ -71,7 +71,7 @@ impl GrammarRule {
 
     pub fn collect_union_parameters(&self) -> BTreeMap<String, Vec<RuleParameter>> {
         assert_eq!(self.kind, GrammarRuleKind::Union);
-        let mut parameters = BTreeMap::new();
+        let parameters = BTreeMap::new();
         return parameters;
     }
 }
@@ -119,21 +119,17 @@ impl UnaryExpression {
         for o in &self.operators {
             match o {
                 // `(a?)*`, `(a?)+`
-                Operator::Repeats | Operator::Repeat1 => return Some(RuleParameterKind::Optional),
-                Operator::Optional => inner = Some(RuleParameterKind::Optional),
-                Operator::Boxing => {
+                YggdrasilOperator::Repeats | YggdrasilOperator::Repeat1 => return Some(RuleParameterKind::Optional),
+                YggdrasilOperator::Optional => inner = Some(RuleParameterKind::Optional),
+                YggdrasilOperator::Boxing => {
                     unreachable!("unsupported now")
                 }
-                Operator::Recursive => {
+                YggdrasilOperator::Recursive => {
                     unreachable!("unsupported now")
                 }
-                Operator::Remark => {
-                    unreachable!("`^p` should be resolved before collecting parameters")
-                }
+                YggdrasilOperator::Negative => {}
 
-                Operator::Negative => {}
-
-                Operator::RepeatsBetween(_, _) => {}
+                YggdrasilOperator::RepeatsBetween(_, _) => {}
             }
         }
         assert_ne!(inner, Some(RuleParameterKind::Required));

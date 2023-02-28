@@ -283,7 +283,7 @@ impl<'i> TextSpan<'i> {
 }
 
 impl<'i> fmt::Debug for TextSpan<'i> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.debug_struct("Span").field("str", &self.as_str()).field("start", &self.start).field("end", &self.end).finish()
     }
 }

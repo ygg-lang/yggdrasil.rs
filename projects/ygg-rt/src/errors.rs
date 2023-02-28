@@ -1,14 +1,3 @@
-// pest. The Elegant Parser
-// Copyright (c) 2018 Dragoș Tiselice
-//
-// Licensed under the Apache License, Version 2.0
-// <LICENSE-APACHE or http://www.apache.org/licenses/LICENSE-2.0> or the MIT
-// license <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
-// option. All files in the project carrying such notice may not be copied,
-// modified, or distributed except according to those terms.
-
-//! Types for different kinds of parsing failures.
-
 use alloc::{
     borrow::{Cow, ToOwned},
     format,
@@ -17,10 +6,7 @@ use alloc::{
 };
 use core::{cmp, fmt, mem};
 
-use crate::{iterators::TokenTree, position::Position, span::TextSpan, YggdrasilRule};
-
-/// Output result alias
-pub type OutputResult<'i, R> = Result<TokenTree<'i, R>, YggdrasilError<R>>;
+use crate::{position::Position, span::TextSpan, YggdrasilRule};
 
 /// Parse-related error type.
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]

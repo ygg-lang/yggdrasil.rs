@@ -1,4 +1,8 @@
-pub use self::{choice::ChoiceExpression, concat::ConcatExpression, unary::UnaryExpression};
+pub use self::{
+    choice::ChoiceExpression,
+    concat::ConcatExpression,
+    unary::{UnaryExpression, YggdrasilOperator},
+};
 use crate::{
     data::{DataKind, RuleReference, YggdrasilRegex, YggdrasilText},
     rule::{GrammarRule, GrammarRuleKind, YggdrasilIdentifier},
@@ -23,7 +27,7 @@ mod unary;
 pub struct YggdrasilExpression {
     pub kind: ExpressionKind,
     /// If it's a `^rule`
-    pub untag: bool,
+    pub remark: bool,
     /// If it's a `tag:Rule`
     pub tag: Option<YggdrasilIdentifier>,
 }
@@ -47,12 +51,12 @@ pub enum ExpressionKind {
 
 impl From<ExpressionKind> for YggdrasilExpression {
     fn from(value: ExpressionKind) -> Self {
-        Self { kind: value, untag: false, tag: None }
+        Self { kind: value, remark: false, tag: None }
     }
 }
 
 impl YggdrasilExpression {
-    pub fn unary(mut base: YggdrasilExpression, o: Operator) -> Self {
+    pub fn unary(mut base: YggdrasilExpression, o: YggdrasilOperator) -> Self {
         match base.kind {
             ExpressionKind::Unary(ref mut v) if base.tag.is_none() => {
                 v.operators.push(o);
@@ -70,26 +74,4 @@ impl YggdrasilExpression {
     pub fn boolean(bool: bool) -> Self {
         ExpressionKind::Boolean(bool).into()
     }
-}
-
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
-pub enum Operator {
-    /// ```ygg
-    /// !e
-    /// ```
-    Negative,
-    /// e?
-    Optional,
-    /// e*
-    Repeats,
-    /// e+
-    Repeat1,
-    /// no such literal
-    Boxing,
-    /// e+
-    RepeatsBetween(Option<u8>, Option<u8>),
-    /// ^e
-    Remark,
-    /// *e
-    Recursive,
 }

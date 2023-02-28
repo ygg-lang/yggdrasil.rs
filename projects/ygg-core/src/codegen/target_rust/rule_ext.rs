@@ -4,7 +4,7 @@ use std::{fmt::Debug, ops::Range};
 use yggdrasil_ir::{
     data::RuleReference,
     grammar::GrammarInfo,
-    nodes::{ExpressionKind, Operator, YggdrasilExpression},
+    nodes::{ExpressionKind, YggdrasilExpression, YggdrasilOperator},
     rule::{GrammarRule, GrammarRuleKind, RuleDerive, YggdrasilIdentifier},
     traits::FieldMap,
 };
@@ -80,28 +80,25 @@ impl NodeExt for YggdrasilExpression {
             ExpressionKind::Unary(v) => {
                 for o in &v.operators {
                     match o {
-                        Operator::Negative => {
+                        YggdrasilOperator::Negative => {
                             todo!()
                         }
-                        Operator::Optional => {
+                        YggdrasilOperator::Optional => {
                             w.push_str("s.optional(|s|");
                         }
-                        Operator::Repeats => {
+                        YggdrasilOperator::Repeats => {
                             todo!()
                         }
-                        Operator::Repeat1 => {
+                        YggdrasilOperator::Repeat1 => {
                             todo!()
                         }
-                        Operator::Boxing => {
+                        YggdrasilOperator::Boxing => {
                             todo!()
                         }
-                        Operator::RepeatsBetween(_, _) => {
+                        YggdrasilOperator::RepeatsBetween(_, _) => {
                             todo!()
                         }
-                        Operator::Remark => {
-                            todo!()
-                        }
-                        Operator::Recursive => {
+                        YggdrasilOperator::Recursive => {
                             todo!()
                         }
                     }

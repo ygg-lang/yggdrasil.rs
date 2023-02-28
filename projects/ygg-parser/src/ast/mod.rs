@@ -11,16 +11,16 @@ use antlr_rust::{
     tree::{ParseTree, ParseTreeVisitorCompat},
     InputStream,
 };
-use std::{ops::Range, rc::Rc, str::FromStr};
+use std::ops::Range;
 use yggdrasil_ir::grammar::GrammarInfo;
 
 #[derive(Clone, Debug, Default)]
-pub struct YggdrasilParser {
+pub struct YggdrasilANTLR {
     grammar: GrammarInfo,
     dirty: (),
 }
 
-impl YggdrasilParser {
+impl YggdrasilANTLR {
     pub fn parse(input: &str) -> Result<GrammarInfo, ANTLRError> {
         let codepoints = input.chars().map(|x| x as u32).collect::<Vec<_>>();
         let input = InputStream::new(&*codepoints);
@@ -28,7 +28,7 @@ impl YggdrasilParser {
         let token_source = CommonTokenStream::new(lexer);
         let mut parser = YggdrasilAntlrParser::new(token_source);
         let root = parser.program()?;
-        let mut state = YggdrasilParser::default();
+        let mut state = YggdrasilANTLR::default();
         state.visit(&*root);
         Ok(state.grammar)
     }

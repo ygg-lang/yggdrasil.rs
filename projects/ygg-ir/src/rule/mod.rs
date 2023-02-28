@@ -4,7 +4,7 @@ pub use self::{
 };
 use crate::{
     grammar::GrammarInfo,
-    nodes::{ExpressionKind, Operator, YggdrasilExpression},
+    nodes::{ExpressionKind, YggdrasilExpression, YggdrasilOperator},
 };
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};

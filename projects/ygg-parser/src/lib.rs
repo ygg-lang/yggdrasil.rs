@@ -4,4 +4,4 @@ mod ast;
 
 mod traits;
 
-pub use self::ast::YggdrasilParser;
+pub use self::ast::YggdrasilANTLR;

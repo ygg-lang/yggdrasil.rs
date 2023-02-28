@@ -5,7 +5,7 @@ mod json5;
 
 #[test]
 fn test_array() {
-    let out = Json5Language::parse("{a: [1, null, ]}", Json5Rule::Value).unwrap();
+    let out = Json5Language::parse("[1, null, ]", Json5Rule::Value).unwrap();
     println!("{:#?}", out);
     println!("{:#}", out);
     println!("Short Form:\n{}", out);

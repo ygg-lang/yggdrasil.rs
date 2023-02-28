@@ -1,25 +1,13 @@
 #![no_std]
-#![warn(missing_docs, unused_qualifications)]
+#![warn(missing_docs)]
 #![doc(html_logo_url = "https://avatars.githubusercontent.com/u/91894079")]
 #![doc(html_favicon_url = "https://avatars.githubusercontent.com/u/91894079")]
 #![doc = include_str!("../readme.md")]
 
 extern crate alloc;
 
-pub use self::regex_proxy::RegexCompiled;
-pub use crate::{
-    parser::YggdrasilParser,
-    parser_state::{state, Either, Lookahead, MatchDir, State},
-    position::Position,
-    span::{merge_spans, Lines, LinesSpan, TextSpan},
-    stack::Stack,
-    token::Token,
-};
-use core::{fmt::Debug, hash::Hash};
-pub use regex_automata::dfa::regex::Regex;
-pub mod errors;
-pub mod iterators;
-
+mod errors;
+mod iterators;
 mod macros;
 mod parser;
 mod parser_state;
@@ -36,9 +24,26 @@ mod regex_proxy;
 mod span;
 mod stack;
 mod token;
-pub use crate::errors::OutputResult;
+
 #[doc(hidden)]
 pub mod unicode;
+
+pub use crate::{
+    errors::YggdrasilError,
+    iterators::TokenTree,
+    parser::YggdrasilParser,
+    parser_state::{state, Either, Lookahead, MatchDir, State},
+    position::Position,
+    regex_proxy::RegexCompiled,
+    span::{merge_spans, Lines, LinesSpan, TextSpan},
+    stack::Stack,
+    token::Token,
+};
+use core::{fmt::Debug, hash::Hash};
+pub use regex_automata::dfa::regex::Regex;
+
+/// Output result alias
+pub type OutputResult<'i, R> = Result<TokenTree<'i, R>, YggdrasilError<R>>;
 
 /// Define rules subject to Yggdrasil
 pub trait YggdrasilRule: Copy + Debug + Eq + Hash + Ord {

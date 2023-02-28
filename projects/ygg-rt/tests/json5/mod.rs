@@ -83,7 +83,6 @@ fn parse_value(state: Input) -> Output {
     state.rule(Json5Rule::Value, |s| {
         parse_object(s)
             .or_else(|s| parse_array(s))
-            .or_else(|s| parse_string(s))
             .or_else(|s| parse_number(s))
             .or_else(|s| parse_boolean(s))
             .or_else(|s| parse_null(s))
@@ -202,7 +201,7 @@ fn parse_identifier(state: Input) -> Output {
     })
 }
 #[inline]
-pub(crate) fn parse_white_space(state: Input) -> Output {
+fn parse_white_space(state: Input) -> Output {
     state.rule(Json5Rule::WhiteSpace, |s| {
         builtin_text::<false>(s, " ").or_else(|s| builtin_text::<false>(s, "\\n")).or_else(|s| builtin_text::<false>(s, "\\r"))
     })

@@ -1,9 +1,29 @@
 use super::*;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
+pub enum YggdrasilOperator {
+    /// ```ygg
+    /// !e
+    /// ```
+    Negative,
+    /// e?
+    Optional,
+    /// e*
+    Repeats,
+    /// e+
+    Repeat1,
+    /// no such literal
+    Boxing,
+    /// e+
+    RepeatsBetween(Option<u8>, Option<u8>),
+    /// *e
+    Recursive,
+}
+
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct UnaryExpression {
     pub base: YggdrasilExpression,
-    pub operators: Vec<Operator>,
+    pub operators: Vec<YggdrasilOperator>,
 }
 
 impl From<UnaryExpression> for ExpressionKind {
@@ -12,16 +32,16 @@ impl From<UnaryExpression> for ExpressionKind {
     }
 }
 
-impl Add<Operator> for YggdrasilExpression {
+impl Add<YggdrasilOperator> for YggdrasilExpression {
     type Output = Self;
 
-    fn add(self, o: Operator) -> Self::Output {
+    fn add(self, o: YggdrasilOperator) -> Self::Output {
         match self.kind {
             ExpressionKind::Unary(node) => {
                 let mut ops = node.operators;
                 ops.push(o);
                 let unary = UnaryExpression { base: node.base, operators: ops };
-                YggdrasilExpression { kind: ExpressionKind::Unary(Box::new(unary)), untag: self.untag, tag: self.tag }
+                YggdrasilExpression { kind: ExpressionKind::Unary(Box::new(unary)), remark: self.remark, tag: self.tag }
             }
             _ => {
                 let unary = UnaryExpression { base: self, operators: vec![o] };
@@ -31,15 +51,14 @@ impl Add<Operator> for YggdrasilExpression {
     }
 }
 
-impl Operator {
-    pub fn prefix(o: &str) -> Operator {
+impl YggdrasilOperator {
+    pub fn prefix(o: &str) -> YggdrasilOperator {
         match o {
             "*" => Self::Recursive,
-            "^" => Self::Remark,
             _ => unreachable!(),
         }
     }
-    pub fn suffix(o: &str) -> Operator {
+    pub fn suffix(o: &str) -> YggdrasilOperator {
         match o {
             "?" => Self::Optional,
             "+" => Self::Repeats,

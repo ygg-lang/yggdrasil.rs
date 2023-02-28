@@ -2,7 +2,7 @@ use super::*;
 
 use yggdrasil_ir::{
     data::{YggdrasilRegex, YggdrasilText},
-    nodes::{Operator, YggdrasilExpression},
+    nodes::{YggdrasilExpression, YggdrasilOperator},
     rule::{GrammarRule, YggdrasilAnnotations, YggdrasilIdentifier, YggdrasilNamepath},
 };
 
@@ -14,7 +14,7 @@ mod unions;
 // mod let_binding;
 // mod modifiers;
 
-impl ParseTreeVisitorCompat<'_> for YggdrasilParser {
+impl ParseTreeVisitorCompat<'_> for YggdrasilANTLR {
     type Node = YggdrasilAntlrParserContextType;
     type Return = ();
 
@@ -24,7 +24,7 @@ impl ParseTreeVisitorCompat<'_> for YggdrasilParser {
 }
 
 /// Convert weakly typed ast to strongly typed ast
-impl YggdrasilAntlrVisitor<'_> for YggdrasilParser {
+impl YggdrasilAntlrVisitor<'_> for YggdrasilANTLR {
     fn visit_define_grammar(&mut self, ctx: &Define_grammarContext<'_>) {
         self.grammar.name = YggdrasilIdentifier::take(ctx.identifier()).unwrap();
     }
