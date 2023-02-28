@@ -4,17 +4,18 @@ pub use self::{
     unary::{UnaryExpression, YggdrasilOperator},
 };
 use crate::{
-    data::{DataKind, RuleReference, YggdrasilRegex, YggdrasilText},
+    data::{RuleReference, YggdrasilRegex, YggdrasilText},
     rule::{GrammarRule, GrammarRuleKind, YggdrasilIdentifier},
     FunctionExpression,
 };
 use diagnostic_quick::QResult;
 use indexmap::IndexMap;
+use num::BigInt;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::{
     hash::{Hash, Hasher},
-    ops::{Add, BitAnd, BitOr, BitXor},
+    ops::{Add, BitAnd, BitOr, BitXor, RangeInclusive},
 };
 
 mod choice;
@@ -44,9 +45,10 @@ pub enum ExpressionKind {
     Text(YggdrasilText),
     /// Any character
     CharacterAny,
+    CharacterRange(RangeInclusive<char>),
+    Integer(BigInt),
     Boolean(bool),
     Regex(YggdrasilRegex),
-    Data(Box<DataKind>),
 }
 
 impl From<ExpressionKind> for YggdrasilExpression {

@@ -1,5 +1,5 @@
 use crate::{
-    data::{DataKind, RuleReference},
+    data::RuleReference,
     grammar::GrammarInfo,
     nodes::{ChoiceExpression, ConcatExpression, ExpressionKind, UnaryExpression, YggdrasilExpression},
     rule::GrammarRule,

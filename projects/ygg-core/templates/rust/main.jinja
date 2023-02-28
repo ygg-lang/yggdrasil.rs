@@ -79,6 +79,10 @@ fn builtin_ignore(state: Input) -> Output {
 {% endif %}
 }
 
+fn builtin_any(state: Input) -> Output {
+    state.rule({{ self.rule_name() }}::IgnoreText, |s| s.match_char_if(|_| true))
+}
+
 fn builtin_text<'i, const INSENSITIVE: bool>(state: Input<'i>, text: &'static str) -> Output<'i> {
     state.rule({{ self.rule_name() }}::IgnoreText, |s| s.match_string::<INSENSITIVE>(text))
 }

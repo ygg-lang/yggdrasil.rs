@@ -113,8 +113,8 @@ impl NodeExt for YggdrasilExpression {
                 write!(w, "{name}(s)")?
             }
             ExpressionKind::Text(v) if root => match v.insensitive {
-                true => write!(w, "builtin_text::<true>(s, {:?})", v.text)?,
-                false => write!(w, "builtin_text::<false>(s, {:?})", v.text)?,
+                true => write!(w, "s.match_string::<true>({:?})", v.text)?,
+                false => write!(w, "s.match_string::<false>({:?})", v.text)?,
             },
             ExpressionKind::Text(v) => match v.insensitive {
                 true => write!(w, "builtin_text::<true>(s, {:?})", v.text)?,
@@ -130,9 +130,14 @@ impl NodeExt for YggdrasilExpression {
                 write!(w, "{:?}", r.raw)?;
                 w.push_str(").unwrap())})");
             }
-            ExpressionKind::Data(_) => w.push_str("parse_Data(s)"),
-            ExpressionKind::CharacterAny => w.push_str("s.match_char_if(|_| true)"),
+            ExpressionKind::CharacterAny if root => w.push_str("s.match_char_if(|_| true)"),
+            ExpressionKind::CharacterAny => w.push_str("builtin_any(s)"),
+            ExpressionKind::CharacterRange(_) if root => {}
+            ExpressionKind::CharacterRange(_) => {}
+            ExpressionKind::Boolean(_) if root => {}
             ExpressionKind::Boolean(_) => {}
+            ExpressionKind::Integer(_) if root => {}
+            ExpressionKind::Integer(_) => {}
         }
         Ok(())
     }

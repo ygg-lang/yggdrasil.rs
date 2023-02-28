@@ -162,7 +162,7 @@ fn parse_string(state: Input) -> Output {
         s.sequence(|s| builtin_text::<false>(s, "'").and_then(|s| builtin_text::<false>(s, "'"))).or_else(|s| {
             s.sequence(|s| {
                 builtin_text::<false>(s, "'")
-                    .and_then(|s| parse_string_escaped(s).or_else(|s| s.match_char_if(|_| true)))
+                    .and_then(|s| parse_string_escaped(s).or_else(|s| builtin_any(s)))
                     .and_then(|s| builtin_text::<false>(s, "'"))
             })
         })
@@ -170,9 +170,7 @@ fn parse_string(state: Input) -> Output {
 }
 #[inline]
 fn parse_string_escaped(state: Input) -> Output {
-    state.rule(Json5Rule::StringEscaped, |s| {
-        s.sequence(|s| builtin_text::<false>(s, "\\").and_then(|s| s.match_char_if(|_| true)))
-    })
+    state.rule(Json5Rule::StringEscaped, |s| s.sequence(|s| builtin_text::<false>(s, "\\").and_then(|s| builtin_any(s))))
 }
 #[inline]
 fn parse_number(state: Input) -> Output {
@@ -189,7 +187,7 @@ fn parse_boolean(state: Input) -> Output {
 }
 #[inline]
 fn parse_null(state: Input) -> Output {
-    state.rule(Json5Rule::Null, |s| builtin_text::<false>(s, "null"))
+    state.rule(Json5Rule::Null, |s| s.match_string::<false>("null"))
 }
 #[inline]
 fn parse_identifier(state: Input) -> Output {
@@ -210,6 +208,10 @@ fn parse_white_space(state: Input) -> Output {
 /// All rules ignored in ast mode, inline is not recommended
 fn builtin_ignore(state: Input) -> Output {
     state.repeat(|s| parse_white_space(s))
+}
+
+fn builtin_any(state: Input) -> Output {
+    state.rule(Json5Rule::IgnoreText, |s| s.match_char_if(|_| true))
 }
 
 fn builtin_text<'i, const INSENSITIVE: bool>(state: Input<'i>, text: &'static str) -> Output<'i> {

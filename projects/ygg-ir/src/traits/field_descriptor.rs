@@ -27,7 +27,6 @@ impl FieldDescriptor for ExpressionKind {
             ExpressionKind::Choice(e) => e.get_field_names(buffer),
             ExpressionKind::Concat(e) => e.get_field_names(buffer),
             ExpressionKind::Unary(e) => e.get_field_names(buffer),
-            ExpressionKind::Data(e) => e.get_field_names(buffer),
             ExpressionKind::Rule(e) => e.get_field_names(buffer),
             ExpressionKind::Function(e) => e.get_field_names(buffer),
             ExpressionKind::Regex(_) => {
@@ -42,7 +41,6 @@ impl FieldDescriptor for ExpressionKind {
             ExpressionKind::Choice(e) => e.get_field_count(buffer),
             ExpressionKind::Concat(e) => e.get_field_count(buffer),
             ExpressionKind::Unary(e) => e.get_field_count(buffer),
-            ExpressionKind::Data(e) => e.get_field_count(buffer),
             ExpressionKind::Rule(e) => e.get_field_count(buffer),
             ExpressionKind::Function(e) => e.get_field_count(buffer),
             ExpressionKind::Regex(_) => {
@@ -91,12 +89,6 @@ impl FieldDescriptor for UnaryExpression {
     fn get_field_count(&self, _buffer: &mut HashSet<String, FieldCount2>) {
         todo!()
     }
-}
-
-impl FieldDescriptor for DataKind {
-    fn get_field_names<'a>(&'a self, _: &mut HashSet<&'a String>) {}
-
-    fn get_field_count(&self, _: &mut HashSet<String, FieldCount2>) {}
 }
 
 impl FieldDescriptor for RuleReference {

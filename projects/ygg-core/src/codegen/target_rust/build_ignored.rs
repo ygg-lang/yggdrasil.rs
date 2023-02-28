@@ -3,7 +3,6 @@ use std::ops::Range;
 use askama::Template;
 use convert_case::{Case, Casing};
 use yggdrasil_ir::{
-    data::DataKind,
     grammar::GrammarInfo,
     nodes::{ExpressionKind, YggdrasilExpression},
     rule::{GrammarRule, GrammarRuleKind},
