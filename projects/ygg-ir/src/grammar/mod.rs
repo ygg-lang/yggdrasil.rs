@@ -1,24 +1,13 @@
 use crate::{
     data::SymbolAlias,
-    nodes::{ChoiceExpression, YggdrasilExpression},
     rule::{FunctionRule, GrammarRule, YggdrasilIdentifier},
-    traits::CodeOptimizer,
 };
-use diagnostic_quick::{QError, QResult, Validation};
+
 use indexmap::IndexMap;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-use std::{
-    collections::{BTreeMap, HashSet},
-    mem::take,
-};
+use std::collections::{BTreeMap, HashSet};
 use url::Url;
-
-mod auto_tag;
-
-mod emit_function;
-mod fuse_charset;
-mod fuse_rule;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", Serialize, Deserialize)]

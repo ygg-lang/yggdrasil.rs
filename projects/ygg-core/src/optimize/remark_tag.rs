@@ -1,8 +1,8 @@
 use super::*;
 
-pub struct FuseCharset {}
+pub struct RemarkTags {}
 
-impl CodeOptimizer for FuseCharset {
+impl CodeOptimizer for RemarkTags {
     fn optimize(&mut self, info: &GrammarInfo) -> Validation<GrammarInfo> {
         let _ = info;
         let e = ChoiceExpression { branches: Default::default() };
@@ -11,7 +11,7 @@ impl CodeOptimizer for FuseCharset {
     }
 }
 
-impl FuseCharset {
+impl RemarkTags {
     fn fuse_choice(&mut self, choice: &ChoiceExpression) -> Validation<ChoiceExpression> {
         let mut errors = vec![];
         for branch in &choice.branches {}

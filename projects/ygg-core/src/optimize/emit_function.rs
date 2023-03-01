@@ -1,4 +1,6 @@
 use super::*;
+use std::mem::take;
+use yggdrasil_ir::{rule::FunctionRule, QResult};
 
 pub struct EmitFunction {
     functions: IndexMap<String, FunctionRule>,
@@ -34,5 +36,3 @@ impl EmitFunction {
         Ok(())
     }
 }
-
-impl YggdrasilExpression {}
