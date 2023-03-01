@@ -120,14 +120,14 @@ impl<'i, R: YggdrasilRule> fmt::Debug for Tokens<'i, R> {
 #[cfg(test)]
 mod tests {
     use super::{
-        super::super::{macros::tests::*, YggdrasilParser},
+        super::super::{macros::tests::*, YggdrasilLanguage},
         Token,
     };
     use alloc::vec::Vec;
 
     #[test]
     fn double_ended_iter_for_tokens() {
-        let pairs = AbcParser::parse(TestRule::a, "abcde").unwrap();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
         let mut tokens = pairs.clone().tokens().collect::<Vec<Token<'_, TestRule>>>();
         tokens.reverse();
         let reverse_tokens = pairs.tokens().rev().collect::<Vec<Token<'_, TestRule>>>();
@@ -136,16 +136,16 @@ mod tests {
 
     #[test]
     fn exact_size_iter_for_tokens() {
-        let tokens = AbcParser::parse(TestRule::a, "abcde").unwrap().tokens();
+        let tokens = AbcParser::parse_cst(TestRule::a, "abcde").unwrap().tokens();
         assert_eq!(tokens.len(), tokens.count());
 
-        let tokens = AbcParser::parse(TestRule::a, "我很漂亮e").unwrap().tokens();
+        let tokens = AbcParser::parse_cst(TestRule::a, "我很漂亮e").unwrap().tokens();
         assert_eq!(tokens.len(), tokens.count());
 
-        let tokens = AbcParser::parse(TestRule::a, "abcde").unwrap().tokens().rev();
+        let tokens = AbcParser::parse_cst(TestRule::a, "abcde").unwrap().tokens().rev();
         assert_eq!(tokens.len(), tokens.count());
 
-        let mut tokens = AbcParser::parse(TestRule::a, "abcde").unwrap().tokens();
+        let mut tokens = AbcParser::parse_cst(TestRule::a, "abcde").unwrap().tokens();
         let tokens_len = tokens.len();
         let _ = tokens.next().unwrap();
         assert_eq!(tokens.count() + 1, tokens_len);

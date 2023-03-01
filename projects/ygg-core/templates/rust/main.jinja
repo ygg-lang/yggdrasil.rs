@@ -4,19 +4,23 @@
 use yggdrasil_rt::*;
 use std::sync::OnceLock;
 
-type Input<'i> = Box<State<'i, {{ self.rule_name() }}>>;
-type Output<'i> = Result<Box<State<'i, {{ self.rule_name() }}>>, Box<State<'i, {{ self.rule_name()}}>>>;
+{%- set rules = self.grammar.rules() %}
+{%- set rule_name = self.grammar.rule_name() %}
+{%- set language_name = self.grammar.language_name() %}
+
+type Input<'i> = Box<State<'i, {{ rule_name }}>>;
+type Output<'i> = Result<Box<State<'i, {{ rule_name }}>>, Box<State<'i, {{ rule_name}}>>>;
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct {{ self.language_name() }} {}
+pub struct {{ language_name }} {}
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum {{ self.rule_name() }} {
-{%- for rule in self.rules() %}
+pub enum {{ rule_name }} {
+{%- for rule in rules.iter() %}
     {{ rule.safe_rule_name() }},
 {%- endfor %}
     /// Label for text literal
@@ -25,68 +29,21 @@ pub enum {{ self.rule_name() }} {
     IgnoreRegex,
 }
 
-impl YggdrasilRule for {{ self.rule_name()}} {
+impl YggdrasilRule for {{ rule_name }} {
     fn all_rules() -> &'static [Self] {
         &[
-{%- for rule in self.rules() %}
+{%- for rule in rules.iter() %}
             Self::{{ rule.safe_rule_name() }},
 {%- endfor %}
         ]
     }
 
     fn is_ignore(&self) -> bool {
-{%- if self.ignore_rules_empty() %}
+{%- if self.grammar.ignore_rules_empty() %}
         false
 {%- else %}
-        matches!(self, {{ self.ignore_rule_pattern() }})
+        matches!(self, {{ self.grammar.ignore_rule_pattern() }})
 {% endif %}
     }
 }
 
-// ===================================================
-use super::*;
-
-impl YggdrasilParser for {{ self.language_name() }} {
-    type Rule = {{ self.rule_name() }};
-    fn parse(input: &str, rule: {{ self.rule_name() }}) -> OutputResult<{{ self.rule_name()}}> {
-        state(input, |state| match rule {
-{%- for rule in self.rules() %}
-            {{ self.rule_name() }}::{{ rule.safe_rule_name() }} => {{ rule.parser_name() }}(state),
-{%- endfor %}
-            {{ self.rule_name() }}::IgnoreText => unreachable!(),
-            {{ self.rule_name() }}::IgnoreRegex => unreachable!(),
-        })
-    }
-}
-
-{%- for rule in self.rules() %}
-#[inline]
-fn {{ rule.parser_name() }}(state: Input) -> Output {
-    state.rule({{ self.rule_name() }}::{{ rule.safe_rule_name() }}, |s| {
-        {{ rule.parser_expression() }}
-    })
-}
-{%- endfor %}
-
-/// All rules ignored in ast mode, inline is not recommended
-fn builtin_ignore(state: Input) -> Output {
-{%- if self.ignore_rules_empty() %}
-    Ok(state)
-{%- else %}
-    state.repeat(|s| {
-        {{ self.ignore_rule_match() }}
-    })
-{% endif %}
-}
-
-fn builtin_any(state: Input) -> Output {
-    state.rule({{ self.rule_name() }}::IgnoreText, |s| s.match_char_if(|_| true))
-}
-
-fn builtin_text<'i, const INSENSITIVE: bool>(state: Input<'i>, text: &'static str) -> Output<'i> {
-    state.rule({{ self.rule_name() }}::IgnoreText, |s| s.match_string::<INSENSITIVE>(text))
-}
-
-fn builtin_regex<'i, 'r>(state: Input<'i>, regex: &'r Regex) -> Output<'i> {
-    state.rule({{ self.rule_name() }}::IgnoreRegex, |s| s.match_regex(regex))
-}

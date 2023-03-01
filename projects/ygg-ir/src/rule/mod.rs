@@ -64,41 +64,33 @@ pub struct GrammarRule {
     ///
     /// ## Examples
     /// ```ygg
-    /// def RuleName {
-    ///
-    /// }
+    /// def RuleName { }
     /// ```
     pub name: YggdrasilIdentifier,
     /// Redirect to other rules when parsing is successful
-    pub redirect: Option<YggdrasilIdentifier>,
-    /// Kind of this rule
-    pub kind: GrammarRuleKind,
-    /// Automatically inline when this rule is called
     ///
     /// ## Examples
     /// ```ygg
-    /// def rule -> char {
-    ///
-    /// }
-    ///
-    /// def rule() -> char {
-    ///
-    /// }
+    /// def RuleName -> Redirect { }
     /// ```
-    pub r#type: String,
+    pub redirect: Option<YggdrasilIdentifier>,
+    /// Kind of this rule
+    pub kind: GrammarRuleKind,
     /// Document of this rule
     ///
     /// ## Examples
     /// ```ygg
     /// /// this is documents
-    /// def rule {
-    ///
-    /// }
+    /// class Rule { }
     /// ```
     pub document: String,
-    /// Whether the generated class is visible
-    pub public: bool,
     ///
+    /// ## Examples
+    /// ```ygg
+    /// #derive(Copy, Clone)
+    /// #derive(Encode, feature: a)
+    /// class Rule { }
+    /// ```
     pub derives: RuleDerive,
     /// Ignore this node in ast mode.
     ///
@@ -113,47 +105,26 @@ pub struct GrammarRule {
     /// ## Examples
     /// ```ygg
     /// #inline(true)
-    /// def Rule {
-    ///
-    /// }
-    ///
-    /// def inline Rule {
-    ///
-    /// }
-    ///
-    /// def _Rule {
-    ///
-    /// }
+    /// inline class Rule { }
+    /// class _Rule { }
     /// ```
     pub auto_inline: bool,
-    /// Automatically box when this rule is called
-    ///
-    /// ## Examples
-    /// ```ygg
-    /// #boxed(true)
-    /// def Rule {
-    ///
-    /// }
-    ///
-    /// def boxed Rule {
-    ///
-    /// }
-    /// ```
-    pub auto_boxed: bool,
-    /// The entry of the ast_mode, the name of the ast_mode to be exported
+    /// The entry of the ast mode, the name of the ast_mode to be exported
     ///
     /// ## Examples
     /// ```ygg
     /// #entry(true)
-    /// def Rule {
-    ///
-    /// }
-    ///
-    /// def entry Rule {
-    ///
-    /// }
+    /// entry class Rule { }
     /// ```
     pub entry: bool,
+    /// Keep this rule even if it is not used.
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// #keep(true)
+    /// keep class Rule { }
+    /// ```
+    pub keep: bool,
     /// Ignore this node in ast mode.
     ///
     /// ## Examples
@@ -186,14 +157,12 @@ impl Default for GrammarRule {
     fn default() -> Self {
         Self {
             name: Default::default(),
-            r#type: String::new(),
             document: String::new(),
-            public: false,
             derives: RuleDerive::default(),
             atomic: GrammarAtomic::Atomic,
             auto_inline: false,
-            auto_boxed: false,
             entry: false,
+            keep: false,
             ignored: false,
             kind: GrammarRuleKind::Class,
             body: None,
@@ -213,6 +182,8 @@ impl GrammarRule {
     pub fn with_annotation(mut self, extra: &YggdrasilAnnotations) -> Self {
         self.atomic = extra.get_atomic();
         self.ignored = extra.get_ignored();
+        self.keep = extra.get_keep();
+        self.entry = extra.get_entry();
         self
     }
     pub fn with_expression(mut self, extra: Option<YggdrasilExpression>) -> Self {

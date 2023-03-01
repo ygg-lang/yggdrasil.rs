@@ -5,21 +5,20 @@ use std::{
     collections::{btree_map::Values, BTreeMap},
     fmt::{Arguments, Write},
     fs,
-    fs::File,
-    io::Write as _,
-    path::Path,
+    fs::{create_dir_all, File},
+    io::{Error, ErrorKind, Write as _},
+    path::{Path, PathBuf},
 };
 use yggdrasil_ir::{grammar::GrammarInfo, rule::GrammarRule, traits::CodeGenerator, QError, QResult, Validation};
 
 mod build_data;
-mod build_ignored;
 mod grammar_ext;
 mod rule_ext;
 
-use self::rule_ext::RuleExt;
+use self::{grammar_ext::GrammarExt, rule_ext::RuleExt};
 
+#[derive(Clone, Debug)]
 pub struct RustCodegen {
-    buffer: String,
     enable_position: bool,
     rule_prefix: String,
     rule_suffix: String,
@@ -27,55 +26,77 @@ pub struct RustCodegen {
 
 impl Default for RustCodegen {
     fn default() -> Self {
-        Self { buffer: "".to_string(), enable_position: true, rule_prefix: "".to_string(), rule_suffix: "Node".to_string() }
-    }
-}
-
-impl RustCodegen {
-    pub fn codegen(&mut self, src: impl AsRef<Path>) -> QResult {
-        self.buffer.clear();
-        let path = src.as_ref().to_path_buf().canonicalize()?;
-        let dir = match path.parent() {
-            Some(s) => s,
-            None => return Err(QError::runtime_error("ygg dir not found")),
-        };
-        let mut peg = File::create(path.with_extension("ebnf"))?;
-        let text = read_to_string(&path)?;
-        // let info = match GrammarParser::parse(&text) {
-        //     Validation::Success { value, diagnostics } => value,
-        //     Validation::Failure { fatal, diagnostics } => return Err(fatal),
-        // };
-        // let tokens = match self.generate(&info) {
-        //     Validation::Success { value, diagnostics } => value,
-        //     Validation::Failure { fatal, diagnostics } => return Err(fatal),
-        // };
-        todo!();
-        // write!(peg, "{}", self.buffer)?;
-        // Ok(())
+        Self { enable_position: true, rule_prefix: "".to_string(), rule_suffix: "Node".to_string() }
     }
 }
 
 #[derive(Template)]
 #[template(path = "rust/main.jinja", escape = "none")]
-pub struct RustWrite<'i> {
+pub struct RustWriteMain<'i> {
     grammar: &'i GrammarInfo,
+    config: RustCodegen,
+}
+
+#[derive(Template)]
+#[template(path = "rust/lex.jinja", escape = "none")]
+pub struct RustWriteLex<'i> {
+    grammar: &'i GrammarInfo,
+    config: RustCodegen,
+}
+
+#[derive(Template)]
+#[template(path = "rust/cst.jinja", escape = "none")]
+pub struct RustWriteCST<'i> {
+    grammar: &'i GrammarInfo,
+    config: RustCodegen,
+}
+
+#[derive(Template)]
+#[template(path = "rust/ast.jinja", escape = "none")]
+pub struct RustWriteAST<'i> {
+    grammar: &'i GrammarInfo,
+    config: RustCodegen,
+}
+
+#[derive(Clone, Debug)]
+pub struct RustModule {
+    pub main: String,
+    pub lex: String,
+    pub cst: String,
+    pub ast: String,
 }
 
 impl CodeGenerator for RustCodegen {
-    type Output = String;
+    type Output = RustModule;
 
     fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
-        let inner = RustWrite { grammar: info };
-        Validation::Success { value: inner.render().unwrap(), diagnostics: vec![] }
+        let main = RustWriteMain { grammar: info, config: self.clone() }.render().unwrap();
+        let lex = RustWriteLex { grammar: info, config: self.clone() }.render().unwrap();
+        let cst = RustWriteCST { grammar: info, config: self.clone() }.render().unwrap();
+        let ast = RustWriteAST { grammar: info, config: self.clone() }.render().unwrap();
+        Validation::Success { value: RustModule { main, lex, cst, ast }, diagnostics: vec![] }
     }
 }
 
-trait WriteRust {
-    fn write_rust(&self, w: &mut RustCodegen, info: &GrammarInfo) -> std::fmt::Result;
-
-    #[track_caller]
-    #[allow(unused_variables)]
-    fn write_class(&self, w: &mut RustCodegen, info: &GrammarInfo) -> std::fmt::Result {
-        unreachable!("should not implement here")
+impl RustModule {
+    pub fn save<P: AsRef<Path>>(&self, path: P) -> std::io::Result<()> {
+        let path = path.as_ref();
+        if path.exists() {
+            if !path.is_dir() {
+                return Err(Error::new(ErrorKind::InvalidInput, "Path is not a directory"));
+            }
+        }
+        else {
+            create_dir_all(path)?
+        }
+        let mut main = File::create(path.join("mod.rs"))?;
+        main.write_all(self.main.as_bytes())?;
+        let mut cst = File::create(path.join("lexer.rs"))?;
+        cst.write_all(self.lex.as_bytes())?;
+        let mut cst = File::create(path.join("parse_cst.rs"))?;
+        cst.write_all(self.cst.as_bytes())?;
+        let mut ast = File::create(path.join("parse_ast.rs"))?;
+        ast.write_all(self.ast.as_bytes())?;
+        Ok(())
     }
 }

@@ -404,14 +404,14 @@ impl<'i, R: YggdrasilRule> ::serde::Serialize for TokenTree<'i, R> {
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::{macros::tests::*, YggdrasilParser};
+    use super::super::super::{macros::tests::*, YggdrasilLanguage};
     use crate::YggdrasilRule;
     use alloc::{borrow::ToOwned, boxed::Box, format, vec, vec::Vec};
 
     #[test]
     #[cfg(feature = "pretty-print")]
     fn test_pretty_print() {
-        let pairs = AbcParser::parse(TestRule::a, "abcde").unwrap();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
 
         let expected = r#"{
   "pos": [
@@ -458,7 +458,7 @@ mod tests {
 
     #[test]
     fn as_str() {
-        let pairs = AbcParser::parse(TestRule::a, "abcde").unwrap();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
 
         assert_eq!(pairs.as_str(), "abcde");
     }
@@ -466,28 +466,28 @@ mod tests {
     #[test]
     fn get_input_of_pairs() {
         let input = "abcde";
-        let pairs = AbcParser::parse(TestRule::a, input).unwrap();
+        let pairs = AbcParser::parse_cst(TestRule::a, input).unwrap();
 
         assert_eq!(pairs.get_input(), input);
     }
 
     #[test]
     fn as_str_empty() {
-        let mut pairs = AbcParser::parse(TestRule::a, "abcde").unwrap();
+        let mut pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
 
         assert_eq!(pairs.nth(1).unwrap().into_inner().as_str(), "");
     }
 
     #[test]
     fn concat() {
-        let pairs = AbcParser::parse(TestRule::a, "abcde").unwrap();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
 
         assert_eq!(pairs.concat(), "abce");
     }
 
     #[test]
     fn pairs_debug() {
-        let pairs = AbcParser::parse(TestRule::a, "abcde").unwrap();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
 
         #[rustfmt::skip]
         assert_eq!(
@@ -504,26 +504,26 @@ mod tests {
 
     #[test]
     fn pairs_display() {
-        let pairs = AbcParser::parse(TestRule::a, "abcde").unwrap();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
 
         assert_eq!(format!("{}", pairs), "[a(0, 3, [b(1, 2)]), c(4, 5)]".to_owned());
     }
 
     #[test]
     fn iter_for_pairs() {
-        let pairs = AbcParser::parse(TestRule::a, "abcde").unwrap();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
         assert_eq!(pairs.map(|p| p.as_rule()).collect::<Vec<TestRule>>(), vec![TestRule::a, TestRule::c]);
     }
 
     #[test]
     fn double_ended_iter_for_pairs() {
-        let pairs = AbcParser::parse(TestRule::a, "abcde").unwrap();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
         assert_eq!(pairs.rev().map(|p| p.as_rule()).collect::<Vec<TestRule>>(), vec![TestRule::c, TestRule::a]);
     }
 
     #[test]
     fn test_line_col() {
-        let mut pairs = AbcParser::parse(TestRule::a, "abc\nefgh").unwrap();
+        let mut pairs = AbcParser::parse_cst(TestRule::a, "abc\nefgh").unwrap();
         let pair = pairs.next().unwrap();
         assert_eq!(pair.as_str(), "abc");
         assert_eq!(pair.line_col(), (1, 1));
@@ -539,7 +539,7 @@ mod tests {
 
     #[test]
     fn test_rev_iter_line_col() {
-        let mut pairs = AbcParser::parse(TestRule::a, "abc\nefgh").unwrap().rev();
+        let mut pairs = AbcParser::parse_cst(TestRule::a, "abc\nefgh").unwrap().rev();
         let pair = pairs.next().unwrap();
         assert_eq!(pair.as_str(), "fgh");
         assert_eq!(pair.line_col(), (2, 2));
@@ -603,13 +603,13 @@ mod tests {
 
     #[test]
     fn exact_size_iter_for_pairs() {
-        let pairs = AbcParser::parse(TestRule::a, "abc\nefgh").unwrap();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abc\nefgh").unwrap();
         assert_eq!(pairs.len(), pairs.count());
 
-        let pairs = AbcParser::parse(TestRule::a, "abc\nefgh").unwrap().rev();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abc\nefgh").unwrap().rev();
         assert_eq!(pairs.len(), pairs.count());
 
-        let mut pairs = AbcParser::parse(TestRule::a, "abc\nefgh").unwrap();
+        let mut pairs = AbcParser::parse_cst(TestRule::a, "abc\nefgh").unwrap();
         let pairs_len = pairs.len();
         let _ = pairs.next().unwrap();
         assert_eq!(pairs.count() + 1, pairs_len);

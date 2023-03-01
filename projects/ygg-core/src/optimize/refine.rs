@@ -51,7 +51,12 @@ impl RefineRules {
                 }
                 *node = head
             }
-            ExpressionKind::Unary(v) => {}
+            ExpressionKind::Unary(v) => {
+                // TODO: marge operators,
+                // ** -> *
+                // ?* -> *
+                self.refine_node(&mut v.base)?
+            }
             _ => {}
         }
         Ok(())

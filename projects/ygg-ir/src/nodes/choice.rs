@@ -38,19 +38,18 @@ impl ChoiceExpression {
 }
 
 impl GrammarRule {
-    pub fn get_branches(&self) -> IndexMap<&str, &YggdrasilExpression> {
-        let mut out = IndexMap::default();
-        if self.kind == GrammarRuleKind::Union {
-            // match &self.body.kind {
-            //     ExpressionKind::Choice(v) => {
-            //         for branch in &v.branches {
-            //             out.insert(branch.tag.as_str(), branch);
-            //         }
-            //     }
-            //     _ => {}
-            // }
+    pub fn get_branches(&self) -> &[YggdrasilExpression] {
+        if self.kind != GrammarRuleKind::Union {
+            return &[];
         }
-        out
+        let node = match self.body.as_ref() {
+            Some(s) => s,
+            None => return &[],
+        };
+        match &node.kind {
+            ExpressionKind::Choice(v) => v.branches.as_slice(),
+            _ => &[],
+        }
     }
 }
 

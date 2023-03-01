@@ -1,4 +1,3 @@
-use std::{fs::File, io::Write};
 use yggdrasil_core::{
     codegen::RustCodegen,
     optimize::{InsertIgnore, RefineRules},
@@ -19,9 +18,8 @@ fn test_bootstrap() {
     let mut info = YggdrasilANTLR::parse(input).expect("fail");
     info = InsertIgnore::default().optimize(&info).unwrap();
     info = RefineRules::default().optimize(&info).unwrap();
-    let out = info.generate(RustCodegen::default());
-    let mut output = File::create("../ygg-rt/tests/json5/mod.rs").unwrap();
-    output.write_all(out.unwrap().as_bytes()).unwrap();
+    let out = info.generate(RustCodegen::default()).unwrap();
+    out.save("../ygg-rt/tests/json5").unwrap()
 }
 
 // #[test]

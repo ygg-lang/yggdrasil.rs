@@ -383,12 +383,12 @@ impl<'i, R: YggdrasilRule> ::serde::Serialize for Pair<'i, R> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{macros::tests::*, parser::YggdrasilParser};
+    use crate::{macros::tests::*, parser::YggdrasilLanguage};
 
     #[test]
     #[cfg(feature = "pretty-print")]
     fn test_pretty_print() {
-        let pair = AbcParser::parse(TestRule::a, "abcde").unwrap().next().unwrap();
+        let pair = AbcParser::parse_cst(TestRule::a, "abcde").unwrap().next().unwrap();
 
         let expected = r#"{
   "pos": [
@@ -419,7 +419,7 @@ mod tests {
 
     #[test]
     fn pair_into_inner() {
-        let pair = AbcParser::parse(TestRule::a, "abcde").unwrap().next().unwrap(); // the tokens a(b())
+        let pair = AbcParser::parse_cst(TestRule::a, "abcde").unwrap().next().unwrap(); // the tokens a(b())
 
         let pairs = pair.into_inner(); // the tokens b()
 
@@ -429,7 +429,7 @@ mod tests {
     #[test]
     fn get_input_of_pair() {
         let input = "abcde";
-        let pair = AbcParser::parse(TestRule::a, input).unwrap().next().unwrap();
+        let pair = AbcParser::parse_cst(TestRule::a, input).unwrap().next().unwrap();
 
         assert_eq!(input, pair.get_input());
     }

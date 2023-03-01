@@ -9,7 +9,6 @@ use crate::{
     FunctionExpression,
 };
 use diagnostic_quick::QResult;
-use indexmap::IndexMap;
 use num::BigInt;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};

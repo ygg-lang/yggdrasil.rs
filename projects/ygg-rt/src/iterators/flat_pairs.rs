@@ -146,12 +146,12 @@ impl<'i, R: Clone> Clone for TokenStream<'i, R> {
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::{macros::tests::*, YggdrasilParser};
+    use super::super::super::{macros::tests::*, YggdrasilLanguage};
     use alloc::{vec, vec::Vec};
 
     #[test]
     fn iter_for_flat_pairs() {
-        let pairs = AbcParser::parse(TestRule::a, "abcde").unwrap();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
 
         assert_eq!(
             pairs.flatten().map(|p| p.as_rule()).collect::<Vec<TestRule>>(),
@@ -161,7 +161,7 @@ mod tests {
 
     #[test]
     fn double_ended_iter_for_flat_pairs() {
-        let pairs = AbcParser::parse(TestRule::a, "abcde").unwrap();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
         assert_eq!(
             pairs.flatten().rev().map(|p| p.as_rule()).collect::<Vec<TestRule>>(),
             vec![TestRule::c, TestRule::b, TestRule::a]
@@ -170,7 +170,7 @@ mod tests {
 
     #[test]
     fn test_line_col() {
-        let mut pairs = AbcParser::parse(TestRule::a, "abcNe\nabcde").unwrap().flatten();
+        let mut pairs = AbcParser::parse_cst(TestRule::a, "abcNe\nabcde").unwrap().flatten();
 
         let pair = pairs.next().unwrap();
         assert_eq!(pair.as_str(), "abc");
@@ -190,17 +190,17 @@ mod tests {
 
     #[test]
     fn exact_size_iter_for_pairs() {
-        let pairs = AbcParser::parse(TestRule::a, "abc\nefgh").unwrap().flatten();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abc\nefgh").unwrap().flatten();
         assert_eq!(pairs.len(), pairs.count());
 
-        let pairs = AbcParser::parse(TestRule::a, "我很漂亮efgh").unwrap().flatten();
+        let pairs = AbcParser::parse_cst(TestRule::a, "我很漂亮efgh").unwrap().flatten();
         assert_eq!(pairs.len(), pairs.count());
 
-        let pairs = AbcParser::parse(TestRule::a, "abc\nefgh").unwrap().flatten();
+        let pairs = AbcParser::parse_cst(TestRule::a, "abc\nefgh").unwrap().flatten();
         let pairs = pairs.rev();
         assert_eq!(pairs.len(), pairs.count());
 
-        let mut pairs = AbcParser::parse(TestRule::a, "abc\nefgh").unwrap().flatten();
+        let mut pairs = AbcParser::parse_cst(TestRule::a, "abc\nefgh").unwrap().flatten();
         let pairs_len = pairs.len();
         let _ = pairs.next().unwrap();
         assert_eq!(pairs.count() + 1, pairs_len);

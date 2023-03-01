@@ -31,7 +31,7 @@ pub mod unicode;
 pub use crate::{
     errors::YggdrasilError,
     iterators::TokenTree,
-    parser::YggdrasilParser,
+    parser::YggdrasilLanguage,
     parser_state::{state, Either, Lookahead, MatchDir, State},
     position::Position,
     regex_proxy::RegexCompiled,

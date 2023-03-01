@@ -1,10 +1,6 @@
+use memchr::arch::all::packedpair::Pair;
 use std::collections::HashMap;
-use yggdrasil_rt::{
-    consumes_to,
-    errors::YggdrasilError,
-    iterators::{Pair, TokenTree},
-    parses_to, state, OutputResult, State, TextSpan, YggdrasilParser, YggdrasilRule,
-};
+use yggdrasil_rt::{consumes_to, parses_to, state, OutputResult, State, TextSpan, YggdrasilLanguage, YggdrasilRule};
 
 type Input<'i> = Box<State<'i, JsonRule>>;
 type Output<'i> = Result<Box<State<'i, JsonRule>>, Box<State<'i, JsonRule>>>;
@@ -41,10 +37,10 @@ impl YggdrasilRule for JsonRule {
     }
 }
 
-impl YggdrasilParser for JsonParser {
+impl YggdrasilLanguage for JsonParser {
     type Rule = JsonRule;
     #[allow(clippy::almost_complete_range)]
-    fn parse(rule: JsonRule, input: &str) -> OutputResult<JsonRule> {
+    fn parse_cst(rule: JsonRule, input: &str) -> OutputResult<JsonRule> {
         state(input, |state| match rule {
             JsonRule::json => json(state),
             JsonRule::object => object(state),
@@ -392,7 +388,7 @@ fn test_object() {
 fn ast() {
     let input = "{\"a\": [null, true, 3.4]}";
 
-    let ast = consume(JsonParser::parse(JsonRule::json, input).unwrap().next().unwrap());
+    let ast = consume(JsonParser::parse_cst(JsonRule::json, input).unwrap().next().unwrap());
 
     if let Json::Object(pairs) = ast {
         let vals: Vec<&Json> = pairs.values().collect();

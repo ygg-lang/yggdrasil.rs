@@ -28,4 +28,21 @@ impl YggdrasilAnnotations {
         }
         return false;
     }
+    pub fn get_entry(&self) -> bool {
+        for m in &self.modifiers {
+            if m.text.eq_ignore_ascii_case("ignore") {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    pub fn get_keep(&self) -> bool {
+        for m in &self.modifiers {
+            if m.text.eq_ignore_ascii_case("keep") {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -194,7 +194,7 @@ macro_rules! parses_to {
 
         #[allow(unused_mut)]
         {
-            use $crate::YggdrasilParser;
+            use $crate::YggdrasilLanguage;
 
             let mut tokens = $parser::parse($rules::$rule, $string).unwrap().tokens();
 
@@ -291,7 +291,7 @@ macro_rules! fails_with {
       positives: $positives:expr, negatives: $negatives:expr, pos: $pos:expr ) => {
         #[allow(unused_mut)]
         {
-            use $crate::YggdrasilParser;
+            use $crate::YggdrasilLanguage;
 
             let error = $parser::parse($rules::$rule, $string).unwrap_err();
 
@@ -313,7 +313,7 @@ macro_rules! fails_with {
 
 #[cfg(test)]
 pub mod tests {
-    use super::super::{errors::YggdrasilError, iterators::TokenTree, state, YggdrasilParser};
+    use super::super::{errors::YggdrasilError, iterators::TokenTree, state, YggdrasilLanguage};
     use crate::YggdrasilRule;
     use alloc::{format, vec, vec::Vec};
 
@@ -330,9 +330,9 @@ pub mod tests {
 
     pub struct AbcParser;
 
-    impl YggdrasilParser for AbcParser {
+    impl YggdrasilLanguage for AbcParser {
         type Rule = TestRule;
-        fn parse(_: TestRule, input: &str) -> Result<TokenTree<'_, TestRule>, YggdrasilError<TestRule>> {
+        fn parse_cst(_: TestRule, input: &str) -> Result<TokenTree<'_, TestRule>, YggdrasilError<TestRule>> {
             state(input, |state| {
                 state
                     .rule(TestRule::a, |s| s.skip(1).unwrap().rule(TestRule::b, |s| s.skip(1)).unwrap().skip(1))
