@@ -54,11 +54,3 @@ impl ExpressionKind {
         }
     }
 }
-
-impl BitXor<Self> for YggdrasilExpression {
-    type Output = QResult<Self>;
-
-    fn bitxor(self, rhs: Self) -> Self::Output {
-        todo!()
-    }
-}

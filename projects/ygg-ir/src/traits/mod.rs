@@ -5,8 +5,8 @@ use crate::{
     rule::GrammarRule,
     FunctionExpression,
 };
-use diagnostic_quick::Validation;
 use std::collections::{BTreeMap, HashSet};
+use yggdrasil_error::Validation;
 
 mod field_descriptor;
 

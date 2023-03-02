@@ -1,4 +1,5 @@
 use super::*;
+use yggdrasil_ir::YggdrasilError;
 
 pub struct InlineRules {
     grammar: GrammarInfo,
@@ -20,7 +21,7 @@ impl CodeOptimizer for InlineRules {
 }
 
 impl InlineRules {
-    fn inline_node(&mut self, info: &mut YggdrasilExpression, depth: usize) -> Result<(), QError> {
+    fn inline_node(&mut self, info: &mut YggdrasilExpression, depth: usize) -> Result<(), YggdrasilError> {
         todo!()
     }
 }

@@ -5,7 +5,7 @@ use yggdrasil_ir::{
     nodes::{ChoiceExpression, ConcatExpression, ExpressionKind, UnaryExpression, YggdrasilExpression},
     rule::{GrammarAtomic, GrammarRule},
     traits::{CodeOptimizer, FieldDescriptor},
-    IndexMap, QError, Validation,
+    IndexMap, Validation,
 };
 
 mod dead_code;

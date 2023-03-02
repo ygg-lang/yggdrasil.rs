@@ -9,7 +9,7 @@ use std::{
     io::{Error, ErrorKind, Write as _},
     path::{Path, PathBuf},
 };
-use yggdrasil_ir::{grammar::GrammarInfo, rule::GrammarRule, traits::CodeGenerator, QError, QResult, Validation};
+use yggdrasil_ir::{grammar::GrammarInfo, rule::GrammarRule, traits::CodeGenerator, Validation};
 
 mod build_data;
 mod grammar_ext;

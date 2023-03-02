@@ -1,4 +1,5 @@
 use super::*;
+use yggdrasil_ir::YggdrasilError;
 
 pub struct RefineRules {
     grammar: GrammarInfo,
@@ -29,7 +30,7 @@ impl CodeOptimizer for RefineRules {
 }
 
 impl RefineRules {
-    fn refine_node(&mut self, node: &mut YggdrasilExpression) -> Result<(), QError> {
+    fn refine_node(&mut self, node: &mut YggdrasilExpression) -> Result<(), YggdrasilError> {
         match &mut node.kind {
             ExpressionKind::Choice(v) => {
                 for child in v.branches.iter_mut() {

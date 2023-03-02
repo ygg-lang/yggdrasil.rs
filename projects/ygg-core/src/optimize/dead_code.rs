@@ -1,4 +1,5 @@
 use super::*;
+use yggdrasil_ir::YggdrasilError;
 
 pub struct DeadCodeEliminator {
     pub panic: bool,
@@ -30,7 +31,7 @@ impl CodeOptimizer for DeadCodeEliminator {
                     }
                     None => {
                         let error = format!("Undefined rule {}", rule);
-                        if self.panic { panic!("{}", error) } else { errors.push(QError::runtime_error(error)) }
+                        if self.panic { panic!("{}", error) } else { errors.push(YggdrasilError::runtime_error(error)) }
                     }
                 }
             }

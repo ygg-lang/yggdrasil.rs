@@ -8,13 +8,12 @@ use crate::{
     rule::{GrammarRule, GrammarRuleKind, YggdrasilIdentifier},
     FunctionExpression,
 };
-use diagnostic_quick::QResult;
 use num::BigInt;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::{
     hash::{Hash, Hasher},
-    ops::{Add, BitAnd, BitOr, BitXor, RangeInclusive},
+    ops::{Add, BitAnd, BitOr, RangeInclusive},
 };
 
 mod choice;

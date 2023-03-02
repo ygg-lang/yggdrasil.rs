@@ -1,10 +1,10 @@
 use super::*;
 use std::mem::take;
-use yggdrasil_ir::{rule::FunctionRule, QResult};
+use yggdrasil_ir::{rule::FunctionRule, YggdrasilError};
 
 pub struct EmitFunction {
     functions: IndexMap<String, FunctionRule>,
-    errors: Vec<QError>,
+    errors: Vec<YggdrasilError>,
 }
 
 impl Default for EmitFunction {
@@ -29,7 +29,7 @@ impl CodeOptimizer for EmitFunction {
 }
 
 impl EmitFunction {
-    fn emit(&mut self, rules: &mut IndexMap<String, GrammarRule>) -> QResult {
+    fn emit(&mut self, rules: &mut IndexMap<String, GrammarRule>) -> Result<(), YggdrasilError> {
         for (_, rule) in rules.iter_mut() {
             // self.emit_expression(&mut rule.body)?;
         }
