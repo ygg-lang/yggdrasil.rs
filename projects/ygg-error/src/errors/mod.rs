@@ -4,12 +4,12 @@ use std::{
     path::PathBuf,
 };
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YggdrasilError {
     pub(crate) kind: Box<YggdrasilErrorKind>,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YggdrasilErrorKind {
     Io { error: String, file: Option<PathBuf> },
     Runtime { message: String },

@@ -1,16 +1,14 @@
 use crate::optimize::{InsertIgnore, RefineRules};
 use askama::Template;
-use fs::read_to_string;
 use itertools::Itertools;
 use std::{
-    collections::{btree_map::Values, BTreeMap},
-    fmt::{Arguments, Write},
+    fmt::Write,
     fs,
     fs::{create_dir_all, File},
     io::{Error, ErrorKind, Write as _},
     path::{Path, PathBuf},
 };
-use yggdrasil_error::{Failure, Success, Validation, YggdrasilError};
+use yggdrasil_error::{Failure, Success, Validate, Validation};
 use yggdrasil_ir::{
     grammar::GrammarInfo,
     rule::GrammarRule,
@@ -77,56 +75,23 @@ impl CodeGenerator for RustCodegen {
     type Output = RustModule;
 
     fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
-        let main = RustWriteMain { grammar: info, config: self.clone() }.render().unwrap();
-        let lex = RustWriteLex { grammar: info, config: self.clone() }.render().unwrap();
-        let cst = RustWriteCST { grammar: info, config: self.clone() }.render().unwrap();
-        let ast = RustWriteAST { grammar: info, config: self.clone() }.render().unwrap();
-        Success { value: RustModule { main, lex, cst, ast }, diagnostics: vec![] }
+        let mut errors = vec![];
+        let main = RustWriteMain { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
+        let lex = RustWriteLex { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
+        let cst = RustWriteCST { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
+        let ast = RustWriteAST { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
+        Success { value: RustModule { main, lex, cst, ast }, diagnostics: errors }
     }
 }
 
 impl RustCodegen {
     pub fn generate<P: AsRef<Path>>(&self, grammar: &str, output: P) -> Validation<PathBuf> {
         let mut errors = vec![];
-        let mut info = match YggdrasilANTLR::parse(grammar) {
-            Ok(o) => o,
-            Err(e) => return Failure { fatal: YggdrasilError::from(e), diagnostics: errors },
-        };
-        match InsertIgnore::default().optimize(&info) {
-            Success { value, diagnostics } => {
-                errors.extend(diagnostics);
-                info = value
-            }
-            Failure { fatal, diagnostics } => {
-                errors.extend(diagnostics);
-                return Failure { fatal, diagnostics: errors };
-            }
-        };
-        match RefineRules::default().optimize(&info) {
-            Success { value, diagnostics } => {
-                errors.extend(diagnostics);
-                info = value
-            }
-            Failure { fatal, diagnostics } => {
-                errors.extend(diagnostics);
-                return Failure { fatal, diagnostics: errors };
-            }
-        };
-
-        let out = match info.generate(RustCodegen::default()) {
-            Success { value, diagnostics } => {
-                errors.extend(diagnostics);
-                value
-            }
-            Failure { fatal, diagnostics } => {
-                errors.extend(diagnostics);
-                return Failure { fatal, diagnostics: errors };
-            }
-        };
-        match out.save(output) {
-            Ok(value) => Success { value, diagnostics: errors },
-            Err(e) => Failure { fatal: YggdrasilError::from(e), diagnostics: errors },
-        }
+        let mut info = YggdrasilANTLR::parse(grammar).validate(&mut errors)?;
+        info = InsertIgnore::default().optimize(&info).validate(&mut errors)?;
+        info = RefineRules::default().optimize(&info).validate(&mut errors)?;
+        let out = info.generate(RustCodegen::default()).validate(&mut errors)?;
+        out.save(output).validate(&mut errors)
     }
 }
 

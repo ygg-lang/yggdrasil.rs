@@ -30,7 +30,7 @@ path = "../ygg-parser"
 [dependencies.yggdrasil-error]
 version = "0.1.*"
 path = "../ygg-error"
-features = ["antlr-rust"]
+features = ["askama", "antlr-rust"]
 
 [dev-dependencies]
 serde_yaml = "0.9.25"

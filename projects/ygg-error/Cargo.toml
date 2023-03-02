@@ -9,11 +9,13 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-validatus = "0.0.0"
 diagnostic = "0.5.3"
 
+askama = { version = "0.12.1", optional = true }
 antlr-rust = { version = "0.3.0-beta", optional = true }
 
+[dependencies.validatus]
+version = "0.0.2"
 
 [features]
 default = []
