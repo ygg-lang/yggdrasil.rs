@@ -1,5 +1,5 @@
+use yggdrasil_error::Validation;
 use super::*;
-use yggdrasil_ir::YggdrasilError;
 
 pub struct RefineRules {
     grammar: GrammarInfo,

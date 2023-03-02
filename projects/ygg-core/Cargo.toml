@@ -27,9 +27,10 @@ path = "../ygg-ir"
 version = "0.0.*"
 path = "../ygg-parser"
 
-#[dev-dependencies.yggdrasil-rt]
-#version = "0.0.*"
-#path = "../ygg-rt"
+[dependencies.yggdrasil-error]
+version = "0.1.*"
+path = "../ygg-error"
+features = ["antlr-rust"]
 
 [dev-dependencies]
 serde_yaml = "0.9.25"

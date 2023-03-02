@@ -8,4 +8,3 @@ mod utils;
 
 pub use crate::function::FunctionExpression;
 pub use indexmap::{IndexMap, IndexSet};
-pub use yggdrasil_error::{Validation, YggdrasilError};

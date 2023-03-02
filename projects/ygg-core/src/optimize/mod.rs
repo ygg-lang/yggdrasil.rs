@@ -1,11 +1,12 @@
 use itertools::Itertools;
-use std::collections::HashSet;
+use std::{collections::HashSet, mem::take};
+use yggdrasil_error::YggdrasilError;
 use yggdrasil_ir::{
     grammar::GrammarInfo,
     nodes::{ChoiceExpression, ConcatExpression, ExpressionKind, UnaryExpression, YggdrasilExpression},
-    rule::{GrammarAtomic, GrammarRule},
+    rule::{FunctionRule, GrammarAtomic, GrammarRule},
     traits::{CodeOptimizer, FieldDescriptor},
-    IndexMap, Validation,
+    IndexMap,
 };
 
 mod dead_code;

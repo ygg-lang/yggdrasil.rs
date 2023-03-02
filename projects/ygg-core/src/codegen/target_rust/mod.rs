@@ -1,3 +1,4 @@
+use crate::optimize::{InsertIgnore, RefineRules};
 use askama::Template;
 use fs::read_to_string;
 use itertools::Itertools;
@@ -9,7 +10,13 @@ use std::{
     io::{Error, ErrorKind, Write as _},
     path::{Path, PathBuf},
 };
-use yggdrasil_ir::{grammar::GrammarInfo, rule::GrammarRule, traits::CodeGenerator, Validation};
+use yggdrasil_error::{Failure, Success, Validation, YggdrasilError};
+use yggdrasil_ir::{
+    grammar::GrammarInfo,
+    rule::GrammarRule,
+    traits::{CodeGenerator, CodeOptimizer},
+};
+use yggdrasil_parser::YggdrasilANTLR;
 
 mod build_data;
 mod grammar_ext;
@@ -19,9 +26,9 @@ use self::{grammar_ext::GrammarExt, rule_ext::RuleExt};
 
 #[derive(Clone, Debug)]
 pub struct RustCodegen {
-    enable_position: bool,
-    rule_prefix: String,
-    rule_suffix: String,
+    pub enable_position: bool,
+    pub rule_prefix: String,
+    pub rule_suffix: String,
 }
 
 impl Default for RustCodegen {
@@ -74,12 +81,57 @@ impl CodeGenerator for RustCodegen {
         let lex = RustWriteLex { grammar: info, config: self.clone() }.render().unwrap();
         let cst = RustWriteCST { grammar: info, config: self.clone() }.render().unwrap();
         let ast = RustWriteAST { grammar: info, config: self.clone() }.render().unwrap();
-        Validation::Success { value: RustModule { main, lex, cst, ast }, diagnostics: vec![] }
+        Success { value: RustModule { main, lex, cst, ast }, diagnostics: vec![] }
+    }
+}
+
+impl RustCodegen {
+    pub fn generate<P: AsRef<Path>>(&self, grammar: &str, output: P) -> Validation<PathBuf> {
+        let mut errors = vec![];
+        let mut info = match YggdrasilANTLR::parse(grammar) {
+            Ok(o) => o,
+            Err(e) => return Failure { fatal: YggdrasilError::from(e), diagnostics: errors },
+        };
+        match InsertIgnore::default().optimize(&info) {
+            Success { value, diagnostics } => {
+                errors.extend(diagnostics);
+                info = value
+            }
+            Failure { fatal, diagnostics } => {
+                errors.extend(diagnostics);
+                return Failure { fatal, diagnostics: errors };
+            }
+        };
+        match RefineRules::default().optimize(&info) {
+            Success { value, diagnostics } => {
+                errors.extend(diagnostics);
+                info = value
+            }
+            Failure { fatal, diagnostics } => {
+                errors.extend(diagnostics);
+                return Failure { fatal, diagnostics: errors };
+            }
+        };
+
+        let out = match info.generate(RustCodegen::default()) {
+            Success { value, diagnostics } => {
+                errors.extend(diagnostics);
+                value
+            }
+            Failure { fatal, diagnostics } => {
+                errors.extend(diagnostics);
+                return Failure { fatal, diagnostics: errors };
+            }
+        };
+        match out.save(output) {
+            Ok(value) => Success { value, diagnostics: errors },
+            Err(e) => Failure { fatal: YggdrasilError::from(e), diagnostics: errors },
+        }
     }
 }
 
 impl RustModule {
-    pub fn save<P: AsRef<Path>>(&self, path: P) -> std::io::Result<()> {
+    pub fn save<P: AsRef<Path>>(&self, path: P) -> std::io::Result<PathBuf> {
         let path = path.as_ref();
         if path.exists() {
             if !path.is_dir() {
@@ -97,6 +149,6 @@ impl RustModule {
         cst.write_all(self.cst.as_bytes())?;
         let mut ast = File::create(path.join("parse_ast.rs"))?;
         ast.write_all(self.ast.as_bytes())?;
-        Ok(())
+        path.canonicalize()
     }
 }

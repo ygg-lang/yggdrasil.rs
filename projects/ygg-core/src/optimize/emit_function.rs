@@ -1,6 +1,5 @@
+use yggdrasil_error::Validation;
 use super::*;
-use std::mem::take;
-use yggdrasil_ir::{rule::FunctionRule, YggdrasilError};
 
 pub struct EmitFunction {
     functions: IndexMap<String, FunctionRule>,

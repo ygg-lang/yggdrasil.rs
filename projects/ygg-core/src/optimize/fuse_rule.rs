@@ -1,3 +1,4 @@
+use yggdrasil_error::Validation;
 use super::*;
 
 pub struct FusionRules {}
