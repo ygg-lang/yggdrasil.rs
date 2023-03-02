@@ -1,0 +1,16 @@
+[package]
+name = "yggdrasil-error"
+version = "0.1.3"
+authors = ["Aster <192607617@qq.com>"]
+description = "AWSL Window Structure Language"
+repository = "https://github.com/ygg-lang/yggdrasil-rs"
+readme = "Readme.md"
+license = "MPL-2.0"
+edition = "2021"
+
+[dependencies]
+validatus = "0.0.0"
+diagnostic = "0.5.3"
+
+[features]
+default = []

@@ -34,7 +34,7 @@ impl NonTerminal {
 pub struct RuleName;
 
 impl RuleName {
-    pub fn new(name: String) -> railroad::Comment {
+    pub fn new(name: String) -> Comment {
         let mut nt = railroad::Comment::new(name.to_owned());
         nt.attr("id".to_owned()).or_insert(name);
         return nt;

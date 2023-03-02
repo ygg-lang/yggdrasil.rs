@@ -1,6 +1,6 @@
 [package]
-name = "yggdrasil-core"
-version = "0.1.1"
+name = "yggdrasil-shared"
+version = "0.2.3"
 authors = ["Aster <192607617@qq.com>"]
 description = "AWSL Window Structure Language"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
@@ -24,11 +24,11 @@ version = "0.1"
 path = "../ygg-ir"
 
 [dependencies.yggdrasil-parser]
-#version = "0.1.2"
+version = "0.1.2"
 path = "../ygg-parser"
 
 [dev-dependencies.yggdrasil-rt]
-#version = "0.1"
+version = "0.1.*"
 path = "../ygg-rt"
 
 [dev-dependencies]

@@ -20,7 +20,6 @@ impl YggdrasilLanguage for Json5Language {
         })
     }
 }
-
 #[inline]
 fn parse_value(state: Input) -> Output {
     state.rule(Json5Rule::Value, |s| {
@@ -31,7 +30,6 @@ fn parse_value(state: Input) -> Output {
             .or_else(|s| parse_null(s))
     })
 }
-
 #[inline]
 fn parse_object(state: Input) -> Output {
     state.rule(Json5Rule::Object, |s| {
@@ -62,7 +60,6 @@ fn parse_object(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_object_pair(state: Input) -> Output {
     state.rule(Json5Rule::ObjectPair, |s| {
@@ -71,7 +68,6 @@ fn parse_object_pair(state: Input) -> Output {
         )
     })
 }
-
 #[inline]
 fn parse_array(state: Input) -> Output {
     state.rule(Json5Rule::Array, |s| {
@@ -102,7 +98,6 @@ fn parse_array(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_string(state: Input) -> Output {
     state.rule(Json5Rule::String, |s| {
@@ -115,12 +110,10 @@ fn parse_string(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_string_escaped(state: Input) -> Output {
     state.rule(Json5Rule::StringEscaped, |s| s.sequence(|s| builtin_text::<false>(s, "\\").and_then(|s| builtin_any(s))))
 }
-
 #[inline]
 fn parse_number(state: Input) -> Output {
     state.rule(Json5Rule::Number, |s| {
@@ -130,17 +123,14 @@ fn parse_number(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_boolean(state: Input) -> Output {
     state.rule(Json5Rule::Boolean, |s| builtin_text::<false>(s, "true").or_else(|s| builtin_text::<false>(s, "false")))
 }
-
 #[inline]
 fn parse_null(state: Input) -> Output {
     state.rule(Json5Rule::Null, |s| s.match_string::<false>("null"))
 }
-
 #[inline]
 fn parse_identifier(state: Input) -> Output {
     state.rule(Json5Rule::Identifier, |s| {
@@ -150,7 +140,6 @@ fn parse_identifier(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_white_space(state: Input) -> Output {
     state.rule(Json5Rule::WhiteSpace, |s| {

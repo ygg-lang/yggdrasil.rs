@@ -1,10 +1,6 @@
 #![allow(dead_code, unused_imports, non_camel_case_types)]
 #![doc = include_str!("readme.md")]
 
-mod lexer;
-mod parse_ast;
-mod parse_cst;
-
 use std::sync::OnceLock;
 use yggdrasil_rt::*;
 
