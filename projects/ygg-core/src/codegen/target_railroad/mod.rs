@@ -1,13 +1,13 @@
 use railroad::{svg::Element, Node};
 
 pub use helper::*;
+use yggdrasil_error::Validation;
 use yggdrasil_ir::{
     data::RuleReference,
     grammar::GrammarInfo,
     nodes::{ChoiceExpression, ConcatExpression, ExpressionKind, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
     rule::GrammarRule,
     traits::CodeGenerator,
-    Validation,
 };
 
 mod helper;

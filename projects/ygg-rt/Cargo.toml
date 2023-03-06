@@ -1,14 +1,14 @@
 [package]
 name = "yggdrasil-rt"
-version = "0.0.4"
+version = "0.0.5"
 authors = ["Aster <192607617@qq.com>"]
 description = "Yggdrasil Shared Structure"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
 documentation = "https://docs.rs/yggdrasil-rt"
-keywords = ["parser", "peg", "grammar"]
+keywords = ["parser", "generator", "peg", "grammar"]
 categories = ["parsing"]
 license = "MPL-2.0"
-readme = "Readme.md"
+readme = "readme.md"
 edition = "2021"
 
 [features]
@@ -16,11 +16,11 @@ default = []
 const_prec_climber = []
 
 [dependencies]
-ucd-trie = { version = "0.1.5", default-features = false }
 serde = { version = "1.0.145", optional = true }
-#memchr = { version = "2", optional = true }
 regex-automata = "0.3.9"
-#daachorse = "1.0.0"
+# memchr = { version = "2", optional = true }
+# ucd-trie = { version = "0.1.5", optional = true, default-features = false }
+# daachorse = "1.0.0"
 
 [dev-dependencies]
 criterion = { version = "0.5.1", features = ["html_reports"] }
@@ -28,3 +28,5 @@ criterion = { version = "0.5.1", features = ["html_reports"] }
 [[bench]]
 name = "stack"
 harness = false
+
+

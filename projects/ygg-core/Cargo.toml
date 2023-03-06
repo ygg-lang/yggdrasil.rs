@@ -37,4 +37,4 @@ serde_yaml = "0.9.25"
 json5 = "0.4.1"
 
 [features]
-default = []
+default = ["railroad"]

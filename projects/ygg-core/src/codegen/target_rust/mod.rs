@@ -1,6 +1,11 @@
-use crate::optimize::{InsertIgnore, RefineRules};
+use crate::{
+    codegen::Railroad,
+    optimize::{InsertIgnore, RefineRules},
+};
 use askama::Template;
 use itertools::Itertools;
+#[cfg(feature = "railroad")]
+use railroad::{Diagram, Node, VerticalGrid};
 use std::{
     fmt::Write,
     fs,
@@ -69,6 +74,7 @@ pub struct RustModule {
     pub lex: String,
     pub cst: String,
     pub ast: String,
+    pub railroad: String,
 }
 
 impl CodeGenerator for RustCodegen {
@@ -80,7 +86,15 @@ impl CodeGenerator for RustCodegen {
         let lex = RustWriteLex { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
         let cst = RustWriteCST { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
         let ast = RustWriteAST { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
-        Success { value: RustModule { main, lex, cst, ast }, diagnostics: errors }
+        let railroad = if cfg!(feature = "railroad") {
+            let mut rr = Railroad::default();
+            let out: Diagram<VerticalGrid<Box<dyn Node>>> = rr.generate(info).recover(&mut errors)?;
+            out.to_string()
+        }
+        else {
+            String::new()
+        };
+        Success { value: RustModule { main, lex, cst, ast, railroad }, diagnostics: errors }
     }
 }
 
@@ -114,6 +128,8 @@ impl RustModule {
         cst.write_all(self.cst.as_bytes())?;
         let mut ast = File::create(path.join("parse_ast.rs"))?;
         ast.write_all(self.ast.as_bytes())?;
+        let mut svg = File::create(path.join("railroad.svg"))?;
+        svg.write_all(self.railroad.as_bytes())?;
         path.canonicalize()
     }
 }

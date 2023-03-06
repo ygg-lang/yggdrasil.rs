@@ -21,18 +21,16 @@ While prec_climber is going to be kept in 2.x minor and patch releases, it may b
 )]
 pub mod prec_climber;
 mod span;
-mod stack;
 mod token;
 
 pub use crate::{
-    enhance::RegexCompiled,
+    enhance::{stack::Stack, RegexCompiled},
     errors::YggdrasilError,
     iterators::TokenTree,
     language::YggdrasilLanguage,
     parser_state::{state, Either, Lookahead, MatchDir, State},
     position::Position,
     span::{merge_spans, Lines, LinesSpan, TextSpan},
-    stack::Stack,
     token::Token,
 };
 use core::{fmt::Debug, hash::Hash};

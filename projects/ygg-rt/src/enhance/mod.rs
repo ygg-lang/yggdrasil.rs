@@ -1,5 +1,7 @@
 use regex_automata::dfa::{dense::DFA, regex::Regex};
 
+pub mod stack;
+
 /// A precompiled regular expression state machine
 pub struct RegexCompiled {
     /// FWD

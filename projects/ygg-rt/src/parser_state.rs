@@ -12,11 +12,11 @@ use core::ops::Range;
 use regex_automata::dfa::regex::Regex;
 
 use crate::{
+    enhance::stack::Stack,
     errors::{ErrorKind, YggdrasilError},
     iterators::{TokenQueue, TokenTree},
     position::{self, Position},
     span::TextSpan,
-    stack::Stack,
     YggdrasilRule,
 };
 
@@ -307,9 +307,12 @@ where
     /// assert_eq!(find[0].as_str(), "c")
     /// ```
     #[inline]
-    pub fn tag_node(mut self: Box<Self>, tag: Cow<'static, str>) -> Either<Box<Self>> {
+    pub fn tag_node<S>(mut self: Box<Self>, tag: S) -> Either<Box<Self>>
+    where
+        S: Into<Cow<'static, str>>,
+    {
         if let Some(TokenQueue::End { tag: old, .. }) = self.queue.last_mut() {
-            *old = Some(tag)
+            *old = Some(tag.into())
         }
         Ok(self)
     }
