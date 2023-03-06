@@ -7,19 +7,14 @@
 // option. All files in the project carrying such notice may not be copied,
 // modified, or distributed except according to those terms.
 
-#[macro_use]
-extern crate pest;
-
-use pest::{
-    error::YggdrasilError,
-    iterators::{Pair, TokenTree},
-    pratt_parser::{Assoc, Op, PrattParser},
-    state, Either, State, YggdrasilParser, YggdrasilRule,
+use yggdrasil_rt::{
+    parses_to, pratt_parser::PrattParser, prec_climber::PrecClimber, Either, State, TokenTree, YggdrasilError,
+    YggdrasilLanguage, YggdrasilRule,
 };
 
 #[allow(dead_code, non_camel_case_types)]
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-enum JsonRule {
+enum CalculatorRule {
     expression,
     primary,
     number,
@@ -31,110 +26,59 @@ enum JsonRule {
     power,
 }
 
-type ParseIn<'i> = Box<State<'i, JsonRule>>;
-type ParseOut<'i> = Either<Box<State<'i, JsonRule>>>;
+type ParseIn<'i> = Box<State<'i, CalculatorRule>>;
+type ParseOut<'i> = Either<Box<State<'i, CalculatorRule>>>;
 
 struct CalculatorParser {}
 
-impl YggdrasilRule for JsonRule {}
+impl YggdrasilRule for CalculatorRule {
+    fn all_rules() -> &'static [Self]
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
 
-impl YggdrasilParser for CalculatorParser {
-    type Rule = JsonRule;
-    // false positive: pest uses `..` as a complete range (historically)
-    #[allow(clippy::almost_complete_range)]
-    fn parse(rule: JsonRule, input: &str) -> Result<TokenTree<JsonRule>, YggdrasilError<JsonRule>> {
-        fn expression(state: ParseIn) -> ParseOut {
-            state.rule(JsonRule::expression, |s| {
-                s.sequence(|s| {
-                    primary(s).and_then(|s| {
-                        s.repeat(|s| {
-                            s.sequence(|s| {
-                                plus(s)
-                                    .or_else(minus)
-                                    .or_else(times)
-                                    .or_else(divide)
-                                    .or_else(modulus)
-                                    .or_else(power)
-                                    .and_then(primary)
-                            })
-                        })
-                    })
-                })
-            })
-        }
+    fn is_ignore(&self) -> bool {
+        todo!()
+    }
+}
 
-        fn primary(state: ParseIn) -> ParseOut {
-            state.sequence(|s| s.match_string("(").and_then(expression).and_then(|s| s.match_string(")"))).or_else(number)
-        }
+impl YggdrasilLanguage for CalculatorParser {
+    type Rule = CalculatorRule;
 
-        fn number(state: ParseIn) -> ParseOut {
-            state.rule(JsonRule::number, |s| {
-                s.sequence(|s| {
-                    s.optional(|s| s.match_string("-")).and_then(|s| {
-                        s.match_string("0").or_else(|s| {
-                            s.sequence(|s| s.match_range('1'..'9').and_then(|s| s.repeat(|s| s.match_range('0'..'9'))))
-                        })
-                    })
-                })
-            })
-        }
-
-        fn plus(state: ParseIn) -> ParseOut {
-            state.rule(JsonRule::plus, |s| s.match_string("+"))
-        }
-
-        fn minus(state: ParseIn) -> ParseOut {
-            state.rule(JsonRule::minus, |s| s.match_string("-"))
-        }
-
-        fn times(state: ParseIn) -> ParseOut {
-            state.rule(JsonRule::times, |s| s.match_string("*"))
-        }
-
-        fn divide(state: ParseIn) -> ParseOut {
-            state.rule(JsonRule::divide, |s| s.match_string("/"))
-        }
-
-        fn modulus(state: ParseIn) -> ParseOut {
-            state.rule(JsonRule::modulus, |s| s.match_string("%"))
-        }
-
-        fn power(state: ParseIn) -> ParseOut {
-            state.rule(JsonRule::power, |s| s.match_string("^"))
-        }
-
-        state(input, |state| match rule {
-            JsonRule::expression => expression(state),
-            _ => unreachable!(),
-        })
+    fn parse_cst(input: &str, rule: Self::Rule) -> Result<TokenTree<Self::Rule>, YggdrasilError<Self::Rule>> {
+        todo!()
     }
 }
 
 #[allow(deprecated)]
 enum PrattOrPrecClimber<'a> {
-    Pratt(&'a PrattParser<JsonRule>),
-    PrecClimber(&'a pest::prec_climber::PrecClimber<JsonRule>),
+    Pratt(&'a PrattParser<CalculatorRule>),
+    PrecClimber(&'a PrecClimber<CalculatorRule>),
 }
 
-fn consume(pair: Pair<JsonRule>, pratt_or_climber: &PrattOrPrecClimber) -> i32 {
+fn consume(pair: Pair<CalculatorRule>, pratt_or_climber: &PrattOrPrecClimber) -> i32 {
     let primary = |pair| consume(pair, pratt_or_climber);
-    let infix = |lhs: i32, op: Pair<JsonRule>, rhs: i32| match op.as_rule() {
-        JsonRule::plus => lhs + rhs,
-        JsonRule::minus => lhs - rhs,
-        JsonRule::times => lhs * rhs,
-        JsonRule::divide => lhs / rhs,
-        JsonRule::modulus => lhs % rhs,
-        JsonRule::power => lhs.pow(rhs as u32),
+    let infix = |lhs: i32, op: Pair<CalculatorRule>, rhs: i32| match op.as_rule() {
+        CalculatorRule::plus => lhs + rhs,
+        CalculatorRule::minus => lhs - rhs,
+        CalculatorRule::times => lhs * rhs,
+        CalculatorRule::divide => lhs / rhs,
+        CalculatorRule::modulus => lhs % rhs,
+        CalculatorRule::power => lhs.pow(rhs as u32),
         _ => unreachable!(),
     };
 
     #[allow(deprecated)]
     match (pair.as_rule(), pratt_or_climber) {
-        (JsonRule::expression, PrattOrPrecClimber::Pratt(pratt)) => {
+        (CalculatorRule::expression, PrattOrPrecClimber::Pratt(pratt)) => {
             pratt.map_primary(primary).map_infix(infix).parse(pair.into_inner())
         }
-        (JsonRule::expression, PrattOrPrecClimber::PrecClimber(climber)) => climber.climb(pair.into_inner(), primary, infix),
-        (JsonRule::number, _) => pair.as_str().parse().unwrap(),
+        (CalculatorRule::expression, PrattOrPrecClimber::PrecClimber(climber)) => {
+            climber.climb(pair.into_inner(), primary, infix)
+        }
+        (CalculatorRule::number, _) => pair.as_str().parse().unwrap(),
         _ => unreachable!(),
     }
 }
@@ -202,26 +146,26 @@ fn expression() {
 fn prec_climb() {
     use pest::prec_climber::{Assoc, Operator, PrecClimber};
     let climber = PrecClimber::new(vec![
-        Operator::new(JsonRule::plus, Assoc::Left) | Operator::new(JsonRule::minus, Assoc::Left),
-        Operator::new(JsonRule::times, Assoc::Left)
-            | Operator::new(JsonRule::divide, Assoc::Left)
-            | Operator::new(JsonRule::modulus, Assoc::Left),
-        Operator::new(JsonRule::power, Assoc::Right),
+        Operator::new(CalculatorRule::plus, Assoc::Left) | Operator::new(CalculatorRule::minus, Assoc::Left),
+        Operator::new(CalculatorRule::times, Assoc::Left)
+            | Operator::new(CalculatorRule::divide, Assoc::Left)
+            | Operator::new(CalculatorRule::modulus, Assoc::Left),
+        Operator::new(CalculatorRule::power, Assoc::Right),
     ]);
 
-    let pairs = CalculatorParser::parse(JsonRule::expression, "-12+3*(4-9)^3^2/9%7381");
+    let pairs = CalculatorParser::parse(CalculatorRule::expression, "-12+3*(4-9)^3^2/9%7381");
     assert_eq!(-1_525, consume(pairs.unwrap().next().unwrap(), &PrattOrPrecClimber::PrecClimber(&climber)));
 }
 
 #[test]
 fn pratt_parse() {
     let pratt = PrattParser::new()
-        .op(Op::infix(JsonRule::plus, Assoc::Left) | Op::infix(JsonRule::minus, Assoc::Left))
-        .op(Op::infix(JsonRule::times, Assoc::Left)
-            | Op::infix(JsonRule::divide, Assoc::Left)
-            | Op::infix(JsonRule::modulus, Assoc::Left))
-        .op(Op::infix(JsonRule::power, Assoc::Right));
+        .op(Op::infix(CalculatorRule::plus, Assoc::Left) | Op::infix(CalculatorRule::minus, Assoc::Left))
+        .op(Op::infix(CalculatorRule::times, Assoc::Left)
+            | Op::infix(CalculatorRule::divide, Assoc::Left)
+            | Op::infix(CalculatorRule::modulus, Assoc::Left))
+        .op(Op::infix(CalculatorRule::power, Assoc::Right));
 
-    let pairs = CalculatorParser::parse(JsonRule::expression, "-12+3*(4-9)^3^2/9%7381");
+    let pairs = CalculatorParser::parse(CalculatorRule::expression, "-12+3*(4-9)^3^2/9%7381");
     assert_eq!(-1_525, consume(pairs.unwrap().next().unwrap(), &PrattOrPrecClimber::Pratt(&pratt)));
 }

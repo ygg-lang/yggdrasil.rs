@@ -46,24 +46,24 @@ pub fn new<'i, R: YggdrasilRule>(queue: Rc<Vec<TokenQueue<R>>>, input: &'i str, 
 
 impl<'i, R: YggdrasilRule> Tokens<'i, R> {
     fn create_token(&self, index: usize) -> Token<'i, R> {
-        match self.queue[index] {
-            TokenQueue::Start { end_token_index, input_offset: input_pos } => {
-                let rule = match self.queue[end_token_index] {
-                    TokenQueue::End { rule, .. } => rule,
+        match &self.queue[index] {
+            TokenQueue::Start { end_token_index, input_offset } => {
+                let rule = match &self.queue[*end_token_index] {
+                    TokenQueue::End { rule, .. } => rule.clone(),
                     _ => unreachable!(),
                 };
 
                 Token::Start {
                     rule,
                     // QueueableTokens are safely created.
-                    pos: unsafe { position::Position::new_unchecked(self.input, input_pos) },
+                    pos: unsafe { position::Position::new_unchecked(self.input, *input_offset) },
                 }
             }
             TokenQueue::End { rule, input_offset: input_pos, .. } => {
                 Token::End {
-                    rule,
+                    rule: rule.clone(),
                     // QueueableTokens are safely created.
-                    pos: unsafe { position::Position::new_unchecked(self.input, input_pos) },
+                    pos: unsafe { position::Position::new_unchecked(self.input, *input_pos) },
                 }
             }
         }

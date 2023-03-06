@@ -226,7 +226,7 @@ where
         match result {
             Ok(mut new_state) => {
                 if new_state.lookahead == Lookahead::Negative {
-                    new_state.track(rule, actual_pos, pos_attempts_index, neg_attempts_index, attempts);
+                    new_state.track(rule.clone(), actual_pos, pos_attempts_index, neg_attempts_index, attempts);
                 }
 
                 if new_state.lookahead == Lookahead::None {
@@ -240,7 +240,12 @@ where
 
                     let new_pos = new_state.position.offset();
 
-                    new_state.queue.push(TokenQueue::End { start_token_index: index, rule, tag: None, input_offset: new_pos });
+                    new_state.queue.push(TokenQueue::End {
+                        start_token_index: index,
+                        rule: rule,
+                        tag: None,
+                        input_offset: new_pos,
+                    });
                 }
 
                 Ok(new_state)

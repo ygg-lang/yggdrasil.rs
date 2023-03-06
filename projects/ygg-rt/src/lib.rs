@@ -8,11 +8,11 @@ extern crate alloc;
 
 mod errors;
 mod iterators;
-mod macros;
-mod parser;
+mod language;
 mod parser_state;
 mod position;
 
+mod enhance;
 pub mod pratt_parser;
 #[deprecated(
     since = "2.4.0",
@@ -20,21 +20,17 @@ pub mod pratt_parser;
 While prec_climber is going to be kept in 2.x minor and patch releases, it may be removed in a future major release."
 )]
 pub mod prec_climber;
-mod regex_proxy;
 mod span;
 mod stack;
 mod token;
 
-#[doc(hidden)]
-pub mod unicode;
-
 pub use crate::{
+    enhance::RegexCompiled,
     errors::YggdrasilError,
     iterators::TokenTree,
-    parser::YggdrasilLanguage,
+    language::YggdrasilLanguage,
     parser_state::{state, Either, Lookahead, MatchDir, State},
     position::Position,
-    regex_proxy::RegexCompiled,
     span::{merge_spans, Lines, LinesSpan, TextSpan},
     stack::Stack,
     token::Token,
@@ -46,9 +42,11 @@ pub use regex_automata::dfa::regex::Regex;
 pub type OutputResult<'i, R> = Result<TokenTree<'i, R>, YggdrasilError<R>>;
 
 /// Define rules subject to Yggdrasil
-pub trait YggdrasilRule: Copy + Debug + Eq + Hash + Ord {
+pub trait YggdrasilRule: Clone + Debug + Eq + Hash + Ord {
     /// Go through all the rules
-    fn all_rules() -> &'static [Self];
+    fn all_rules() -> &'static [Self]
+    where
+        Self: Sized;
     /// Nodes ignored in ast, such as spaces, carriage returns, comments, etc.
     fn is_ignore(&self) -> bool;
 }

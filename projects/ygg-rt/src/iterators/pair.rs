@@ -77,8 +77,8 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     /// ```
     #[inline]
     pub fn as_rule(&self) -> R {
-        match self.queue[self.pair()] {
-            TokenQueue::End { rule, .. } => rule,
+        match &self.queue[self.pair()] {
+            TokenQueue::End { rule, .. } => rule.clone(),
             _ => unreachable!(),
         }
     }
@@ -383,7 +383,7 @@ impl<'i, R: YggdrasilRule> ::serde::Serialize for Pair<'i, R> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{macros::tests::*, parser::YggdrasilLanguage};
+    use crate::{language::YggdrasilLanguage, macros::tests::*};
 
     #[test]
     #[cfg(feature = "pretty-print")]
