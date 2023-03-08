@@ -15,11 +15,12 @@ mod helper;
 pub struct Railroad {
     pub with_css: bool,
     pub css: String,
+    pub contain_ignored: bool,
 }
 
 impl Default for Railroad {
     fn default() -> Self {
-        Self { with_css: true, css: include_str!("default.css").to_string() }
+        Self { with_css: true, css: include_str!("default.css").to_string(), contain_ignored: true }
     }
 }
 
@@ -29,7 +30,7 @@ impl CodeGenerator for Railroad {
     type Output = Diagram<VerticalGrid<Box<dyn Node>>>;
 
     fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
-        let grid = VerticalGrid::new(info.rules.iter().map(|(_, rule)| rule.as_railroad()).collect());
+        let grid = VerticalGrid::new(info.rules.iter().map(|(_, rule)| rule.as_railroad(self)).collect());
         let mut diagram = Diagram::new(grid);
         let mut element = Element::new("style").set("type", "text/css");
         if self.with_css {
@@ -41,23 +42,23 @@ impl CodeGenerator for Railroad {
 }
 
 trait AsRailroad {
-    fn as_railroad(&self) -> Box<dyn Node>;
+    fn as_railroad(&self, config: &Railroad) -> Box<dyn Node>;
 }
 
 impl AsRailroad for GrammarInfo {
-    fn as_railroad(&self) -> Box<dyn Node> {
-        Box::new(VerticalGrid::new(self.rules.iter().map(|(_, rule)| rule.as_railroad()).collect()))
+    fn as_railroad(&self, config: &Railroad) -> Box<dyn Node> {
+        Box::new(VerticalGrid::new(self.rules.iter().map(|(_, rule)| rule.as_railroad(config)).collect()))
     }
 }
 
 impl AsRailroad for GrammarRule {
-    fn as_railroad(&self) -> Box<dyn Node> {
+    fn as_railroad(&self, config: &Railroad) -> Box<dyn Node> {
         let mut s = Sequence::<Box<dyn Node>>::default();
         s.push(Box::new(SimpleStart));
         s.push(Box::new(RuleName::new(self.name.text.to_string())));
         match &self.body {
             Some(e) => {
-                s.push(e.as_railroad());
+                s.push(e.as_railroad(config));
             }
             None => {}
         }
@@ -67,18 +68,18 @@ impl AsRailroad for GrammarRule {
 }
 
 impl AsRailroad for YggdrasilExpression {
-    fn as_railroad(&self) -> Box<dyn Node> {
-        self.kind.as_railroad()
+    fn as_railroad(&self, config: &Railroad) -> Box<dyn Node> {
+        self.kind.as_railroad(config)
     }
 }
 
 impl AsRailroad for ExpressionKind {
-    fn as_railroad(&self) -> Box<dyn Node> {
+    fn as_railroad(&self, config: &Railroad) -> Box<dyn Node> {
         match self {
-            ExpressionKind::Choice(e) => e.as_railroad(),
-            ExpressionKind::Concat(e) => e.as_railroad(),
-            ExpressionKind::Unary(e) => e.as_railroad(),
-            ExpressionKind::Rule(e) => e.as_railroad(),
+            ExpressionKind::Choice(e) => e.as_railroad(config),
+            ExpressionKind::Concat(e) => e.as_railroad(config),
+            ExpressionKind::Unary(e) => e.as_railroad(config),
+            ExpressionKind::Rule(e) => e.as_railroad(config),
             ExpressionKind::Function(e) => Box::new(Terminal::new(e.name.to_string(), &vec!["function"])),
             ExpressionKind::Ignored => Box::new(Terminal::new("IGNORED".to_string(), &vec!["character"])),
             ExpressionKind::Text(v) => Box::new(Terminal::new(v.text.to_string(), &vec!["string"])),
@@ -92,21 +93,21 @@ impl AsRailroad for ExpressionKind {
 }
 
 impl AsRailroad for ChoiceExpression {
-    fn as_railroad(&self) -> Box<dyn Node> {
-        Box::new(Choice::new(self.branches.iter().map(|e| e.as_railroad()).collect()))
+    fn as_railroad(&self, config: &Railroad) -> Box<dyn Node> {
+        Box::new(Choice::new(self.branches.iter().map(|e| e.as_railroad(config)).collect()))
     }
 }
 
 impl AsRailroad for ConcatExpression {
-    fn as_railroad(&self) -> Box<dyn Node> {
+    fn as_railroad(&self, config: &Railroad) -> Box<dyn Node> {
         // TODO: maybe stack
-        Box::new(Sequence::new(self.sequence.iter().map(|e| e.as_railroad()).collect()))
+        Box::new(Sequence::new(self.sequence.iter().map(|e| e.as_railroad(config)).collect()))
     }
 }
 
 impl AsRailroad for UnaryExpression {
-    fn as_railroad(&self) -> Box<dyn Node> {
-        let mut base = self.base.as_railroad();
+    fn as_railroad(&self, config: &Railroad) -> Box<dyn Node> {
+        let mut base = self.base.as_railroad(config);
         for o in &self.operators {
             match o {
                 YggdrasilOperator::Optional => base = Box::new(Optional::new(base)),
@@ -138,7 +139,7 @@ impl AsRailroad for UnaryExpression {
 }
 
 impl AsRailroad for RuleReference {
-    fn as_railroad(&self) -> Box<dyn Node> {
+    fn as_railroad(&self, config: &Railroad) -> Box<dyn Node> {
         let mut class = vec!["symbol"];
         if self.inline {
             class.push("inline")
