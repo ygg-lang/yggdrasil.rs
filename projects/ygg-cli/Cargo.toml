@@ -14,9 +14,7 @@ path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.4.6", features = ["derive"] }
-anyhow = "1.0.75"
-diagnostic-quick = "0.4.0"
-#
-#[dependencies.yggdrasil-core]
-##version = "0.1"
-#path = "../ygg-core"
+
+[dependencies.yggdrasil-error]
+version = "0.1.*"
+path = "../ygg-error"

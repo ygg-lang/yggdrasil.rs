@@ -1,9 +1,9 @@
 #![feature(path_try_exists)]
 #![feature(once_cell)]
 #![feature(fs_try_exists)]
+#![feature(lazy_cell)]
 
 use self::{cache::*, subs::*};
-use anyhow::Result;
 use clap::Parser;
 
 mod cache;
