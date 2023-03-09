@@ -21,7 +21,7 @@ use yggdrasil_ir::{
 };
 use yggdrasil_parser::YggdrasilANTLR;
 
-mod build_data;
+mod build_readme;
 mod grammar_ext;
 mod rule_ext;
 
@@ -32,11 +32,19 @@ pub struct RustCodegen {
     pub enable_position: bool,
     pub rule_prefix: String,
     pub rule_suffix: String,
+    #[cfg(feature = "railroad")]
+    pub railway: Railroad,
 }
 
 impl Default for RustCodegen {
     fn default() -> Self {
-        Self { enable_position: true, rule_prefix: "".to_string(), rule_suffix: "Node".to_string() }
+        Self {
+            enable_position: true,
+            rule_prefix: "".to_string(),
+            rule_suffix: "Node".to_string(),
+            #[cfg(feature = "railroad")]
+            railway: Default::default(),
+        }
     }
 }
 
@@ -68,33 +76,46 @@ pub struct RustWriteAST<'i> {
     config: RustCodegen,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Template)]
+#[template(path = "rust/readme.jinja", escape = "none")]
+pub struct RustWriteReadme<'i> {
+    grammar: &'i GrammarInfo,
+    config: RustCodegen,
+    #[cfg(feature = "railroad")]
+    railroad: Diagram<VerticalGrid<Box<dyn Node>>>,
+}
+
+#[derive(Default)]
 pub struct RustModule {
     pub main: String,
     pub lex: String,
     pub cst: String,
     pub ast: String,
-    pub railroad: String,
+    pub readme: String,
+    pub railway: String,
+    pub railway_min: String,
 }
 
 impl CodeGenerator for RustCodegen {
     type Output = RustModule;
 
     fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
+        let mut out = RustModule::default();
         let mut errors = vec![];
-        let main = RustWriteMain { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
-        let lex = RustWriteLex { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
-        let cst = RustWriteCST { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
-        let ast = RustWriteAST { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
-        let railroad = if cfg!(feature = "railroad") {
-            let mut rr = Railroad::default();
-            let out: Diagram<VerticalGrid<Box<dyn Node>>> = rr.generate(info).recover(&mut errors)?;
-            out.to_string()
-        }
-        else {
-            String::new()
+        out.main = RustWriteMain { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
+        out.lex = RustWriteLex { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
+        out.cst = RustWriteCST { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
+        out.ast = RustWriteAST { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
+        let readme = RustWriteReadme {
+            grammar: info,
+            config: self.clone(),
+            #[cfg(feature = "railroad")]
+            railroad: self.railway.generate(info).recover(&mut errors)?,
         };
-        Success { value: RustModule { main, lex, cst, ast, railroad }, diagnostics: errors }
+        out.readme = readme.render().recover(&mut errors)?;
+        out.railway = readme.railway_svg();
+        out.railway_min = readme.railway_min();
+        Success { value: out, diagnostics: errors }
     }
 }
 
@@ -128,8 +149,15 @@ impl RustModule {
         cst.write_all(self.cst.as_bytes())?;
         let mut ast = File::create(path.join("parse_ast.rs"))?;
         ast.write_all(self.ast.as_bytes())?;
-        let mut svg = File::create(path.join("railroad.svg"))?;
-        svg.write_all(self.railroad.as_bytes())?;
+        if !self.railway.is_empty() {
+            let mut ast = File::create(path.join("railway.svg"))?;
+            ast.write_all(self.railway.as_bytes())?;
+            let mut ast = File::create(path.join("railway.min.svg"))?;
+            ast.write_all(self.railway_min.as_bytes())?;
+        }
+        let mut ast = File::create(path.join("readme.md"))?;
+        ast.write_all(self.readme.as_bytes())?;
+
         path.canonicalize()
     }
 }

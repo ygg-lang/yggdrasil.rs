@@ -55,3 +55,7 @@ svg.railroad .regex > rect {
 svg.railroad .string > rect {
     fill: cornsilk;
 }
+
+svg.railroad .character > rect {
+    fill: lightcoral;
+}

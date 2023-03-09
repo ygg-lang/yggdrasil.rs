@@ -12,6 +12,7 @@ use yggdrasil_ir::{
 
 mod helper;
 
+#[derive(Clone, Debug)]
 pub struct Railroad {
     pub with_css: bool,
     pub css: String,
