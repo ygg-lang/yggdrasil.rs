@@ -18,11 +18,13 @@ use std::{
 pub mod derive;
 pub mod parameter;
 
+mod fields;
 mod identifier;
 
 mod modifiers;
 
 pub use self::{
+    fields::{FieldCount, FieldKind, FieldMap, YggdrasilField},
     identifier::{YggdrasilIdentifier, YggdrasilNamepath},
     modifiers::YggdrasilAnnotations,
 };

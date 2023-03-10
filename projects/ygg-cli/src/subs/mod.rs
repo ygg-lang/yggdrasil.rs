@@ -8,7 +8,7 @@ mod test;
 use self::{ast::CommandAST, cst::CommandCST, init::CommandInit, new::CommandNew, publish::CommandPub, test::CommandTest};
 use crate::Ycc;
 use clap::Parser;
-use std::{env, fs, path::Path, process::Command};
+use std::{env, fs, process::Command};
 use yggdrasil_error::Result;
 
 #[derive(Parser)]

@@ -1,9 +1,7 @@
-#![feature(path_try_exists)]
-#![feature(once_cell)]
 #![feature(fs_try_exists)]
 #![feature(lazy_cell)]
 
-use self::{cache::*, subs::*};
+use self::subs::*;
 use clap::Parser;
 use yggdrasil_error::Result;
 
@@ -17,7 +15,7 @@ mod config;
 // #[clap(setting = AppSettings::ColoredHelp)]
 pub struct Ycc {
     /// Sets a custom config file. Could have been an Option<T> with no default too
-    #[clap(short, long, default_value = "yggdrasil.toml")]
+    #[clap(short, long, default_value = "ycc.toml")]
     config: String,
     #[clap(subcommand)]
     subs: YccCommand,
