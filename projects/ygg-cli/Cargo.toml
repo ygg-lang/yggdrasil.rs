@@ -13,6 +13,7 @@ name = "ycc"
 path = "src/main.rs"
 
 [dependencies]
+serde = { version = "1.0.188", features = ["derive"] }
 clap = { version = "4.4.6", features = ["derive"] }
 
 [dependencies.yggdrasil-error]

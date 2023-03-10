@@ -5,28 +5,25 @@
 
 use self::{cache::*, subs::*};
 use clap::Parser;
+use yggdrasil_error::Result;
 
 mod cache;
 mod subs;
 
-/// This doc string acts as a help message when the user runs '--help'
-/// as do all doc strings on fields
+mod config;
+
 #[derive(Parser)]
 // #[clap(version = crate_version!(), author = crate_authors!("\n"))]
 // #[clap(setting = AppSettings::ColoredHelp)]
-pub struct App {
+pub struct Ycc {
     /// Sets a custom config file. Could have been an Option<T> with no default too
     #[clap(short, long, default_value = "yggdrasil.toml")]
     config: String,
-    // A level of verbosity, and can be used multiple times
-    // #[clap(short, long, parse(from_occurrences))]
-    // verbose: i32,
-    /// Subcommands
     #[clap(subcommand)]
-    subs: SubCommand,
+    subs: YccCommand,
 }
 
 fn main() -> Result<()> {
-    let opts: App = App::parse();
+    let opts: Ycc = Ycc::parse();
     opts.subs.run(&opts)
 }
