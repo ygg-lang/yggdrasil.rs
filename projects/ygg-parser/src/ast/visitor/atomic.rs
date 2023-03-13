@@ -1,9 +1,19 @@
 use super::*;
+use std::str::FromStr;
+use yggdrasil_ir::rule::{BigInt, YggdrasilMacroCall};
 
 impl<'i> Extractor<AtomicContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &AtomicContextAll<'i>) -> Option<Self> {
         match node {
-            AtomicContextAll::AIntContext(_) => todo!(),
+            AtomicContextAll::ABoolContext(v) => match v.get_text().as_str() {
+                "true" => Some(YggdrasilExpression::boolean(true)),
+                "false" => Some(YggdrasilExpression::boolean(true)),
+                _ => None,
+            },
+            AtomicContextAll::AIntContext(n) => {
+                let int = BigInt::from_str(&n.get_text()).ok()?;
+                Some(YggdrasilExpression::integer(int))
+            }
             AtomicContextAll::AReContext(r) => Some(YggdrasilRegex::take(r.regex())?.into()),
             AtomicContextAll::ACharContext(escape) => {
                 let range = Range { start: escape.start().start as usize, end: escape.stop().stop as usize };
@@ -21,15 +31,11 @@ impl<'i> Extractor<AtomicContextAll<'i>> for YggdrasilExpression {
                     .into(),
                 )
             }
-            AtomicContextAll::ATupleContext(_) => todo!(),
-            AtomicContextAll::ASpecialContext(v) => match v.get_text().as_str() {
-                "true" => Some(YggdrasilExpression::boolean(true)),
-                "false" => Some(YggdrasilExpression::boolean(true)),
-                "ANY" => Some(YggdrasilExpression::any()),
-                _ => None,
-            },
             AtomicContextAll::AIdContext(s) => Some(YggdrasilIdentifier::take(s.identifier())?.into()),
             AtomicContextAll::AStringContext(s) => Some(YggdrasilText::take(s.string())?.into()),
+            AtomicContextAll::AGroupContext(v) => YggdrasilExpression::take(v.class_expression()),
+
+            AtomicContextAll::ACallContext(v) => Some(YggdrasilMacroCall::take(v.macro_call())?.into()),
             AtomicContextAll::Error(_) => None,
         }
     }

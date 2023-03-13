@@ -55,13 +55,6 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by the {@code CCall}
-    /// labeled alternative in {@link YggdrasilAntlrParser#class_expression}.
-    /// @param ctx the parse tree
-    fn visit_CCall(&mut self, ctx: &CCallContext<'input>) {
-        self.visit_children(ctx)
-    }
-
     /// Visit a parse tree produced by the {@code CETag}
     /// labeled alternative in {@link YggdrasilAntlrParser#class_expression}.
     /// @param ctx the parse tree
@@ -94,13 +87,6 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
     /// labeled alternative in {@link YggdrasilAntlrParser#class_expression}.
     /// @param ctx the parse tree
     fn visit_CPattern(&mut self, ctx: &CPatternContext<'input>) {
-        self.visit_children(ctx)
-    }
-
-    /// Visit a parse tree produced by the {@code CGroup}
-    /// labeled alternative in {@link YggdrasilAntlrParser#class_expression}.
-    /// @param ctx the parse tree
-    fn visit_CGroup(&mut self, ctx: &CGroupContext<'input>) {
         self.visit_children(ctx)
     }
 
@@ -157,13 +143,6 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by the {@code UGroup}
-    /// labeled alternative in {@link YggdrasilAntlrParser#union_expression}.
-    /// @param ctx the parse tree
-    fn visit_UGroup(&mut self, ctx: &UGroupContext<'input>) {
-        self.visit_children(ctx)
-    }
-
     /// Visit a parse tree produced by the {@code UETag}
     /// labeled alternative in {@link YggdrasilAntlrParser#union_expression}.
     /// @param ctx the parse tree
@@ -189,13 +168,6 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
     /// labeled alternative in {@link YggdrasilAntlrParser#union_expression}.
     /// @param ctx the parse tree
     fn visit_USoft(&mut self, ctx: &USoftContext<'input>) {
-        self.visit_children(ctx)
-    }
-
-    /// Visit a parse tree produced by the {@code UCall}
-    /// labeled alternative in {@link YggdrasilAntlrParser#union_expression}.
-    /// @param ctx the parse tree
-    fn visit_UCall(&mut self, ctx: &UCallContext<'input>) {
         self.visit_children(ctx)
     }
 
@@ -243,15 +215,45 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#macro_call}.
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#define_external}.
     /// @param ctx the parse tree
-    fn visit_macro_call(&mut self, ctx: &Macro_callContext<'input>) {
+    fn visit_define_external(&mut self, ctx: &Define_externalContext<'input>) {
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#tuple_call}.
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#external_block}.
     /// @param ctx the parse tree
-    fn visit_tuple_call(&mut self, ctx: &Tuple_callContext<'input>) {
+    fn visit_external_block(&mut self, ctx: &External_blockContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#external_pair}.
+    /// @param ctx the parse tree
+    fn visit_external_pair(&mut self, ctx: &External_pairContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#define_inspector}.
+    /// @param ctx the parse tree
+    fn visit_define_inspector(&mut self, ctx: &Define_inspectorContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#annotation}.
+    /// @param ctx the parse tree
+    fn visit_annotation(&mut self, ctx: &AnnotationContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#annotations}.
+    /// @param ctx the parse tree
+    fn visit_modifiers(&mut self, ctx: &ModifiersContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#macro_call}.
+    /// @param ctx the parse tree
+    fn visit_macro_call(&mut self, ctx: &Macro_callContext<'input>) {
         self.visit_children(ctx)
     }
 
@@ -296,10 +298,17 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by the {@code ATuple}
+    /// Visit a parse tree produced by the {@code AGroup}
     /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
     /// @param ctx the parse tree
-    fn visit_ATuple(&mut self, ctx: &ATupleContext<'input>) {
+    fn visit_AGroup(&mut self, ctx: &AGroupContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code ACall}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_ACall(&mut self, ctx: &ACallContext<'input>) {
         self.visit_children(ctx)
     }
 
@@ -331,10 +340,10 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by the {@code ASpecial}
+    /// Visit a parse tree produced by the {@code ABool}
     /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
     /// @param ctx the parse tree
-    fn visit_ASpecial(&mut self, ctx: &ASpecialContext<'input>) {
+    fn visit_ABool(&mut self, ctx: &ABoolContext<'input>) {
         self.visit_children(ctx)
     }
 
@@ -420,13 +429,6 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by the {@code CCall}
-    /// labeled alternative in {@link YggdrasilAntlrParser#class_expression}.
-    /// @param ctx the parse tree
-    fn visit_CCall(&mut self, ctx: &CCallContext<'input>) -> Self::Return {
-        self.visit_children(ctx)
-    }
-
     /// Visit a parse tree produced by the {@code CETag}
     /// labeled alternative in {@link YggdrasilAntlrParser#class_expression}.
     /// @param ctx the parse tree
@@ -459,13 +461,6 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
     /// labeled alternative in {@link YggdrasilAntlrParser#class_expression}.
     /// @param ctx the parse tree
     fn visit_CPattern(&mut self, ctx: &CPatternContext<'input>) -> Self::Return {
-        self.visit_children(ctx)
-    }
-
-    /// Visit a parse tree produced by the {@code CGroup}
-    /// labeled alternative in {@link YggdrasilAntlrParser#class_expression}.
-    /// @param ctx the parse tree
-    fn visit_CGroup(&mut self, ctx: &CGroupContext<'input>) -> Self::Return {
         self.visit_children(ctx)
     }
 
@@ -522,13 +517,6 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by the {@code UGroup}
-    /// labeled alternative in {@link YggdrasilAntlrParser#union_expression}.
-    /// @param ctx the parse tree
-    fn visit_UGroup(&mut self, ctx: &UGroupContext<'input>) -> Self::Return {
-        self.visit_children(ctx)
-    }
-
     /// Visit a parse tree produced by the {@code UETag}
     /// labeled alternative in {@link YggdrasilAntlrParser#union_expression}.
     /// @param ctx the parse tree
@@ -554,13 +542,6 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
     /// labeled alternative in {@link YggdrasilAntlrParser#union_expression}.
     /// @param ctx the parse tree
     fn visit_USoft(&mut self, ctx: &USoftContext<'input>) -> Self::Return {
-        self.visit_children(ctx)
-    }
-
-    /// Visit a parse tree produced by the {@code UCall}
-    /// labeled alternative in {@link YggdrasilAntlrParser#union_expression}.
-    /// @param ctx the parse tree
-    fn visit_UCall(&mut self, ctx: &UCallContext<'input>) -> Self::Return {
         self.visit_children(ctx)
     }
 
@@ -608,15 +589,45 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#macro_call}.
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#define_external}.
     /// @param ctx the parse tree
-    fn visit_macro_call(&mut self, ctx: &Macro_callContext<'input>) -> Self::Return {
+    fn visit_define_external(&mut self, ctx: &Define_externalContext<'input>) -> Self::Return {
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#tuple_call}.
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#external_block}.
     /// @param ctx the parse tree
-    fn visit_tuple_call(&mut self, ctx: &Tuple_callContext<'input>) -> Self::Return {
+    fn visit_external_block(&mut self, ctx: &External_blockContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#external_pair}.
+    /// @param ctx the parse tree
+    fn visit_external_pair(&mut self, ctx: &External_pairContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#define_inspector}.
+    /// @param ctx the parse tree
+    fn visit_define_inspector(&mut self, ctx: &Define_inspectorContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#annotation}.
+    /// @param ctx the parse tree
+    fn visit_annotation(&mut self, ctx: &AnnotationContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#annotations}.
+    /// @param ctx the parse tree
+    fn visit_modifiers(&mut self, ctx: &ModifiersContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#macro_call}.
+    /// @param ctx the parse tree
+    fn visit_macro_call(&mut self, ctx: &Macro_callContext<'input>) -> Self::Return {
         self.visit_children(ctx)
     }
 
@@ -661,10 +672,17 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by the {@code ATuple}
+    /// Visit a parse tree produced by the {@code AGroup}
     /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
     /// @param ctx the parse tree
-    fn visit_ATuple(&mut self, ctx: &ATupleContext<'input>) -> Self::Return {
+    fn visit_AGroup(&mut self, ctx: &AGroupContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by the {@code ACall}
+    /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
+    /// @param ctx the parse tree
+    fn visit_ACall(&mut self, ctx: &ACallContext<'input>) -> Self::Return {
         self.visit_children(ctx)
     }
 
@@ -696,10 +714,10 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by the {@code ASpecial}
+    /// Visit a parse tree produced by the {@code ABool}
     /// labeled alternative in {@link YggdrasilAntlrParser#atomic}.
     /// @param ctx the parse tree
-    fn visit_ASpecial(&mut self, ctx: &ASpecialContext<'input>) -> Self::Return {
+    fn visit_ABool(&mut self, ctx: &ABoolContext<'input>) -> Self::Return {
         self.visit_children(ctx)
     }
 
@@ -779,11 +797,6 @@ where
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
-    fn visit_CCall(&mut self, ctx: &CCallContext<'input>) {
-        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_CCall(self, ctx);
-        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
-    }
-
     fn visit_CETag(&mut self, ctx: &CETagContext<'input>) {
         let result = <Self as YggdrasilAntlrVisitorCompat>::visit_CETag(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
@@ -806,11 +819,6 @@ where
 
     fn visit_CPattern(&mut self, ctx: &CPatternContext<'input>) {
         let result = <Self as YggdrasilAntlrVisitorCompat>::visit_CPattern(self, ctx);
-        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
-    }
-
-    fn visit_CGroup(&mut self, ctx: &CGroupContext<'input>) {
-        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_CGroup(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
@@ -854,11 +862,6 @@ where
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
-    fn visit_UGroup(&mut self, ctx: &UGroupContext<'input>) {
-        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_UGroup(self, ctx);
-        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
-    }
-
     fn visit_UETag(&mut self, ctx: &UETagContext<'input>) {
         let result = <Self as YggdrasilAntlrVisitorCompat>::visit_UETag(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
@@ -876,11 +879,6 @@ where
 
     fn visit_USoft(&mut self, ctx: &USoftContext<'input>) {
         let result = <Self as YggdrasilAntlrVisitorCompat>::visit_USoft(self, ctx);
-        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
-    }
-
-    fn visit_UCall(&mut self, ctx: &UCallContext<'input>) {
-        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_UCall(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
@@ -919,13 +917,38 @@ where
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
-    fn visit_macro_call(&mut self, ctx: &Macro_callContext<'input>) {
-        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_macro_call(self, ctx);
+    fn visit_define_external(&mut self, ctx: &Define_externalContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_define_external(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
-    fn visit_tuple_call(&mut self, ctx: &Tuple_callContext<'input>) {
-        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_tuple_call(self, ctx);
+    fn visit_external_block(&mut self, ctx: &External_blockContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_external_block(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_external_pair(&mut self, ctx: &External_pairContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_external_pair(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_define_inspector(&mut self, ctx: &Define_inspectorContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_define_inspector(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_annotation(&mut self, ctx: &AnnotationContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_annotation(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_modifiers(&mut self, ctx: &ModifiersContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_modifiers(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_macro_call(&mut self, ctx: &Macro_callContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_macro_call(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
@@ -959,8 +982,13 @@ where
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
-    fn visit_ATuple(&mut self, ctx: &ATupleContext<'input>) {
-        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_ATuple(self, ctx);
+    fn visit_AGroup(&mut self, ctx: &AGroupContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_AGroup(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_ACall(&mut self, ctx: &ACallContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_ACall(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
@@ -984,8 +1012,8 @@ where
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
-    fn visit_ASpecial(&mut self, ctx: &ASpecialContext<'input>) {
-        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_ASpecial(self, ctx);
+    fn visit_ABool(&mut self, ctx: &ABoolContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_ABool(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 

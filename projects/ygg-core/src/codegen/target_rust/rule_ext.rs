@@ -56,7 +56,7 @@ impl NodeExt for YggdrasilExpression {
     fn write(&self, w: &mut String, ctx: &GrammarRule, root: bool) -> std::fmt::Result {
         match &self.kind {
             ExpressionKind::Ignored => w.push_str("builtin_ignore(s)"),
-            ExpressionKind::Function(_) => w.push_str("parse_Function(s)"),
+            ExpressionKind::Call(_) => w.push_str("parse_Function(s)"),
             ExpressionKind::Choice(v) => {
                 let (head, rest) = v.split();
                 head.write(w, ctx, false)?;

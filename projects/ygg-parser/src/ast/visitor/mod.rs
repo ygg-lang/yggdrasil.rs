@@ -12,7 +12,7 @@ mod unions;
 // mod calls;
 // mod collection;
 // mod let_binding;
-// mod modifiers;
+mod modifiers;
 
 impl ParseTreeVisitorCompat<'_> for YggdrasilANTLR {
     type Node = YggdrasilAntlrParserContextType;

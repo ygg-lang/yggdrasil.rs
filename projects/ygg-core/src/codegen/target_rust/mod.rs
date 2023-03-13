@@ -141,7 +141,7 @@ impl RustModule {
         else {
             create_dir_all(path)?
         }
-        let mut main = File::create(path.join("mod.rs"))?;
+        let mut main = File::create(path.join("annotations"))?;
         main.write_all(self.main.as_bytes())?;
         let mut cst = File::create(path.join("lexer.rs"))?;
         cst.write_all(self.lex.as_bytes())?;

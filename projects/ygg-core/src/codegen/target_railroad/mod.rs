@@ -81,7 +81,7 @@ impl AsRailroad for ExpressionKind {
             ExpressionKind::Concat(e) => e.as_railroad(config),
             ExpressionKind::Unary(e) => e.as_railroad(config),
             ExpressionKind::Rule(e) => e.as_railroad(config),
-            ExpressionKind::Function(e) => Box::new(Terminal::new(e.name.to_string(), &vec!["function"])),
+            ExpressionKind::Call(e) => Box::new(Terminal::new(e.name.to_string(), &vec!["function"])),
             ExpressionKind::Ignored => Box::new(Terminal::new("IGNORED".to_string(), &vec!["character"])),
             ExpressionKind::Text(v) => Box::new(Terminal::new(v.text.to_string(), &vec!["string"])),
             ExpressionKind::CharacterAny => Box::new(Terminal::new("ANY".to_string(), &vec!["character"])),

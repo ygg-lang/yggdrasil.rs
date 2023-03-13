@@ -1,7 +1,5 @@
 use super::*;
-use yggdrasil_ir::{
-    nodes::{ChoiceExpression, ConcatExpression},
-};
+use yggdrasil_ir::nodes::{ChoiceExpression, ConcatExpression};
 
 impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
     fn take_one(node: &Define_unionContext<'i>) -> Option<Self> {
@@ -29,35 +27,34 @@ impl<'i> Extractor<Union_termContextAll<'i>> for YggdrasilExpression {
 impl<'i> Extractor<Union_expressionContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &Union_expressionContextAll<'i>) -> Option<Self> {
         match node {
-            Union_expressionContextAll::UHardContext(v) => {
-                let lhs = YggdrasilExpression::take(v.lhs.clone())?;
-                let rhs = YggdrasilExpression::take(v.rhs.clone())?;
+            Union_expressionContextAll::UHardContext(u) => {
+                let lhs = Self::take(u.lhs.clone())?;
+                let rhs = Self::take(u.rhs.clone())?;
                 Some(lhs + rhs)
             }
-            Union_expressionContextAll::USoftContext(v) => {
-                let lhs = YggdrasilExpression::take(v.lhs.clone())?;
-                let rhs = YggdrasilExpression::take(v.rhs.clone())?;
+            Union_expressionContextAll::USoftContext(u) => {
+                let lhs = Self::take(u.lhs.clone())?;
+                let rhs = Self::take(u.rhs.clone())?;
                 Some(lhs & rhs)
             }
-            Union_expressionContextAll::UUntagContext(_) => {
-                todo!()
+            Union_expressionContextAll::UUntagContext(u) => {
+                let base = Self::take(u.union_expression())?;
+                Some(base.with_remark())
             }
-            Union_expressionContextAll::USuffixContext(_) => {
-                todo!()
+            Union_expressionContextAll::USuffixContext(u) => {
+                let base = Self::take(u.union_expression())?;
+                let suffix = YggdrasilOperator::take(u.suffix())?;
+                Some(Self::unary(base, suffix))
             }
-            Union_expressionContextAll::UGroupContext(_) => {
-                todo!()
+            Union_expressionContextAll::UETagContext(u) => {
+                let base = Self::take(u.union_expression())?;
+                let id = YggdrasilIdentifier::take(u.identifier())?;
+                Some(base.with_tag(id))
             }
-            Union_expressionContextAll::UETagContext(_) => {
-                todo!()
-            }
-            Union_expressionContextAll::UtomContext(v) => YggdrasilExpression::take(v.atomic()),
-            Union_expressionContextAll::UNotContext(_) => {
-                todo!()
-            }
-
-            Union_expressionContextAll::UCallContext(_) => {
-                todo!()
+            Union_expressionContextAll::UtomContext(v) => Self::take(v.atomic()),
+            Union_expressionContextAll::UNotContext(u) => {
+                let base = Self::take(u.union_expression())?;
+                Some(Self::unary(base, YggdrasilOperator::Negative))
             }
             Union_expressionContextAll::Error(_) => None,
         }

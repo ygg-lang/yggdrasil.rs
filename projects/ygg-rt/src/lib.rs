@@ -41,10 +41,12 @@ pub type OutputResult<'i, R> = Result<TokenTree<'i, R>, YggdrasilError<R>>;
 
 /// Define rules subject to Yggdrasil
 pub trait YggdrasilRule: Clone + Debug + Eq + Hash + Ord {
-    /// Go through all the rules
-    fn all_rules() -> &'static [Self]
-    where
-        Self: Sized;
     /// Nodes ignored in ast, such as spaces, carriage returns, comments, etc.
-    fn is_ignore(&self) -> bool;
+    fn is_ignore(&self) -> bool {
+        false
+    }
+    /// Get the style name from the rule
+    fn get_style(&self) -> &'static str {
+        ""
+    }
 }

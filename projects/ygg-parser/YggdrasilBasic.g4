@@ -18,6 +18,7 @@ OP_CONCAT: '~';
 OP_OR:     '|';
 OP_GT:     '>';
 OP_UNTAG:  '^';
+OP_TO:   '->';
 
 KW_GRAMMAR: 'grammar';
 
@@ -28,6 +29,8 @@ KW_CLASS: 'class';
 KW_UNION: 'union';
 KW_CLIMB: 'climb';
 KW_TOKEN: 'token';
+KW_EXTERNAL: 'external';
+KW_INSPECTOR: 'inspect'|'inspector';
 
 OP_PROPORTION: '::';
 
@@ -39,7 +42,7 @@ BRACE_L:       '{';
 BRACE_R:       '}';
 
 INTEGER:     '0' | [1-9][0-9]*;
-SPECIAL:     'true' | 'false' | 'ANY';
+BOOLEAN:     'true' | 'false';
 ESCAPED:     '\\' .;
 REGEX_RANGE: '[' ~[\]]* ']';
 REGEX_FREE:  '/' ~[/]* '/';

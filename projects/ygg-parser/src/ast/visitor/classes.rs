@@ -1,10 +1,10 @@
 use super::*;
-use yggdrasil_ir::nodes::ConcatExpression;
+use yggdrasil_ir::{nodes::ConcatExpression, rule::YggdrasilModifiers};
 
 impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
     fn take_one(node: &Define_classContext<'i>) -> Option<Self> {
         let id = YggdrasilIdentifier::take(node.name.clone())?;
-        let modifiers = YggdrasilIdentifier::take_many(&node.mods);
+        let modifiers = YggdrasilModifiers::take(node.modifiers()).unwrap_or_default();
         let anno = YggdrasilAnnotations { macros: vec![], modifiers };
         let expr = YggdrasilExpression::take(node.class_block());
         let range = Range { start: node.start().start as usize, end: node.stop().stop as usize };
@@ -22,41 +22,39 @@ impl<'i> Extractor<Class_blockContextAll<'i>> for YggdrasilExpression {
 impl<'i> Extractor<Class_expressionContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &Class_expressionContextAll<'i>) -> Option<Self> {
         match node {
-            Class_expressionContextAll::CSuffixContext(s) => {
-                let suffix = YggdrasilOperator::take(s.suffix())?;
-                let base = Self::take(s.class_expression())?;
+            Class_expressionContextAll::CSuffixContext(c) => {
+                let suffix = YggdrasilOperator::take(c.suffix())?;
+                let base = Self::take(c.class_expression())?;
                 Some(YggdrasilExpression::unary(base, suffix))
             }
-            Class_expressionContextAll::CCallContext(_) => {
-                todo!()
-            }
-            Class_expressionContextAll::CETagContext(e) => {
-                let name = YggdrasilIdentifier::take(e.identifier())?;
-                let rule = YggdrasilExpression::take(e.class_expression())?;
+            Class_expressionContextAll::CETagContext(c) => {
+                let name = YggdrasilIdentifier::take(c.identifier())?;
+                let rule = YggdrasilExpression::take(c.class_expression())?;
                 Some(rule.with_tag(name))
             }
-            Class_expressionContextAll::CUntagContext(_) => {
-                todo!()
+            Class_expressionContextAll::CUntagContext(c) => {
+                let base = YggdrasilExpression::take(c.class_expression())?;
+                Some(base.with_remark())
             }
-            Class_expressionContextAll::CSoftContext(v) => {
-                let lhs = YggdrasilExpression::take(v.lhs.clone())?;
-                let rhs = YggdrasilExpression::take(v.rhs.clone())?;
+            Class_expressionContextAll::CSoftContext(c) => {
+                let lhs = YggdrasilExpression::take(c.lhs.clone())?;
+                let rhs = YggdrasilExpression::take(c.rhs.clone())?;
                 Some(lhs & rhs)
             }
-            Class_expressionContextAll::CHardContext(v) => {
-                let lhs = YggdrasilExpression::take(v.lhs.clone())?;
-                let rhs = YggdrasilExpression::take(v.rhs.clone())?;
+            Class_expressionContextAll::CHardContext(c) => {
+                let lhs = YggdrasilExpression::take(c.lhs.clone())?;
+                let rhs = YggdrasilExpression::take(c.rhs.clone())?;
                 Some(lhs + rhs)
             }
-            Class_expressionContextAll::CPatternContext(v) => {
-                let lhs = YggdrasilExpression::take(v.lhs.clone())?;
-                let rhs = YggdrasilExpression::take(v.rhs.clone())?;
+            Class_expressionContextAll::CPatternContext(c) => {
+                let lhs = YggdrasilExpression::take(c.lhs.clone())?;
+                let rhs = YggdrasilExpression::take(c.rhs.clone())?;
                 Some(lhs | rhs)
             }
-            Class_expressionContextAll::CGroupContext(v) => YggdrasilExpression::take(v.class_expression()),
-            Class_expressionContextAll::AtomContext(s) => YggdrasilExpression::take(s.atomic()),
-            Class_expressionContextAll::CNotContext(_) => {
-                todo!()
+            Class_expressionContextAll::AtomContext(c) => YggdrasilExpression::take(c.atomic()),
+            Class_expressionContextAll::CNotContext(c) => {
+                let base = Self::take(c.class_expression())?;
+                Some(Self::unary(base, YggdrasilOperator::Negative))
             }
             Class_expressionContextAll::Error(_) => None,
         }
