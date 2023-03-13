@@ -2,7 +2,7 @@ use super::*;
 use crate::{data::RuleReference, traits::FieldDescriptor};
 use std::collections::HashSet;
 
-pub type FieldMap = BTreeMap<String, YggdrasilField>;
+type FieldMap = BTreeMap<String, YggdrasilField>;
 
 #[derive(Debug)]
 pub enum FieldCount {
@@ -37,15 +37,51 @@ pub struct YggdrasilField {
     pub count: FieldCount,
 }
 
-pub struct YggdrasilClass {
-    pub fields: BTreeMap<String, YggdrasilField>,
+impl GrammarRule {
+    pub fn as_class(&self) -> YggdrasilVariant {
+        assert_eq!(self.kind, GrammarRuleKind::Class, "do you filter with class?");
+        let mut fields = Default::default();
+        match &self.body {
+            Some(s) => s.visit_class(None, &mut fields),
+            None => {}
+        }
+
+        YggdrasilVariant { document: self.document.clone(), name: self.name.clone(), fields }
+    }
 }
 
-impl GrammarRule {
-    pub fn get_class_fields(&self) -> YggdrasilClass {
-        assert_eq!(self.kind, GrammarRuleKind::Class, "do you filter with class?");
-
-        YggdrasilClass { fields: Default::default() }
+impl YggdrasilExpression {
+    fn visit_class(&self, candidate: Option<&YggdrasilIdentifier>, map: &mut FieldMap) {
+        let tag = self.tag.as_ref().or(candidate);
+        match &self.kind {
+            // `a:IGNORED`
+            ExpressionKind::Ignored => {}
+            ExpressionKind::Function(_) => {}
+            ExpressionKind::Choice(many) => {
+                // a:(x | y), drop tag
+                for one in &many.branches {
+                    one.visit_class(None, map);
+                }
+            }
+            ExpressionKind::Concat(many) => {
+                // a:(x ~ y), drop tag
+                for one in &many.sequence {
+                    one.visit_class(None, map);
+                }
+            }
+            // a:x+
+            // a:(x*)
+            // a:(b:x)
+            ExpressionKind::Unary(one) => one.base.visit_class(tag, map),
+            ExpressionKind::Rule(_) => {}
+            ExpressionKind::Text(_) => {}
+            ExpressionKind::CharacterAny => {}
+            ExpressionKind::CharacterRange(_) => {}
+            ExpressionKind::Integer(_) => {}
+            ExpressionKind::Boolean(_) => {}
+            ExpressionKind::Regex(_) => {}
+            _ => {}
+        }
     }
 }
 

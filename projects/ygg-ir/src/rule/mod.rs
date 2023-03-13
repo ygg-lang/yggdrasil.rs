@@ -1,7 +1,4 @@
-pub use self::{
-    derive::RuleDerive,
-    parameter::{RuleParameter, RuleParameterKind},
-};
+pub use self::derive::RuleDerive;
 use crate::{
     grammar::GrammarInfo,
     nodes::{ExpressionKind, YggdrasilExpression, YggdrasilOperator},
@@ -24,7 +21,7 @@ mod identifier;
 mod modifiers;
 
 pub use self::{
-    fields::{FieldCount, FieldKind, FieldMap, YggdrasilField},
+    fields::{FieldCount, FieldKind, YggdrasilField},
     identifier::{YggdrasilIdentifier, YggdrasilNamepath},
     modifiers::YggdrasilAnnotations,
 };
@@ -139,6 +136,13 @@ pub struct GrammarRule {
     pub body: Option<YggdrasilExpression>,
     /// position of all parts
     pub range: Range<usize>,
+}
+
+// Class rule
+pub struct YggdrasilVariant {
+    pub document: String,
+    pub name: YggdrasilIdentifier,
+    pub fields: BTreeMap<String, YggdrasilField>,
 }
 
 impl Ord for GrammarRule {
