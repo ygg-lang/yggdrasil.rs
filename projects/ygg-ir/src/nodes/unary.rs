@@ -1,4 +1,5 @@
 use super::*;
+use crate::rule::FieldCounter;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum YggdrasilOperator {
@@ -24,6 +25,12 @@ pub enum YggdrasilOperator {
 pub struct UnaryExpression {
     pub base: YggdrasilExpression,
     pub operators: Vec<YggdrasilOperator>,
+}
+
+impl UnaryExpression {
+    pub fn counter(&self) -> FieldCounter {
+        s
+    }
 }
 
 impl From<UnaryExpression> for ExpressionKind {
@@ -64,6 +71,17 @@ impl YggdrasilOperator {
             "+" => Self::Repeats,
             "*" => Self::Repeat1,
             _ => unreachable!(),
+        }
+    }
+    pub fn counter(&self) -> FieldCounter {
+        match self {
+            YggdrasilOperator::Negative => {}
+            YggdrasilOperator::Optional => {}
+            YggdrasilOperator::Repeats => {}
+            YggdrasilOperator::Repeat1 => {}
+            YggdrasilOperator::Boxing => {}
+            YggdrasilOperator::RepeatsBetween(_, _) => {}
+            YggdrasilOperator::Recursive => {}
         }
     }
 }

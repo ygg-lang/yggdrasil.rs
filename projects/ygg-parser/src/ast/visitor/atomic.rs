@@ -46,13 +46,13 @@ impl<'i> Extractor<IdentifierContextAll<'i>> for YggdrasilIdentifier {
         if let Some(s) = node.UNICODE_ID() {
             return Some(YggdrasilIdentifier {
                 text: s.get_text(),
-                span: Range { start: s.symbol.start as usize, end: s.symbol.stop as usize },
+                range: Range { start: s.symbol.start as usize, end: s.symbol.stop as usize },
             });
         }
         if let Some(s) = node.RAW_ID() {
             return Some(YggdrasilIdentifier {
                 text: s.symbol.text.trim_matches('`').to_string(),
-                span: Range { start: s.symbol.start as usize, end: s.symbol.stop as usize },
+                range: Range { start: s.symbol.start as usize, end: s.symbol.stop as usize },
             });
         }
         None

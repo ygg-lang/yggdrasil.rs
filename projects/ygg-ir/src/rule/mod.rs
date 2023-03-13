@@ -12,8 +12,8 @@ use std::{
     ops::{BitAnd, BitOr, Range},
 };
 
+mod classes;
 pub mod derive;
-pub mod parameter;
 
 mod fields;
 mod identifier;
@@ -21,7 +21,7 @@ mod identifier;
 mod modifiers;
 
 pub use self::{
-    fields::{FieldCount, FieldKind, YggdrasilField},
+    fields::{counter::FieldCounter, FieldKind, YggdrasilField},
     identifier::{YggdrasilIdentifier, YggdrasilNamepath},
     modifiers::YggdrasilAnnotations,
 };

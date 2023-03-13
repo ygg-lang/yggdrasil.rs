@@ -1,18 +1,11 @@
 use super::*;
 use crate::{data::RuleReference, traits::FieldDescriptor};
-use std::collections::HashSet;
+use std::{collections::HashSet, ops::BitXorAssign};
 
-type FieldMap = BTreeMap<String, YggdrasilField>;
-
-#[derive(Debug)]
-pub enum FieldCount {
-    Optional,
-    One,
-    Many,
-}
+pub mod counter;
 
 pub enum FieldKind {
-    Named(YggdrasilIdentifier),
+    Rule(String),
     IgnoreText,
     IgnoreRegex,
     IgnoreComment,
@@ -32,9 +25,38 @@ pub enum FieldKind {
 /// }
 /// ```
 pub struct YggdrasilField {
-    pub name: YggdrasilIdentifier,
+    pub name: String,
     pub kind: FieldKind,
-    pub count: FieldCount,
+    pub count: FieldCounter,
+    pub bind_position: Vec<Range<usize>>,
+    pub rule_position: Vec<Range<usize>>,
+}
+
+#[derive(Default)]
+struct FieldMap {
+    wrap: BTreeMap<String, YggdrasilField>,
+}
+
+impl FieldMap {
+    pub fn register_rule(&mut self, bind: &YggdrasilIdentifier, rule: &RuleReference, count: FieldCounter) {
+        match self.wrap.get_mut(&bind.text) {
+            Some(old) => {
+                old.bind_position.push(bind.range.clone());
+                old.count += count;
+            }
+            None => {
+                let name = bind.text.to_string();
+                let new = YggdrasilField {
+                    name: name.clone(),
+                    kind: FieldKind::Rule(rule.name.text.clone()),
+                    count,
+                    bind_position: vec![bind.range.clone()],
+                    rule_position: vec![rule.name.range.clone()],
+                };
+                self.wrap.insert(name, new);
+            }
+        }
+    }
 }
 
 impl GrammarRule {
@@ -73,7 +95,10 @@ impl YggdrasilExpression {
             // a:(x*)
             // a:(b:x)
             ExpressionKind::Unary(one) => one.base.visit_class(tag, map),
-            ExpressionKind::Rule(_) => {}
+            ExpressionKind::Rule(one) => match &self.tag {
+                Some(s) => YggdrasilField { name: s.clone(), kind: FieldKind::Rule(one.name.clone()), count: FieldCounter::OPTIONAL },
+                None => {}
+            },
             ExpressionKind::Text(_) => {}
             ExpressionKind::CharacterAny => {}
             ExpressionKind::CharacterRange(_) => {}
