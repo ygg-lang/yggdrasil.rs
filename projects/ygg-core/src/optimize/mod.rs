@@ -5,7 +5,7 @@ use yggdrasil_ir::{
     grammar::GrammarInfo,
     nodes::{ChoiceExpression, ConcatExpression, ExpressionKind, UnaryExpression, YggdrasilExpression},
     rule::{FunctionRule, GrammarAtomic, GrammarRule},
-    traits::{CodeOptimizer, FieldDescriptor},
+    traits::CodeOptimizer,
     IndexMap,
 };
 

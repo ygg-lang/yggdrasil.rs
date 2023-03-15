@@ -29,7 +29,7 @@ impl<'i> Extractor<AtomicContextAll<'i>> for YggdrasilExpression {
                     .into(),
                 )
             }
-            AtomicContextAll::AIdContext(s) => Some(YggdrasilIdentifier::take(s.identifier())?.into()),
+            AtomicContextAll::AIdContext(s) => YggdrasilExpression::take(s.identifier()),
             AtomicContextAll::AStringContext(s) => Some(YggdrasilText::take(s.string())?.into()),
             AtomicContextAll::AGroupContext(v) => YggdrasilExpression::take(v.class_expression()),
 
@@ -45,6 +45,18 @@ impl<'i> Extractor<NamepathContextAll<'i>> for YggdrasilNamepath {
         Some(Self { identifiers: YggdrasilIdentifier::take_many(&node.identifier_all()), range: span })
     }
 }
+
+impl<'i> Extractor<IdentifierContextAll<'i>> for YggdrasilExpression {
+    fn take_one(node: &IdentifierContextAll<'i>) -> Option<Self> {
+        let id = YggdrasilIdentifier::take_one(node)?;
+        Some(match id.text.as_str() {
+            "ANY" => YggdrasilExpression::any(),
+            "ROL" => YggdrasilExpression::rol(),
+            _ => id.into(),
+        })
+    }
+}
+
 impl<'i> Extractor<IdentifierContextAll<'i>> for YggdrasilIdentifier {
     fn take_one(node: &IdentifierContextAll<'i>) -> Option<Self> {
         if let Some(s) = node.UNICODE_ID() {

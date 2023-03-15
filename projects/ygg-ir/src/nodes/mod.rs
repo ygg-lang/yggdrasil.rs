@@ -98,6 +98,9 @@ impl YggdrasilExpression {
     pub fn any() -> Self {
         ExpressionKind::CharacterAny.into()
     }
+    pub fn rol() -> Self {
+        ExpressionKind::CharacterRestOfLine.into()
+    }
     pub fn boolean(bool: bool) -> Self {
         ExpressionKind::Boolean(bool).into()
     }

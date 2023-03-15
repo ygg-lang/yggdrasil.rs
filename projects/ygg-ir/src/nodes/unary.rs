@@ -1,5 +1,4 @@
 use super::*;
-use crate::rule::FieldCounter;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum YggdrasilOperator {

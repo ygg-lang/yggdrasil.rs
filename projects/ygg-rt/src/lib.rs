@@ -12,6 +12,8 @@ mod language;
 mod parser_state;
 mod position;
 
+mod ast;
+
 mod enhance;
 pub mod pratt_parser;
 #[deprecated(
@@ -24,6 +26,7 @@ mod span;
 mod token;
 
 pub use crate::{
+    ast::YggdrasilNode,
     enhance::{stack::Stack, RegexCompiled},
     errors::YggdrasilError,
     iterators::TokenTree,

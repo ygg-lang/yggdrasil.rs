@@ -14,9 +14,7 @@ pub use self::{
 };
 use crate::{
     data::RuleReference,
-    grammar::GrammarInfo,
     nodes::{ExpressionKind, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
-    traits::FieldDescriptor,
 };
 use convert_case::{Case, Casing};
 pub use num::BigInt;
@@ -25,7 +23,7 @@ use num::Zero;
 use serde::{Deserialize, Serialize};
 use std::{
     cmp::Ordering,
-    collections::{BTreeMap, BTreeSet, HashSet},
+    collections::{BTreeMap, BTreeSet},
     fmt::{Debug, Display, Formatter},
     ops::{BitAndAssign, BitOrAssign, BitXorAssign, Range},
 };
@@ -182,7 +180,10 @@ impl Default for GrammarRule {
 }
 
 impl GrammarRule {
-    pub fn structure_name(&self) -> String {
+    pub fn is_class(&self) -> bool {
+        matches!(self.kind, GrammarRuleKind::Class)
+    }
+    pub fn node_name(&self) -> String {
         format!("{}Node", self.name.text).to_case(Case::Pascal)
     }
     pub fn parser_name(&self) -> String {

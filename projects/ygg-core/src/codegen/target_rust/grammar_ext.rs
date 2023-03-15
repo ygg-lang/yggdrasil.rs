@@ -1,9 +1,7 @@
 use super::*;
 
 pub trait GrammarExt {
-    fn language_name(&self) -> String;
     fn rule_name(&self) -> String;
-    fn rules(&self) -> Vec<GrammarRule>;
     fn ignore_rules(&self) -> Vec<GrammarRule>;
     fn ignore_rules_empty(&self) -> bool;
     fn ignore_rule_pattern(&self) -> String;
@@ -11,14 +9,8 @@ pub trait GrammarExt {
 }
 
 impl GrammarExt for GrammarInfo {
-    fn language_name(&self) -> String {
-        format!("{}Language", self.name.text)
-    }
     fn rule_name(&self) -> String {
         format!("{}Rule", self.name.text)
-    }
-    fn rules(&self) -> Vec<GrammarRule> {
-        self.rules.values().sorted().cloned().collect_vec()
     }
     fn ignore_rules(&self) -> Vec<GrammarRule> {
         self.rules.values().sorted().filter(|v| v.ignored).cloned().collect_vec()

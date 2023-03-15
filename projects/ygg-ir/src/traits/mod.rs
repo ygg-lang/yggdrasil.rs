@@ -1,18 +1,5 @@
 use crate::grammar::GrammarInfo;
-use std::collections::HashSet;
 use yggdrasil_error::{Validate, Validation};
-
-/// Indicates what kind of structure a rule should generate
-///
-/// ```ygg
-/// class A {
-///     a: (x b:y+)?
-/// }
-/// ```
-pub trait FieldDescriptor {
-    fn visit_field_names<'a>(&'a self, buffer: &mut HashSet<&'a String>);
-    fn visit_field_count(&self, buffer: &mut HashSet<String>);
-}
 
 pub trait CodeOptimizer {
     fn optimize(&mut self, info: &GrammarInfo) -> Validation<GrammarInfo>;

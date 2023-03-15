@@ -141,7 +141,7 @@ impl AsRailroad for UnaryExpression {
 }
 
 impl AsRailroad for RuleReference {
-    fn as_railroad(&self, config: &Railroad) -> Box<dyn Node> {
+    fn as_railroad(&self, _: &Railroad) -> Box<dyn Node> {
         let mut class = vec!["symbol"];
         if self.inline {
             class.push("inline")

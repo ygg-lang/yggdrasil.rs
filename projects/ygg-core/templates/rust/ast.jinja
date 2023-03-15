@@ -1,0 +1,17 @@
+use super::*;
+
+
+{% for rule in self.grammar.rules() %}
+impl YggdrasilNode for {{ rule.node_name() }} {
+    type Language = {{ self.grammar.language_name() }};
+
+    fn get_language(&self) -> Self::Language {
+        {{ self.grammar.language_name() }} {}
+    }
+
+    fn get_range(&self) -> Range<usize> {
+        self.span.clone()
+    }
+}
+{%- endfor %}
+

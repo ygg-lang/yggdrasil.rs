@@ -4,17 +4,14 @@ use super::*;
 {%- set rule_name = self.grammar.rule_name() %}
 {%- set language_name = self.grammar.language_name() %}
 
-impl YggdrasilLanguage for {{ language_name }} {
-    type Rule = {{ rule_name }};
-    fn parse_cst(input: &str, rule: {{ rule_name }}) -> OutputResult<{{ rule_name}}> {
-        state(input, |state| match rule {
+pub(super) fn parse_cst(input: &str, rule: {{ rule_name }}) -> OutputResult<{{ rule_name}}> {
+    state(input, |state| match rule {
 {%- for rule in rules.iter() %}
-            {{ rule_name }}::{{ rule.safe_rule_name() }} => {{ rule.parser_name() }}(state),
+        {{ rule_name }}::{{ rule.safe_rule_name() }} => {{ rule.parser_name() }}(state),
 {%- endfor %}
-            {{ rule_name }}::IgnoreText => unreachable!(),
-            {{ rule_name }}::IgnoreRegex => unreachable!(),
-        })
-    }
+        {{ rule_name }}::IgnoreText => unreachable!(),
+        {{ rule_name }}::IgnoreRegex => unreachable!(),
+    })
 }
 
 {%- for rule in rules.iter() %}

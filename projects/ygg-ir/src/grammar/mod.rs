@@ -41,6 +41,12 @@ impl Default for GrammarInfo {
 }
 
 impl GrammarInfo {
+    pub fn language_name(&self) -> String {
+        format!("{}Language", self.name.text)
+    }
+    pub fn rules(&self) -> Vec<GrammarRule> {
+        self.rules.values().cloned().collect()
+    }
     pub fn ignored_rules(&self) -> Vec<GrammarRule> {
         todo!()
     }

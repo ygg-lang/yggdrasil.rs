@@ -25,7 +25,7 @@ pub enum FieldKind {
 /// }
 /// ```
 pub struct YggdrasilField {
-    pub name: String,
+    pub bind: String,
     pub kind: FieldKind,
     pub count: FieldCounter,
     pub bind_position: Vec<Range<usize>>,
@@ -44,20 +44,16 @@ impl YggdrasilExpression {
     fn field_map(&self) -> FieldMap {
         // let tag = self.tag.as_ref().or(candidate);
         match &self.kind {
-            ExpressionKind::Choice(many) => {
-                // a:(x | y), drop tag
-                let (head, rest) = many.split();
-                head.field_map()
-            }
-            ExpressionKind::Concat(many) => {
-                // a:(x ~ y), drop tag
-                let (head, rest) = many.split();
-                head.field_map()
-            }
+            ExpressionKind::Choice(many) => many.field_map(),
+            ExpressionKind::Concat(many) => many.field_map(),
             // a:x+
             // a:(x*)
             // a:(b:x)
             ExpressionKind::Unary(one) => one.field_map(self.tag.as_ref()),
+            ExpressionKind::Rule(one) => match &self.tag {
+                Some(s) => FieldMap::rule(s, one, FieldCounter::ONE),
+                None => FieldMap::default(),
+            },
             _ => FieldMap::default(),
         }
     }
