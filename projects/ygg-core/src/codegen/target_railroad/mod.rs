@@ -85,6 +85,7 @@ impl AsRailroad for ExpressionKind {
             ExpressionKind::Ignored => Box::new(Terminal::new("IGNORED".to_string(), &vec!["character"])),
             ExpressionKind::Text(v) => Box::new(Terminal::new(v.text.to_string(), &vec!["string"])),
             ExpressionKind::CharacterAny => Box::new(Terminal::new("ANY".to_string(), &vec!["character"])),
+            ExpressionKind::CharacterRestOfLine => Box::new(Terminal::new("RestOfLine".to_string(), &vec!["character"])),
             ExpressionKind::CharacterRange(v) => Box::new(Terminal::new(format!("{}-{}", v.start(), v.end()), &vec!["string"])),
             ExpressionKind::Integer(v) => Box::new(Terminal::new(v.to_string(), &vec!["string"])),
             ExpressionKind::Boolean(_) => Box::new(Terminal::new("Boolean".to_string(), &vec!["character"])),

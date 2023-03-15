@@ -4,7 +4,7 @@ use crate::{
 };
 use askama::Template;
 use itertools::Itertools;
-#[cfg(feature = "railroad")]
+
 use railroad::{Diagram, Node, VerticalGrid};
 use std::{
     fmt::Write,
@@ -21,6 +21,7 @@ use yggdrasil_ir::{
 };
 use yggdrasil_parser::YggdrasilANTLR;
 
+mod build_main;
 mod build_readme;
 mod grammar_ext;
 mod rule_ext;
@@ -32,7 +33,6 @@ pub struct RustCodegen {
     pub enable_position: bool,
     pub rule_prefix: String,
     pub rule_suffix: String,
-    #[cfg(feature = "railroad")]
     pub railway: Railroad,
 }
 
@@ -42,7 +42,6 @@ impl Default for RustCodegen {
             enable_position: true,
             rule_prefix: "".to_string(),
             rule_suffix: "Node".to_string(),
-            #[cfg(feature = "railroad")]
             railway: Default::default(),
         }
     }
@@ -81,7 +80,6 @@ pub struct RustWriteAST<'i> {
 pub struct RustWriteReadme<'i> {
     grammar: &'i GrammarInfo,
     config: RustCodegen,
-    #[cfg(feature = "railroad")]
     railroad: Diagram<VerticalGrid<Box<dyn Node>>>,
 }
 
@@ -109,7 +107,6 @@ impl CodeGenerator for RustCodegen {
         let readme = RustWriteReadme {
             grammar: info,
             config: self.clone(),
-            #[cfg(feature = "railroad")]
             railroad: self.railway.generate(info).recover(&mut errors)?,
         };
         out.readme = readme.render().recover(&mut errors)?;
@@ -141,7 +138,7 @@ impl RustModule {
         else {
             create_dir_all(path)?
         }
-        let mut main = File::create(path.join("annotations"))?;
+        let mut main = File::create(path.join("mod.rs"))?;
         main.write_all(self.main.as_bytes())?;
         let mut cst = File::create(path.join("lexer.rs"))?;
         cst.write_all(self.lex.as_bytes())?;

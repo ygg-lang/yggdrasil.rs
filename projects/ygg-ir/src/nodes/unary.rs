@@ -23,19 +23,13 @@ pub enum YggdrasilOperator {
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct UnaryExpression {
-    pub base: YggdrasilExpression,
+    pub base: Box<YggdrasilExpression>,
     pub operators: Vec<YggdrasilOperator>,
-}
-
-impl UnaryExpression {
-    pub fn counter(&self) -> FieldCounter {
-        s
-    }
 }
 
 impl From<UnaryExpression> for ExpressionKind {
     fn from(e: UnaryExpression) -> Self {
-        Self::Unary(Box::new(e))
+        Self::Unary(e)
     }
 }
 
@@ -48,40 +42,12 @@ impl Add<YggdrasilOperator> for YggdrasilExpression {
                 let mut ops = node.operators;
                 ops.push(o);
                 let unary = UnaryExpression { base: node.base, operators: ops };
-                YggdrasilExpression { kind: ExpressionKind::Unary(Box::new(unary)), remark: self.remark, tag: self.tag }
+                YggdrasilExpression { kind: ExpressionKind::Unary(unary), remark: self.remark, tag: self.tag }
             }
             _ => {
-                let unary = UnaryExpression { base: self, operators: vec![o] };
-                ExpressionKind::Unary(Box::new(unary)).into()
+                let unary = UnaryExpression { base: Box::new(self), operators: vec![o] };
+                ExpressionKind::Unary(unary).into()
             }
-        }
-    }
-}
-
-impl YggdrasilOperator {
-    pub fn prefix(o: &str) -> YggdrasilOperator {
-        match o {
-            "*" => Self::Recursive,
-            _ => unreachable!(),
-        }
-    }
-    pub fn suffix(o: &str) -> YggdrasilOperator {
-        match o {
-            "?" => Self::Optional,
-            "+" => Self::Repeats,
-            "*" => Self::Repeat1,
-            _ => unreachable!(),
-        }
-    }
-    pub fn counter(&self) -> FieldCounter {
-        match self {
-            YggdrasilOperator::Negative => {}
-            YggdrasilOperator::Optional => {}
-            YggdrasilOperator::Repeats => {}
-            YggdrasilOperator::Repeat1 => {}
-            YggdrasilOperator::Boxing => {}
-            YggdrasilOperator::RepeatsBetween(_, _) => {}
-            YggdrasilOperator::Recursive => {}
         }
     }
 }

@@ -52,3 +52,6 @@ impl YggdrasilRule for {{ rule_name }} {
     }
 }
 
+{%- for body in self.write_structures() %}
+{{ body }}
+{%- endfor %}

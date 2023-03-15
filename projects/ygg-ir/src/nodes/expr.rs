@@ -25,21 +25,13 @@ impl YggdrasilExpression {
     pub fn is_rule(&self) -> bool {
         self.as_rule().is_some()
     }
-    pub fn with_tag(mut self, tag: YggdrasilIdentifier) -> Self {
-        self.tag = Some(tag);
-        self
+    #[inline]
+    pub fn with_tag(self, tag: YggdrasilIdentifier) -> Self {
+        Self { tag: Some(tag), ..self }
     }
-    pub fn remark(&mut self, capture: bool) {
-        match capture {
-            true => self.capture(),
-            false => self.non_capture(),
-        }
-    }
-    fn capture(&mut self) {
-        todo!()
-    }
-    fn non_capture(&mut self) {
-        todo!()
+    #[inline]
+    pub fn with_remark(self) -> Self {
+        Self { remark: true, ..self }
     }
 }
 

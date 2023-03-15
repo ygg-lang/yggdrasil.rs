@@ -1,7 +1,7 @@
 use super::*;
 use itertools::Itertools;
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Clone, Debug, Default, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct YggdrasilNamepath {
     pub identifiers: Vec<YggdrasilIdentifier>,

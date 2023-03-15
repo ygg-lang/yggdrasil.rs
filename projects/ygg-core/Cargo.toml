@@ -18,8 +18,8 @@ convert_case = "0.6.0"
 askama = "0.12.1"
 itertools = "0.11.0"
 # svg support
-railroad = { version = "0.2.0", optional = true }
-html-minifier = { version = "4.0.0", optional = true }
+railroad = "0.2.0"
+html-minifier = "4.0.0"
 
 [dependencies.yggdrasil-ir]
 version = "0.1.*"
@@ -39,5 +39,4 @@ serde_yaml = "0.9.25"
 json5 = "0.4.1"
 
 [features]
-default = ["railroad"]
-railroad = ["dep:railroad", "html-minifier"]
+default = []

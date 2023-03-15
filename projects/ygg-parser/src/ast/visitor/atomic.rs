@@ -1,6 +1,4 @@
 use super::*;
-use std::str::FromStr;
-use yggdrasil_ir::rule::{BigInt, YggdrasilMacroCall};
 
 impl<'i> Extractor<AtomicContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &AtomicContextAll<'i>) -> Option<Self> {

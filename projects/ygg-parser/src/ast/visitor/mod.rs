@@ -1,11 +1,5 @@
 use super::*;
 
-use yggdrasil_ir::{
-    data::{YggdrasilRegex, YggdrasilText},
-    nodes::{YggdrasilExpression, YggdrasilOperator},
-    rule::{GrammarRule, YggdrasilAnnotations, YggdrasilIdentifier, YggdrasilNamepath},
-};
-
 mod atomic;
 mod classes;
 mod unions;
@@ -13,6 +7,16 @@ mod unions;
 // mod collection;
 // mod let_binding;
 mod modifiers;
+
+use std::{mem::take, str::FromStr};
+use yggdrasil_ir::{
+    data::{YggdrasilRegex, YggdrasilText},
+    nodes::{ChoiceExpression, ConcatExpression, YggdrasilExpression, YggdrasilOperator},
+    rule::{
+        BigInt, GrammarRule, YggdrasilAnnotations, YggdrasilIdentifier, YggdrasilMacroArgument, YggdrasilMacroCall,
+        YggdrasilModifiers, YggdrasilNamepath,
+    },
+};
 
 impl ParseTreeVisitorCompat<'_> for YggdrasilANTLR {
     type Node = YggdrasilAntlrParserContextType;

@@ -1,20 +1,11 @@
 use convert_case::{Case, Casing};
-use proc_macro2::TokenStream;
-use std::{fmt::Debug, ops::Range};
-use yggdrasil_ir::{
-    data::RuleReference,
-    grammar::GrammarInfo,
-    nodes::{ExpressionKind, YggdrasilExpression, YggdrasilOperator},
-    rule::{GrammarRule, GrammarRuleKind, RuleDerive, YggdrasilIdentifier},
-    traits::FieldMap,
-};
+use std::fmt::Debug;
+use yggdrasil_ir::nodes::{ExpressionKind, YggdrasilExpression, YggdrasilOperator};
 
 use super::*;
 
 pub(super) trait RuleExt {
     fn safe_rule_name(&self) -> String;
-    fn parser_name(&self) -> String;
-
     fn parser_expression(&self) -> String;
 }
 
@@ -29,10 +20,6 @@ impl RuleExt for GrammarRule {
             "yield",
         ];
         if keywords.contains(&raw) { format!("r#{raw}") } else { raw.to_string() }
-    }
-
-    fn parser_name(&self) -> String {
-        format!("parse_{}", self.name.text).to_case(Case::Snake)
     }
 
     fn parser_expression(&self) -> String {
@@ -132,6 +119,7 @@ impl NodeExt for YggdrasilExpression {
             }
             ExpressionKind::CharacterAny if root => w.push_str("s.match_char_if(|_| true)"),
             ExpressionKind::CharacterAny => w.push_str("builtin_any(s)"),
+            ExpressionKind::CharacterRestOfLine => {}
             ExpressionKind::CharacterRange(_) if root => {}
             ExpressionKind::CharacterRange(_) => {}
             ExpressionKind::Boolean(_) if root => {}
@@ -141,10 +129,4 @@ impl NodeExt for YggdrasilExpression {
         }
         Ok(())
     }
-}
-
-pub struct ClassObject {
-    name: String,
-    derives: RuleDerive,
-    file: FieldMap,
 }

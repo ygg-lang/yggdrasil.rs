@@ -1,41 +1,35 @@
 use super::*;
 
 impl YggdrasilModifiers {
-    pub fn get_atomic(&self) -> GrammarAtomic {
-        for m in &self.identifiers {
-            if m.text.eq_ignore_ascii_case("atom") || m.text.eq_ignore_ascii_case("atomic") {
-                return GrammarAtomic::Atomic;
-            }
-            else if m.text.eq_ignore_ascii_case("combine") || m.text.eq_ignore_ascii_case("combined") {
-                return GrammarAtomic::Combined;
-            }
+    pub fn get_atomic(&self) -> Option<GrammarAtomic> {
+        match self.find(&["atom", "atomic"], &["combine", "combined"])? {
+            true => Some(GrammarAtomic::Atomic),
+            false => Some(GrammarAtomic::Combined),
         }
-        return GrammarAtomic::Combined;
     }
 
-    pub fn get_ignored(&self) -> bool {
-        for m in &self.identifiers {
-            if m.text.eq_ignore_ascii_case("ignore") {
-                return true;
-            }
-        }
-        return false;
+    pub fn get_ignored(&self) -> Option<bool> {
+        self.find(&["ignore"], &[])
     }
-    pub fn get_entry(&self) -> bool {
-        for m in &self.identifiers {
-            if m.text.eq_ignore_ascii_case("ignore") {
-                return true;
-            }
-        }
-        return false;
+    pub fn get_entry(&self) -> Option<bool> {
+        self.find(&["entry"], &[])
     }
-
-    pub fn get_keep(&self) -> bool {
+    pub fn get_keep(&self) -> Option<bool> {
+        self.find(&["keep"], &[])
+    }
+    fn find(&self, positive: &[&str], negative: &[&str]) -> Option<bool> {
         for m in &self.identifiers {
-            if m.text.eq_ignore_ascii_case("keep") {
-                return true;
+            for accept in positive {
+                if m.text.eq_ignore_ascii_case(accept) {
+                    return Some(true);
+                }
+            }
+            for reject in negative {
+                if m.text.eq_ignore_ascii_case(reject) {
+                    return Some(false);
+                }
             }
         }
-        return false;
+        None
     }
 }

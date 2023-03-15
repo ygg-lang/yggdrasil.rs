@@ -1,30 +1,35 @@
-pub use self::derive::RuleDerive;
-use crate::{
-    grammar::GrammarInfo,
-    nodes::{ExpressionKind, YggdrasilExpression, YggdrasilOperator},
-};
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
-use std::{
-    cmp::Ordering,
-    collections::{BTreeMap, BTreeSet},
-    fmt::{Debug, Display, Formatter},
-    ops::{BitAnd, BitOr, Range},
-};
-
 mod classes;
 pub mod derive;
 
 mod fields;
 mod identifier;
 
-mod modifiers;
+mod annotations;
 
 pub use self::{
-    fields::{counter::FieldCounter, FieldKind, YggdrasilField},
+    annotations::{YggdrasilAnnotations, YggdrasilMacroArgument, YggdrasilMacroCall, YggdrasilModifiers},
+    derive::RuleDerive,
+    fields::{counter::FieldCounter, mapper::FieldMap, FieldKind, YggdrasilField},
     identifier::{YggdrasilIdentifier, YggdrasilNamepath},
-    modifiers::YggdrasilAnnotations,
 };
+use crate::{
+    data::RuleReference,
+    grammar::GrammarInfo,
+    nodes::{ExpressionKind, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
+    traits::FieldDescriptor,
+};
+use convert_case::{Case, Casing};
+pub use num::BigInt;
+use num::Zero;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+use std::{
+    cmp::Ordering,
+    collections::{BTreeMap, BTreeSet, HashSet},
+    fmt::{Debug, Display, Formatter},
+    ops::{BitAndAssign, BitOrAssign, BitXorAssign, Range},
+};
+
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct FunctionRule {}
 
@@ -120,10 +125,10 @@ pub struct GrammarRule {
     ///
     /// ## Examples
     /// ```ygg
-    /// #keep(true)
-    /// keep class Rule { }
+    /// #hide(true)
+    /// hidden class Rule { }
     /// ```
-    pub keep: bool,
+    pub hide: bool,
     /// Ignore this node in ast mode.
     ///
     /// ## Examples
@@ -157,8 +162,6 @@ impl PartialOrd for GrammarRule {
     }
 }
 
-impl GrammarInfo {}
-
 impl Default for GrammarRule {
     fn default() -> Self {
         Self {
@@ -168,13 +171,22 @@ impl Default for GrammarRule {
             atomic: GrammarAtomic::Atomic,
             auto_inline: false,
             entry: false,
-            keep: false,
+            hide: false,
             ignored: false,
             kind: GrammarRuleKind::Class,
             body: None,
             range: Default::default(),
             redirect: None,
         }
+    }
+}
+
+impl GrammarRule {
+    pub fn structure_name(&self) -> String {
+        format!("{}Node", self.name.text).to_case(Case::Pascal)
+    }
+    pub fn parser_name(&self) -> String {
+        format!("parse_{}", self.name.text).to_case(Case::Snake)
     }
 }
 
@@ -188,7 +200,7 @@ impl GrammarRule {
     pub fn with_annotation(mut self, extra: &YggdrasilAnnotations) -> Self {
         self.atomic = extra.get_atomic();
         self.ignored = extra.get_ignored();
-        self.keep = extra.get_keep();
+        self.hide = extra.get_keep();
         self.entry = extra.get_entry();
         self
     }

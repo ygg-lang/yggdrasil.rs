@@ -1,5 +1,4 @@
 use super::*;
-use yggdrasil_ir::nodes::{ChoiceExpression, ConcatExpression};
 
 impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
     fn take_one(node: &Define_unionContext<'i>) -> Option<Self> {
