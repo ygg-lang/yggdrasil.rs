@@ -5,23 +5,10 @@ use yggdrasil_ir::nodes::{ExpressionKind, YggdrasilExpression, YggdrasilOperator
 use super::*;
 
 pub(super) trait RuleExt {
-    fn safe_rule_name(&self) -> String;
     fn parser_expression(&self) -> String;
 }
 
 impl RuleExt for GrammarRule {
-    fn safe_rule_name(&self) -> String {
-        let raw = self.name.text.as_str();
-        let keywords = &[
-            "abstract", "alignof", "as", "become", "box", "break", "const", "continue", "crate", "do", "else", "enum",
-            "extern", "false", "final", "fn", "for", "if", "impl", "in", "let", "loop", "macro", "match", "mod", "move", "mut",
-            "offsetof", "override", "priv", "proc", "pub", "pure", "ref", "return", "Self", "self", "sizeof", "static",
-            "struct", "super", "trait", "true", "type", "typeof", "unsafe", "unsized", "use", "virtual", "where", "while",
-            "yield",
-        ];
-        if keywords.contains(&raw) { format!("r#{raw}") } else { raw.to_string() }
-    }
-
     fn parser_expression(&self) -> String {
         let mut w = String::new();
         match &self.body {

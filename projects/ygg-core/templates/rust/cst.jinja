@@ -7,7 +7,7 @@ use super::*;
 pub(super) fn parse_cst(input: &str, rule: {{ rule_name }}) -> OutputResult<{{ rule_name}}> {
     state(input, |state| match rule {
 {%- for rule in rules.iter() %}
-        {{ rule_name }}::{{ rule.safe_rule_name() }} => {{ rule.parser_name() }}(state),
+        {{ rule_name }}::{{ rule.name.text|safe_rust_id }} => {{ rule.parser_name() }}(state),
 {%- endfor %}
         {{ rule_name }}::IgnoreText => unreachable!(),
         {{ rule_name }}::IgnoreRegex => unreachable!(),
@@ -17,7 +17,7 @@ pub(super) fn parse_cst(input: &str, rule: {{ rule_name }}) -> OutputResult<{{ r
 {%- for rule in rules.iter() %}
 #[inline]
 fn {{ rule.parser_name() }}(state: Input) -> Output {
-    state.rule({{ rule_name }}::{{ rule.safe_rule_name() }}, |s| {
+    state.rule({{ rule_name }}::{{ rule.name.text|safe_rust_id }}, |s| {
         {{ rule.parser_expression() }}
     })
 }

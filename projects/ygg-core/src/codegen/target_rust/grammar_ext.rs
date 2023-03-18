@@ -1,4 +1,5 @@
 use super::*;
+use crate::codegen::target_rust::filters::safe_rust_id;
 
 pub trait GrammarExt {
     fn rule_name(&self) -> String;
@@ -21,7 +22,7 @@ impl GrammarExt for GrammarInfo {
     fn ignore_rule_pattern(&self) -> String {
         let mut out = String::from("Self::IgnoreText | Self::IgnoreRegex");
         for ignore in self.ignore_rules() {
-            out.push_str(&format!(" | Self::{}", ignore.safe_rule_name()))
+            out.push_str(&format!(" | Self::{}", safe_rust_id(&ignore.name.text).unwrap()))
         }
         out
     }

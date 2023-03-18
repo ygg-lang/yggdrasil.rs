@@ -25,12 +25,13 @@ mod build_main;
 mod build_readme;
 mod grammar_ext;
 mod rule_ext;
+mod filters;
 
 use self::{grammar_ext::GrammarExt, rule_ext::RuleExt};
 
 #[derive(Clone, Debug)]
 pub struct RustCodegen {
-    pub enable_position: bool,
+    pub range_type: String,
     pub rule_prefix: String,
     pub rule_suffix: String,
     pub railway: Railroad,
@@ -39,7 +40,7 @@ pub struct RustCodegen {
 impl Default for RustCodegen {
     fn default() -> Self {
         Self {
-            enable_position: true,
+            range_type: "u32".to_string(),
             rule_prefix: "".to_string(),
             rule_suffix: "Node".to_string(),
             railway: Default::default(),

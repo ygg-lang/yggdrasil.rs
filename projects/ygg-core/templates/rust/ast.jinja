@@ -10,7 +10,13 @@ impl YggdrasilNode for {{ rule.node_name() }} {
     }
 
     fn get_range(&self) -> Range<usize> {
-        self.span.clone()
+{%- if rule.is_class() %}
+        Range { start: self.span.start as usize, end: self.span.end as usize }
+{%- else %}
+        match self {
+            _ => unreachable!()
+        }
+{%- endif %}
     }
 }
 {%- endfor %}

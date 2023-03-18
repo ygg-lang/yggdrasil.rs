@@ -1,5 +1,6 @@
 #![allow(dead_code, unused_imports, non_camel_case_types)]
 #![allow(missing_docs, rustdoc::missing_crate_level_docs)]
+#![allow(clippy::unnecessary_cast)]
 #![doc = include_str!("readme.md")]
 
 mod parse_cst;
@@ -34,7 +35,7 @@ impl YggdrasilLanguage for {{ language_name }} {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum {{ rule_name }} {
 {%- for rule in rules.iter() %}
-    {{ rule.safe_rule_name() }},
+    {{ rule.name.text|safe_rust_id }},
 {%- endfor %}
     /// Label for text literal
     IgnoreText,
@@ -54,7 +55,7 @@ impl YggdrasilRule for {{ rule_name }} {
     fn get_style(&self) -> &'static str {
         match self {
 {%- for rule in rules.iter() %}
-            Self::{{ rule.safe_rule_name() }} => "",
+            Self::{{ rule.name.text|safe_rust_id }} => "",
 {%- endfor %}
             _ => "",
         }
@@ -62,9 +63,21 @@ impl YggdrasilRule for {{ rule_name }} {
 }
 
 {% for rule in self.grammar.rules() %}
+{%- if rule.is_class() %}
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct {{ rule.node_name() }} {
-    pub span: Range<usize>,
+    {% for field in rule.class_fields() %}
+
+    {%- endfor %}
+    pub span: Range<{{ self.config.range_type }}>,
 }
+{%- else %}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub enum {{ rule.node_name() }} {
+
+}
+{%- endif %}
 {%- endfor %}
+
