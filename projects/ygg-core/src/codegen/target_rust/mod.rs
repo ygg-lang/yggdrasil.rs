@@ -5,6 +5,7 @@ use crate::{
 use askama::Template;
 use itertools::Itertools;
 
+use crate::optimize::RemarkTags;
 use railroad::{Diagram, Node, VerticalGrid};
 use std::{
     fmt::Write,
@@ -23,9 +24,9 @@ use yggdrasil_parser::YggdrasilANTLR;
 
 mod build_main;
 mod build_readme;
+mod filters;
 mod grammar_ext;
 mod rule_ext;
-mod filters;
 
 use self::{grammar_ext::GrammarExt, rule_ext::RuleExt};
 
@@ -33,7 +34,7 @@ use self::{grammar_ext::GrammarExt, rule_ext::RuleExt};
 pub struct RustCodegen {
     pub range_type: String,
     pub rule_prefix: String,
-    pub rule_suffix: String,
+    pub node_suffix: String,
     pub railway: Railroad,
 }
 
@@ -42,7 +43,7 @@ impl Default for RustCodegen {
         Self {
             range_type: "u32".to_string(),
             rule_prefix: "".to_string(),
-            rule_suffix: "Node".to_string(),
+            node_suffix: "Node".to_string(),
             railway: Default::default(),
         }
     }
@@ -121,6 +122,7 @@ impl RustCodegen {
     pub fn generate<P: AsRef<Path>>(&self, grammar: &str, output: P) -> Validation<PathBuf> {
         let mut errors = vec![];
         let mut info = YggdrasilANTLR::parse(grammar).validate(&mut errors)?;
+        info = RemarkTags::default().optimize(&info).validate(&mut errors)?;
         info = InsertIgnore::default().optimize(&info).validate(&mut errors)?;
         info = RefineRules::default().optimize(&info).validate(&mut errors)?;
         let out = info.generate(RustCodegen::default()).validate(&mut errors)?;

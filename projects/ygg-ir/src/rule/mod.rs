@@ -19,8 +19,6 @@ use crate::{
 use convert_case::{Case, Casing};
 pub use num::BigInt;
 use num::Zero;
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
 use std::{
     cmp::Ordering,
     collections::{BTreeMap, BTreeSet},
@@ -31,14 +29,8 @@ use std::{
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct FunctionRule {}
 
-/// Temporary value, will be removed after parsing
-#[derive(Copy, Clone, Debug)]
-pub struct GrammarRuleContext {
-    pub capture: bool,
-    pub atomic: bool,
-}
-
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum GrammarRuleKind {
     Class,
     Union,
@@ -46,7 +38,7 @@ pub enum GrammarRuleKind {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum GrammarAtomic {
     Optimized,
     Atomic,
@@ -60,7 +52,7 @@ impl GrammarAtomic {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GrammarRule {
     /// Automatically inline when this rule is called
     ///
@@ -142,10 +134,12 @@ pub struct GrammarRule {
 }
 
 // Class rule
-pub struct YggdrasilVariant {
-    pub document: String,
-    pub name: YggdrasilIdentifier,
+pub struct YggdrasilVariants {
     pub fields: BTreeMap<String, YggdrasilField>,
+}
+
+pub struct YggdrasilEnumerates {
+    pub variants: BTreeMap<String, YggdrasilVariants>,
 }
 
 impl Ord for GrammarRule {

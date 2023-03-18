@@ -67,8 +67,8 @@ impl YggdrasilRule for {{ rule_name }} {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct {{ rule.node_name() }} {
-    {% for field in rule.class_fields() %}
-
+    {%- for field in rule.class_fields() %}
+    {{ field|field_type(self.grammar) }}
     {%- endfor %}
     pub span: Range<{{ self.config.range_type }}>,
 }

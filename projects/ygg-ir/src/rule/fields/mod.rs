@@ -1,5 +1,8 @@
 use super::*;
-use crate::nodes::{ChoiceExpression, ConcatExpression};
+use crate::{
+    grammar::GrammarInfo,
+    nodes::{ChoiceExpression, ConcatExpression},
+};
 
 pub mod counter;
 pub mod mapper;
@@ -32,11 +35,20 @@ pub struct YggdrasilField {
     pub rule_position: Vec<Range<usize>>,
 }
 
+impl YggdrasilField {
+    pub fn is_valid(&self, grammar: &GrammarInfo) -> bool {
+        grammar.rules.get(&self.bind).is_some()
+    }
+    pub fn field_name(&self) -> String {
+        self.bind.to_case(Case::Snake)
+    }
+}
+
 impl GrammarRule {
-    pub fn class_fields(&self) -> BTreeMap<String, YggdrasilField> {
+    pub fn class_fields(&self) -> YggdrasilVariants {
         assert_eq!(self.kind, GrammarRuleKind::Class, "do you filter with class?");
         let fields = self.body.as_ref().map(|s| s.field_map()).unwrap_or_default();
-        fields.wrap
+        YggdrasilVariants { fields: fields.wrap }
     }
 }
 
