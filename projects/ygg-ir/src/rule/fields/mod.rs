@@ -7,12 +7,19 @@ use crate::{
 pub mod counter;
 pub mod mapper;
 
+#[derive(Debug)]
 pub enum FieldKind {
     Rule(String),
     IgnoreText,
     IgnoreRegex,
     IgnoreComment,
     IgnoreWhitespace,
+}
+
+impl Display for FieldKind {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        Debug::fmt(self, f)
+    }
 }
 
 /// ```ygg
@@ -36,11 +43,20 @@ pub struct YggdrasilField {
 }
 
 impl YggdrasilField {
-    pub fn is_valid(&self, grammar: &GrammarInfo) -> bool {
-        grammar.rules.get(&self.bind).is_some()
-    }
     pub fn field_name(&self) -> String {
         self.bind.to_case(Case::Snake)
+    }
+    pub fn field_type(&self, grammar: &GrammarInfo) -> String {
+        match &self.kind {
+            FieldKind::Rule(r) => match grammar.rules.get(r) {
+                Some(s) => self.count.as_count().rust_container(&s.node_name()),
+                None => "".to_string(),
+            },
+            FieldKind::IgnoreText => "".to_string(),
+            FieldKind::IgnoreRegex => "".to_string(),
+            FieldKind::IgnoreComment => "".to_string(),
+            FieldKind::IgnoreWhitespace => "".to_string(),
+        }
     }
 }
 

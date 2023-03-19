@@ -68,7 +68,11 @@ impl YggdrasilRule for {{ rule_name }} {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct {{ rule.node_name() }} {
     {%- for field in rule.class_fields() %}
-    {{ field|field_type(self.grammar) }}
+{%- if field.field_type(self.grammar).is_empty() %}
+    // Missing rule {{ field.kind }}
+{%- else %}
+    pub {{ field.field_name()|safe_rust_id }}: {{ field.field_type(self.grammar) }},
+{%- endif %}
     {%- endfor %}
     pub span: Range<{{ self.config.range_type }}>,
 }

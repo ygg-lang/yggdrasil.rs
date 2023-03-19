@@ -65,9 +65,9 @@ impl<'i> Extractor<SuffixContextAll<'i>> for YggdrasilOperator {
         match node {
             SuffixContextAll::OptionalContext(_) => Some(YggdrasilOperator::Optional),
             SuffixContextAll::MaybeContext(_) => Some(YggdrasilOperator::Optional),
-            SuffixContextAll::MaybeGreedyContext(_) => Some(YggdrasilOperator::Optional),
-            SuffixContextAll::ManyGreedyContext(_) => Some(YggdrasilOperator::Optional),
-            SuffixContextAll::ManyContext(_) => Some(YggdrasilOperator::Optional),
+            SuffixContextAll::MaybeGreedyContext(_) => Some(YggdrasilOperator::Repeats),
+            SuffixContextAll::ManyGreedyContext(_) => Some(YggdrasilOperator::Repeat1),
+            SuffixContextAll::ManyContext(_) => Some(YggdrasilOperator::Repeat1),
             SuffixContextAll::Error(_) => None,
         }
     }

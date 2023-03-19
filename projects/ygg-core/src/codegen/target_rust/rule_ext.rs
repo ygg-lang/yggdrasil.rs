@@ -61,10 +61,10 @@ impl NodeExt for YggdrasilExpression {
                             w.push_str("s.optional(|s|");
                         }
                         YggdrasilOperator::Repeats => {
-                            todo!()
+                            w.push_str("s.repeat(0..u32::MAX, |s|");
                         }
                         YggdrasilOperator::Repeat1 => {
-                            todo!()
+                            w.push_str("s.repeat(1..u32::MAX, |s|");
                         }
                         YggdrasilOperator::Boxing => {
                             todo!()
@@ -86,14 +86,8 @@ impl NodeExt for YggdrasilExpression {
                 let name = format!("parse_{}", r.name.text).to_case(Case::Snake);
                 write!(w, "{name}(s)")?
             }
-            ExpressionKind::Text(v) if root => match v.insensitive {
-                true => write!(w, "s.match_string::<true>({:?})", v.text)?,
-                false => write!(w, "s.match_string::<false>({:?})", v.text)?,
-            },
-            ExpressionKind::Text(v) => match v.insensitive {
-                true => write!(w, "builtin_text::<true>(s, {:?})", v.text)?,
-                false => write!(w, "builtin_text::<false>(s, {:?})", v.text)?,
-            },
+            ExpressionKind::Text(v) if root => write!(w, "s.match_string({:?}, {})", v.text, v.insensitive)?,
+            ExpressionKind::Text(v) => write!(w, "builtin_text(s, {:?}, {})", v.text, v.insensitive)?,
             ExpressionKind::Regex(r) if root => {
                 w.push_str("s.match_regex({static REGEX:OnceLock<Regex>=OnceLock::new();REGEX.get_or_init(|| Regex::new(");
                 write!(w, "{:?}", r.raw)?;
