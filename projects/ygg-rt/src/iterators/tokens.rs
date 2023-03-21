@@ -120,7 +120,7 @@ impl<'i, R: YggdrasilRule> fmt::Debug for Tokens<'i, R> {
 #[cfg(test)]
 mod tests {
     use super::{
-        super::super::{macros::tests::*, YggdrasilLanguage},
+        super::super::{macros::tests::*, YggdrasilParser},
         Token,
     };
     use alloc::vec::Vec;

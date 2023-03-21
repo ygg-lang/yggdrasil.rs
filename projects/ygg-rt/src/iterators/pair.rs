@@ -383,7 +383,7 @@ impl<'i, R: YggdrasilRule> ::serde::Serialize for Pair<'i, R> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{language::YggdrasilLanguage, macros::tests::*};
+    use crate::{language::YggdrasilParser, macros::tests::*};
 
     #[test]
     #[cfg(feature = "pretty-print")]

@@ -168,7 +168,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     /// ```
     #[inline]
     pub fn flatten(self) -> TokenStream<'i, R> {
-        unsafe { flat_pairs::new(self.queue, self.input, self.start, self.end) }
+        unsafe { token_stream::new(self.queue, self.input, self.start, self.end) }
     }
 
     /// Finds the first pair that has its node or branch tagged with the provided
@@ -404,7 +404,7 @@ impl<'i, R: YggdrasilRule> ::serde::Serialize for TokenTree<'i, R> {
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::{macros::tests::*, YggdrasilLanguage};
+    use super::super::super::{macros::tests::*, YggdrasilParser};
     use crate::YggdrasilRule;
     use alloc::{borrow::ToOwned, boxed::Box, format, vec, vec::Vec};
 

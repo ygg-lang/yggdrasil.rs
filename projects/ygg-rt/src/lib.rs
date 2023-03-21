@@ -30,7 +30,7 @@ pub use crate::{
     enhance::{stack::Stack, RegexCompiled},
     errors::YggdrasilError,
     iterators::TokenTree,
-    language::YggdrasilLanguage,
+    language::YggdrasilParser,
     parser_state::{state, Either, Lookahead, MatchDir, State},
     position::Position,
     span::{merge_spans, Lines, LinesSpan, TextSpan},

@@ -450,7 +450,8 @@ where
             };
             counter += 1;
         }
-        if times.contains(&counter.saturating_sub(1)) {
+        // times.contains(&counter.saturating_sub(1))
+        if times.start <= counter && counter <= times.end {
             result
         }
         else {
