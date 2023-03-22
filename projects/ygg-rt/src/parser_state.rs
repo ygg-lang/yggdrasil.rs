@@ -425,7 +425,7 @@ where
     /// assert_eq!(result.unwrap().position().offset(), 0);
     /// ```
     #[inline]
-    pub fn repeat<F>(self: Box<Self>, times: Range<u32>, mut f: F) -> Either<Box<Self>>
+    pub fn repeat<F>(self: Box<Self>, min: u32, max: u32, mut f: F) -> Either<Box<Self>>
     where
         F: FnMut(Box<Self>) -> Either<Box<Self>>,
     {
@@ -442,7 +442,7 @@ where
             counter += 1;
         }
         // times.contains(&counter.saturating_sub(1))
-        if times.start <= counter && counter <= times.end {
+        if min <= counter && counter <= max {
             result
         }
         else {

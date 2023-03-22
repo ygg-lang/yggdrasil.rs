@@ -12,7 +12,7 @@ use std::sync::OnceLock;
 
 {%- set rules = self.grammar.rules() %}
 {%- set rule_name = self.grammar.rule_name() %}
-{%- set language_name = self.grammar.language_name() %}
+{%- set parser_name = self.grammar.parser_name() %}
 
 type Input<'i> = Box<State<'i, {{ rule_name }}>>;
 type Output<'i> = Result<Box<State<'i, {{ rule_name }}>>, Box<State<'i, {{ rule_name}}>>>;
@@ -21,9 +21,9 @@ type Output<'i> = Result<Box<State<'i, {{ rule_name }}>>, Box<State<'i, {{ rule_
 #[repr(C)]
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct {{ language_name }} {}
+pub struct {{ parser_name }} {}
 
-impl YggdrasilLanguage for {{ language_name }} {
+impl YggdrasilParser for {{ parser_name }} {
     type Rule = {{ rule_name }};
     fn parse_cst(input: &str, rule: Self::Rule) -> OutputResult<{{ rule_name }}> {
         self::parse_cst::parse_cst(input, rule)

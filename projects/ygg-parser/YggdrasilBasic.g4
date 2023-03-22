@@ -7,8 +7,8 @@ COMMA:     ',';
 COLON:     ':';
 SEMICOLON: ';';
 
-MATCH_MAYBE:    '*';
-MATCH_MANY:     '+';
+MATCH_MANY:     '*';
+MATCH_MANY1:    '+';
 MATCH_OPTIONAL: '?';
 
 OP_NOT:    '!';
@@ -18,19 +18,19 @@ OP_CONCAT: '~';
 OP_OR:     '|';
 OP_GT:     '>';
 OP_UNTAG:  '^';
-OP_TO:   '->';
+OP_TO:     '->';
 
 KW_GRAMMAR: 'grammar';
 
 KW_IMPORT: 'using';
 KW_AS:     'as';
 
-KW_CLASS: 'class';
-KW_UNION: 'union';
-KW_CLIMB: 'climb';
-KW_TOKEN: 'token';
-KW_EXTERNAL: 'external';
-KW_INSPECTOR: 'inspect'|'inspector';
+KW_CLASS:     'class' | 'struct';
+KW_UNION:     'union' | 'enum';
+KW_CLIMB:     'climb';
+KW_TOKEN:     'token';
+KW_EXTERNAL:  'parser' | 'external';
+KW_INSPECTOR: 'inspect' | 'inspector';
 
 OP_PROPORTION: '::';
 

@@ -1,0 +1,77 @@
+grammar Json5 {
+    file: '*.json5'
+}
+
+entry union Value {
+    | Object  #Object
+    | Array   #Array
+    | String  #String
+    | Number  #Number
+    | Boolean #Boolean
+    | Null    #Null
+}
+// === object === ------------------------------------------------------------------------------------------------------
+class Object {
+    '{' (ObjectPair (',' ObjectPair)* ',')? '}'
+}
+
+class ObjectPair {
+    ObjectKey ':' Value
+}
+
+@style(field)
+union ObjectKey {
+    | Identifier
+    | String
+}
+// === array === ------------------------------------------------------------------------------------------------------
+class Array {
+    '[' (item:Value (',' Value)* ',')? ']'
+}
+// === string === ------------------------------------------------------------------------------------------------------
+@style(string)
+atomic union String {
+    | "'" StringRaw "'"    #SingleQuote
+    | "'" StringText* "'"  #DoubleQuote
+}
+class StringRaw -> StringText {
+/[^"]*/
+}
+union StringText {
+| StringEscape #Escape
+| /[^"]+/ #Character
+}
+@style(escape)
+class StringEscape {
+'\' c:ANY
+}
+// === number === ------------------------------------------------------------------------------------------------------
+@style(number)
+atomic class Number {
+    /[+-]?(0|[1-9][0-9]*)/
+}
+// === identifier === --------------------------------------------------------------------------------------------------
+class Identifier {
+    /[_\p{XID_start}][\p{XID_continue}]*/
+}
+// === special === -----------------------------------------------------------------------------------------------------
+@style(keyword)
+union Boolean {
+    | "true"  #True
+    | "false" #False
+}
+@style(keyword)
+class Null {
+    "null"
+}
+// === ignores === -----------------------------------------------------------------------------------------------------
+ignore class WhiteSpace {
+    [\p{WhiteSpace}]
+}
+
+@style(comment)
+ignore union Comment {
+    | @comment_line('//')
+| @comment_line('#')
+| @comment_block('/*', '*/', nest: false)
+}

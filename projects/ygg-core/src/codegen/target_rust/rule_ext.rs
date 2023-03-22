@@ -60,16 +60,12 @@ impl NodeExt for YggdrasilExpression {
                         YggdrasilOperator::Optional => {
                             w.push_str("s.optional(|s|");
                         }
-                        YggdrasilOperator::Repeats => {
-                            w.push_str("s.repeat(0..u32::MAX, |s|");
-                        }
-                        YggdrasilOperator::Repeat1 => {
-                            w.push_str("s.repeat(1..u32::MAX, |s|");
+                        YggdrasilOperator::Repeats => write!(w, "s.repeat({}, {}, |s|", 0, u32::MAX)?,
+                        YggdrasilOperator::Repeat1 => write!(w, "s.repeat({}, {}, |s|", 1, u32::MAX)?,
+                        YggdrasilOperator::RepeatsBetween(min, max) => {
+                            write!(w, "s.repeat({}, {}, |s|", min.unwrap_or(0), max.unwrap_or(u32::MAX))?
                         }
                         YggdrasilOperator::Boxing => {
-                            todo!()
-                        }
-                        YggdrasilOperator::RepeatsBetween(_, _) => {
                             todo!()
                         }
                         YggdrasilOperator::Recursive => {
@@ -90,12 +86,12 @@ impl NodeExt for YggdrasilExpression {
             ExpressionKind::Text(v) => write!(w, "builtin_text(s, {:?}, {})", v.text, v.insensitive)?,
             ExpressionKind::Regex(r) if root => {
                 w.push_str("s.match_regex({static REGEX:OnceLock<Regex>=OnceLock::new();REGEX.get_or_init(|| Regex::new(");
-                write!(w, "{:?}", r.raw)?;
+                write!(w, "{}", r)?;
                 w.push_str(").unwrap())})");
             }
             ExpressionKind::Regex(r) => {
                 w.push_str("builtin_regex(s,{static REGEX:OnceLock<Regex>=OnceLock::new();REGEX.get_or_init(||Regex::new(");
-                write!(w, "{:?}", r.raw)?;
+                write!(w, "{}", r)?;
                 w.push_str(").unwrap())})");
             }
             ExpressionKind::CharacterAny if root => w.push_str("s.match_char_if(|_| true)"),

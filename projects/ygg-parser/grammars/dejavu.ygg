@@ -85,5 +85,7 @@ GENERIC_R:     '⟩'
 
 
 ignore union Comment {
-| '//' ROL
+| @comment_line('//')
+| @comment_block('/*', '*/', nest: false)
 }
+

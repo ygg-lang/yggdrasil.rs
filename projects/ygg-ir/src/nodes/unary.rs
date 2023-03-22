@@ -15,7 +15,7 @@ pub enum YggdrasilOperator {
     /// no such literal
     Boxing,
     /// e+
-    RepeatsBetween(Option<u8>, Option<u8>),
+    RepeatsBetween(Option<u32>, Option<u32>),
     /// *e
     Recursive,
 }

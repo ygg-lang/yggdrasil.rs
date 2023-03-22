@@ -1,7 +1,5 @@
 use super::*;
-use std::thread::scope;
 use yggdrasil_error::Validation;
-use yggdrasil_ir::rule::YggdrasilIdentifier;
 
 /// Automatically insert or remove tags
 #[derive(Default)]

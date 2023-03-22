@@ -20,11 +20,18 @@ program
 import_statement: KW_IMPORT (identifier | string) import_block?;
 import_block:     BRACE_L identifier* BRACE_R;
 // =================================================================================================
-define_grammar: KW_GRAMMAR identifier grammar_block;
-grammar_block:  BRACE_L BRACE_R;
+define_grammar: KW_GRAMMAR identifier (COLON parent=identifier)? grammar_block;
+grammar_block:  BRACE_L (grammar_pair|SEMICOLON|COMMA)* BRACE_R;
+grammar_pair:  grammar_key COLON grammar_value;
+grammar_key: string|identifier;
+grammar_value:
+	string | namepath | BOOLEAN
+	;
 // =================================================================================================
-define_class: annotation* modifiers KW_CLASS name = identifier (OP_TO cast = identifier)? class_block;
-class_block:  BRACE_L OP_OR? class_expression* BRACE_R;
+define_class
+    : annotation* modifiers KW_CLASS name = identifier (OP_TO cast = identifier)? class_block
+    ;
+class_block: BRACE_L OP_OR? class_expression* BRACE_R;
 class_expression
     : class_expression suffix                                 # CSuffix
     | identifier COLON class_expression                       # CETag
@@ -36,9 +43,11 @@ class_expression
     | atomic                                                  # Atom
     ;
 // =================================================================================================
-define_union: annotation* modifiers KW_UNION name = identifier (OP_TO cast = identifier)? union_block;
-union_block:  BRACE_L union_term* BRACE_R;
-union_term:   OP_OR union_expression* tag_branch?;
+define_union
+    : annotation* modifiers KW_UNION name = identifier (OP_TO cast = identifier)? union_block
+    ;
+union_block: BRACE_L union_term* BRACE_R;
+union_term:  OP_OR union_expression* tag_branch?;
 union_expression
     : union_expression suffix                                 # USuffix
     | identifier COLON union_expression                       # UETag
@@ -71,10 +80,10 @@ tuple_block: PARENTHESES_L (class_expression (COMMA class_expression)* COMMA?)? 
 // =================================================================================================
 suffix
     : MATCH_OPTIONAL             # Optional
-    | MATCH_MAYBE                # MaybeGreedy
-    | MATCH_MAYBE MATCH_OPTIONAL # Maybe
-    | MATCH_MANY                 # ManyGreedy
-    | MATCH_MANY MATCH_OPTIONAL  # Many
+    | MATCH_MANY                 # MaybeGreedy
+    | MATCH_MANY MATCH_OPTIONAL  # Maybe
+    | MATCH_MANY1                # ManyGreedy
+    | MATCH_MANY1 MATCH_OPTIONAL # Many
     ;
 // =================================================================================================
 atomic

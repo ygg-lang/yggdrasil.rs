@@ -3,15 +3,11 @@ use super::*;
 
 {% for rule in self.grammar.rules() %}
 impl YggdrasilNode for {{ rule.node_name() }} {
-    type Language = {{ self.grammar.language_name() }};
+    type Rule = {{ self.grammar.rule_name() }};
 
-    fn get_language(&self) -> Self::Language {
-        {{ self.grammar.language_name() }} {}
-    }
-
-    fn get_range(&self) -> Range<usize> {
+    fn get_range(&self) -> Option<Range<usize>> {
 {%- if rule.is_class() %}
-        Range { start: self.span.start as usize, end: self.span.end as usize }
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
 {%- else %}
         match self {
             _ => unreachable!()

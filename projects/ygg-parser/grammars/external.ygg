@@ -1,6 +1,8 @@
-grammar TestLanguage {}
+grammar External {
+    generate: false
+}
 
-external parse_extra {
+parser parse_extra {
 rust: crate::utils::parse_extra;
 java: package::helper::parse_extra;
 }
@@ -28,7 +30,7 @@ fake union Enum {
 
 @inspector(is_valid)
 class A {
-@parse_extra  @is_valid(Extra)
+@parse_extra @is_valid(Extra)
 }
 
 token {
