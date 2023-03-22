@@ -25,6 +25,8 @@ pub mod prec_climber;
 mod span;
 mod token;
 
+mod highlighters;
+
 pub use crate::{
     ast::YggdrasilNode,
     enhance::{stack::Stack, RegexCompiled},
