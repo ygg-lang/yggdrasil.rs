@@ -1,5 +1,5 @@
-use yggdrasil_error::Validation;
 use super::*;
+use yggdrasil_error::Validation;
 
 pub struct InsertIgnore {
     grammar: GrammarInfo,
@@ -33,10 +33,10 @@ impl CodeOptimizer for InsertIgnore {
 
 impl InsertIgnore {
     fn update_node(&mut self, info: &mut YggdrasilExpression) {
-        match &mut info.kind {
-            ExpressionKind::Choice(node) => self.update_choice(node),
-            ExpressionKind::Concat(node) => self.update_concat(node),
-            ExpressionKind::Unary(node) => self.insert_unary(node),
+        match &mut info.body {
+            ExpressionBody::Choice(node) => self.update_choice(node),
+            ExpressionBody::Concat(node) => self.update_concat(node),
+            ExpressionBody::Unary(node) => self.insert_unary(node),
             // do nothing
             _ => {}
         }

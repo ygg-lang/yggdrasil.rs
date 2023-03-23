@@ -26,7 +26,7 @@ pub struct UnaryExpression {
     pub operators: Vec<YggdrasilOperator>,
 }
 
-impl From<UnaryExpression> for ExpressionKind {
+impl From<UnaryExpression> for ExpressionBody {
     fn from(e: UnaryExpression) -> Self {
         Self::Unary(e)
     }
@@ -36,16 +36,16 @@ impl Add<YggdrasilOperator> for YggdrasilExpression {
     type Output = Self;
 
     fn add(self, o: YggdrasilOperator) -> Self::Output {
-        match self.kind {
-            ExpressionKind::Unary(node) => {
+        match self.body {
+            ExpressionBody::Unary(node) => {
                 let mut ops = node.operators;
                 ops.push(o);
                 let unary = UnaryExpression { base: node.base, operators: ops };
-                YggdrasilExpression { kind: ExpressionKind::Unary(unary), remark: self.remark, tag: self.tag }
+                YggdrasilExpression { body: ExpressionBody::Unary(unary), remark: self.remark, tag: self.tag }
             }
             _ => {
                 let unary = UnaryExpression { base: Box::new(self), operators: vec![o] };
-                ExpressionKind::Unary(unary).into()
+                ExpressionBody::Unary(unary).into()
             }
         }
     }

@@ -3,7 +3,7 @@ use std::{collections::HashSet, mem::take};
 use yggdrasil_error::YggdrasilError;
 use yggdrasil_ir::{
     grammar::GrammarInfo,
-    nodes::{ChoiceExpression, ConcatExpression, ExpressionKind, UnaryExpression, YggdrasilExpression},
+    nodes::{ChoiceExpression, ConcatExpression, ExpressionBody, UnaryExpression, YggdrasilExpression},
     rule::{FunctionRule, GrammarAtomic, GrammarRule},
     traits::CodeOptimizer,
     IndexMap,

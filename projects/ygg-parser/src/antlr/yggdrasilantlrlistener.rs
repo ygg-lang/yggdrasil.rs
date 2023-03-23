@@ -34,6 +34,24 @@ pub trait YggdrasilAntlrListener<'input>: ParseTreeListener<'input, YggdrasilAnt
     /// Exit a parse tree produced by {@link YggdrasilAntlrParser#grammar_block}.
     /// @param ctx the parse tree
     fn exit_grammar_block(&mut self, _ctx: &Grammar_blockContext<'input>) {}
+    /// Enter a parse tree produced by {@link YggdrasilAntlrParser#grammar_pair}.
+    /// @param ctx the parse tree
+    fn enter_grammar_pair(&mut self, _ctx: &Grammar_pairContext<'input>) {}
+    /// Exit a parse tree produced by {@link YggdrasilAntlrParser#grammar_pair}.
+    /// @param ctx the parse tree
+    fn exit_grammar_pair(&mut self, _ctx: &Grammar_pairContext<'input>) {}
+    /// Enter a parse tree produced by {@link YggdrasilAntlrParser#grammar_key}.
+    /// @param ctx the parse tree
+    fn enter_grammar_key(&mut self, _ctx: &Grammar_keyContext<'input>) {}
+    /// Exit a parse tree produced by {@link YggdrasilAntlrParser#grammar_key}.
+    /// @param ctx the parse tree
+    fn exit_grammar_key(&mut self, _ctx: &Grammar_keyContext<'input>) {}
+    /// Enter a parse tree produced by {@link YggdrasilAntlrParser#grammar_value}.
+    /// @param ctx the parse tree
+    fn enter_grammar_value(&mut self, _ctx: &Grammar_valueContext<'input>) {}
+    /// Exit a parse tree produced by {@link YggdrasilAntlrParser#grammar_value}.
+    /// @param ctx the parse tree
+    fn exit_grammar_value(&mut self, _ctx: &Grammar_valueContext<'input>) {}
     /// Enter a parse tree produced by {@link YggdrasilAntlrParser#define_class}.
     /// @param ctx the parse tree
     fn enter_define_class(&mut self, _ctx: &Define_classContext<'input>) {}
@@ -260,10 +278,10 @@ pub trait YggdrasilAntlrListener<'input>: ParseTreeListener<'input, YggdrasilAnt
     /// Exit a parse tree produced by {@link YggdrasilAntlrParser#annotation}.
     /// @param ctx the parse tree
     fn exit_annotation(&mut self, _ctx: &AnnotationContext<'input>) {}
-    /// Enter a parse tree produced by {@link YggdrasilAntlrParser#annotations}.
+    /// Enter a parse tree produced by {@link YggdrasilAntlrParser#modifiers}.
     /// @param ctx the parse tree
     fn enter_modifiers(&mut self, _ctx: &ModifiersContext<'input>) {}
-    /// Exit a parse tree produced by {@link YggdrasilAntlrParser#annotations}.
+    /// Exit a parse tree produced by {@link YggdrasilAntlrParser#modifiers}.
     /// @param ctx the parse tree
     fn exit_modifiers(&mut self, _ctx: &ModifiersContext<'input>) {}
     /// Enter a parse tree produced by {@link YggdrasilAntlrParser#macro_call}.

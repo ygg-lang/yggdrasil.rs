@@ -36,6 +36,24 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
         self.visit_children(ctx)
     }
 
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#grammar_pair}.
+    /// @param ctx the parse tree
+    fn visit_grammar_pair(&mut self, ctx: &Grammar_pairContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#grammar_key}.
+    /// @param ctx the parse tree
+    fn visit_grammar_key(&mut self, ctx: &Grammar_keyContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#grammar_value}.
+    /// @param ctx the parse tree
+    fn visit_grammar_value(&mut self, ctx: &Grammar_valueContext<'input>) {
+        self.visit_children(ctx)
+    }
+
     /// Visit a parse tree produced by {@link YggdrasilAntlrParser#define_class}.
     /// @param ctx the parse tree
     fn visit_define_class(&mut self, ctx: &Define_classContext<'input>) {
@@ -245,7 +263,7 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#annotations}.
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#modifiers}.
     /// @param ctx the parse tree
     fn visit_modifiers(&mut self, ctx: &ModifiersContext<'input>) {
         self.visit_children(ctx)
@@ -407,6 +425,24 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
     /// Visit a parse tree produced by {@link YggdrasilAntlrParser#grammar_block}.
     /// @param ctx the parse tree
     fn visit_grammar_block(&mut self, ctx: &Grammar_blockContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#grammar_pair}.
+    /// @param ctx the parse tree
+    fn visit_grammar_pair(&mut self, ctx: &Grammar_pairContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#grammar_key}.
+    /// @param ctx the parse tree
+    fn visit_grammar_key(&mut self, ctx: &Grammar_keyContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#grammar_value}.
+    /// @param ctx the parse tree
+    fn visit_grammar_value(&mut self, ctx: &Grammar_valueContext<'input>) -> Self::Return {
         self.visit_children(ctx)
     }
 
@@ -619,7 +655,7 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
         self.visit_children(ctx)
     }
 
-    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#annotations}.
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#modifiers}.
     /// @param ctx the parse tree
     fn visit_modifiers(&mut self, ctx: &ModifiersContext<'input>) -> Self::Return {
         self.visit_children(ctx)
@@ -779,6 +815,21 @@ where
 
     fn visit_grammar_block(&mut self, ctx: &Grammar_blockContext<'input>) {
         let result = <Self as YggdrasilAntlrVisitorCompat>::visit_grammar_block(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_grammar_pair(&mut self, ctx: &Grammar_pairContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_grammar_pair(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_grammar_key(&mut self, ctx: &Grammar_keyContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_grammar_key(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_grammar_value(&mut self, ctx: &Grammar_valueContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_grammar_value(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 

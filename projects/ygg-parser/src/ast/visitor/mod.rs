@@ -30,7 +30,7 @@ impl ParseTreeVisitorCompat<'_> for YggdrasilANTLR {
 /// Convert weakly typed ast to strongly typed ast
 impl YggdrasilAntlrVisitor<'_> for YggdrasilANTLR {
     fn visit_define_grammar(&mut self, ctx: &Define_grammarContext<'_>) {
-        self.grammar.name = YggdrasilIdentifier::take(ctx.identifier()).unwrap();
+        self.grammar.name = YggdrasilIdentifier::take(ctx.identifier(0)).unwrap();
     }
     fn visit_define_class(&mut self, ctx: &Define_classContext<'_>) {
         if let Some(s) = GrammarRule::take_one(ctx) {

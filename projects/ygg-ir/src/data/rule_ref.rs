@@ -27,13 +27,13 @@ impl Display for RuleReference {
 impl From<YggdrasilIdentifier> for YggdrasilExpression {
     fn from(value: YggdrasilIdentifier) -> Self {
         let rule = RuleReference { name: value, boxed: false, inline: false };
-        ExpressionKind::Rule(rule).into()
+        ExpressionBody::Rule(rule).into()
     }
 }
 
 impl From<RuleReference> for YggdrasilExpression {
     fn from(value: RuleReference) -> Self {
-        ExpressionKind::Rule(value).into()
+        ExpressionBody::Rule(value).into()
     }
 }
 impl RuleReference {

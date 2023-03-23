@@ -7,7 +7,7 @@ impl YggdrasilExpression {
         let out = match name {
             p if properties.contains(&p) => YggdrasilRegex::new(format!("[\\p{{{name}}}]"), 0..p.len()).into(),
             "ASCII_DIGIT" => RangeInclusive::new('0', '9').into(),
-            "ANY" => ExpressionKind::CharacterAny.into(),
+            "ANY" => ExpressionBody::CharacterAny.into(),
             _ => return None,
         };
         Some(out)

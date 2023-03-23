@@ -9,12 +9,12 @@ pub struct YggdrasilText {
 
 impl From<YggdrasilText> for YggdrasilExpression {
     fn from(value: YggdrasilText) -> Self {
-        ExpressionKind::Text(value).into()
+        ExpressionBody::Text(value).into()
     }
 }
 
 impl From<RangeInclusive<char>> for YggdrasilExpression {
     fn from(value: RangeInclusive<char>) -> Self {
-        ExpressionKind::CharacterRange(value).into()
+        ExpressionBody::CharacterRange(value).into()
     }
 }

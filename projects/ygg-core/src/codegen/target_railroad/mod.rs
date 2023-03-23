@@ -5,7 +5,7 @@ use yggdrasil_error::Validation;
 use yggdrasil_ir::{
     data::RuleReference,
     grammar::GrammarInfo,
-    nodes::{ChoiceExpression, ConcatExpression, ExpressionKind, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
+    nodes::{ChoiceExpression, ConcatExpression, ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
     rule::GrammarRule,
     traits::CodeGenerator,
 };
@@ -70,26 +70,26 @@ impl AsRailroad for GrammarRule {
 
 impl AsRailroad for YggdrasilExpression {
     fn as_railroad(&self, config: &Railroad) -> Box<dyn Node> {
-        self.kind.as_railroad(config)
+        self.body.as_railroad(config)
     }
 }
 
-impl AsRailroad for ExpressionKind {
+impl AsRailroad for ExpressionBody {
     fn as_railroad(&self, config: &Railroad) -> Box<dyn Node> {
         match self {
-            ExpressionKind::Choice(e) => e.as_railroad(config),
-            ExpressionKind::Concat(e) => e.as_railroad(config),
-            ExpressionKind::Unary(e) => e.as_railroad(config),
-            ExpressionKind::Rule(e) => e.as_railroad(config),
-            ExpressionKind::Call(e) => Box::new(Terminal::new(e.name.to_string(), &vec!["function"])),
-            ExpressionKind::Ignored => Box::new(Terminal::new("IGNORED".to_string(), &vec!["character"])),
-            ExpressionKind::Text(v) => Box::new(Terminal::new(v.text.to_string(), &vec!["string"])),
-            ExpressionKind::CharacterAny => Box::new(Terminal::new("ANY".to_string(), &vec!["character"])),
-            ExpressionKind::CharacterRestOfLine => Box::new(Terminal::new("RestOfLine".to_string(), &vec!["character"])),
-            ExpressionKind::CharacterRange(v) => Box::new(Terminal::new(format!("{}-{}", v.start(), v.end()), &vec!["string"])),
-            ExpressionKind::Integer(v) => Box::new(Terminal::new(v.to_string(), &vec!["string"])),
-            ExpressionKind::Boolean(_) => Box::new(Terminal::new("Boolean".to_string(), &vec!["character"])),
-            ExpressionKind::Regex(v) => Box::new(Terminal::new(v.raw.to_string(), &vec!["string"])),
+            ExpressionBody::Choice(e) => e.as_railroad(config),
+            ExpressionBody::Concat(e) => e.as_railroad(config),
+            ExpressionBody::Unary(e) => e.as_railroad(config),
+            ExpressionBody::Rule(e) => e.as_railroad(config),
+            ExpressionBody::Call(e) => Box::new(Terminal::new(e.name.to_string(), &vec!["function"])),
+            ExpressionBody::Ignored => Box::new(Terminal::new("IGNORED".to_string(), &vec!["character"])),
+            ExpressionBody::Text(v) => Box::new(Terminal::new(v.text.to_string(), &vec!["string"])),
+            ExpressionBody::CharacterAny => Box::new(Terminal::new("ANY".to_string(), &vec!["character"])),
+            ExpressionBody::CharacterRestOfLine => Box::new(Terminal::new("RestOfLine".to_string(), &vec!["character"])),
+            ExpressionBody::CharacterRange(v) => Box::new(Terminal::new(format!("{}-{}", v.start(), v.end()), &vec!["string"])),
+            ExpressionBody::Integer(v) => Box::new(Terminal::new(v.to_string(), &vec!["string"])),
+            ExpressionBody::Boolean(_) => Box::new(Terminal::new("Boolean".to_string(), &vec!["character"])),
+            ExpressionBody::Regex(v) => Box::new(Terminal::new(v.raw.to_string(), &vec!["string"])),
         }
     }
 }

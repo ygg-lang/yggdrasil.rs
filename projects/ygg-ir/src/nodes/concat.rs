@@ -17,24 +17,29 @@ where
 
 impl From<ConcatExpression> for YggdrasilExpression {
     fn from(value: ConcatExpression) -> Self {
-        ExpressionKind::Concat(value).into()
+        ExpressionBody::Concat(value).into()
     }
 }
 
 impl ConcatExpression {
-    pub fn new(lhs: impl Into<YggdrasilExpression>, rhs: impl Into<YggdrasilExpression>, soft: bool) -> Self {
-        let mut sequence = vec![];
-        sequence.push(lhs.into());
-        if soft {
-            sequence.push(YggdrasilExpression::ignored())
+    pub fn new(terms: Vec<YggdrasilExpression>) -> Option<Self> {
+        if terms.is_empty() {
+            return None;
         }
-        sequence.push(rhs.into());
-        Self { sequence }
+        return Some(Self { sequence: terms });
+    }
+    pub fn pair(lhs: impl Into<YggdrasilExpression>, rhs: impl Into<YggdrasilExpression>, soft: bool) -> Self {
+        if soft {
+            Self { sequence: vec![lhs.into(), YggdrasilExpression::ignored(), rhs.into()] }
+        }
+        else {
+            Self { sequence: vec![lhs.into(), rhs.into()] }
+        }
     }
     pub fn split(&self) -> (YggdrasilExpression, &[YggdrasilExpression]) {
         match self.sequence.split_first() {
             Some((head, rest)) => (head.clone(), rest),
-            None => unreachable!("invalid empty"),
+            None => unreachable!("Empty nodes are illegal, make sure you use `ConcatExpression::new`"),
         }
     }
 }
@@ -51,10 +56,10 @@ impl Add for YggdrasilExpression {
 impl AddAssign for YggdrasilExpression {
     /// `a ~ b ~ c`
     fn add_assign(&mut self, rhs: Self) {
-        match &mut self.kind {
-            ExpressionKind::Concat(this) if self.tag.is_none() && rhs.tag.is_none() => {
-                match rhs.kind {
-                    ExpressionKind::Concat(that) => this.sequence.extend(that.sequence),
+        match &mut self.body {
+            ExpressionBody::Concat(this) if self.tag.is_none() && rhs.tag.is_none() => {
+                match rhs.body {
+                    ExpressionBody::Concat(that) => this.sequence.extend(that.sequence),
                     _ => this.sequence.push(rhs),
                 }
                 return;
@@ -65,7 +70,7 @@ impl AddAssign for YggdrasilExpression {
     }
 }
 
-impl BitAnd<Self> for YggdrasilExpression {
+impl BitAnd for YggdrasilExpression {
     type Output = Self;
     /// `a b`
     fn bitand(mut self, other: Self) -> Self::Output {
@@ -77,10 +82,10 @@ impl BitAnd<Self> for YggdrasilExpression {
 impl BitAndAssign for YggdrasilExpression {
     /// `p:a q:(b c) | d e`
     fn bitand_assign(&mut self, rhs: Self) {
-        match &mut self.kind {
-            ExpressionKind::Concat(this) if self.tag.is_none() && rhs.tag.is_none() => {
-                match rhs.kind {
-                    ExpressionKind::Concat(that) => this.sequence.extend(that.sequence),
+        match &mut self.body {
+            ExpressionBody::Concat(this) if self.tag.is_none() && rhs.tag.is_none() => {
+                match rhs.body {
+                    ExpressionBody::Concat(that) => this.sequence.extend(that.sequence),
                     _ => this.sequence.push(rhs),
                 }
                 return;

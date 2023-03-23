@@ -3,6 +3,7 @@ use crate::{
     grammar::GrammarInfo,
     nodes::{ChoiceExpression, ConcatExpression},
 };
+use std::iter::from_generator;
 
 pub mod counter;
 pub mod mapper;
@@ -66,19 +67,44 @@ impl GrammarRule {
         let fields = self.body.as_ref().map(|s| s.field_map()).unwrap_or_default();
         YggdrasilVariants { fields: fields.wrap }
     }
+    pub fn union_fields(&self) -> YggdrasilEnumerates {
+        assert_eq!(self.kind, GrammarRuleKind::Union, "do you filter with union?");
+        let mut variants = BTreeMap::default();
+        for (index, expr) in self.get_branches().enumerate() {
+            let field = YggdrasilVariants { fields: expr.field_map().wrap };
+            match &expr.tag {
+                Some(s) => variants.insert(s.text.clone().to_case(Case::Pascal), field),
+                None => variants.insert(format!("{}{index}", self.name.text).to_case(Case::Pascal), field),
+            };
+        }
+        YggdrasilEnumerates { variants }
+    }
+    fn get_branches<'i>(&'i self) -> impl Iterator<Item = &'i YggdrasilExpression> + '_ {
+        from_generator(move || match &self.body {
+            Some(s) => match &s.body {
+                ExpressionBody::Choice(e) => {
+                    for item in &e.branches {
+                        yield item
+                    }
+                }
+                _ => yield s,
+            },
+            None => {}
+        })
+    }
 }
 
 impl YggdrasilExpression {
     fn field_map(&self) -> FieldMap {
         // let tag = self.tag.as_ref().or(candidate);
-        match &self.kind {
-            ExpressionKind::Choice(many) => many.field_map(),
-            ExpressionKind::Concat(many) => many.field_map(),
+        match &self.body {
+            ExpressionBody::Choice(many) => many.field_map(),
+            ExpressionBody::Concat(many) => many.field_map(),
             // a:x+
             // a:(x*)
             // a:(b:x)
-            ExpressionKind::Unary(one) => one.field_map(self.tag.as_ref()),
-            ExpressionKind::Rule(one) => match &self.tag {
+            ExpressionBody::Unary(one) => one.field_map(self.tag.as_ref()),
+            ExpressionBody::Rule(one) => match &self.tag {
                 Some(s) => FieldMap::rule(s, one, FieldCounter::ONE),
                 None => FieldMap::default(),
             },
@@ -91,18 +117,18 @@ impl UnaryExpression {
     fn field_map(&self, candidate: Option<&YggdrasilIdentifier>) -> FieldMap {
         let count = self.counter();
         let tag = self.base.tag.as_ref().or(candidate);
-        match &self.base.kind {
-            ExpressionKind::Concat(v) => v.field_map(),
-            ExpressionKind::Choice(v) => v.field_map(),
+        match &self.base.body {
+            ExpressionBody::Concat(v) => v.field_map(),
+            ExpressionBody::Choice(v) => v.field_map(),
             // base:Rule*         => tag = base
             // outer:(Rule)*      => tag = outer
             // outer:(base:Rule)* => tag = base
-            ExpressionKind::Unary(v) => {
+            ExpressionBody::Unary(v) => {
                 let mut base = v.field_map(tag);
                 base ^= count;
                 base
             }
-            ExpressionKind::Rule(r) => match tag {
+            ExpressionBody::Rule(r) => match tag {
                 Some(s) => FieldMap::rule(s, r, count),
                 None => FieldMap::default(),
             },

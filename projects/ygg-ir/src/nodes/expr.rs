@@ -4,20 +4,20 @@ use crate::data::RuleReference;
 impl YggdrasilExpression {
     #[inline]
     pub fn is_choice(&self) -> bool {
-        matches!(self.kind, ExpressionKind::Choice(_))
+        matches!(self.body, ExpressionBody::Choice(_))
     }
     #[inline]
     pub fn is_concat(&self) -> bool {
-        matches!(self.kind, ExpressionKind::Concat(_))
+        matches!(self.body, ExpressionBody::Concat(_))
     }
     #[inline]
     pub fn is_unary(&self) -> bool {
-        matches!(self.kind, ExpressionKind::Unary(_))
+        matches!(self.body, ExpressionBody::Unary(_))
     }
     #[inline]
     pub fn as_rule(&self) -> Option<&RuleReference> {
-        match &self.kind {
-            ExpressionKind::Rule(r) => Some(r),
+        match &self.body {
+            ExpressionBody::Rule(r) => Some(r),
             _ => None,
         }
     }
@@ -35,13 +35,13 @@ impl YggdrasilExpression {
     }
 }
 
-impl ExpressionKind {
+impl ExpressionBody {
     pub fn as_tag(&self) -> Option<&str> {
         self.as_rule().map(|r| r.name.text.as_str())
     }
     pub fn as_rule(&self) -> Option<&RuleReference> {
         match self {
-            ExpressionKind::Rule(r) => Some(r),
+            ExpressionBody::Rule(r) => Some(r),
             _ => None,
         }
     }

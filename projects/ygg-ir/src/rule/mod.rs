@@ -3,18 +3,21 @@ pub mod derive;
 
 mod fields;
 mod identifier;
+mod unions;
 
 mod annotations;
 
 pub use self::{
     annotations::{YggdrasilAnnotations, YggdrasilMacroArgument, YggdrasilMacroCall, YggdrasilModifiers},
+    classes::YggdrasilVariants,
     derive::RuleDerive,
     fields::{counter::FieldCounter, mapper::FieldMap, FieldKind, YggdrasilField},
     identifier::{YggdrasilIdentifier, YggdrasilNamepath},
+    unions::YggdrasilEnumerates,
 };
 use crate::{
     data::RuleReference,
-    nodes::{ExpressionKind, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
+    nodes::{ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
 };
 use convert_case::{Case, Casing};
 pub use num::BigInt;
@@ -133,15 +136,6 @@ pub struct GrammarRule {
     pub range: Range<usize>,
 }
 
-// Class rule
-pub struct YggdrasilVariants {
-    pub fields: BTreeMap<String, YggdrasilField>,
-}
-
-pub struct YggdrasilEnumerates {
-    pub variants: BTreeMap<String, YggdrasilVariants>,
-}
-
 impl Ord for GrammarRule {
     fn cmp(&self, other: &Self) -> Ordering {
         other.name.text.cmp(&other.name.text)
@@ -201,9 +195,9 @@ impl GrammarRule {
     }
     pub fn with_expression(mut self, extra: Option<YggdrasilExpression>) -> Self {
         let empty = match &extra {
-            Some(s) => match &s.kind {
-                ExpressionKind::Choice(v) => v.branches.is_empty(),
-                ExpressionKind::Concat(v) => v.sequence.is_empty(),
+            Some(s) => match &s.body {
+                ExpressionBody::Choice(v) => v.branches.is_empty(),
+                ExpressionBody::Concat(v) => v.sequence.is_empty(),
                 _ => false,
             },
             None => true,

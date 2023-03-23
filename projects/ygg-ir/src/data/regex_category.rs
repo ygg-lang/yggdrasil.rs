@@ -32,7 +32,7 @@ impl FromStr for YggdrasilRegex {
 
 impl From<YggdrasilRegex> for YggdrasilExpression {
     fn from(value: YggdrasilRegex) -> Self {
-        ExpressionKind::Regex(value).into()
+        ExpressionBody::Regex(value).into()
     }
 }
 
@@ -129,11 +129,11 @@ impl GrammarRule {
 
 impl YggdrasilExpression {
     fn collect_regex(&self, all: &mut Vec<YggdrasilRegex>) {
-        match &self.kind {
-            ExpressionKind::Choice(v) => v.branches.iter().for_each(|s| s.collect_regex(all)),
-            ExpressionKind::Concat(v) => v.sequence.iter().for_each(|s| s.collect_regex(all)),
-            ExpressionKind::Unary(v) => v.base.collect_regex(all),
-            ExpressionKind::Regex(r) => all.push(r.clone()),
+        match &self.body {
+            ExpressionBody::Choice(v) => v.branches.iter().for_each(|s| s.collect_regex(all)),
+            ExpressionBody::Concat(v) => v.sequence.iter().for_each(|s| s.collect_regex(all)),
+            ExpressionBody::Unary(v) => v.base.collect_regex(all),
+            ExpressionBody::Regex(r) => all.push(r.clone()),
             _ => {}
         }
     }

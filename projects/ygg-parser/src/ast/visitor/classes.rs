@@ -14,7 +14,7 @@ impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
 impl<'i> Extractor<Class_blockContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &Class_blockContextAll<'i>) -> Option<Self> {
         let terms = YggdrasilExpression::take_many(&node.class_expression_all());
-        Some(ConcatExpression { sequence: terms }.into())
+        Some(ConcatExpression::new(terms)?.into())
     }
 }
 

@@ -28,7 +28,7 @@ fn builtin_ignore(state: Input) -> Output {
 {%- if self.grammar.ignore_rules_empty() %}
     Ok(state)
 {%- else %}
-    state.repeat(0, u32::MAX, |s| {
+    state.repeat(0..u32::MAX, |s| {
         {{ self.grammar.ignore_rule_match() }}
     })
 {% endif %}

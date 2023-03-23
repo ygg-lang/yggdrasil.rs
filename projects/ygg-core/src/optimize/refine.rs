@@ -1,5 +1,5 @@
-use yggdrasil_error::Validation;
 use super::*;
+use yggdrasil_error::Validation;
 
 pub struct RefineRules {
     grammar: GrammarInfo,
@@ -31,8 +31,8 @@ impl CodeOptimizer for RefineRules {
 
 impl RefineRules {
     fn refine_node(&mut self, node: &mut YggdrasilExpression) -> Result<(), YggdrasilError> {
-        match &mut node.kind {
-            ExpressionKind::Choice(v) => {
+        match &mut node.body {
+            ExpressionBody::Choice(v) => {
                 for child in v.branches.iter_mut() {
                     self.refine_node(child)?;
                 }
@@ -42,7 +42,7 @@ impl RefineRules {
                 }
                 *node = head
             }
-            ExpressionKind::Concat(v) => {
+            ExpressionBody::Concat(v) => {
                 for child in v.sequence.iter_mut() {
                     self.refine_node(child)?;
                 }
@@ -52,7 +52,7 @@ impl RefineRules {
                 }
                 *node = head
             }
-            ExpressionKind::Unary(v) => {
+            ExpressionBody::Unary(v) => {
                 // TODO: marge operators,
                 // ** -> *
                 // ?* -> *

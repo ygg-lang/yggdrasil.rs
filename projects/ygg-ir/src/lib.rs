@@ -1,4 +1,6 @@
 #![feature(impl_trait_in_assoc_type)]
+#![feature(generators)]
+#![feature(iter_from_generator)]
 
 pub mod data;
 pub mod grammar;

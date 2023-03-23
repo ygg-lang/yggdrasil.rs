@@ -32,7 +32,7 @@ pub struct YggdrasilMacroArgument {
 
 impl From<YggdrasilMacroCall> for YggdrasilExpression {
     fn from(value: YggdrasilMacroCall) -> Self {
-        ExpressionKind::Call(value).into()
+        ExpressionBody::Call(value).into()
     }
 }
 

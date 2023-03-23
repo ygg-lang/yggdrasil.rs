@@ -11,7 +11,7 @@ pub use self::{
     text::YggdrasilText,
 };
 use crate::{
-    nodes::{ExpressionKind, YggdrasilExpression},
+    nodes::{ExpressionBody, YggdrasilExpression},
     rule::YggdrasilIdentifier,
 };
 use regex_automata::dfa::{dense::BuildError, regex::Regex};

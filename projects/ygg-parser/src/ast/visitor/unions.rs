@@ -12,14 +12,16 @@ impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
 impl<'i> Extractor<Union_blockContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &Union_blockContextAll<'i>) -> Option<Self> {
         let terms = YggdrasilExpression::take_many(&node.union_term_all());
-        if terms.len() == 1 { return terms.first().cloned() } else { Some(ChoiceExpression { branches: terms }.into()) }
+        Some(ChoiceExpression::new(terms)?.into())
     }
 }
 
 impl<'i> Extractor<Union_termContextAll<'i>> for YggdrasilExpression {
     fn take_one(node: &Union_termContextAll<'i>) -> Option<Self> {
         let terms = YggdrasilExpression::take_many(&node.union_expression_all());
-        Some(ConcatExpression { sequence: terms }.into())
+        let mut expr = YggdrasilExpression::from(ConcatExpression::new(terms)?);
+        expr.tag = YggdrasilIdentifier::take(node.tag_branch().and_then(|v| v.identifier()));
+        Some(expr)
     }
 }
 

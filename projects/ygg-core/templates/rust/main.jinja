@@ -80,7 +80,23 @@ pub struct {{ rule.node_name() }} {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum {{ rule.node_name() }} {
-
+    {%- for (name, variant) in rule.union_fields() %}
+{%- if variant.is_empty() %}
+    {{ name }},
+{%- else if variant.as_single().is_some() %}
+    {{ name }}({{ variant.as_single().unwrap().field_type(self.grammar) }}),
+{%- else %}
+    {{ name }} {
+    {%- for field in variant %}
+{%- if field.field_type(self.grammar).is_empty() %}
+        // Missing rule {{ field.kind }}
+{%- else %}
+        {{ field.field_name()|safe_rust_id }}: {{ field.field_type(self.grammar) }},
+{%- endif %}
+    {%- endfor %}
+    },
+{%- endif %}
+    {%- endfor %}
 }
 {%- endif %}
 {%- endfor %}

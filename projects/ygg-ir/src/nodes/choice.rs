@@ -15,7 +15,7 @@ impl Default for ChoiceExpression {
 
 impl From<ChoiceExpression> for YggdrasilExpression {
     fn from(value: ChoiceExpression) -> Self {
-        ExpressionKind::Choice(value).into()
+        ExpressionBody::Choice(value).into()
     }
 }
 
@@ -26,34 +26,24 @@ impl Hash for ChoiceExpression {
 }
 
 impl ChoiceExpression {
-    pub fn new(lhs: impl Into<YggdrasilExpression>, rhs: impl Into<YggdrasilExpression>) -> Self {
+    pub fn new(terms: Vec<YggdrasilExpression>) -> Option<Self> {
+        if terms.is_empty() {
+            return None;
+        }
+        return Some(Self { branches: terms });
+    }
+    pub fn pair(lhs: impl Into<YggdrasilExpression>, rhs: impl Into<YggdrasilExpression>) -> Self {
         Self { branches: vec![lhs.into(), rhs.into()] }
     }
     pub fn split(&self) -> (YggdrasilExpression, &[YggdrasilExpression]) {
         match self.branches.split_first() {
             Some((head, rest)) => (head.clone(), rest),
-            None => unreachable!("invalid empty"),
+            None => unreachable!("Empty nodes are illegal, make sure you use `ChoiceExpression::new`"),
         }
     }
 }
 
-impl GrammarRule {
-    pub fn get_branches(&self) -> &[YggdrasilExpression] {
-        if self.kind != GrammarRuleKind::Union {
-            return &[];
-        }
-        let node = match self.body.as_ref() {
-            Some(s) => s,
-            None => return &[],
-        };
-        match &node.kind {
-            ExpressionKind::Choice(v) => v.branches.as_slice(),
-            _ => &[],
-        }
-    }
-}
-
-impl BitOr<Self> for YggdrasilExpression {
+impl BitOr for YggdrasilExpression {
     type Output = Self;
     /// `a | b`
     fn bitor(mut self, other: Self) -> Self::Output {
@@ -64,10 +54,10 @@ impl BitOr<Self> for YggdrasilExpression {
 
 impl BitOrAssign for YggdrasilExpression {
     fn bitor_assign(&mut self, rhs: Self) {
-        match &mut self.kind {
-            ExpressionKind::Choice(this) if self.tag.is_none() && rhs.tag.is_none() => {
-                match rhs.kind {
-                    ExpressionKind::Concat(that) => this.branches.extend(that.sequence),
+        match &mut self.body {
+            ExpressionBody::Choice(this) => {
+                match rhs.body {
+                    ExpressionBody::Concat(that) => this.branches.extend(that.sequence),
                     _ => this.branches.push(rhs),
                 }
                 return;

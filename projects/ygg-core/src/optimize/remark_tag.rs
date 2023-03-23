@@ -23,28 +23,28 @@ impl RemarkTags {
     fn remark(&self, expr: &mut YggdrasilExpression, scope: bool) {
         let mark = if expr.remark { !scope } else { scope };
         expr.remark = false;
-        match &mut expr.kind {
+        match &mut expr.body {
             // ^(a b c)
-            ExpressionKind::Concat(v) => {
+            ExpressionBody::Concat(v) => {
                 for item in &mut v.sequence {
                     self.remark(item, mark)
                 }
             }
             // ^(a|b|c)
-            ExpressionKind::Choice(v) => {
+            ExpressionBody::Choice(v) => {
                 for item in &mut v.branches {
                     self.remark(item, mark)
                 }
             }
             // ^(a+)
-            ExpressionKind::Unary(v) => self.remark(&mut v.base, mark),
-            ExpressionKind::Rule(v) if mark => match &mut expr.tag {
+            ExpressionBody::Unary(v) => self.remark(&mut v.base, mark),
+            ExpressionBody::Rule(v) if mark => match &mut expr.tag {
                 Some(_) => {}
                 None => {
                     expr.tag = Some(v.name.clone());
                 }
             },
-            ExpressionKind::Text(_) => {}
+            ExpressionBody::Text(_) => {}
             _ => {}
         }
     }

@@ -94,6 +94,7 @@ pub struct RustModule {
     pub readme: String,
     pub railway: String,
     pub railway_min: String,
+    pub ron: String,
 }
 
 impl CodeGenerator for RustCodegen {
@@ -102,6 +103,7 @@ impl CodeGenerator for RustCodegen {
     fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
         let mut out = RustModule::default();
         let mut errors = vec![];
+        out.ron = format!("{:#?}", info);
         out.main = RustWriteMain { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
         out.lex = RustWriteLex { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
         out.cst = RustWriteCST { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
@@ -157,7 +159,8 @@ impl RustModule {
         }
         let mut ast = File::create(path.join("readme.md"))?;
         ast.write_all(self.readme.as_bytes())?;
-
+        let mut ast = File::create(path.join("debug.ron"))?;
+        ast.write_all(self.ron.as_bytes())?;
         path.canonicalize()
     }
 }

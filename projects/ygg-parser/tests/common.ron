@@ -44,7 +44,7 @@ GrammarInfo {
                                         tag: None,
                                     },
                                     operators: [
-                                        Optional,
+                                        Repeats,
                                     ],
                                 },
                                 remark: false,
@@ -96,7 +96,12 @@ GrammarInfo {
                                     ],
                                 },
                                 remark: false,
-                                tag: None,
+                                tag: Some(
+                                    YggdrasilIdentifier {
+                                        text: "Class",
+                                        range: 229..233,
+                                    },
+                                ),
                             },
                             YggdrasilExpression {
                                 kind: ConcatExpression {
@@ -116,7 +121,12 @@ GrammarInfo {
                                     ],
                                 },
                                 remark: false,
-                                tag: None,
+                                tag: Some(
+                                    YggdrasilIdentifier {
+                                        text: "Union",
+                                        range: 257..261,
+                                    },
+                                ),
                             },
                             YggdrasilExpression {
                                 kind: ConcatExpression {
@@ -136,7 +146,12 @@ GrammarInfo {
                                     ],
                                 },
                                 remark: false,
-                                tag: None,
+                                tag: Some(
+                                    YggdrasilIdentifier {
+                                        text: "Macro",
+                                        range: 285..289,
+                                    },
+                                ),
                             },
                         ],
                     },
@@ -766,7 +781,12 @@ GrammarInfo {
                                     ],
                                 },
                                 remark: false,
-                                tag: None,
+                                tag: Some(
+                                    YggdrasilIdentifier {
+                                        text: "FromPath",
+                                        range: 1369..1376,
+                                    },
+                                ),
                             },
                             YggdrasilExpression {
                                 kind: ConcatExpression {
@@ -820,7 +840,12 @@ GrammarInfo {
                                     ],
                                 },
                                 remark: false,
-                                tag: None,
+                                tag: Some(
+                                    YggdrasilIdentifier {
+                                        text: "FromPathItems",
+                                        range: 1429..1441,
+                                    },
+                                ),
                             },
                         ],
                     },
@@ -1609,7 +1634,7 @@ GrammarInfo {
                                                 sequence: [
                                                     YggdrasilExpression {
                                                         kind: YggdrasilRegex {
-                                                            raw: "^([1-9])",
+                                                            raw: "[1-9]",
                                                             span: 3268..3272,
                                                             forward_le: [],
                                                             reverse_le: [],
@@ -1621,7 +1646,7 @@ GrammarInfo {
                                                     },
                                                     YggdrasilExpression {
                                                         kind: YggdrasilRegex {
-                                                            raw: "^([_0-9])",
+                                                            raw: "[_0-9]",
                                                             span: 3273..3278,
                                                             forward_le: [],
                                                             reverse_le: [],
@@ -1826,7 +1851,7 @@ GrammarInfo {
                                         tag: None,
                                     },
                                     operators: [
-                                        Optional,
+                                        Repeats,
                                     ],
                                 },
                                 remark: false,
@@ -1924,7 +1949,7 @@ GrammarInfo {
                                                     tag: None,
                                                 },
                                                 operators: [
-                                                    Optional,
+                                                    Repeats,
                                                 ],
                                             },
                                             remark: false,
@@ -2010,7 +2035,7 @@ GrammarInfo {
                                                     tag: None,
                                                 },
                                                 operators: [
-                                                    Optional,
+                                                    Repeats,
                                                 ],
                                             },
                                             remark: false,
@@ -2234,14 +2259,7 @@ GrammarInfo {
                                                                 tag: None,
                                                             },
                                                             YggdrasilExpression {
-                                                                kind: RuleReference {
-                                                                    name: YggdrasilIdentifier {
-                                                                        text: "ANY",
-                                                                        range: 4289..4291,
-                                                                    },
-                                                                    boxed: false,
-                                                                    inline: false,
-                                                                },
+                                                                kind: ANY,
                                                                 remark: false,
                                                                 tag: None,
                                                             },
@@ -2251,7 +2269,7 @@ GrammarInfo {
                                                     tag: None,
                                                 },
                                                 operators: [
-                                                    Optional,
+                                                    Repeats,
                                                 ],
                                             },
                                             remark: false,
@@ -2326,14 +2344,7 @@ GrammarInfo {
                                                                 tag: None,
                                                             },
                                                             YggdrasilExpression {
-                                                                kind: RuleReference {
-                                                                    name: YggdrasilIdentifier {
-                                                                        text: "ANY",
-                                                                        range: 4343..4345,
-                                                                    },
-                                                                    boxed: false,
-                                                                    inline: false,
-                                                                },
+                                                                kind: ANY,
                                                                 remark: false,
                                                                 tag: None,
                                                             },
@@ -2343,7 +2354,7 @@ GrammarInfo {
                                                     tag: None,
                                                 },
                                                 operators: [
-                                                    Optional,
+                                                    Repeats,
                                                 ],
                                             },
                                             remark: false,
