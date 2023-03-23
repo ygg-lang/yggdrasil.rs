@@ -17,5 +17,5 @@ fn test() {
 
 fn repeat_a(input: &str) -> Either<Box<State<Rule>>> {
     let state: Box<State<Rule>> = State::new(input);
-    state.repeat(0, 2, |s| s.match_string("a", false))
+    state.repeat(0..2, |s| s.match_string("a", false))
 }

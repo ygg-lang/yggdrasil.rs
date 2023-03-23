@@ -1,4 +1,5 @@
 use super::*;
+use alloc::string::ToString;
 
 impl<'i, R> Debug for TokenTree<'i, R>
 where
@@ -36,7 +37,14 @@ where
             else {
                 f.write_str("\x1b[34m*\x1b[0m ")?
             }
-            writeln!(f, "{:?}{}", term.as_rule(), term.as_span())?;
+            let span = term.as_span();
+            write!(f, "{:?}({}..{}", term.as_rule(), span.start, span.end)?;
+            match term.as_node_tag() {
+                Some(s) => write!(f, ", {s})")?,
+                None => write!(f, ")")?,
+            }
+            writeln!(f, ": \x1b[32m{:?}\x1b[0m", span.input)?;
+
             term.into_inner().pretty_print(f, depth + 1)?
         }
         Ok(())

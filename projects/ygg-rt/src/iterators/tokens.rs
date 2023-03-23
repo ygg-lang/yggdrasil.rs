@@ -1,7 +1,7 @@
 use alloc::{rc::Rc, vec::Vec};
 use core::{fmt, str};
 
-use super::queueable_token::TokenQueue;
+use super::token_queue::TokenQueue;
 use crate::{position, token::Token, YggdrasilRule};
 
 /// An iterator over [`Token`]s. It is created by [`Pair::tokens`] and [`Pairs::tokens`].
@@ -93,11 +93,8 @@ impl<'i, R: YggdrasilRule> DoubleEndedIterator for Tokens<'i, R> {
         if self.end <= self.start {
             return None;
         }
-
         let token = self.create_token(self.end - 1);
-
         self.end -= 1;
-
         Some(token)
     }
 }
@@ -105,40 +102,5 @@ impl<'i, R: YggdrasilRule> DoubleEndedIterator for Tokens<'i, R> {
 impl<'i, R: YggdrasilRule> fmt::Debug for Tokens<'i, R> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_list().entries(self.clone()).finish()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::{
-        super::super::{macros::tests::*, YggdrasilParser},
-        Token,
-    };
-    use alloc::vec::Vec;
-
-    #[test]
-    fn double_ended_iter_for_tokens() {
-        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
-        let mut tokens = pairs.clone().tokens().collect::<Vec<Token<'_, TestRule>>>();
-        tokens.reverse();
-        let reverse_tokens = pairs.tokens().rev().collect::<Vec<Token<'_, TestRule>>>();
-        assert_eq!(tokens, reverse_tokens);
-    }
-
-    #[test]
-    fn exact_size_iter_for_tokens() {
-        let tokens = AbcParser::parse_cst(TestRule::a, "abcde").unwrap().tokens();
-        assert_eq!(tokens.len(), tokens.count());
-
-        let tokens = AbcParser::parse_cst(TestRule::a, "我很漂亮e").unwrap().tokens();
-        assert_eq!(tokens.len(), tokens.count());
-
-        let tokens = AbcParser::parse_cst(TestRule::a, "abcde").unwrap().tokens().rev();
-        assert_eq!(tokens.len(), tokens.count());
-
-        let mut tokens = AbcParser::parse_cst(TestRule::a, "abcde").unwrap().tokens();
-        let tokens_len = tokens.len();
-        let _ = tokens.next().unwrap();
-        assert_eq!(tokens.count() + 1, tokens_len);
     }
 }

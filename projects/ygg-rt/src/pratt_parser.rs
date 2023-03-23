@@ -5,7 +5,7 @@ use core::{iter::Peekable, marker::PhantomData, ops::BitOr};
 
 use alloc::{boxed::Box, collections::BTreeMap};
 
-use crate::{iterators::Pair, YggdrasilRule};
+use crate::{iterators::TokenPair, YggdrasilRule};
 
 /// Associativity of an infix binary operator, used by [`Op::infix(Assoc)`].
 ///
@@ -110,7 +110,7 @@ impl<R: YggdrasilRule> BitOr for Op<R> {
 /// precedence.
 ///
 /// ```
-/// # use pest::pratt_parser::{Assoc, Op, PrattParser};
+/// # use yggdrasil_rt::pratt_parser::{Assoc, Op, PrattParser};
 /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 /// # enum Rule { program, expr, int, add, mul, sub, div, pow, fac, neg }
 /// let pratt = PrattParser::new()
@@ -125,7 +125,7 @@ impl<R: YggdrasilRule> BitOr for Op<R> {
 /// [`map_infix`] and [`parse`] methods as follows:
 ///
 /// ```
-/// # use pest::{iterators::TokenTree, pratt_parser::PrattParser};
+/// # use yggdrasil_rt::{iterators::TokenTree, pratt_parser::PrattParser};
 /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 /// # enum Rule { program, expr, int, add, mul, sub, div, pow, fac, neg }
 /// fn parse_expr(pairs: TokenTree<Rule>, pratt: &PrattParser<Rule>) -> i32 {
@@ -206,16 +206,16 @@ impl<R: YggdrasilRule> PrattParser<R> {
     /// Maps primary expressions with a closure `primary`.
     pub fn map_primary<'pratt, 'a, 'i, X, T>(&'pratt self, primary: X) -> PrattParserMap<'pratt, 'a, 'i, R, X, T>
     where
-        X: FnMut(Pair<'i, R>) -> T,
+        X: FnMut(TokenPair<'i, R>) -> T,
         R: 'pratt,
     {
         PrattParserMap { pratt: self, primary, prefix: None, postfix: None, infix: None, phantom: PhantomData }
     }
 }
 
-type PrefixFn<'a, 'i, R, T> = Box<dyn FnMut(Pair<'i, R>, T) -> T + 'a>;
-type PostfixFn<'a, 'i, R, T> = Box<dyn FnMut(T, Pair<'i, R>) -> T + 'a>;
-type InfixFn<'a, 'i, R, T> = Box<dyn FnMut(T, Pair<'i, R>, T) -> T + 'a>;
+type PrefixFn<'a, 'i, R, T> = Box<dyn FnMut(TokenPair<'i, R>, T) -> T + 'a>;
+type PostfixFn<'a, 'i, R, T> = Box<dyn FnMut(T, TokenPair<'i, R>) -> T + 'a>;
+type InfixFn<'a, 'i, R, T> = Box<dyn FnMut(T, TokenPair<'i, R>, T) -> T + 'a>;
 
 /// Product of calling [`map_primary`] on [`PrattParser`], defines how expressions should
 /// be mapped.
@@ -225,7 +225,7 @@ type InfixFn<'a, 'i, R, T> = Box<dyn FnMut(T, Pair<'i, R>, T) -> T + 'a>;
 pub struct PrattParserMap<'pratt, 'a, 'i, R, F, T>
 where
     R: YggdrasilRule,
-    F: FnMut(Pair<'i, R>) -> T,
+    F: FnMut(TokenPair<'i, R>) -> T,
 {
     pratt: &'pratt PrattParser<R>,
     primary: F,
@@ -238,12 +238,12 @@ where
 impl<'pratt, 'a, 'i, R, F, T> PrattParserMap<'pratt, 'a, 'i, R, F, T>
 where
     R: YggdrasilRule + 'pratt,
-    F: FnMut(Pair<'i, R>) -> T,
+    F: FnMut(TokenPair<'i, R>) -> T,
 {
     /// Maps prefix operators with closure `prefix`.
     pub fn map_prefix<X>(mut self, prefix: X) -> Self
     where
-        X: FnMut(Pair<'i, R>, T) -> T + 'a,
+        X: FnMut(TokenPair<'i, R>, T) -> T + 'a,
     {
         self.prefix = Some(Box::new(prefix));
         self
@@ -252,7 +252,7 @@ where
     /// Maps postfix operators with closure `postfix`.
     pub fn map_postfix<X>(mut self, postfix: X) -> Self
     where
-        X: FnMut(T, Pair<'i, R>) -> T + 'a,
+        X: FnMut(T, TokenPair<'i, R>) -> T + 'a,
     {
         self.postfix = Some(Box::new(postfix));
         self
@@ -261,7 +261,7 @@ where
     /// Maps infix operators with a closure `infix`.
     pub fn map_infix<X>(mut self, infix: X) -> Self
     where
-        X: FnMut(T, Pair<'i, R>, T) -> T + 'a,
+        X: FnMut(T, TokenPair<'i, R>, T) -> T + 'a,
     {
         self.infix = Some(Box::new(infix));
         self
@@ -275,11 +275,11 @@ where
     /// [`map_prefix`]: struct.PrattParserMap.html#method.map_prefix
     /// [`map_postfix`]: struct.PrattParserMap.html#method.map_postfix
     /// [`map_infix`]: struct.PrattParserMap.html#method.map_infix
-    pub fn parse<P: Iterator<Item = Pair<'i, R>>>(&mut self, pairs: P) -> T {
+    pub fn parse<P: Iterator<Item = TokenPair<'i, R>>>(&mut self, pairs: P) -> T {
         self.expr(&mut pairs.peekable(), 0)
     }
 
-    fn expr<P: Iterator<Item = Pair<'i, R>>>(&mut self, pairs: &mut Peekable<P>, rbp: Prec) -> T {
+    fn expr<P: Iterator<Item = TokenPair<'i, R>>>(&mut self, pairs: &mut Peekable<P>, rbp: Prec) -> T {
         let mut lhs = self.nud(pairs);
         while rbp < self.lbp(pairs) {
             lhs = self.led(pairs, lhs);
@@ -291,7 +291,7 @@ where
     ///
     /// "the action that should happen when the symbol is encountered
     ///  as start of an expression (most notably, prefix operators)
-    fn nud<P: Iterator<Item = Pair<'i, R>>>(&mut self, pairs: &mut Peekable<P>) -> T {
+    fn nud<P: Iterator<Item = TokenPair<'i, R>>>(&mut self, pairs: &mut Peekable<P>) -> T {
         let pair = pairs.next().expect("Pratt parsing expects non-empty Pairs");
         match self.pratt.ops.get(&pair.as_rule()) {
             Some((Affix::Prefix, prec)) => {
@@ -310,7 +310,7 @@ where
     ///
     /// "the action that should happen when the symbol is encountered
     /// after the start of an expression (most notably, infix and postfix operators)"
-    fn led<P: Iterator<Item = Pair<'i, R>>>(&mut self, pairs: &mut Peekable<P>, lhs: T) -> T {
+    fn led<P: Iterator<Item = TokenPair<'i, R>>>(&mut self, pairs: &mut Peekable<P>, lhs: T) -> T {
         let pair = pairs.next().unwrap();
         match self.pratt.ops.get(&pair.as_rule()) {
             Some((Affix::Infix(assoc), prec)) => {
@@ -334,7 +334,7 @@ where
     /// Left-Binding-Power
     ///
     /// "describes the symbol's precedence in infix form (most notably, operator precedence)"
-    fn lbp<P: Iterator<Item = Pair<'i, R>>>(&mut self, pairs: &mut Peekable<P>) -> Prec {
+    fn lbp<P: Iterator<Item = TokenPair<'i, R>>>(&mut self, pairs: &mut Peekable<P>) -> Prec {
         match pairs.peek() {
             Some(pair) => match self.pratt.ops.get(&pair.as_rule()) {
                 Some((_, prec)) => *prec,

@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 // This structure serves to improve performance over Token objects in two ways:
 //
 //   * it is smaller than a Token, leading to both less memory use when stored in the queue but also
@@ -8,6 +6,17 @@ use alloc::borrow::Cow;
 //     and can easily be stored instead of recomputed
 #[derive(Debug)]
 pub enum TokenQueue<R> {
-    Start { end_token_index: usize, input_offset: usize },
-    End { start_token_index: usize, input_offset: usize, rule: R, tag: Option<Cow<'static, str>> },
+    Start {
+        end_token_index: usize,
+        input_offset: usize,
+    },
+    End {
+        start_token_index: usize,
+        input_offset: usize,
+        rule: R,
+        #[cfg(not(feature = "dynamic"))]
+        tag: Option<&'static str>,
+        #[cfg(feature = "dynamic")]
+        tag: Option<String>,
+    },
 }

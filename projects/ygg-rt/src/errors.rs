@@ -6,7 +6,7 @@ use alloc::{
 };
 use core::{cmp, fmt, mem};
 
-use crate::{position::Position, span::TextSpan, YggdrasilRule};
+use crate::{position::Position, span::TextSpan, TokenPair, YggdrasilRule};
 
 /// Parse-related error type.
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -32,6 +32,8 @@ pub enum ErrorKind<R> {
         /// Negative attempts
         negatives: Vec<R>,
     },
+    /// Unable to convert given node to ast
+    InvalidNode {},
     /// Custom error with a message
     CustomError {
         /// Short explanation
@@ -76,8 +78,8 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::error::{YggdrasilError, ErrorKind};
-    /// # use pest::Position;
+    /// # use yggdrasil_rt::error::{YggdrasilError, ErrorKind};
+    /// # use yggdrasil_rt::Position;
     /// # #[allow(non_camel_case_types)]
     /// # #[allow(dead_code)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -101,7 +103,7 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
         let visualize_ws = pos.match_char('\n') || pos.match_char('\r');
         let line_of = pos.line_of();
         let line = if visualize_ws { visualize_whitespace(line_of) } else { line_of.replace(&['\r', '\n'][..], "") };
-        YggdrasilError {
+        Self {
             variant,
             location: InputLocation::Pos(pos.offset()),
             path: None,
@@ -116,8 +118,8 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::error::{YggdrasilError, ErrorKind};
-    /// # use pest::{Position, TextSpan};
+    /// # use yggdrasil_rt::error::{YggdrasilError, ErrorKind};
+    /// # use yggdrasil_rt::{Position, TextSpan};
     /// # #[allow(non_camel_case_types)]
     /// # #[allow(dead_code)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -158,7 +160,7 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
         let ll = line_iter.last();
         let continued_line = if visualize_ws { ll.map(str::to_owned) } else { ll.map(visualize_whitespace) };
 
-        YggdrasilError {
+        Self {
             variant,
             location: InputLocation::Span((span.start(), end.offset())),
             path: None,
@@ -168,13 +170,18 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
         }
     }
 
+    /// unable to create node
+    pub fn invalid_node(pair: TokenPair<R>) -> YggdrasilError<R> {
+        Self::new_from_span(ErrorKind::InvalidNode {}, pair.as_span())
+    }
+
     /// Returns `Error` variant with `path` which is shown when formatted with `Display`.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use pest::error::{YggdrasilError, ErrorKind};
-    /// # use pest::Position;
+    /// # use yggdrasil_rt::{YggdrasilError};
+    /// # use yggdrasil_rt::Position;
     /// # #[allow(non_camel_case_types)]
     /// # #[allow(dead_code)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -204,8 +211,8 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::error::{YggdrasilError, ErrorKind};
-    /// # use pest::Position;
+    /// # use yggdrasil_rt::error::{YggdrasilError, ErrorKind};
+    /// # use yggdrasil_rt::Position;
     /// # #[allow(non_camel_case_types)]
     /// # #[allow(dead_code)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -244,8 +251,8 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::error::{YggdrasilError, ErrorKind};
-    /// # use pest::Position;
+    /// # use yggdrasil_rt::error::{YggdrasilError, ErrorKind};
+    /// # use yggdrasil_rt::Position;
     /// # #[allow(non_camel_case_types)]
     /// # #[allow(dead_code)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -474,7 +481,7 @@ impl<R: YggdrasilRule> ErrorKind<R> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::error::ErrorKind;
+    /// # use yggdrasil_rt::error::ErrorKind;
     /// let variant = ErrorKind::<()>::CustomError {
     ///     message: String::from("unexpected error")
     /// };
@@ -486,6 +493,9 @@ impl<R: YggdrasilRule> ErrorKind<R> {
                 Cow::Owned(YggdrasilError::parsing_error_message(positives, negatives, |r| format!("{:?}", r)))
             }
             ErrorKind::CustomError { ref message } => Cow::Borrowed(message),
+            ErrorKind::InvalidNode { .. } => {
+                todo!()
+            }
         }
     }
 }
@@ -501,6 +511,9 @@ impl<R: YggdrasilRule> fmt::Display for ErrorKind<R> {
         match self {
             ErrorKind::ParsingError { .. } => write!(f, "parsing error: {}", self.message()),
             ErrorKind::CustomError { .. } => write!(f, "{}", self.message()),
+            ErrorKind::InvalidNode { .. } => {
+                todo!()
+            }
         }
     }
 }

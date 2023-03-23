@@ -13,6 +13,7 @@ edition = "2021"
 
 [features]
 default = []
+dynamic = []
 const_prec_climber = []
 
 [dependencies]

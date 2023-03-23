@@ -37,7 +37,7 @@ impl<'i> Position<'i> {
     ///
     /// # Examples
     /// ```
-    /// # use pest::Position;
+    /// # use yggdrasil_rt::Position;
     /// let cheart = '💖';
     /// let heart = "💖";
     /// assert_eq!(Position::new(heart, 1), None);
@@ -52,7 +52,7 @@ impl<'i> Position<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use yggdrasil_rt::Position;
     /// let start = Position::from_start("");
     /// assert_eq!(start.offset(), 0);
     /// ```
@@ -67,7 +67,7 @@ impl<'i> Position<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use yggdrasil_rt::Position;
     /// let input = "ab";
     /// let mut start = Position::from_start(input);
     ///
@@ -87,7 +87,7 @@ impl<'i> Position<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use yggdrasil_rt::Position;
     /// let input = "ab";
     /// let start = Position::from_start(input);
     /// let span = start.span(&start.clone());
@@ -115,13 +115,13 @@ impl<'i> Position<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
     ///
     /// let input = "\na";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state.match_string("\na");
     /// assert!(result.is_ok());
     /// assert_eq!(result.unwrap().position().line_col(), (2, 2));
@@ -177,13 +177,13 @@ impl<'i> Position<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
     ///
     /// let input = "\na";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state.match_string("\na");
     /// assert!(result.is_ok());
     /// assert_eq!(result.unwrap().position().line_of(), "a");

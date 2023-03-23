@@ -1,4 +1,11 @@
-use alloc::{borrow::Cow, boxed::Box, rc::Rc, vec, vec::Vec};
+use alloc::{
+    borrow::Cow,
+    boxed::Box,
+    rc::Rc,
+    string::{String, ToString},
+    vec,
+    vec::Vec,
+};
 use core::ops::Range;
 use regex_automata::dfa::regex::Regex;
 
@@ -263,7 +270,7 @@ where
     ///
     /// ```
     /// # use yggdrasil_rt::{Either, state, State, YggdrasilRule};
-    /// use yggdrasil_rt::iterators::Pair;
+    /// use yggdrasil_rt::iterators::TokenPair;
     /// # impl YggdrasilRule for Rule {
     /// #    fn all_rules() -> &'static [Self] {
     /// #        &[]
@@ -294,20 +301,29 @@ where
     /// let input = "abcd";
     /// let pairs = state(input, mark_c).unwrap();
     /// // find all node tag as `c`
-    /// let find: Vec<Pair<Rule>> = pairs.filter(|s| s.as_node_tag() == Some("c")).collect();
+    /// let find: Vec<TokenPair<Rule>> = pairs.filter(|s| s.as_node_tag() == Some("c")).collect();
     /// assert_eq!(find[0].as_str(), "c")
     /// ```
     #[inline]
-    pub fn tag_node<S>(mut self: Box<Self>, tag: S) -> Either<Box<Self>>
-    where
-        S: Into<Cow<'static, str>>,
-    {
+    #[cfg(not(feature = "dynamic"))]
+    pub fn tag_node(mut self: Box<Self>, tag: &'static str) -> Either<Box<Self>> {
         if let Some(TokenQueue::End { tag: old, .. }) = self.queue.last_mut() {
-            *old = Some(tag.into())
+            *old = Some(tag)
         }
         Ok(self)
     }
-
+    /// Do not use this method except within a vm
+    #[inline]
+    #[cfg(feature = "dynamic")]
+    pub fn tag_node<S>(mut self: Box<Self>, tag: S) -> Either<Box<Self>>
+    where
+        S: Into<String>,
+    {
+        if let Some(TokenQueue::End { tag: old, .. }) = self.queue.last_mut() {
+            *old = Some(Cow::Owned(tag.into()))
+        }
+        Ok(self)
+    }
     fn attempts_at(&self, pos: usize) -> usize {
         if self.attempt_pos == pos { self.pos_attempts.len() + self.neg_attempts.len() } else { 0 }
     }
@@ -425,7 +441,7 @@ where
     /// assert_eq!(result.unwrap().position().offset(), 0);
     /// ```
     #[inline]
-    pub fn repeat<F>(self: Box<Self>, min: u32, max: u32, mut f: F) -> Either<Box<Self>>
+    pub fn repeat<F>(self: Box<Self>, range: Range<u32>, mut f: F) -> Either<Box<Self>>
     where
         F: FnMut(Box<Self>) -> Either<Box<Self>>,
     {
@@ -442,7 +458,7 @@ where
             counter += 1;
         }
         // times.contains(&counter.saturating_sub(1))
-        if min <= counter && counter <= max {
+        if range.start <= counter && counter <= range.end {
             result
         }
         else {
@@ -476,11 +492,11 @@ where
     /// }
     ///
     /// let input = "ab";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let result = state.optional(|s| s.match_string("ab"));
     /// assert!(result.is_ok());
     ///
-    /// state = pest::State::new(input);
+    /// state = yggdrasil_rt::State::new(input);
     /// let result = state.optional(|s| s.match_string("ac"));
     /// assert!(result.is_ok());
     /// ```
@@ -516,13 +532,13 @@ where
     /// enum Rule {}
     ///
     /// let input = "ab";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let result = state.match_char_by(|c| c.is_ascii());
     /// assert!(result.is_ok());
     /// assert_eq!(result.unwrap().position().pos(), 1);
     ///
     /// let input = "❤";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let result = state.match_char_by(|c| c.is_ascii());
     /// assert!(result.is_err());
     /// assert_eq!(result.unwrap_err().position().pos(), 0);
@@ -556,12 +572,12 @@ where
     /// enum Rule {}
     ///
     /// let input = "ab";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state.match_string("ab");
     /// assert!(result.is_ok());
     /// assert_eq!(result.unwrap().position().pos(), 2);
     ///
-    /// state = pest::State::new(input);
+    /// state = yggdrasil_rt::State::new(input);
     /// result = state.match_string("ac");
     /// assert!(result.is_err());
     /// assert_eq!(result.unwrap_err().position().pos(), 0);
@@ -612,12 +628,12 @@ where
     /// enum Rule {}
     ///
     /// let input = "ab";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state.match_range('a'..'z');
     /// assert!(result.is_ok());
     /// assert_eq!(result.unwrap().position().pos(), 1);
     ///
-    /// state = pest::State::new(input);
+    /// state = yggdrasil_rt::State::new(input);
     /// result = state.match_range('A'..'Z');
     /// assert!(result.is_err());
     /// assert_eq!(result.unwrap_err().position().pos(), 0);
@@ -650,12 +666,12 @@ where
     /// enum Rule {}
     ///
     /// let input = "ab";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state.match_range('a'..'z');
     /// assert!(result.is_ok());
     /// assert_eq!(result.unwrap().position().pos(), 1);
     ///
-    /// state = pest::State::new(input);
+    /// state = yggdrasil_rt::State::new(input);
     /// result = state.match_range('A'..'Z');
     /// assert!(result.is_err());
     /// assert_eq!(result.unwrap_err().position().pos(), 0);
@@ -686,12 +702,12 @@ where
     /// enum Rule {}
     ///
     /// let input = "ab";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state.skip(1);
     /// assert!(result.is_ok());
     /// assert_eq!(result.unwrap().position().pos(), 1);
     ///
-    /// state = pest::State::new(input);
+    /// state = yggdrasil_rt::State::new(input);
     /// result = state.skip(3);
     /// assert!(result.is_err());
     /// assert_eq!(result.unwrap_err().position().pos(), 0);
@@ -722,7 +738,7 @@ where
     /// enum Rule {}
     ///
     /// let input = "abcd";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state.skip_until(&["c", "d"]);
     /// assert!(result.is_ok());
     /// assert_eq!(result.unwrap().position().pos(), 2);
@@ -754,11 +770,11 @@ where
     /// enum Rule {}
     ///
     /// let input = "ab";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state.start_of_input();
     /// assert!(result.is_ok());
     ///
-    /// state = pest::State::new(input);
+    /// state = yggdrasil_rt::State::new(input);
     /// state = state.match_string("ab").unwrap();
     /// result = state.start_of_input();
     /// assert!(result.is_err());
@@ -789,11 +805,11 @@ where
     /// enum Rule {}
     ///
     /// let input = "ab";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state.end_of_input();
     /// assert!(result.is_err());
     ///
-    /// state = pest::State::new(input);
+    /// state = yggdrasil_rt::State::new(input);
     /// state = state.match_string("ab").unwrap();
     /// result = state.end_of_input();
     /// assert!(result.is_ok());
@@ -828,10 +844,11 @@ where
     /// }
     ///
     /// let input = "a";
-    /// let pairs: Vec<_> =
-    ///     pest::state(input, |state| state.lookahead(true, |state| state.rule(Rule::a, |s| Ok(s))))
-    ///         .unwrap()
-    ///         .collect();
+    /// let pairs: Vec<_> = yggdrasil_rt::state(input, |state| {
+    ///     state.lookahead(true, |state| state.rule(Rule::a, |s| Ok(s)))
+    /// })
+    /// .unwrap()
+    /// .collect();
     ///
     /// assert_eq!(pairs.len(), 0);
     /// ```
@@ -905,7 +922,7 @@ where
     /// enum Rule {}
     ///
     /// let input = "ab";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state.stack_push(|state| state.match_string("a"));
     /// assert!(result.is_ok());
     /// assert_eq!(result.unwrap().position().pos(), 1);
@@ -948,7 +965,7 @@ where
     /// enum Rule {}
     ///
     /// let input = "aa";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result =
     ///     state.stack_push(|state| state.match_string("a")).and_then(|state| state.stack_peek());
     /// assert!(result.is_ok());
@@ -981,7 +998,7 @@ where
     /// enum Rule {}
     ///
     /// let input = "aa";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result =
     ///     state.stack_push(|state| state.match_string("a")).and_then(|state| state.stack_pop());
     /// assert!(result.is_ok());
@@ -1013,7 +1030,7 @@ where
     /// enum Rule {}
     ///
     /// let input = "abcd cd cb";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state
     ///     .stack_push(|state| state.match_string("a"))
     ///     .and_then(|state| state.stack_push(|state| state.match_string("b")))
@@ -1075,7 +1092,7 @@ where
     /// enum Rule {}
     ///
     /// let input = "abba";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state
     ///     .stack_push(|state| state.match_string("a"))
     ///     .and_then(|state| state.stack_push(|state| state.match_string("b")))
@@ -1108,7 +1125,7 @@ where
     /// enum Rule {}
     ///
     /// let input = "aaaa";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state
     ///     .stack_push(|state| state.match_string("a"))
     ///     .and_then(|state| state.stack_push(|state| state.match_string("a")))
@@ -1157,7 +1174,7 @@ where
     /// enum Rule {}
     ///
     /// let input = "aa";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result =
     ///     state.stack_push(|state| state.match_string("a")).and_then(|state| state.stack_drop());
     /// assert!(result.is_ok());
@@ -1192,7 +1209,7 @@ where
     /// enum Rule {}
     ///
     /// let input = "ab";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input);
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
     /// let mut result = state.restore_on_err(|state| {
     ///     state.stack_push(|state| state.match_string("a")).and_then(|state| state.match_string("a"))
     /// });

@@ -2,10 +2,10 @@ use super::*;
 
 mod display;
 
-/// An iterator over [`Pair`]s. It is created by [`pest::state`] and [`Pair::into_inner`].
+/// An iterator over [`Pair`]s. It is created by [`yggdrasil_rt::state`] and [`Pair::into_inner`].
 ///
 /// [`Pair`]: struct.Pair.html
-/// [`pest::state`]: ../fn.state.html
+/// [`yggdrasil_rt::state`]: ../fn.state.html
 /// [`Pair::into_inner`]: struct.Pair.html#method.into_inner
 #[derive(Clone)]
 pub struct TokenTree<'i, R> {
@@ -44,7 +44,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     ///
     /// ```
     /// # use std::rc::Rc;
-    /// # use pest;
+    /// # use yggdrasil_rt::{state};
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -53,9 +53,9 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     /// }
     ///
     /// let input = "a b";
-    /// let pairs = pest::state(input, |state| {
+    /// let pairs = state(input, |state| {
     ///     // generating Token pairs with Rule::a and Rule::b ...
-    /// #     state.rule(Rule::a, |s| s.match_string("a")).and_then(|s| s.skip(1))
+    /// #     state.rule(Rule::a, |s| s.match_string("a", false)).and_then(|s| s.skip(1))
     /// #         .and_then(|s| s.rule(Rule::b, |s| s.match_string("b")))
     /// })
     /// .unwrap();
@@ -85,7 +85,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     ///
     /// ```
     /// # use std::rc::Rc;
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -96,7 +96,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     /// // Example: Get input string from Pairs
     ///
     /// let input = "a b";
-    /// let pairs = pest::state(input, |state| {
+    /// let pairs = yggdrasil_rt::state(input, |state| {
     ///     // generating Token pairs with Rule::a and Rule::b ...
     /// #     state.rule(Rule::a, |s| s.match_string("a")).and_then(|s| s.skip(1))
     /// #         .and_then(|s| s.rule(Rule::b, |s| s.match_string("b")))
@@ -117,7 +117,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     ///
     /// ```
     /// # use std::rc::Rc;
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -126,7 +126,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     /// }
     ///
     /// let input = "a b";
-    /// let pairs = pest::state(input, |state| {
+    /// let pairs = yggdrasil_rt::state(input, |state| {
     ///     // generating Token pairs with Rule::a and Rule::b ...
     /// #     state.rule(Rule::a, |s| s.match_string("a")).and_then(|s| s.skip(1))
     /// #         .and_then(|s| s.rule(Rule::b, |s| s.match_string("b")))
@@ -146,7 +146,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     ///
     /// ```
     /// # use std::rc::Rc;
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -155,7 +155,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     /// }
     ///
     /// let input = "";
-    /// let pairs = pest::state(input, |state| {
+    /// let pairs = yggdrasil_rt::state(input, |state| {
     ///     // generating nested Token pair with Rule::b inside Rule::a
     /// #     state.rule(Rule::a, |state| {
     /// #         state.rule(Rule::b, |s| Ok(s))
@@ -171,55 +171,6 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
         unsafe { token_stream::new(self.queue, self.input, self.start, self.end) }
     }
 
-    /// Finds the first pair that has its node or branch tagged with the provided
-    /// label. Searches in the flattened [`TokenTree`] iterator.
-    ///
-    /// # Examples
-    ///
-    /// Try to recognize the branch between add and mul
-    /// ```
-    /// use pest::{state, Either, State};
-    /// #[allow(non_camel_case_types)]
-    /// #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-    /// enum Rule {
-    ///     number, // 0..9
-    ///     add,    // num + num
-    ///     mul,    // num * num
-    /// }
-    /// fn mark_branch(state: Box<State<'_, Rule>>) -> Either<Box<State<'_, Rule>>> {
-    ///     expr(state, Rule::mul, "*")
-    ///         .and_then(|state| state.tag_node("mul"))
-    ///         .or_else(|state| expr(state, Rule::add, "+"))
-    ///         .and_then(|state| state.tag_node("add"))
-    /// }
-    /// fn expr<'a>(
-    ///     state: Box<State<'a, Rule>>,
-    ///     r: Rule,
-    ///     o: &'static str,
-    /// ) -> Either<Box<State<'a, Rule>>> {
-    ///     state.rule(r, |state| {
-    ///         state.sequence(|state| {
-    ///             number(state)
-    ///                 .and_then(|state| state.tag_node("lhs"))
-    ///                 .and_then(|state| state.match_string(o))
-    ///                 .and_then(number)
-    ///                 .and_then(|state| state.tag_node("rhs"))
-    ///         })
-    ///     })
-    /// }
-    /// fn number(state: Box<State<'_, Rule>>) -> Either<Box<State<'_, Rule>>> {
-    ///     state.rule(Rule::number, |state| state.match_range('0'..'9'))
-    /// }
-    /// let input = "1+2";
-    /// let pairs = state(input, mark_branch).unwrap();
-    /// assert_eq!(pairs.find_first_tagged("add").unwrap().as_rule(), Rule::add);
-    /// assert_eq!(pairs.find_first_tagged("mul"), None);
-    /// ```
-    #[inline]
-    pub fn find_first_tagged(&self, tag: &'i str) -> Option<Pair<'i, R>> {
-        self.clone().find_tagged(tag).next()
-    }
-
     /// Returns the iterator over pairs that have their node or branch tagged
     /// with the provided label. The iterator is built from a flattened [`TokenTree`] iterator.
     ///
@@ -227,7 +178,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     ///
     /// Try to recognize the node between left and right hand side
     /// ```
-    /// use pest::{state, Either, State};
+    /// use yggdrasil_rt::{state, Either, State};
     /// #[allow(non_camel_case_types)]
     /// #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -267,8 +218,29 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     /// assert_eq!(left_numbers.next(), None);
     /// ```
     #[inline]
-    pub fn find_tagged(self, tag: &'i str) -> Filter<TokenStream<'i, R>, impl FnMut(&Pair<'i, R>) -> bool + '_> {
-        self.flatten().filter(move |pair: &Pair<'i, R>| matches!(pair.as_node_tag(), Some(nt) if nt == tag))
+    pub fn find_tagged(self, tag: &'i str) -> Filter<TokenStream<'i, R>, impl FnMut(&TokenPair<'i, R>) -> bool + '_> {
+        self.flatten().filter(move |pair: &TokenPair<'i, R>| matches!(pair.as_node_tag(), Some(nt) if nt == tag))
+    }
+    /// Finds the first pair that has its node or branch tagged with the provided
+    /// label. Searches in the flattened [`TokenTree`] iterator.
+    ///
+    /// **Warning: This operation will not panic when running, ensuring that the element must exist!**
+    #[inline]
+    pub fn find_tagged_one(&self, tag: &'i str) -> TokenPair<'i, R> {
+        unsafe {
+            if cfg!(debug_assertions) {
+                self.find_tagged_optional(tag).unwrap()
+            }
+            else {
+                self.find_tagged_optional(tag).unwrap_unchecked()
+            }
+        }
+    }
+    /// Finds the first pair that has its node or branch tagged with the provided
+    /// label. Searches in the flattened [`TokenTree`] iterator.
+    #[inline]
+    pub fn find_tagged_optional(&self, tag: &'i str) -> Option<TokenPair<'i, R>> {
+        self.clone().find_tagged(tag).next()
     }
 
     /// Returns the `Tokens` for the `Pairs`.
@@ -277,7 +249,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     ///
     /// ```
     /// # use std::rc::Rc;
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -285,7 +257,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     /// }
     ///
     /// let input = "";
-    /// let pairs = pest::state(input, |state| {
+    /// let pairs = yggdrasil_rt::state(input, |state| {
     ///     // generating Token pair with Rule::a ...
     /// #     state.rule(Rule::a, |s| Ok(s))
     /// })
@@ -301,8 +273,13 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
 
     /// Peek at the first inner `Pair` without changing the position of this iterator.
     #[inline]
-    pub fn peek(&self) -> Option<Pair<'i, R>> {
-        if self.start < self.end { Some(unsafe { pair::new(Rc::clone(&self.queue), self.input, self.start) }) } else { None }
+    pub fn peek(&self) -> Option<TokenPair<'i, R>> {
+        if self.start < self.end {
+            Some(unsafe { token_pair::new(Rc::clone(&self.queue), self.input, self.start) })
+        }
+        else {
+            None
+        }
     }
 
     fn pair(&self) -> usize {
@@ -334,7 +311,7 @@ impl<'i, R: YggdrasilRule> ExactSizeIterator for TokenTree<'i, R> {
 }
 
 impl<'i, R: YggdrasilRule> Iterator for TokenTree<'i, R> {
-    type Item = Pair<'i, R>;
+    type Item = TokenPair<'i, R>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let pair = self.peek()?;
@@ -359,7 +336,7 @@ impl<'i, R: YggdrasilRule> DoubleEndedIterator for TokenTree<'i, R> {
         self.end = self.pair_from_end();
         self.pairs_count -= 1;
 
-        let pair = unsafe { pair::new(Rc::clone(&self.queue), self.input, self.end) };
+        let pair = unsafe { token_pair::new(Rc::clone(&self.queue), self.input, self.end) };
 
         Some(pair)
     }
@@ -588,8 +565,8 @@ mod tests {
         }
         let input = "1+2";
         let pairs = state(input, mark_branch).unwrap();
-        assert_eq!(pairs.find_first_tagged("add").unwrap().as_rule(), Rule::add);
-        assert_eq!(pairs.find_first_tagged("mul"), None);
+        assert_eq!(pairs.find_tagged_one("add").unwrap().as_rule(), Rule::add);
+        assert_eq!(pairs.find_tagged_one("mul"), None);
 
         let mut left_numbers = pairs.clone().find_tagged("lhs");
 

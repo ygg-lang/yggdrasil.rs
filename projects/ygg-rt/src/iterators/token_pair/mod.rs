@@ -7,7 +7,7 @@ use core::{
 };
 
 use super::{
-    queueable_token::TokenQueue,
+    token_queue::TokenQueue,
     token_tree::TokenTree,
     tokens::{self, Tokens},
 };
@@ -22,7 +22,7 @@ use crate::{span::TextSpan, YggdrasilRule};
 ///
 /// [`Token`]: ../enum.Token.html
 #[derive(Clone)]
-pub struct Pair<'i, R> {
+pub struct TokenPair<'i, R> {
     /// # Safety
     ///
     /// All `QueueableToken`s' `input_pos` must be valid character boundary indices into `input`.
@@ -35,18 +35,18 @@ pub struct Pair<'i, R> {
 /// # Safety
 ///
 /// All `QueueableToken`s' `input_pos` must be valid character boundary indices into `input`.
-pub unsafe fn new<R: YggdrasilRule>(queue: Rc<Vec<TokenQueue<R>>>, input: &str, start: usize) -> Pair<R> {
-    Pair { queue, input, start }
+pub unsafe fn new<R: YggdrasilRule>(queue: Rc<Vec<TokenQueue<R>>>, input: &str, start: usize) -> TokenPair<R> {
+    TokenPair { queue, input, start }
 }
 
-impl<'i, R: YggdrasilRule> Pair<'i, R> {
+impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
     /// Returns the `Rule` of the `Pair`.
     ///
     /// # Examples
     ///
     /// ```
     /// # use std::rc::Rc;
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -54,7 +54,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     /// }
     ///
     /// let input = "";
-    /// let pair = pest::state(input, |state| {
+    /// let pair = yggdrasil_rt::state(input, |state| {
     ///     // generating Token pair with Rule::a ...
     /// #     state.rule(Rule::a, |s| Ok(s))
     /// })
@@ -78,7 +78,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     ///
     /// ```
     /// # use std::rc::Rc;
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -86,7 +86,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     /// }
     ///
     /// let input = "ab";
-    /// let pair = pest::state(input, |state| {
+    /// let pair = yggdrasil_rt::state(input, |state| {
     ///     // generating Token pair with Rule::ab ...
     /// #     state.rule(Rule::ab, |s| s.match_string("ab"))
     /// })
@@ -115,7 +115,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     ///
     /// ```
     /// # use std::rc::Rc;
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -125,7 +125,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     /// // Example: Get input string from a Pair
     ///
     /// let input = "ab";
-    /// let pair = pest::state(input, |state| {
+    /// let pair = yggdrasil_rt::state(input, |state| {
     ///     // generating Token pair with Rule::ab ...
     /// #     state.rule(Rule::ab, |s| s.match_string("ab"))
     /// })
@@ -146,7 +146,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     ///
     /// ```
     /// # use std::rc::Rc;
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -154,7 +154,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     /// }
     ///
     /// let input = "ab";
-    /// let pair = pest::state(input, |state| {
+    /// let pair = yggdrasil_rt::state(input, |state| {
     ///     // generating Token pair with Rule::ab ...
     /// #     state.rule(Rule::ab, |s| s.match_string("ab"))
     /// })
@@ -188,7 +188,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     ///
     /// ```
     /// # use std::rc::Rc;
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -196,7 +196,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     /// }
     ///
     /// let input = "";
-    /// let pair = pest::state(input, |state| {
+    /// let pair = yggdrasil_rt::state(input, |state| {
     ///     // generating Token pair with Rule::a ...
     /// #     state.rule(Rule::a, |s| Ok(s))
     /// })
@@ -217,7 +217,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     ///
     /// ```
     /// # use std::rc::Rc;
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -225,7 +225,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     /// }
     ///
     /// let input = "";
-    /// let pair = pest::state(input, |state| {
+    /// let pair = yggdrasil_rt::state(input, |state| {
     ///     // generating Token pair with Rule::a ...
     /// #     state.rule(Rule::a, |s| Ok(s))
     /// })
@@ -245,7 +245,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     ///
     /// ```
     /// # use std::rc::Rc;
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -253,7 +253,7 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
     /// }
     ///
     /// let input = "";
-    /// let pair = pest::state(input, |state| {
+    /// let pair = yggdrasil_rt::state(input, |state| {
     ///     // generating Token pair with Rule::a ...
     /// #     state.rule(Rule::a, |s| Ok(s))
     /// })
@@ -287,13 +287,13 @@ impl<'i, R: YggdrasilRule> Pair<'i, R> {
 
 impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     /// Create a new `Pairs` iterator containing just the single `Pair`.
-    pub fn single(pair: Pair<'i, R>) -> Self {
+    pub fn single(pair: TokenPair<'i, R>) -> Self {
         let end = pair.pair();
         TokenTree::new(pair.queue, pair.input, pair.start, end)
     }
 }
 
-impl<'i, R: YggdrasilRule> fmt::Debug for Pair<'i, R> {
+impl<'i, R: YggdrasilRule> fmt::Debug for TokenPair<'i, R> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let pair = &mut f.debug_struct("Pair");
         pair.field("rule", &self.as_rule());
@@ -305,7 +305,7 @@ impl<'i, R: YggdrasilRule> fmt::Debug for Pair<'i, R> {
     }
 }
 
-impl<'i, R: YggdrasilRule> fmt::Display for Pair<'i, R> {
+impl<'i, R: YggdrasilRule> fmt::Display for TokenPair<'i, R> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let rule = self.as_rule();
         let start = self.pos(self.start);
@@ -328,98 +328,18 @@ impl<'i, R: YggdrasilRule> fmt::Display for Pair<'i, R> {
     }
 }
 
-impl<'i, R: PartialEq> PartialEq for Pair<'i, R> {
-    fn eq(&self, other: &Pair<'i, R>) -> bool {
+impl<'i, R: PartialEq> PartialEq for TokenPair<'i, R> {
+    fn eq(&self, other: &TokenPair<'i, R>) -> bool {
         Rc::ptr_eq(&self.queue, &other.queue) && ptr::eq(self.input, other.input) && self.start == other.start
     }
 }
 
-impl<'i, R: Eq> Eq for Pair<'i, R> {}
+impl<'i, R: Eq> Eq for TokenPair<'i, R> {}
 
-impl<'i, R: Hash> Hash for Pair<'i, R> {
+impl<'i, R: Hash> Hash for TokenPair<'i, R> {
     fn hash<H: Hasher>(&self, state: &mut H) {
         (&*self.queue as *const Vec<TokenQueue<R>>).hash(state);
         (self.input as *const str).hash(state);
         self.start.hash(state);
-    }
-}
-
-#[cfg(feature = "pretty-print")]
-impl<'i, R: YggdrasilRule> ::serde::Serialize for Pair<'i, R> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: ::serde::Serializer,
-    {
-        let start = self.pos(self.start);
-        let end = self.pos(self.pair());
-        let rule = format!("{:?}", self.as_rule());
-        let inner = self.clone().into_inner();
-
-        let mut ser = serializer.serialize_struct("Pairs", 3)?;
-        ser.serialize_field("pos", &(start, end))?;
-        ser.serialize_field("rule", &rule)?;
-
-        if inner.peek().is_none() {
-            ser.serialize_field("inner", &self.as_str())?;
-        }
-        else {
-            ser.serialize_field("inner", &inner)?;
-        }
-
-        ser.end()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::{language::YggdrasilParser, macros::tests::*};
-
-    #[test]
-    #[cfg(feature = "pretty-print")]
-    fn test_pretty_print() {
-        let pair = AbcParser::parse_cst(TestRule::a, "abcde").unwrap().next().unwrap();
-
-        let expected = r#"{
-  "pos": [
-    0,
-    3
-  ],
-  "rule": "a",
-  "inner": {
-    "pos": [
-      1,
-      2
-    ],
-    "pairs": [
-      {
-        "pos": [
-          1,
-          2
-        ],
-        "rule": "b",
-        "inner": "b"
-      }
-    ]
-  }
-}"#;
-
-        assert_eq!(expected, pair.to_json());
-    }
-
-    #[test]
-    fn pair_into_inner() {
-        let pair = AbcParser::parse_cst(TestRule::a, "abcde").unwrap().next().unwrap(); // the tokens a(b())
-
-        let pairs = pair.into_inner(); // the tokens b()
-
-        assert_eq!(2, pairs.tokens().count());
-    }
-
-    #[test]
-    fn get_input_of_pair() {
-        let input = "abcde";
-        let pair = AbcParser::parse_cst(TestRule::a, input).unwrap().next().unwrap();
-
-        assert_eq!(input, pair.get_input());
     }
 }

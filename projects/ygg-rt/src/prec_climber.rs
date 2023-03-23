@@ -3,15 +3,15 @@
 use alloc::{borrow::Cow, boxed::Box, vec::Vec};
 use core::{iter::Peekable, ops::BitOr};
 
-use crate::{iterators::Pair, YggdrasilRule};
+use crate::{iterators::TokenPair, YggdrasilRule};
 
 /// Macro for more convenient const fn definition of `prec_climber::PrecClimber`.
 ///
 /// # Examples
 ///
 /// ```
-/// # use pest::prec_climber::{Assoc, PrecClimber};
-/// # use pest::prec_climber;
+/// # use yggdrasil_rt::prec_climber::{Assoc, PrecClimber};
+/// # use yggdrasil_rt::prec_climber;
 /// # #[allow(non_camel_case_types)]
 /// # #[allow(dead_code)]
 /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -114,7 +114,7 @@ impl<R: YggdrasilRule> Operator<R> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::prec_climber::{Assoc, Operator};
+    /// # use yggdrasil_rt::prec_climber::{Assoc, Operator};
     /// # #[allow(non_camel_case_types)]
     /// # #[allow(dead_code)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -169,7 +169,7 @@ impl<R: Clone + 'static> PrecClimber<R> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::prec_climber::{Assoc, PrecClimber};
+    /// # use yggdrasil_rt::prec_climber::{Assoc, PrecClimber};
     /// # #[allow(non_camel_case_types)]
     /// # #[allow(dead_code)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -206,7 +206,7 @@ impl<R: YggdrasilRule> PrecClimber<R> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::prec_climber::{Assoc, Operator, PrecClimber};
+    /// # use yggdrasil_rt::prec_climber::{Assoc, Operator, PrecClimber};
     /// # #[allow(non_camel_case_types)]
     /// # #[allow(dead_code)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -270,9 +270,9 @@ impl<R: YggdrasilRule> PrecClimber<R> {
     /// ```
     pub fn climb<'i, P, F, G, T>(&self, mut pairs: P, mut primary: F, mut infix: G) -> T
     where
-        P: Iterator<Item = Pair<'i, R>>,
-        F: FnMut(Pair<'i, R>) -> T,
-        G: FnMut(T, Pair<'i, R>, T) -> T,
+        P: Iterator<Item = TokenPair<'i, R>>,
+        F: FnMut(TokenPair<'i, R>) -> T,
+        G: FnMut(T, TokenPair<'i, R>, T) -> T,
     {
         let lhs = primary(pairs.next().expect("precedence climbing requires a non-empty Pairs"));
         self.climb_rec(lhs, 0, &mut pairs.peekable(), &mut primary, &mut infix)
@@ -280,9 +280,9 @@ impl<R: YggdrasilRule> PrecClimber<R> {
 
     fn climb_rec<'i, P, F, G, T>(&self, mut lhs: T, min_prec: u32, pairs: &mut Peekable<P>, primary: &mut F, infix: &mut G) -> T
     where
-        P: Iterator<Item = Pair<'i, R>>,
-        F: FnMut(Pair<'i, R>) -> T,
-        G: FnMut(T, Pair<'i, R>, T) -> T,
+        P: Iterator<Item = TokenPair<'i, R>>,
+        F: FnMut(TokenPair<'i, R>) -> T,
+        G: FnMut(T, TokenPair<'i, R>, T) -> T,
     {
         while pairs.peek().is_some() {
             let rule = pairs.peek().unwrap().as_rule();

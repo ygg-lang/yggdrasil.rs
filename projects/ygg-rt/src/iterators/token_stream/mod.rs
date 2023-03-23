@@ -30,7 +30,7 @@ impl<'i, R: YggdrasilRule> TokenStream<'i, R> {
     ///
     /// ```
     /// # use std::rc::Rc;
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {
@@ -38,7 +38,7 @@ impl<'i, R: YggdrasilRule> TokenStream<'i, R> {
     /// }
     ///
     /// let input = "";
-    /// let pairs = pest::state(input, |state| {
+    /// let pairs = yggdrasil_rt::state(input, |state| {
     ///     // generating Token pair with Rule::a ...
     /// #     state.rule(Rule::a, |s| Ok(s))
     /// })
@@ -84,14 +84,14 @@ impl<'i, R: YggdrasilRule> ExactSizeIterator for TokenStream<'i, R> {
 }
 
 impl<'i, R: YggdrasilRule> Iterator for TokenStream<'i, R> {
-    type Item = Pair<'i, R>;
+    type Item = TokenPair<'i, R>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.start >= self.end {
             return None;
         }
 
-        let pair = unsafe { pair::new(Rc::clone(&self.queue), self.input, self.start) };
+        let pair = unsafe { token_pair::new(Rc::clone(&self.queue), self.input, self.start) };
         self.next_start();
 
         Some(pair)
@@ -111,7 +111,7 @@ impl<'i, R: YggdrasilRule> DoubleEndedIterator for TokenStream<'i, R> {
 
         self.next_start_from_end();
 
-        let pair = unsafe { pair::new(Rc::clone(&self.queue), self.input, self.end) };
+        let pair = unsafe { token_pair::new(Rc::clone(&self.queue), self.input, self.end) };
 
         Some(pair)
     }

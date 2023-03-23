@@ -14,15 +14,15 @@ use crate::position;
 /// [`Pair`]: ../iterators/struct.Pair.html#method.span
 #[derive(Clone, Copy)]
 pub struct TextSpan<'i> {
-    input: &'i str,
+    pub(crate) input: &'i str,
     /// # Safety
     ///
     /// Must be a valid character boundary index into `input`.
-    start: usize,
+    pub(crate) start: usize,
     /// # Safety
     ///
     /// Must be a valid character boundary index into `input`.
-    end: usize,
+    pub(crate) end: usize,
 }
 
 impl<'i> Display for TextSpan<'i> {
@@ -49,7 +49,7 @@ impl<'i> TextSpan<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::TextSpan;
+    /// # use yggdrasil_rt::TextSpan;
     /// let input = "Hello!";
     /// assert_eq!(None, TextSpan::new(input, 100, 0));
     /// assert!(TextSpan::new(input, 0, input.len()).is_some());
@@ -61,7 +61,7 @@ impl<'i> TextSpan<'i> {
     /// Attempts to create a new span based on a sub-range.
     ///
     /// ```
-    /// use pest::TextSpan;
+    /// use yggdrasil_rt::TextSpan;
     /// let input = "Hello World!";
     /// let world = TextSpan::new(input, 6, input.len()).unwrap();
     /// let orl = world.get(1..=3);
@@ -90,7 +90,7 @@ impl<'i> TextSpan<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use yggdrasil_rt::Position;
     /// let input = "ab";
     /// let start = Position::from_start(input);
     /// let end = start.clone();
@@ -108,7 +108,7 @@ impl<'i> TextSpan<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use yggdrasil_rt::Position;
     /// let input = "ab";
     /// let start = Position::from_start(input);
     /// let end = start.clone();
@@ -126,7 +126,7 @@ impl<'i> TextSpan<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use yggdrasil_rt::Position;
     /// let input = "ab";
     /// let start = Position::from_start(input);
     /// let end = start.clone();
@@ -145,7 +145,7 @@ impl<'i> TextSpan<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use yggdrasil_rt::Position;
     /// let input = "ab";
     /// let start = Position::from_start(input);
     /// let end = start.clone();
@@ -164,7 +164,7 @@ impl<'i> TextSpan<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use yggdrasil_rt::Position;
     /// let input = "ab";
     /// let start = Position::from_start(input);
     /// let end = start.clone();
@@ -186,13 +186,14 @@ impl<'i> TextSpan<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
     ///
     /// let input = "abc";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input).skip(1).unwrap();
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> =
+    ///     yggdrasil_rt::State::new(input).skip(1).unwrap();
     /// let start_pos = state.position().clone();
     /// state = state.match_string("b").unwrap();
     /// let span = start_pos.span(&state.position().clone());
@@ -213,8 +214,8 @@ impl<'i> TextSpan<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest;
-    /// # use pest::TextSpan;
+    /// # use yggdrasil_rt;
+    /// # use yggdrasil_rt::TextSpan;
     ///
     /// // Example: Get input string from a span
     /// let input = "abc\ndef\nghi";
@@ -230,13 +231,14 @@ impl<'i> TextSpan<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use yggdrasil_rt;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
     ///
     /// let input = "a\nb\nc";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input).skip(2).unwrap();
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> =
+    ///     yggdrasil_rt::State::new(input).skip(2).unwrap();
     /// let start_pos = state.position().clone();
     /// state = state.match_string("b\nc").unwrap();
     /// let span = start_pos.span(&state.position().clone());
@@ -252,14 +254,15 @@ impl<'i> TextSpan<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest;
-    /// # use pest::TextSpan;
+    /// # use yggdrasil_rt;
+    /// # use yggdrasil_rt::TextSpan;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
     ///
     /// let input = "a\nb\nc";
-    /// let mut state: Box<pest::State<'_, Rule>> = pest::State::new(input).skip(2).unwrap();
+    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> =
+    ///     yggdrasil_rt::State::new(input).skip(2).unwrap();
     /// let start_pos = state.position().clone();
     /// state = state.match_string("b\nc").unwrap();
     /// let span = start_pos.span(&state.position().clone());
@@ -311,9 +314,9 @@ impl<'i> Hash for TextSpan<'i> {
 /// # Examples
 ///
 /// ```
-/// # use pest;
-/// # use pest::TextSpan;
-/// # use pest::merge_spans;
+/// # use yggdrasil_rt;
+/// # use yggdrasil_rt::TextSpan;
+/// # use yggdrasil_rt::merge_spans;
 ///
 /// // Example 1: Contiguous spans
 /// let input = "abc\ndef\nghi";
