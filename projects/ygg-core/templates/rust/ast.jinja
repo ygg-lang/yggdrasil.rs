@@ -14,6 +14,19 @@ impl YggdrasilNode for {{ rule.node_name() }} {
         }
 {%- endif %}
     }
+    fn from_cst(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+{%- if rule.is_class() %}
+        let _span = pair.as_span();
+        let _tree = pair.into_inner();
+        let object_pair = _tree.take_tagged::<ObjectPairNode>("object_pair")?;
+        Ok(Self {
+            object_pair,
+            span: Range { start: _span.start() as {{ self.config.range_type }}, end: _span.end() as {{ self.config.range_type }} }
+        })
+{%- else %}
+        todo!()
+{%- endif %}
+    }
 }
 {%- endfor %}
 

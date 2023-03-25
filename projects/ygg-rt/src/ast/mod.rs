@@ -1,5 +1,5 @@
-use crate::{errors::ErrorKind, iterators::TokenPair, TextSpan, TokenTree, YggdrasilError, YggdrasilRule};
-use alloc::{format, string::ToString};
+use crate::{errors::ErrorKind, iterators::TokenPair, YggdrasilError, YggdrasilRule};
+use alloc::format;
 use core::{fmt::Debug, ops::Range};
 
 /// A typed ast node

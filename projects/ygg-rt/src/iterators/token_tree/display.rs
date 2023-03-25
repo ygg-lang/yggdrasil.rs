@@ -1,5 +1,4 @@
 use super::*;
-use alloc::string::ToString;
 
 impl<'i, R> Debug for TokenTree<'i, R>
 where

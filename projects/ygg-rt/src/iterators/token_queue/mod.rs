@@ -14,9 +14,9 @@ pub enum TokenQueue<R> {
         start_token_index: usize,
         input_offset: usize,
         rule: R,
-        #[cfg(not(feature = "dynamic"))]
-        tag: Option<&'static str>,
         #[cfg(feature = "dynamic")]
         tag: Option<String>,
+        #[cfg(not(feature = "dynamic"))]
+        tag: Option<&'static str>,
     },
 }

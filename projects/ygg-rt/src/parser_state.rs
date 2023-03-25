@@ -1,11 +1,4 @@
-use alloc::{
-    borrow::Cow,
-    boxed::Box,
-    rc::Rc,
-    string::{String, ToString},
-    vec,
-    vec::Vec,
-};
+use alloc::{boxed::Box, rc::Rc, vec, vec::Vec};
 use core::ops::Range;
 use regex_automata::dfa::regex::Regex;
 

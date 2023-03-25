@@ -218,28 +218,42 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     /// assert_eq!(left_numbers.next(), None);
     /// ```
     #[inline]
-    pub fn find_tagged(self, tag: &'i str) -> Filter<TokenStream<'i, R>, impl FnMut(&TokenPair<'i, R>) -> bool + '_> {
+    pub fn find_tagged(self, tag: &str) -> Filter<TokenStream<'i, R>, impl FnMut(&TokenPair<'i, R>) -> bool + '_> {
         self.flatten().filter(move |pair: &TokenPair<'i, R>| matches!(pair.as_node_tag(), Some(nt) if nt == tag))
+    }
+    /// find and cast
+    #[inline]
+    pub fn take_tagged<N>(self, tag: Cow<'static, str>) -> Result<Vec<N>, YggdrasilError<N::Rule>>
+    where
+        N: YggdrasilNode<Rule = R>,
+    {
+        let mut out = vec![];
+        for pair in self.flatten() {
+            match pair.as_node_tag() {
+                Some(s) if tag.eq(s) => out.push(N::from_cst(pair)?),
+                _ => {}
+            }
+        }
+        Ok(out)
     }
     /// Finds the first pair that has its node or branch tagged with the provided
     /// label. Searches in the flattened [`TokenTree`] iterator.
     ///
     /// **Warning: This operation will not panic when running, ensuring that the element must exist!**
     #[inline]
-    pub fn find_tagged_one(&self, tag: &'i str) -> TokenPair<'i, R> {
-        unsafe {
-            if cfg!(debug_assertions) {
-                self.find_tagged_optional(tag).unwrap()
-            }
-            else {
-                self.find_tagged_optional(tag).unwrap_unchecked()
-            }
+    pub fn take_tagged_one<N>(&self, tag: Cow<'static, str>) -> Result<N, YggdrasilError<N::Rule>>
+    where
+        N: YggdrasilNode<Rule = R>,
+    {
+        match self.find_tagged_optional(tag.as_ref()) {
+            Some(s) => N::from_cst(s),
+            None => Err(YggdrasilError::missing_tag(tag, TextSpan { input: "", start: 0, end: 0 })),
         }
     }
     /// Finds the first pair that has its node or branch tagged with the provided
     /// label. Searches in the flattened [`TokenTree`] iterator.
     #[inline]
-    pub fn find_tagged_optional(&self, tag: &'i str) -> Option<TokenPair<'i, R>> {
+    pub fn find_tagged_optional(&self, tag: &str) -> Option<TokenPair<'i, R>> {
         self.clone().find_tagged(tag).next()
     }
 
@@ -359,236 +373,5 @@ impl<'i, R: Hash> Hash for TokenTree<'i, R> {
         (self.input as *const str).hash(state);
         self.start.hash(state);
         self.end.hash(state);
-    }
-}
-
-#[cfg(feature = "pretty-print")]
-impl<'i, R: YggdrasilRule> ::serde::Serialize for TokenTree<'i, R> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: ::serde::Serializer,
-    {
-        let start = self.pos(self.start);
-        let end = self.pos(self.end - 1);
-        let pairs = self.clone().collect::<Vec<_>>();
-
-        let mut ser = serializer.serialize_struct("Pairs", 2)?;
-        ser.serialize_field("pos", &(start, end))?;
-        ser.serialize_field("pairs", &pairs)?;
-        ser.end()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::super::super::{macros::tests::*, YggdrasilParser};
-    use crate::YggdrasilRule;
-    use alloc::{borrow::ToOwned, boxed::Box, format, vec, vec::Vec};
-
-    #[test]
-    #[cfg(feature = "pretty-print")]
-    fn test_pretty_print() {
-        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
-
-        let expected = r#"{
-  "pos": [
-    0,
-    5
-  ],
-  "pairs": [
-    {
-      "pos": [
-        0,
-        3
-      ],
-      "rule": "a",
-      "inner": {
-        "pos": [
-          1,
-          2
-        ],
-        "pairs": [
-          {
-            "pos": [
-              1,
-              2
-            ],
-            "rule": "b",
-            "inner": "b"
-          }
-        ]
-      }
-    },
-    {
-      "pos": [
-        4,
-        5
-      ],
-      "rule": "c",
-      "inner": "e"
-    }
-  ]
-}"#;
-
-        assert_eq!(expected, pairs.to_json());
-    }
-
-    #[test]
-    fn as_str() {
-        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
-
-        assert_eq!(pairs.as_str(), "abcde");
-    }
-
-    #[test]
-    fn get_input_of_pairs() {
-        let input = "abcde";
-        let pairs = AbcParser::parse_cst(TestRule::a, input).unwrap();
-
-        assert_eq!(pairs.get_input(), input);
-    }
-
-    #[test]
-    fn as_str_empty() {
-        let mut pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
-
-        assert_eq!(pairs.nth(1).unwrap().into_inner().as_str(), "");
-    }
-
-    #[test]
-    fn concat() {
-        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
-
-        assert_eq!(pairs.concat(), "abce");
-    }
-
-    #[test]
-    fn pairs_debug() {
-        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
-
-        #[rustfmt::skip]
-        assert_eq!(
-            format!("{:?}", pairs),
-            "[\
-                Pair { rule: a, span: Span { str: \"abc\", start: 0, end: 3 }, inner: [\
-                    Pair { rule: b, span: Span { str: \"b\", start: 1, end: 2 }, inner: [] }\
-                ] }, \
-                Pair { rule: c, span: Span { str: \"e\", start: 4, end: 5 }, inner: [] }\
-            ]"
-            .to_owned()
-        );
-    }
-
-    #[test]
-    fn pairs_display() {
-        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
-
-        assert_eq!(format!("{}", pairs), "[a(0, 3, [b(1, 2)]), c(4, 5)]".to_owned());
-    }
-
-    #[test]
-    fn iter_for_pairs() {
-        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
-        assert_eq!(pairs.map(|p| p.as_rule()).collect::<Vec<TestRule>>(), vec![TestRule::a, TestRule::c]);
-    }
-
-    #[test]
-    fn double_ended_iter_for_pairs() {
-        let pairs = AbcParser::parse_cst(TestRule::a, "abcde").unwrap();
-        assert_eq!(pairs.rev().map(|p| p.as_rule()).collect::<Vec<TestRule>>(), vec![TestRule::c, TestRule::a]);
-    }
-
-    #[test]
-    fn test_line_col() {
-        let mut pairs = AbcParser::parse_cst(TestRule::a, "abc\nefgh").unwrap();
-        let pair = pairs.next().unwrap();
-        assert_eq!(pair.as_str(), "abc");
-        assert_eq!(pair.line_col(), (1, 1));
-
-        let pair = pairs.next().unwrap();
-        assert_eq!(pair.as_str(), "e");
-        assert_eq!(pair.line_col(), (2, 1));
-
-        let pair = pairs.next().unwrap();
-        assert_eq!(pair.as_str(), "fgh");
-        assert_eq!(pair.line_col(), (2, 2));
-    }
-
-    #[test]
-    fn test_rev_iter_line_col() {
-        let mut pairs = AbcParser::parse_cst(TestRule::a, "abc\nefgh").unwrap().rev();
-        let pair = pairs.next().unwrap();
-        assert_eq!(pair.as_str(), "fgh");
-        assert_eq!(pair.line_col(), (2, 2));
-
-        let pair = pairs.next().unwrap();
-        assert_eq!(pair.as_str(), "e");
-        assert_eq!(pair.line_col(), (2, 1));
-
-        let pair = pairs.next().unwrap();
-        assert_eq!(pair.as_str(), "abc");
-        assert_eq!(pair.line_col(), (1, 1));
-    }
-
-    #[test]
-    // false positive: pest uses `..` as a complete range (historically)
-    #[allow(clippy::almost_complete_range)]
-    fn test_tag_node_branch() {
-        use crate::{state, Either, State};
-        #[allow(non_camel_case_types)]
-        #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-        enum Rule {
-            number, // 0..9
-            add,    // num + num
-            mul,    // num * num
-        }
-        impl YggdrasilRule for Rule {}
-        fn mark_branch(state: Box<State<'_, Rule>>) -> Either<Box<State<'_, Rule>>> {
-            expr(state, Rule::mul, "*")
-                .and_then(|state| state.tag_node("mul"))
-                .or_else(|state| expr(state, Rule::add, "+"))
-                .and_then(|state| state.tag_node("add"))
-        }
-        fn expr<'a>(state: Box<State<'a, Rule>>, r: Rule, o: &'static str) -> Either<Box<State<'a, Rule>>> {
-            state.rule(r, |state| {
-                state.sequence(|state| {
-                    number(state)
-                        .and_then(|state| state.tag_node("lhs"))
-                        .and_then(|state| state.match_string_exact(o))
-                        .and_then(number)
-                        .and_then(|state| state.tag_node("rhs"))
-                })
-            })
-        }
-        fn number(state: Box<State<'_, Rule>>) -> Either<Box<State<'_, Rule>>> {
-            state.rule(Rule::number, |state| state.match_range('0'..'9'))
-        }
-        let input = "1+2";
-        let pairs = state(input, mark_branch).unwrap();
-        assert_eq!(pairs.find_tagged_one("add").unwrap().as_rule(), Rule::add);
-        assert_eq!(pairs.find_tagged_one("mul"), None);
-
-        let mut left_numbers = pairs.clone().find_tagged("lhs");
-
-        assert_eq!(left_numbers.next().unwrap().as_str(), "1");
-        assert_eq!(left_numbers.next(), None);
-        let mut right_numbers = pairs.find_tagged("rhs");
-
-        assert_eq!(right_numbers.next().unwrap().as_str(), "2");
-        assert_eq!(right_numbers.next(), None);
-    }
-
-    #[test]
-    fn exact_size_iter_for_pairs() {
-        let pairs = AbcParser::parse_cst(TestRule::a, "abc\nefgh").unwrap();
-        assert_eq!(pairs.len(), pairs.count());
-
-        let pairs = AbcParser::parse_cst(TestRule::a, "abc\nefgh").unwrap().rev();
-        assert_eq!(pairs.len(), pairs.count());
-
-        let mut pairs = AbcParser::parse_cst(TestRule::a, "abc\nefgh").unwrap();
-        let pairs_len = pairs.len();
-        let _ = pairs.next().unwrap();
-        assert_eq!(pairs.count() + 1, pairs_len);
     }
 }

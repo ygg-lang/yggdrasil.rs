@@ -6,8 +6,8 @@ mod tokens;
 
 pub(crate) use self::token_queue::TokenQueue;
 pub use self::{token_pair::TokenPair, token_stream::TokenStream, token_tree::TokenTree, tokens::Tokens};
-use crate::YggdrasilRule;
-use alloc::{rc::Rc, string::String, vec::Vec};
+use crate::{TextSpan, YggdrasilError, YggdrasilNode, YggdrasilRule};
+use alloc::{borrow::Cow, rc::Rc, string::String, vec, vec::Vec};
 use core::{
     fmt::{Debug, Display, Formatter},
     hash::{Hash, Hasher},
