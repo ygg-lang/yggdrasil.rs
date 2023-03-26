@@ -16,11 +16,22 @@ impl CodeOptimizer for RefineRules {
         let mut errors = vec![];
         self.grammar = info.clone();
         let mut out = info.clone();
-        for node in out.rules.values_mut() {
-            match &mut node.body {
-                Some(s) => match self.refine_node(s) {
-                    Ok(_) => {}
-                    Err(e) => errors.push(e),
+        for rule in out.rules.values_mut() {
+            let is_union = rule.is_union();
+            match &mut rule.body {
+                Some(s) => match &mut s.body {
+                    ExpressionBody::Choice(c) if is_union => {
+                        for x in c.branches.iter_mut() {
+                            match self.refine_node(x) {
+                                Ok(_) => {}
+                                Err(e) => errors.push(e),
+                            }
+                        }
+                    }
+                    _ => match self.refine_node(s) {
+                        Ok(_) => {}
+                        Err(e) => errors.push(e),
+                    },
                 },
                 None => {}
             }

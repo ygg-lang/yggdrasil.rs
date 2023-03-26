@@ -1,5 +1,7 @@
 use super::*;
+use convert_case::{Case, Casing};
 use yggdrasil_error::Validation;
+use yggdrasil_ir::rule::YggdrasilIdentifier;
 
 /// Automatically insert or remove tags
 #[derive(Default)]
@@ -9,9 +11,17 @@ impl CodeOptimizer for RemarkTags {
     fn optimize(&mut self, info: &GrammarInfo) -> Validation<GrammarInfo> {
         let mut info = info.clone();
         for rule in info.rules.values_mut() {
+            let is_union = rule.is_union();
+            let rule_name = rule.name.text.as_str();
             match &mut rule.body {
+                Some(s) => {
+                    match &mut s.body {
+                        ExpressionBody::Choice(c) if is_union => self.remark_union_root(rule_name, c),
+                        _ => {}
+                    }
+                    self.remark(s, true)
+                }
                 None => {}
-                Some(s) => self.remark(s, true),
             }
         }
 
@@ -46,6 +56,25 @@ impl RemarkTags {
             },
             ExpressionBody::Text(_) => {}
             _ => {}
+        }
+    }
+    fn remark_union_root(&self, rule: &str, expr: &mut ChoiceExpression) {
+        for (index, branch) in expr.branches.iter_mut().enumerate() {
+            match branch.tag {
+                Some(_) => {}
+                None => match &branch.body {
+                    ExpressionBody::Rule(r) => {
+                        branch.tag =
+                            Some(YggdrasilIdentifier { text: r.name.text.to_case(Case::Pascal), range: r.name.range.clone() })
+                    }
+                    _ => {
+                        branch.tag = Some(YggdrasilIdentifier {
+                            text: format!("{rule}{index}").to_case(Case::Pascal),
+                            range: Default::default(),
+                        })
+                    }
+                },
+            }
         }
     }
 }

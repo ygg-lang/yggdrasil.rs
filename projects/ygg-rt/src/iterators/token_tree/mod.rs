@@ -33,6 +33,10 @@ where
         }
         Self { queue, input, start, end, pairs_count }
     }
+    /// todo
+    pub fn span(&self) -> TextSpan<'i> {
+        TextSpan { input: "todo", start: 0, end: 0 }
+    }
 }
 
 impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
@@ -221,6 +225,18 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     pub fn find_tagged(self, tag: &str) -> Filter<TokenStream<'i, R>, impl FnMut(&TokenPair<'i, R>) -> bool + '_> {
         self.flatten().filter(move |pair: &TokenPair<'i, R>| matches!(pair.as_node_tag(), Some(nt) if nt == tag))
     }
+    /// Finds the first pair that has its node or branch tagged with the provided
+    /// label. Searches in the flattened [`TokenTree`] iterator.
+    #[inline]
+    pub fn first_tagged(&self, tag: &str) -> Option<TokenTree<'i, R>> {
+        for pair in self.clone().flatten() {
+            match pair.as_node_tag() {
+                Some(s) if tag.eq(s) => return Some(pair.into_inner()),
+                _ => {}
+            }
+        }
+        return None;
+    }
     /// find and cast
     #[inline]
     pub fn take_tagged<N>(self, tag: Cow<'static, str>) -> Result<Vec<N>, YggdrasilError<N::Rule>>
@@ -230,7 +246,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
         let mut out = vec![];
         for pair in self.flatten() {
             match pair.as_node_tag() {
-                Some(s) if tag.eq(s) => out.push(N::from_cst(pair)?),
+                Some(s) if tag.eq(s) => out.push(N::from_cst(pair.into_inner())?),
                 _ => {}
             }
         }
@@ -245,16 +261,10 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     where
         N: YggdrasilNode<Rule = R>,
     {
-        match self.find_tagged_optional(tag.as_ref()) {
+        match self.first_tagged(tag.as_ref()) {
             Some(s) => N::from_cst(s),
             None => Err(YggdrasilError::missing_tag(tag, TextSpan { input: "", start: 0, end: 0 })),
         }
-    }
-    /// Finds the first pair that has its node or branch tagged with the provided
-    /// label. Searches in the flattened [`TokenTree`] iterator.
-    #[inline]
-    pub fn find_tagged_optional(&self, tag: &str) -> Option<TokenPair<'i, R>> {
-        self.clone().find_tagged(tag).next()
     }
 
     /// Returns the `Tokens` for the `Pairs`.

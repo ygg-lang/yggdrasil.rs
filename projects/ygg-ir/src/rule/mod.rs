@@ -136,6 +136,19 @@ pub struct GrammarRule {
     pub range: Range<usize>,
 }
 
+pub enum GrammarBody {
+    Empty {},
+    Class { term: YggdrasilExpression },
+    Union { branches: YggdrasilExpression },
+    Climb { branches: YggdrasilExpression },
+}
+
+impl Default for GrammarBody {
+    fn default() -> Self {
+        Self::Empty {}
+    }
+}
+
 impl Ord for GrammarRule {
     fn cmp(&self, other: &Self) -> Ordering {
         other.name.text.cmp(&other.name.text)
@@ -170,6 +183,9 @@ impl Default for GrammarRule {
 impl GrammarRule {
     pub fn is_class(&self) -> bool {
         matches!(self.kind, GrammarRuleKind::Class)
+    }
+    pub fn is_union(&self) -> bool {
+        matches!(self.kind, GrammarRuleKind::Union)
     }
     pub fn node_name(&self) -> String {
         format!("{}Node", self.name.text).to_case(Case::Pascal)

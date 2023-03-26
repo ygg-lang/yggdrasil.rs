@@ -6,4 +6,5 @@ fn ready() {
     println!("it, works!")
 }
 
+mod concat;
 mod suffix;

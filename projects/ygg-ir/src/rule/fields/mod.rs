@@ -50,7 +50,7 @@ impl YggdrasilField {
     pub fn field_type(&self, grammar: &GrammarInfo) -> String {
         match &self.kind {
             FieldKind::Rule(r) => match grammar.rules.get(r) {
-                Some(s) => self.count.as_count().rust_container(&s.node_name()),
+                Some(s) => s.node_name(),
                 None => "".to_string(),
             },
             FieldKind::IgnoreText => "".to_string(),
@@ -70,11 +70,14 @@ impl GrammarRule {
     pub fn union_fields(&self) -> YggdrasilEnumerates {
         assert_eq!(self.kind, GrammarRuleKind::Union, "do you filter with union?");
         let mut variants = BTreeMap::default();
-        for (index, expr) in self.get_branches().enumerate() {
+        for expr in self.get_branches() {
             let field = YggdrasilVariants { fields: expr.field_map().wrap };
             match &expr.tag {
                 Some(s) => variants.insert(s.text.clone().to_case(Case::Pascal), field),
-                None => variants.insert(format!("{}{index}", self.name.text).to_case(Case::Pascal), field),
+                None => {
+                    variants.insert("buggggggggggggggg".to_string(), field)
+                    // unreachable!("have you run remark?")
+                }
             };
         }
         YggdrasilEnumerates { variants }

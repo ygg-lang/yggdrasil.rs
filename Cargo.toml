@@ -3,6 +3,7 @@ resolver = "2"
 members = ["projects/*"]
 default-members = [
     "projects/ygg-ir",
+    "projects/ygg-rt",
 ]
 exclude = [
     "projects/.DS_Store",

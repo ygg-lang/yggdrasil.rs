@@ -1,4 +1,4 @@
-use crate::{errors::ErrorKind, iterators::TokenPair, YggdrasilError, YggdrasilRule};
+use crate::{errors::ErrorKind, iterators::TokenPair, TextSpan, TokenTree, YggdrasilError, YggdrasilRule};
 use alloc::format;
 use core::{fmt::Debug, ops::Range};
 
@@ -15,10 +15,10 @@ pub trait YggdrasilNode: Clone + Debug {
         None
     }
     /// from
-    fn from_cst(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+    fn from_cst(tree: TokenTree<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Err(YggdrasilError::new_from_span(
-            ErrorKind::CustomError { message: format!("unimplemented {:?}", pair.as_rule()) },
-            pair.as_span(),
+            ErrorKind::CustomError { message: format!("unimplemented {:?}", tree) },
+            TextSpan { input: "", start: 0, end: 0 },
         ))
     }
 }

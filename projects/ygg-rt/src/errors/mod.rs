@@ -1,3 +1,4 @@
+use crate::{position::Position, span::TextSpan, YggdrasilRule};
 use alloc::{
     borrow::{Cow, ToOwned},
     format,
@@ -5,8 +6,6 @@ use alloc::{
     vec::Vec,
 };
 use core::{cmp, fmt, mem};
-
-use crate::{position::Position, span::TextSpan, TokenPair, YggdrasilRule};
 
 /// Parse-related error type.
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -176,8 +175,8 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
     }
 
     /// unable to create node
-    pub fn invalid_node(expect: R, pair: TokenPair<R>) -> YggdrasilError<R> {
-        Self::new_from_span(ErrorKind::InvalidNode { expect }, pair.as_span())
+    pub fn invalid_node(expect: R, span: TextSpan) -> YggdrasilError<R> {
+        Self::new_from_span(ErrorKind::InvalidNode { expect }, span)
     }
     /// unable to create node
     pub fn missing_tag(expect: Cow<'static, str>, span: TextSpan) -> YggdrasilError<R> {

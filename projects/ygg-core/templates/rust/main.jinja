@@ -6,9 +6,8 @@
 mod parse_cst;
 mod parse_ast;
 
+use std::{borrow::Cow, ops::Range, sync::OnceLock};
 use yggdrasil_rt::*;
-use core::ops::Range;
-use std::sync::OnceLock;
 
 {%- set rules = self.grammar.rules() %}
 {%- set rule_name = self.grammar.rule_name() %}
@@ -67,13 +66,23 @@ impl YggdrasilRule for {{ rule_name }} {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct {{ rule.node_name() }} {
-    {%- for field in rule.class_fields() %}
+{%- for field in rule.class_fields() %}
+
+
 {%- if field.field_type(self.grammar).is_empty() %}
-    // Missing rule {{ field.kind }}
+        // Missing rule {{ field.kind }}
 {%- else %}
-    pub {{ field.field_name()|safe_rust_id }}: {{ field.field_type(self.grammar) }},
+{%- if field.count.is_one() %}
+        {{ field.field_name()|safe_rust_id }}: {{ field.field_type(self.grammar) }},
+{%- else if field.count.is_optional() %}
+        {{ field.field_name()|safe_rust_id }}: Option<{{ field.field_type(self.grammar) }}>,
+{%- else %}
+        {{ field.field_name()|safe_rust_id }}: Vec<{{ field.field_type(self.grammar) }}>,
 {%- endif %}
-    {%- endfor %}
+{%- endif %}
+
+
+{%- endfor %}
     pub span: Range<{{ self.config.range_type }}>,
 }
 {%- else %}
@@ -87,16 +96,27 @@ pub enum {{ rule.node_name() }} {
     {{ name }}({{ variant.as_single().unwrap().field_type(self.grammar) }}),
 {%- else %}
     {{ name }} {
-    {%- for field in variant %}
+{%- for field in variant %}
+
+
+
 {%- if field.field_type(self.grammar).is_empty() %}
         // Missing rule {{ field.kind }}
 {%- else %}
+{%- if field.count.is_one() %}
         {{ field.field_name()|safe_rust_id }}: {{ field.field_type(self.grammar) }},
+{%- else if field.count.is_optional() %}
+        {{ field.field_name()|safe_rust_id }}: Option<{{ field.field_type(self.grammar) }}>,
+{%- else %}
+        {{ field.field_name()|safe_rust_id }}: Vec<{{ field.field_type(self.grammar) }}>,
 {%- endif %}
-    {%- endfor %}
+{%- endif %}
+
+
+{%- endfor %}
     },
 {%- endif %}
-    {%- endfor %}
+{%- endfor %}
 }
 {%- endif %}
 {%- endfor %}
