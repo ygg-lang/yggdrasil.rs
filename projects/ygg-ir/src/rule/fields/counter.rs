@@ -82,9 +82,9 @@ impl BitXorAssign for FieldCounter {
     }
 }
 
-impl BitXorAssign<FieldCounter> for FieldMap {
+impl BitXorAssign<FieldCounter> for YggdrasilVariants {
     fn bitxor_assign(&mut self, rhs: FieldCounter) {
-        for x in self.wrap.values_mut() {
+        for x in self.fields.values_mut() {
             x.count ^= rhs
         }
     }

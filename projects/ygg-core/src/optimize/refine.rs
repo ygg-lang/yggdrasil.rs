@@ -1,5 +1,6 @@
 use super::*;
 use yggdrasil_error::Validation;
+use yggdrasil_ir::rule::GrammarBody;
 
 pub struct RefineRules {
     grammar: GrammarInfo,
@@ -17,23 +18,21 @@ impl CodeOptimizer for RefineRules {
         self.grammar = info.clone();
         let mut out = info.clone();
         for rule in out.rules.values_mut() {
-            let is_union = rule.is_union();
             match &mut rule.body {
-                Some(s) => match &mut s.body {
-                    ExpressionBody::Choice(c) if is_union => {
-                        for x in c.branches.iter_mut() {
-                            match self.refine_node(x) {
-                                Ok(_) => {}
-                                Err(e) => errors.push(e),
-                            }
+                GrammarBody::Empty => {}
+                GrammarBody::Class { term } => match self.refine_node(term) {
+                    Ok(_) => {}
+                    Err(e) => errors.push(e),
+                },
+                GrammarBody::Union { branches } => {
+                    for x in branches.iter_mut() {
+                        match self.refine_node(x) {
+                            Ok(_) => {}
+                            Err(e) => errors.push(e),
                         }
                     }
-                    _ => match self.refine_node(s) {
-                        Ok(_) => {}
-                        Err(e) => errors.push(e),
-                    },
-                },
-                None => {}
+                }
+                GrammarBody::Climb { .. } => {}
             }
         }
         Validation::Success { value: out, diagnostics: errors }

@@ -2,7 +2,7 @@ use convert_case::{Case, Casing};
 use std::fmt::Debug;
 use yggdrasil_ir::{
     nodes::{ExpressionBody, YggdrasilExpression, YggdrasilOperator},
-    rule::YggdrasilIdentifier,
+    rule::{GrammarBody, YggdrasilIdentifier},
 };
 
 use super::*;
@@ -15,12 +15,14 @@ impl RuleExt for GrammarRule {
     fn parser_expression(&self) -> String {
         let mut w = String::new();
         match &self.body {
-            Some(s) => {
-                if let Err(e) = s.write(&mut w, self, true) {
+            GrammarBody::Empty { .. } => w.push_str("Err(/* empty node */s)"),
+            GrammarBody::Class { term } => {
+                if let Err(e) = term.write(&mut w, self, true) {
                     w.push_str(&format!("Err(/*{e}*/s)"))
                 }
             }
-            None => w.push_str("Err(/* empty node */s)"),
+            GrammarBody::Union { .. } => {}
+            GrammarBody::Climb { .. } => w.push_str("Err(/* Climb node */s)"),
         }
         w
     }

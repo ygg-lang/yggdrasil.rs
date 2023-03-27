@@ -11,13 +11,13 @@ pub use self::{
     annotations::{YggdrasilAnnotations, YggdrasilMacroArgument, YggdrasilMacroCall, YggdrasilModifiers},
     classes::YggdrasilVariants,
     derive::RuleDerive,
-    fields::{counter::FieldCounter, mapper::FieldMap, FieldKind, YggdrasilField},
+    fields::{counter::FieldCounter, FieldKind, YggdrasilField},
     identifier::{YggdrasilIdentifier, YggdrasilNamepath},
     unions::YggdrasilEnumerates,
 };
 use crate::{
     data::RuleReference,
-    nodes::{ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
+    nodes::{ChoiceExpression, ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
 };
 use convert_case::{Case, Casing};
 pub use num::BigInt;
@@ -131,16 +131,32 @@ pub struct GrammarRule {
     /// ```
     pub ignored: bool,
     ///
-    pub body: Option<YggdrasilExpression>,
+    pub body: GrammarBody,
     /// position of all parts
     pub range: Range<usize>,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum GrammarBody {
-    Empty {},
+    Empty,
     Class { term: YggdrasilExpression },
-    Union { branches: YggdrasilExpression },
-    Climb { branches: YggdrasilExpression },
+    Union { branches: Vec<YggdrasilExpression> },
+    Climb { priority: Vec<YggdrasilExpression> },
+}
+
+impl GrammarBody {
+    pub fn for_each<F>(&mut self, mut f: F)
+    where
+        F: FnMut(&mut YggdrasilExpression),
+    {
+        match self {
+            GrammarBody::Empty { .. } => {}
+            GrammarBody::Class { term } => f(term),
+            GrammarBody::Union { branches } => branches.iter_mut().for_each(f),
+            GrammarBody::Climb { priority } => priority.iter_mut().for_each(f),
+        }
+    }
 }
 
 impl Default for GrammarBody {
@@ -173,7 +189,7 @@ impl Default for GrammarRule {
             hide: false,
             ignored: false,
             kind: GrammarRuleKind::Class,
-            body: None,
+            body: Default::default(),
             range: Default::default(),
             redirect: None,
         }
@@ -207,21 +223,6 @@ impl GrammarRule {
         self.ignored = extra.get_ignored();
         self.hide = extra.get_keep();
         self.entry = extra.get_entry();
-        self
-    }
-    pub fn with_expression(mut self, extra: Option<YggdrasilExpression>) -> Self {
-        let empty = match &extra {
-            Some(s) => match &s.body {
-                ExpressionBody::Choice(v) => v.branches.is_empty(),
-                ExpressionBody::Concat(v) => v.sequence.is_empty(),
-                _ => false,
-            },
-            None => true,
-        };
-        self.body = extra;
-        if empty {
-            self.body = None
-        }
         self
     }
 }

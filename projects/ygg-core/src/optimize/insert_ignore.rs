@@ -1,5 +1,6 @@
 use super::*;
 use yggdrasil_error::Validation;
+use yggdrasil_ir::rule::GrammarBody;
 
 pub struct InsertIgnore {
     grammar: GrammarInfo,
@@ -19,9 +20,8 @@ impl CodeOptimizer for InsertIgnore {
             match rule.atomic {
                 GrammarAtomic::Atomic => rule.atomic.optimize(),
                 GrammarAtomic::Combined => {
-                    if let Some(s) = &mut rule.body {
-                        self.update_node(s)
-                    }
+                    rule.body.for_each(|e| self.update_node(e));
+
                     rule.atomic.optimize()
                 }
                 GrammarAtomic::Optimized => continue,

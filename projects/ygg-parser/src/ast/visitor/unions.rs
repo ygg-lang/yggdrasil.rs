@@ -1,11 +1,22 @@
 use super::*;
+use std::rc::Rc;
+use yggdrasil_ir::rule::GrammarBody;
 
 impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
     fn take_one(node: &Define_unionContext<'i>) -> Option<Self> {
         let id = YggdrasilIdentifier::take(node.name.clone())?;
-        let expr = YggdrasilExpression::take(node.union_block());
         let range = Range { start: node.start().start as usize, end: node.stop().stop as usize };
-        Some(GrammarRule::create_union(id, range).with_expression(expr))
+        let mut unions = GrammarRule::create_union(id, range);
+        match node.union_block() {
+            Some(s) => {
+                let terms = YggdrasilExpression::take_many(&s.union_term_all());
+                if !terms.is_empty() {
+                    unions.body = GrammarBody::Union { branches: terms }
+                }
+            }
+            None => {}
+        }
+        Some(unions)
     }
 }
 

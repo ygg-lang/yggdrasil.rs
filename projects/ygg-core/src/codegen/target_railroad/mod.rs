@@ -6,7 +6,7 @@ use yggdrasil_ir::{
     data::RuleReference,
     grammar::GrammarInfo,
     nodes::{ChoiceExpression, ConcatExpression, ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
-    rule::GrammarRule,
+    rule::{GrammarBody, GrammarRule},
     traits::CodeGenerator,
 };
 
@@ -58,10 +58,15 @@ impl AsRailroad for GrammarRule {
         s.push(Box::new(SimpleStart));
         s.push(Box::new(RuleName::new(self.name.text.to_string())));
         match &self.body {
-            Some(e) => {
-                s.push(e.as_railroad(config));
+            GrammarBody::Empty { .. } => {}
+            GrammarBody::Class { term } => {
+                s.push(term.as_railroad(config));
             }
-            None => {}
+            GrammarBody::Union { branches } => {
+                let concat = ConcatExpression { sequence: branches.clone() };
+                s.push(concat.as_railroad(config));
+            }
+            GrammarBody::Climb { .. } => {}
         }
         s.push(Box::new(SimpleEnd));
         return Box::new(s);

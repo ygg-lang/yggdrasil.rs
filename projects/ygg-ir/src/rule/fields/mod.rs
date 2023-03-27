@@ -6,7 +6,6 @@ use crate::{
 use std::iter::from_generator;
 
 pub mod counter;
-pub mod mapper;
 
 #[derive(Debug)]
 pub enum FieldKind {
@@ -63,15 +62,16 @@ impl YggdrasilField {
 
 impl GrammarRule {
     pub fn class_fields(&self) -> YggdrasilVariants {
-        assert_eq!(self.kind, GrammarRuleKind::Class, "do you filter with class?");
-        let fields = self.body.as_ref().map(|s| s.field_map()).unwrap_or_default();
-        YggdrasilVariants { fields: fields.wrap }
+        match &self.body {
+            GrammarBody::Class { term } => YggdrasilVariants { fields: term.field_map().fields },
+            _ => unreachable!("do you filter with class?"),
+        }
     }
     pub fn union_fields(&self) -> YggdrasilEnumerates {
         assert_eq!(self.kind, GrammarRuleKind::Union, "do you filter with union?");
         let mut variants = BTreeMap::default();
         for expr in self.get_branches() {
-            let field = YggdrasilVariants { fields: expr.field_map().wrap };
+            let field = YggdrasilVariants { fields: expr.field_map().fields };
             match &expr.tag {
                 Some(s) => variants.insert(s.text.clone().to_case(Case::Pascal), field),
                 None => {
@@ -84,21 +84,18 @@ impl GrammarRule {
     }
     fn get_branches<'i>(&'i self) -> impl Iterator<Item = &'i YggdrasilExpression> + '_ {
         from_generator(move || match &self.body {
-            Some(s) => match &s.body {
-                ExpressionBody::Choice(e) => {
-                    for item in &e.branches {
-                        yield item
-                    }
+            GrammarBody::Union { branches } => {
+                for item in branches {
+                    yield item
                 }
-                _ => yield s,
-            },
-            None => {}
+            }
+            _ => {}
         })
     }
 }
 
 impl YggdrasilExpression {
-    fn field_map(&self) -> FieldMap {
+    fn field_map(&self) -> YggdrasilVariants {
         // let tag = self.tag.as_ref().or(candidate);
         match &self.body {
             ExpressionBody::Choice(many) => many.field_map(),
@@ -108,16 +105,16 @@ impl YggdrasilExpression {
             // a:(b:x)
             ExpressionBody::Unary(one) => one.field_map(self.tag.as_ref()),
             ExpressionBody::Rule(one) => match &self.tag {
-                Some(s) => FieldMap::rule(s, one, FieldCounter::ONE),
-                None => FieldMap::default(),
+                Some(s) => YggdrasilVariants::rule(s, one, FieldCounter::ONE),
+                None => YggdrasilVariants::default(),
             },
-            _ => FieldMap::default(),
+            _ => YggdrasilVariants::default(),
         }
     }
 }
 
 impl UnaryExpression {
-    fn field_map(&self, candidate: Option<&YggdrasilIdentifier>) -> FieldMap {
+    fn field_map(&self, candidate: Option<&YggdrasilIdentifier>) -> YggdrasilVariants {
         let count = self.counter();
         let tag = self.base.tag.as_ref().or(candidate);
         match &self.base.body {
@@ -132,10 +129,10 @@ impl UnaryExpression {
                 base
             }
             ExpressionBody::Rule(r) => match tag {
-                Some(s) => FieldMap::rule(s, r, count),
-                None => FieldMap::default(),
+                Some(s) => YggdrasilVariants::rule(s, r, count),
+                None => YggdrasilVariants::default(),
             },
-            _ => FieldMap::default(),
+            _ => YggdrasilVariants::default(),
         }
     }
 }
@@ -145,7 +142,7 @@ impl ConcatExpression {
     /// T? ~ T+ -> T*
     /// T? ~ T? -> T*
     /// ```
-    fn field_map(&self) -> FieldMap {
+    fn field_map(&self) -> YggdrasilVariants {
         let (head, rest) = self.split();
         let mut map = head.field_map();
         for item in rest {
@@ -160,7 +157,7 @@ impl ChoiceExpression {
     /// T?+ -> *
     /// T?? -> ?
     /// ```
-    fn field_map(&self) -> FieldMap {
+    fn field_map(&self) -> YggdrasilVariants {
         let (head, rest) = self.split();
         let mut map = head.field_map();
         for item in rest {
