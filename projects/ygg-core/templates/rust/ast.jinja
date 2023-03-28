@@ -1,6 +1,8 @@
 use super::*;
 
-{% for rule in self.grammar.rules() %}
+{%- set rules = self.grammar.rules() %}
+
+{%- for rule in rules.clone() %}
 impl YggdrasilNode for {{ rule.node_name() }} {
     type Rule = {{ self.grammar.rule_name() }};
 
@@ -32,7 +34,7 @@ impl YggdrasilNode for {{ rule.node_name() }} {
 {%- endfor %}
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
-{%- else %}
+{%- else if rule.is_union() %}
 {%- for (name, variant) in rule.union_fields() %}
 {%- if variant.is_empty() %}
         if let Some(_) = tree.first_tagged("{{ name }}") {

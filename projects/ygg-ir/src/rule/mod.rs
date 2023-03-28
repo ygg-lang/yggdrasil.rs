@@ -32,14 +32,6 @@ use std::{
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct FunctionRule {}
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum GrammarRuleKind {
-    Class,
-    Union,
-    Climb,
-}
-
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum GrammarAtomic {
@@ -71,8 +63,6 @@ pub struct GrammarRule {
     /// def RuleName -> Redirect { }
     /// ```
     pub redirect: Option<YggdrasilIdentifier>,
-    /// Kind of this rule
-    pub kind: GrammarRuleKind,
     /// Document of this rule
     ///
     /// ## Examples
@@ -139,7 +129,7 @@ pub struct GrammarRule {
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum GrammarBody {
-    Empty,
+    Empty {},
     Class { term: YggdrasilExpression },
     Union { branches: Vec<YggdrasilExpression> },
     Climb { priority: Vec<YggdrasilExpression> },
@@ -188,7 +178,6 @@ impl Default for GrammarRule {
             entry: false,
             hide: false,
             ignored: false,
-            kind: GrammarRuleKind::Class,
             body: Default::default(),
             range: Default::default(),
             redirect: None,
@@ -198,10 +187,10 @@ impl Default for GrammarRule {
 
 impl GrammarRule {
     pub fn is_class(&self) -> bool {
-        matches!(self.kind, GrammarRuleKind::Class)
+        matches!(self.body, GrammarBody::Class { .. })
     }
     pub fn is_union(&self) -> bool {
-        matches!(self.kind, GrammarRuleKind::Union)
+        matches!(self.body, GrammarBody::Union { .. })
     }
     pub fn node_name(&self) -> String {
         format!("{}Node", self.name.text).to_case(Case::Pascal)
@@ -212,11 +201,19 @@ impl GrammarRule {
 }
 
 impl GrammarRule {
-    pub fn create_class(name: YggdrasilIdentifier, range: Range<usize>) -> Self {
-        Self { kind: GrammarRuleKind::Class, name, range, ..Default::default() }
+    pub fn create_class(name: YggdrasilIdentifier, body: Option<YggdrasilExpression>, range: Range<usize>) -> Self {
+        match body {
+            Some(s) => Self { name, range, body: GrammarBody::Class { term: s }, ..Default::default() },
+            None => Self { name, range, body: GrammarBody::Empty {}, ..Default::default() },
+        }
     }
-    pub fn create_union(name: YggdrasilIdentifier, range: Range<usize>) -> Self {
-        Self { kind: GrammarRuleKind::Union, name, range, ..Default::default() }
+    pub fn create_union(name: YggdrasilIdentifier, body: Vec<YggdrasilExpression>, range: Range<usize>) -> Self {
+        if body.is_empty() {
+            Self { name, range, body: GrammarBody::Empty {}, ..Default::default() }
+        }
+        else {
+            Self { name, range, body: GrammarBody::Union { branches: body }, ..Default::default() }
+        }
     }
     pub fn with_annotation(mut self, extra: &YggdrasilAnnotations) -> Self {
         self.atomic = extra.get_atomic();

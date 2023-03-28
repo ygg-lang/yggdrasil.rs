@@ -61,10 +61,10 @@ impl YggdrasilRule for {{ rule_name }} {
     }
 }
 
-{% for rule in self.grammar.rules() %}
-{%- if rule.is_class() %}
+{%- for rule in rules.clone() %}
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+{%- if rule.is_class() %}
 pub struct {{ rule.node_name() }} {
 {%- for field in rule.class_fields() %}
 
@@ -85,11 +85,9 @@ pub struct {{ rule.node_name() }} {
 {%- endfor %}
     pub span: Range<{{ self.config.range_type }}>,
 }
-{%- else %}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+{%- else if rule.is_union() %}
 pub enum {{ rule.node_name() }} {
-    {%- for (name, variant) in rule.union_fields() %}
+{%- for (name, variant) in rule.union_fields() %}
 {%- if variant.is_empty() %}
     {{ name }},
 {%- else if variant.as_single().is_some() %}

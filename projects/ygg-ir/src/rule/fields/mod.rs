@@ -3,7 +3,6 @@ use crate::{
     grammar::GrammarInfo,
     nodes::{ChoiceExpression, ConcatExpression},
 };
-use std::iter::from_generator;
 
 pub mod counter;
 
@@ -68,29 +67,21 @@ impl GrammarRule {
         }
     }
     pub fn union_fields(&self) -> YggdrasilEnumerates {
-        assert_eq!(self.kind, GrammarRuleKind::Union, "do you filter with union?");
-        let mut variants = BTreeMap::default();
-        for expr in self.get_branches() {
-            let field = YggdrasilVariants { fields: expr.field_map().fields };
-            match &expr.tag {
-                Some(s) => variants.insert(s.text.clone().to_case(Case::Pascal), field),
-                None => {
-                    variants.insert("buggggggggggggggg".to_string(), field)
-                    // unreachable!("have you run remark?")
-                }
-            };
-        }
-        YggdrasilEnumerates { variants }
-    }
-    fn get_branches<'i>(&'i self) -> impl Iterator<Item = &'i YggdrasilExpression> + '_ {
-        from_generator(move || match &self.body {
+        match &self.body {
             GrammarBody::Union { branches } => {
-                for item in branches {
-                    yield item
+                let mut variants = BTreeMap::default();
+                println!("{:?}", branches);
+                for expr in branches {
+                    let field = expr.field_map();
+                    match &expr.tag {
+                        Some(s) => variants.insert(s.text.clone().to_case(Case::Pascal), field),
+                        None => unreachable!("have you run remark?"),
+                    };
                 }
+                YggdrasilEnumerates { variants }
             }
-            _ => {}
-        })
+            _ => unreachable!("do you filter with `union`?"),
+        }
     }
 }
 

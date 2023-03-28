@@ -19,7 +19,7 @@ impl CodeOptimizer for RefineRules {
         let mut out = info.clone();
         for rule in out.rules.values_mut() {
             match &mut rule.body {
-                GrammarBody::Empty => {}
+                GrammarBody::Empty {} => {}
                 GrammarBody::Class { term } => match self.refine_node(term) {
                     Ok(_) => {}
                     Err(e) => errors.push(e),
@@ -43,24 +43,33 @@ impl RefineRules {
     fn refine_node(&mut self, node: &mut YggdrasilExpression) -> Result<(), YggdrasilError> {
         match &mut node.body {
             ExpressionBody::Choice(v) => {
-                for child in v.branches.iter_mut() {
-                    self.refine_node(child)?;
+                if v.branches.len() == 1 {
+                    let head = v.branches.pop().unwrap();
+                    *node = head;
                 }
-                let (mut head, rest) = v.split();
-                for term in rest {
-                    head |= term.clone();
-                }
-                *node = head
+
+                // for child in v.branches.iter_mut() {
+                //     self.refine_node(child)?;
+                // }
+                // let (mut head, rest) = v.split();
+                // for term in rest {
+                //     head |= term.clone();
+                // }
+                // *node = head
             }
             ExpressionBody::Concat(v) => {
-                for child in v.sequence.iter_mut() {
-                    self.refine_node(child)?;
+                if v.sequence.len() == 1 {
+                    let head = v.sequence.pop().unwrap();
+                    *node = head;
                 }
-                let (mut head, rest) = v.split();
-                for term in rest {
-                    head &= term.clone();
-                }
-                *node = head
+                // for child in v.sequence.iter_mut() {
+                //     self.refine_node(child)?;
+                // }
+                // let (mut head, rest) = v.split();
+                // for term in rest {
+                //     head &= term.clone();
+                // }
+                // *node = head
             }
             ExpressionBody::Unary(v) => {
                 // TODO: marge operators,

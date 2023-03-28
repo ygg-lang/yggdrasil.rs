@@ -21,7 +21,14 @@ impl RuleExt for GrammarRule {
                     w.push_str(&format!("Err(/*{e}*/s)"))
                 }
             }
-            GrammarBody::Union { .. } => {}
+            GrammarBody::Union { branches } => {
+                w.push_str("Err(s)");
+                for pat in branches {
+                    w.push_str(".or_else(|s|");
+                    pat.write(&mut w, self, false).unwrap();
+                    w.push_str(")");
+                }
+            }
             GrammarBody::Climb { .. } => w.push_str("Err(/* Climb node */s)"),
         }
         w
@@ -36,19 +43,17 @@ impl NodeExt for YggdrasilExpression {
     fn write(&self, w: &mut String, ctx: &GrammarRule, root: bool) -> std::fmt::Result {
         match &self.body {
             ExpressionBody::Choice(v) => {
-                let (head, rest) = v.split();
-                head.write(w, ctx, false)?;
-                for pat in rest {
+                w.push_str("Err(s)");
+                for pat in &v.branches {
                     w.push_str(".or_else(|s|");
                     pat.write(w, ctx, false)?;
                     w.push_str(")");
                 }
             }
             ExpressionBody::Concat(v) => {
-                let (head, rest) = v.split();
                 w.push_str("s.sequence(|s|");
-                head.write(w, ctx, false)?;
-                for pat in rest {
+                w.push_str("Ok(s)");
+                for pat in &v.sequence {
                     w.push_str(".and_then(|s|");
                     pat.write(w, ctx, false)?;
                     w.push_str(")");
@@ -114,4 +119,17 @@ impl NodeExt for YggdrasilExpression {
         }
         Ok(())
     }
+}
+
+fn write_seq(w: &mut String, classes: &[YggdrasilExpression], ctx: &GrammarRule) -> std::fmt::Result {
+    let (head, rest) = classes.split_first().unwrap();
+    w.push_str("s.sequence(|s|");
+    head.write(w, ctx, false)?;
+    for pat in rest {
+        w.push_str(".and_then(|s|");
+        pat.write(w, ctx, false)?;
+        w.push_str(")");
+    }
+
+    w.write_str(")")
 }

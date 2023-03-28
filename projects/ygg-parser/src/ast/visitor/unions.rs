@@ -6,24 +6,14 @@ impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
     fn take_one(node: &Define_unionContext<'i>) -> Option<Self> {
         let id = YggdrasilIdentifier::take(node.name.clone())?;
         let range = Range { start: node.start().start as usize, end: node.stop().stop as usize };
-        let mut unions = GrammarRule::create_union(id, range);
-        match node.union_block() {
-            Some(s) => {
-                let terms = YggdrasilExpression::take_many(&s.union_term_all());
-                if !terms.is_empty() {
-                    unions.body = GrammarBody::Union { branches: terms }
-                }
-            }
-            None => {}
-        }
-        Some(unions)
-    }
-}
+        let modifiers = YggdrasilModifiers::take(node.modifiers()).unwrap_or_default();
+        let anno = YggdrasilAnnotations { macros: vec![], modifiers };
+        let body = match node.union_block() {
+            Some(s) => YggdrasilExpression::take_many(&s.union_term_all()),
+            None => vec![],
+        };
 
-impl<'i> Extractor<Union_blockContextAll<'i>> for YggdrasilExpression {
-    fn take_one(node: &Union_blockContextAll<'i>) -> Option<Self> {
-        let terms = YggdrasilExpression::take_many(&node.union_term_all());
-        Some(ChoiceExpression::new(terms)?.into())
+        Some(GrammarRule::create_union(id, body, range).with_annotation(&anno))
     }
 }
 

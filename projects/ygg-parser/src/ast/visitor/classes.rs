@@ -8,12 +8,7 @@ impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
         let anno = YggdrasilAnnotations { macros: vec![], modifiers };
         let expr = YggdrasilExpression::take(node.class_block());
         let range = Range { start: node.start().start as usize, end: node.stop().stop as usize };
-        let mut classes = GrammarRule::create_class(id, range).with_annotation(&anno);
-        match expr {
-            Some(s) => classes.body = GrammarBody::Class { term: s },
-            None => {}
-        }
-        Some(classes)
+        Some(GrammarRule::create_class(id, expr, range).with_annotation(&anno))
     }
 }
 

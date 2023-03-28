@@ -1,5 +1,5 @@
 grammar Json5 {
-file: '*.json5'
+    file: '*.json5'
 }
 
 entry union Value {
@@ -21,12 +21,13 @@ class ObjectPair {
 
 @style(field)
 union ObjectKey {
+    |
     | Identifier
     | String
 }
 // === array === ------------------------------------------------------------------------------------------------------
 class Array {
-    '[' (item:Value (',' Value)* ',')? ']'
+    '[' (Value (',' Value)* ',')? ']'
 }
 // === string === ------------------------------------------------------------------------------------------------------
 @style(string)
@@ -35,15 +36,15 @@ atomic union String {
     | "'" StringText* "'"  #DoubleQuote
 }
 class StringRaw -> StringText {
-    /[^"]*/
+/[^"]*/
 }
 union StringText {
-    | StringEscape #Escape
+| StringEscape #Escape
     | /[^"]+/ #Character
 }
 @style(escape)
 class StringEscape {
-    '\' c:ANY
+'\' c:ANY
 }
 // === number === ------------------------------------------------------------------------------------------------------
 @style(number)
@@ -72,6 +73,6 @@ ignore class WhiteSpace {
 @style(comment)
 ignore union Comment {
     | @comment_line('//')
-    | @comment_line('#')
-    | @comment_block('/*', '*/', nest: false)
+| @comment_line('#')
+| @comment_block('/*', '*/', nest: false)
 }
