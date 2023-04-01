@@ -120,16 +120,3 @@ impl NodeExt for YggdrasilExpression {
         Ok(())
     }
 }
-
-fn write_seq(w: &mut String, classes: &[YggdrasilExpression], ctx: &GrammarRule) -> std::fmt::Result {
-    let (head, rest) = classes.split_first().unwrap();
-    w.push_str("s.sequence(|s|");
-    head.write(w, ctx, false)?;
-    for pat in rest {
-        w.push_str(".and_then(|s|");
-        pat.write(w, ctx, false)?;
-        w.push_str(")");
-    }
-
-    w.write_str(")")
-}

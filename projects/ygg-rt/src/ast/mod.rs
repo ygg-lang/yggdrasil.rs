@@ -1,4 +1,4 @@
-use crate::{errors::ErrorKind, iterators::TokenPair, TextSpan, TokenTree, YggdrasilError, YggdrasilRule};
+use crate::{errors::ErrorKind, TextSpan, TokenTree, YggdrasilError, YggdrasilRule};
 use alloc::format;
 use core::{fmt::Debug, ops::Range};
 

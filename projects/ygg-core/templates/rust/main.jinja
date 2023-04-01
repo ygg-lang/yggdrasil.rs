@@ -73,11 +73,11 @@ pub struct {{ rule.node_name() }} {
         // Missing rule {{ field.kind }}
 {%- else %}
 {%- if field.count.is_one() %}
-        {{ field.field_name()|safe_rust_id }}: {{ field.field_type(self.grammar) }},
+    pub {{ field.field_name()|safe_rust_id }}: {{ field.field_type(self.grammar) }},
 {%- else if field.count.is_optional() %}
-        {{ field.field_name()|safe_rust_id }}: Option<{{ field.field_type(self.grammar) }}>,
+    pub {{ field.field_name()|safe_rust_id }}: Option<{{ field.field_type(self.grammar) }}>,
 {%- else %}
-        {{ field.field_name()|safe_rust_id }}: Vec<{{ field.field_type(self.grammar) }}>,
+    pub {{ field.field_name()|safe_rust_id }}: Vec<{{ field.field_type(self.grammar) }}>,
 {%- endif %}
 {%- endif %}
 

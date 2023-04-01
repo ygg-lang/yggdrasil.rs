@@ -1,3 +1,4 @@
+use convert_case::{Case, Casing};
 use std::{borrow::Cow, fmt::Write};
 use yggdrasil_ir::{
     grammar::GrammarInfo,
@@ -31,4 +32,8 @@ pub fn field_type(field: &YggdrasilField, grammar: &GrammarInfo) -> askama::Resu
         FieldKind::IgnoreWhitespace => {}
     }
     Ok(w)
+}
+
+pub fn snake_case<T: AsRef<str>>(text: T) -> askama::Result<String> {
+    Ok(text.as_ref().to_case(Case::Snake))
 }

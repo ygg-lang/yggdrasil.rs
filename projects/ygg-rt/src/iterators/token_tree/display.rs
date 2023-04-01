@@ -42,7 +42,7 @@ where
                 Some(s) => write!(f, ", {s})")?,
                 None => write!(f, ")")?,
             }
-            writeln!(f, ": \x1b[32m{:?}\x1b[0m", span.input)?;
+            writeln!(f, ": \x1b[32m{:?}\x1b[0m", span.as_str())?;
 
             term.into_inner().pretty_print(f, depth + 1)?
         }

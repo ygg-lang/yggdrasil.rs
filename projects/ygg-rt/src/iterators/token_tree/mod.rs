@@ -35,7 +35,7 @@ where
     }
     /// todo
     pub fn span(&self) -> TextSpan<'i> {
-        TextSpan { input: "todo", start: 0, end: 0 }
+        TextSpan { input: self.input, start: self.start, end: self.end }
     }
 }
 
