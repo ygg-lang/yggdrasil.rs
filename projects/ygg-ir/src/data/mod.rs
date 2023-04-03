@@ -14,12 +14,10 @@ use crate::{
     nodes::{ExpressionBody, YggdrasilExpression},
     rule::YggdrasilIdentifier,
 };
-use regex_automata::dfa::{dense::BuildError, regex::Regex};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::hash_map::DefaultHasher,
     fmt::{Debug, Display, Formatter, Write},
     hash::{Hash, Hasher},
     ops::{Range, RangeInclusive},
-    str::FromStr,
 };

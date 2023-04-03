@@ -130,20 +130,20 @@ impl<R: YggdrasilRule> BitOr for Op<R> {
 /// # enum Rule { program, expr, int, add, mul, sub, div, pow, fac, neg }
 /// fn parse_expr(pairs: TokenTree<Rule>, pratt: &PrattParser<Rule>) -> i32 {
 ///     pratt
-///         .map_primary(|primary| match primary.as_rule() {
+///         .map_primary(|primary| match primary.get_rule() {
 ///             Rule::int => primary.as_str().parse().unwrap(),
 ///             Rule::expr => parse_expr(primary.into_inner(), pratt), // from "(" ~ expr ~ ")"
 ///             _ => unreachable!(),
 ///         })
-///         .map_prefix(|op, rhs| match op.as_rule() {
+///         .map_prefix(|op, rhs| match op.get_rule() {
 ///             Rule::neg => -rhs,
 ///             _ => unreachable!(),
 ///         })
-///         .map_postfix(|lhs, op| match op.as_rule() {
+///         .map_postfix(|lhs, op| match op.get_rule() {
 ///             Rule::fac => (1..lhs + 1).product(),
 ///             _ => unreachable!(),
 ///         })
-///         .map_infix(|lhs, op, rhs| match op.as_rule() {
+///         .map_infix(|lhs, op, rhs| match op.get_rule() {
 ///             Rule::add => lhs + rhs,
 ///             Rule::sub => lhs - rhs,
 ///             Rule::mul => lhs * rhs,
@@ -293,7 +293,7 @@ where
     ///  as start of an expression (most notably, prefix operators)
     fn nud<P: Iterator<Item = TokenPair<'i, R>>>(&mut self, pairs: &mut Peekable<P>) -> T {
         let pair = pairs.next().expect("Pratt parsing expects non-empty Pairs");
-        match self.pratt.ops.get(&pair.as_rule()) {
+        match self.pratt.ops.get(&pair.get_rule()) {
             Some((Affix::Prefix, prec)) => {
                 let rhs = self.expr(pairs, *prec - 1);
                 match self.prefix.as_mut() {
@@ -312,7 +312,7 @@ where
     /// after the start of an expression (most notably, infix and postfix operators)"
     fn led<P: Iterator<Item = TokenPair<'i, R>>>(&mut self, pairs: &mut Peekable<P>, lhs: T) -> T {
         let pair = pairs.next().unwrap();
-        match self.pratt.ops.get(&pair.as_rule()) {
+        match self.pratt.ops.get(&pair.get_rule()) {
             Some((Affix::Infix(assoc), prec)) => {
                 let rhs = match *assoc {
                     Assoc::Left => self.expr(pairs, *prec),
@@ -336,7 +336,7 @@ where
     /// "describes the symbol's precedence in infix form (most notably, operator precedence)"
     fn lbp<P: Iterator<Item = TokenPair<'i, R>>>(&mut self, pairs: &mut Peekable<P>) -> Prec {
         match pairs.peek() {
-            Some(pair) => match self.pratt.ops.get(&pair.as_rule()) {
+            Some(pair) => match self.pratt.ops.get(&pair.get_rule()) {
                 Some((_, prec)) => *prec,
                 None => panic!("Expected operator, found {}", pair),
             },

@@ -1,6 +1,4 @@
 use super::*;
-use std::rc::Rc;
-use yggdrasil_ir::rule::GrammarBody;
 
 impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
     fn take_one(node: &Define_unionContext<'i>) -> Option<Self> {

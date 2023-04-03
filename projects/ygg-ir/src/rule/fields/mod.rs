@@ -70,7 +70,6 @@ impl GrammarRule {
         match &self.body {
             GrammarBody::Union { branches } => {
                 let mut variants = BTreeMap::default();
-                println!("{:?}", branches);
                 for expr in branches {
                     let field = expr.field_map();
                     match &expr.tag {

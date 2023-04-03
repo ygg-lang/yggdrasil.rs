@@ -1,7 +1,3 @@
-use alloc::{boxed::Box, rc::Rc, vec, vec::Vec};
-use core::ops::Range;
-use regex_automata::dfa::regex::Regex;
-
 use crate::{
     enhance::stack::Stack,
     errors::{ErrorKind, YggdrasilError},
@@ -10,6 +6,9 @@ use crate::{
     span::TextSpan,
     YggdrasilRule,
 };
+use alloc::{boxed::Box, rc::Rc, vec, vec::Vec};
+use core::ops::Range;
+use regex_automata::dfa::regex::Regex;
 
 /// The current lookahead status of a [`ParserState`].
 ///
@@ -294,7 +293,7 @@ where
     /// let input = "abcd";
     /// let pairs = state(input, mark_c).unwrap();
     /// // find all node tag as `c`
-    /// let find: Vec<TokenPair<Rule>> = pairs.filter(|s| s.as_node_tag() == Some("c")).collect();
+    /// let find: Vec<TokenPair<Rule>> = pairs.filter(|s| s.get_tag() == Some("c")).collect();
     /// assert_eq!(find[0].as_str(), "c")
     /// ```
     #[inline]

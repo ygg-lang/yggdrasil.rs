@@ -500,9 +500,7 @@ impl<R: YggdrasilRule> ErrorKind<R> {
                 Cow::Owned(YggdrasilError::parsing_error_message(positives, negatives, |r| format!("{:?}", r)))
             }
             ErrorKind::CustomError { ref message } => Cow::Borrowed(message),
-            ErrorKind::InvalidNode { .. } => {
-                todo!()
-            }
+            ErrorKind::InvalidNode { expect } => Cow::Owned(format!("invalid node, expected node {expect:?}")),
             ErrorKind::MissingTag { .. } => {
                 todo!()
             }
@@ -521,12 +519,12 @@ impl<R: YggdrasilRule> fmt::Display for ErrorKind<R> {
         match self {
             ErrorKind::ParsingError { .. } => write!(f, "parsing error: {}", self.message()),
             ErrorKind::InvalidNode { .. } => {
-                todo!()
+                write!(f, "{}", self.message())
             }
-            ErrorKind::CustomError { .. } => write!(f, "{}", self.message()),
             ErrorKind::MissingTag { .. } => {
                 todo!()
             }
+            ErrorKind::CustomError { .. } => write!(f, "{}", self.message()),
         }
     }
 }

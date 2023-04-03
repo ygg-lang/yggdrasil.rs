@@ -1,4 +1,4 @@
-use std::fs::{read_to_string, File};
+use std::fs::read_to_string;
 use yggdrasil_shared::codegen::RustCodegen;
 
 #[test]

@@ -33,10 +33,6 @@ where
         }
         Self { queue, input, start, end, pairs_count }
     }
-    /// todo
-    pub fn span(&self) -> TextSpan<'i> {
-        TextSpan { input: self.input, start: self.start, end: self.end }
-    }
 }
 
 impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
@@ -223,48 +219,7 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     /// ```
     #[inline]
     pub fn find_tagged(self, tag: &str) -> Filter<TokenStream<'i, R>, impl FnMut(&TokenPair<'i, R>) -> bool + '_> {
-        self.flatten().filter(move |pair: &TokenPair<'i, R>| matches!(pair.as_node_tag(), Some(nt) if nt == tag))
-    }
-    /// Finds the first pair that has its node or branch tagged with the provided
-    /// label. Searches in the flattened [`TokenTree`] iterator.
-    #[inline]
-    pub fn first_tagged(&self, tag: &str) -> Option<TokenTree<'i, R>> {
-        for pair in self.clone().flatten() {
-            match pair.as_node_tag() {
-                Some(s) if tag.eq(s) => return Some(pair.into_inner()),
-                _ => {}
-            }
-        }
-        return None;
-    }
-    /// find and cast
-    #[inline]
-    pub fn take_tagged<N>(self, tag: Cow<'static, str>) -> Result<Vec<N>, YggdrasilError<N::Rule>>
-    where
-        N: YggdrasilNode<Rule = R>,
-    {
-        let mut out = vec![];
-        for pair in self.flatten() {
-            match pair.as_node_tag() {
-                Some(s) if tag.eq(s) => out.push(N::from_cst(pair.into_inner())?),
-                _ => {}
-            }
-        }
-        Ok(out)
-    }
-    /// Finds the first pair that has its node or branch tagged with the provided
-    /// label. Searches in the flattened [`TokenTree`] iterator.
-    ///
-    /// **Warning: This operation will not panic when running, ensuring that the element must exist!**
-    #[inline]
-    pub fn take_tagged_one<N>(&self, tag: Cow<'static, str>) -> Result<N, YggdrasilError<N::Rule>>
-    where
-        N: YggdrasilNode<Rule = R>,
-    {
-        match self.first_tagged(tag.as_ref()) {
-            Some(s) => N::from_cst(s),
-            None => Err(YggdrasilError::missing_tag(tag, TextSpan { input: "", start: 0, end: 0 })),
-        }
+        self.flatten().filter(move |pair: &TokenPair<'i, R>| matches!(pair.get_tag(), Some(nt) if nt == tag))
     }
 
     /// Returns the `Tokens` for the `Pairs`.

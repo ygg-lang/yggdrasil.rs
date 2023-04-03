@@ -1,5 +1,4 @@
 use super::*;
-use yggdrasil_ir::rule::GrammarBody;
 
 impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
     fn take_one(node: &Define_classContext<'i>) -> Option<Self> {

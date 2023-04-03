@@ -1,17 +1,4 @@
-use alloc::{format, rc::Rc, vec::Vec};
-use core::{
-    borrow::Borrow,
-    fmt,
-    hash::{Hash, Hasher},
-    ptr, str,
-};
-
-use super::{
-    token_queue::TokenQueue,
-    token_tree::TokenTree,
-    tokens::{self, Tokens},
-};
-use crate::{span::TextSpan, YggdrasilRule};
+use super::*;
 
 /// A matching pair of [`Token`]s and everything between them.
 ///
@@ -62,10 +49,10 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
     /// .next()
     /// .unwrap();
     ///
-    /// assert_eq!(pair.as_rule(), Rule::a);
+    /// assert_eq!(pair.get_rule(), Rule::a);
     /// ```
     #[inline]
-    pub fn as_rule(&self) -> R {
+    pub fn get_rule(&self) -> R {
         match &self.queue[self.pair()] {
             TokenQueue::End { rule, .. } => rule.clone(),
             _ => unreachable!(),
@@ -162,10 +149,10 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
     /// .next()
     /// .unwrap();
     ///
-    /// assert_eq!(pair.as_span().as_str(), "ab");
+    /// assert_eq!(pair.get_span().as_str(), "ab");
     /// ```
     #[inline]
-    pub fn as_span(&self) -> TextSpan<'i> {
+    pub fn get_span(&self) -> TextSpan<'i> {
         let start = self.pos(self.start);
         let end = self.pos(self.pair());
 
@@ -175,7 +162,7 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
 
     /// Get current node tag
     #[inline]
-    pub fn as_node_tag(&self) -> Option<&str> {
+    pub fn get_tag(&self) -> Option<&str> {
         match &self.queue[self.pair()] {
             TokenQueue::End { tag, .. } => tag.as_ref().map(|x| x.borrow()),
             _ => None,
@@ -211,6 +198,53 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
         let pair = self.pair();
         TokenTree::new(self.queue, self.input, self.start + 1, pair)
     }
+    /// check
+    #[inline]
+    pub fn find_first_tag(&self, tag: &str) -> Option<TokenPair<R>> {
+        for pair in self.clone().into_inner() {
+            match pair.get_tag() {
+                Some(s) if tag.eq(s) => return Some(pair),
+                _ => {}
+            }
+        }
+        None
+    }
+    /// Finds the first pair that has its node or branch tagged with the provided
+    /// label. Searches in the flattened [`TokenTree`] iterator.
+    #[inline]
+    pub fn take_tagged_one<N>(&self, tag: Cow<'static, str>) -> Result<N, YggdrasilError<N::Rule>>
+    where
+        N: YggdrasilNode<Rule = R>,
+    {
+        for pair in self.clone().into_inner() {
+            match pair.get_tag() {
+                Some(s) if tag.eq(s) => return N::from_pair(pair),
+                _ => {}
+            }
+        }
+        Err(YggdrasilError::missing_tag(tag, self.get_span()))
+    }
+
+    /// Finds the first pair that has its node or branch tagged with the provided
+    /// label. Searches in the flattened [`TokenTree`] iterator.
+    ///
+    /// **Warning: This operation will not panic when running, ensuring that the element must exist!**
+    #[inline]
+    pub fn take_tagged_items<N>(&self, tag: Cow<'static, str>) -> Result<Vec<N>, YggdrasilError<N::Rule>>
+    where
+        N: YggdrasilNode<Rule = R>,
+    {
+        // TODO: SIZE_HINT
+        let mut out = Vec::with_capacity(0);
+        for pair in self.clone().into_inner() {
+            match pair.get_tag() {
+                Some(s) if tag.eq(s) => out.push(N::from_pair(pair)?),
+                _ => {}
+            }
+        }
+        Ok(out)
+    }
+
     /// Returns the inner `Pairs` between the `Pair`, consuming it.
     ///
     /// # Examples
@@ -293,21 +327,21 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
     }
 }
 
-impl<'i, R: YggdrasilRule> fmt::Debug for TokenPair<'i, R> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl<'i, R: YggdrasilRule> Debug for TokenPair<'i, R> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let pair = &mut f.debug_struct("Pair");
-        pair.field("rule", &self.as_rule());
+        pair.field("rule", &self.get_tag());
         // In order not to break compatibility
-        if let Some(s) = self.as_node_tag() {
+        if let Some(s) = self.get_tag() {
             pair.field("node_tag", &s);
         }
-        pair.field("span", &self.as_span()).field("inner", &self.clone().into_inner().collect::<Vec<_>>()).finish()
+        pair.field("span", &self.get_span()).field("inner", &self.clone().into_inner().collect::<Vec<_>>()).finish()
     }
 }
 
-impl<'i, R: YggdrasilRule> fmt::Display for TokenPair<'i, R> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let rule = self.as_rule();
+impl<'i, R: YggdrasilRule> Display for TokenPair<'i, R> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let rule = self.get_rule();
         let start = self.pos(self.start);
         let end = self.pos(self.pair());
         let mut pairs = self.clone().into_inner().peekable();

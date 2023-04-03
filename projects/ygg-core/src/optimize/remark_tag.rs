@@ -16,13 +16,10 @@ impl CodeOptimizer for RemarkTags {
                 GrammarBody::Empty {} => {}
                 GrammarBody::Class { term } => self.remark(term, true),
                 GrammarBody::Union { branches } => {
-                    println!("{:?}", branches);
                     self.remark_union_root(rule_name, branches);
-                    println!("{:?}", branches);
                     for branch in branches.iter_mut() {
                         self.remark(branch, true)
                     }
-                    println!("{:?}\n\n", branches);
                 }
                 GrammarBody::Climb { .. } => {}
             }

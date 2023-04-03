@@ -1,6 +1,5 @@
 use super::*;
 use yggdrasil_error::Validation;
-use yggdrasil_ir::rule::GrammarBody;
 
 pub struct InsertIgnore {
     grammar: GrammarInfo,

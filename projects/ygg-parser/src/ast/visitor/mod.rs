@@ -11,7 +11,7 @@ mod modifiers;
 use std::{mem::take, str::FromStr};
 use yggdrasil_ir::{
     data::{YggdrasilRegex, YggdrasilText},
-    nodes::{ChoiceExpression, ConcatExpression, YggdrasilExpression, YggdrasilOperator},
+    nodes::{ConcatExpression, YggdrasilExpression, YggdrasilOperator},
     rule::{
         BigInt, GrammarRule, YggdrasilAnnotations, YggdrasilIdentifier, YggdrasilMacroArgument, YggdrasilMacroCall,
         YggdrasilModifiers, YggdrasilNamepath,

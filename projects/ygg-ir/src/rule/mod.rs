@@ -17,7 +17,7 @@ pub use self::{
 };
 use crate::{
     data::RuleReference,
-    nodes::{ChoiceExpression, ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
+    nodes::{ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
 };
 use convert_case::{Case, Casing};
 pub use num::BigInt;
