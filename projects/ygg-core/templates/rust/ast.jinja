@@ -3,6 +3,7 @@ use super::*;
 {%- set rules = self.grammar.rules() %}
 
 {%- for rule in rules.clone() %}
+#[automatically_derived]
 impl YggdrasilNode for {{ rule.node_name() }} {
     type Rule = {{ self.grammar.rule_name() }};
 

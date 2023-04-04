@@ -13,6 +13,7 @@ pub struct YggdrasilError {
 pub enum YggdrasilErrorKind {
     Io { error: String, file: Option<PathBuf> },
     Runtime { message: String },
+    Config { message: String },
 }
 
 impl Error for YggdrasilError {}
@@ -45,11 +46,17 @@ impl Display for YggdrasilErrorKind {
             YggdrasilErrorKind::Runtime { message } => {
                 write!(f, "RuntimeError: {}", message)
             }
+            YggdrasilErrorKind::Config { message } => {
+                write!(f, "ConfigError: {}", message)
+            }
         }
     }
 }
 
 impl YggdrasilError {
+    pub fn config_error<S: Display>(message: S) -> Self {
+        Self { kind: Box::new(YggdrasilErrorKind::Config { message: message.to_string() }) }
+    }
     pub fn runtime_error<S: Display>(message: S) -> Self {
         Self { kind: Box::new(YggdrasilErrorKind::Runtime { message: message.to_string() }) }
     }
