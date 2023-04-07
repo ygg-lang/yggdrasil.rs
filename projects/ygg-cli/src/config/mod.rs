@@ -1,7 +1,8 @@
 use serde::{Deserialize, Deserializer, Serialize};
 use std::{
     env::current_dir,
-    fs::read_to_string,
+    ffi::OsStr,
+    fs::{read_dir, read_to_string, DirEntry},
     path::{Path, PathBuf},
 };
 use yggdrasil_error::YggdrasilError;
@@ -33,6 +34,7 @@ impl YccConfig {
                 unimplemented!()
             }
         };
+        println!("{:#?}", config);
         Ok(config)
     }
 }
@@ -54,6 +56,22 @@ fn find_config<P: AsRef<Path>>(config: Option<P>) -> Result<(String, String), Yg
 }
 
 fn find_default() -> Option<PathBuf> {
-    println!("workspace {:?}", current_dir());
-    for file in current_dir()? {}
+    println!("workspace {:?}", current_dir().ok());
+    for file in read_dir(current_dir()?)? {
+        let t: std::io::Result<DirEntry> = file;
+        let file = file.ok()?.path();
+        if !file.is_file() {
+            continue;
+        }
+        let name = match file.file_name() {
+            Some(s) => s,
+            None => continue,
+        };
+        if name.eq_ignore_ascii_case("ycc") || name.eq_ignore_ascii_case("yggdrasil") {
+            return Some(file.path());
+        }
+    }
+    None
 }
+
+fn check_file(input: std::io::Result<DirEntry>) -> Option<PathBuf> {}

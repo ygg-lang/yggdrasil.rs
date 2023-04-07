@@ -18,7 +18,7 @@ clap = { version = "4.4.6", features = ["derive"] }
 tracing = "0.1.37"
 json5 = "0.4.1"
 toml = "0.8.2"
-yaml = "0.3.0"
+#yaml = "0.3.0"
 
 [dependencies.yggdrasil-error]
 version = "0.1.*"
