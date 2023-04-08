@@ -1,0 +1,97 @@
+program = {SOI ~ statement* ~ EOI}
+
+statement = {
+    comment_doc
+  | macro_call
+  | macro_define
+  | empty_statement
+  | grammar_statement ~ eos?
+  | fragment_statement ~ eos?
+  | ignore_statement ~ eos?
+  | assign_statement ~ eos?
+}
+empty_statement = {eos}
+eos = @{";"}
+/*====================================================================================================================*/
+grammar_statement = {
+    grammar ~ SYMBOL ~ string?
+  | grammar ~ SYMBOL ~ "{" ~ (string ~ ("," ~ string)* ~ ","?)? ~"}"
+}
+grammar = _{"grammar!"}
+/*====================================================================================================================*/
+fragment_statement = {fragment ~ SYMBOL}
+fragment = _{"fragment!"}
+/*====================================================================================================================*/
+import_statement = {
+    import ~ string
+  | import ~ string ~ "{" ~ (symbol_alias ~ ("," ~ symbol_alias)* ~ ","?)? ~"}"
+}
+import = _{"import!"}
+/*====================================================================================================================*/
+ignore_statement = {
+    ignore ~ SYMBOL
+  | ignore ~ "{" ~ (SYMBOL ~ ("," ~ SYMBOL)* ~ ","?)? ~"}"
+}
+ignore = _{"ignore!"}
+/*====================================================================================================================*/
+assign_statement = {SYMBOL ~ assign_kind ~ "|"? ~ expr}
+assign_kind = @{("^"|"_"|"@")* ~ "=" }
+/*====================================================================================================================*/
+expr = {
+    "(" ~ "|"? ~ expr ~ ")"
+  | SYMBOL ~ mark_type? ~ "<-" ~ expr
+  | choice_expr ~ ("|"|"/") ~ expr ~ choice_expr
+  | expr ~ "~" ~ expr
+  | expr ~ slice
+  | expr ~ suffix
+  | prefix ~ expr
+  | data
+}
+choice_expr = {expr ~(mark_branch ~ mark_type?)?}
+mark_branch = ${("^"| "!")? ~ "#" ~ SYMBOL}
+mark_type = {":" ~ SYMBOL}
+prefix = @{"!" | "&" | "^" | "*" | "%"}
+suffix = @{"?" | "+" | "-"| "*"}
+/*====================================================================================================================*/
+data  = {macro_call|regex_range|list|symbol_path|integer}
+list  = {"{" ~ (data ~ ("," ~ data)* ~ ","?)? ~"}"}
+slice = {"{" ~ integer ~ "," ~ integer ~ "}"}
+/*====================================================================================================================*/
+regex_range = @{"[" ~ (!"]" ~ ANY | "\\" ~ ANY)* ~ "]"}
+/*====================================================================================================================*/
+macro_call = {
+    "@" ~ symbol_path ~ "(" ~ (macro_kv ~ ("," ~ macro_kv)* ~ ","?)? ~")"
+}
+/*====================================================================================================================*/
+macro_define = {
+    "macro!" ~ symbol_path ~  "(" ~(macro_arg ~ ("," ~ macro_arg)* ~ ","?)?~ ")" ~ block
+}
+macro_kv =  {SYMBOL ~ "=" ~ expr|expr}
+macro_arg = {SYMBOL ~ (":" ~ SYMBOL)? ~ ("=" ~ expr)?}
+block = {"{" ~ "return"? ~ expr ~ "}"}
+/*====================================================================================================================*/
+string = @{
+    "'" ~ (!"\'" ~ ANY | "\\" ~ ANY)* ~ "'"
+  | "\"" ~ (!"\"" ~ ANY | "\\" ~ ANY)* ~ "\""
+}
+///#D19A66
+integer = @{"0"|ASCII_NONZERO_DIGIT ~ ("_"? ~ ASCII_DIGIT)*}
+///#D19A66
+special = @{"true"|"false"|"null"}
+/*====================================================================================================================*/
+comment_doc = @{"///" ~ (!NEWLINE ~ ANY)*}
+comment_s_l = @{"//" ~ (!NEWLINE ~ ANY)*}
+comment_m_l = @{"/*" ~ (comment_m_l | !"*/" ~ ANY)* ~ "*/"}
+COMMENT = @{comment_s_l | comment_m_l}
+symbol_path = {
+    SYMBOL ~ (("::"|".") ~ SYMBOL)*
+}
+symbol_alias = {
+    SYMBOL ~ ("as" ~ SYMBOL)?
+}
+SYMBOL = @{
+    ("_" | XID_START) ~ XID_CONTINUE*
+}
+WHITESPACE = ${COMMENT|WHITE_SPACE|NEWLINE}
+WHITE_SPACE = @{(" "|"\t")+}
+NEWLINE = @{("\r\n"|"\r"|"\n")+}

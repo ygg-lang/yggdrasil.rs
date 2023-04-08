@@ -1,6 +1,7 @@
 use crate::{
     codegen::Railroad,
     optimize::{InsertIgnore, RefineRules},
+    parse_grammar,
 };
 use askama::Template;
 use itertools::Itertools;
@@ -123,10 +124,7 @@ impl CodeGenerator for RustCodegen {
 impl RustCodegen {
     pub fn generate<P: AsRef<Path>>(&self, grammar: &str, output: P) -> Validation<PathBuf> {
         let mut errors = vec![];
-        let mut info = YggdrasilANTLR::parse(grammar).validate(&mut errors)?;
-        info = RefineRules::default().optimize(&info).validate(&mut errors)?;
-        info = InsertIgnore::default().optimize(&info).validate(&mut errors)?;
-        info = RemarkTags::default().optimize(&info).validate(&mut errors)?;
+        let info = parse_grammar(grammar).validate(&mut errors)?;
         let out = info.generate(RustCodegen::default()).validate(&mut errors)?;
         out.save(output).validate(&mut errors)
     }

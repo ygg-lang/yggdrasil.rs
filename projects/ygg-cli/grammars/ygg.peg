@@ -1,0 +1,108 @@
+program  <- IGNORE (<statement:statement> IGNORE)* EOI;
+
+statement  <- empty_statement
+    Grammar:/ <grammar_statement:grammar_statement> IGNORE eos?
+    Fragment:/ <fragment_statement:fragment_statement> IGNORE eos?
+    Import:/ <import_statement:import_statement> IGNORE eos?
+    Ignore:/ <ignore_statement:ignore_statement> IGNORE eos?
+    Assign:/ <assign_statement:assign_statement> IGNORE eos?
+    MacroCall:/ <macro_then:macro_then> IGNORE eos?
+    MacroDef:/ <macro_define:macro_define> IGNORE eos?
+;
+
+empty_statement <- eos;
+
+eos  <- ";";
+
+
+grammar_statement  <-
+    grammar IGNORE <id:symbol> IGNORE "{" IGNORE (<ext:string> IGNORE ("," IGNORE <ext:string>)* IGNORE ","?)? IGNORE "}"
+  / grammar IGNORE <id:symbol> IGNORE <ext:string>?
+;
+grammar  <- "@grammar";
+
+fragment_statement <- fragment IGNORE <id:symbol>;
+fragment <- "@fragment";
+
+
+import_statement  <-
+    import IGNORE <path:string> IGNORE "{" IGNORE (<symbol_alias:symbol_alias> IGNORE ("," IGNORE <symbol_alias:symbol_alias>)* IGNORE ","?)? IGNORE "}"
+  / import IGNORE <path:string>
+;
+import  <- "@import";
+
+symbol_alias <- <from:symbol> (IGNORE "as" IGNORE <into:symbol>)?;
+
+ignore_statement  <-
+    ignore IGNORE <rules:symbol>
+  / ignore IGNORE "{" IGNORE (<rules:symbol> IGNORE ("," IGNORE <rules:symbol>)* IGNORE ","?)? IGNORE "}"
+;
+ignore  <- "@ignore";
+
+assign_statement  <- <id:symbol> (":" <ty:symbol>)? IGNORE <eq:assign_kind> IGNORE ("|"/"/")? IGNORE <rhs:expr>;
+assign_kind  <- ("^"/"_"/"@")* "=";
+
+expr  <- <term:term> IGNORE (<expr_next:expr_next> IGNORE)*;
+expr_next <-
+    Infix:/ <infix:infix> IGNORE <term:term>
+    Other:/ <term:term> !assign_kind;
+term <- (<prefix:prefix> !"💣")* (<data:data> !"💣" / "(" IGNORE ("/"/"|")? IGNORE <expr:expr> IGNORE ")") (<term_next:term_next> !"💣")*;
+term_next <-
+    Suffix:/ <suffix:suffix> !"💣"
+    Slice:/  <slice:slice> !"💣"
+    Branch:/ IGNORE <branch_tag:branch_tag> !"💣";
+branch_tag <- <kind:branch_kind>? "#" <symbol:symbol>
+branch_kind <- "_"/"^"/"!"/"<"/">";
+infix   <- "|" / "/" / "~" / "<-" / ":";
+prefix  <- "!" / "&" / "^" / "%";
+suffix  <- "?" / "+" / "*";
+
+data <-
+    Macro:/   <macro_call:macro_call> !"💣"
+    Range:/   <regex_range:regex_range> !"💣"
+    Regex:/   <regex:regex> !"💣"
+    List:/    <list:list> !"💣"
+    Symbol:/  <symbol_path:symbol_path> !"💣"
+    Integer:/ <integer:integer> !"💣"
+    String:/  <string:string> !"💣"
+;
+
+list   <- "{" IGNORE (<data:data> IGNORE ("," IGNORE <data:data>)* IGNORE ","?)? IGNORE "}";
+slice  <- "{" IGNORE <start:integer>? IGNORE "," IGNORE <end:integer>? IGNORE  "}";
+
+regex <- re#/([^\\/]|\\.)*/#;
+regex_range  <- "[" IGNORE (!"]" IGNORE . / "\\" IGNORE .)* IGNORE "]";
+
+
+macro_call  <-
+    "$" <symbol_path:symbol_path> IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE ")"
+;
+macro_then  <-
+    "@" <symbol_path:symbol_path> (IGNORE "(" IGNORE (macro_kv IGNORE ("," IGNORE macro_kv)* IGNORE ","?)? IGNORE ")")?
+;
+macro_kv  <-  symbol IGNORE "=" IGNORE expr / expr;
+
+
+
+macro_define  <-
+    "@macro" IGNORE symbol IGNORE  "(" IGNORE(macro_arg IGNORE ("," IGNORE macro_arg)* IGNORE ","?)? IGNORE ")" IGNORE block
+;
+macro_arg  <- symbol IGNORE (":" IGNORE symbol)? IGNORE ("=" IGNORE expr)?;
+block  <- "{" IGNORE expr IGNORE "}";
+
+
+string  <-
+    re#'([^\\']|\\.)*'#
+  / re#"([^\\"]|\\.)*"#
+;
+
+integer  <- re#[0-9](_?[0-9])*#;
+
+symbol_path  <- <symbol:symbol> IGNORE (("::"/".") IGNORE <symbol:symbol>)*;
+symbol  <- XID_IDENTIFIER;
+
+IGNORE <-  (SPACE / NEWLINE / COMMENT)*;
+
+SPACE <- re#[\s]+#;
+NEWLINE <- re#[\r\n]+#;
+COMMENT <- re#//[^\r\n]*#;

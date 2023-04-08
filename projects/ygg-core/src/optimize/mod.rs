@@ -1,14 +1,13 @@
 use itertools::Itertools;
 use std::{collections::HashSet, mem::take};
 use yggdrasil_error::YggdrasilError;
+pub use yggdrasil_ir::traits::{CodeGenerator, CodeOptimizer};
 use yggdrasil_ir::{
     grammar::GrammarInfo,
     nodes::{ChoiceExpression, ConcatExpression, ExpressionBody, UnaryExpression, YggdrasilExpression},
     rule::{FunctionRule, GrammarAtomic, GrammarRule},
-    traits::CodeOptimizer,
     IndexMap,
 };
-
 mod dead_code;
 mod emit_function;
 mod fuse_rule;

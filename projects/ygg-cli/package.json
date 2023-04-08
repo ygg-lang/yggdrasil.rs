@@ -1,6 +1,6 @@
 {
     "private": true,
     "scripts": {
-        "pub": "cargo publish --allow-dirty"
+        "i": "cargo install --path . --debug"
     }
 }

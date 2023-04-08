@@ -1,0 +1,38 @@
+grammar External {
+    generate: false
+}
+
+parser parse_extra {
+rust: crate::utils::parse_extra;
+java: package::helper::parse_extra;
+}
+
+inspector is_valid {
+rust: crate::utils::check_extra;
+java: package::helper::check_extra;
+}
+
+@inspector(is_valid, language: true)
+@external(parse_extra, think: false)
+fake class Struct {
+One
+Option?
+Numbers*
+Many1+
+}
+
+@inspector(is_valid)
+@external(parse_extra)
+fake union Enum {
+| A #This
+| B #That
+}
+
+@inspector(is_valid)
+class A {
+@parse_extra @is_valid(Extra)
+}
+
+token {
+AA: 'man'
+}
