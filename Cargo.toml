@@ -4,6 +4,7 @@ members = ["projects/*"]
 default-members = [
     "projects/ygg-ir",
     "projects/ygg-rt",
+    "projects/ygg-cli",
 ]
 exclude = [
     "projects/.DS_Store",

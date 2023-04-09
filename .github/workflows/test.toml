@@ -1,0 +1,42 @@
+name = "Rust Test"
+
+[on.push]
+branches = ["master", "dev"]
+
+[on.pull_request]
+branches = ["master", "dev"]
+
+[jobs.build]
+runs-on = "${{ matrix.os }}"
+
+[jobs.build.strategy.matrix]
+os = ["ubuntu-latest", "macos-latest", "windows-latest"]
+
+#[[jobs.build.steps]]
+#run = "git config --global core.autocrlf false"
+
+[[jobs.build.steps]]
+uses = "actions/checkout@v2"
+
+[[jobs.build.steps]]
+name = "Rust Nightly"
+uses = "actions-rs/toolchain@v1"
+[jobs.build.steps.with]
+toolchain = "nightly"
+override = true
+components = "rustfmt, clippy"
+
+[[jobs.build.steps]]
+name = "Cargo Build"
+run = "cargo build --release"
+
+[[jobs.build.steps]]
+name = "Find Release"
+run = """
+cd target/release/
+ls
+"""
+
+#[[jobs.build.steps]]
+#name = "Tests"
+#run = "cargo test --release"

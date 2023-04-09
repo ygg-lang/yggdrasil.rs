@@ -1,0 +1,42 @@
+name: Publish (nightly)
+on:
+  push:
+    branches:
+    - dev
+jobs:
+  publish:
+    name: Publish for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - os: ubuntu-latest
+          artifact_name: ycc
+          asset_name: ycc-linux
+        - os: windows-latest
+          artifact_name: ycc.exe
+          asset_name: ycc.exe
+        - os: macos-latest
+          artifact_name: ycc
+          asset_name: ycc-macos
+    steps:
+    - uses: actions/checkout@v3
+    - name: Read Git Hash
+      uses: prompt/actions-commit-hash@v3
+      id: commit
+    - name: Rust Nightly
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: nightly
+        override: true
+    - name: Build
+      run: cargo build --release
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        tag: preview-${{ steps.commit.outputs.short }}
+        asset_name: ${{ matrix.asset_name }}
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: target/release/${{ matrix.artifact_name }}
+        prerelease: true
