@@ -1,9 +1,5 @@
 # Yggdrasil Generative Grammar
 
-[![Build/test](https://github.com/tree-sitter/tree-sitter-rust/actions/workflows/ci.yml/badge.svg)](https://github.com/tree-sitter/tree-sitter-rust/actions/workflows/ci.yml)
-
-Yggdrasil grammar DSL for [tree-sitter](https://github.com/tree-sitter/tree-sitter)
-
 ## Features
 
 ## Language Tutorial
@@ -17,12 +13,12 @@ Yggdrasil grammar DSL for [tree-sitter](https://github.com/tree-sitter/tree-sitt
 |    `a+`    | One or more elements         |
 |   `a b`    | Sequence of elements         |
 |  `a \| b`  | Alternative of branch        |
-| `name: e`  | Mark element with given name |
-|  `^rule`   | Unmark element               |
-|  `#Name`   | Mark branch name             |      
+|  `name:e`  | Mark element with given name |
+|  `#Name`   | Mark branch with given name  |      
+|  `^rule`   | Remark element               |
 | `@macro()` | Macro call                   |        
+|   `ANY`    | Any unicode characters       |
 | `IGNORED`  | All rules marked as ignored  |
-|   `ANY`    | All unicode characters       |
 
 - `class` vs `union`
 
@@ -41,7 +37,6 @@ union TestB {
 }
 ```
 
-
 ```rust
 struct TestA {
     tag_a: A,
@@ -56,4 +51,8 @@ enum TestB {
 
 - examples
 
-You can learn more from [examples](./examples).
+You can learn more from [project-yggdrasil](https://github.com/ygg-lang/project-yggdrasil/tree/master/languages).
+
+## Tools
+
+- [JetBrains Support](https://plugins.jetbrains.com/plugin/20594-yggdrasil-support)

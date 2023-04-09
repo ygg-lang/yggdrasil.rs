@@ -1,0 +1,39 @@
+name: Publish (nightly)
+
+on:
+  push:
+    branches: [ master, dev ]
+
+jobs:
+  publish:
+    name: Publish for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+      os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - name: linux
+            os: ubuntu-latest
+            artifact_name: target/release/ycc
+            asset_name: ycc-x64-linux
+          - name: windows
+            os: windows-latest
+            artifact_name: target/release/ycc.exe
+            asset_name: ycc-x64.exe
+          - name: macos
+            os: macos-latest
+            artifact_name: target/release/<name>
+            asset_name: ycc-x64-macos
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: nightly
+    - name: Cargo Build
+      run: cargo build --release
+    - name: Upload binaries to release
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.asset_name }}
+        path: ${{ matrix.artifact_name }}
