@@ -27,8 +27,9 @@ impl<'i> Extractor<Class_expressionContextAll<'i>> for YggdrasilExpression {
                 Some(YggdrasilExpression::unary(base, suffix))
             }
             Class_expressionContextAll::CETagContext(c) => {
-                let name = YggdrasilIdentifier::take(c.identifier())?;
-                let rule = YggdrasilExpression::take(c.class_expression())?;
+                let inner = c.class_tag()?;
+                let name = YggdrasilIdentifier::take(inner.identifier_free())?;
+                let rule = YggdrasilExpression::take(inner.class_expression())?;
                 Some(rule.with_tag(name))
             }
             Class_expressionContextAll::CUntagContext(c) => {

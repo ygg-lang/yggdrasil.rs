@@ -128,6 +128,12 @@ pub trait YggdrasilAntlrListener<'input>: ParseTreeListener<'input, YggdrasilAnt
     /// labeled alternative in {@link YggdrasilAntlrParser#class_expression}.
     /// @param ctx the parse tree
     fn exit_CNot(&mut self, _ctx: &CNotContext<'input>) {}
+    /// Enter a parse tree produced by {@link YggdrasilAntlrParser#class_tag}.
+    /// @param ctx the parse tree
+    fn enter_class_tag(&mut self, _ctx: &Class_tagContext<'input>) {}
+    /// Exit a parse tree produced by {@link YggdrasilAntlrParser#class_tag}.
+    /// @param ctx the parse tree
+    fn exit_class_tag(&mut self, _ctx: &Class_tagContext<'input>) {}
     /// Enter a parse tree produced by {@link YggdrasilAntlrParser#define_union}.
     /// @param ctx the parse tree
     fn enter_define_union(&mut self, _ctx: &Define_unionContext<'input>) {}
@@ -202,6 +208,12 @@ pub trait YggdrasilAntlrListener<'input>: ParseTreeListener<'input, YggdrasilAnt
     /// labeled alternative in {@link YggdrasilAntlrParser#union_expression}.
     /// @param ctx the parse tree
     fn exit_USoft(&mut self, _ctx: &USoftContext<'input>) {}
+    /// Enter a parse tree produced by {@link YggdrasilAntlrParser#union_tag}.
+    /// @param ctx the parse tree
+    fn enter_union_tag(&mut self, _ctx: &Union_tagContext<'input>) {}
+    /// Exit a parse tree produced by {@link YggdrasilAntlrParser#union_tag}.
+    /// @param ctx the parse tree
+    fn exit_union_tag(&mut self, _ctx: &Union_tagContext<'input>) {}
     /// Enter a parse tree produced by {@link YggdrasilAntlrParser#define_climb}.
     /// @param ctx the parse tree
     fn enter_define_climb(&mut self, _ctx: &Define_climbContext<'input>) {}
@@ -418,6 +430,12 @@ pub trait YggdrasilAntlrListener<'input>: ParseTreeListener<'input, YggdrasilAnt
     /// Exit a parse tree produced by {@link YggdrasilAntlrParser#string}.
     /// @param ctx the parse tree
     fn exit_string(&mut self, _ctx: &StringContext<'input>) {}
+    /// Enter a parse tree produced by {@link YggdrasilAntlrParser#identifier_free}.
+    /// @param ctx the parse tree
+    fn enter_identifier_free(&mut self, _ctx: &Identifier_freeContext<'input>) {}
+    /// Exit a parse tree produced by {@link YggdrasilAntlrParser#identifier_free}.
+    /// @param ctx the parse tree
+    fn exit_identifier_free(&mut self, _ctx: &Identifier_freeContext<'input>) {}
     /// Enter a parse tree produced by {@link YggdrasilAntlrParser#identifier}.
     /// @param ctx the parse tree
     fn enter_identifier(&mut self, _ctx: &IdentifierContext<'input>) {}

@@ -122,6 +122,12 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
         self.visit_children(ctx)
     }
 
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#class_tag}.
+    /// @param ctx the parse tree
+    fn visit_class_tag(&mut self, ctx: &Class_tagContext<'input>) {
+        self.visit_children(ctx)
+    }
+
     /// Visit a parse tree produced by {@link YggdrasilAntlrParser#define_union}.
     /// @param ctx the parse tree
     fn visit_define_union(&mut self, ctx: &Define_unionContext<'input>) {
@@ -186,6 +192,12 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
     /// labeled alternative in {@link YggdrasilAntlrParser#union_expression}.
     /// @param ctx the parse tree
     fn visit_USoft(&mut self, ctx: &USoftContext<'input>) {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#union_tag}.
+    /// @param ctx the parse tree
+    fn visit_union_tag(&mut self, ctx: &Union_tagContext<'input>) {
         self.visit_children(ctx)
     }
 
@@ -390,6 +402,12 @@ pub trait YggdrasilAntlrVisitor<'input>: ParseTreeVisitor<'input, YggdrasilAntlr
         self.visit_children(ctx)
     }
 
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#identifier_free}.
+    /// @param ctx the parse tree
+    fn visit_identifier_free(&mut self, ctx: &Identifier_freeContext<'input>) {
+        self.visit_children(ctx)
+    }
+
     /// Visit a parse tree produced by {@link YggdrasilAntlrParser#identifier}.
     /// @param ctx the parse tree
     fn visit_identifier(&mut self, ctx: &IdentifierContext<'input>) {
@@ -514,6 +532,12 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
         self.visit_children(ctx)
     }
 
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#class_tag}.
+    /// @param ctx the parse tree
+    fn visit_class_tag(&mut self, ctx: &Class_tagContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
     /// Visit a parse tree produced by {@link YggdrasilAntlrParser#define_union}.
     /// @param ctx the parse tree
     fn visit_define_union(&mut self, ctx: &Define_unionContext<'input>) -> Self::Return {
@@ -578,6 +602,12 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
     /// labeled alternative in {@link YggdrasilAntlrParser#union_expression}.
     /// @param ctx the parse tree
     fn visit_USoft(&mut self, ctx: &USoftContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#union_tag}.
+    /// @param ctx the parse tree
+    fn visit_union_tag(&mut self, ctx: &Union_tagContext<'input>) -> Self::Return {
         self.visit_children(ctx)
     }
 
@@ -782,6 +812,12 @@ pub trait YggdrasilAntlrVisitorCompat<'input>: ParseTreeVisitorCompat<'input, No
         self.visit_children(ctx)
     }
 
+    /// Visit a parse tree produced by {@link YggdrasilAntlrParser#identifier_free}.
+    /// @param ctx the parse tree
+    fn visit_identifier_free(&mut self, ctx: &Identifier_freeContext<'input>) -> Self::Return {
+        self.visit_children(ctx)
+    }
+
     /// Visit a parse tree produced by {@link YggdrasilAntlrParser#identifier}.
     /// @param ctx the parse tree
     fn visit_identifier(&mut self, ctx: &IdentifierContext<'input>) -> Self::Return {
@@ -883,6 +919,11 @@ where
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
+    fn visit_class_tag(&mut self, ctx: &Class_tagContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_class_tag(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
     fn visit_define_union(&mut self, ctx: &Define_unionContext<'input>) {
         let result = <Self as YggdrasilAntlrVisitorCompat>::visit_define_union(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
@@ -930,6 +971,11 @@ where
 
     fn visit_USoft(&mut self, ctx: &USoftContext<'input>) {
         let result = <Self as YggdrasilAntlrVisitorCompat>::visit_USoft(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_union_tag(&mut self, ctx: &Union_tagContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_union_tag(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
@@ -1085,6 +1131,11 @@ where
 
     fn visit_string(&mut self, ctx: &StringContext<'input>) {
         let result = <Self as YggdrasilAntlrVisitorCompat>::visit_string(self, ctx);
+        *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
+    }
+
+    fn visit_identifier_free(&mut self, ctx: &Identifier_freeContext<'input>) {
+        let result = <Self as YggdrasilAntlrVisitorCompat>::visit_identifier_free(self, ctx);
         *<Self as ParseTreeVisitorCompat>::temp_result(self) = result;
     }
 
