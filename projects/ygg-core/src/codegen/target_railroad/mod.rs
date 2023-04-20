@@ -67,6 +67,7 @@ impl AsRailroad for GrammarRule {
                 s.push(concat.as_railroad(config));
             }
             GrammarBody::Climb { .. } => {}
+            GrammarBody::TokenSet { .. } => {}
         }
         s.push(Box::new(SimpleEnd));
         return Box::new(s);
