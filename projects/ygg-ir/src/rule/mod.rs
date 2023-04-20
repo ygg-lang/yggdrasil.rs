@@ -96,6 +96,16 @@ pub struct GrammarRule {
     /// class _Rule { }
     /// ```
     pub auto_inline: bool,
+    /// Don't capture any objects in rule.
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// #tag(true)
+    /// class Rule { Tagged }
+    /// #tag(false)
+    /// class Rule ^ { Untagged }
+    /// ```
+    pub auto_tag: bool,
     /// The entry of the ast mode, the name of the ast_mode to be exported
     ///
     /// ## Examples
@@ -112,6 +122,7 @@ pub struct GrammarRule {
     /// hidden class Rule { }
     /// ```
     pub hide: bool,
+
     /// Ignore this node in ast mode.
     ///
     /// ## Examples
@@ -175,6 +186,7 @@ impl Default for GrammarRule {
             derives: RuleDerive::default(),
             atomic: GrammarAtomic::Atomic,
             auto_inline: false,
+            auto_tag: false,
             entry: false,
             hide: false,
             ignored: false,
@@ -221,5 +233,11 @@ impl GrammarRule {
         self.hide = extra.get_keep();
         self.entry = extra.get_entry();
         self
+    }
+    /// Whether to automatically mark all tags in the rule
+    /// 
+    /// To ensure the highest priority, it needs to be called after with_annotation
+    pub fn with_auto_tag(self, on: bool) -> Self {
+        Self { auto_tag: on, ..self }
     }
 }
