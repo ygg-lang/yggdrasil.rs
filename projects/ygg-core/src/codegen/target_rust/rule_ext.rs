@@ -30,6 +30,7 @@ impl RuleExt for GrammarRule {
                 }
             }
             GrammarBody::Climb { .. } => w.push_str("Err(/* Climb node */s)"),
+            GrammarBody::TokenSet { .. } => unreachable!("TokenSet is not an expression"),
         }
         w
     }

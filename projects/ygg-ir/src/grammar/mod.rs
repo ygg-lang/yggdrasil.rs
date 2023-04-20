@@ -6,7 +6,7 @@ use crate::{
 use indexmap::IndexMap;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, HashSet};
+use std::collections::BTreeMap;
 use url::Url;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -18,8 +18,18 @@ pub struct GrammarInfo {
     pub extensions: Vec<String>,
     pub imports: BTreeMap<Url, Vec<SymbolAlias>>,
     pub exports: Vec<String>,
-    pub ignores: HashSet<String>,
     pub rules: IndexMap<String, GrammarRule>,
+    /// Named set of rules
+    ///
+    /// ```ygg
+    /// @style(keyword)
+    /// token Keywords {
+    ///     KW_FOR: 'for'
+    ///     KW_IN: 'in'
+    /// }
+    /// ```
+    /// Warning: this collection cannot be indexed externally without naming
+    pub token_sets: IndexMap<String, Vec<YggdrasilIdentifier>>,
     pub functions: IndexMap<String, FunctionRule>,
     pub range_type: String,
 }
@@ -32,8 +42,8 @@ impl Default for GrammarInfo {
             extensions: vec![],
             imports: Default::default(),
             exports: vec![],
-            ignores: Default::default(),
             rules: Default::default(),
+            token_sets: Default::default(),
             functions: Default::default(),
             range_type: "usize".to_string(),
         }

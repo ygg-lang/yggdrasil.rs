@@ -22,6 +22,7 @@ impl CodeOptimizer for RemarkTags {
                     }
                 }
                 GrammarBody::Climb { .. } => {}
+                GrammarBody::TokenSet { .. } => {}
             }
         }
 

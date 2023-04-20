@@ -10,6 +10,7 @@ mod modifiers;
 
 mod tokens;
 
+use crate::ast::visitor::tokens::BatchClass;
 use std::{mem::take, str::FromStr};
 use yggdrasil_ir::{
     data::{YggdrasilRegex, YggdrasilText},
@@ -45,14 +46,10 @@ impl YggdrasilAntlrVisitor<'_> for YggdrasilANTLR {
         }
     }
     fn visit_define_token(&mut self, ctx: &Define_tokenContext<'_>) {
-        // TODO: insert token set
-        self.visit_children(ctx)
+        if let Some(s) = BatchClass::take_one(ctx) {
+            for e in s.classes {
+                self.grammar.insert(e);
+            }
+        }
     }
-    fn visit_token_pair(&mut self, ctx: &Token_pairContext<'_>) {
-        todo!()
-    }
-}
-
-struct BatchClass {
-    classes: Vec<GrammarRule>,
 }
