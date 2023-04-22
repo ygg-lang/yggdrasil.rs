@@ -8,3 +8,5 @@ fn ready() {
 
 mod concat;
 mod suffix;
+
+mod stack;
