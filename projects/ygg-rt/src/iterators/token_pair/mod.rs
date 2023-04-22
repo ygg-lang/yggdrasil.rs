@@ -85,8 +85,8 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
     /// ```
     #[inline]
     pub fn as_str(&self) -> &'i str {
-        let start = self.pos(self.start);
-        let end = self.pos(self.pair());
+        let start = self.p(self.start);
+        let end = self.p(self.pair());
 
         // Generated positions always come from Positions and are UTF-8 borders.
         &self.input[start..end]
@@ -143,7 +143,7 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
     /// let input = "ab";
     /// let pair = yggdrasil_rt::state(input, |state| {
     ///     // generating Token pair with Rule::ab ...
-    /// #     state.rule(Rule::ab, |s| s.match_string("ab"))
+    /// #     state.rule(Rule::ab, |s| s.match_string("ab", false))
     /// })
     /// .unwrap()
     /// .next()
@@ -153,8 +153,8 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
     /// ```
     #[inline]
     pub fn get_span(&self) -> TextSpan<'i> {
-        let start = self.pos(self.start);
-        let end = self.pos(self.pair());
+        let start = self.p(self.start);
+        let end = self.p(self.pair());
 
         // Generated positions always come from Positions and are UTF-8 borders.
         unsafe { TextSpan::new_unchecked(self.input, start, end) }
@@ -224,11 +224,11 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
         }
         Err(YggdrasilError::missing_tag(tag, self.get_span()))
     }
-
+    /// Take option
     #[inline]
     pub fn take_tagged_option<N>(&self, tag: Cow<'static, str>) -> Option<N>
-        where
-            N: YggdrasilNode<Rule = R>,
+    where
+        N: YggdrasilNode<Rule = R>,
     {
         self.take_tagged_one(tag).ok()
     }
@@ -320,7 +320,7 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
         }
     }
 
-    fn pos(&self, index: usize) -> usize {
+    fn p(&self, index: usize) -> usize {
         match self.queue[index] {
             TokenQueue::Start { input_offset: input_pos, .. } | TokenQueue::End { input_offset: input_pos, .. } => input_pos,
         }
@@ -350,8 +350,8 @@ impl<'i, R: YggdrasilRule> Debug for TokenPair<'i, R> {
 impl<'i, R: YggdrasilRule> Display for TokenPair<'i, R> {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let rule = self.get_rule();
-        let start = self.pos(self.start);
-        let end = self.pos(self.pair());
+        let start = self.p(self.start);
+        let end = self.p(self.pair());
         let mut pairs = self.clone().into_inner().peekable();
 
         if pairs.peek().is_none() {

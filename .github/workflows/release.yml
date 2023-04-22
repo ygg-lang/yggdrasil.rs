@@ -21,7 +21,7 @@ jobs:
           artifact_name: ycc
           asset_name: ycc-macos
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Read Git Hash
       uses: prompt/actions-commit-hash@v3
       id: commit
