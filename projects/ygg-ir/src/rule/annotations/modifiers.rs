@@ -17,6 +17,10 @@ impl YggdrasilModifiers {
     pub fn get_keep(&self) -> Option<bool> {
         self.find(&["keep"], &[])
     }
+
+    pub fn get_text(&self) -> Option<bool> {
+        self.find(&["text"], &[])
+    }
     fn find(&self, positive: &[&str], negative: &[&str]) -> Option<bool> {
         for m in &self.identifiers {
             for accept in positive {

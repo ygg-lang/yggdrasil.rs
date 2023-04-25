@@ -14,11 +14,11 @@ impl CodeOptimizer for RemarkTags {
             let rule_name = rule.name.text.as_str();
             match &mut rule.body {
                 GrammarBody::Empty {} => {}
-                GrammarBody::Class { term } => self.remark(term, rule.auto_tag),
+                GrammarBody::Class { term } => self.remark(term, rule.captures.auto),
                 GrammarBody::Union { branches } => {
                     self.remark_union_root(rule_name, branches);
                     for branch in branches.iter_mut() {
-                        self.remark(branch, rule.auto_tag)
+                        self.remark(branch, rule.captures.auto)
                     }
                 }
                 GrammarBody::Climb { .. } => {}

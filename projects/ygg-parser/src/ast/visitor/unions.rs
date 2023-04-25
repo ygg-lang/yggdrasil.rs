@@ -6,13 +6,12 @@ impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
         let range = Range { start: node.start().start as usize, end: node.stop().stop as usize };
         let modifiers = YggdrasilModifiers::take(node.modifiers()).unwrap_or_default();
         let macros = YggdrasilMacroCall::take_many(&node.annotation_all());
-        let anno = YggdrasilAnnotations { macros, modifiers };
-        let auto_tag = node.OP_UNTAG().is_none();
+        let anno = YggdrasilAnnotations { auto_tag: node.OP_UNTAG().is_none(), macros, modifiers };
         let body = match node.union_block() {
             Some(s) => YggdrasilExpression::take_many(&s.union_term_all()),
             None => vec![],
         };
-        Some(GrammarRule::create_union(id, body, range).with_annotation(&anno).with_auto_tag(auto_tag))
+        Some(GrammarRule::create_union(id, body, range).with_annotation(&anno))
     }
 }
 

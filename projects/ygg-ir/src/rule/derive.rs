@@ -25,6 +25,7 @@ use super::*;
 /// #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 /// ```
 #[derive(Debug, Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RuleDerive {
     derives: BTreeMap<String, BTreeSet<String>>,
 }

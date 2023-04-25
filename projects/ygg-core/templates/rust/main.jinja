@@ -84,6 +84,9 @@ pub struct {{ rule.node_name() }} {
 
 
 {%- endfor %}
+{%- if rule.captures.text %}
+    pub text: String,
+{%- endif %}
     pub span: Range<{{ self.config.range_type }}>,
 }
 {%- else if rule.is_union() %}

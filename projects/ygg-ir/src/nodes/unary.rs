@@ -1,6 +1,7 @@
 use super::*;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum YggdrasilOperator {
     /// ```ygg
     /// !e
@@ -21,6 +22,7 @@ pub enum YggdrasilOperator {
 }
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnaryExpression {
     pub base: Box<YggdrasilExpression>,
     pub operators: Vec<YggdrasilOperator>,

@@ -2,6 +2,7 @@ use super::*;
 use std::ops::{AddAssign, BitAndAssign};
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ConcatExpression {
     pub sequence: Vec<YggdrasilExpression>,
 }

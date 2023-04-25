@@ -24,6 +24,7 @@ mod expr;
 mod unary;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct YggdrasilExpression {
     /// If it's a `tag:Rule`
     pub tag: Option<YggdrasilIdentifier>,
@@ -34,6 +35,7 @@ pub struct YggdrasilExpression {
 }
 
 #[derive(Clone, Hash, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ExpressionBody {
     Choice(ChoiceExpression),
     Concat(ConcatExpression),

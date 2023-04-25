@@ -5,11 +5,10 @@ impl<'i> Extractor<Define_classContext<'i>> for GrammarRule {
         let id = YggdrasilIdentifier::take(node.name.clone())?;
         let modifiers = YggdrasilModifiers::take(node.modifiers()).unwrap_or_default();
         let macros = YggdrasilMacroCall::take_many(&node.annotation_all());
-        let anno = YggdrasilAnnotations { macros, modifiers };
+        let anno = YggdrasilAnnotations { auto_tag: node.OP_UNTAG().is_none(), macros, modifiers };
         let expr = YggdrasilExpression::take(node.class_block());
-        let auto_tag = node.OP_UNTAG().is_none();
         let range = Range { start: node.start().start as usize, end: node.stop().stop as usize };
-        Some(GrammarRule::create_class(id, expr, range).with_annotation(&anno).with_auto_tag(auto_tag))
+        Some(GrammarRule::create_class(id, expr, range).with_annotation(&anno))
     }
 }
 

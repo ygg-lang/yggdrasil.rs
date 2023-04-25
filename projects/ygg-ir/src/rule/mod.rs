@@ -47,7 +47,7 @@ impl GrammarAtomic {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GrammarRule {
     /// Automatically inline when this rule is called
     ///
@@ -96,16 +96,7 @@ pub struct GrammarRule {
     /// class _Rule { }
     /// ```
     pub auto_inline: bool,
-    /// Don't capture any objects in rule.
-    ///
-    /// ## Examples
-    /// ```ygg
-    /// #tag(true)
-    /// class Rule { Tagged }
-    /// #tag(false)
-    /// class Rule ^ { Untagged }
-    /// ```
-    pub auto_tag: bool,
+
     /// The entry of the ast mode, the name of the ast_mode to be exported
     ///
     /// ## Examples
@@ -132,9 +123,36 @@ pub struct GrammarRule {
     /// ```
     pub ignored: bool,
     ///
+    pub captures: GrammarCaptures,
+    ///
     pub body: GrammarBody,
     /// position of all parts
     pub range: Range<usize>,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", Serialize, Deserialize)]
+pub struct GrammarCaptures {
+    /// Don't capture any objects in rule.
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// #text(true)
+    /// text Rule { Tagged }
+    /// ```
+    pub text: bool,
+    /// Don't capture any objects in rule.
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// #tag(true)
+    /// class Rule { Tagged }
+    /// #tag(false)
+    /// class Rule ^ { Untagged }
+    /// ```
+    pub auto: bool,
+    /// Range size
+    pub range: String,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -184,21 +202,26 @@ impl Default for GrammarRule {
     fn default() -> Self {
         Self {
             name: Default::default(),
+            redirect: None,
             document: String::new(),
             derives: RuleDerive::default(),
             atomic: GrammarAtomic::Atomic,
             auto_inline: false,
-            auto_tag: false,
             entry: false,
             hide: false,
             ignored: false,
+            captures: Default::default(),
             body: Default::default(),
             range: Default::default(),
-            redirect: None,
         }
     }
 }
 
+impl Default for GrammarCaptures {
+    fn default() -> Self {
+        Self { range: "usize".to_string(), text: false, auto: false }
+    }
+}
 impl GrammarRule {
     pub fn is_class(&self) -> bool {
         matches!(self.body, GrammarBody::Class { .. })
@@ -234,12 +257,12 @@ impl GrammarRule {
         self.ignored = extra.get_ignored();
         self.hide = extra.get_keep();
         self.entry = extra.get_entry();
+        if let Some(s) = extra.get_auto_capture() {
+            self.captures.auto = s
+        };
+        if let Some(s) = extra.get_text_capture() {
+            self.captures.text = s
+        }
         self
-    }
-    /// Whether to automatically mark all tags in the rule
-    ///
-    /// To ensure the highest priority, it needs to be called after with_annotation
-    pub fn with_auto_tag(self, on: bool) -> Self {
-        Self { auto_tag: on, ..self }
     }
 }

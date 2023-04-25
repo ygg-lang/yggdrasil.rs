@@ -31,15 +31,6 @@ pub struct GrammarInfo {
     /// Warning: this collection cannot be indexed externally without naming
     pub token_sets: IndexMap<String, Vec<YggdrasilIdentifier>>,
     pub functions: IndexMap<String, FunctionRule>,
-    pub captures: GrammarCaptures,
-}
-
-#[derive(Debug, Clone, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", Serialize, Deserialize)]
-pub struct GrammarCaptures {
-    range: String,
-    text: bool,
-    character: bool,
 }
 
 impl Default for GrammarInfo {
@@ -53,14 +44,7 @@ impl Default for GrammarInfo {
             rules: Default::default(),
             token_sets: Default::default(),
             functions: Default::default(),
-            captures: Default::default(),
         }
-    }
-}
-
-impl Default for GrammarCaptures {
-    fn default() -> Self {
-        Self { range: "usize".to_string(), text: false, character: false }
     }
 }
 

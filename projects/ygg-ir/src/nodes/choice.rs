@@ -3,6 +3,7 @@ use super::*;
 use std::ops::BitOrAssign;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ChoiceExpression {
     pub branches: Vec<YggdrasilExpression>,
 }

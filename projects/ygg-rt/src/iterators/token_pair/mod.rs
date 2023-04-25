@@ -1,4 +1,5 @@
 use super::*;
+use alloc::borrow::ToOwned;
 
 /// A matching pair of [`Token`]s and everything between them.
 ///
@@ -91,7 +92,11 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
         // Generated positions always come from Positions and are UTF-8 borders.
         &self.input[start..end]
     }
-
+    /// Get String
+    #[inline]
+    pub fn get_string(&self) -> String {
+        self.as_str().to_owned()
+    }
     /// Returns the input string of the `Pair`.
     ///
     /// This function returns the input string of the `Pair` as a `&str`. This is the source string

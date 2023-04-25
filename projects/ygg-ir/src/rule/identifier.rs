@@ -16,7 +16,7 @@ impl Display for YggdrasilNamepath {
 }
 
 #[derive(Clone, Default, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct YggdrasilIdentifier {
     pub text: String,
     pub range: Range<usize>,
@@ -24,7 +24,7 @@ pub struct YggdrasilIdentifier {
 
 impl Debug for YggdrasilIdentifier {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "YggdrasilIdentifier({:?}, {:?})", self.text, self.range)
+        write!(f, "Identifier({:?}, {:?})", self.text, self.range)
     }
 }
 
