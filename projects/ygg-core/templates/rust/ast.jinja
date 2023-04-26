@@ -12,7 +12,15 @@ impl YggdrasilNode for {{ rule.node_name() }} {
         Some(Range { start: self.span.start as usize, end: self.span.end as usize })
 {%- else %}
         match self {
-            _ => unimplemented!()
+{%- for (name, variant) in rule.union_fields() %}
+{%- if variant.is_empty() %}
+            Self::{{ name }} => None,
+{%- else if variant.as_single().is_some() %}
+            Self::{{ name }}(s) => s.get_range(),
+{%- else %}
+            Self::{{ name }} {..} => None,
+{%- endif %}
+{%- endfor %}
         }
 {%- endif %}
     }
@@ -48,7 +56,7 @@ impl YggdrasilNode for {{ rule.node_name() }} {
         if let Ok(s) = pair.take_tagged_one::<{{ variant.as_single().unwrap().field_type(self.grammar) }}>(Cow::Borrowed("{{ name|snake_case }}")) {
             return Ok(Self::{{ name }}(s));
 {%- else %}
-        if let Ok(s) = pair.take_tagged_one("{{ name|snake_case }}") {
+        if let Ok(s) = pair.take_tagged_one(Cow::Borrowed("{{ name|snake_case }}")) {
             unimplemented!()
 {%- endif %}
         }

@@ -1,5 +1,6 @@
+use alloc::{borrow::ToOwned, boxed::Box};
+
 use super::*;
-use alloc::borrow::ToOwned;
 
 /// A matching pair of [`Token`]s and everything between them.
 ///
@@ -228,6 +229,13 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
             }
         }
         Err(YggdrasilError::missing_tag(tag, self.get_span()))
+    }
+    #[inline]
+    pub fn take_tagged_box<N>(&self, tag: Cow<'static, str>) -> Result<Box<N>, YggdrasilError<N::Rule>>
+    where
+        N: YggdrasilNode<Rule = R>,
+    {
+        Ok(Box::new(self.take_tagged_one(tag)?))
     }
     /// Take option
     #[inline]

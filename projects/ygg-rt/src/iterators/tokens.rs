@@ -21,7 +21,7 @@ pub struct Tokens<'i, R> {
 }
 
 // TODO(safety): QueueableTokens must be valid indices into input.
-pub fn new<'i, R: YggdrasilRule>(queue: Rc<Vec<TokenQueue<R>>>, input: &'i str, start: usize, end: usize) -> Tokens<'i, R> {
+pub fn new<R: YggdrasilRule>(queue: Rc<Vec<TokenQueue<R>>>, input: &str, start: usize, end: usize) -> Tokens<R> {
     if cfg!(debug_assertions) {
         for tok in queue.iter() {
             match *tok {

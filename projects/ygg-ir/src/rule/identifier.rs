@@ -15,6 +15,15 @@ impl Display for YggdrasilNamepath {
     }
 }
 
+impl PartialEq<str> for YggdrasilNamepath {
+    fn eq(&self, other: &str) -> bool {
+        match self.identifiers.as_slice() {
+            [one] => one.text.eq(other),
+            _ => false,
+        }
+    }
+}
+
 #[derive(Clone, Default, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct YggdrasilIdentifier {
