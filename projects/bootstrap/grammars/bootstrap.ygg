@@ -13,11 +13,49 @@ union Statement {
 
 // === class === -----------------------------------------------------------------------------------------------------
 class ClassStatements {
-    ^KW_CLASS Identifier
+    ^KW_CLASS Identifier ClassBlock
+}
+class ClassBlock {
+    '{' Expression* '}'
 }
 // === union === -----------------------------------------------------------------------------------------------------
 class UnionStatements {
     ^KW_UNION Identifier
+}
+class UnionBlock {
+    '{' UnionBranch* '}'
+}
+class UnionBranch {
+    Expression
+}
+// === group === -----------------------------------------------------------------------------------------------------
+class GroupStatements {
+    ^KW_GROUP Identifier
+}
+// === expression === -----------------------------------------------------------------------------------------------------
+class Expression {
+    Term (Infix Term)*
+}
+class Term {
+    Prefix* Atomic Suffix*
+}
+union Infix {
+    | '~' #Soft
+}
+union Prefix {
+    | '!' #Negative
+    | '&' #Positive
+    | '^' #Remark
+}
+union Suffix {
+    | '?' #Negative
+    | '*' #Positive
+    | '+' #Remark
+}
+// === atoms === -----------------------------------------------------------------------------------------------------
+union Atomic {
+    | Identifier
+    | Boolean
 }
 // === identifier === --------------------------------------------------------------------------------------------------
 class NamepathFree -> Namepath {
@@ -38,6 +76,7 @@ union Boolean {
 token {
     KW_CLASS: 'class'
     KW_UNION: 'union'
+    KW_GROUP: 'group'
 }
 // === ignores === -----------------------------------------------------------------------------------------------------
 ignore class WhiteSpace {
