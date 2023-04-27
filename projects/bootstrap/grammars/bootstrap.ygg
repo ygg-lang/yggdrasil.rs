@@ -3,7 +3,7 @@ grammar Bootstrap {
 }
 
 entry class Root {
-    Statements*
+    Statement*
 }
 
 union Statement {
@@ -13,19 +13,36 @@ union Statement {
 
 // === class === -----------------------------------------------------------------------------------------------------
 class ClassStatements {
-    KW_CLASS
+    ^KW_CLASS Identifier
 }
 // === union === -----------------------------------------------------------------------------------------------------
 class UnionStatements {
-    KW_UNION
+    ^KW_UNION Identifier
 }
-// === keyword === -----------------------------------------------------------------------------------------------------
+// === identifier === --------------------------------------------------------------------------------------------------
+class NamepathFree -> Namepath {
+    Identifier (('.' | '::') Identifier)*
+}
+class Namepath {
+    Identifier ('::' Identifier)*
+}
+class Identifier {
+    /[_\p{XID_start}]\p{XID_continue}*/
+}
+union Boolean {
+    | 'true'  #True
+    | 'false' #False
+}
+// === keywords === ----------------------------------------------------------------------------------------------------
 @style(keyword)
 token {
     KW_CLASS: 'class'
     KW_UNION: 'union'
 }
-// === comment === -----------------------------------------------------------------------------------------------------
+// === ignores === -----------------------------------------------------------------------------------------------------
+ignore class WhiteSpace {
+    /\p{White_Space}+/
+}
 @style(comment)
 ignore union Comment {
     | /\/\/[^\n\r]*/

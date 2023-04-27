@@ -15,7 +15,6 @@ mod position;
 mod ast;
 
 mod enhance;
-mod pratt_parser;
 mod span;
 mod token;
 
