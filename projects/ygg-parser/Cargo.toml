@@ -19,6 +19,10 @@ version = "0.3.0-beta"
 version = "0.1.*"
 path = "../ygg-ir"
 
+[dependencies.yggdrasil-rt]
+version = "0.0.*"
+path = "../ygg-rt"
+
 [dev-dependencies]
 
 

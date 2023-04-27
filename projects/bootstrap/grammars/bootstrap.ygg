@@ -1,0 +1,33 @@
+grammar Bootstrap {
+
+}
+
+entry class Root {
+    Statements*
+}
+
+union Statement {
+    | ClassStatements
+    | UnionStatements
+}
+
+// === class === -----------------------------------------------------------------------------------------------------
+class ClassStatements {
+    KW_CLASS
+}
+// === union === -----------------------------------------------------------------------------------------------------
+class UnionStatements {
+    KW_UNION
+}
+// === keyword === -----------------------------------------------------------------------------------------------------
+@style(keyword)
+token {
+    KW_CLASS: 'class'
+    KW_UNION: 'union'
+}
+// === comment === -----------------------------------------------------------------------------------------------------
+@style(comment)
+ignore union Comment {
+    | /\/\/[^\n\r]*/
+    | /#[^\n\r]*/
+}
