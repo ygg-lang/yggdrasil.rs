@@ -4,18 +4,24 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
     state(input, |state| match rule {
         BootstrapRule::Root => parse_root(state),
         BootstrapRule::Statement => parse_statement(state),
+        BootstrapRule::GrammarStatements => parse_grammar_statements(state),
+        BootstrapRule::GrammarBlock => parse_grammar_block(state),
         BootstrapRule::ClassStatements => parse_class_statements(state),
         BootstrapRule::ClassBlock => parse_class_block(state),
         BootstrapRule::UnionStatements => parse_union_statements(state),
         BootstrapRule::UnionBlock => parse_union_block(state),
         BootstrapRule::UnionBranch => parse_union_branch(state),
         BootstrapRule::GroupStatements => parse_group_statements(state),
+        BootstrapRule::GroupBlock => parse_group_block(state),
+        BootstrapRule::GroupPair => parse_group_pair(state),
         BootstrapRule::Expression => parse_expression(state),
         BootstrapRule::Term => parse_term(state),
         BootstrapRule::Infix => parse_infix(state),
         BootstrapRule::Prefix => parse_prefix(state),
         BootstrapRule::Suffix => parse_suffix(state),
         BootstrapRule::Atomic => parse_atomic(state),
+        BootstrapRule::String => parse_string(state),
+        BootstrapRule::Regex => parse_regex(state),
         BootstrapRule::NamepathFree => parse_namepath_free(state),
         BootstrapRule::Namepath => parse_namepath(state),
         BootstrapRule::Identifier => parse_identifier(state),
@@ -37,8 +43,36 @@ fn parse_root(state: Input) -> Output {
 fn parse_statement(state: Input) -> Output {
     state.rule(BootstrapRule::Statement, |s| {
         Err(s)
+            .or_else(|s| parse_grammar_statements(s).and_then(|s| s.tag_node("grammar_statements")))
             .or_else(|s| parse_class_statements(s).and_then(|s| s.tag_node("class_statements")))
             .or_else(|s| parse_union_statements(s).and_then(|s| s.tag_node("union_statements")))
+            .or_else(|s| parse_group_statements(s).and_then(|s| s.tag_node("group_statements")))
+    })
+}
+
+#[inline]
+fn parse_grammar_statements(state: Input) -> Output {
+    state.rule(BootstrapRule::GrammarStatements, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| parse_kw_grammar(s))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_grammar_block(s).and_then(|s| s.tag_node("grammar_block")))
+        })
+    })
+}
+
+#[inline]
+fn parse_grammar_block(state: Input) -> Output {
+    state.rule(BootstrapRule::GrammarBlock, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| builtin_text(s, "{", false))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, "}", false))
+        })
     })
 }
 #[inline]
@@ -54,7 +88,6 @@ fn parse_class_statements(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_class_block(state: Input) -> Output {
     state.rule(BootstrapRule::ClassBlock, |s| {
@@ -79,7 +112,6 @@ fn parse_union_statements(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_union_block(state: Input) -> Output {
     state.rule(BootstrapRule::UnionBlock, |s| {
@@ -93,12 +125,10 @@ fn parse_union_block(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_union_branch(state: Input) -> Output {
     state.rule(BootstrapRule::UnionBranch, |s| parse_expression(s).and_then(|s| s.tag_node("expression")))
 }
-
 #[inline]
 fn parse_group_statements(state: Input) -> Output {
     state.rule(BootstrapRule::GroupStatements, |s| {
@@ -106,21 +136,49 @@ fn parse_group_statements(state: Input) -> Output {
             Ok(s)
                 .and_then(|s| parse_kw_group(s))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                .and_then(|s| s.optional(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier"))))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_group_block(s).and_then(|s| s.tag_node("group_block")))
         })
     })
 }
 
 #[inline]
+fn parse_group_block(state: Input) -> Output {
+    state.rule(BootstrapRule::GroupBlock, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| builtin_text(s, "{", false))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| s.repeat(0..4294967295, |s| parse_group_pair(s).and_then(|s| s.tag_node("group_pair"))))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, "}", false))
+        })
+    })
+}
+
+#[inline]
+fn parse_group_pair(state: Input) -> Output {
+    state.rule(BootstrapRule::GroupPair, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, ":", false))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_atomic(s).and_then(|s| s.tag_node("atomic")))
+        })
+    })
+}
+#[inline]
 fn parse_expression(state: Input) -> Output {
     state.rule(BootstrapRule::Expression, |s| {
         s.sequence(|s| {
-            Ok(s).and_then(|s| parse_term(s).and_then(|s| s.tag_node("term"))).and_then(|s| builtin_ignore(s)).and_then(|s| {
+            Ok(s).and_then(|s| parse_term(s).and_then(|s| s.tag_node("term"))).and_then(|s| {
                 s.repeat(0..4294967295, |s| {
                     s.sequence(|s| {
                         Ok(s)
                             .and_then(|s| parse_infix(s).and_then(|s| s.tag_node("infix")))
-                            .and_then(|s| builtin_ignore(s))
                             .and_then(|s| parse_term(s).and_then(|s| s.tag_node("term")))
                     })
                 })
@@ -128,7 +186,6 @@ fn parse_expression(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_term(state: Input) -> Output {
     state.rule(BootstrapRule::Term, |s| {
@@ -136,18 +193,27 @@ fn parse_term(state: Input) -> Output {
             Ok(s)
                 .and_then(|s| s.repeat(0..4294967295, |s| parse_prefix(s).and_then(|s| s.tag_node("prefix"))))
                 .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_atomic(s).and_then(|s| s.tag_node("atomic")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| s.repeat(0..4294967295, |s| parse_suffix(s).and_then(|s| s.tag_node("suffix"))))
         })
     })
 }
-
 #[inline]
 fn parse_infix(state: Input) -> Output {
-    state.rule(BootstrapRule::Infix, |s| Err(s).or_else(|s| builtin_text(s, "~", false).and_then(|s| s.tag_node("infix_0"))))
+    state.rule(BootstrapRule::Infix, |s| {
+        Err(s).or_else(|s| builtin_ignore(s).and_then(|s| s.tag_node("infix_0"))).or_else(|s| {
+            s.sequence(|s| {
+                Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| builtin_text(s, "~", false)).and_then(|s| builtin_ignore(s))
+            })
+            .and_then(|s| s.tag_node("infix_1"))
+        })
+    })
 }
-
 #[inline]
 fn parse_prefix(state: Input) -> Output {
     state.rule(BootstrapRule::Prefix, |s| {
@@ -157,7 +223,6 @@ fn parse_prefix(state: Input) -> Output {
             .or_else(|s| builtin_text(s, "^", false).and_then(|s| s.tag_node("prefix_2")))
     })
 }
-
 #[inline]
 fn parse_suffix(state: Input) -> Output {
     state.rule(BootstrapRule::Suffix, |s| {
@@ -167,7 +232,6 @@ fn parse_suffix(state: Input) -> Output {
             .or_else(|s| builtin_text(s, "+", false).and_then(|s| s.tag_node("suffix_2")))
     })
 }
-
 #[inline]
 fn parse_atomic(state: Input) -> Output {
     state.rule(BootstrapRule::Atomic, |s| {
@@ -175,6 +239,26 @@ fn parse_atomic(state: Input) -> Output {
             .or_else(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
             .or_else(|s| parse_boolean(s).and_then(|s| s.tag_node("boolean")))
     })
+}
+
+#[inline]
+fn parse_string(state: Input) -> Output {
+    state.rule(BootstrapRule::String, |s| {
+        Err(s)
+            .or_else(|s| {
+                s.sequence(|s| Ok(s).and_then(|s| builtin_text(s, "'", false)).and_then(|s| builtin_text(s, "'", false)))
+                    .and_then(|s| s.tag_node("string_0"))
+            })
+            .or_else(|s| {
+                s.sequence(|s| Ok(s).and_then(|s| builtin_text(s, "\"", false)).and_then(|s| builtin_text(s, "\"", false)))
+                    .and_then(|s| s.tag_node("string_1"))
+            })
+    })
+}
+
+#[inline]
+fn parse_regex(state: Input) -> Output {
+    state.rule(BootstrapRule::Regex, |s| s.match_string("/", false))
 }
 #[inline]
 fn parse_namepath_free(state: Input) -> Output {
@@ -237,16 +321,30 @@ fn parse_boolean(state: Input) -> Output {
 }
 #[inline]
 fn parse_kw_class(state: Input) -> Output {
-    state.rule(BootstrapRule::KW_CLASS, |s| s.match_string("class", false))
+    state.rule(BootstrapRule::KW_CLASS, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(class|struct)").unwrap())
+        })
+    })
 }
 #[inline]
 fn parse_kw_union(state: Input) -> Output {
-    state.rule(BootstrapRule::KW_UNION, |s| s.match_string("union", false))
+    state.rule(BootstrapRule::KW_UNION, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(union|enum)").unwrap())
+        })
+    })
 }
-
 #[inline]
 fn parse_kw_group(state: Input) -> Output {
-    state.rule(BootstrapRule::KW_GROUP, |s| s.match_string("group", false))
+    state.rule(BootstrapRule::KW_GROUP, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(group|token)").unwrap())
+        })
+    })
 }
 #[inline]
 fn parse_white_space(state: Input) -> Output {

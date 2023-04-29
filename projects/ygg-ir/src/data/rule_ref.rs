@@ -1,4 +1,5 @@
 use super::*;
+
 //
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", Serialize, Deserialize)]
@@ -26,8 +27,16 @@ impl Display for RuleReference {
 
 impl From<YggdrasilIdentifier> for YggdrasilExpression {
     fn from(value: YggdrasilIdentifier) -> Self {
-        let rule = RuleReference { name: value, boxed: false, inline: false };
-        ExpressionBody::Rule(rule).into()
+        let name = value.text.as_ref();
+        let properties = &["XID_START", "XID_CONTINUE"];
+        let out: ExpressionBody = match name {
+            p if properties.contains(&p) => ExpressionBody::Regex(YggdrasilRegex::new(format!("[\\p{{{name}}}]"), 0..p.len())),
+            "ANY" => ExpressionBody::CharacterAny.into(),
+            "IGNORE" | "IGNORED" => ExpressionBody::Ignored.into(),
+            "ASCII_DIGIT" => ExpressionBody::CharacterRange(RangeInclusive::new('0', '9')),
+            _ => ExpressionBody::Rule(RuleReference::new(value)),
+        };
+        YggdrasilExpression { tag: None, remark: false, body: out }
     }
 }
 

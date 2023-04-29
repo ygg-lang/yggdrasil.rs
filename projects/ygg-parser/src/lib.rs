@@ -1,7 +1,7 @@
 pub(crate) mod antlr;
 
 mod ast;
-mod bootstrap;
+pub mod bootstrap;
 
 mod traits;
 

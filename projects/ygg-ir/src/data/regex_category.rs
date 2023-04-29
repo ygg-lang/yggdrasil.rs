@@ -1,4 +1,5 @@
 use super::*;
+use crate::rule::YggdrasilNamepath;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct YggdrasilRegex {
@@ -11,7 +12,6 @@ impl From<YggdrasilRegex> for YggdrasilExpression {
         ExpressionBody::Regex(value).into()
     }
 }
-
 impl Display for YggdrasilRegex {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.write_str("\"^(")?;

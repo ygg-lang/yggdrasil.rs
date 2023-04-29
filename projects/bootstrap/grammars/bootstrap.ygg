@@ -7,10 +7,18 @@ entry class Root {
 }
 
 union Statement {
+    | GrammarStatements
     | ClassStatements
     | UnionStatements
+    | GroupStatements
 }
-
+// === grammar === -----------------------------------------------------------------------------------------------------
+class GrammarStatements {
+    ^KW_GRAMMAR Identifier GrammarBlock
+}
+class GrammarBlock {
+    '{' '}'
+}
 // === class === -----------------------------------------------------------------------------------------------------
 class ClassStatements {
     ^KW_CLASS Identifier ClassBlock
@@ -28,19 +36,26 @@ class UnionBlock {
 class UnionBranch {
     Expression
 }
-// === group === -----------------------------------------------------------------------------------------------------
+// === group === -------------------------------------------------------------------------------------------------------
 class GroupStatements {
-    ^KW_GROUP Identifier
+    ^KW_GROUP Identifier? GroupBlock
 }
-// === expression === -----------------------------------------------------------------------------------------------------
-class Expression {
+class GroupBlock {
+    '{' GroupPair* '}'
+}
+class GroupPair {
+    Identifier ':' Atomic
+}
+// === expression === --------------------------------------------------------------------------------------------------
+atomic class Expression {
     Term (Infix Term)*
 }
 class Term {
-    Prefix* Atomic Suffix*
+    Prefix* IGNORE Atomic IGNORE Suffix*
 }
-union Infix {
-    | '~' #Soft
+atomic union Infix {
+    | IGNORE            #Soft
+    | IGNORE '~' IGNORE #Hard
 }
 union Prefix {
     | '!' #Negative
@@ -52,10 +67,19 @@ union Suffix {
     | '*' #Positive
     | '+' #Remark
 }
-// === atoms === -----------------------------------------------------------------------------------------------------
+// === atoms === -------------------------------------------------------------------------------------------------------
 union Atomic {
     | Identifier
     | Boolean
+}
+// === String === -------------------------------------------------------------------------------------------------------
+atomic union String {
+    | "'" "'" #DoubleQuote
+    | '"' '"' #SingleQuote
+}
+// === regex === -------------------------------------------------------------------------------------------------------
+class Regex {
+    '/'
 }
 // === identifier === --------------------------------------------------------------------------------------------------
 class NamepathFree -> Namepath {
@@ -74,9 +98,9 @@ union Boolean {
 // === keywords === ----------------------------------------------------------------------------------------------------
 @style(keyword)
 token {
-    KW_CLASS: 'class'
-    KW_UNION: 'union'
-    KW_GROUP: 'group'
+    KW_CLASS: /class|struct/
+    KW_UNION: /union|enum/
+    KW_GROUP: /group|token/
 }
 // === ignores === -----------------------------------------------------------------------------------------------------
 ignore class WhiteSpace {

@@ -32,18 +32,24 @@ impl YggdrasilParser for BootstrapParser {
 pub enum BootstrapRule {
     Root,
     Statement,
+    GrammarStatements,
+    GrammarBlock,
     ClassStatements,
     ClassBlock,
     UnionStatements,
     UnionBlock,
     UnionBranch,
     GroupStatements,
+    GroupBlock,
+    GroupPair,
     Expression,
     Term,
     Infix,
     Prefix,
     Suffix,
     Atomic,
+    String,
+    Regex,
     NamepathFree,
     Namepath,
     Identifier,
@@ -68,18 +74,24 @@ impl YggdrasilRule for BootstrapRule {
         match self {
             Self::Root => "",
             Self::Statement => "",
+            Self::GrammarStatements => "",
+            Self::GrammarBlock => "",
             Self::ClassStatements => "",
             Self::ClassBlock => "",
             Self::UnionStatements => "",
             Self::UnionBlock => "",
             Self::UnionBranch => "",
             Self::GroupStatements => "",
+            Self::GroupBlock => "",
+            Self::GroupPair => "",
             Self::Expression => "",
             Self::Term => "",
             Self::Infix => "",
             Self::Prefix => "",
             Self::Suffix => "",
             Self::Atomic => "",
+            Self::String => "",
+            Self::Regex => "",
             Self::NamepathFree => "",
             Self::Namepath => "",
             Self::Identifier => "",
@@ -103,7 +115,23 @@ pub struct RootNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StatementNode {
     ClassStatements(ClassStatementsNode),
+    GrammarStatements(GrammarStatementsNode),
+    GroupStatements(GroupStatementsNode),
     UnionStatements(UnionStatementsNode),
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GrammarStatementsNode {
+    pub grammar_block: GrammarBlockNode,
+    pub identifier: IdentifierNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GrammarBlockNode {
+    pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -112,7 +140,6 @@ pub struct ClassStatementsNode {
     pub identifier: IdentifierNode,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ClassBlockNode {
@@ -125,28 +152,40 @@ pub struct UnionStatementsNode {
     pub identifier: IdentifierNode,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnionBlockNode {
     pub union_branch: Vec<UnionBranchNode>,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnionBranchNode {
     pub expression: ExpressionNode,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GroupStatementsNode {
-    pub identifier: IdentifierNode,
+    pub group_block: GroupBlockNode,
+    pub identifier: Option<IdentifierNode>,
     pub span: Range<u32>,
 }
 
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GroupBlockNode {
+    pub group_pair: Vec<GroupPairNode>,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GroupPairNode {
+    pub atomic: AtomicNode,
+    pub identifier: IdentifierNode,
+    pub span: Range<u32>,
+}
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ExpressionNode {
@@ -154,7 +193,6 @@ pub struct ExpressionNode {
     pub term: Vec<TermNode>,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct TermNode {
@@ -163,13 +201,12 @@ pub struct TermNode {
     pub suffix: Vec<SuffixNode>,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum InfixNode {
     Infix0,
+    Infix1,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum PrefixNode {
@@ -177,7 +214,6 @@ pub enum PrefixNode {
     Prefix1,
     Prefix2,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SuffixNode {
@@ -185,12 +221,24 @@ pub enum SuffixNode {
     Suffix1,
     Suffix2,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum AtomicNode {
     Boolean(BooleanNode),
     Identifier(IdentifierNode),
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub enum StringNode {
+    String0,
+    String1,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct RegexNode {
+    pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -225,7 +273,6 @@ pub struct KwClassNode {
 pub struct KwUnionNode {
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct KwGroupNode {

@@ -12,9 +12,3 @@ impl From<YggdrasilText> for YggdrasilExpression {
         ExpressionBody::Text(value).into()
     }
 }
-
-impl From<RangeInclusive<char>> for YggdrasilExpression {
-    fn from(value: RangeInclusive<char>) -> Self {
-        ExpressionBody::CharacterRange(value).into()
-    }
-}
