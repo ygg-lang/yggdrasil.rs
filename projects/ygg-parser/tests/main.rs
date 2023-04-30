@@ -1,5 +1,5 @@
 use std::{fs::File, io::Write, str::FromStr};
-use yggdrasil_parser::bootstrap::{BootstrapParser, BootstrapRule, RootNode};
+use yggdrasil_parser::bootstrap::{BootstrapParser, BootstrapRule, RootNode, StringNode};
 use yggdrasil_rt::YggdrasilParser;
 
 #[test]
@@ -15,4 +15,12 @@ fn test_unicode() {
     let mut file = File::create("tests/json5.ron").unwrap();
     file.write_all(format!("{:#?}", ast).as_bytes()).unwrap();
     // file.write_all(out.to_string().as_bytes()).unwrap();
+}
+
+#[test]
+fn test_string() {
+    let cst = BootstrapParser::parse_cst("'123'", BootstrapRule::String).unwrap();
+    println!("Short Form:\n{}", cst);
+    let ast = StringNode::from_str("'123'").unwrap();
+    println!("{ast:#?}")
 }

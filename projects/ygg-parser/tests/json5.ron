@@ -11,27 +11,6 @@ RootNode {
                 span: 0..37,
             },
         ),
-        UnionStatements(
-            UnionStatementsNode {
-                identifier: IdentifierNode {
-                    span: 51..56,
-                },
-                modifiers: ModifiersNode {
-                    identifier: [
-                        IdentifierNode {
-                            span: 39..44,
-                        },
-                    ],
-                    kw_class: [],
-                    kw_climb: [],
-                    kw_group: [],
-                    kw_macro: [],
-                    kw_union: [],
-                    span: 39..44,
-                },
-                span: 39..56,
-            },
-        ),
     ],
-    span: 0..56,
+    span: 0..37,
 }

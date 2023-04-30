@@ -3,7 +3,7 @@ grammar Bootstrap {
 }
 
 atomic entry class Root {
-    Statement (IGNORED Statement)*
+    (Statement (IGNORED Statement)*)?
 }
 
 union Statement {
@@ -31,7 +31,7 @@ class UnionStatements {
     Modifiers ^KW_UNION Identifier UnionBlock
 }
 class UnionBlock {
-    '{' UnionBranch (IGNORED UnionBranch)* '}'
+    '{' (UnionBranch (IGNORED UnionBranch)*)? '}'
 }
 class UnionBranch {
     '|' Expression BranchTag?
@@ -58,9 +58,10 @@ atomic class Expression {
     Term (Infix Term)*
 }
 class Term {
-    Prefix* IGNORE Atomic IGNORE Suffix*
+    (Prefix (IGNORE Prefix)*)? Atomic (Suffix (IGNORE Suffix)*)?
 }
 atomic union Infix {
+    | IGNORE ':' IGNORE #Tag
     | IGNORE            #Soft
     | IGNORE '~' IGNORE #Hard
 }
@@ -76,17 +77,21 @@ union Suffix {
 }
 // === atoms === -------------------------------------------------------------------------------------------------------
 union Atomic {
+    | '(' Expression ')'
     | Identifier
     | Boolean
+    | String
+    | Regex
 }
 // === String === -------------------------------------------------------------------------------------------------------
 atomic union String {
-    | "'" "'" #DoubleQuote
-    | '"' '"' #SingleQuote
+    | "'" (!"'" ANY)* "'" #Raw
+    | '"' (!'"' ANY)* '"' #Escaped
 }
 // === regex === -------------------------------------------------------------------------------------------------------
-class Regex {
-    '/'
+atomic class Regex {
+    '/' (!'/' ANY)* '/'
+    '[' (!']' ANY)* ']'
 }
 // === identifier === --------------------------------------------------------------------------------------------------
 class NamepathFree -> Namepath {
@@ -104,7 +109,7 @@ union Boolean {
 }
 // === keywords === ----------------------------------------------------------------------------------------------------
 atomic class Modifiers {
-    !(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) Identifier (IGNORED !(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) Identifier)*
+    (!(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) Identifier (IGNORED !(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) Identifier)*)?
 }
 @style(keyword)
 token {
