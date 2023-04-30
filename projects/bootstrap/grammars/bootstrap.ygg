@@ -3,7 +3,7 @@ grammar Bootstrap {
 }
 
 atomic entry class Root {
-    (Statement (IGNORED Statement)*)?
+    (IGNORED Statement)*
 }
 
 union Statement {
@@ -31,7 +31,7 @@ class UnionStatements {
     Modifiers ^KW_UNION Identifier UnionBlock
 }
 class UnionBlock {
-    '{' (UnionBranch (IGNORED UnionBranch)*)? '}'
+    '{' (IGNORED UnionBranch)* '}'
 }
 class UnionBranch {
     '|' Expression BranchTag?
@@ -58,7 +58,7 @@ atomic class Expression {
     Term (Infix Term)*
 }
 class Term {
-    (Prefix (IGNORE Prefix)*)? Atomic (Suffix (IGNORE Suffix)*)?
+    (IGNORE Prefix)* Atomic (IGNORE Suffix)*
 }
 atomic union Infix {
     | IGNORE ':' IGNORE #Tag
@@ -109,7 +109,7 @@ union Boolean {
 }
 // === keywords === ----------------------------------------------------------------------------------------------------
 atomic class Modifiers {
-    (!(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) Identifier (IGNORED !(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) Identifier)*)?
+    (IGNORE !(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) Identifier)*
 }
 @style(keyword)
 token {

@@ -9,7 +9,7 @@ impl YggdrasilNode for RootNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            statement: pair.take_tagged_items::<StatementNode>(Cow::Borrowed("statement"))?,
+            statement: pair.take_tagged_one::<StatementNode>(Cow::Borrowed("statement"))?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
@@ -188,7 +188,7 @@ impl YggdrasilNode for UnionBlockNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            union_branch: pair.take_tagged_items::<UnionBranchNode>(Cow::Borrowed("union_branch"))?,
+            union_branch: pair.take_tagged_one::<UnionBranchNode>(Cow::Borrowed("union_branch"))?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
@@ -378,8 +378,8 @@ impl YggdrasilNode for TermNode {
         let _span = pair.get_span();
         Ok(Self {
             atomic: pair.take_tagged_one::<AtomicNode>(Cow::Borrowed("atomic"))?,
-            prefix: pair.take_tagged_items::<PrefixNode>(Cow::Borrowed("prefix"))?,
-            suffix: pair.take_tagged_items::<SuffixNode>(Cow::Borrowed("suffix"))?,
+            prefix: pair.take_tagged_one::<PrefixNode>(Cow::Borrowed("prefix"))?,
+            suffix: pair.take_tagged_one::<SuffixNode>(Cow::Borrowed("suffix"))?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
@@ -690,12 +690,12 @@ impl YggdrasilNode for ModifiersNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            identifier: pair.take_tagged_items::<IdentifierNode>(Cow::Borrowed("identifier"))?,
-            kw_class: pair.take_tagged_items::<KwClassNode>(Cow::Borrowed("kw_class"))?,
-            kw_climb: pair.take_tagged_items::<KwClimbNode>(Cow::Borrowed("kw_climb"))?,
-            kw_group: pair.take_tagged_items::<KwGroupNode>(Cow::Borrowed("kw_group"))?,
-            kw_macro: pair.take_tagged_items::<KwMacroNode>(Cow::Borrowed("kw_macro"))?,
-            kw_union: pair.take_tagged_items::<KwUnionNode>(Cow::Borrowed("kw_union"))?,
+            identifier: pair.take_tagged_one::<IdentifierNode>(Cow::Borrowed("identifier"))?,
+            kw_class: pair.take_tagged_one::<KwClassNode>(Cow::Borrowed("kw_class"))?,
+            kw_climb: pair.take_tagged_one::<KwClimbNode>(Cow::Borrowed("kw_climb"))?,
+            kw_group: pair.take_tagged_one::<KwGroupNode>(Cow::Borrowed("kw_group"))?,
+            kw_macro: pair.take_tagged_one::<KwMacroNode>(Cow::Borrowed("kw_macro"))?,
+            kw_union: pair.take_tagged_one::<KwUnionNode>(Cow::Borrowed("kw_union"))?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }

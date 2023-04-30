@@ -1,16 +1,14 @@
 RootNode {
-    statement: [
-        GrammarStatements(
-            GrammarStatementsNode {
-                grammar_block: GrammarBlockNode {
-                    span: 14..37,
-                },
-                identifier: IdentifierNode {
-                    span: 8..13,
-                },
-                span: 0..37,
+    statement: GrammarStatements(
+        GrammarStatementsNode {
+            grammar_block: GrammarBlockNode {
+                span: 14..37,
             },
-        ),
-    ],
-    span: 0..37,
+            identifier: IdentifierNode {
+                span: 8..13,
+            },
+            span: 0..37,
+        },
+    ),
+    span: 0..422,
 }

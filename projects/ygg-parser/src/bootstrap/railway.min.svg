@@ -1,4 +1,4 @@
-<svg class="railroad" viewBox="0 0 1330 2376" xmlns="http://www.w3.org/2000/svg"
+<svg class="railroad" viewBox="0 0 907 2324" xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink">
     <style type="text/css">svg.railroad{background-color:hsl(30,20%,95%);background-size:15px
         15px;background-image:linear-gradient(to right,rgba(30,30,30,.05) 1px,transparent 1px),linear-gradient(to
@@ -15,1585 +15,1513 @@
     </style>
     <g class="verticalgrid">
         <g class="sequence">
-            <path d=" M 10 34 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Root" x="54" y="39">
+            <path d=" M 10 21 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Root" x="54" y="26">
                 Root
             </text>
-            <g class="optional">
+            <g class="repeat">
                 <path
-                    d=" M 83 34 h 24 m -24 0 a 12 12 0 0 0 12 -12 v 0 a 12 12 0 0 1 12 -12 h 304 m -149 0 l -5 -5 m 0 10 l 5 -5 m 149 0 a 12 12 0 0 1 12 12 v 0 a 12 12 0 0 0 12 12 h -24"/>
+                    d=" M 83 21 h 12 m 178 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -161 m 83 0 l 5 -5 m 0 10 l -5 -5 m -83 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
+                <text class="comment" x="264" y="57">
+                    *
+                </text>
                 <g class="sequence">
+                    <g class="character">
+                        <rect height="22" rx="10" ry="10" width="76" x="95" y="10"/>
+                        <text x="133" y="26">
+                            IGNORED
+                        </text>
+                    </g>
                     <a class="link" xlink:href="#Statement">
                         <g class="symbol">
-                            <rect height="22" width="92" x="107" y="23"/>
-                            <text x="153" y="39">
+                            <rect height="22" width="92" x="181" y="10"/>
+                            <text x="227" y="26">
                                 Statement
                             </text>
                         </g>
                     </a>
-                    <g class="repeat">
-                        <path
-                            d=" M 209 34 h 12 m 178 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -161 m 83 0 l 5 -5 m 0 10 l -5 -5 m -83 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
-                        <text class="comment" x="390" y="70">
-                            *
-                        </text>
-                        <g class="sequence">
-                            <g class="character">
-                                <rect height="22" rx="10" ry="10" width="76" x="221" y="23"/>
-                                <text x="259" y="39">
-                                    IGNORED
-                                </text>
-                            </g>
-                            <a class="link" xlink:href="#Statement">
-                                <g class="symbol">
-                                    <rect height="22" width="92" x="307" y="23"/>
-                                    <text x="353" y="39">
-                                        Statement
-                                    </text>
-                                </g>
-                            </a>
-                            <path d=" M 297 34 h 10"/>
-                        </g>
-                    </g>
-                    <path d=" M 199 34 h 10"/>
+                    <path d=" M 171 21 h 10"/>
                 </g>
             </g>
-            <path d=" M 445 34 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 34 h 10"/>
-            <path d=" M 73 34 h 10"/>
-            <path d=" M 435 34 h 10"/>
+            <path d=" M 295 21 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 21 h 10"/>
+            <path d=" M 73 21 h 10"/>
+            <path d=" M 285 21 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 98 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Statement" x="71" y="103">
+            <path d=" M 10 85 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Statement" x="71" y="90">
                 Statement
             </text>
             <g class="choice">
-                <path d=" M 118 98 h 24 m 156 0 h 24"/>
+                <path d=" M 118 85 h 24 m 156 0 h 24"/>
                 <a class="link" xlink:href="#GrammarStatements">
                     <g class="symbol">
-                        <rect height="22" width="156" x="142" y="87"/>
-                        <text x="220" y="103">
+                        <rect height="22" width="156" x="142" y="74"/>
+                        <text x="220" y="90">
                             GrammarStatements
                         </text>
                     </g>
                 </a>
-                <path d=" M 118 98 a 12 12 0 0 1 12 12 v 9 m 180 0 v -9 a 12 12 0 0 1 12 -12"/>
-                <path d=" M 130 119 v 33 m 180 0 v -33"/>
-                <path d=" M 130 152 v 33 m 180 0 v -33"/>
-                <path d=" M 130 119 v 0 a 12 12 0 0 0 12 12 m 140 0 h 16 a 12 12 0 0 0 12 -12 v 0"/>
+                <path d=" M 118 85 a 12 12 0 0 1 12 12 v 9 m 180 0 v -9 a 12 12 0 0 1 12 -12"/>
+                <path d=" M 130 106 v 33 m 180 0 v -33"/>
+                <path d=" M 130 139 v 33 m 180 0 v -33"/>
+                <path d=" M 130 106 v 0 a 12 12 0 0 0 12 12 m 140 0 h 16 a 12 12 0 0 0 12 -12 v 0"/>
                 <a class="link" xlink:href="#ClassStatements">
                     <g class="symbol">
-                        <rect height="22" width="140" x="142" y="120"/>
-                        <text x="212" y="136">
+                        <rect height="22" width="140" x="142" y="107"/>
+                        <text x="212" y="123">
                             ClassStatements
                         </text>
                     </g>
                 </a>
-                <path d=" M 130 152 v 0 a 12 12 0 0 0 12 12 m 140 0 h 16 a 12 12 0 0 0 12 -12 v 0"/>
+                <path d=" M 130 139 v 0 a 12 12 0 0 0 12 12 m 140 0 h 16 a 12 12 0 0 0 12 -12 v 0"/>
                 <a class="link" xlink:href="#UnionStatements">
                     <g class="symbol">
-                        <rect height="22" width="140" x="142" y="153"/>
-                        <text x="212" y="169">
+                        <rect height="22" width="140" x="142" y="140"/>
+                        <text x="212" y="156">
                             UnionStatements
                         </text>
                     </g>
                 </a>
-                <path d=" M 130 185 v 0 a 12 12 0 0 0 12 12 m 140 0 h 16 a 12 12 0 0 0 12 -12 v 0"/>
+                <path d=" M 130 172 v 0 a 12 12 0 0 0 12 12 m 140 0 h 16 a 12 12 0 0 0 12 -12 v 0"/>
                 <a class="link" xlink:href="#GroupStatements">
                     <g class="symbol">
-                        <rect height="22" width="140" x="142" y="186"/>
-                        <text x="212" y="202">
+                        <rect height="22" width="140" x="142" y="173"/>
+                        <text x="212" y="189">
                             GroupStatements
                         </text>
                     </g>
                 </a>
             </g>
-            <path d=" M 332 98 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 98 h 10"/>
-            <path d=" M 108 98 h 10"/>
-            <path d=" M 322 98 h 10"/>
+            <path d=" M 332 85 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 85 h 10"/>
+            <path d=" M 108 85 h 10"/>
+            <path d=" M 322 85 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 231 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="GrammarStatements" x="99" y="236">
+            <path d=" M 10 218 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="GrammarStatements" x="99" y="223">
                 GrammarStatements
             </text>
             <g class="sequence">
                 <a class="link" xlink:href="#KW_GRAMMAR">
                     <g class="symbol">
-                        <rect height="22" width="100" x="174" y="220"/>
-                        <text x="224" y="236">
+                        <rect height="22" width="100" x="174" y="207"/>
+                        <text x="224" y="223">
                             KW_GRAMMAR
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="284" y="220"/>
-                    <text x="322" y="236">
+                    <rect height="22" rx="10" ry="10" width="76" x="284" y="207"/>
+                    <text x="322" y="223">
                         IGNORED
                     </text>
                 </g>
                 <a class="link" xlink:href="#Identifier">
                     <g class="symbol">
-                        <rect height="22" width="100" x="370" y="220"/>
-                        <text x="420" y="236">
+                        <rect height="22" width="100" x="370" y="207"/>
+                        <text x="420" y="223">
                             Identifier
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="480" y="220"/>
-                    <text x="518" y="236">
+                    <rect height="22" rx="10" ry="10" width="76" x="480" y="207"/>
+                    <text x="518" y="223">
                         IGNORED
                     </text>
                 </g>
                 <a class="link" xlink:href="#GrammarBlock">
                     <g class="symbol">
-                        <rect height="22" width="116" x="566" y="220"/>
-                        <text x="624" y="236">
+                        <rect height="22" width="116" x="566" y="207"/>
+                        <text x="624" y="223">
                             GrammarBlock
                         </text>
                     </g>
                 </a>
-                <path d=" M 274 231 h 10"/>
-                <path d=" M 360 231 h 10"/>
-                <path d=" M 470 231 h 10"/>
-                <path d=" M 556 231 h 10"/>
+                <path d=" M 274 218 h 10"/>
+                <path d=" M 360 218 h 10"/>
+                <path d=" M 470 218 h 10"/>
+                <path d=" M 556 218 h 10"/>
             </g>
-            <path d=" M 692 231 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 231 h 10"/>
-            <path d=" M 164 231 h 10"/>
-            <path d=" M 682 231 h 10"/>
+            <path d=" M 692 218 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 218 h 10"/>
+            <path d=" M 164 218 h 10"/>
+            <path d=" M 682 218 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 265 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="GrammarBlock" x="82" y="270">
+            <path d=" M 10 252 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="GrammarBlock" x="82" y="257">
                 GrammarBlock
             </text>
             <g class="sequence">
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="139" y="254"/>
-                    <text x="153" y="270">
+                    <rect height="22" rx="10" ry="10" width="28" x="139" y="241"/>
+                    <text x="153" y="257">
                         {
                     </text>
                 </g>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="177" y="254"/>
-                    <text x="215" y="270">
+                    <rect height="22" rx="10" ry="10" width="76" x="177" y="241"/>
+                    <text x="215" y="257">
                         IGNORED
                     </text>
                 </g>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="263" y="254"/>
-                    <text x="277" y="270">
+                    <rect height="22" rx="10" ry="10" width="28" x="263" y="241"/>
+                    <text x="277" y="257">
                         }
                     </text>
                 </g>
-                <path d=" M 167 265 h 10"/>
-                <path d=" M 253 265 h 10"/>
+                <path d=" M 167 252 h 10"/>
+                <path d=" M 253 252 h 10"/>
             </g>
-            <path d=" M 301 265 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 265 h 10"/>
-            <path d=" M 129 265 h 10"/>
-            <path d=" M 291 265 h 10"/>
+            <path d=" M 301 252 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 252 h 10"/>
+            <path d=" M 129 252 h 10"/>
+            <path d=" M 291 252 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 299 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="ClassStatements" x="92" y="304">
+            <path d=" M 10 286 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="ClassStatements" x="92" y="291">
                 ClassStatements
             </text>
             <g class="sequence">
                 <a class="link" xlink:href="#Modifiers">
                     <g class="symbol">
-                        <rect height="22" width="92" x="160" y="288"/>
-                        <text x="206" y="304">
+                        <rect height="22" width="92" x="160" y="275"/>
+                        <text x="206" y="291">
                             Modifiers
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="262" y="288"/>
-                    <text x="300" y="304">
+                    <rect height="22" rx="10" ry="10" width="76" x="262" y="275"/>
+                    <text x="300" y="291">
                         IGNORED
                     </text>
                 </g>
                 <a class="link" xlink:href="#KW_CLASS">
                     <g class="symbol">
-                        <rect height="22" width="84" x="348" y="288"/>
-                        <text x="390" y="304">
+                        <rect height="22" width="84" x="348" y="275"/>
+                        <text x="390" y="291">
                             KW_CLASS
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="442" y="288"/>
-                    <text x="480" y="304">
+                    <rect height="22" rx="10" ry="10" width="76" x="442" y="275"/>
+                    <text x="480" y="291">
                         IGNORED
                     </text>
                 </g>
                 <a class="link" xlink:href="#Identifier">
                     <g class="symbol">
-                        <rect height="22" width="100" x="528" y="288"/>
-                        <text x="578" y="304">
+                        <rect height="22" width="100" x="528" y="275"/>
+                        <text x="578" y="291">
                             Identifier
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="638" y="288"/>
-                    <text x="676" y="304">
+                    <rect height="22" rx="10" ry="10" width="76" x="638" y="275"/>
+                    <text x="676" y="291">
                         IGNORED
                     </text>
                 </g>
                 <a class="link" xlink:href="#ClassBlock">
                     <g class="symbol">
-                        <rect height="22" width="100" x="724" y="288"/>
-                        <text x="774" y="304">
+                        <rect height="22" width="100" x="724" y="275"/>
+                        <text x="774" y="291">
                             ClassBlock
                         </text>
                     </g>
                 </a>
-                <path d=" M 252 299 h 10"/>
-                <path d=" M 338 299 h 10"/>
-                <path d=" M 432 299 h 10"/>
-                <path d=" M 518 299 h 10"/>
-                <path d=" M 628 299 h 10"/>
-                <path d=" M 714 299 h 10"/>
+                <path d=" M 252 286 h 10"/>
+                <path d=" M 338 286 h 10"/>
+                <path d=" M 432 286 h 10"/>
+                <path d=" M 518 286 h 10"/>
+                <path d=" M 628 286 h 10"/>
+                <path d=" M 714 286 h 10"/>
             </g>
-            <path d=" M 834 299 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 299 h 10"/>
-            <path d=" M 150 299 h 10"/>
-            <path d=" M 824 299 h 10"/>
+            <path d=" M 834 286 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 286 h 10"/>
+            <path d=" M 150 286 h 10"/>
+            <path d=" M 824 286 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 333 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="ClassBlock" x="75" y="338">
+            <path d=" M 10 320 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="ClassBlock" x="75" y="325">
                 ClassBlock
             </text>
             <g class="sequence">
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="125" y="322"/>
-                    <text x="139" y="338">
+                    <rect height="22" rx="10" ry="10" width="28" x="125" y="309"/>
+                    <text x="139" y="325">
                         {
                     </text>
                 </g>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="163" y="322"/>
-                    <text x="201" y="338">
+                    <rect height="22" rx="10" ry="10" width="76" x="163" y="309"/>
+                    <text x="201" y="325">
                         IGNORED
                     </text>
                 </g>
                 <g class="repeat">
                     <path
-                        d=" M 249 333 h 12 m 100 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -83 m 44 0 l 5 -5 m 0 10 l -5 -5 m -44 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
-                    <text class="comment" x="352" y="369">
+                        d=" M 249 320 h 12 m 100 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -83 m 44 0 l 5 -5 m 0 10 l -5 -5 m -44 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
+                    <text class="comment" x="352" y="356">
                         *
                     </text>
                     <a class="link" xlink:href="#Expression">
                         <g class="symbol">
-                            <rect height="22" width="100" x="261" y="322"/>
-                            <text x="311" y="338">
+                            <rect height="22" width="100" x="261" y="309"/>
+                            <text x="311" y="325">
                                 Expression
                             </text>
                         </g>
                     </a>
                 </g>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="383" y="322"/>
-                    <text x="421" y="338">
+                    <rect height="22" rx="10" ry="10" width="76" x="383" y="309"/>
+                    <text x="421" y="325">
                         IGNORED
                     </text>
                 </g>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="469" y="322"/>
-                    <text x="483" y="338">
+                    <rect height="22" rx="10" ry="10" width="28" x="469" y="309"/>
+                    <text x="483" y="325">
                         }
                     </text>
                 </g>
-                <path d=" M 153 333 h 10"/>
-                <path d=" M 239 333 h 10"/>
-                <path d=" M 373 333 h 10"/>
-                <path d=" M 459 333 h 10"/>
+                <path d=" M 153 320 h 10"/>
+                <path d=" M 239 320 h 10"/>
+                <path d=" M 373 320 h 10"/>
+                <path d=" M 459 320 h 10"/>
             </g>
-            <path d=" M 507 333 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 333 h 10"/>
-            <path d=" M 115 333 h 10"/>
-            <path d=" M 497 333 h 10"/>
+            <path d=" M 507 320 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 320 h 10"/>
+            <path d=" M 115 320 h 10"/>
+            <path d=" M 497 320 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 397 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="UnionStatements" x="92" y="402">
+            <path d=" M 10 384 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="UnionStatements" x="92" y="389">
                 UnionStatements
             </text>
             <g class="sequence">
                 <a class="link" xlink:href="#Modifiers">
                     <g class="symbol">
-                        <rect height="22" width="92" x="160" y="386"/>
-                        <text x="206" y="402">
+                        <rect height="22" width="92" x="160" y="373"/>
+                        <text x="206" y="389">
                             Modifiers
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="262" y="386"/>
-                    <text x="300" y="402">
+                    <rect height="22" rx="10" ry="10" width="76" x="262" y="373"/>
+                    <text x="300" y="389">
                         IGNORED
                     </text>
                 </g>
                 <a class="link" xlink:href="#KW_UNION">
                     <g class="symbol">
-                        <rect height="22" width="84" x="348" y="386"/>
-                        <text x="390" y="402">
+                        <rect height="22" width="84" x="348" y="373"/>
+                        <text x="390" y="389">
                             KW_UNION
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="442" y="386"/>
-                    <text x="480" y="402">
+                    <rect height="22" rx="10" ry="10" width="76" x="442" y="373"/>
+                    <text x="480" y="389">
                         IGNORED
                     </text>
                 </g>
                 <a class="link" xlink:href="#Identifier">
                     <g class="symbol">
-                        <rect height="22" width="100" x="528" y="386"/>
-                        <text x="578" y="402">
+                        <rect height="22" width="100" x="528" y="373"/>
+                        <text x="578" y="389">
                             Identifier
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="638" y="386"/>
-                    <text x="676" y="402">
+                    <rect height="22" rx="10" ry="10" width="76" x="638" y="373"/>
+                    <text x="676" y="389">
                         IGNORED
                     </text>
                 </g>
                 <a class="link" xlink:href="#UnionBlock">
                     <g class="symbol">
-                        <rect height="22" width="100" x="724" y="386"/>
-                        <text x="774" y="402">
+                        <rect height="22" width="100" x="724" y="373"/>
+                        <text x="774" y="389">
                             UnionBlock
                         </text>
                     </g>
                 </a>
-                <path d=" M 252 397 h 10"/>
-                <path d=" M 338 397 h 10"/>
-                <path d=" M 432 397 h 10"/>
-                <path d=" M 518 397 h 10"/>
-                <path d=" M 628 397 h 10"/>
-                <path d=" M 714 397 h 10"/>
+                <path d=" M 252 384 h 10"/>
+                <path d=" M 338 384 h 10"/>
+                <path d=" M 432 384 h 10"/>
+                <path d=" M 518 384 h 10"/>
+                <path d=" M 628 384 h 10"/>
+                <path d=" M 714 384 h 10"/>
             </g>
-            <path d=" M 834 397 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 397 h 10"/>
-            <path d=" M 150 397 h 10"/>
-            <path d=" M 824 397 h 10"/>
+            <path d=" M 834 384 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 384 h 10"/>
+            <path d=" M 150 384 h 10"/>
+            <path d=" M 824 384 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 444 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="UnionBlock" x="75" y="449">
+            <path d=" M 10 418 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="UnionBlock" x="75" y="423">
                 UnionBlock
             </text>
             <g class="sequence">
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="125" y="433"/>
-                    <text x="139" y="449">
+                    <rect height="22" rx="10" ry="10" width="28" x="125" y="407"/>
+                    <text x="139" y="423">
                         {
                     </text>
                 </g>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="163" y="433"/>
-                    <text x="201" y="449">
+                    <rect height="22" rx="10" ry="10" width="76" x="163" y="407"/>
+                    <text x="201" y="423">
                         IGNORED
                     </text>
                 </g>
-                <g class="optional">
+                <g class="repeat">
                     <path
-                        d=" M 249 444 h 24 m -24 0 a 12 12 0 0 0 12 -12 v 0 a 12 12 0 0 1 12 -12 h 508 m -251 0 l -5 -5 m 0 10 l 5 -5 m 251 0 a 12 12 0 0 1 12 12 v 0 a 12 12 0 0 0 12 12 h -24"/>
+                        d=" M 249 418 h 12 m 280 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -263 m 134 0 l 5 -5 m 0 10 l -5 -5 m -134 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
+                    <text class="comment" x="532" y="454">
+                        *
+                    </text>
                     <g class="sequence">
+                        <g class="character">
+                            <rect height="22" rx="10" ry="10" width="76" x="261" y="407"/>
+                            <text x="299" y="423">
+                                IGNORED
+                            </text>
+                        </g>
+                        <g class="character">
+                            <rect height="22" rx="10" ry="10" width="76" x="347" y="407"/>
+                            <text x="385" y="423">
+                                IGNORED
+                            </text>
+                        </g>
                         <a class="link" xlink:href="#UnionBranch">
                             <g class="symbol">
-                                <rect height="22" width="108" x="273" y="433"/>
-                                <text x="327" y="449">
+                                <rect height="22" width="108" x="433" y="407"/>
+                                <text x="487" y="423">
                                     UnionBranch
                                 </text>
                             </g>
                         </a>
-                        <g class="character">
-                            <rect height="22" rx="10" ry="10" width="76" x="391" y="433"/>
-                            <text x="429" y="449">
-                                IGNORED
-                            </text>
-                        </g>
-                        <g class="repeat">
-                            <path
-                                d=" M 477 444 h 12 m 280 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -263 m 134 0 l 5 -5 m 0 10 l -5 -5 m -134 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
-                            <text class="comment" x="760" y="480">
-                                *
-                            </text>
-                            <g class="sequence">
-                                <g class="character">
-                                    <rect height="22" rx="10" ry="10" width="76" x="489" y="433"/>
-                                    <text x="527" y="449">
-                                        IGNORED
-                                    </text>
-                                </g>
-                                <g class="character">
-                                    <rect height="22" rx="10" ry="10" width="76" x="575" y="433"/>
-                                    <text x="613" y="449">
-                                        IGNORED
-                                    </text>
-                                </g>
-                                <a class="link" xlink:href="#UnionBranch">
-                                    <g class="symbol">
-                                        <rect height="22" width="108" x="661" y="433"/>
-                                        <text x="715" y="449">
-                                            UnionBranch
-                                        </text>
-                                    </g>
-                                </a>
-                                <path d=" M 565 444 h 10"/>
-                                <path d=" M 651 444 h 10"/>
-                            </g>
-                        </g>
-                        <path d=" M 381 444 h 10"/>
-                        <path d=" M 467 444 h 10"/>
+                        <path d=" M 337 418 h 10"/>
+                        <path d=" M 423 418 h 10"/>
                     </g>
                 </g>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="815" y="433"/>
-                    <text x="853" y="449">
+                    <rect height="22" rx="10" ry="10" width="76" x="563" y="407"/>
+                    <text x="601" y="423">
                         IGNORED
                     </text>
                 </g>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="901" y="433"/>
-                    <text x="915" y="449">
+                    <rect height="22" rx="10" ry="10" width="28" x="649" y="407"/>
+                    <text x="663" y="423">
                         }
                     </text>
                 </g>
-                <path d=" M 153 444 h 10"/>
-                <path d=" M 239 444 h 10"/>
-                <path d=" M 805 444 h 10"/>
-                <path d=" M 891 444 h 10"/>
+                <path d=" M 153 418 h 10"/>
+                <path d=" M 239 418 h 10"/>
+                <path d=" M 553 418 h 10"/>
+                <path d=" M 639 418 h 10"/>
             </g>
-            <path d=" M 939 444 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 444 h 10"/>
-            <path d=" M 115 444 h 10"/>
-            <path d=" M 929 444 h 10"/>
+            <path d=" M 687 418 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 418 h 10"/>
+            <path d=" M 115 418 h 10"/>
+            <path d=" M 677 418 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 521 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="UnionBranch" x="78" y="526">
+            <path d=" M 10 495 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="UnionBranch" x="78" y="500">
                 UnionBranch
             </text>
             <g class="sequence">
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="132" y="510"/>
-                    <text x="146" y="526">
+                    <rect height="22" rx="10" ry="10" width="28" x="132" y="484"/>
+                    <text x="146" y="500">
                         |
                     </text>
                 </g>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="170" y="510"/>
-                    <text x="208" y="526">
+                    <rect height="22" rx="10" ry="10" width="76" x="170" y="484"/>
+                    <text x="208" y="500">
                         IGNORED
                     </text>
                 </g>
                 <a class="link" xlink:href="#Expression">
                     <g class="symbol">
-                        <rect height="22" width="100" x="256" y="510"/>
-                        <text x="306" y="526">
+                        <rect height="22" width="100" x="256" y="484"/>
+                        <text x="306" y="500">
                             Expression
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="366" y="510"/>
-                    <text x="404" y="526">
+                    <rect height="22" rx="10" ry="10" width="76" x="366" y="484"/>
+                    <text x="404" y="500">
                         IGNORED
                     </text>
                 </g>
                 <g class="optional">
                     <path
-                        d=" M 452 521 h 24 m -24 0 a 12 12 0 0 0 12 -12 v 0 a 12 12 0 0 1 12 -12 h 92 m -43 0 l -5 -5 m 0 10 l 5 -5 m 43 0 a 12 12 0 0 1 12 12 v 0 a 12 12 0 0 0 12 12 h -24"/>
+                        d=" M 452 495 h 24 m -24 0 a 12 12 0 0 0 12 -12 v 0 a 12 12 0 0 1 12 -12 h 92 m -43 0 l -5 -5 m 0 10 l 5 -5 m 43 0 a 12 12 0 0 1 12 12 v 0 a 12 12 0 0 0 12 12 h -24"/>
                     <a class="link" xlink:href="#BranchTag">
                         <g class="symbol">
-                            <rect height="22" width="92" x="476" y="510"/>
-                            <text x="522" y="526">
+                            <rect height="22" width="92" x="476" y="484"/>
+                            <text x="522" y="500">
                                 BranchTag
                             </text>
                         </g>
                     </a>
                 </g>
-                <path d=" M 160 521 h 10"/>
-                <path d=" M 246 521 h 10"/>
-                <path d=" M 356 521 h 10"/>
-                <path d=" M 442 521 h 10"/>
+                <path d=" M 160 495 h 10"/>
+                <path d=" M 246 495 h 10"/>
+                <path d=" M 356 495 h 10"/>
+                <path d=" M 442 495 h 10"/>
             </g>
-            <path d=" M 602 521 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 521 h 10"/>
-            <path d=" M 122 521 h 10"/>
-            <path d=" M 592 521 h 10"/>
+            <path d=" M 602 495 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 495 h 10"/>
+            <path d=" M 122 495 h 10"/>
+            <path d=" M 592 495 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 568 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="BranchTag" x="71" y="573">
+            <path d=" M 10 542 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="BranchTag" x="71" y="547">
                 BranchTag
             </text>
             <g class="sequence">
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="118" y="557"/>
-                    <text x="132" y="573">
+                    <rect height="22" rx="10" ry="10" width="28" x="118" y="531"/>
+                    <text x="132" y="547">
                         #
                     </text>
                 </g>
                 <a class="link" xlink:href="#Identifier">
                     <g class="symbol">
-                        <rect height="22" width="100" x="156" y="557"/>
-                        <text x="206" y="573">
+                        <rect height="22" width="100" x="156" y="531"/>
+                        <text x="206" y="547">
                             Identifier
                         </text>
                     </g>
                 </a>
                 <g class="optional">
                     <path
-                        d=" M 266 568 h 24 m -24 0 a 12 12 0 0 0 12 -12 v 0 a 12 12 0 0 1 12 -12 h 164 m -79 0 l -5 -5 m 0 10 l 5 -5 m 79 0 a 12 12 0 0 1 12 12 v 0 a 12 12 0 0 0 12 12 h -24"/>
+                        d=" M 266 542 h 24 m -24 0 a 12 12 0 0 0 12 -12 v 0 a 12 12 0 0 1 12 -12 h 164 m -79 0 l -5 -5 m 0 10 l 5 -5 m 79 0 a 12 12 0 0 1 12 12 v 0 a 12 12 0 0 0 12 12 h -24"/>
                     <a class="link" xlink:href="#RightAssociativity">
                         <g class="symbol">
-                            <rect height="22" width="164" x="290" y="557"/>
-                            <text x="372" y="573">
+                            <rect height="22" width="164" x="290" y="531"/>
+                            <text x="372" y="547">
                                 RightAssociativity
                             </text>
                         </g>
                     </a>
                 </g>
-                <path d=" M 146 568 h 10"/>
-                <path d=" M 256 568 h 10"/>
+                <path d=" M 146 542 h 10"/>
+                <path d=" M 256 542 h 10"/>
             </g>
-            <path d=" M 488 568 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 568 h 10"/>
-            <path d=" M 108 568 h 10"/>
-            <path d=" M 478 568 h 10"/>
+            <path d=" M 488 542 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 542 h 10"/>
+            <path d=" M 108 542 h 10"/>
+            <path d=" M 478 542 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 602 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="RightAssociativity" x="103" y="607">
+            <path d=" M 10 576 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="RightAssociativity" x="103" y="581">
                 RightAssociativity
             </text>
             <g class="string">
-                <rect height="22" rx="10" ry="10" width="28" x="181" y="591"/>
-                <text x="195" y="607">
+                <rect height="22" rx="10" ry="10" width="28" x="181" y="565"/>
+                <text x="195" y="581">
                     &gt;
                 </text>
             </g>
-            <path d=" M 219 602 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 602 h 10"/>
-            <path d=" M 171 602 h 10"/>
-            <path d=" M 209 602 h 10"/>
+            <path d=" M 219 576 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 576 h 10"/>
+            <path d=" M 171 576 h 10"/>
+            <path d=" M 209 576 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 649 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="GroupStatements" x="92" y="654">
+            <path d=" M 10 623 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="GroupStatements" x="92" y="628">
                 GroupStatements
             </text>
             <g class="sequence">
                 <a class="link" xlink:href="#Modifiers">
                     <g class="symbol">
-                        <rect height="22" width="92" x="160" y="638"/>
-                        <text x="206" y="654">
+                        <rect height="22" width="92" x="160" y="612"/>
+                        <text x="206" y="628">
                             Modifiers
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="262" y="638"/>
-                    <text x="300" y="654">
+                    <rect height="22" rx="10" ry="10" width="76" x="262" y="612"/>
+                    <text x="300" y="628">
                         IGNORED
                     </text>
                 </g>
                 <a class="link" xlink:href="#KW_GROUP">
                     <g class="symbol">
-                        <rect height="22" width="84" x="348" y="638"/>
-                        <text x="390" y="654">
+                        <rect height="22" width="84" x="348" y="612"/>
+                        <text x="390" y="628">
                             KW_GROUP
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="442" y="638"/>
-                    <text x="480" y="654">
+                    <rect height="22" rx="10" ry="10" width="76" x="442" y="612"/>
+                    <text x="480" y="628">
                         IGNORED
                     </text>
                 </g>
                 <g class="optional">
                     <path
-                        d=" M 528 649 h 24 m -24 0 a 12 12 0 0 0 12 -12 v 0 a 12 12 0 0 1 12 -12 h 100 m -47 0 l -5 -5 m 0 10 l 5 -5 m 47 0 a 12 12 0 0 1 12 12 v 0 a 12 12 0 0 0 12 12 h -24"/>
+                        d=" M 528 623 h 24 m -24 0 a 12 12 0 0 0 12 -12 v 0 a 12 12 0 0 1 12 -12 h 100 m -47 0 l -5 -5 m 0 10 l 5 -5 m 47 0 a 12 12 0 0 1 12 12 v 0 a 12 12 0 0 0 12 12 h -24"/>
                     <a class="link" xlink:href="#Identifier">
                         <g class="symbol">
-                            <rect height="22" width="100" x="552" y="638"/>
-                            <text x="602" y="654">
+                            <rect height="22" width="100" x="552" y="612"/>
+                            <text x="602" y="628">
                                 Identifier
                             </text>
                         </g>
                     </a>
                 </g>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="686" y="638"/>
-                    <text x="724" y="654">
+                    <rect height="22" rx="10" ry="10" width="76" x="686" y="612"/>
+                    <text x="724" y="628">
                         IGNORED
                     </text>
                 </g>
                 <a class="link" xlink:href="#GroupBlock">
                     <g class="symbol">
-                        <rect height="22" width="100" x="772" y="638"/>
-                        <text x="822" y="654">
+                        <rect height="22" width="100" x="772" y="612"/>
+                        <text x="822" y="628">
                             GroupBlock
                         </text>
                     </g>
                 </a>
-                <path d=" M 252 649 h 10"/>
-                <path d=" M 338 649 h 10"/>
-                <path d=" M 432 649 h 10"/>
-                <path d=" M 518 649 h 10"/>
-                <path d=" M 676 649 h 10"/>
-                <path d=" M 762 649 h 10"/>
+                <path d=" M 252 623 h 10"/>
+                <path d=" M 338 623 h 10"/>
+                <path d=" M 432 623 h 10"/>
+                <path d=" M 518 623 h 10"/>
+                <path d=" M 676 623 h 10"/>
+                <path d=" M 762 623 h 10"/>
             </g>
-            <path d=" M 882 649 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 649 h 10"/>
-            <path d=" M 150 649 h 10"/>
-            <path d=" M 872 649 h 10"/>
+            <path d=" M 882 623 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 623 h 10"/>
+            <path d=" M 150 623 h 10"/>
+            <path d=" M 872 623 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 683 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="GroupBlock" x="75" y="688">
+            <path d=" M 10 657 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="GroupBlock" x="75" y="662">
                 GroupBlock
             </text>
             <g class="sequence">
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="125" y="672"/>
-                    <text x="139" y="688">
+                    <rect height="22" rx="10" ry="10" width="28" x="125" y="646"/>
+                    <text x="139" y="662">
                         {
                     </text>
                 </g>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="163" y="672"/>
-                    <text x="201" y="688">
+                    <rect height="22" rx="10" ry="10" width="76" x="163" y="646"/>
+                    <text x="201" y="662">
                         IGNORED
                     </text>
                 </g>
                 <g class="repeat">
                     <path
-                        d=" M 249 683 h 12 m 92 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -75 m 40 0 l 5 -5 m 0 10 l -5 -5 m -40 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
-                    <text class="comment" x="344" y="719">
+                        d=" M 249 657 h 12 m 92 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -75 m 40 0 l 5 -5 m 0 10 l -5 -5 m -40 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
+                    <text class="comment" x="344" y="693">
                         *
                     </text>
                     <a class="link" xlink:href="#GroupPair">
                         <g class="symbol">
-                            <rect height="22" width="92" x="261" y="672"/>
-                            <text x="307" y="688">
+                            <rect height="22" width="92" x="261" y="646"/>
+                            <text x="307" y="662">
                                 GroupPair
                             </text>
                         </g>
                     </a>
                 </g>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="375" y="672"/>
-                    <text x="413" y="688">
+                    <rect height="22" rx="10" ry="10" width="76" x="375" y="646"/>
+                    <text x="413" y="662">
                         IGNORED
                     </text>
                 </g>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="461" y="672"/>
-                    <text x="475" y="688">
+                    <rect height="22" rx="10" ry="10" width="28" x="461" y="646"/>
+                    <text x="475" y="662">
                         }
                     </text>
                 </g>
-                <path d=" M 153 683 h 10"/>
-                <path d=" M 239 683 h 10"/>
-                <path d=" M 365 683 h 10"/>
-                <path d=" M 451 683 h 10"/>
+                <path d=" M 153 657 h 10"/>
+                <path d=" M 239 657 h 10"/>
+                <path d=" M 365 657 h 10"/>
+                <path d=" M 451 657 h 10"/>
             </g>
-            <path d=" M 499 683 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 683 h 10"/>
-            <path d=" M 115 683 h 10"/>
-            <path d=" M 489 683 h 10"/>
+            <path d=" M 499 657 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 657 h 10"/>
+            <path d=" M 115 657 h 10"/>
+            <path d=" M 489 657 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 747 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="GroupPair" x="71" y="752">
+            <path d=" M 10 721 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="GroupPair" x="71" y="726">
                 GroupPair
             </text>
             <g class="sequence">
                 <a class="link" xlink:href="#Identifier">
                     <g class="symbol">
-                        <rect height="22" width="100" x="118" y="736"/>
-                        <text x="168" y="752">
+                        <rect height="22" width="100" x="118" y="710"/>
+                        <text x="168" y="726">
                             Identifier
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="228" y="736"/>
-                    <text x="266" y="752">
+                    <rect height="22" rx="10" ry="10" width="76" x="228" y="710"/>
+                    <text x="266" y="726">
                         IGNORED
                     </text>
                 </g>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="314" y="736"/>
-                    <text x="328" y="752">
+                    <rect height="22" rx="10" ry="10" width="28" x="314" y="710"/>
+                    <text x="328" y="726">
                         :
                     </text>
                 </g>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="352" y="736"/>
-                    <text x="390" y="752">
+                    <rect height="22" rx="10" ry="10" width="76" x="352" y="710"/>
+                    <text x="390" y="726">
                         IGNORED
                     </text>
                 </g>
                 <a class="link" xlink:href="#Atomic">
                     <g class="symbol">
-                        <rect height="22" width="68" x="438" y="736"/>
-                        <text x="472" y="752">
+                        <rect height="22" width="68" x="438" y="710"/>
+                        <text x="472" y="726">
                             Atomic
                         </text>
                     </g>
                 </a>
-                <path d=" M 218 747 h 10"/>
-                <path d=" M 304 747 h 10"/>
-                <path d=" M 342 747 h 10"/>
-                <path d=" M 428 747 h 10"/>
+                <path d=" M 218 721 h 10"/>
+                <path d=" M 304 721 h 10"/>
+                <path d=" M 342 721 h 10"/>
+                <path d=" M 428 721 h 10"/>
             </g>
-            <path d=" M 516 747 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 747 h 10"/>
-            <path d=" M 108 747 h 10"/>
-            <path d=" M 506 747 h 10"/>
+            <path d=" M 516 721 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 721 h 10"/>
+            <path d=" M 108 721 h 10"/>
+            <path d=" M 506 721 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 781 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Expression" x="75" y="786">
+            <path d=" M 10 755 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Expression" x="75" y="760">
                 Expression
             </text>
             <g class="sequence">
                 <a class="link" xlink:href="#Term">
                     <g class="symbol">
-                        <rect height="22" width="52" x="125" y="770"/>
-                        <text x="151" y="786">
+                        <rect height="22" width="52" x="125" y="744"/>
+                        <text x="151" y="760">
                             Term
                         </text>
                     </g>
                 </a>
                 <g class="repeat">
                     <path
-                        d=" M 187 781 h 12 m 122 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -105 m 55 0 l 5 -5 m 0 10 l -5 -5 m -55 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
-                    <text class="comment" x="312" y="817">
+                        d=" M 187 755 h 12 m 122 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -105 m 55 0 l 5 -5 m 0 10 l -5 -5 m -55 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
+                    <text class="comment" x="312" y="791">
                         *
                     </text>
                     <g class="sequence">
                         <a class="link" xlink:href="#Infix">
                             <g class="symbol">
-                                <rect height="22" width="60" x="199" y="770"/>
-                                <text x="229" y="786">
+                                <rect height="22" width="60" x="199" y="744"/>
+                                <text x="229" y="760">
                                     Infix
                                 </text>
                             </g>
                         </a>
                         <a class="link" xlink:href="#Term">
                             <g class="symbol">
-                                <rect height="22" width="52" x="269" y="770"/>
-                                <text x="295" y="786">
+                                <rect height="22" width="52" x="269" y="744"/>
+                                <text x="295" y="760">
                                     Term
                                 </text>
                             </g>
                         </a>
-                        <path d=" M 259 781 h 10"/>
+                        <path d=" M 259 755 h 10"/>
                     </g>
                 </g>
-                <path d=" M 177 781 h 10"/>
+                <path d=" M 177 755 h 10"/>
             </g>
-            <path d=" M 343 781 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 781 h 10"/>
-            <path d=" M 115 781 h 10"/>
-            <path d=" M 333 781 h 10"/>
+            <path d=" M 343 755 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 755 h 10"/>
+            <path d=" M 115 755 h 10"/>
+            <path d=" M 333 755 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 858 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Term" x="54" y="863">
+            <path d=" M 10 819 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Term" x="54" y="824">
                 Term
             </text>
             <g class="sequence">
-                <g class="optional">
+                <g class="repeat">
                     <path
-                        d=" M 83 858 h 24 m -24 0 a 12 12 0 0 0 12 -12 v 0 a 12 12 0 0 1 12 -12 h 428 m -211 0 l -5 -5 m 0 10 l 5 -5 m 211 0 a 12 12 0 0 1 12 12 v 0 a 12 12 0 0 0 12 12 h -24"/>
+                        d=" M 83 819 h 12 m 240 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -223 m 114 0 l 5 -5 m 0 10 l -5 -5 m -114 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
+                    <text class="comment" x="326" y="855">
+                        *
+                    </text>
                     <g class="sequence">
+                        <g class="character">
+                            <rect height="22" rx="10" ry="10" width="76" x="95" y="808"/>
+                            <text x="133" y="824">
+                                IGNORED
+                            </text>
+                        </g>
+                        <g class="character">
+                            <rect height="22" rx="10" ry="10" width="76" x="181" y="808"/>
+                            <text x="219" y="824">
+                                IGNORED
+                            </text>
+                        </g>
                         <a class="link" xlink:href="#Prefix">
                             <g class="symbol">
-                                <rect height="22" width="68" x="107" y="847"/>
-                                <text x="141" y="863">
+                                <rect height="22" width="68" x="267" y="808"/>
+                                <text x="301" y="824">
                                     Prefix
                                 </text>
                             </g>
                         </a>
-                        <g class="character">
-                            <rect height="22" rx="10" ry="10" width="76" x="185" y="847"/>
-                            <text x="223" y="863">
-                                IGNORED
-                            </text>
-                        </g>
-                        <g class="repeat">
-                            <path
-                                d=" M 271 858 h 12 m 240 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -223 m 114 0 l 5 -5 m 0 10 l -5 -5 m -114 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
-                            <text class="comment" x="514" y="894">
-                                *
-                            </text>
-                            <g class="sequence">
-                                <g class="character">
-                                    <rect height="22" rx="10" ry="10" width="76" x="283" y="847"/>
-                                    <text x="321" y="863">
-                                        IGNORED
-                                    </text>
-                                </g>
-                                <g class="character">
-                                    <rect height="22" rx="10" ry="10" width="76" x="369" y="847"/>
-                                    <text x="407" y="863">
-                                        IGNORED
-                                    </text>
-                                </g>
-                                <a class="link" xlink:href="#Prefix">
-                                    <g class="symbol">
-                                        <rect height="22" width="68" x="455" y="847"/>
-                                        <text x="489" y="863">
-                                            Prefix
-                                        </text>
-                                    </g>
-                                </a>
-                                <path d=" M 359 858 h 10"/>
-                                <path d=" M 445 858 h 10"/>
-                            </g>
-                        </g>
-                        <path d=" M 175 858 h 10"/>
-                        <path d=" M 261 858 h 10"/>
+                        <path d=" M 171 819 h 10"/>
+                        <path d=" M 257 819 h 10"/>
                     </g>
                 </g>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="569" y="847"/>
-                    <text x="607" y="863">
+                    <rect height="22" rx="10" ry="10" width="76" x="357" y="808"/>
+                    <text x="395" y="824">
                         IGNORED
                     </text>
                 </g>
                 <a class="link" xlink:href="#Atomic">
                     <g class="symbol">
-                        <rect height="22" width="68" x="655" y="847"/>
-                        <text x="689" y="863">
+                        <rect height="22" width="68" x="443" y="808"/>
+                        <text x="477" y="824">
                             Atomic
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="733" y="847"/>
-                    <text x="771" y="863">
+                    <rect height="22" rx="10" ry="10" width="76" x="521" y="808"/>
+                    <text x="559" y="824">
                         IGNORED
                     </text>
                 </g>
-                <g class="optional">
+                <g class="repeat">
                     <path
-                        d=" M 819 858 h 24 m -24 0 a 12 12 0 0 0 12 -12 v 0 a 12 12 0 0 1 12 -12 h 428 m -211 0 l -5 -5 m 0 10 l 5 -5 m 211 0 a 12 12 0 0 1 12 12 v 0 a 12 12 0 0 0 12 12 h -24"/>
+                        d=" M 607 819 h 12 m 240 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -223 m 114 0 l 5 -5 m 0 10 l -5 -5 m -114 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
+                    <text class="comment" x="850" y="855">
+                        *
+                    </text>
                     <g class="sequence">
+                        <g class="character">
+                            <rect height="22" rx="10" ry="10" width="76" x="619" y="808"/>
+                            <text x="657" y="824">
+                                IGNORED
+                            </text>
+                        </g>
+                        <g class="character">
+                            <rect height="22" rx="10" ry="10" width="76" x="705" y="808"/>
+                            <text x="743" y="824">
+                                IGNORED
+                            </text>
+                        </g>
                         <a class="link" xlink:href="#Suffix">
                             <g class="symbol">
-                                <rect height="22" width="68" x="843" y="847"/>
-                                <text x="877" y="863">
+                                <rect height="22" width="68" x="791" y="808"/>
+                                <text x="825" y="824">
                                     Suffix
                                 </text>
                             </g>
                         </a>
-                        <g class="character">
-                            <rect height="22" rx="10" ry="10" width="76" x="921" y="847"/>
-                            <text x="959" y="863">
-                                IGNORED
-                            </text>
-                        </g>
-                        <g class="repeat">
-                            <path
-                                d=" M 1007 858 h 12 m 240 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -223 m 114 0 l 5 -5 m 0 10 l -5 -5 m -114 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
-                            <text class="comment" x="1250" y="894">
-                                *
-                            </text>
-                            <g class="sequence">
-                                <g class="character">
-                                    <rect height="22" rx="10" ry="10" width="76" x="1019" y="847"/>
-                                    <text x="1057" y="863">
-                                        IGNORED
-                                    </text>
-                                </g>
-                                <g class="character">
-                                    <rect height="22" rx="10" ry="10" width="76" x="1105" y="847"/>
-                                    <text x="1143" y="863">
-                                        IGNORED
-                                    </text>
-                                </g>
-                                <a class="link" xlink:href="#Suffix">
-                                    <g class="symbol">
-                                        <rect height="22" width="68" x="1191" y="847"/>
-                                        <text x="1225" y="863">
-                                            Suffix
-                                        </text>
-                                    </g>
-                                </a>
-                                <path d=" M 1095 858 h 10"/>
-                                <path d=" M 1181 858 h 10"/>
-                            </g>
-                        </g>
-                        <path d=" M 911 858 h 10"/>
-                        <path d=" M 997 858 h 10"/>
+                        <path d=" M 695 819 h 10"/>
+                        <path d=" M 781 819 h 10"/>
                     </g>
                 </g>
-                <path d=" M 559 858 h 10"/>
-                <path d=" M 645 858 h 10"/>
-                <path d=" M 723 858 h 10"/>
-                <path d=" M 809 858 h 10"/>
+                <path d=" M 347 819 h 10"/>
+                <path d=" M 433 819 h 10"/>
+                <path d=" M 511 819 h 10"/>
+                <path d=" M 597 819 h 10"/>
             </g>
-            <path d=" M 1305 858 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 858 h 10"/>
-            <path d=" M 73 858 h 10"/>
-            <path d=" M 1295 858 h 10"/>
+            <path d=" M 881 819 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 819 h 10"/>
+            <path d=" M 73 819 h 10"/>
+            <path d=" M 871 819 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 922 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Infix" x="57" y="927">
+            <path d=" M 10 883 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Infix" x="57" y="888">
                 Infix
             </text>
             <g class="choice">
-                <path d=" M 90 922 h 24 m 200 0 h 24"/>
+                <path d=" M 90 883 h 24 m 200 0 h 24"/>
                 <g class="sequence">
                     <g class="character">
-                        <rect height="22" rx="10" ry="10" width="76" x="114" y="911"/>
-                        <text x="152" y="927">
+                        <rect height="22" rx="10" ry="10" width="76" x="114" y="872"/>
+                        <text x="152" y="888">
                             IGNORED
                         </text>
                     </g>
                     <g class="string">
-                        <rect height="22" rx="10" ry="10" width="28" x="200" y="911"/>
-                        <text x="214" y="927">
+                        <rect height="22" rx="10" ry="10" width="28" x="200" y="872"/>
+                        <text x="214" y="888">
                             :
                         </text>
                     </g>
                     <g class="character">
-                        <rect height="22" rx="10" ry="10" width="76" x="238" y="911"/>
-                        <text x="276" y="927">
+                        <rect height="22" rx="10" ry="10" width="76" x="238" y="872"/>
+                        <text x="276" y="888">
                             IGNORED
                         </text>
                     </g>
-                    <path d=" M 190 922 h 10"/>
-                    <path d=" M 228 922 h 10"/>
+                    <path d=" M 190 883 h 10"/>
+                    <path d=" M 228 883 h 10"/>
                 </g>
-                <path d=" M 90 922 a 12 12 0 0 1 12 12 v 9 m 224 0 v -9 a 12 12 0 0 1 12 -12"/>
-                <path d=" M 102 943 v 33 m 224 0 v -33"/>
+                <path d=" M 90 883 a 12 12 0 0 1 12 12 v 9 m 224 0 v -9 a 12 12 0 0 1 12 -12"/>
+                <path d=" M 102 904 v 33 m 224 0 v -33"/>
                 <path
-                    d=" M 102 943 v 0 a 12 12 0 0 0 12 12 m 76 0 h 124 m -59 0 l -5 -5 m 0 10 l 5 -5 m 59 0 a 12 12 0 0 0 12 -12 v 0"/>
+                    d=" M 102 904 v 0 a 12 12 0 0 0 12 12 m 76 0 h 124 m -59 0 l -5 -5 m 0 10 l 5 -5 m 59 0 a 12 12 0 0 0 12 -12 v 0"/>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="114" y="944"/>
-                    <text x="152" y="960">
+                    <rect height="22" rx="10" ry="10" width="76" x="114" y="905"/>
+                    <text x="152" y="921">
                         IGNORED
                     </text>
                 </g>
-                <path d=" M 102 976 v 0 a 12 12 0 0 0 12 12 m 200 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
+                <path d=" M 102 937 v 0 a 12 12 0 0 0 12 12 m 200 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
                 <g class="sequence">
                     <g class="character">
-                        <rect height="22" rx="10" ry="10" width="76" x="114" y="977"/>
-                        <text x="152" y="993">
+                        <rect height="22" rx="10" ry="10" width="76" x="114" y="938"/>
+                        <text x="152" y="954">
                             IGNORED
                         </text>
                     </g>
                     <g class="string">
-                        <rect height="22" rx="10" ry="10" width="28" x="200" y="977"/>
-                        <text x="214" y="993">
+                        <rect height="22" rx="10" ry="10" width="28" x="200" y="938"/>
+                        <text x="214" y="954">
                             ~
                         </text>
                     </g>
                     <g class="character">
-                        <rect height="22" rx="10" ry="10" width="76" x="238" y="977"/>
-                        <text x="276" y="993">
+                        <rect height="22" rx="10" ry="10" width="76" x="238" y="938"/>
+                        <text x="276" y="954">
                             IGNORED
                         </text>
                     </g>
-                    <path d=" M 190 988 h 10"/>
-                    <path d=" M 228 988 h 10"/>
+                    <path d=" M 190 949 h 10"/>
+                    <path d=" M 228 949 h 10"/>
                 </g>
             </g>
-            <path d=" M 348 922 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 922 h 10"/>
-            <path d=" M 80 922 h 10"/>
-            <path d=" M 338 922 h 10"/>
+            <path d=" M 348 883 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 883 h 10"/>
+            <path d=" M 80 883 h 10"/>
+            <path d=" M 338 883 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 1022 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Prefix" x="61" y="1027">
+            <path d=" M 10 983 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Prefix" x="61" y="988">
                 Prefix
             </text>
             <g class="choice">
-                <path d=" M 97 1022 h 24 m 28 0 h 24"/>
+                <path d=" M 97 983 h 24 m 28 0 h 24"/>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="121" y="1011"/>
-                    <text x="135" y="1027">
+                    <rect height="22" rx="10" ry="10" width="28" x="121" y="972"/>
+                    <text x="135" y="988">
                         !
                     </text>
                 </g>
-                <path d=" M 97 1022 a 12 12 0 0 1 12 12 v 9 m 52 0 v -9 a 12 12 0 0 1 12 -12"/>
-                <path d=" M 109 1043 v 33 m 52 0 v -33"/>
-                <path d=" M 109 1043 v 0 a 12 12 0 0 0 12 12 m 28 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
+                <path d=" M 97 983 a 12 12 0 0 1 12 12 v 9 m 52 0 v -9 a 12 12 0 0 1 12 -12"/>
+                <path d=" M 109 1004 v 33 m 52 0 v -33"/>
+                <path d=" M 109 1004 v 0 a 12 12 0 0 0 12 12 m 28 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="121" y="1044"/>
-                    <text x="135" y="1060">
+                    <rect height="22" rx="10" ry="10" width="28" x="121" y="1005"/>
+                    <text x="135" y="1021">
                         &amp;
                     </text>
                 </g>
-                <path d=" M 109 1076 v 0 a 12 12 0 0 0 12 12 m 28 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
+                <path d=" M 109 1037 v 0 a 12 12 0 0 0 12 12 m 28 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="121" y="1077"/>
-                    <text x="135" y="1093">
+                    <rect height="22" rx="10" ry="10" width="28" x="121" y="1038"/>
+                    <text x="135" y="1054">
                         ^
                     </text>
                 </g>
             </g>
-            <path d=" M 183 1022 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 1022 h 10"/>
-            <path d=" M 87 1022 h 10"/>
-            <path d=" M 173 1022 h 10"/>
+            <path d=" M 183 983 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 983 h 10"/>
+            <path d=" M 87 983 h 10"/>
+            <path d=" M 173 983 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 1122 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Suffix" x="61" y="1127">
+            <path d=" M 10 1083 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Suffix" x="61" y="1088">
                 Suffix
             </text>
             <g class="choice">
-                <path d=" M 97 1122 h 24 m 28 0 h 24"/>
+                <path d=" M 97 1083 h 24 m 28 0 h 24"/>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="121" y="1111"/>
-                    <text x="135" y="1127">
+                    <rect height="22" rx="10" ry="10" width="28" x="121" y="1072"/>
+                    <text x="135" y="1088">
                         ?
                     </text>
                 </g>
-                <path d=" M 97 1122 a 12 12 0 0 1 12 12 v 9 m 52 0 v -9 a 12 12 0 0 1 12 -12"/>
-                <path d=" M 109 1143 v 33 m 52 0 v -33"/>
-                <path d=" M 109 1143 v 0 a 12 12 0 0 0 12 12 m 28 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
+                <path d=" M 97 1083 a 12 12 0 0 1 12 12 v 9 m 52 0 v -9 a 12 12 0 0 1 12 -12"/>
+                <path d=" M 109 1104 v 33 m 52 0 v -33"/>
+                <path d=" M 109 1104 v 0 a 12 12 0 0 0 12 12 m 28 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="121" y="1144"/>
-                    <text x="135" y="1160">
+                    <rect height="22" rx="10" ry="10" width="28" x="121" y="1105"/>
+                    <text x="135" y="1121">
                         *
                     </text>
                 </g>
-                <path d=" M 109 1176 v 0 a 12 12 0 0 0 12 12 m 28 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
+                <path d=" M 109 1137 v 0 a 12 12 0 0 0 12 12 m 28 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="121" y="1177"/>
-                    <text x="135" y="1193">
+                    <rect height="22" rx="10" ry="10" width="28" x="121" y="1138"/>
+                    <text x="135" y="1154">
                         +
                     </text>
                 </g>
             </g>
-            <path d=" M 183 1122 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 1122 h 10"/>
-            <path d=" M 87 1122 h 10"/>
-            <path d=" M 173 1122 h 10"/>
+            <path d=" M 183 1083 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 1083 h 10"/>
+            <path d=" M 87 1083 h 10"/>
+            <path d=" M 173 1083 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 1222 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Atomic" x="61" y="1227">
+            <path d=" M 10 1183 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Atomic" x="61" y="1188">
                 Atomic
             </text>
             <g class="choice">
-                <path d=" M 97 1222 h 24 m 348 0 h 24"/>
+                <path d=" M 97 1183 h 24 m 348 0 h 24"/>
                 <g class="sequence">
                     <g class="string">
-                        <rect height="22" rx="10" ry="10" width="28" x="121" y="1211"/>
-                        <text x="135" y="1227">
+                        <rect height="22" rx="10" ry="10" width="28" x="121" y="1172"/>
+                        <text x="135" y="1188">
                             (
                         </text>
                     </g>
                     <g class="character">
-                        <rect height="22" rx="10" ry="10" width="76" x="159" y="1211"/>
-                        <text x="197" y="1227">
+                        <rect height="22" rx="10" ry="10" width="76" x="159" y="1172"/>
+                        <text x="197" y="1188">
                             IGNORED
                         </text>
                     </g>
                     <a class="link" xlink:href="#Expression">
                         <g class="symbol">
-                            <rect height="22" width="100" x="245" y="1211"/>
-                            <text x="295" y="1227">
+                            <rect height="22" width="100" x="245" y="1172"/>
+                            <text x="295" y="1188">
                                 Expression
                             </text>
                         </g>
                     </a>
                     <g class="character">
-                        <rect height="22" rx="10" ry="10" width="76" x="355" y="1211"/>
-                        <text x="393" y="1227">
+                        <rect height="22" rx="10" ry="10" width="76" x="355" y="1172"/>
+                        <text x="393" y="1188">
                             IGNORED
                         </text>
                     </g>
                     <g class="string">
-                        <rect height="22" rx="10" ry="10" width="28" x="441" y="1211"/>
-                        <text x="455" y="1227">
+                        <rect height="22" rx="10" ry="10" width="28" x="441" y="1172"/>
+                        <text x="455" y="1188">
                             )
                         </text>
                     </g>
-                    <path d=" M 149 1222 h 10"/>
-                    <path d=" M 235 1222 h 10"/>
-                    <path d=" M 345 1222 h 10"/>
-                    <path d=" M 431 1222 h 10"/>
+                    <path d=" M 149 1183 h 10"/>
+                    <path d=" M 235 1183 h 10"/>
+                    <path d=" M 345 1183 h 10"/>
+                    <path d=" M 431 1183 h 10"/>
                 </g>
-                <path d=" M 97 1222 a 12 12 0 0 1 12 12 v 9 m 372 0 v -9 a 12 12 0 0 1 12 -12"/>
-                <path d=" M 109 1243 v 33 m 372 0 v -33"/>
-                <path d=" M 109 1276 v 33 m 372 0 v -33"/>
-                <path d=" M 109 1309 v 33 m 372 0 v -33"/>
+                <path d=" M 97 1183 a 12 12 0 0 1 12 12 v 9 m 372 0 v -9 a 12 12 0 0 1 12 -12"/>
+                <path d=" M 109 1204 v 33 m 372 0 v -33"/>
+                <path d=" M 109 1237 v 33 m 372 0 v -33"/>
+                <path d=" M 109 1270 v 33 m 372 0 v -33"/>
                 <path
-                    d=" M 109 1243 v 0 a 12 12 0 0 0 12 12 m 100 0 h 248 m -121 0 l -5 -5 m 0 10 l 5 -5 m 121 0 a 12 12 0 0 0 12 -12 v 0"/>
+                    d=" M 109 1204 v 0 a 12 12 0 0 0 12 12 m 100 0 h 248 m -121 0 l -5 -5 m 0 10 l 5 -5 m 121 0 a 12 12 0 0 0 12 -12 v 0"/>
                 <a class="link" xlink:href="#Identifier">
                     <g class="symbol">
-                        <rect height="22" width="100" x="121" y="1244"/>
-                        <text x="171" y="1260">
+                        <rect height="22" width="100" x="121" y="1205"/>
+                        <text x="171" y="1221">
                             Identifier
                         </text>
                     </g>
                 </a>
                 <path
-                    d=" M 109 1276 v 0 a 12 12 0 0 0 12 12 m 76 0 h 272 m -133 0 l -5 -5 m 0 10 l 5 -5 m 133 0 a 12 12 0 0 0 12 -12 v 0"/>
+                    d=" M 109 1237 v 0 a 12 12 0 0 0 12 12 m 76 0 h 272 m -133 0 l -5 -5 m 0 10 l 5 -5 m 133 0 a 12 12 0 0 0 12 -12 v 0"/>
                 <a class="link" xlink:href="#Boolean">
                     <g class="symbol">
-                        <rect height="22" width="76" x="121" y="1277"/>
-                        <text x="159" y="1293">
+                        <rect height="22" width="76" x="121" y="1238"/>
+                        <text x="159" y="1254">
                             Boolean
                         </text>
                     </g>
                 </a>
                 <path
-                    d=" M 109 1309 v 0 a 12 12 0 0 0 12 12 m 68 0 h 280 m -137 0 l -5 -5 m 0 10 l 5 -5 m 137 0 a 12 12 0 0 0 12 -12 v 0"/>
+                    d=" M 109 1270 v 0 a 12 12 0 0 0 12 12 m 68 0 h 280 m -137 0 l -5 -5 m 0 10 l 5 -5 m 137 0 a 12 12 0 0 0 12 -12 v 0"/>
                 <a class="link" xlink:href="#String">
                     <g class="symbol">
-                        <rect height="22" width="68" x="121" y="1310"/>
-                        <text x="155" y="1326">
+                        <rect height="22" width="68" x="121" y="1271"/>
+                        <text x="155" y="1287">
                             String
                         </text>
                     </g>
                 </a>
                 <path
-                    d=" M 109 1342 v 0 a 12 12 0 0 0 12 12 m 60 0 h 288 m -141 0 l -5 -5 m 0 10 l 5 -5 m 141 0 a 12 12 0 0 0 12 -12 v 0"/>
+                    d=" M 109 1303 v 0 a 12 12 0 0 0 12 12 m 60 0 h 288 m -141 0 l -5 -5 m 0 10 l 5 -5 m 141 0 a 12 12 0 0 0 12 -12 v 0"/>
                 <a class="link" xlink:href="#Regex">
                     <g class="symbol">
-                        <rect height="22" width="60" x="121" y="1343"/>
-                        <text x="151" y="1359">
+                        <rect height="22" width="60" x="121" y="1304"/>
+                        <text x="151" y="1320">
                             Regex
                         </text>
                     </g>
                 </a>
             </g>
-            <path d=" M 503 1222 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 1222 h 10"/>
-            <path d=" M 87 1222 h 10"/>
-            <path d=" M 493 1222 h 10"/>
+            <path d=" M 503 1183 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 1183 h 10"/>
+            <path d=" M 87 1183 h 10"/>
+            <path d=" M 493 1183 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 1388 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="String" x="61" y="1393">
+            <path d=" M 10 1349 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="String" x="61" y="1354">
                 String
             </text>
             <g class="choice">
-                <path d=" M 97 1388 h 24 m 182 0 h 24"/>
+                <path d=" M 97 1349 h 24 m 182 0 h 24"/>
                 <g class="sequence">
                     <g class="string">
-                        <rect height="22" rx="10" ry="10" width="28" x="121" y="1377"/>
-                        <text x="135" y="1393">
+                        <rect height="22" rx="10" ry="10" width="28" x="121" y="1338"/>
+                        <text x="135" y="1354">
                             &#x27;
                         </text>
                     </g>
                     <g class="repeat">
                         <path
-                            d=" M 159 1388 h 12 m 82 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -65 m 35 0 l 5 -5 m 0 10 l -5 -5 m -35 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
-                        <text class="comment" x="244" y="1424">
+                            d=" M 159 1349 h 12 m 82 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -65 m 35 0 l 5 -5 m 0 10 l -5 -5 m -35 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
+                        <text class="comment" x="244" y="1385">
                             *
                         </text>
                         <g class="sequence">
                             <g class="string">
-                                <rect height="22" rx="10" ry="10" width="28" x="171" y="1377"/>
-                                <text x="185" y="1393">
+                                <rect height="22" rx="10" ry="10" width="28" x="171" y="1338"/>
+                                <text x="185" y="1354">
                                     &#x27;
                                 </text>
                             </g>
                             <g class="character">
-                                <rect height="22" rx="10" ry="10" width="44" x="209" y="1377"/>
-                                <text x="231" y="1393">
+                                <rect height="22" rx="10" ry="10" width="44" x="209" y="1338"/>
+                                <text x="231" y="1354">
                                     ANY
                                 </text>
                             </g>
-                            <path d=" M 199 1388 h 10"/>
+                            <path d=" M 199 1349 h 10"/>
                         </g>
                     </g>
                     <g class="string">
-                        <rect height="22" rx="10" ry="10" width="28" x="275" y="1377"/>
-                        <text x="289" y="1393">
+                        <rect height="22" rx="10" ry="10" width="28" x="275" y="1338"/>
+                        <text x="289" y="1354">
                             &#x27;
                         </text>
                     </g>
-                    <path d=" M 149 1388 h 10"/>
-                    <path d=" M 265 1388 h 10"/>
+                    <path d=" M 149 1349 h 10"/>
+                    <path d=" M 265 1349 h 10"/>
                 </g>
-                <path d=" M 97 1388 a 12 12 0 0 1 12 12 v 39 m 206 0 v -39 a 12 12 0 0 1 12 -12"/>
-                <path d=" M 109 1439 v 0 a 12 12 0 0 0 12 12 m 182 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
+                <path d=" M 97 1349 a 12 12 0 0 1 12 12 v 39 m 206 0 v -39 a 12 12 0 0 1 12 -12"/>
+                <path d=" M 109 1400 v 0 a 12 12 0 0 0 12 12 m 182 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
                 <g class="sequence">
                     <g class="string">
-                        <rect height="22" rx="10" ry="10" width="28" x="121" y="1440"/>
-                        <text x="135" y="1456">
+                        <rect height="22" rx="10" ry="10" width="28" x="121" y="1401"/>
+                        <text x="135" y="1417">
                             &quot;
                         </text>
                     </g>
                     <g class="repeat">
                         <path
-                            d=" M 159 1451 h 12 m 82 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -65 m 35 0 l 5 -5 m 0 10 l -5 -5 m -35 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
-                        <text class="comment" x="244" y="1487">
+                            d=" M 159 1412 h 12 m 82 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -65 m 35 0 l 5 -5 m 0 10 l -5 -5 m -35 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
+                        <text class="comment" x="244" y="1448">
                             *
                         </text>
                         <g class="sequence">
                             <g class="string">
-                                <rect height="22" rx="10" ry="10" width="28" x="171" y="1440"/>
-                                <text x="185" y="1456">
+                                <rect height="22" rx="10" ry="10" width="28" x="171" y="1401"/>
+                                <text x="185" y="1417">
                                     &quot;
                                 </text>
                             </g>
                             <g class="character">
-                                <rect height="22" rx="10" ry="10" width="44" x="209" y="1440"/>
-                                <text x="231" y="1456">
+                                <rect height="22" rx="10" ry="10" width="44" x="209" y="1401"/>
+                                <text x="231" y="1417">
                                     ANY
                                 </text>
                             </g>
-                            <path d=" M 199 1451 h 10"/>
+                            <path d=" M 199 1412 h 10"/>
                         </g>
                     </g>
                     <g class="string">
-                        <rect height="22" rx="10" ry="10" width="28" x="275" y="1440"/>
-                        <text x="289" y="1456">
+                        <rect height="22" rx="10" ry="10" width="28" x="275" y="1401"/>
+                        <text x="289" y="1417">
                             &quot;
                         </text>
                     </g>
-                    <path d=" M 149 1451 h 10"/>
-                    <path d=" M 265 1451 h 10"/>
+                    <path d=" M 149 1412 h 10"/>
+                    <path d=" M 265 1412 h 10"/>
                 </g>
             </g>
-            <path d=" M 337 1388 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 1388 h 10"/>
-            <path d=" M 87 1388 h 10"/>
-            <path d=" M 327 1388 h 10"/>
+            <path d=" M 337 1349 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 1349 h 10"/>
+            <path d=" M 87 1349 h 10"/>
+            <path d=" M 327 1349 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 1515 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Regex" x="57" y="1520">
+            <path d=" M 10 1476 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Regex" x="57" y="1481">
                 Regex
             </text>
             <g class="sequence">
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="90" y="1504"/>
-                    <text x="104" y="1520">
+                    <rect height="22" rx="10" ry="10" width="28" x="90" y="1465"/>
+                    <text x="104" y="1481">
                         /
                     </text>
                 </g>
                 <g class="repeat">
                     <path
-                        d=" M 128 1515 h 12 m 82 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -65 m 35 0 l 5 -5 m 0 10 l -5 -5 m -35 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
-                    <text class="comment" x="213" y="1551">
+                        d=" M 128 1476 h 12 m 82 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -65 m 35 0 l 5 -5 m 0 10 l -5 -5 m -35 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
+                    <text class="comment" x="213" y="1512">
                         *
                     </text>
                     <g class="sequence">
                         <g class="string">
-                            <rect height="22" rx="10" ry="10" width="28" x="140" y="1504"/>
-                            <text x="154" y="1520">
+                            <rect height="22" rx="10" ry="10" width="28" x="140" y="1465"/>
+                            <text x="154" y="1481">
                                 /
                             </text>
                         </g>
                         <g class="character">
-                            <rect height="22" rx="10" ry="10" width="44" x="178" y="1504"/>
-                            <text x="200" y="1520">
+                            <rect height="22" rx="10" ry="10" width="44" x="178" y="1465"/>
+                            <text x="200" y="1481">
                                 ANY
                             </text>
                         </g>
-                        <path d=" M 168 1515 h 10"/>
+                        <path d=" M 168 1476 h 10"/>
                     </g>
                 </g>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="244" y="1504"/>
-                    <text x="258" y="1520">
+                    <rect height="22" rx="10" ry="10" width="28" x="244" y="1465"/>
+                    <text x="258" y="1481">
                         /
                     </text>
                 </g>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="282" y="1504"/>
-                    <text x="296" y="1520">
+                    <rect height="22" rx="10" ry="10" width="28" x="282" y="1465"/>
+                    <text x="296" y="1481">
                         [
                     </text>
                 </g>
                 <g class="repeat">
                     <path
-                        d=" M 320 1515 h 12 m 82 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -65 m 35 0 l 5 -5 m 0 10 l -5 -5 m -35 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
-                    <text class="comment" x="405" y="1551">
+                        d=" M 320 1476 h 12 m 82 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -65 m 35 0 l 5 -5 m 0 10 l -5 -5 m -35 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
+                    <text class="comment" x="405" y="1512">
                         *
                     </text>
                     <g class="sequence">
                         <g class="string">
-                            <rect height="22" rx="10" ry="10" width="28" x="332" y="1504"/>
-                            <text x="346" y="1520">
+                            <rect height="22" rx="10" ry="10" width="28" x="332" y="1465"/>
+                            <text x="346" y="1481">
                                 ]
                             </text>
                         </g>
                         <g class="character">
-                            <rect height="22" rx="10" ry="10" width="44" x="370" y="1504"/>
-                            <text x="392" y="1520">
+                            <rect height="22" rx="10" ry="10" width="44" x="370" y="1465"/>
+                            <text x="392" y="1481">
                                 ANY
                             </text>
                         </g>
-                        <path d=" M 360 1515 h 10"/>
+                        <path d=" M 360 1476 h 10"/>
                     </g>
                 </g>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="28" x="436" y="1504"/>
-                    <text x="450" y="1520">
+                    <rect height="22" rx="10" ry="10" width="28" x="436" y="1465"/>
+                    <text x="450" y="1481">
                         ]
                     </text>
                 </g>
-                <path d=" M 118 1515 h 10"/>
-                <path d=" M 234 1515 h 10"/>
-                <path d=" M 272 1515 h 10"/>
-                <path d=" M 310 1515 h 10"/>
-                <path d=" M 426 1515 h 10"/>
+                <path d=" M 118 1476 h 10"/>
+                <path d=" M 234 1476 h 10"/>
+                <path d=" M 272 1476 h 10"/>
+                <path d=" M 310 1476 h 10"/>
+                <path d=" M 426 1476 h 10"/>
             </g>
-            <path d=" M 474 1515 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 1515 h 10"/>
-            <path d=" M 80 1515 h 10"/>
-            <path d=" M 464 1515 h 10"/>
+            <path d=" M 474 1476 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 1476 h 10"/>
+            <path d=" M 80 1476 h 10"/>
+            <path d=" M 464 1476 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 1579 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="NamepathFree" x="82" y="1584">
+            <path d=" M 10 1540 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="NamepathFree" x="82" y="1545">
                 NamepathFree
             </text>
             <g class="sequence">
                 <a class="link" xlink:href="#Identifier">
                     <g class="symbol">
-                        <rect height="22" width="100" x="139" y="1568"/>
-                        <text x="189" y="1584">
+                        <rect height="22" width="100" x="139" y="1529"/>
+                        <text x="189" y="1545">
                             Identifier
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="249" y="1568"/>
-                    <text x="287" y="1584">
+                    <rect height="22" rx="10" ry="10" width="76" x="249" y="1529"/>
+                    <text x="287" y="1545">
                         IGNORED
                     </text>
                 </g>
                 <g class="repeat">
                     <path
-                        d=" M 335 1579 h 12 m 280 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 40 a 12 12 0 0 1 -12 12 m -17 0 h -263 m 134 0 l 5 -5 m 0 10 l -5 -5 m -134 0 a 12 12 0 0 1 -12 -12 v -40 a 12 12 0 0 1 12 -12"/>
-                    <text class="comment" x="618" y="1648">
+                        d=" M 335 1540 h 12 m 280 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 40 a 12 12 0 0 1 -12 12 m -17 0 h -263 m 134 0 l 5 -5 m 0 10 l -5 -5 m -134 0 a 12 12 0 0 1 -12 -12 v -40 a 12 12 0 0 1 12 -12"/>
+                    <text class="comment" x="618" y="1609">
                         *
                     </text>
                     <g class="sequence">
                         <g class="choice">
-                            <path d=" M 347 1579 h 24 m 28 0 h 32"/>
+                            <path d=" M 347 1540 h 24 m 28 0 h 32"/>
                             <g class="string">
-                                <rect height="22" rx="10" ry="10" width="28" x="371" y="1568"/>
-                                <text x="385" y="1584">
+                                <rect height="22" rx="10" ry="10" width="28" x="371" y="1529"/>
+                                <text x="385" y="1545">
                                     .
                                 </text>
                             </g>
-                            <path d=" M 347 1579 a 12 12 0 0 1 12 12 v 9 m 60 0 v -9 a 12 12 0 0 1 12 -12"/>
-                            <path d=" M 359 1600 v 0 a 12 12 0 0 0 12 12 m 36 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
+                            <path d=" M 347 1540 a 12 12 0 0 1 12 12 v 9 m 60 0 v -9 a 12 12 0 0 1 12 -12"/>
+                            <path d=" M 359 1561 v 0 a 12 12 0 0 0 12 12 m 36 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
                             <g class="string">
-                                <rect height="22" rx="10" ry="10" width="36" x="371" y="1601"/>
-                                <text x="389" y="1617">
+                                <rect height="22" rx="10" ry="10" width="36" x="371" y="1562"/>
+                                <text x="389" y="1578">
                                     ::
                                 </text>
                             </g>
                         </g>
                         <g class="character">
-                            <rect height="22" rx="10" ry="10" width="76" x="441" y="1568"/>
-                            <text x="479" y="1584">
+                            <rect height="22" rx="10" ry="10" width="76" x="441" y="1529"/>
+                            <text x="479" y="1545">
                                 IGNORED
                             </text>
                         </g>
                         <a class="link" xlink:href="#Identifier">
                             <g class="symbol">
-                                <rect height="22" width="100" x="527" y="1568"/>
-                                <text x="577" y="1584">
+                                <rect height="22" width="100" x="527" y="1529"/>
+                                <text x="577" y="1545">
                                     Identifier
                                 </text>
                             </g>
                         </a>
-                        <path d=" M 431 1579 h 10"/>
-                        <path d=" M 517 1579 h 10"/>
+                        <path d=" M 431 1540 h 10"/>
+                        <path d=" M 517 1540 h 10"/>
                     </g>
                 </g>
-                <path d=" M 239 1579 h 10"/>
-                <path d=" M 325 1579 h 10"/>
+                <path d=" M 239 1540 h 10"/>
+                <path d=" M 325 1540 h 10"/>
             </g>
-            <path d=" M 649 1579 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 1579 h 10"/>
-            <path d=" M 129 1579 h 10"/>
-            <path d=" M 639 1579 h 10"/>
+            <path d=" M 649 1540 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 1540 h 10"/>
+            <path d=" M 129 1540 h 10"/>
+            <path d=" M 639 1540 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 1676 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Namepath" x="68" y="1681">
+            <path d=" M 10 1637 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Namepath" x="68" y="1642">
                 Namepath
             </text>
             <g class="sequence">
                 <a class="link" xlink:href="#Identifier">
                     <g class="symbol">
-                        <rect height="22" width="100" x="111" y="1665"/>
-                        <text x="161" y="1681">
+                        <rect height="22" width="100" x="111" y="1626"/>
+                        <text x="161" y="1642">
                             Identifier
                         </text>
                     </g>
                 </a>
                 <g class="character">
-                    <rect height="22" rx="10" ry="10" width="76" x="221" y="1665"/>
-                    <text x="259" y="1681">
+                    <rect height="22" rx="10" ry="10" width="76" x="221" y="1626"/>
+                    <text x="259" y="1642">
                         IGNORED
                     </text>
                 </g>
                 <g class="repeat">
                     <path
-                        d=" M 307 1676 h 12 m 232 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -215 m 110 0 l 5 -5 m 0 10 l -5 -5 m -110 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
-                    <text class="comment" x="542" y="1712">
+                        d=" M 307 1637 h 12 m 232 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -17 0 h -215 m 110 0 l 5 -5 m 0 10 l -5 -5 m -110 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
+                    <text class="comment" x="542" y="1673">
                         *
                     </text>
                     <g class="sequence">
                         <g class="string">
-                            <rect height="22" rx="10" ry="10" width="36" x="319" y="1665"/>
-                            <text x="337" y="1681">
+                            <rect height="22" rx="10" ry="10" width="36" x="319" y="1626"/>
+                            <text x="337" y="1642">
                                 ::
                             </text>
                         </g>
                         <g class="character">
-                            <rect height="22" rx="10" ry="10" width="76" x="365" y="1665"/>
-                            <text x="403" y="1681">
+                            <rect height="22" rx="10" ry="10" width="76" x="365" y="1626"/>
+                            <text x="403" y="1642">
                                 IGNORED
                             </text>
                         </g>
                         <a class="link" xlink:href="#Identifier">
                             <g class="symbol">
-                                <rect height="22" width="100" x="451" y="1665"/>
-                                <text x="501" y="1681">
+                                <rect height="22" width="100" x="451" y="1626"/>
+                                <text x="501" y="1642">
                                     Identifier
                                 </text>
                             </g>
                         </a>
-                        <path d=" M 355 1676 h 10"/>
-                        <path d=" M 441 1676 h 10"/>
+                        <path d=" M 355 1637 h 10"/>
+                        <path d=" M 441 1637 h 10"/>
                     </g>
                 </g>
-                <path d=" M 211 1676 h 10"/>
-                <path d=" M 297 1676 h 10"/>
+                <path d=" M 211 1637 h 10"/>
+                <path d=" M 297 1637 h 10"/>
             </g>
-            <path d=" M 573 1676 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 1676 h 10"/>
-            <path d=" M 101 1676 h 10"/>
-            <path d=" M 563 1676 h 10"/>
+            <path d=" M 573 1637 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 1637 h 10"/>
+            <path d=" M 101 1637 h 10"/>
+            <path d=" M 563 1637 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 1740 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Identifier" x="75" y="1745">
+            <path d=" M 10 1701 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Identifier" x="75" y="1706">
                 Identifier
             </text>
             <g class="string">
-                <rect height="22" rx="10" ry="10" width="292" x="125" y="1729"/>
-                <text x="271" y="1745">
+                <rect height="22" rx="10" ry="10" width="292" x="125" y="1690"/>
+                <text x="271" y="1706">
                     [_\p{XID_start}]\p{XID_continue}*
                 </text>
             </g>
-            <path d=" M 427 1740 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 1740 h 10"/>
-            <path d=" M 115 1740 h 10"/>
-            <path d=" M 417 1740 h 10"/>
+            <path d=" M 427 1701 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 1701 h 10"/>
+            <path d=" M 115 1701 h 10"/>
+            <path d=" M 417 1701 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 1774 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Boolean" x="64" y="1779">
+            <path d=" M 10 1735 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Boolean" x="64" y="1740">
                 Boolean
             </text>
             <g class="choice">
-                <path d=" M 104 1774 h 24 m 52 0 h 32"/>
+                <path d=" M 104 1735 h 24 m 52 0 h 32"/>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="52" x="128" y="1763"/>
-                    <text x="154" y="1779">
+                    <rect height="22" rx="10" ry="10" width="52" x="128" y="1724"/>
+                    <text x="154" y="1740">
                         true
                     </text>
                 </g>
-                <path d=" M 104 1774 a 12 12 0 0 1 12 12 v 9 m 84 0 v -9 a 12 12 0 0 1 12 -12"/>
-                <path d=" M 116 1795 v 0 a 12 12 0 0 0 12 12 m 60 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
+                <path d=" M 104 1735 a 12 12 0 0 1 12 12 v 9 m 84 0 v -9 a 12 12 0 0 1 12 -12"/>
+                <path d=" M 116 1756 v 0 a 12 12 0 0 0 12 12 m 60 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
                 <g class="string">
-                    <rect height="22" rx="10" ry="10" width="60" x="128" y="1796"/>
-                    <text x="158" y="1812">
+                    <rect height="22" rx="10" ry="10" width="60" x="128" y="1757"/>
+                    <text x="158" y="1773">
                         false
                     </text>
                 </g>
             </g>
-            <path d=" M 222 1774 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 1774 h 10"/>
-            <path d=" M 94 1774 h 10"/>
-            <path d=" M 212 1774 h 10"/>
+            <path d=" M 222 1735 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 1735 h 10"/>
+            <path d=" M 94 1735 h 10"/>
+            <path d=" M 212 1735 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 1854 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Modifiers" x="71" y="1859">
+            <path d=" M 10 1802 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Modifiers" x="71" y="1807">
                 Modifiers
             </text>
-            <g class="optional">
+            <g class="repeat">
                 <path
-                    d=" M 118 1854 h 24 m -24 0 a 12 12 0 0 0 12 -12 v 0 a 12 12 0 0 1 12 -12 h 604 m -299 0 l -5 -5 m 0 10 l 5 -5 m 299 0 a 12 12 0 0 1 12 12 v 0 a 12 12 0 0 0 12 12 h -24"/>
+                    d=" M 118 1802 h 12 m 328 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 139 m 0 -66 l -5 -5 m 10 0 l -5 5 m 0 66 a 12 12 0 0 1 -12 12 m -17 0 h -311 m 158 0 l 5 -5 m 0 10 l -5 -5 m -158 0 a 12 12 0 0 1 -12 -12 v -139 m 0 72 l -5 5 m 10 0 l -5 -5 m 0 -72 a 12 12 0 0 1 12 -12"/>
+                <text class="comment" x="449" y="1970">
+                    *
+                </text>
                 <g class="sequence">
+                    <g class="character">
+                        <rect height="22" rx="10" ry="10" width="76" x="130" y="1791"/>
+                        <text x="168" y="1807">
+                            IGNORED
+                        </text>
+                    </g>
                     <g class="choice">
-                        <path d=" M 142 1854 h 24 m 84 0 h 24"/>
+                        <path d=" M 216 1802 h 24 m 84 0 h 24"/>
                         <a class="link" xlink:href="#KW_CLASS">
                             <g class="symbol">
-                                <rect height="22" width="84" x="166" y="1843"/>
-                                <text x="208" y="1859">
+                                <rect height="22" width="84" x="240" y="1791"/>
+                                <text x="282" y="1807">
                                     KW_CLASS
                                 </text>
                             </g>
                         </a>
-                        <path d=" M 142 1854 a 12 12 0 0 1 12 12 v 9 m 108 0 v -9 a 12 12 0 0 1 12 -12"/>
-                        <path d=" M 154 1875 v 33 m 108 0 v -33"/>
-                        <path d=" M 154 1908 v 33 m 108 0 v -33"/>
-                        <path d=" M 154 1941 v 33 m 108 0 v -33"/>
-                        <path d=" M 154 1875 v 0 a 12 12 0 0 0 12 12 m 84 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
+                        <path d=" M 216 1802 a 12 12 0 0 1 12 12 v 9 m 108 0 v -9 a 12 12 0 0 1 12 -12"/>
+                        <path d=" M 228 1823 v 33 m 108 0 v -33"/>
+                        <path d=" M 228 1856 v 33 m 108 0 v -33"/>
+                        <path d=" M 228 1889 v 33 m 108 0 v -33"/>
+                        <path d=" M 228 1823 v 0 a 12 12 0 0 0 12 12 m 84 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
                         <a class="link" xlink:href="#KW_UNION">
                             <g class="symbol">
-                                <rect height="22" width="84" x="166" y="1876"/>
-                                <text x="208" y="1892">
+                                <rect height="22" width="84" x="240" y="1824"/>
+                                <text x="282" y="1840">
                                     KW_UNION
                                 </text>
                             </g>
                         </a>
-                        <path d=" M 154 1908 v 0 a 12 12 0 0 0 12 12 m 84 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
+                        <path d=" M 228 1856 v 0 a 12 12 0 0 0 12 12 m 84 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
                         <a class="link" xlink:href="#KW_GROUP">
                             <g class="symbol">
-                                <rect height="22" width="84" x="166" y="1909"/>
-                                <text x="208" y="1925">
+                                <rect height="22" width="84" x="240" y="1857"/>
+                                <text x="282" y="1873">
                                     KW_GROUP
                                 </text>
                             </g>
                         </a>
-                        <path d=" M 154 1941 v 0 a 12 12 0 0 0 12 12 m 84 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
+                        <path d=" M 228 1889 v 0 a 12 12 0 0 0 12 12 m 84 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
                         <a class="link" xlink:href="#KW_MACRO">
                             <g class="symbol">
-                                <rect height="22" width="84" x="166" y="1942"/>
-                                <text x="208" y="1958">
+                                <rect height="22" width="84" x="240" y="1890"/>
+                                <text x="282" y="1906">
                                     KW_MACRO
                                 </text>
                             </g>
                         </a>
-                        <path d=" M 154 1974 v 0 a 12 12 0 0 0 12 12 m 84 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
+                        <path d=" M 228 1922 v 0 a 12 12 0 0 0 12 12 m 84 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
                         <a class="link" xlink:href="#KW_CLIMB">
                             <g class="symbol">
-                                <rect height="22" width="84" x="166" y="1975"/>
-                                <text x="208" y="1991">
+                                <rect height="22" width="84" x="240" y="1923"/>
+                                <text x="282" y="1939">
                                     KW_CLIMB
                                 </text>
                             </g>
@@ -1601,269 +1529,193 @@
                     </g>
                     <a class="link" xlink:href="#Identifier">
                         <g class="symbol">
-                            <rect height="22" width="100" x="284" y="1843"/>
-                            <text x="334" y="1859">
+                            <rect height="22" width="100" x="358" y="1791"/>
+                            <text x="408" y="1807">
                                 Identifier
                             </text>
                         </g>
                     </a>
-                    <g class="repeat">
-                        <path
-                            d=" M 394 1854 h 12 m 328 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 139 m 0 -66 l -5 -5 m 10 0 l -5 5 m 0 66 a 12 12 0 0 1 -12 12 m -17 0 h -311 m 158 0 l 5 -5 m 0 10 l -5 -5 m -158 0 a 12 12 0 0 1 -12 -12 v -139 m 0 72 l -5 5 m 10 0 l -5 -5 m 0 -72 a 12 12 0 0 1 12 -12"/>
-                        <text class="comment" x="725" y="2022">
-                            *
-                        </text>
-                        <g class="sequence">
-                            <g class="character">
-                                <rect height="22" rx="10" ry="10" width="76" x="406" y="1843"/>
-                                <text x="444" y="1859">
-                                    IGNORED
-                                </text>
-                            </g>
-                            <g class="choice">
-                                <path d=" M 492 1854 h 24 m 84 0 h 24"/>
-                                <a class="link" xlink:href="#KW_CLASS">
-                                    <g class="symbol">
-                                        <rect height="22" width="84" x="516" y="1843"/>
-                                        <text x="558" y="1859">
-                                            KW_CLASS
-                                        </text>
-                                    </g>
-                                </a>
-                                <path d=" M 492 1854 a 12 12 0 0 1 12 12 v 9 m 108 0 v -9 a 12 12 0 0 1 12 -12"/>
-                                <path d=" M 504 1875 v 33 m 108 0 v -33"/>
-                                <path d=" M 504 1908 v 33 m 108 0 v -33"/>
-                                <path d=" M 504 1941 v 33 m 108 0 v -33"/>
-                                <path d=" M 504 1875 v 0 a 12 12 0 0 0 12 12 m 84 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
-                                <a class="link" xlink:href="#KW_UNION">
-                                    <g class="symbol">
-                                        <rect height="22" width="84" x="516" y="1876"/>
-                                        <text x="558" y="1892">
-                                            KW_UNION
-                                        </text>
-                                    </g>
-                                </a>
-                                <path d=" M 504 1908 v 0 a 12 12 0 0 0 12 12 m 84 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
-                                <a class="link" xlink:href="#KW_GROUP">
-                                    <g class="symbol">
-                                        <rect height="22" width="84" x="516" y="1909"/>
-                                        <text x="558" y="1925">
-                                            KW_GROUP
-                                        </text>
-                                    </g>
-                                </a>
-                                <path d=" M 504 1941 v 0 a 12 12 0 0 0 12 12 m 84 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
-                                <a class="link" xlink:href="#KW_MACRO">
-                                    <g class="symbol">
-                                        <rect height="22" width="84" x="516" y="1942"/>
-                                        <text x="558" y="1958">
-                                            KW_MACRO
-                                        </text>
-                                    </g>
-                                </a>
-                                <path d=" M 504 1974 v 0 a 12 12 0 0 0 12 12 m 84 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
-                                <a class="link" xlink:href="#KW_CLIMB">
-                                    <g class="symbol">
-                                        <rect height="22" width="84" x="516" y="1975"/>
-                                        <text x="558" y="1991">
-                                            KW_CLIMB
-                                        </text>
-                                    </g>
-                                </a>
-                            </g>
-                            <a class="link" xlink:href="#Identifier">
-                                <g class="symbol">
-                                    <rect height="22" width="100" x="634" y="1843"/>
-                                    <text x="684" y="1859">
-                                        Identifier
-                                    </text>
-                                </g>
-                            </a>
-                            <path d=" M 482 1854 h 10"/>
-                            <path d=" M 624 1854 h 10"/>
-                        </g>
-                    </g>
-                    <path d=" M 274 1854 h 10"/>
-                    <path d=" M 384 1854 h 10"/>
+                    <path d=" M 206 1802 h 10"/>
+                    <path d=" M 348 1802 h 10"/>
                 </g>
             </g>
-            <path d=" M 780 1854 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 1854 h 10"/>
-            <path d=" M 108 1854 h 10"/>
-            <path d=" M 770 1854 h 10"/>
+            <path d=" M 480 1802 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 1802 h 10"/>
+            <path d=" M 108 1802 h 10"/>
+            <path d=" M 470 1802 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 2050 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="KW_GRAMMAR" x="75" y="2055">
+            <path d=" M 10 1998 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="KW_GRAMMAR" x="75" y="2003">
                 KW_GRAMMAR
             </text>
             <g class="string">
-                <rect height="22" rx="10" ry="10" width="76" x="125" y="2039"/>
-                <text x="163" y="2055">
+                <rect height="22" rx="10" ry="10" width="76" x="125" y="1987"/>
+                <text x="163" y="2003">
                     grammar
                 </text>
             </g>
-            <path d=" M 211 2050 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 2050 h 10"/>
-            <path d=" M 115 2050 h 10"/>
-            <path d=" M 201 2050 h 10"/>
+            <path d=" M 211 1998 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 1998 h 10"/>
+            <path d=" M 115 1998 h 10"/>
+            <path d=" M 201 1998 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 2084 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="KW_IMPORT" x="71" y="2089">
+            <path d=" M 10 2032 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="KW_IMPORT" x="71" y="2037">
                 KW_IMPORT
             </text>
             <g class="string">
-                <rect height="22" rx="10" ry="10" width="148" x="118" y="2073"/>
-                <text x="192" y="2089">
+                <rect height="22" rx="10" ry="10" width="148" x="118" y="2021"/>
+                <text x="192" y="2037">
                     using|import|use
                 </text>
             </g>
-            <path d=" M 276 2084 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 2084 h 10"/>
-            <path d=" M 108 2084 h 10"/>
-            <path d=" M 266 2084 h 10"/>
+            <path d=" M 276 2032 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 2032 h 10"/>
+            <path d=" M 108 2032 h 10"/>
+            <path d=" M 266 2032 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 2118 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="KW_CLASS" x="68" y="2123">
+            <path d=" M 10 2066 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="KW_CLASS" x="68" y="2071">
                 KW_CLASS
             </text>
             <g class="string">
-                <rect height="22" rx="10" ry="10" width="116" x="111" y="2107"/>
-                <text x="169" y="2123">
+                <rect height="22" rx="10" ry="10" width="116" x="111" y="2055"/>
+                <text x="169" y="2071">
                     class|struct
                 </text>
             </g>
-            <path d=" M 237 2118 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 2118 h 10"/>
-            <path d=" M 101 2118 h 10"/>
-            <path d=" M 227 2118 h 10"/>
+            <path d=" M 237 2066 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 2066 h 10"/>
+            <path d=" M 101 2066 h 10"/>
+            <path d=" M 227 2066 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 2152 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="KW_UNION" x="68" y="2157">
+            <path d=" M 10 2100 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="KW_UNION" x="68" y="2105">
                 KW_UNION
             </text>
             <g class="string">
-                <rect height="22" rx="10" ry="10" width="100" x="111" y="2141"/>
-                <text x="161" y="2157">
+                <rect height="22" rx="10" ry="10" width="100" x="111" y="2089"/>
+                <text x="161" y="2105">
                     union|enum
                 </text>
             </g>
-            <path d=" M 221 2152 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 2152 h 10"/>
-            <path d=" M 101 2152 h 10"/>
-            <path d=" M 211 2152 h 10"/>
+            <path d=" M 221 2100 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 2100 h 10"/>
+            <path d=" M 101 2100 h 10"/>
+            <path d=" M 211 2100 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 2186 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="KW_GROUP" x="68" y="2191">
+            <path d=" M 10 2134 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="KW_GROUP" x="68" y="2139">
                 KW_GROUP
             </text>
             <g class="string">
-                <rect height="22" rx="10" ry="10" width="108" x="111" y="2175"/>
-                <text x="165" y="2191">
+                <rect height="22" rx="10" ry="10" width="108" x="111" y="2123"/>
+                <text x="165" y="2139">
                     group|token
                 </text>
             </g>
-            <path d=" M 229 2186 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 2186 h 10"/>
-            <path d=" M 101 2186 h 10"/>
-            <path d=" M 219 2186 h 10"/>
+            <path d=" M 229 2134 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 2134 h 10"/>
+            <path d=" M 101 2134 h 10"/>
+            <path d=" M 219 2134 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 2220 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="KW_CLIMB" x="68" y="2225">
+            <path d=" M 10 2168 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="KW_CLIMB" x="68" y="2173">
                 KW_CLIMB
             </text>
             <g class="string">
-                <rect height="22" rx="10" ry="10" width="60" x="111" y="2209"/>
-                <text x="141" y="2225">
+                <rect height="22" rx="10" ry="10" width="60" x="111" y="2157"/>
+                <text x="141" y="2173">
                     climb
                 </text>
             </g>
-            <path d=" M 181 2220 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 2220 h 10"/>
-            <path d=" M 101 2220 h 10"/>
-            <path d=" M 171 2220 h 10"/>
+            <path d=" M 181 2168 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 2168 h 10"/>
+            <path d=" M 101 2168 h 10"/>
+            <path d=" M 171 2168 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 2254 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="KW_MACRO" x="68" y="2259">
+            <path d=" M 10 2202 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="KW_MACRO" x="68" y="2207">
                 KW_MACRO
             </text>
             <g class="string">
-                <rect height="22" rx="10" ry="10" width="268" x="111" y="2243"/>
-                <text x="245" y="2259">
+                <rect height="22" rx="10" ry="10" width="268" x="111" y="2191"/>
+                <text x="245" y="2207">
                     macro|def|function|func|fun|fn
                 </text>
             </g>
-            <path d=" M 389 2254 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 2254 h 10"/>
-            <path d=" M 101 2254 h 10"/>
-            <path d=" M 379 2254 h 10"/>
+            <path d=" M 389 2202 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 2202 h 10"/>
+            <path d=" M 101 2202 h 10"/>
+            <path d=" M 379 2202 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 2288 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="WhiteSpace" x="75" y="2293">
+            <path d=" M 10 2236 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="WhiteSpace" x="75" y="2241">
                 WhiteSpace
             </text>
             <g class="string">
-                <rect height="22" rx="10" ry="10" width="148" x="125" y="2277"/>
-                <text x="199" y="2293">
+                <rect height="22" rx="10" ry="10" width="148" x="125" y="2225"/>
+                <text x="199" y="2241">
                     \p{White_Space}+
                 </text>
             </g>
-            <path d=" M 283 2288 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 2288 h 10"/>
-            <path d=" M 115 2288 h 10"/>
-            <path d=" M 273 2288 h 10"/>
+            <path d=" M 283 2236 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 2236 h 10"/>
+            <path d=" M 115 2236 h 10"/>
+            <path d=" M 273 2236 h 10"/>
         </g>
         <g class="sequence">
-            <path d=" M 10 2322 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-            <text class="comment" id="Comment" x="64" y="2327">
+            <path d=" M 10 2270 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+            <text class="comment" id="Comment" x="64" y="2275">
                 Comment
             </text>
             <g class="choice">
-                <path d=" M 104 2322 h 24 m 130 0 h 24"/>
+                <path d=" M 104 2270 h 24 m 130 0 h 24"/>
                 <g class="sequence">
                     <g class="string">
-                        <rect height="22" rx="10" ry="10" width="36" x="128" y="2311"/>
-                        <text x="146" y="2327">
+                        <rect height="22" rx="10" ry="10" width="36" x="128" y="2259"/>
+                        <text x="146" y="2275">
                             //
                         </text>
                     </g>
                     <g class="string">
-                        <rect height="22" rx="10" ry="10" width="84" x="174" y="2311"/>
-                        <text x="216" y="2327">
+                        <rect height="22" rx="10" ry="10" width="84" x="174" y="2259"/>
+                        <text x="216" y="2275">
                             [^\n\r]*
                         </text>
                     </g>
-                    <path d=" M 164 2322 h 10"/>
+                    <path d=" M 164 2270 h 10"/>
                 </g>
-                <path d=" M 104 2322 a 12 12 0 0 1 12 12 v 9 m 154 0 v -9 a 12 12 0 0 1 12 -12"/>
-                <path d=" M 116 2343 v 0 a 12 12 0 0 0 12 12 m 122 0 h 8 a 12 12 0 0 0 12 -12 v 0"/>
+                <path d=" M 104 2270 a 12 12 0 0 1 12 12 v 9 m 154 0 v -9 a 12 12 0 0 1 12 -12"/>
+                <path d=" M 116 2291 v 0 a 12 12 0 0 0 12 12 m 122 0 h 8 a 12 12 0 0 0 12 -12 v 0"/>
                 <g class="sequence">
                     <g class="string">
-                        <rect height="22" rx="10" ry="10" width="28" x="128" y="2344"/>
-                        <text x="142" y="2360">
+                        <rect height="22" rx="10" ry="10" width="28" x="128" y="2292"/>
+                        <text x="142" y="2308">
                             #
                         </text>
                     </g>
                     <g class="string">
-                        <rect height="22" rx="10" ry="10" width="84" x="166" y="2344"/>
-                        <text x="208" y="2360">
+                        <rect height="22" rx="10" ry="10" width="84" x="166" y="2292"/>
+                        <text x="208" y="2308">
                             [^\n\r]*
                         </text>
                     </g>
-                    <path d=" M 156 2355 h 10"/>
+                    <path d=" M 156 2303 h 10"/>
                 </g>
             </g>
-            <path d=" M 292 2322 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-            <path d=" M 25 2322 h 10"/>
-            <path d=" M 94 2322 h 10"/>
-            <path d=" M 282 2322 h 10"/>
+            <path d=" M 292 2270 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+            <path d=" M 25 2270 h 10"/>
+            <path d=" M 94 2270 h 10"/>
+            <path d=" M 282 2270 h 10"/>
         </g>
     </g>
 </svg>

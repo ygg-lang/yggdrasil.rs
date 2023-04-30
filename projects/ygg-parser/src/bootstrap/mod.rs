@@ -122,7 +122,7 @@ impl YggdrasilRule for BootstrapRule {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RootNode {
-    pub statement: Vec<StatementNode>,
+    pub statement: StatementNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -170,7 +170,7 @@ pub struct UnionStatementsNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnionBlockNode {
-    pub union_branch: Vec<UnionBranchNode>,
+    pub union_branch: UnionBranchNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -224,8 +224,8 @@ pub struct ExpressionNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct TermNode {
     pub atomic: AtomicNode,
-    pub prefix: Vec<PrefixNode>,
-    pub suffix: Vec<SuffixNode>,
+    pub prefix: PrefixNode,
+    pub suffix: SuffixNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -295,12 +295,12 @@ pub enum BooleanNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ModifiersNode {
-    pub identifier: Vec<IdentifierNode>,
-    pub kw_class: Vec<KwClassNode>,
-    pub kw_climb: Vec<KwClimbNode>,
-    pub kw_group: Vec<KwGroupNode>,
-    pub kw_macro: Vec<KwMacroNode>,
-    pub kw_union: Vec<KwUnionNode>,
+    pub identifier: IdentifierNode,
+    pub kw_class: KwClassNode,
+    pub kw_climb: KwClimbNode,
+    pub kw_group: KwGroupNode,
+    pub kw_macro: KwMacroNode,
+    pub kw_union: KwUnionNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]

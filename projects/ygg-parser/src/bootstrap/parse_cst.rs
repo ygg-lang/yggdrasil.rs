@@ -45,17 +45,9 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
 #[inline]
 fn parse_root(state: Input) -> Output {
     state.rule(BootstrapRule::Root, |s| {
-        s.optional(|s| {
+        s.repeat(0..4294967295, |s| {
             s.sequence(|s| {
-                Ok(s).and_then(|s| parse_statement(s).and_then(|s| s.tag_node("statement"))).and_then(|s| {
-                    s.repeat(0..4294967295, |s| {
-                        s.sequence(|s| {
-                            Ok(s)
-                                .and_then(|s| builtin_ignore(s))
-                                .and_then(|s| parse_statement(s).and_then(|s| s.tag_node("statement")))
-                        })
-                    })
-                })
+                Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| parse_statement(s).and_then(|s| s.tag_node("statement")))
             })
         })
     })
@@ -145,21 +137,12 @@ fn parse_union_block(state: Input) -> Output {
                 .and_then(|s| builtin_text(s, "{", false))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| {
-                    s.optional(|s| {
+                    s.repeat(0..4294967295, |s| {
                         s.sequence(|s| {
                             Ok(s)
-                                .and_then(|s| parse_union_branch(s).and_then(|s| s.tag_node("union_branch")))
                                 .and_then(|s| builtin_ignore(s))
-                                .and_then(|s| {
-                                    s.repeat(0..4294967295, |s| {
-                                        s.sequence(|s| {
-                                            Ok(s)
-                                                .and_then(|s| builtin_ignore(s))
-                                                .and_then(|s| builtin_ignore(s))
-                                                .and_then(|s| parse_union_branch(s).and_then(|s| s.tag_node("union_branch")))
-                                        })
-                                    })
-                                })
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_union_branch(s).and_then(|s| s.tag_node("union_branch")))
                         })
                     })
                 })
@@ -259,21 +242,12 @@ fn parse_term(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| {
-                    s.optional(|s| {
+                    s.repeat(0..4294967295, |s| {
                         s.sequence(|s| {
                             Ok(s)
-                                .and_then(|s| parse_prefix(s).and_then(|s| s.tag_node("prefix")))
                                 .and_then(|s| builtin_ignore(s))
-                                .and_then(|s| {
-                                    s.repeat(0..4294967295, |s| {
-                                        s.sequence(|s| {
-                                            Ok(s)
-                                                .and_then(|s| builtin_ignore(s))
-                                                .and_then(|s| builtin_ignore(s))
-                                                .and_then(|s| parse_prefix(s).and_then(|s| s.tag_node("prefix")))
-                                        })
-                                    })
-                                })
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_prefix(s).and_then(|s| s.tag_node("prefix")))
                         })
                     })
                 })
@@ -281,21 +255,12 @@ fn parse_term(state: Input) -> Output {
                 .and_then(|s| parse_atomic(s).and_then(|s| s.tag_node("atomic")))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| {
-                    s.optional(|s| {
+                    s.repeat(0..4294967295, |s| {
                         s.sequence(|s| {
                             Ok(s)
-                                .and_then(|s| parse_suffix(s).and_then(|s| s.tag_node("suffix")))
                                 .and_then(|s| builtin_ignore(s))
-                                .and_then(|s| {
-                                    s.repeat(0..4294967295, |s| {
-                                        s.sequence(|s| {
-                                            Ok(s)
-                                                .and_then(|s| builtin_ignore(s))
-                                                .and_then(|s| builtin_ignore(s))
-                                                .and_then(|s| parse_suffix(s).and_then(|s| s.tag_node("suffix")))
-                                        })
-                                    })
-                                })
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_suffix(s).and_then(|s| s.tag_node("suffix")))
                         })
                     })
                 })
@@ -494,9 +459,10 @@ fn parse_boolean(state: Input) -> Output {
 #[inline]
 fn parse_modifiers(state: Input) -> Output {
     state.rule(BootstrapRule::Modifiers, |s| {
-        s.optional(|s| {
+        s.repeat(0..4294967295, |s| {
             s.sequence(|s| {
                 Ok(s)
+                    .and_then(|s| builtin_ignore(s))
                     .and_then(|s| {
                         s.lookahead(false, |s| {
                             Err(s)
@@ -508,25 +474,6 @@ fn parse_modifiers(state: Input) -> Output {
                         })
                     })
                     .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
-                    .and_then(|s| {
-                        s.repeat(0..4294967295, |s| {
-                            s.sequence(|s| {
-                                Ok(s)
-                                    .and_then(|s| builtin_ignore(s))
-                                    .and_then(|s| {
-                                        s.lookahead(false, |s| {
-                                            Err(s)
-                                                .or_else(|s| parse_kw_class(s).and_then(|s| s.tag_node("kw_class")))
-                                                .or_else(|s| parse_kw_union(s).and_then(|s| s.tag_node("kw_union")))
-                                                .or_else(|s| parse_kw_group(s).and_then(|s| s.tag_node("kw_group")))
-                                                .or_else(|s| parse_kw_macro(s).and_then(|s| s.tag_node("kw_macro")))
-                                                .or_else(|s| parse_kw_climb(s).and_then(|s| s.tag_node("kw_climb")))
-                                        })
-                                    })
-                                    .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
-                            })
-                        })
-                    })
             })
         })
     })
