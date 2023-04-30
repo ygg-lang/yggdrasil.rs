@@ -2,8 +2,8 @@ grammar Bootstrap {
 
 }
 
-entry class Root {
-    Statement*
+atomic entry class Root {
+    Statement (IGNORED Statement)*
 }
 
 union Statement {
@@ -21,24 +21,31 @@ class GrammarBlock {
 }
 // === class === -----------------------------------------------------------------------------------------------------
 class ClassStatements {
-    ^KW_CLASS Identifier ClassBlock
+    Modifiers ^KW_CLASS Identifier ClassBlock
 }
 class ClassBlock {
     '{' Expression* '}'
 }
 // === union === -----------------------------------------------------------------------------------------------------
 class UnionStatements {
-    ^KW_UNION Identifier
+    Modifiers ^KW_UNION Identifier UnionBlock
 }
 class UnionBlock {
-    '{' UnionBranch* '}'
+    '{' UnionBranch (IGNORED UnionBranch)* '}'
 }
 class UnionBranch {
-    Expression
+    '|' Expression BranchTag?
+}
+@style(field)
+atomic class BranchTag {
+    '#' Identifier RightAssociativity?
+}
+class RightAssociativity {
+    '>'
 }
 // === group === -------------------------------------------------------------------------------------------------------
 class GroupStatements {
-    ^KW_GROUP Identifier? GroupBlock
+    Modifiers ^KW_GROUP Identifier? GroupBlock
 }
 class GroupBlock {
     '{' GroupPair* '}'
@@ -96,18 +103,25 @@ union Boolean {
     | 'false' #False
 }
 // === keywords === ----------------------------------------------------------------------------------------------------
+atomic class Modifiers {
+    !(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) Identifier (IGNORED !(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) Identifier)*
+}
 @style(keyword)
 token {
+    KW_GRAMMAR: /grammar/
+    KW_IMPORT: /using|import|use/
     KW_CLASS: /class|struct/
     KW_UNION: /union|enum/
     KW_GROUP: /group|token/
+    KW_CLIMB: /climb/
+    KW_MACRO: /macro|def|function|func|fun|fn/
 }
 // === ignores === -----------------------------------------------------------------------------------------------------
 ignore class WhiteSpace {
     /\p{White_Space}+/
 }
 @style(comment)
-ignore union Comment {
-    | /\/\/[^\n\r]*/
-    | /#[^\n\r]*/
+atomic ignore union Comment {
+    | '//' /[^\n\r]*/
+    | '#'  /[^\n\r]*/
 }

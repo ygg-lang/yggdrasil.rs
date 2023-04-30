@@ -64,9 +64,8 @@ impl NodeExt for YggdrasilExpression {
             ExpressionBody::Unary(v) => {
                 for o in &v.operators {
                     match o {
-                        YggdrasilOperator::Negative => {
-                            todo!()
-                        }
+                        YggdrasilOperator::Positive => w.push_str("s.lookahead(true, |s|"),
+                        YggdrasilOperator::Negative => w.push_str("s.lookahead(false, |s|"),
                         YggdrasilOperator::Optional => w.push_str("s.optional(|s|"),
                         YggdrasilOperator::Repeats => write!(w, "s.repeat({}..{}, |s|", 0, u32::MAX)?,
                         YggdrasilOperator::Repeat1 => write!(w, "s.repeat({}..{}, |s|", 1, u32::MAX)?,

@@ -193,6 +193,7 @@ impl YggdrasilOperator {
     }
     pub fn counter(&self) -> FieldCounter {
         match self {
+            YggdrasilOperator::Positive => FieldCounter::ONE,
             YggdrasilOperator::Negative => FieldCounter::NEVER,
             YggdrasilOperator::Optional => FieldCounter::OPTIONAL,
             YggdrasilOperator::Repeats => FieldCounter::MANY,

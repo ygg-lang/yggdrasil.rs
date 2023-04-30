@@ -1,9 +1,10 @@
 [package]
 name = "yggdrasil-shared"
-version = "0.2.3"
+version = "0.2.5"
 authors = ["Aster <192607617@qq.com>"]
-description = "AWSL Window Structure Language"
+description = "Yggdrasil Compiler core shared components"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
+documentation = "https://docs.rs/yggdrasil-shared"
 readme = "Readme.md"
 license = "MPL-2.0"
 edition = "2021"

@@ -4,6 +4,10 @@ use super::*;
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum YggdrasilOperator {
     /// ```ygg
+    /// &e
+    /// ```
+    Positive,
+    /// ```ygg
     /// !e
     /// ```
     Negative,

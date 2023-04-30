@@ -1,3 +1,5 @@
+#![feature(lazy_cell)]
+
 pub(crate) mod antlr;
 
 mod ast;

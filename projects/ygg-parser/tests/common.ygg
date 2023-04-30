@@ -8,25 +8,6 @@ using std;
 // add value to structure
 // #attach(a: true)
 
-
-entry class Program {
-    Statement*
-}
-
-union Statement {
-    | ClassStatement #Class
-    | UnionStatement #Union
-    | MacroStatement #Macro
-}
-// =================================================================================================
-class GrammarStatement {
-    Identifier
-}
-class KW_GRAMMAR {
-    "grammar"
-}
-
-
 // =================================================================================================
 // import
 // =================================================================================================
@@ -122,36 +103,14 @@ atomic class Decimal {
     Integer '.' Integer
 }
 // =================================================================================================
-class Modifiers {
-    (!(KW_CLASS | KW_UNION | KW_MACRO | KW_CLIMB) Identifier)*
-}
+
 class Namepath {
     Identifier (("::" | ".") Identifier)*
 }
+
 #string
 atomic class Identifier {
     ("_" | XID_START) XID_CONTINUE*
-}
-#string
-class Boolean {
-    "true" | "false"
-}
-class AnyThing {
-    "any"
-}
-// =================================================================================================
-atomic token keywords {
-    KW_GRAMMAR: "grammar"
-    KW_IMPORT: "import" | "using"
-    KW_CLASS: "class" | "struct" | "rule"
-    KW_UNION: "union" | "enum"
-    KW_CLIMB: "climb"
-    KW_MACRO: "define" | "def" | "function" | "fun" | "fn" | "macro"
-}
-// =================================================================================================
-#ignored
-class WhiteSpace {
-    UNICODE_WHITESPACE
 }
 
 #ignored

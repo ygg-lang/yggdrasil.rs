@@ -140,6 +140,7 @@ impl AsRailroad for UnaryExpression {
                 YggdrasilOperator::Boxing => continue,
                 YggdrasilOperator::Recursive => continue,
                 YggdrasilOperator::Negative => continue,
+                YggdrasilOperator::Positive => continue,
             }
         }
         return base;

@@ -39,6 +39,8 @@ pub enum BootstrapRule {
     UnionStatements,
     UnionBlock,
     UnionBranch,
+    BranchTag,
+    RightAssociativity,
     GroupStatements,
     GroupBlock,
     GroupPair,
@@ -54,9 +56,14 @@ pub enum BootstrapRule {
     Namepath,
     Identifier,
     Boolean,
+    Modifiers,
+    KW_GRAMMAR,
+    KW_IMPORT,
     KW_CLASS,
     KW_UNION,
     KW_GROUP,
+    KW_CLIMB,
+    KW_MACRO,
     WhiteSpace,
     Comment,
     /// Label for text literal
@@ -81,6 +88,8 @@ impl YggdrasilRule for BootstrapRule {
             Self::UnionStatements => "",
             Self::UnionBlock => "",
             Self::UnionBranch => "",
+            Self::BranchTag => "",
+            Self::RightAssociativity => "",
             Self::GroupStatements => "",
             Self::GroupBlock => "",
             Self::GroupPair => "",
@@ -96,9 +105,14 @@ impl YggdrasilRule for BootstrapRule {
             Self::Namepath => "",
             Self::Identifier => "",
             Self::Boolean => "",
+            Self::Modifiers => "",
+            Self::KW_GRAMMAR => "",
+            Self::KW_IMPORT => "",
             Self::KW_CLASS => "",
             Self::KW_UNION => "",
             Self::KW_GROUP => "",
+            Self::KW_CLIMB => "",
+            Self::KW_MACRO => "",
             Self::WhiteSpace => "",
             Self::Comment => "",
             _ => "",
@@ -119,7 +133,6 @@ pub enum StatementNode {
     GroupStatements(GroupStatementsNode),
     UnionStatements(UnionStatementsNode),
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GrammarStatementsNode {
@@ -127,7 +140,6 @@ pub struct GrammarStatementsNode {
     pub identifier: IdentifierNode,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GrammarBlockNode {
@@ -138,6 +150,7 @@ pub struct GrammarBlockNode {
 pub struct ClassStatementsNode {
     pub class_block: ClassBlockNode,
     pub identifier: IdentifierNode,
+    pub modifiers: ModifiersNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -150,6 +163,8 @@ pub struct ClassBlockNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnionStatementsNode {
     pub identifier: IdentifierNode,
+    pub modifiers: ModifiersNode,
+    pub union_block: UnionBlockNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -161,7 +176,22 @@ pub struct UnionBlockNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnionBranchNode {
+    pub branch_tag: Option<BranchTagNode>,
     pub expression: ExpressionNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct BranchTagNode {
+    pub identifier: IdentifierNode,
+    pub right_associativity: Option<RightAssociativityNode>,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct RightAssociativityNode {
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -169,16 +199,15 @@ pub struct UnionBranchNode {
 pub struct GroupStatementsNode {
     pub group_block: GroupBlockNode,
     pub identifier: Option<IdentifierNode>,
+    pub modifiers: ModifiersNode,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GroupBlockNode {
     pub group_pair: Vec<GroupPairNode>,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GroupPairNode {
@@ -227,14 +256,12 @@ pub enum AtomicNode {
     Boolean(BooleanNode),
     Identifier(IdentifierNode),
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StringNode {
     String0,
     String1,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RegexNode {
@@ -263,6 +290,30 @@ pub enum BooleanNode {
     Boolean0,
     Boolean1,
 }
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct ModifiersNode {
+    pub identifier: Vec<IdentifierNode>,
+    pub kw_class: Vec<KwClassNode>,
+    pub kw_climb: Vec<KwClimbNode>,
+    pub kw_group: Vec<KwGroupNode>,
+    pub kw_macro: Vec<KwMacroNode>,
+    pub kw_union: Vec<KwUnionNode>,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct KwGrammarNode {
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct KwImportNode {
+    pub span: Range<u32>,
+}
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct KwClassNode {
@@ -278,6 +329,18 @@ pub struct KwUnionNode {
 pub struct KwGroupNode {
     pub span: Range<u32>,
 }
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct KwClimbNode {
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct KwMacroNode {
+    pub span: Range<u32>,
+}
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct WhiteSpaceNode {
@@ -287,4 +350,5 @@ pub struct WhiteSpaceNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum CommentNode {
     Comment0,
+    Comment1,
 }
