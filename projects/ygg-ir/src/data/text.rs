@@ -1,6 +1,7 @@
 use super::*;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct YggdrasilText {
     pub text: String,
     pub insensitive: bool,

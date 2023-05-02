@@ -3,8 +3,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![doc = include_str!("readme.md")]
 
-mod parse_cst;
 mod parse_ast;
+mod parse_cst;
 
 use core::str::FromStr;
 use std::{borrow::Cow, ops::Range, sync::OnceLock};
@@ -32,18 +32,24 @@ impl YggdrasilParser for BootstrapParser {
 pub enum BootstrapRule {
     Root,
     Statement,
-    GrammarStatements,
+    GrammarStatement,
     GrammarBlock,
-    ClassStatements,
+    ClassStatement,
     ClassBlock,
-    UnionStatements,
+    UnionStatement,
     UnionBlock,
     UnionBranch,
     BranchTag,
     RightAssociativity,
-    GroupStatements,
+    GroupStatement,
     GroupBlock,
     GroupPair,
+    Annotation,
+    AnnotationCall,
+    AnnotationName,
+    FunctionCall,
+    FunctionName,
+    CallBody,
     Expression,
     Term,
     Infix,
@@ -51,12 +57,14 @@ pub enum BootstrapRule {
     Suffix,
     Atomic,
     String,
-    Regex,
+    RegexEmbed,
+    RegexRange,
+    RegexNegative,
     NamepathFree,
     Namepath,
     Identifier,
     Boolean,
-    Modifiers,
+    ModifierCall,
     KW_GRAMMAR,
     KW_IMPORT,
     KW_CLASS,
@@ -81,18 +89,24 @@ impl YggdrasilRule for BootstrapRule {
         match self {
             Self::Root => "",
             Self::Statement => "",
-            Self::GrammarStatements => "",
+            Self::GrammarStatement => "",
             Self::GrammarBlock => "",
-            Self::ClassStatements => "",
+            Self::ClassStatement => "",
             Self::ClassBlock => "",
-            Self::UnionStatements => "",
+            Self::UnionStatement => "",
             Self::UnionBlock => "",
             Self::UnionBranch => "",
             Self::BranchTag => "",
             Self::RightAssociativity => "",
-            Self::GroupStatements => "",
+            Self::GroupStatement => "",
             Self::GroupBlock => "",
             Self::GroupPair => "",
+            Self::Annotation => "",
+            Self::AnnotationCall => "",
+            Self::AnnotationName => "",
+            Self::FunctionCall => "",
+            Self::FunctionName => "",
+            Self::CallBody => "",
             Self::Expression => "",
             Self::Term => "",
             Self::Infix => "",
@@ -100,12 +114,14 @@ impl YggdrasilRule for BootstrapRule {
             Self::Suffix => "",
             Self::Atomic => "",
             Self::String => "",
-            Self::Regex => "",
+            Self::RegexEmbed => "",
+            Self::RegexRange => "",
+            Self::RegexNegative => "",
             Self::NamepathFree => "",
             Self::Namepath => "",
             Self::Identifier => "",
             Self::Boolean => "",
-            Self::Modifiers => "",
+            Self::ModifierCall => "",
             Self::KW_GRAMMAR => "",
             Self::KW_IMPORT => "",
             Self::KW_CLASS => "",
@@ -128,14 +144,14 @@ pub struct RootNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StatementNode {
-    ClassStatements(ClassStatementsNode),
-    GrammarStatements(GrammarStatementsNode),
-    GroupStatements(GroupStatementsNode),
-    UnionStatements(UnionStatementsNode),
+    ClassStatement(ClassStatementNode),
+    GrammarStatement(GrammarStatementNode),
+    GroupStatement(GroupStatementNode),
+    UnionStatement(UnionStatementNode),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct GrammarStatementsNode {
+pub struct GrammarStatementNode {
     pub grammar_block: GrammarBlockNode,
     pub identifier: IdentifierNode,
     pub span: Range<u32>,
@@ -147,10 +163,11 @@ pub struct GrammarBlockNode {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct ClassStatementsNode {
+pub struct ClassStatementNode {
+    pub annotation: AnnotationNode,
     pub class_block: ClassBlockNode,
-    pub identifier: IdentifierNode,
-    pub modifiers: ModifiersNode,
+    pub cast: IdentifierNode,
+    pub name: IdentifierNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -161,10 +178,10 @@ pub struct ClassBlockNode {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct UnionStatementsNode {
-    pub identifier: IdentifierNode,
-    pub modifiers: ModifiersNode,
+pub struct UnionStatementNode {
+    pub annotation: AnnotationNode,
     pub union_block: UnionBlockNode,
+    pub name: IdentifierNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -194,10 +211,10 @@ pub struct RightAssociativityNode {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct GroupStatementsNode {
+pub struct GroupStatementNode {
+    pub annotation: AnnotationNode,
     pub group_block: GroupBlockNode,
     pub identifier: Option<IdentifierNode>,
-    pub modifiers: ModifiersNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -211,6 +228,52 @@ pub struct GroupBlockNode {
 pub struct GroupPairNode {
     pub atomic: AtomicNode,
     pub identifier: IdentifierNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct AnnotationNode {
+    pub annotation_call: AnnotationCallNode,
+    pub modifier_call: ModifierCallNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct AnnotationCallNode {
+    pub annotation_name: AnnotationNameNode,
+    pub call_body: CallBodyNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct AnnotationNameNode {
+    pub identifier: IdentifierNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct FunctionCallNode {
+    pub call_body: CallBodyNode,
+    pub function_name: FunctionNameNode,
+    pub identifier: IdentifierNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct FunctionNameNode {
+    pub identifier: IdentifierNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct CallBodyNode {
+    pub expression: Vec<ExpressionNode>,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -254,8 +317,10 @@ pub enum SuffixNode {
 pub enum AtomicNode {
     Atomic0(ExpressionNode),
     Boolean(BooleanNode),
+    FunctionCall(FunctionCallNode),
     Identifier(IdentifierNode),
-    Regex(RegexNode),
+    RegexEmbed(RegexEmbedNode),
+    RegexRange(RegexRangeNode),
     String(StringNode),
 }
 #[derive(Clone, Debug, Hash)]
@@ -266,7 +331,20 @@ pub enum StringNode {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct RegexNode {
+pub struct RegexEmbedNode {
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct RegexRangeNode {
+    pub regex_negative: Option<RegexNegativeNode>,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct RegexNegativeNode {
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -294,13 +372,8 @@ pub enum BooleanNode {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct ModifiersNode {
+pub struct ModifierCallNode {
     pub identifier: IdentifierNode,
-    pub kw_class: KwClassNode,
-    pub kw_climb: KwClimbNode,
-    pub kw_group: KwGroupNode,
-    pub kw_macro: KwMacroNode,
-    pub kw_union: KwUnionNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]

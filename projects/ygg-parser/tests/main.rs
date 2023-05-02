@@ -1,5 +1,5 @@
 use std::{fs::File, io::Write, str::FromStr};
-use yggdrasil_parser::bootstrap::{BootstrapParser, BootstrapRule, RootNode, StringNode};
+use yggdrasil_parser::bootstrap::{BootstrapParser, BootstrapRule, ClassStatementNode, RootNode};
 use yggdrasil_rt::YggdrasilParser;
 
 #[test]
@@ -8,7 +8,7 @@ fn ready() {
 }
 
 #[test]
-fn test_unicode() {
+fn test_json5() {
     let cst = BootstrapParser::parse_cst(include_str!("json5.ygg"), BootstrapRule::Root).unwrap();
     println!("Short Form:\n{}", cst);
     let ast = RootNode::from_str(include_str!("json5.ygg")).unwrap();
@@ -19,8 +19,16 @@ fn test_unicode() {
 
 #[test]
 fn test_string() {
-    let cst = BootstrapParser::parse_cst("'123'", BootstrapRule::String).unwrap();
+    let cst = BootstrapParser::parse_cst(
+        r##"
+class StringRaw -> StringText {
+    /[^"]*/
+}
+    "##,
+        BootstrapRule::ClassStatement,
+    )
+    .unwrap();
     println!("Short Form:\n{}", cst);
-    let ast = StringNode::from_str("'123'").unwrap();
+    let ast = ClassStatementNode::from_str("'123'").unwrap();
     println!("{ast:#?}")
 }

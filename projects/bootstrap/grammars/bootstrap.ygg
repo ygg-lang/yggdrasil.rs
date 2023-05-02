@@ -7,30 +7,30 @@ atomic entry class Root {
 }
 
 union Statement {
-    | GrammarStatements
-    | ClassStatements
-    | UnionStatements
-    | GroupStatements
+    | GrammarStatement
+    | ClassStatement
+    | UnionStatement
+    | GroupStatement
 }
 // === grammar === -----------------------------------------------------------------------------------------------------
-class GrammarStatements {
+class GrammarStatement {
     ^KW_GRAMMAR Identifier GrammarBlock
 }
 class GrammarBlock {
     '{' '}'
 }
 // === class === -----------------------------------------------------------------------------------------------------
-class ClassStatements {
-    Modifiers ^KW_CLASS Identifier ClassBlock
+class ClassStatement {
+    Annotation ^KW_CLASS (name:Identifier) ('->' cast:Identifier)? ClassBlock
 }
 class ClassBlock {
     '{' Expression* '}'
 }
 // === union === -----------------------------------------------------------------------------------------------------
-class UnionStatements {
-    Modifiers ^KW_UNION Identifier UnionBlock
+class UnionStatement {
+    Annotation ^KW_UNION (name:Identifier) UnionBlock
 }
-class UnionBlock {
+atomic class UnionBlock {
     '{' (IGNORED UnionBranch)* '}'
 }
 class UnionBranch {
@@ -44,14 +44,35 @@ class RightAssociativity {
     '>'
 }
 // === group === -------------------------------------------------------------------------------------------------------
-class GroupStatements {
-    Modifiers ^KW_GROUP Identifier? GroupBlock
+class GroupStatement {
+    Annotation ^KW_GROUP Identifier? GroupBlock
 }
 class GroupBlock {
     '{' GroupPair* '}'
 }
 class GroupPair {
     Identifier ':' Atomic
+}
+// === annotations === -------------------------------------------------------------------------------------------------
+class Annotation {
+    (IGNORE AnnotationCall)* (IGNORE ModifierCall)*
+}
+class AnnotationCall {
+    AnnotationName CallBody
+}
+@style(annotation)
+class AnnotationName {
+    [@#] Identifier
+}
+class FunctionCall {
+    FunctionName Identifier CallBody
+}
+@style(function)
+class FunctionName {
+    [@] Identifier
+}
+class CallBody {
+    '(' (Expression (',' Expression)* ','?)? ')'
 }
 // === expression === --------------------------------------------------------------------------------------------------
 atomic class Expression {
@@ -78,10 +99,12 @@ union Suffix {
 // === atoms === -------------------------------------------------------------------------------------------------------
 union Atomic {
     | '(' Expression ')'
-    | Identifier
+    | FunctionCall
     | Boolean
     | String
-    | Regex
+    | RegexEmbed
+    | RegexRange
+    | Identifier
 }
 // === String === -------------------------------------------------------------------------------------------------------
 atomic union String {
@@ -89,9 +112,14 @@ atomic union String {
     | '"' (!'"' ANY)* '"' #Escaped
 }
 // === regex === -------------------------------------------------------------------------------------------------------
-atomic class Regex {
+class RegexEmbed {
     '/' (!'/' ANY)* '/'
-    '[' (!']' ANY)* ']'
+}
+atomic class RegexRange {
+    '[' RegexNegative? (!']' ANY)* ']'
+}
+class RegexNegative {
+    '^'
 }
 // === identifier === --------------------------------------------------------------------------------------------------
 class NamepathFree -> Namepath {
@@ -108,8 +136,8 @@ union Boolean {
     | 'false' #False
 }
 // === keywords === ----------------------------------------------------------------------------------------------------
-atomic class Modifiers {
-    (IGNORE !(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) Identifier)*
+atomic class ModifierCall ^ {
+    !(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) ^Identifier
 }
 @style(keyword)
 token {

@@ -1,20 +1,23 @@
-pub use self::{
-    choice::ChoiceExpression,
-    concat::ConcatExpression,
-    unary::{UnaryExpression, YggdrasilOperator},
-};
-use crate::{
-    data::{RuleReference, YggdrasilRegex, YggdrasilText},
-    rule::{GrammarRule, YggdrasilIdentifier, YggdrasilMacroCall},
-};
-use convert_case::{Case, Casing};
-use num::BigInt;
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
 use std::{
     fmt::{Debug, Formatter},
     hash::{Hash, Hasher},
     ops::{Add, BitAnd, BitOr, RangeInclusive},
+};
+
+use convert_case::{Case, Casing};
+use num::BigInt;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
+use crate::{
+    data::{RuleReference, YggdrasilRegex, YggdrasilText},
+    rule::{GrammarRule, YggdrasilIdentifier, YggdrasilMacroCall},
+};
+
+pub use self::{
+    choice::ChoiceExpression,
+    concat::ConcatExpression,
+    unary::{UnaryExpression, YggdrasilOperator},
 };
 
 mod choice;
@@ -23,7 +26,7 @@ mod debug;
 mod expr;
 mod unary;
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Clone, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct YggdrasilExpression {
     /// If it's a `tag:Rule`
@@ -52,6 +55,19 @@ pub enum ExpressionBody {
     Integer(BigInt),
     Boolean(bool),
     Regex(YggdrasilRegex),
+}
+
+impl Debug for YggdrasilExpression {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let mut f = f.debug_struct("Expression");
+        match &self.tag {
+            Some(s) => f.field("tag", s),
+            None => f.field("tag", &Option::<()>::None),
+        };
+        f.field("remark", &self.remark);
+        f.field("body", &self.body);
+        f.finish()
+    }
 }
 
 impl Debug for ExpressionBody {

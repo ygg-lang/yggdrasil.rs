@@ -1,6 +1,6 @@
 RootNode {
-    statement: GrammarStatements(
-        GrammarStatementsNode {
+    statement: GrammarStatement(
+        GrammarStatementNode {
             grammar_block: GrammarBlockNode {
                 span: 14..37,
             },
@@ -10,5 +10,5 @@ RootNode {
             span: 0..37,
         },
     ),
-    span: 0..422,
+    span: 0..1856,
 }

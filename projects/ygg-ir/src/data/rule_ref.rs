@@ -2,7 +2,7 @@ use super::*;
 
 //
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RuleReference {
     pub name: YggdrasilIdentifier,
     pub boxed: bool,
