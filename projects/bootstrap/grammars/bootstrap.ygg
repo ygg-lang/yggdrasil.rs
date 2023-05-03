@@ -2,8 +2,8 @@ grammar Bootstrap {
 
 }
 
-atomic entry class Root {
-    (IGNORED Statement)*
+entry class Root {
+    Statement*
 }
 
 union Statement {
@@ -21,17 +21,17 @@ class GrammarBlock {
 }
 // === class === -----------------------------------------------------------------------------------------------------
 class ClassStatement {
-    Annotation ^KW_CLASS (name:Identifier) ('->' cast:Identifier)? ClassBlock
+    Annotation? ^KW_CLASS (name:Identifier) ('->' cast:Identifier)? ClassBlock
 }
 class ClassBlock {
     '{' Expression* '}'
 }
 // === union === -----------------------------------------------------------------------------------------------------
 class UnionStatement {
-    Annotation ^KW_UNION (name:Identifier) UnionBlock
+    Annotation? ^KW_UNION (name:Identifier) UnionBlock
 }
 atomic class UnionBlock {
-    '{' (IGNORED UnionBranch)* '}'
+    '{' UnionBranch* '}'
 }
 class UnionBranch {
     '|' Expression BranchTag?
@@ -45,7 +45,7 @@ class RightAssociativity {
 }
 // === group === -------------------------------------------------------------------------------------------------------
 class GroupStatement {
-    Annotation ^KW_GROUP Identifier? GroupBlock
+    Annotation? ^KW_GROUP Identifier? GroupBlock
 }
 class GroupBlock {
     '{' GroupPair* '}'
@@ -55,7 +55,7 @@ class GroupPair {
 }
 // === annotations === -------------------------------------------------------------------------------------------------
 class Annotation {
-    (IGNORE AnnotationCall)* (IGNORE ModifierCall)*
+    AnnotationCall* ModifierCall*
 }
 class AnnotationCall {
     AnnotationName CallBody
@@ -76,10 +76,13 @@ class CallBody {
 }
 // === expression === --------------------------------------------------------------------------------------------------
 atomic class Expression {
-    Term (Infix Term)*
+    Term ExpressionResidual*
+}
+atomic class ExpressionResidual {
+    Infix Term
 }
 class Term {
-    (IGNORE Prefix)* Atomic (IGNORE Suffix)*
+    Prefix* Atomic Suffix*
 }
 atomic union Infix {
     | IGNORE ':' IGNORE #Tag
@@ -98,7 +101,7 @@ union Suffix {
 }
 // === atoms === -------------------------------------------------------------------------------------------------------
 union Atomic {
-    | '(' Expression ')'
+    | '(' @box(Expression) ')'
     | FunctionCall
     | Boolean
     | String
@@ -112,7 +115,7 @@ atomic union String {
     | '"' (!'"' ANY)* '"' #Escaped
 }
 // === regex === -------------------------------------------------------------------------------------------------------
-class RegexEmbed {
+atomic class RegexEmbed {
     '/' (!'/' ANY)* '/'
 }
 atomic class RegexRange {

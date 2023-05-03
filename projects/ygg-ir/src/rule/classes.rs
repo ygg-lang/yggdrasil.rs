@@ -54,7 +54,7 @@ impl BitXorAssign for YggdrasilVariants {
         for (key, value) in rhs.fields {
             match self.fields.get_mut(&key) {
                 Some(s) => {
-                    s.count ^= value.count;
+                    s.count *= value.count;
                     s.bind_position.extend(value.bind_position);
                     s.rule_position.extend(value.rule_position);
                 }

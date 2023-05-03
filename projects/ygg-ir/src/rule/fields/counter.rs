@@ -1,4 +1,5 @@
 use super::*;
+use std::ops::{Mul, MulAssign};
 
 #[derive(Copy, Clone, Debug)]
 pub struct FieldCounter {
@@ -47,6 +48,9 @@ impl FieldCounter {
             if self.min.is_zero() { FieldCounterType::Array } else { FieldCounterType::ArrayNonZero }
         }
     }
+    pub fn as_range(&self) -> Range<u16> {
+        self.min..self.max
+    }
 }
 
 /// ```ygg
@@ -75,17 +79,17 @@ impl BitOrAssign for FieldCounter {
 /// a?+ => a*
 /// a?? => a?
 /// ```
-impl BitXorAssign for FieldCounter {
-    fn bitxor_assign(&mut self, rhs: Self) {
-        self.min = self.min.max(rhs.min);
-        self.max = self.max.max(rhs.max);
+impl MulAssign for FieldCounter {
+    fn mul_assign(&mut self, rhs: Self) {
+        self.min = self.min.saturating_mul(rhs.min);
+        self.max = self.max.saturating_mul(rhs.max);
     }
 }
 
-impl BitXorAssign<FieldCounter> for YggdrasilVariants {
-    fn bitxor_assign(&mut self, rhs: FieldCounter) {
+impl MulAssign<FieldCounter> for YggdrasilVariants {
+    fn mul_assign(&mut self, rhs: FieldCounter) {
         for x in self.fields.values_mut() {
-            x.count ^= rhs
+            x.count *= rhs
         }
     }
 }

@@ -115,7 +115,7 @@ impl UnaryExpression {
             // outer:(base:Rule)* => tag = base
             ExpressionBody::Unary(v) => {
                 let mut base = v.field_map(tag);
-                base ^= count;
+                base *= count;
                 base
             }
             ExpressionBody::Rule(r) => match tag {
@@ -167,7 +167,7 @@ impl UnaryExpression {
             Some((head, rest)) => {
                 let mut out = head.counter();
                 for item in rest {
-                    out ^= item.counter();
+                    out *= item.counter();
                 }
                 out
             }

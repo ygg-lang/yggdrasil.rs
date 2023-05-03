@@ -20,7 +20,6 @@ impl CodeOptimizer for InsertIgnore {
                 GrammarAtomic::Atomic => rule.atomic.optimize(),
                 GrammarAtomic::Combined => {
                     rule.body.for_each(|e| self.update_node(e));
-
                     rule.atomic.optimize()
                 }
                 GrammarAtomic::Optimized => continue,
@@ -35,7 +34,7 @@ impl InsertIgnore {
         match &mut info.body {
             ExpressionBody::Choice(node) => self.update_choice(node),
             ExpressionBody::Concat(node) => self.update_concat(node),
-            ExpressionBody::Unary(node) => self.insert_unary(node),
+            ExpressionBody::Unary(node) => self.update_unary(node),
             // do nothing
             _ => {}
         }
@@ -59,7 +58,11 @@ impl InsertIgnore {
         // TODO: truncate ignore at begin and end
         info.sequence = new;
     }
-    fn insert_unary(&mut self, info: &mut UnaryExpression) {
-        self.update_node(&mut info.base)
+    fn update_unary(&mut self, info: &mut UnaryExpression) {
+        self.update_node(&mut info.base);
+        if info.counter().as_range().end > 1 {
+            let head = YggdrasilExpression::ignored();
+            info.base = Box::new(head & *info.base.clone());
+        }
     }
 }
