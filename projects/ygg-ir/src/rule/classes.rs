@@ -1,7 +1,7 @@
 use super::*;
 
 // Class rule
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct YggdrasilVariants {
     pub fields: BTreeMap<String, YggdrasilField>,
 }

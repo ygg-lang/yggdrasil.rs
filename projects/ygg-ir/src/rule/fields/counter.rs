@@ -1,10 +1,9 @@
 use super::*;
-use std::ops::{Mul, MulAssign};
 
 #[derive(Copy, Clone, Debug)]
 pub struct FieldCounter {
-    min: u16,
-    max: u16,
+    min: u32,
+    max: u32,
 }
 
 pub enum FieldCounterType {
@@ -19,11 +18,14 @@ impl FieldCounter {
     pub const NEVER: Self = Self { min: 0, max: 0 };
     pub const OPTIONAL: Self = Self { min: 0, max: 1 };
     pub const ONE: Self = Self { min: 1, max: 1 };
-    pub const MANY: Self = Self { min: 0, max: u16::MAX };
-    pub const MANY1: Self = Self { min: 1, max: u16::MAX };
+    pub const MANY: Self = Self { min: 0, max: u32::MAX };
+    pub const MANY1: Self = Self { min: 1, max: u32::MAX };
 }
 
 impl FieldCounter {
+    pub fn new(min: u32, max: u32) -> Self {
+        Self { min, max }
+    }
     pub fn is_never(&self) -> bool {
         self.min == 0 && self.max == 0
     }
@@ -48,7 +50,7 @@ impl FieldCounter {
             if self.min.is_zero() { FieldCounterType::Array } else { FieldCounterType::ArrayNonZero }
         }
     }
-    pub fn as_range(&self) -> Range<u16> {
+    pub fn as_range(&self) -> Range<u32> {
         self.min..self.max
     }
 }

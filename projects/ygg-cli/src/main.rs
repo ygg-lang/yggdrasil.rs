@@ -18,7 +18,7 @@ pub use cache::{GaiaSystem, GrammarCache};
 // #[clap(version = crate_version!(), author = crate_authors!("\n"))]
 // #[clap(setting = AppSettings::ColoredHelp)]
 pub struct Ycc {
-    /// Sets a custom config file. Could have been an Option<T> with no default too
+    /// Sets a custom config file. Could have been an `Option<T>` with no default too
     #[clap(short, long)]
     config: Option<PathBuf>,
     #[clap(subcommand)]

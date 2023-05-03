@@ -10,5 +10,5 @@ RootNode {
             span: 0..37,
         },
     ),
-    span: 0..1856,
+    span: 0..37,
 }

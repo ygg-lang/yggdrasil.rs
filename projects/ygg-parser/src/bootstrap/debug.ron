@@ -6,7 +6,7 @@ GrammarInfo {
     exports: [],
     rules: {
         "Root": GrammarRule {
-            name: Identifier("Root", 43..46),
+            name: Identifier("Root", 36..39),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -23,27 +23,25 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: UnaryExpression {
-                        base: YggdrasilExpression {
+                        base: Expression {
                             tag: None,
                             remark: false,
                             body: ConcatExpression {
                                 sequence: [
-                                    YggdrasilExpression {
+                                    Expression {
                                         tag: None,
                                         remark: false,
                                         body: IGNORED,
                                     },
-                                    YggdrasilExpression {
-                                        tag: Some(
-                                            Identifier("Statement", 63..71),
-                                        ),
+                                    Expression {
+                                        tag: Identifier("Statement", 47..55),
                                         remark: false,
                                         body: RuleReference {
-                                            name: Identifier("Statement", 63..71),
+                                            name: Identifier("Statement", 47..55),
                                             boxed: false,
                                             inline: false,
                                         },
@@ -57,10 +55,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 24..75,
+            range: 24..58,
         },
         "Statement": GrammarRule {
-            name: Identifier("Statement", 84..92),
+            name: Identifier("Statement", 67..75),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -78,56 +76,48 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("GrammarStatement", 102..117),
-                        ),
+                    Expression {
+                        tag: Identifier("GrammarStatement", 85..100),
                         remark: false,
                         body: RuleReference {
-                            name: Identifier("GrammarStatement", 102..117),
+                            name: Identifier("GrammarStatement", 85..100),
                             boxed: false,
                             inline: false,
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("ClassStatement", 125..138),
-                        ),
+                    Expression {
+                        tag: Identifier("ClassStatement", 108..121),
                         remark: false,
                         body: RuleReference {
-                            name: Identifier("ClassStatement", 125..138),
+                            name: Identifier("ClassStatement", 108..121),
                             boxed: false,
                             inline: false,
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("UnionStatement", 146..159),
-                        ),
+                    Expression {
+                        tag: Identifier("UnionStatement", 129..142),
                         remark: false,
                         body: RuleReference {
-                            name: Identifier("UnionStatement", 146..159),
+                            name: Identifier("UnionStatement", 129..142),
                             boxed: false,
                             inline: false,
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("GroupStatement", 167..180),
-                        ),
+                    Expression {
+                        tag: Identifier("GroupStatement", 150..163),
                         remark: false,
                         body: RuleReference {
-                            name: Identifier("GroupStatement", 167..180),
+                            name: Identifier("GroupStatement", 150..163),
                             boxed: false,
                             inline: false,
                         },
                     },
                 ],
             },
-            range: 78..182,
+            range: 61..165,
         },
         "GrammarStatement": GrammarRule {
-            name: Identifier("GrammarStatement", 311..326),
+            name: Identifier("GrammarStatement", 294..309),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -144,48 +134,44 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("KW_GRAMMAR", 335..344),
+                                    name: Identifier("KW_GRAMMAR", 318..327),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Identifier", 346..355),
-                                ),
+                            Expression {
+                                tag: Identifier("Identifier", 329..338),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Identifier", 346..355),
+                                    name: Identifier("Identifier", 329..338),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("GrammarBlock", 357..368),
-                                ),
+                            Expression {
+                                tag: Identifier("GrammarBlock", 340..351),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("GrammarBlock", 357..368),
+                                    name: Identifier("GrammarBlock", 340..351),
                                     boxed: false,
                                     inline: false,
                                 },
@@ -194,10 +180,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 305..370,
+            range: 288..353,
         },
         "GrammarBlock": GrammarRule {
-            name: Identifier("GrammarBlock", 378..389),
+            name: Identifier("GrammarBlock", 361..372),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -214,42 +200,42 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: "{",
                                     insensitive: false,
-                                    range: 397..399,
+                                    range: 380..382,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: "}",
                                     insensitive: false,
-                                    range: 401..403,
+                                    range: 384..386,
                                 },
                             },
                         ],
                     },
                 },
             },
-            range: 372..405,
+            range: 355..388,
         },
         "ClassStatement": GrammarRule {
-            name: Identifier("ClassStatement", 532..545),
+            name: Identifier("ClassStatement", 515..528),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -266,37 +252,44 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: ConcatExpression {
                                     sequence: [
-                                        YggdrasilExpression {
-                                            tag: Some(
-                                                Identifier("Annotation", 553..562),
-                                            ),
+                                        Expression {
+                                            tag: None,
                                             remark: false,
-                                            body: RuleReference {
-                                                name: Identifier("Annotation", 553..562),
-                                                boxed: false,
-                                                inline: false,
+                                            body: UnaryExpression {
+                                                base: Expression {
+                                                    tag: Identifier("Annotation", 536..545),
+                                                    remark: false,
+                                                    body: RuleReference {
+                                                        name: Identifier("Annotation", 536..545),
+                                                        boxed: false,
+                                                        inline: false,
+                                                    },
+                                                },
+                                                operators: [
+                                                    Optional,
+                                                ],
                                             },
                                         },
-                                        YggdrasilExpression {
+                                        Expression {
                                             tag: None,
                                             remark: false,
                                             body: IGNORED,
                                         },
-                                        YggdrasilExpression {
+                                        Expression {
                                             tag: None,
                                             remark: false,
                                             body: RuleReference {
-                                                name: Identifier("KW_CLASS", 565..572),
+                                                name: Identifier("KW_CLASS", 549..556),
                                                 boxed: false,
                                                 inline: false,
                                             },
@@ -304,57 +297,53 @@ GrammarInfo {
                                     ],
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("name", 575..578),
-                                ),
+                            Expression {
+                                tag: Identifier("name", 559..562),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Identifier", 580..589),
+                                    name: Identifier("Identifier", 564..573),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
+                                    base: Expression {
                                         tag: None,
                                         remark: false,
                                         body: ConcatExpression {
                                             sequence: [
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: YggdrasilText {
                                                         text: "->",
                                                         insensitive: false,
-                                                        range: 593..596,
+                                                        range: 577..580,
                                                     },
                                                 },
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: IGNORED,
                                                 },
-                                                YggdrasilExpression {
-                                                    tag: Some(
-                                                        Identifier("cast", 598..601),
-                                                    ),
+                                                Expression {
+                                                    tag: Identifier("cast", 582..585),
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("Identifier", 603..612),
+                                                        name: Identifier("Identifier", 587..596),
                                                         boxed: false,
                                                         inline: false,
                                                     },
@@ -367,18 +356,16 @@ GrammarInfo {
                                     ],
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("ClassBlock", 616..625),
-                                ),
+                            Expression {
+                                tag: Identifier("ClassBlock", 600..609),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("ClassBlock", 616..625),
+                                    name: Identifier("ClassBlock", 600..609),
                                     boxed: false,
                                     inline: false,
                                 },
@@ -387,10 +374,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 526..627,
+            range: 509..611,
         },
         "ClassBlock": GrammarRule {
-            name: Identifier("ClassBlock", 635..644),
+            name: Identifier("ClassBlock", 619..628),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -407,212 +394,44 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: "{",
                                     insensitive: false,
-                                    range: 652..654,
+                                    range: 636..638,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
-                                        tag: Some(
-                                            Identifier("Expression", 656..665),
-                                        ),
-                                        remark: false,
-                                        body: RuleReference {
-                                            name: Identifier("Expression", 656..665),
-                                            boxed: false,
-                                            inline: false,
-                                        },
-                                    },
-                                    operators: [
-                                        Repeats,
-                                    ],
-                                },
-                            },
-                            YggdrasilExpression {
-                                tag: None,
-                                remark: false,
-                                body: IGNORED,
-                            },
-                            YggdrasilExpression {
-                                tag: None,
-                                remark: false,
-                                body: YggdrasilText {
-                                    text: "}",
-                                    insensitive: false,
-                                    range: 668..670,
-                                },
-                            },
-                        ],
-                    },
-                },
-            },
-            range: 629..672,
-        },
-        "UnionStatement": GrammarRule {
-            name: Identifier("UnionStatement", 799..812),
-            redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            auto_inline: false,
-            entry: false,
-            hide: false,
-            ignored: false,
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
-            },
-            body: Class {
-                term: YggdrasilExpression {
-                    tag: None,
-                    remark: false,
-                    body: ConcatExpression {
-                        sequence: [
-                            YggdrasilExpression {
-                                tag: None,
-                                remark: false,
-                                body: ConcatExpression {
-                                    sequence: [
-                                        YggdrasilExpression {
-                                            tag: Some(
-                                                Identifier("Annotation", 820..829),
-                                            ),
-                                            remark: false,
-                                            body: RuleReference {
-                                                name: Identifier("Annotation", 820..829),
-                                                boxed: false,
-                                                inline: false,
-                                            },
-                                        },
-                                        YggdrasilExpression {
-                                            tag: None,
-                                            remark: false,
-                                            body: IGNORED,
-                                        },
-                                        YggdrasilExpression {
-                                            tag: None,
-                                            remark: false,
-                                            body: RuleReference {
-                                                name: Identifier("KW_UNION", 832..839),
-                                                boxed: false,
-                                                inline: false,
-                                            },
-                                        },
-                                    ],
-                                },
-                            },
-                            YggdrasilExpression {
-                                tag: None,
-                                remark: false,
-                                body: IGNORED,
-                            },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("name", 842..845),
-                                ),
-                                remark: false,
-                                body: RuleReference {
-                                    name: Identifier("Identifier", 847..856),
-                                    boxed: false,
-                                    inline: false,
-                                },
-                            },
-                            YggdrasilExpression {
-                                tag: None,
-                                remark: false,
-                                body: IGNORED,
-                            },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("UnionBlock", 859..868),
-                                ),
-                                remark: false,
-                                body: RuleReference {
-                                    name: Identifier("UnionBlock", 859..868),
-                                    boxed: false,
-                                    inline: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-            },
-            range: 793..870,
-        },
-        "UnionBlock": GrammarRule {
-            name: Identifier("UnionBlock", 885..894),
-            redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            auto_inline: false,
-            entry: false,
-            hide: false,
-            ignored: false,
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
-            },
-            body: Class {
-                term: YggdrasilExpression {
-                    tag: None,
-                    remark: false,
-                    body: ConcatExpression {
-                        sequence: [
-                            YggdrasilExpression {
-                                tag: None,
-                                remark: false,
-                                body: YggdrasilText {
-                                    text: "{",
-                                    insensitive: false,
-                                    range: 902..904,
-                                },
-                            },
-                            YggdrasilExpression {
-                                tag: None,
-                                remark: false,
-                                body: UnaryExpression {
-                                    base: YggdrasilExpression {
+                                    base: Expression {
                                         tag: None,
                                         remark: false,
                                         body: ConcatExpression {
                                             sequence: [
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: IGNORED,
                                                 },
-                                                YggdrasilExpression {
-                                                    tag: Some(
-                                                        Identifier("UnionBranch", 915..925),
-                                                    ),
+                                                Expression {
+                                                    tag: Identifier("Expression", 640..649),
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("UnionBranch", 915..925),
+                                                        name: Identifier("Expression", 640..649),
                                                         boxed: false,
                                                         inline: false,
                                                     },
@@ -625,23 +444,28 @@ GrammarInfo {
                                     ],
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: IGNORED,
+                            },
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: "}",
                                     insensitive: false,
-                                    range: 929..931,
+                                    range: 652..654,
                                 },
                             },
                         ],
                     },
                 },
             },
-            range: 872..933,
+            range: 613..656,
         },
-        "UnionBranch": GrammarRule {
-            name: Identifier("UnionBranch", 941..951),
+        "UnionStatement": GrammarRule {
+            name: Identifier("UnionStatement", 783..796),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -658,52 +482,210 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: ConcatExpression {
+                                    sequence: [
+                                        Expression {
+                                            tag: None,
+                                            remark: false,
+                                            body: UnaryExpression {
+                                                base: Expression {
+                                                    tag: Identifier("Annotation", 804..813),
+                                                    remark: false,
+                                                    body: RuleReference {
+                                                        name: Identifier("Annotation", 804..813),
+                                                        boxed: false,
+                                                        inline: false,
+                                                    },
+                                                },
+                                                operators: [
+                                                    Optional,
+                                                ],
+                                            },
+                                        },
+                                        Expression {
+                                            tag: None,
+                                            remark: false,
+                                            body: IGNORED,
+                                        },
+                                        Expression {
+                                            tag: None,
+                                            remark: false,
+                                            body: RuleReference {
+                                                name: Identifier("KW_UNION", 817..824),
+                                                boxed: false,
+                                                inline: false,
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: IGNORED,
+                            },
+                            Expression {
+                                tag: Identifier("name", 827..830),
+                                remark: false,
+                                body: RuleReference {
+                                    name: Identifier("Identifier", 832..841),
+                                    boxed: false,
+                                    inline: false,
+                                },
+                            },
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: IGNORED,
+                            },
+                            Expression {
+                                tag: Identifier("UnionBlock", 844..853),
+                                remark: false,
+                                body: RuleReference {
+                                    name: Identifier("UnionBlock", 844..853),
+                                    boxed: false,
+                                    inline: false,
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+            range: 777..855,
+        },
+        "UnionBlock": GrammarRule {
+            name: Identifier("UnionBlock", 870..879),
+            redirect: None,
+            document: "",
+            derives: RuleDerive {
+                derives: {},
+            },
+            atomic: Optimized,
+            auto_inline: false,
+            entry: false,
+            hide: false,
+            ignored: false,
+            captures: GrammarCaptures {
+                text: false,
+                auto: true,
+                range: "usize",
+            },
+            body: Class {
+                term: Expression {
+                    tag: None,
+                    remark: false,
+                    body: ConcatExpression {
+                        sequence: [
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: YggdrasilText {
+                                    text: "{",
+                                    insensitive: false,
+                                    range: 887..889,
+                                },
+                            },
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: UnaryExpression {
+                                    base: Expression {
+                                        tag: Identifier("UnionBranch", 891..901),
+                                        remark: false,
+                                        body: RuleReference {
+                                            name: Identifier("UnionBranch", 891..901),
+                                            boxed: false,
+                                            inline: false,
+                                        },
+                                    },
+                                    operators: [
+                                        Repeats,
+                                    ],
+                                },
+                            },
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: YggdrasilText {
+                                    text: "}",
+                                    insensitive: false,
+                                    range: 904..906,
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+            range: 857..908,
+        },
+        "UnionBranch": GrammarRule {
+            name: Identifier("UnionBranch", 916..926),
+            redirect: None,
+            document: "",
+            derives: RuleDerive {
+                derives: {},
+            },
+            atomic: Optimized,
+            auto_inline: false,
+            entry: false,
+            hide: false,
+            ignored: false,
+            captures: GrammarCaptures {
+                text: false,
+                auto: true,
+                range: "usize",
+            },
+            body: Class {
+                term: Expression {
+                    tag: None,
+                    remark: false,
+                    body: ConcatExpression {
+                        sequence: [
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: "|",
                                     insensitive: false,
-                                    range: 959..961,
+                                    range: 934..936,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Expression", 963..972),
-                                ),
+                            Expression {
+                                tag: Identifier("Expression", 938..947),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Expression", 963..972),
+                                    name: Identifier("Expression", 938..947),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
-                                        tag: Some(
-                                            Identifier("BranchTag", 974..982),
-                                        ),
+                                    base: Expression {
+                                        tag: Identifier("BranchTag", 949..957),
                                         remark: false,
                                         body: RuleReference {
-                                            name: Identifier("BranchTag", 974..982),
+                                            name: Identifier("BranchTag", 949..957),
                                             boxed: false,
                                             inline: false,
                                         },
@@ -717,10 +699,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 935..985,
+            range: 910..960,
         },
         "BranchTag": GrammarRule {
-            name: Identifier("BranchTag", 1014..1022),
+            name: Identifier("BranchTag", 989..997),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -737,42 +719,38 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: "#",
                                     insensitive: false,
-                                    range: 1030..1032,
+                                    range: 1005..1007,
                                 },
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Identifier", 1034..1043),
-                                ),
+                            Expression {
+                                tag: Identifier("Identifier", 1009..1018),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Identifier", 1034..1043),
+                                    name: Identifier("Identifier", 1009..1018),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
-                                        tag: Some(
-                                            Identifier("RightAssociativity", 1045..1062),
-                                        ),
+                                    base: Expression {
+                                        tag: Identifier("RightAssociativity", 1020..1037),
                                         remark: false,
                                         body: RuleReference {
-                                            name: Identifier("RightAssociativity", 1045..1062),
+                                            name: Identifier("RightAssociativity", 1020..1037),
                                             boxed: false,
                                             inline: false,
                                         },
@@ -786,10 +764,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 987..1065,
+            range: 962..1040,
         },
         "RightAssociativity": GrammarRule {
-            name: Identifier("RightAssociativity", 1073..1090),
+            name: Identifier("RightAssociativity", 1048..1065),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -806,20 +784,20 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilText {
                         text: ">",
                         insensitive: false,
-                        range: 1098..1100,
+                        range: 1073..1075,
                     },
                 },
             },
-            range: 1067..1102,
+            range: 1042..1077,
         },
         "GroupStatement": GrammarRule {
-            name: Identifier("GroupStatement", 1231..1244),
+            name: Identifier("GroupStatement", 1206..1219),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -836,52 +814,20 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Annotation", 1252..1261),
-                                ),
-                                remark: false,
-                                body: RuleReference {
-                                    name: Identifier("Annotation", 1252..1261),
-                                    boxed: false,
-                                    inline: false,
-                                },
-                            },
-                            YggdrasilExpression {
-                                tag: None,
-                                remark: false,
-                                body: IGNORED,
-                            },
-                            YggdrasilExpression {
-                                tag: None,
-                                remark: false,
-                                body: RuleReference {
-                                    name: Identifier("KW_GROUP", 1264..1271),
-                                    boxed: false,
-                                    inline: false,
-                                },
-                            },
-                            YggdrasilExpression {
-                                tag: None,
-                                remark: false,
-                                body: IGNORED,
-                            },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
-                                        tag: Some(
-                                            Identifier("Identifier", 1273..1282),
-                                        ),
+                                    base: Expression {
+                                        tag: Identifier("Annotation", 1227..1236),
                                         remark: false,
                                         body: RuleReference {
-                                            name: Identifier("Identifier", 1273..1282),
+                                            name: Identifier("Annotation", 1227..1236),
                                             boxed: false,
                                             inline: false,
                                         },
@@ -891,107 +837,153 @@ GrammarInfo {
                                     ],
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("GroupBlock", 1285..1294),
-                                ),
+                            Expression {
+                                tag: None,
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("GroupBlock", 1285..1294),
+                                    name: Identifier("KW_GROUP", 1240..1247),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                        ],
-                    },
-                },
-            },
-            range: 1225..1296,
-        },
-        "GroupBlock": GrammarRule {
-            name: Identifier("GroupBlock", 1304..1313),
-            redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            auto_inline: false,
-            entry: false,
-            hide: false,
-            ignored: false,
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
-            },
-            body: Class {
-                term: YggdrasilExpression {
-                    tag: None,
-                    remark: false,
-                    body: ConcatExpression {
-                        sequence: [
-                            YggdrasilExpression {
-                                tag: None,
-                                remark: false,
-                                body: YggdrasilText {
-                                    text: "{",
-                                    insensitive: false,
-                                    range: 1321..1323,
-                                },
-                            },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
-                                        tag: Some(
-                                            Identifier("GroupPair", 1325..1333),
-                                        ),
+                                    base: Expression {
+                                        tag: Identifier("Identifier", 1249..1258),
                                         remark: false,
                                         body: RuleReference {
-                                            name: Identifier("GroupPair", 1325..1333),
+                                            name: Identifier("Identifier", 1249..1258),
                                             boxed: false,
                                             inline: false,
                                         },
                                     },
                                     operators: [
-                                        Repeats,
+                                        Optional,
                                     ],
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
+                            Expression {
+                                tag: Identifier("GroupBlock", 1261..1270),
+                                remark: false,
+                                body: RuleReference {
+                                    name: Identifier("GroupBlock", 1261..1270),
+                                    boxed: false,
+                                    inline: false,
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+            range: 1200..1272,
+        },
+        "GroupBlock": GrammarRule {
+            name: Identifier("GroupBlock", 1280..1289),
+            redirect: None,
+            document: "",
+            derives: RuleDerive {
+                derives: {},
+            },
+            atomic: Optimized,
+            auto_inline: false,
+            entry: false,
+            hide: false,
+            ignored: false,
+            captures: GrammarCaptures {
+                text: false,
+                auto: true,
+                range: "usize",
+            },
+            body: Class {
+                term: Expression {
+                    tag: None,
+                    remark: false,
+                    body: ConcatExpression {
+                        sequence: [
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: YggdrasilText {
+                                    text: "{",
+                                    insensitive: false,
+                                    range: 1297..1299,
+                                },
+                            },
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: IGNORED,
+                            },
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: UnaryExpression {
+                                    base: Expression {
+                                        tag: None,
+                                        remark: false,
+                                        body: ConcatExpression {
+                                            sequence: [
+                                                Expression {
+                                                    tag: None,
+                                                    remark: false,
+                                                    body: IGNORED,
+                                                },
+                                                Expression {
+                                                    tag: Identifier("GroupPair", 1301..1309),
+                                                    remark: false,
+                                                    body: RuleReference {
+                                                        name: Identifier("GroupPair", 1301..1309),
+                                                        boxed: false,
+                                                        inline: false,
+                                                    },
+                                                },
+                                            ],
+                                        },
+                                    },
+                                    operators: [
+                                        Repeats,
+                                    ],
+                                },
+                            },
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: IGNORED,
+                            },
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: "}",
                                     insensitive: false,
-                                    range: 1336..1338,
+                                    range: 1312..1314,
                                 },
                             },
                         ],
                     },
                 },
             },
-            range: 1298..1340,
+            range: 1274..1316,
         },
         "GroupPair": GrammarRule {
-            name: Identifier("GroupPair", 1348..1356),
+            name: Identifier("GroupPair", 1324..1332),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -1008,48 +1000,44 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Identifier", 1364..1373),
-                                ),
+                            Expression {
+                                tag: Identifier("Identifier", 1340..1349),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Identifier", 1364..1373),
+                                    name: Identifier("Identifier", 1340..1349),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: ":",
                                     insensitive: false,
-                                    range: 1375..1377,
+                                    range: 1351..1353,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Atomic", 1379..1384),
-                                ),
+                            Expression {
+                                tag: Identifier("Atomic", 1355..1360),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Atomic", 1379..1384),
+                                    name: Identifier("Atomic", 1355..1360),
                                     boxed: false,
                                     inline: false,
                                 },
@@ -1058,10 +1046,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 1342..1386,
+            range: 1318..1362,
         },
         "Annotation": GrammarRule {
-            name: Identifier("Annotation", 1515..1524),
+            name: Identifier("Annotation", 1491..1500),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -1078,37 +1066,30 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
+                                    base: Expression {
                                         tag: None,
                                         remark: false,
                                         body: ConcatExpression {
                                             sequence: [
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: IGNORED,
                                                 },
-                                                YggdrasilExpression {
-                                                    tag: None,
-                                                    remark: false,
-                                                    body: IGNORED,
-                                                },
-                                                YggdrasilExpression {
-                                                    tag: Some(
-                                                        Identifier("AnnotationCall", 1540..1553),
-                                                    ),
+                                                Expression {
+                                                    tag: Identifier("AnnotationCall", 1508..1521),
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("AnnotationCall", 1540..1553),
+                                                        name: Identifier("AnnotationCall", 1508..1521),
                                                         boxed: false,
                                                         inline: false,
                                                     },
@@ -1121,37 +1102,30 @@ GrammarInfo {
                                     ],
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
+                                    base: Expression {
                                         tag: None,
                                         remark: false,
                                         body: ConcatExpression {
                                             sequence: [
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: IGNORED,
                                                 },
-                                                YggdrasilExpression {
-                                                    tag: None,
-                                                    remark: false,
-                                                    body: IGNORED,
-                                                },
-                                                YggdrasilExpression {
-                                                    tag: Some(
-                                                        Identifier("ModifierCall", 1565..1576),
-                                                    ),
+                                                Expression {
+                                                    tag: Identifier("ModifierCall", 1524..1535),
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("ModifierCall", 1565..1576),
+                                                        name: Identifier("ModifierCall", 1524..1535),
                                                         boxed: false,
                                                         inline: false,
                                                     },
@@ -1168,10 +1142,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 1509..1580,
+            range: 1485..1538,
         },
         "AnnotationCall": GrammarRule {
-            name: Identifier("AnnotationCall", 1588..1601),
+            name: Identifier("AnnotationCall", 1546..1559),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -1188,34 +1162,30 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("AnnotationName", 1609..1622),
-                                ),
+                            Expression {
+                                tag: Identifier("AnnotationName", 1567..1580),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("AnnotationName", 1609..1622),
+                                    name: Identifier("AnnotationName", 1567..1580),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("CallBody", 1624..1631),
-                                ),
+                            Expression {
+                                tag: Identifier("CallBody", 1582..1589),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("CallBody", 1624..1631),
+                                    name: Identifier("CallBody", 1582..1589),
                                     boxed: false,
                                     inline: false,
                                 },
@@ -1224,10 +1194,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 1582..1633,
+            range: 1540..1591,
         },
         "AnnotationName": GrammarRule {
-            name: Identifier("AnnotationName", 1660..1673),
+            name: Identifier("AnnotationName", 1618..1631),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -1244,31 +1214,29 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilRegex {
                                     raw: "[@#]",
-                                    span: 1681..1684,
+                                    span: 1639..1642,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Identifier", 1686..1695),
-                                ),
+                            Expression {
+                                tag: Identifier("Identifier", 1644..1653),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Identifier", 1686..1695),
+                                    name: Identifier("Identifier", 1644..1653),
                                     boxed: false,
                                     inline: false,
                                 },
@@ -1277,10 +1245,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 1635..1697,
+            range: 1593..1655,
         },
         "FunctionCall": GrammarRule {
-            name: Identifier("FunctionCall", 1705..1716),
+            name: Identifier("FunctionCall", 1663..1674),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -1297,50 +1265,44 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("FunctionName", 1724..1735),
-                                ),
+                            Expression {
+                                tag: Identifier("FunctionName", 1682..1693),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("FunctionName", 1724..1735),
+                                    name: Identifier("FunctionName", 1682..1693),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Identifier", 1737..1746),
-                                ),
+                            Expression {
+                                tag: Identifier("Identifier", 1695..1704),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Identifier", 1737..1746),
+                                    name: Identifier("Identifier", 1695..1704),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("CallBody", 1748..1755),
-                                ),
+                            Expression {
+                                tag: Identifier("CallBody", 1706..1713),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("CallBody", 1748..1755),
+                                    name: Identifier("CallBody", 1706..1713),
                                     boxed: false,
                                     inline: false,
                                 },
@@ -1349,10 +1311,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 1699..1757,
+            range: 1657..1715,
         },
         "FunctionName": GrammarRule {
-            name: Identifier("FunctionName", 1782..1793),
+            name: Identifier("FunctionName", 1740..1751),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -1369,31 +1331,29 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilRegex {
                                     raw: "[@]",
-                                    span: 1801..1803,
+                                    span: 1759..1761,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Identifier", 1805..1814),
-                                ),
+                            Expression {
+                                tag: Identifier("Identifier", 1763..1772),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Identifier", 1805..1814),
+                                    name: Identifier("Identifier", 1763..1772),
                                     boxed: false,
                                     inline: false,
                                 },
@@ -1402,10 +1362,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 1759..1816,
+            range: 1717..1774,
         },
         "CallBody": GrammarRule {
-            name: Identifier("CallBody", 1824..1831),
+            name: Identifier("CallBody", 1782..1789),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -1422,82 +1382,91 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: "(",
                                     insensitive: false,
-                                    range: 1839..1841,
+                                    range: 1797..1799,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
+                                    base: Expression {
                                         tag: None,
                                         remark: false,
                                         body: ConcatExpression {
                                             sequence: [
-                                                YggdrasilExpression {
-                                                    tag: Some(
-                                                        Identifier("Expression", 1844..1853),
-                                                    ),
+                                                Expression {
+                                                    tag: Identifier("Expression", 1802..1811),
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("Expression", 1844..1853),
+                                                        name: Identifier("Expression", 1802..1811),
                                                         boxed: false,
                                                         inline: false,
                                                     },
                                                 },
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: IGNORED,
                                                 },
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: UnaryExpression {
-                                                        base: YggdrasilExpression {
+                                                        base: Expression {
                                                             tag: None,
                                                             remark: false,
                                                             body: ConcatExpression {
                                                                 sequence: [
-                                                                    YggdrasilExpression {
-                                                                        tag: None,
-                                                                        remark: false,
-                                                                        body: YggdrasilText {
-                                                                            text: ",",
-                                                                            insensitive: false,
-                                                                            range: 1856..1858,
-                                                                        },
-                                                                    },
-                                                                    YggdrasilExpression {
+                                                                    Expression {
                                                                         tag: None,
                                                                         remark: false,
                                                                         body: IGNORED,
                                                                     },
-                                                                    YggdrasilExpression {
-                                                                        tag: Some(
-                                                                            Identifier("Expression", 1860..1869),
-                                                                        ),
+                                                                    Expression {
+                                                                        tag: None,
                                                                         remark: false,
-                                                                        body: RuleReference {
-                                                                            name: Identifier("Expression", 1860..1869),
-                                                                            boxed: false,
-                                                                            inline: false,
+                                                                        body: ConcatExpression {
+                                                                            sequence: [
+                                                                                Expression {
+                                                                                    tag: None,
+                                                                                    remark: false,
+                                                                                    body: YggdrasilText {
+                                                                                        text: ",",
+                                                                                        insensitive: false,
+                                                                                        range: 1814..1816,
+                                                                                    },
+                                                                                },
+                                                                                Expression {
+                                                                                    tag: None,
+                                                                                    remark: false,
+                                                                                    body: IGNORED,
+                                                                                },
+                                                                                Expression {
+                                                                                    tag: Identifier("Expression", 1818..1827),
+                                                                                    remark: false,
+                                                                                    body: RuleReference {
+                                                                                        name: Identifier("Expression", 1818..1827),
+                                                                                        boxed: false,
+                                                                                        inline: false,
+                                                                                    },
+                                                                                },
+                                                                            ],
                                                                         },
                                                                     },
                                                                 ],
@@ -1508,22 +1477,22 @@ GrammarInfo {
                                                         ],
                                                     },
                                                 },
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: IGNORED,
                                                 },
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: UnaryExpression {
-                                                        base: YggdrasilExpression {
+                                                        base: Expression {
                                                             tag: None,
                                                             remark: false,
                                                             body: YggdrasilText {
                                                                 text: ",",
                                                                 insensitive: false,
-                                                                range: 1873..1875,
+                                                                range: 1831..1833,
                                                             },
                                                         },
                                                         operators: [
@@ -1539,28 +1508,28 @@ GrammarInfo {
                                     ],
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: ")",
                                     insensitive: false,
-                                    range: 1880..1882,
+                                    range: 1838..1840,
                                 },
                             },
                         ],
                     },
                 },
             },
-            range: 1818..1884,
+            range: 1776..1842,
         },
         "Expression": GrammarRule {
-            name: Identifier("Expression", 2020..2029),
+            name: Identifier("Expression", 1978..1987),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -1577,54 +1546,31 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Term", 2037..2040),
-                                ),
+                            Expression {
+                                tag: Identifier("Term", 1995..1998),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Term", 2037..2040),
+                                    name: Identifier("Term", 1995..1998),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
-                                        tag: None,
+                                    base: Expression {
+                                        tag: Identifier("ExpressionResidual", 2000..2017),
                                         remark: false,
-                                        body: ConcatExpression {
-                                            sequence: [
-                                                YggdrasilExpression {
-                                                    tag: Some(
-                                                        Identifier("Infix", 2043..2047),
-                                                    ),
-                                                    remark: false,
-                                                    body: RuleReference {
-                                                        name: Identifier("Infix", 2043..2047),
-                                                        boxed: false,
-                                                        inline: false,
-                                                    },
-                                                },
-                                                YggdrasilExpression {
-                                                    tag: Some(
-                                                        Identifier("Term", 2049..2052),
-                                                    ),
-                                                    remark: false,
-                                                    body: RuleReference {
-                                                        name: Identifier("Term", 2049..2052),
-                                                        boxed: false,
-                                                        inline: false,
-                                                    },
-                                                },
-                                            ],
+                                        body: RuleReference {
+                                            name: Identifier("ExpressionResidual", 2000..2017),
+                                            boxed: false,
+                                            inline: false,
                                         },
                                     },
                                     operators: [
@@ -1636,10 +1582,57 @@ GrammarInfo {
                     },
                 },
             },
-            range: 2007..2056,
+            range: 1965..2020,
+        },
+        "ExpressionResidual": GrammarRule {
+            name: Identifier("ExpressionResidual", 2035..2052),
+            redirect: None,
+            document: "",
+            derives: RuleDerive {
+                derives: {},
+            },
+            atomic: Optimized,
+            auto_inline: false,
+            entry: false,
+            hide: false,
+            ignored: false,
+            captures: GrammarCaptures {
+                text: false,
+                auto: true,
+                range: "usize",
+            },
+            body: Class {
+                term: Expression {
+                    tag: None,
+                    remark: false,
+                    body: ConcatExpression {
+                        sequence: [
+                            Expression {
+                                tag: Identifier("Infix", 2060..2064),
+                                remark: false,
+                                body: RuleReference {
+                                    name: Identifier("Infix", 2060..2064),
+                                    boxed: false,
+                                    inline: false,
+                                },
+                            },
+                            Expression {
+                                tag: Identifier("Term", 2066..2069),
+                                remark: false,
+                                body: RuleReference {
+                                    name: Identifier("Term", 2066..2069),
+                                    boxed: false,
+                                    inline: false,
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+            range: 2022..2071,
         },
         "Term": GrammarRule {
-            name: Identifier("Term", 2064..2067),
+            name: Identifier("Term", 2079..2082),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -1656,37 +1649,30 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
+                                    base: Expression {
                                         tag: None,
                                         remark: false,
                                         body: ConcatExpression {
                                             sequence: [
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: IGNORED,
                                                 },
-                                                YggdrasilExpression {
-                                                    tag: None,
-                                                    remark: false,
-                                                    body: IGNORED,
-                                                },
-                                                YggdrasilExpression {
-                                                    tag: Some(
-                                                        Identifier("Prefix", 2083..2088),
-                                                    ),
+                                                Expression {
+                                                    tag: Identifier("Prefix", 2090..2095),
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("Prefix", 2083..2088),
+                                                        name: Identifier("Prefix", 2090..2095),
                                                         boxed: false,
                                                         inline: false,
                                                     },
@@ -1699,53 +1685,44 @@ GrammarInfo {
                                     ],
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Atomic", 2092..2097),
-                                ),
+                            Expression {
+                                tag: Identifier("Atomic", 2098..2103),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Atomic", 2092..2097),
+                                    name: Identifier("Atomic", 2098..2103),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
+                                    base: Expression {
                                         tag: None,
                                         remark: false,
                                         body: ConcatExpression {
                                             sequence: [
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: IGNORED,
                                                 },
-                                                YggdrasilExpression {
-                                                    tag: None,
-                                                    remark: false,
-                                                    body: IGNORED,
-                                                },
-                                                YggdrasilExpression {
-                                                    tag: Some(
-                                                        Identifier("Suffix", 2107..2112),
-                                                    ),
+                                                Expression {
+                                                    tag: Identifier("Suffix", 2105..2110),
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("Suffix", 2107..2112),
+                                                        name: Identifier("Suffix", 2105..2110),
                                                         boxed: false,
                                                         inline: false,
                                                     },
@@ -1762,10 +1739,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 2058..2116,
+            range: 2073..2113,
         },
         "Infix": GrammarRule {
-            name: Identifier("Infix", 2131..2135),
+            name: Identifier("Infix", 2128..2132),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -1783,28 +1760,26 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Infix0", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Infix0", 0..0),
                         remark: false,
                         body: ConcatExpression {
                             sequence: [
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: IGNORED,
                                 },
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: YggdrasilText {
                                         text: ":",
                                         insensitive: false,
-                                        range: 2152..2154,
+                                        range: 2149..2151,
                                     },
                                 },
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: IGNORED,
@@ -1812,35 +1787,31 @@ GrammarInfo {
                             ],
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Infix1", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Infix1", 0..0),
                         remark: false,
                         body: IGNORED,
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Infix2", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Infix2", 0..0),
                         remark: false,
                         body: ConcatExpression {
                             sequence: [
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: IGNORED,
                                 },
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: YggdrasilText {
                                         text: "~",
                                         insensitive: false,
-                                        range: 2211..2213,
+                                        range: 2208..2210,
                                     },
                                 },
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: IGNORED,
@@ -1850,10 +1821,10 @@ GrammarInfo {
                     },
                 ],
             },
-            range: 2118..2228,
+            range: 2115..2225,
         },
         "Prefix": GrammarRule {
-            name: Identifier("Prefix", 2236..2241),
+            name: Identifier("Prefix", 2233..2238),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -1871,45 +1842,39 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Prefix0", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Prefix0", 0..0),
                         remark: false,
                         body: YggdrasilText {
                             text: "!",
                             insensitive: false,
-                            range: 2251..2253,
+                            range: 2248..2250,
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Prefix1", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Prefix1", 0..0),
                         remark: false,
                         body: YggdrasilText {
                             text: "&",
                             insensitive: false,
-                            range: 2271..2273,
+                            range: 2268..2270,
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Prefix2", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Prefix2", 0..0),
                         remark: false,
                         body: YggdrasilText {
                             text: "^",
                             insensitive: false,
-                            range: 2291..2293,
+                            range: 2288..2290,
                         },
                     },
                 ],
             },
-            range: 2230..2303,
+            range: 2227..2300,
         },
         "Suffix": GrammarRule {
-            name: Identifier("Suffix", 2311..2316),
+            name: Identifier("Suffix", 2308..2313),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -1927,45 +1892,39 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Suffix0", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Suffix0", 0..0),
                         remark: false,
                         body: YggdrasilText {
                             text: "?",
                             insensitive: false,
-                            range: 2326..2328,
+                            range: 2323..2325,
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Suffix1", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Suffix1", 0..0),
                         remark: false,
                         body: YggdrasilText {
                             text: "*",
                             insensitive: false,
-                            range: 2346..2348,
+                            range: 2343..2345,
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Suffix2", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Suffix2", 0..0),
                         remark: false,
                         body: YggdrasilText {
                             text: "+",
                             insensitive: false,
-                            range: 2366..2368,
+                            range: 2363..2365,
                         },
                     },
                 ],
             },
-            range: 2305..2378,
+            range: 2302..2375,
         },
         "Atomic": GrammarRule {
-            name: Identifier("Atomic", 2507..2512),
+            name: Identifier("Atomic", 2504..2509),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -1983,127 +1942,129 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Atomic0", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Atomic0", 0..0),
                         remark: false,
                         body: ConcatExpression {
                             sequence: [
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: YggdrasilText {
                                         text: "(",
                                         insensitive: false,
-                                        range: 2522..2524,
+                                        range: 2519..2521,
                                     },
                                 },
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: IGNORED,
                                 },
-                                YggdrasilExpression {
-                                    tag: Some(
-                                        Identifier("Expression", 2526..2535),
-                                    ),
+                                Expression {
+                                    tag: None,
                                     remark: false,
-                                    body: RuleReference {
-                                        name: Identifier("Expression", 2526..2535),
-                                        boxed: false,
-                                        inline: false,
+                                    body: YggdrasilMacroCall {
+                                        name: YggdrasilNamepath {
+                                            identifiers: [
+                                                Identifier("box", 2524..2526),
+                                            ],
+                                            range: 2524..2526,
+                                        },
+                                        arguments: [
+                                            YggdrasilMacroArgument {
+                                                key: None,
+                                                value: Expression {
+                                                    tag: None,
+                                                    remark: false,
+                                                    body: RuleReference {
+                                                        name: Identifier("Expression", 2528..2537),
+                                                        boxed: false,
+                                                        inline: false,
+                                                    },
+                                                },
+                                            },
+                                        ],
+                                        range: 2523..2538,
                                     },
                                 },
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: IGNORED,
                                 },
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: YggdrasilText {
                                         text: ")",
                                         insensitive: false,
-                                        range: 2537..2539,
+                                        range: 2540..2542,
                                     },
                                 },
                             ],
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("FunctionCall", 2547..2558),
-                        ),
+                    Expression {
+                        tag: Identifier("FunctionCall", 2550..2561),
                         remark: false,
                         body: RuleReference {
-                            name: Identifier("FunctionCall", 2547..2558),
+                            name: Identifier("FunctionCall", 2550..2561),
                             boxed: false,
                             inline: false,
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Boolean", 2566..2572),
-                        ),
+                    Expression {
+                        tag: Identifier("Boolean", 2569..2575),
                         remark: false,
                         body: RuleReference {
-                            name: Identifier("Boolean", 2566..2572),
+                            name: Identifier("Boolean", 2569..2575),
                             boxed: false,
                             inline: false,
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("String", 2580..2585),
-                        ),
+                    Expression {
+                        tag: Identifier("String", 2583..2588),
                         remark: false,
                         body: RuleReference {
-                            name: Identifier("String", 2580..2585),
+                            name: Identifier("String", 2583..2588),
                             boxed: false,
                             inline: false,
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("RegexEmbed", 2593..2602),
-                        ),
+                    Expression {
+                        tag: Identifier("RegexEmbed", 2596..2605),
                         remark: false,
                         body: RuleReference {
-                            name: Identifier("RegexEmbed", 2593..2602),
+                            name: Identifier("RegexEmbed", 2596..2605),
                             boxed: false,
                             inline: false,
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("RegexRange", 2610..2619),
-                        ),
+                    Expression {
+                        tag: Identifier("RegexRange", 2613..2622),
                         remark: false,
                         body: RuleReference {
-                            name: Identifier("RegexRange", 2610..2619),
+                            name: Identifier("RegexRange", 2613..2622),
                             boxed: false,
                             inline: false,
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Identifier", 2627..2636),
-                        ),
+                    Expression {
+                        tag: Identifier("Identifier", 2630..2639),
                         remark: false,
                         body: RuleReference {
-                            name: Identifier("Identifier", 2627..2636),
+                            name: Identifier("Identifier", 2630..2639),
                             boxed: false,
                             inline: false,
                         },
                     },
                 ],
             },
-            range: 2501..2638,
+            range: 2498..2641,
         },
         "String": GrammarRule {
-            name: Identifier("String", 2775..2780),
+            name: Identifier("String", 2778..2783),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -2121,42 +2082,40 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("String0", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("String0", 0..0),
                         remark: false,
                         body: ConcatExpression {
                             sequence: [
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: YggdrasilText {
                                         text: "'",
                                         insensitive: false,
-                                        range: 2790..2792,
+                                        range: 2793..2795,
                                     },
                                 },
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: UnaryExpression {
-                                        base: YggdrasilExpression {
+                                        base: Expression {
                                             tag: None,
                                             remark: false,
                                             body: ConcatExpression {
                                                 sequence: [
-                                                    YggdrasilExpression {
+                                                    Expression {
                                                         tag: None,
                                                         remark: false,
                                                         body: UnaryExpression {
-                                                            base: YggdrasilExpression {
+                                                            base: Expression {
                                                                 tag: None,
                                                                 remark: false,
                                                                 body: YggdrasilText {
                                                                     text: "'",
                                                                     insensitive: false,
-                                                                    range: 2796..2798,
+                                                                    range: 2799..2801,
                                                                 },
                                                             },
                                                             operators: [
@@ -2164,7 +2123,7 @@ GrammarInfo {
                                                             ],
                                                         },
                                                     },
-                                                    YggdrasilExpression {
+                                                    Expression {
                                                         tag: None,
                                                         remark: false,
                                                         body: ANY,
@@ -2177,54 +2136,52 @@ GrammarInfo {
                                         ],
                                     },
                                 },
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: YggdrasilText {
                                         text: "'",
                                         insensitive: false,
-                                        range: 2806..2808,
+                                        range: 2809..2811,
                                     },
                                 },
                             ],
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("String1", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("String1", 0..0),
                         remark: false,
                         body: ConcatExpression {
                             sequence: [
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: YggdrasilText {
                                         text: "\"",
                                         insensitive: false,
-                                        range: 2821..2823,
+                                        range: 2824..2826,
                                     },
                                 },
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: UnaryExpression {
-                                        base: YggdrasilExpression {
+                                        base: Expression {
                                             tag: None,
                                             remark: false,
                                             body: ConcatExpression {
                                                 sequence: [
-                                                    YggdrasilExpression {
+                                                    Expression {
                                                         tag: None,
                                                         remark: false,
                                                         body: UnaryExpression {
-                                                            base: YggdrasilExpression {
+                                                            base: Expression {
                                                                 tag: None,
                                                                 remark: false,
                                                                 body: YggdrasilText {
                                                                     text: "\"",
                                                                     insensitive: false,
-                                                                    range: 2827..2829,
+                                                                    range: 2830..2832,
                                                                 },
                                                             },
                                                             operators: [
@@ -2232,7 +2189,7 @@ GrammarInfo {
                                                             ],
                                                         },
                                                     },
-                                                    YggdrasilExpression {
+                                                    Expression {
                                                         tag: None,
                                                         remark: false,
                                                         body: ANY,
@@ -2245,13 +2202,13 @@ GrammarInfo {
                                         ],
                                     },
                                 },
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: YggdrasilText {
                                         text: "\"",
                                         insensitive: false,
-                                        range: 2837..2839,
+                                        range: 2840..2842,
                                     },
                                 },
                             ],
@@ -2259,10 +2216,10 @@ GrammarInfo {
                     },
                 ],
             },
-            range: 2762..2850,
+            range: 2765..2853,
         },
         "RegexEmbed": GrammarRule {
-            name: Identifier("RegexEmbed", 2979..2988),
+            name: Identifier("RegexEmbed", 2989..2998),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -2279,45 +2236,40 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: "/",
                                     insensitive: false,
-                                    range: 2996..2998,
+                                    range: 3006..3008,
                                 },
                             },
-                            YggdrasilExpression {
-                                tag: None,
-                                remark: false,
-                                body: IGNORED,
-                            },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
+                                    base: Expression {
                                         tag: None,
                                         remark: false,
                                         body: ConcatExpression {
                                             sequence: [
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: UnaryExpression {
-                                                        base: YggdrasilExpression {
+                                                        base: Expression {
                                                             tag: None,
                                                             remark: false,
                                                             body: YggdrasilText {
                                                                 text: "/",
                                                                 insensitive: false,
-                                                                range: 3002..3004,
+                                                                range: 3012..3014,
                                                             },
                                                         },
                                                         operators: [
@@ -2325,12 +2277,7 @@ GrammarInfo {
                                                         ],
                                                     },
                                                 },
-                                                YggdrasilExpression {
-                                                    tag: None,
-                                                    remark: false,
-                                                    body: IGNORED,
-                                                },
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: ANY,
@@ -2343,28 +2290,23 @@ GrammarInfo {
                                     ],
                                 },
                             },
-                            YggdrasilExpression {
-                                tag: None,
-                                remark: false,
-                                body: IGNORED,
-                            },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: "/",
                                     insensitive: false,
-                                    range: 3012..3014,
+                                    range: 3022..3024,
                                 },
                             },
                         ],
                     },
                 },
             },
-            range: 2973..3016,
+            range: 2976..3026,
         },
         "RegexRange": GrammarRule {
-            name: Identifier("RegexRange", 3031..3040),
+            name: Identifier("RegexRange", 3041..3050),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -2381,31 +2323,29 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: "[",
                                     insensitive: false,
-                                    range: 3048..3050,
+                                    range: 3058..3060,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
-                                        tag: Some(
-                                            Identifier("RegexNegative", 3052..3064),
-                                        ),
+                                    base: Expression {
+                                        tag: Identifier("RegexNegative", 3062..3074),
                                         remark: false,
                                         body: RuleReference {
-                                            name: Identifier("RegexNegative", 3052..3064),
+                                            name: Identifier("RegexNegative", 3062..3074),
                                             boxed: false,
                                             inline: false,
                                         },
@@ -2415,26 +2355,26 @@ GrammarInfo {
                                     ],
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
+                                    base: Expression {
                                         tag: None,
                                         remark: false,
                                         body: ConcatExpression {
                                             sequence: [
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: UnaryExpression {
-                                                        base: YggdrasilExpression {
+                                                        base: Expression {
                                                             tag: None,
                                                             remark: false,
                                                             body: YggdrasilText {
                                                                 text: "]",
                                                                 insensitive: false,
-                                                                range: 3069..3071,
+                                                                range: 3079..3081,
                                                             },
                                                         },
                                                         operators: [
@@ -2442,7 +2382,7 @@ GrammarInfo {
                                                         ],
                                                     },
                                                 },
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: ANY,
@@ -2455,23 +2395,23 @@ GrammarInfo {
                                     ],
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
                                     text: "]",
                                     insensitive: false,
-                                    range: 3079..3081,
+                                    range: 3089..3091,
                                 },
                             },
                         ],
                     },
                 },
             },
-            range: 3018..3083,
+            range: 3028..3093,
         },
         "RegexNegative": GrammarRule {
-            name: Identifier("RegexNegative", 3091..3103),
+            name: Identifier("RegexNegative", 3101..3113),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -2488,20 +2428,20 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilText {
                         text: "^",
                         insensitive: false,
-                        range: 3111..3113,
+                        range: 3121..3123,
                     },
                 },
             },
-            range: 3085..3115,
+            range: 3095..3125,
         },
         "NamepathFree": GrammarRule {
-            name: Identifier("NamepathFree", 3244..3255),
+            name: Identifier("NamepathFree", 3254..3265),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -2518,78 +2458,87 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Identifier", 3275..3284),
-                                ),
+                            Expression {
+                                tag: Identifier("Identifier", 3285..3294),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Identifier", 3275..3284),
+                                    name: Identifier("Identifier", 3285..3294),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
+                                    base: Expression {
                                         tag: None,
                                         remark: false,
                                         body: ConcatExpression {
                                             sequence: [
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
-                                                    body: ChoiceExpression {
-                                                        branches: [
-                                                            YggdrasilExpression {
+                                                    body: IGNORED,
+                                                },
+                                                Expression {
+                                                    tag: None,
+                                                    remark: false,
+                                                    body: ConcatExpression {
+                                                        sequence: [
+                                                            Expression {
                                                                 tag: None,
                                                                 remark: false,
-                                                                body: YggdrasilText {
-                                                                    text: ".",
-                                                                    insensitive: false,
-                                                                    range: 3288..3290,
+                                                                body: ChoiceExpression {
+                                                                    branches: [
+                                                                        Expression {
+                                                                            tag: None,
+                                                                            remark: false,
+                                                                            body: YggdrasilText {
+                                                                                text: ".",
+                                                                                insensitive: false,
+                                                                                range: 3298..3300,
+                                                                            },
+                                                                        },
+                                                                        Expression {
+                                                                            tag: None,
+                                                                            remark: false,
+                                                                            body: YggdrasilText {
+                                                                                text: "::",
+                                                                                insensitive: false,
+                                                                                range: 3304..3307,
+                                                                            },
+                                                                        },
+                                                                    ],
                                                                 },
                                                             },
-                                                            YggdrasilExpression {
+                                                            Expression {
                                                                 tag: None,
                                                                 remark: false,
-                                                                body: YggdrasilText {
-                                                                    text: "::",
-                                                                    insensitive: false,
-                                                                    range: 3294..3297,
+                                                                body: IGNORED,
+                                                            },
+                                                            Expression {
+                                                                tag: Identifier("Identifier", 3310..3319),
+                                                                remark: false,
+                                                                body: RuleReference {
+                                                                    name: Identifier("Identifier", 3310..3319),
+                                                                    boxed: false,
+                                                                    inline: false,
                                                                 },
                                                             },
                                                         ],
                                                     },
                                                 },
-                                                YggdrasilExpression {
-                                                    tag: None,
-                                                    remark: false,
-                                                    body: IGNORED,
-                                                },
-                                                YggdrasilExpression {
-                                                    tag: Some(
-                                                        Identifier("Identifier", 3300..3309),
-                                                    ),
-                                                    remark: false,
-                                                    body: RuleReference {
-                                                        name: Identifier("Identifier", 3300..3309),
-                                                        boxed: false,
-                                                        inline: false,
-                                                    },
-                                                },
                                             ],
                                         },
                                     },
@@ -2602,10 +2551,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 3238..3313,
+            range: 3248..3323,
         },
         "Namepath": GrammarRule {
-            name: Identifier("Namepath", 3321..3328),
+            name: Identifier("Namepath", 3331..3338),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -2622,59 +2571,68 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Identifier", 3336..3345),
-                                ),
+                            Expression {
+                                tag: Identifier("Identifier", 3346..3355),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Identifier", 3336..3345),
+                                    name: Identifier("Identifier", 3346..3355),
                                     boxed: false,
                                     inline: false,
                                 },
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: IGNORED,
                             },
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
+                                    base: Expression {
                                         tag: None,
                                         remark: false,
                                         body: ConcatExpression {
                                             sequence: [
-                                                YggdrasilExpression {
-                                                    tag: None,
-                                                    remark: false,
-                                                    body: YggdrasilText {
-                                                        text: "::",
-                                                        insensitive: false,
-                                                        range: 3348..3351,
-                                                    },
-                                                },
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: IGNORED,
                                                 },
-                                                YggdrasilExpression {
-                                                    tag: Some(
-                                                        Identifier("Identifier", 3353..3362),
-                                                    ),
+                                                Expression {
+                                                    tag: None,
                                                     remark: false,
-                                                    body: RuleReference {
-                                                        name: Identifier("Identifier", 3353..3362),
-                                                        boxed: false,
-                                                        inline: false,
+                                                    body: ConcatExpression {
+                                                        sequence: [
+                                                            Expression {
+                                                                tag: None,
+                                                                remark: false,
+                                                                body: YggdrasilText {
+                                                                    text: "::",
+                                                                    insensitive: false,
+                                                                    range: 3358..3361,
+                                                                },
+                                                            },
+                                                            Expression {
+                                                                tag: None,
+                                                                remark: false,
+                                                                body: IGNORED,
+                                                            },
+                                                            Expression {
+                                                                tag: Identifier("Identifier", 3363..3372),
+                                                                remark: false,
+                                                                body: RuleReference {
+                                                                    name: Identifier("Identifier", 3363..3372),
+                                                                    boxed: false,
+                                                                    inline: false,
+                                                                },
+                                                            },
+                                                        ],
                                                     },
                                                 },
                                             ],
@@ -2689,10 +2647,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 3315..3366,
+            range: 3325..3376,
         },
         "Identifier": GrammarRule {
-            name: Identifier("Identifier", 3374..3383),
+            name: Identifier("Identifier", 3384..3393),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -2709,19 +2667,19 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "[_\\p{XID_start}]\\p{XID_continue}*",
-                        span: 3391..3425,
+                        span: 3401..3435,
                     },
                 },
             },
-            range: 3368..3427,
+            range: 3378..3437,
         },
         "Boolean": GrammarRule {
-            name: Identifier("Boolean", 3435..3441),
+            name: Identifier("Boolean", 3445..3451),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -2739,34 +2697,30 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Boolean0", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Boolean0", 0..0),
                         remark: false,
                         body: YggdrasilText {
                             text: "true",
                             insensitive: false,
-                            range: 3451..3456,
+                            range: 3461..3466,
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Boolean1", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Boolean1", 0..0),
                         remark: false,
                         body: YggdrasilText {
                             text: "false",
                             insensitive: false,
-                            range: 3471..3477,
+                            range: 3481..3487,
                         },
                     },
                 ],
             },
-            range: 3429..3486,
+            range: 3439..3496,
         },
         "ModifierCall": GrammarRule {
-            name: Identifier("ModifierCall", 3622..3633),
+            name: Identifier("ModifierCall", 3632..3643),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -2783,61 +2737,61 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: ConcatExpression {
                         sequence: [
-                            YggdrasilExpression {
+                            Expression {
                                 tag: None,
                                 remark: false,
                                 body: UnaryExpression {
-                                    base: YggdrasilExpression {
+                                    base: Expression {
                                         tag: None,
                                         remark: false,
                                         body: ChoiceExpression {
                                             branches: [
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("KW_CLASS", 3645..3652),
+                                                        name: Identifier("KW_CLASS", 3655..3662),
                                                         boxed: false,
                                                         inline: false,
                                                     },
                                                 },
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("KW_UNION", 3656..3663),
+                                                        name: Identifier("KW_UNION", 3666..3673),
                                                         boxed: false,
                                                         inline: false,
                                                     },
                                                 },
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("KW_GROUP", 3667..3674),
+                                                        name: Identifier("KW_GROUP", 3677..3684),
                                                         boxed: false,
                                                         inline: false,
                                                     },
                                                 },
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("KW_MACRO", 3678..3685),
+                                                        name: Identifier("KW_MACRO", 3688..3695),
                                                         boxed: false,
                                                         inline: false,
                                                     },
                                                 },
-                                                YggdrasilExpression {
+                                                Expression {
                                                     tag: None,
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("KW_CLIMB", 3689..3696),
+                                                        name: Identifier("KW_CLIMB", 3699..3706),
                                                         boxed: false,
                                                         inline: false,
                                                     },
@@ -2850,13 +2804,11 @@ GrammarInfo {
                                     ],
                                 },
                             },
-                            YggdrasilExpression {
-                                tag: Some(
-                                    Identifier("Identifier", 3700..3709),
-                                ),
+                            Expression {
+                                tag: Identifier("Identifier", 3710..3719),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Identifier", 3700..3709),
+                                    name: Identifier("Identifier", 3710..3719),
                                     boxed: false,
                                     inline: false,
                                 },
@@ -2865,10 +2817,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 3609..3711,
+            range: 3619..3721,
         },
         "KW_GRAMMAR": GrammarRule {
-            name: Identifier("KW_GRAMMAR", 3741..3750),
+            name: Identifier("KW_GRAMMAR", 3751..3760),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -2885,19 +2837,19 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "grammar",
-                        span: 3753..3761,
+                        span: 3763..3771,
                     },
                 },
             },
-            range: 3741..3761,
+            range: 3751..3771,
         },
         "KW_IMPORT": GrammarRule {
-            name: Identifier("KW_IMPORT", 3767..3775),
+            name: Identifier("KW_IMPORT", 3777..3785),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -2914,19 +2866,19 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "using|import|use",
-                        span: 3778..3795,
+                        span: 3788..3805,
                     },
                 },
             },
-            range: 3767..3795,
+            range: 3777..3805,
         },
         "KW_CLASS": GrammarRule {
-            name: Identifier("KW_CLASS", 3801..3808),
+            name: Identifier("KW_CLASS", 3811..3818),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -2943,19 +2895,19 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "class|struct",
-                        span: 3811..3824,
+                        span: 3821..3834,
                     },
                 },
             },
-            range: 3801..3824,
+            range: 3811..3834,
         },
         "KW_UNION": GrammarRule {
-            name: Identifier("KW_UNION", 3830..3837),
+            name: Identifier("KW_UNION", 3840..3847),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -2972,19 +2924,19 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "union|enum",
-                        span: 3840..3851,
+                        span: 3850..3861,
                     },
                 },
             },
-            range: 3830..3851,
+            range: 3840..3861,
         },
         "KW_GROUP": GrammarRule {
-            name: Identifier("KW_GROUP", 3857..3864),
+            name: Identifier("KW_GROUP", 3867..3874),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -3001,19 +2953,19 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "group|token",
-                        span: 3867..3879,
+                        span: 3877..3889,
                     },
                 },
             },
-            range: 3857..3879,
+            range: 3867..3889,
         },
         "KW_CLIMB": GrammarRule {
-            name: Identifier("KW_CLIMB", 3885..3892),
+            name: Identifier("KW_CLIMB", 3895..3902),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -3030,19 +2982,19 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "climb",
-                        span: 3895..3901,
+                        span: 3905..3911,
                     },
                 },
             },
-            range: 3885..3901,
+            range: 3895..3911,
         },
         "KW_MACRO": GrammarRule {
-            name: Identifier("KW_MACRO", 3907..3914),
+            name: Identifier("KW_MACRO", 3917..3924),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -3059,19 +3011,19 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "macro|def|function|func|fun|fn",
-                        span: 3917..3948,
+                        span: 3927..3958,
                     },
                 },
             },
-            range: 3907..3948,
+            range: 3917..3958,
         },
         "WhiteSpace": GrammarRule {
-            name: Identifier("WhiteSpace", 4086..4095),
+            name: Identifier("WhiteSpace", 4096..4105),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -3088,19 +3040,19 @@ GrammarInfo {
                 range: "usize",
             },
             body: Class {
-                term: YggdrasilExpression {
+                term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "\\p{White_Space}+",
-                        span: 4103..4120,
+                        span: 4113..4130,
                     },
                 },
             },
-            range: 4073..4122,
+            range: 4083..4132,
         },
         "Comment": GrammarRule {
-            name: Identifier("Comment", 4160..4166),
+            name: Identifier("Comment", 4170..4176),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -3118,55 +3070,51 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Comment0", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Comment0", 0..0),
                         remark: false,
                         body: ConcatExpression {
                             sequence: [
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: YggdrasilText {
                                         text: "//",
                                         insensitive: false,
-                                        range: 4176..4179,
+                                        range: 4186..4189,
                                     },
                                 },
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: YggdrasilRegex {
                                         raw: "[^\\n\\r]*",
-                                        span: 4181..4190,
+                                        span: 4191..4200,
                                     },
                                 },
                             ],
                         },
                     },
-                    YggdrasilExpression {
-                        tag: Some(
-                            Identifier("Comment1", 0..0),
-                        ),
+                    Expression {
+                        tag: Identifier("Comment1", 0..0),
                         remark: false,
                         body: ConcatExpression {
                             sequence: [
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: YggdrasilText {
                                         text: "#",
                                         insensitive: false,
-                                        range: 4198..4200,
+                                        range: 4208..4210,
                                     },
                                 },
-                                YggdrasilExpression {
+                                Expression {
                                     tag: None,
                                     remark: false,
                                     body: YggdrasilRegex {
                                         raw: "[^\\n\\r]*",
-                                        span: 4203..4212,
+                                        span: 4213..4222,
                                     },
                                 },
                             ],
@@ -3174,7 +3122,7 @@ GrammarInfo {
                     },
                 ],
             },
-            range: 4124..4214,
+            range: 4134..4224,
         },
     },
     token_sets: {},

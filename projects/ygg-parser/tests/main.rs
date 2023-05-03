@@ -19,16 +19,11 @@ fn test_json5() {
 
 #[test]
 fn test_string() {
-    let cst = BootstrapParser::parse_cst(
-        r##"
-class StringRaw -> StringText {
+    let text = r##"class StringRaw -> StringText {
     /[^"]*/
-}
-    "##,
-        BootstrapRule::ClassStatement,
-    )
-    .unwrap();
+}"##;
+    let cst = BootstrapParser::parse_cst(text, BootstrapRule::ClassStatement).unwrap();
     println!("Short Form:\n{}", cst);
-    let ast = ClassStatementNode::from_str("'123'").unwrap();
+    let ast = ClassStatementNode::from_str(text).unwrap();
     println!("{ast:#?}")
 }

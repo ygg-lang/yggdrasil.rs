@@ -1,8 +1,4 @@
 use super::*;
-use crate::{
-    grammar::GrammarInfo,
-    nodes::{ChoiceExpression, ConcatExpression},
-};
 
 pub mod counter;
 
@@ -33,6 +29,7 @@ impl Display for FieldKind {
 ///     span: Range<usize>
 /// }
 /// ```
+#[derive(Debug)]
 pub struct YggdrasilField {
     pub bind: String,
     pub kind: FieldKind,
@@ -85,7 +82,7 @@ impl GrammarRule {
 }
 
 impl YggdrasilExpression {
-    fn field_map(&self) -> YggdrasilVariants {
+    pub fn field_map(&self) -> YggdrasilVariants {
         // let tag = self.tag.as_ref().or(candidate);
         match &self.body {
             ExpressionBody::Choice(many) => many.field_map(),
@@ -93,7 +90,7 @@ impl YggdrasilExpression {
             // a:x+
             // a:(x*)
             // a:(b:x)
-            ExpressionBody::Unary(one) => one.field_map(self.tag.as_ref()),
+            ExpressionBody::Unary(one) => one.field_map(),
             ExpressionBody::Rule(one) => match &self.tag {
                 Some(s) => YggdrasilVariants::rule(s, one, FieldCounter::ONE),
                 None => YggdrasilVariants::default(),
@@ -103,29 +100,29 @@ impl YggdrasilExpression {
     }
 }
 
-impl UnaryExpression {
-    fn field_map(&self, candidate: Option<&YggdrasilIdentifier>) -> YggdrasilVariants {
-        let count = self.counter();
-        let tag = self.base.tag.as_ref().or(candidate);
-        match &self.base.body {
-            ExpressionBody::Concat(v) => v.field_map(),
-            ExpressionBody::Choice(v) => v.field_map(),
-            // base:Rule*         => tag = base
-            // outer:(Rule)*      => tag = outer
-            // outer:(base:Rule)* => tag = base
-            ExpressionBody::Unary(v) => {
-                let mut base = v.field_map(tag);
-                base *= count;
-                base
-            }
-            ExpressionBody::Rule(r) => match tag {
-                Some(s) => YggdrasilVariants::rule(s, r, count),
-                None => YggdrasilVariants::default(),
-            },
-            _ => YggdrasilVariants::default(),
-        }
-    }
-}
+// impl UnaryExpression {
+//     fn field_map(&self, candidate: Option<&YggdrasilIdentifier>) -> YggdrasilVariants {
+//         let count = self.counter();
+//         let tag = self.base.tag.as_ref().or(candidate);
+//         match &self.base.body {
+//             ExpressionBody::Concat(v) => v.field_map(),
+//             ExpressionBody::Choice(v) => v.field_map(),
+//             // base:Rule*         => tag = base
+//             // outer:(Rule)*      => tag = outer
+//             // outer:(base:Rule)* => tag = base
+//             ExpressionBody::Unary(v) => {
+//                 let mut base = v.field_map(tag);
+//                 base *= count;
+//                 base
+//             }
+//             ExpressionBody::Rule(r) => match tag {
+//                 Some(s) => YggdrasilVariants::rule(s, r, count),
+//                 None => YggdrasilVariants::default(),
+//             },
+//             _ => YggdrasilVariants::default(),
+//         }
+//     }
+// }
 
 impl ConcatExpression {
     ///```ygg
@@ -158,6 +155,12 @@ impl ChoiceExpression {
 }
 
 impl UnaryExpression {
+    pub fn field_map(&self) -> YggdrasilVariants {
+        let mut map = self.base.field_map();
+        map *= self.counter();
+        map
+    }
+
     ///```ygg
     /// T?+ -> *
     /// T?? -> ?
@@ -185,9 +188,9 @@ impl YggdrasilOperator {
     }
     pub fn suffix(o: &str) -> YggdrasilOperator {
         match o {
-            "?" => Self::Optional,
-            "+" => Self::Repeats,
-            "*" => Self::Repeat1,
+            "?" => Self::RepeatsBetween { min: 0, max: 1 },
+            "+" => Self::RepeatsBetween { min: 1, max: u32::MAX },
+            "*" => Self::RepeatsBetween { min: 0, max: u32::MAX },
             _ => unreachable!(),
         }
     }
@@ -195,11 +198,8 @@ impl YggdrasilOperator {
         match self {
             YggdrasilOperator::Positive => FieldCounter::ONE,
             YggdrasilOperator::Negative => FieldCounter::NEVER,
-            YggdrasilOperator::Optional => FieldCounter::OPTIONAL,
-            YggdrasilOperator::Repeats => FieldCounter::MANY,
-            YggdrasilOperator::Repeat1 => FieldCounter::MANY1,
             YggdrasilOperator::Boxing => FieldCounter::ONE,
-            YggdrasilOperator::RepeatsBetween(_, _) => FieldCounter::MANY,
+            YggdrasilOperator::RepeatsBetween { min, max } => FieldCounter::MANY,
             YggdrasilOperator::Recursive => FieldCounter::ONE,
         }
     }

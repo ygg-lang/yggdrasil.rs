@@ -1,53 +1,44 @@
-mod classes;
-pub mod derive;
+use std::{
+    cmp::Ordering,
+    collections::{BTreeMap, BTreeSet},
+    fmt::{Debug, Display, Formatter},
+    ops::{BitAndAssign, BitOrAssign, BitXorAssign, MulAssign, Range},
+};
 
-mod fields;
-mod identifier;
-mod unions;
+use convert_case::{Case, Casing};
+pub use num::BigInt;
+use num::Zero;
 
-mod annotations;
+use crate::{
+    data::RuleReference,
+    grammar::GrammarInfo,
+    nodes::{ChoiceExpression, ConcatExpression, ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
+};
 
 pub use self::{
     annotations::{YggdrasilAnnotations, YggdrasilMacroArgument, YggdrasilMacroCall, YggdrasilModifiers},
+    atomic::GrammarAtomic,
     classes::YggdrasilVariants,
     derive::RuleDerive,
     fields::{counter::FieldCounter, FieldKind, YggdrasilField},
     identifier::{YggdrasilIdentifier, YggdrasilNamepath},
     unions::YggdrasilEnumerates,
 };
-use crate::{
-    data::RuleReference,
-    nodes::{ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
-};
-use convert_case::{Case, Casing};
-pub use num::BigInt;
-use num::Zero;
-use std::{
-    cmp::Ordering,
-    collections::{BTreeMap, BTreeSet},
-    fmt::{Debug, Display, Formatter},
-    ops::{BitAndAssign, BitOrAssign, BitXorAssign, Range},
-};
+
+mod classes;
+pub mod derive;
+
+mod annotations;
+mod atomic;
+mod fields;
+mod identifier;
+mod unions;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct FunctionRule {}
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum GrammarAtomic {
-    Optimized,
-    Atomic,
-    Combined,
-}
-
-impl GrammarAtomic {
-    pub fn optimize(&mut self) {
-        *self = GrammarAtomic::Optimized
-    }
-}
-
-#[derive(Debug, Clone, Eq, PartialEq)]
-// #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GrammarRule {
     /// Automatically inline when this rule is called
     ///
@@ -131,7 +122,7 @@ pub struct GrammarRule {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GrammarCaptures {
     /// Don't capture any objects in rule.
     ///
