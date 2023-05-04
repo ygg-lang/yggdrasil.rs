@@ -119,10 +119,15 @@ impl AsRailroad for UnaryExpression {
         for o in &self.operators {
             match o {
                 YggdrasilOperator::RepeatsBetween { min, max } => {
-                    let start = min.to_string();
-                    let end = if *max >= 65536 { String::from("∞") } else { max.to_string() };
-                    let c = Comment::new(format!("[{}, {}]", start, end));
-                    base = Box::new(Repeat::new(base, c));
+                    if *min == 0 && *max == 1 {
+                        base = Box::new(Optional::new(base))
+                    }
+                    else {
+                        let start = min.to_string();
+                        let end = if *max >= 65536 { String::from("∞") } else { max.to_string() };
+                        let c = Comment::new(format!("[{}, {}]", start, end));
+                        base = Box::new(Repeat::new(base, c));
+                    }
                 }
                 YggdrasilOperator::Boxing => continue,
                 YggdrasilOperator::Recursive => continue,

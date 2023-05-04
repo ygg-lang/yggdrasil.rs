@@ -1,5 +1,8 @@
 use std::{fs::File, io::Write, str::FromStr};
-use yggdrasil_parser::bootstrap::{BootstrapParser, BootstrapRule, ClassStatementNode, RootNode};
+use yggdrasil_parser::bootstrap::{
+    BootstrapParser, BootstrapRule, ClassBlockNode, ClassStatementNode, ExpressionNode, RootNode, TermNode, UnionBranchNode,
+    UnionStatementNode,
+};
 use yggdrasil_rt::YggdrasilParser;
 
 #[test]
@@ -19,11 +22,11 @@ fn test_json5() {
 
 #[test]
 fn test_string() {
-    let text = r##"class StringRaw -> StringText {
-    /[^"]*/
-}"##;
-    let cst = BootstrapParser::parse_cst(text, BootstrapRule::ClassStatement).unwrap();
+    let text = r##"
+    | Object  #Object
+    "##;
+    let cst = BootstrapParser::parse_cst(text, BootstrapRule::UnionBranch).unwrap();
     println!("Short Form:\n{}", cst);
-    let ast = ClassStatementNode::from_str(text).unwrap();
+    let ast = UnionBranchNode::from_str(text).unwrap();
     println!("{ast:#?}")
 }

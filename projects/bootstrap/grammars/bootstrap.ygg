@@ -21,16 +21,16 @@ class GrammarBlock {
 }
 // === class === -----------------------------------------------------------------------------------------------------
 class ClassStatement {
-    Annotation? ^KW_CLASS (name:Identifier) ('->' cast:Identifier)? ClassBlock
+    AnnotationCall* ModifierCall* ^KW_CLASS (name:Identifier) ('->' cast:Identifier)? ClassBlock
 }
 class ClassBlock {
-    '{' Expression* '}'
+    '{' '|'? Expression* '}'
 }
 // === union === -----------------------------------------------------------------------------------------------------
 class UnionStatement {
-    Annotation? ^KW_UNION (name:Identifier) UnionBlock
+    AnnotationCall* ModifierCall* ^KW_UNION (name:Identifier) UnionBlock
 }
-atomic class UnionBlock {
+class UnionBlock {
     '{' UnionBranch* '}'
 }
 class UnionBranch {
@@ -45,7 +45,7 @@ class RightAssociativity {
 }
 // === group === -------------------------------------------------------------------------------------------------------
 class GroupStatement {
-    Annotation? ^KW_GROUP Identifier? GroupBlock
+    AnnotationCall* ModifierCall* ^KW_GROUP Identifier? GroupBlock
 }
 class GroupBlock {
     '{' GroupPair* '}'
@@ -54,9 +54,6 @@ class GroupPair {
     Identifier ':' Atomic
 }
 // === annotations === -------------------------------------------------------------------------------------------------
-class Annotation {
-    AnnotationCall* ModifierCall*
-}
 class AnnotationCall {
     AnnotationName CallBody
 }
@@ -65,7 +62,7 @@ class AnnotationName {
     [@#] Identifier
 }
 class FunctionCall {
-    FunctionName Identifier CallBody
+    FunctionName CallBody
 }
 @style(function)
 class FunctionName {
@@ -75,19 +72,12 @@ class CallBody {
     '(' (Expression (',' Expression)* ','?)? ')'
 }
 // === expression === --------------------------------------------------------------------------------------------------
-atomic class Expression {
-    Term ExpressionResidual*
-}
-atomic class ExpressionResidual {
-    Infix Term
-}
+class Expression     { ExpressionHard ('|' ExpressionHard)* }
+class ExpressionHard { ExpressionSoft ('~' ExpressionSoft)* }
+class ExpressionSoft { ExpressionTag ExpressionTag* }
+class ExpressionTag  { Term (':' Term)* }
 class Term {
     Prefix* Atomic Suffix*
-}
-atomic union Infix {
-    | IGNORE ':' IGNORE #Tag
-    | IGNORE            #Soft
-    | IGNORE '~' IGNORE #Hard
 }
 union Prefix {
     | '!' #Negative
@@ -101,7 +91,7 @@ union Suffix {
 }
 // === atoms === -------------------------------------------------------------------------------------------------------
 union Atomic {
-    | '(' @box(Expression) ')'
+    | '(' '|'? Expression ')'
     | FunctionCall
     | Boolean
     | String
@@ -153,7 +143,7 @@ token {
     KW_MACRO: /macro|def|function|func|fun|fn/
 }
 // === ignores === -----------------------------------------------------------------------------------------------------
-ignore class WhiteSpace {
+atomic ignore class WhiteSpace {
     /\p{White_Space}+/
 }
 @style(comment)

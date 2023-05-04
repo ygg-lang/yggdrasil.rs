@@ -11,6 +11,1684 @@ RootNode {
                 span: 0..37,
             },
         ),
+        UnionStatement(
+            UnionStatementNode {
+                annotation_call: [],
+                modifier_call: [
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            span: 39..44,
+                        },
+                        span: 39..44,
+                    },
+                ],
+                union_block: UnionBlockNode {
+                    union_branch: [
+                        UnionBranchNode {
+                            branch_tag: None,
+                            expression: ExpressionNode {
+                                expression_hard: [
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: Identifier(
+                                                                    IdentifierNode {
+                                                                        span: 65..71,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 65..85,
+                                                            },
+                                                        ],
+                                                        span: 65..85,
+                                                    },
+                                                ],
+                                                span: 65..85,
+                                            },
+                                        ],
+                                        span: 65..85,
+                                    },
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: Identifier(
+                                                                    IdentifierNode {
+                                                                        span: 87..92,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 87..106,
+                                                            },
+                                                        ],
+                                                        span: 87..106,
+                                                    },
+                                                ],
+                                                span: 87..106,
+                                            },
+                                        ],
+                                        span: 87..106,
+                                    },
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: Identifier(
+                                                                    IdentifierNode {
+                                                                        span: 108..114,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 108..128,
+                                                            },
+                                                        ],
+                                                        span: 108..128,
+                                                    },
+                                                ],
+                                                span: 108..128,
+                                            },
+                                        ],
+                                        span: 108..128,
+                                    },
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: Identifier(
+                                                                    IdentifierNode {
+                                                                        span: 130..136,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 130..150,
+                                                            },
+                                                        ],
+                                                        span: 130..150,
+                                                    },
+                                                ],
+                                                span: 130..150,
+                                            },
+                                        ],
+                                        span: 130..150,
+                                    },
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: Identifier(
+                                                                    IdentifierNode {
+                                                                        span: 152..159,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 152..173,
+                                                            },
+                                                        ],
+                                                        span: 152..173,
+                                                    },
+                                                ],
+                                                span: 152..173,
+                                            },
+                                        ],
+                                        span: 152..173,
+                                    },
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: Identifier(
+                                                                    IdentifierNode {
+                                                                        span: 175..179,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 175..189,
+                                                            },
+                                                        ],
+                                                        span: 175..189,
+                                                    },
+                                                ],
+                                                span: 175..189,
+                                            },
+                                        ],
+                                        span: 175..189,
+                                    },
+                                ],
+                                span: 65..189,
+                            },
+                            span: 63..189,
+                        },
+                    ],
+                    span: 57..190,
+                },
+                name: IdentifierNode {
+                    span: 51..56,
+                },
+                span: 39..190,
+            },
+        ),
+        ClassStatement(
+            ClassStatementNode {
+                annotation_call: [],
+                class_block: ClassBlockNode {
+                    expression: [
+                        ExpressionNode {
+                            expression_hard: [
+                                ExpressionHardNode {
+                                    expression_soft: [
+                                        ExpressionSoftNode {
+                                            expression_tag: [
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: String(
+                                                                String0,
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 331..335,
+                                                        },
+                                                    ],
+                                                    span: 331..335,
+                                                },
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: Atomic0(
+                                                                ExpressionNode {
+                                                                    expression_hard: [],
+                                                                    span: 368..369,
+                                                                },
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [
+                                                                Suffix0,
+                                                            ],
+                                                            span: 335..370,
+                                                        },
+                                                    ],
+                                                    span: 335..371,
+                                                },
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: String(
+                                                                String0,
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 371..375,
+                                                        },
+                                                    ],
+                                                    span: 371..375,
+                                                },
+                                            ],
+                                            span: 331..375,
+                                        },
+                                    ],
+                                    span: 331..375,
+                                },
+                            ],
+                            span: 331..375,
+                        },
+                    ],
+                    span: 325..376,
+                },
+                modifier_call: [],
+                cast: None,
+                name: IdentifierNode {
+                    span: 318..324,
+                },
+                span: 312..376,
+            },
+        ),
+        ClassStatement(
+            ClassStatementNode {
+                annotation_call: [],
+                class_block: ClassBlockNode {
+                    expression: [
+                        ExpressionNode {
+                            expression_hard: [
+                                ExpressionHardNode {
+                                    expression_soft: [
+                                        ExpressionSoftNode {
+                                            expression_tag: [
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: Identifier(
+                                                                IdentifierNode {
+                                                                    span: 401..410,
+                                                                },
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 401..411,
+                                                        },
+                                                    ],
+                                                    span: 401..411,
+                                                },
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: String(
+                                                                String0,
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 411..415,
+                                                        },
+                                                    ],
+                                                    span: 411..415,
+                                                },
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: Identifier(
+                                                                IdentifierNode {
+                                                                    span: 415..420,
+                                                                },
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 415..421,
+                                                        },
+                                                    ],
+                                                    span: 415..421,
+                                                },
+                                            ],
+                                            span: 401..421,
+                                        },
+                                    ],
+                                    span: 401..421,
+                                },
+                            ],
+                            span: 401..421,
+                        },
+                    ],
+                    span: 395..422,
+                },
+                modifier_call: [],
+                cast: None,
+                name: IdentifierNode {
+                    span: 384..394,
+                },
+                span: 378..422,
+            },
+        ),
+        UnionStatement(
+            UnionStatementNode {
+                annotation_call: [
+                    AnnotationCallNode {
+                        annotation_name: AnnotationNameNode {
+                            identifier: IdentifierNode {
+                                span: 425..430,
+                            },
+                            span: 424..430,
+                        },
+                        call_body: CallBodyNode {
+                            expression: [
+                                ExpressionNode {
+                                    expression_hard: [
+                                        ExpressionHardNode {
+                                            expression_soft: [
+                                                ExpressionSoftNode {
+                                                    expression_tag: [
+                                                        ExpressionTagNode {
+                                                            term: [
+                                                                TermNode {
+                                                                    atomic: Identifier(
+                                                                        IdentifierNode {
+                                                                            span: 431..436,
+                                                                        },
+                                                                    ),
+                                                                    prefix: [],
+                                                                    suffix: [],
+                                                                    span: 431..436,
+                                                                },
+                                                            ],
+                                                            span: 431..436,
+                                                        },
+                                                    ],
+                                                    span: 431..436,
+                                                },
+                                            ],
+                                            span: 431..436,
+                                        },
+                                    ],
+                                    span: 431..436,
+                                },
+                            ],
+                            span: 430..437,
+                        },
+                        span: 424..437,
+                    },
+                ],
+                modifier_call: [],
+                union_block: UnionBlockNode {
+                    union_branch: [
+                        UnionBranchNode {
+                            branch_tag: None,
+                            expression: ExpressionNode {
+                                expression_hard: [
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: Identifier(
+                                                                    IdentifierNode {
+                                                                        span: 462..472,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 462..477,
+                                                            },
+                                                        ],
+                                                        span: 462..477,
+                                                    },
+                                                ],
+                                                span: 462..477,
+                                            },
+                                        ],
+                                        span: 462..477,
+                                    },
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: Identifier(
+                                                                    IdentifierNode {
+                                                                        span: 479..485,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 479..486,
+                                                            },
+                                                        ],
+                                                        span: 479..486,
+                                                    },
+                                                ],
+                                                span: 479..486,
+                                            },
+                                        ],
+                                        span: 479..486,
+                                    },
+                                ],
+                                span: 462..486,
+                            },
+                            span: 460..486,
+                        },
+                    ],
+                    span: 454..487,
+                },
+                name: IdentifierNode {
+                    span: 444..453,
+                },
+                span: 424..487,
+            },
+        ),
+        ClassStatement(
+            ClassStatementNode {
+                annotation_call: [],
+                class_block: ClassBlockNode {
+                    expression: [
+                        ExpressionNode {
+                            expression_hard: [
+                                ExpressionHardNode {
+                                    expression_soft: [
+                                        ExpressionSoftNode {
+                                            expression_tag: [
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: String(
+                                                                String0,
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 626..630,
+                                                        },
+                                                    ],
+                                                    span: 626..630,
+                                                },
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: Atomic0(
+                                                                ExpressionNode {
+                                                                    expression_hard: [],
+                                                                    span: 658..659,
+                                                                },
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [
+                                                                Suffix0,
+                                                            ],
+                                                            span: 630..660,
+                                                        },
+                                                    ],
+                                                    span: 630..661,
+                                                },
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: String(
+                                                                String0,
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 661..665,
+                                                        },
+                                                    ],
+                                                    span: 661..665,
+                                                },
+                                            ],
+                                            span: 626..665,
+                                        },
+                                    ],
+                                    span: 626..665,
+                                },
+                            ],
+                            span: 626..665,
+                        },
+                    ],
+                    span: 620..666,
+                },
+                modifier_call: [],
+                cast: None,
+                name: IdentifierNode {
+                    span: 614..619,
+                },
+                span: 608..666,
+            },
+        ),
+        UnionStatement(
+            UnionStatementNode {
+                annotation_call: [
+                    AnnotationCallNode {
+                        annotation_name: AnnotationNameNode {
+                            identifier: IdentifierNode {
+                                span: 789..794,
+                            },
+                            span: 788..794,
+                        },
+                        call_body: CallBodyNode {
+                            expression: [
+                                ExpressionNode {
+                                    expression_hard: [
+                                        ExpressionHardNode {
+                                            expression_soft: [
+                                                ExpressionSoftNode {
+                                                    expression_tag: [
+                                                        ExpressionTagNode {
+                                                            term: [
+                                                                TermNode {
+                                                                    atomic: Identifier(
+                                                                        IdentifierNode {
+                                                                            span: 795..801,
+                                                                        },
+                                                                    ),
+                                                                    prefix: [],
+                                                                    suffix: [],
+                                                                    span: 795..801,
+                                                                },
+                                                            ],
+                                                            span: 795..801,
+                                                        },
+                                                    ],
+                                                    span: 795..801,
+                                                },
+                                            ],
+                                            span: 795..801,
+                                        },
+                                    ],
+                                    span: 795..801,
+                                },
+                            ],
+                            span: 794..802,
+                        },
+                        span: 788..802,
+                    },
+                ],
+                modifier_call: [
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            span: 803..809,
+                        },
+                        span: 803..809,
+                    },
+                ],
+                union_block: UnionBlockNode {
+                    union_branch: [
+                        UnionBranchNode {
+                            branch_tag: None,
+                            expression: ExpressionNode {
+                                expression_hard: [
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: String(
+                                                                    String1,
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 831..835,
+                                                            },
+                                                        ],
+                                                        span: 831..835,
+                                                    },
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: Identifier(
+                                                                    IdentifierNode {
+                                                                        span: 835..844,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 835..845,
+                                                            },
+                                                        ],
+                                                        span: 835..845,
+                                                    },
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: String(
+                                                                    String1,
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 845..869,
+                                                            },
+                                                        ],
+                                                        span: 845..869,
+                                                    },
+                                                ],
+                                                span: 831..869,
+                                            },
+                                        ],
+                                        span: 831..869,
+                                    },
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: String(
+                                                                    String1,
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 871..875,
+                                                            },
+                                                        ],
+                                                        span: 871..875,
+                                                    },
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: Identifier(
+                                                                    IdentifierNode {
+                                                                        span: 875..885,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [
+                                                                    Suffix1,
+                                                                ],
+                                                                span: 875..886,
+                                                            },
+                                                        ],
+                                                        span: 875..887,
+                                                    },
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: String(
+                                                                    String1,
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 887..905,
+                                                            },
+                                                        ],
+                                                        span: 887..905,
+                                                    },
+                                                ],
+                                                span: 871..905,
+                                            },
+                                        ],
+                                        span: 871..905,
+                                    },
+                                ],
+                                span: 831..905,
+                            },
+                            span: 829..905,
+                        },
+                    ],
+                    span: 823..906,
+                },
+                name: IdentifierNode {
+                    span: 816..822,
+                },
+                span: 788..906,
+            },
+        ),
+        ClassStatement(
+            ClassStatementNode {
+                annotation_call: [],
+                class_block: ClassBlockNode {
+                    expression: [
+                        ExpressionNode {
+                            expression_hard: [
+                                ExpressionHardNode {
+                                    expression_soft: [
+                                        ExpressionSoftNode {
+                                            expression_tag: [
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: RegexEmbed(
+                                                                RegexEmbedNode {
+                                                                    span: 943..950,
+                                                                },
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 943..951,
+                                                        },
+                                                    ],
+                                                    span: 943..951,
+                                                },
+                                            ],
+                                            span: 943..951,
+                                        },
+                                    ],
+                                    span: 943..951,
+                                },
+                            ],
+                            span: 943..951,
+                        },
+                    ],
+                    span: 937..952,
+                },
+                modifier_call: [],
+                cast: Some(
+                    IdentifierNode {
+                        span: 926..936,
+                    },
+                ),
+                name: IdentifierNode {
+                    span: 913..922,
+                },
+                span: 907..952,
+            },
+        ),
+        UnionStatement(
+            UnionStatementNode {
+                annotation_call: [],
+                modifier_call: [],
+                union_block: UnionBlockNode {
+                    union_branch: [
+                        UnionBranchNode {
+                            branch_tag: None,
+                            expression: ExpressionNode {
+                                expression_hard: [
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: Identifier(
+                                                                    IdentifierNode {
+                                                                        span: 978..990,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 978..1003,
+                                                            },
+                                                        ],
+                                                        span: 978..1003,
+                                                    },
+                                                ],
+                                                span: 978..1003,
+                                            },
+                                        ],
+                                        span: 978..1003,
+                                    },
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: RegexEmbed(
+                                                                    RegexEmbedNode {
+                                                                        span: 1005..1012,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 1005..1024,
+                                                            },
+                                                        ],
+                                                        span: 1005..1024,
+                                                    },
+                                                ],
+                                                span: 1005..1024,
+                                            },
+                                        ],
+                                        span: 1005..1024,
+                                    },
+                                ],
+                                span: 978..1024,
+                            },
+                            span: 976..1024,
+                        },
+                    ],
+                    span: 970..1025,
+                },
+                name: IdentifierNode {
+                    span: 959..969,
+                },
+                span: 953..1025,
+            },
+        ),
+        ClassStatement(
+            ClassStatementNode {
+                annotation_call: [
+                    AnnotationCallNode {
+                        annotation_name: AnnotationNameNode {
+                            identifier: IdentifierNode {
+                                span: 1027..1032,
+                            },
+                            span: 1026..1032,
+                        },
+                        call_body: CallBodyNode {
+                            expression: [
+                                ExpressionNode {
+                                    expression_hard: [
+                                        ExpressionHardNode {
+                                            expression_soft: [
+                                                ExpressionSoftNode {
+                                                    expression_tag: [
+                                                        ExpressionTagNode {
+                                                            term: [
+                                                                TermNode {
+                                                                    atomic: Identifier(
+                                                                        IdentifierNode {
+                                                                            span: 1033..1039,
+                                                                        },
+                                                                    ),
+                                                                    prefix: [],
+                                                                    suffix: [],
+                                                                    span: 1033..1039,
+                                                                },
+                                                            ],
+                                                            span: 1033..1039,
+                                                        },
+                                                    ],
+                                                    span: 1033..1039,
+                                                },
+                                            ],
+                                            span: 1033..1039,
+                                        },
+                                    ],
+                                    span: 1033..1039,
+                                },
+                            ],
+                            span: 1032..1040,
+                        },
+                        span: 1026..1040,
+                    },
+                ],
+                class_block: ClassBlockNode {
+                    expression: [
+                        ExpressionNode {
+                            expression_hard: [
+                                ExpressionHardNode {
+                                    expression_soft: [
+                                        ExpressionSoftNode {
+                                            expression_tag: [
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: String(
+                                                                String0,
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 1066..1070,
+                                                        },
+                                                    ],
+                                                    span: 1066..1070,
+                                                },
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: Identifier(
+                                                                IdentifierNode {
+                                                                    span: 1070..1071,
+                                                                },
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 1070..1071,
+                                                        },
+                                                        TermNode {
+                                                            atomic: Identifier(
+                                                                IdentifierNode {
+                                                                    span: 1072..1075,
+                                                                },
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 1072..1076,
+                                                        },
+                                                    ],
+                                                    span: 1070..1076,
+                                                },
+                                            ],
+                                            span: 1066..1076,
+                                        },
+                                    ],
+                                    span: 1066..1076,
+                                },
+                            ],
+                            span: 1066..1076,
+                        },
+                    ],
+                    span: 1060..1077,
+                },
+                modifier_call: [],
+                cast: None,
+                name: IdentifierNode {
+                    span: 1047..1059,
+                },
+                span: 1026..1077,
+            },
+        ),
+        ClassStatement(
+            ClassStatementNode {
+                annotation_call: [
+                    AnnotationCallNode {
+                        annotation_name: AnnotationNameNode {
+                            identifier: IdentifierNode {
+                                span: 1200..1205,
+                            },
+                            span: 1199..1205,
+                        },
+                        call_body: CallBodyNode {
+                            expression: [
+                                ExpressionNode {
+                                    expression_hard: [
+                                        ExpressionHardNode {
+                                            expression_soft: [
+                                                ExpressionSoftNode {
+                                                    expression_tag: [
+                                                        ExpressionTagNode {
+                                                            term: [
+                                                                TermNode {
+                                                                    atomic: Identifier(
+                                                                        IdentifierNode {
+                                                                            span: 1206..1212,
+                                                                        },
+                                                                    ),
+                                                                    prefix: [],
+                                                                    suffix: [],
+                                                                    span: 1206..1212,
+                                                                },
+                                                            ],
+                                                            span: 1206..1212,
+                                                        },
+                                                    ],
+                                                    span: 1206..1212,
+                                                },
+                                            ],
+                                            span: 1206..1212,
+                                        },
+                                    ],
+                                    span: 1206..1212,
+                                },
+                            ],
+                            span: 1205..1213,
+                        },
+                        span: 1199..1213,
+                    },
+                ],
+                class_block: ClassBlockNode {
+                    expression: [
+                        ExpressionNode {
+                            expression_hard: [
+                                ExpressionHardNode {
+                                    expression_soft: [
+                                        ExpressionSoftNode {
+                                            expression_tag: [
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: RegexEmbed(
+                                                                RegexEmbedNode {
+                                                                    span: 1240..1262,
+                                                                },
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 1240..1263,
+                                                        },
+                                                    ],
+                                                    span: 1240..1263,
+                                                },
+                                            ],
+                                            span: 1240..1263,
+                                        },
+                                    ],
+                                    span: 1240..1263,
+                                },
+                            ],
+                            span: 1240..1263,
+                        },
+                    ],
+                    span: 1234..1264,
+                },
+                modifier_call: [
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            span: 1214..1220,
+                        },
+                        span: 1214..1220,
+                    },
+                ],
+                cast: None,
+                name: IdentifierNode {
+                    span: 1227..1233,
+                },
+                span: 1199..1264,
+            },
+        ),
+        ClassStatement(
+            ClassStatementNode {
+                annotation_call: [],
+                class_block: ClassBlockNode {
+                    expression: [
+                        ExpressionNode {
+                            expression_hard: [
+                                ExpressionHardNode {
+                                    expression_soft: [
+                                        ExpressionSoftNode {
+                                            expression_tag: [
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: RegexEmbed(
+                                                                RegexEmbedNode {
+                                                                    span: 1409..1446,
+                                                                },
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 1409..1447,
+                                                        },
+                                                    ],
+                                                    span: 1409..1447,
+                                                },
+                                            ],
+                                            span: 1409..1447,
+                                        },
+                                    ],
+                                    span: 1409..1447,
+                                },
+                            ],
+                            span: 1409..1447,
+                        },
+                    ],
+                    span: 1403..1448,
+                },
+                modifier_call: [],
+                cast: None,
+                name: IdentifierNode {
+                    span: 1392..1402,
+                },
+                span: 1386..1448,
+            },
+        ),
+        UnionStatement(
+            UnionStatementNode {
+                annotation_call: [
+                    AnnotationCallNode {
+                        annotation_name: AnnotationNameNode {
+                            identifier: IdentifierNode {
+                                span: 1571..1576,
+                            },
+                            span: 1570..1576,
+                        },
+                        call_body: CallBodyNode {
+                            expression: [
+                                ExpressionNode {
+                                    expression_hard: [
+                                        ExpressionHardNode {
+                                            expression_soft: [
+                                                ExpressionSoftNode {
+                                                    expression_tag: [
+                                                        ExpressionTagNode {
+                                                            term: [
+                                                                TermNode {
+                                                                    atomic: Identifier(
+                                                                        IdentifierNode {
+                                                                            span: 1577..1584,
+                                                                        },
+                                                                    ),
+                                                                    prefix: [],
+                                                                    suffix: [],
+                                                                    span: 1577..1584,
+                                                                },
+                                                            ],
+                                                            span: 1577..1584,
+                                                        },
+                                                    ],
+                                                    span: 1577..1584,
+                                                },
+                                            ],
+                                            span: 1577..1584,
+                                        },
+                                    ],
+                                    span: 1577..1584,
+                                },
+                            ],
+                            span: 1576..1585,
+                        },
+                        span: 1570..1585,
+                    },
+                ],
+                modifier_call: [],
+                union_block: UnionBlockNode {
+                    union_branch: [
+                        UnionBranchNode {
+                            branch_tag: None,
+                            expression: ExpressionNode {
+                                expression_hard: [
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: String(
+                                                                    String1,
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 1608..1626,
+                                                            },
+                                                        ],
+                                                        span: 1608..1626,
+                                                    },
+                                                ],
+                                                span: 1608..1626,
+                                            },
+                                        ],
+                                        span: 1608..1626,
+                                    },
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: String(
+                                                                    String1,
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 1628..1643,
+                                                            },
+                                                        ],
+                                                        span: 1628..1643,
+                                                    },
+                                                ],
+                                                span: 1628..1643,
+                                            },
+                                        ],
+                                        span: 1628..1643,
+                                    },
+                                ],
+                                span: 1608..1643,
+                            },
+                            span: 1606..1643,
+                        },
+                    ],
+                    span: 1600..1644,
+                },
+                name: IdentifierNode {
+                    span: 1592..1599,
+                },
+                span: 1570..1644,
+            },
+        ),
+        ClassStatement(
+            ClassStatementNode {
+                annotation_call: [
+                    AnnotationCallNode {
+                        annotation_name: AnnotationNameNode {
+                            identifier: IdentifierNode {
+                                span: 1646..1651,
+                            },
+                            span: 1645..1651,
+                        },
+                        call_body: CallBodyNode {
+                            expression: [
+                                ExpressionNode {
+                                    expression_hard: [
+                                        ExpressionHardNode {
+                                            expression_soft: [
+                                                ExpressionSoftNode {
+                                                    expression_tag: [
+                                                        ExpressionTagNode {
+                                                            term: [
+                                                                TermNode {
+                                                                    atomic: Identifier(
+                                                                        IdentifierNode {
+                                                                            span: 1652..1659,
+                                                                        },
+                                                                    ),
+                                                                    prefix: [],
+                                                                    suffix: [],
+                                                                    span: 1652..1659,
+                                                                },
+                                                            ],
+                                                            span: 1652..1659,
+                                                        },
+                                                    ],
+                                                    span: 1652..1659,
+                                                },
+                                            ],
+                                            span: 1652..1659,
+                                        },
+                                    ],
+                                    span: 1652..1659,
+                                },
+                            ],
+                            span: 1651..1660,
+                        },
+                        span: 1645..1660,
+                    },
+                ],
+                class_block: ClassBlockNode {
+                    expression: [
+                        ExpressionNode {
+                            expression_hard: [
+                                ExpressionHardNode {
+                                    expression_soft: [
+                                        ExpressionSoftNode {
+                                            expression_tag: [
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: String(
+                                                                String1,
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 1678..1685,
+                                                        },
+                                                    ],
+                                                    span: 1678..1685,
+                                                },
+                                            ],
+                                            span: 1678..1685,
+                                        },
+                                    ],
+                                    span: 1678..1685,
+                                },
+                            ],
+                            span: 1678..1685,
+                        },
+                    ],
+                    span: 1672..1686,
+                },
+                modifier_call: [],
+                cast: None,
+                name: IdentifierNode {
+                    span: 1667..1671,
+                },
+                span: 1645..1686,
+            },
+        ),
+        ClassStatement(
+            ClassStatementNode {
+                annotation_call: [],
+                class_block: ClassBlockNode {
+                    expression: [
+                        ExpressionNode {
+                            expression_hard: [
+                                ExpressionHardNode {
+                                    expression_soft: [
+                                        ExpressionSoftNode {
+                                            expression_tag: [
+                                                ExpressionTagNode {
+                                                    term: [
+                                                        TermNode {
+                                                            atomic: RegexRange(
+                                                                RegexRangeNode {
+                                                                    regex_negative: None,
+                                                                    span: 1838..1854,
+                                                                },
+                                                            ),
+                                                            prefix: [],
+                                                            suffix: [],
+                                                            span: 1838..1855,
+                                                        },
+                                                    ],
+                                                    span: 1838..1855,
+                                                },
+                                            ],
+                                            span: 1838..1855,
+                                        },
+                                    ],
+                                    span: 1838..1855,
+                                },
+                            ],
+                            span: 1838..1855,
+                        },
+                    ],
+                    span: 1832..1856,
+                },
+                modifier_call: [
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            span: 1808..1814,
+                        },
+                        span: 1808..1814,
+                    },
+                ],
+                cast: None,
+                name: IdentifierNode {
+                    span: 1821..1831,
+                },
+                span: 1808..1856,
+            },
+        ),
+        UnionStatement(
+            UnionStatementNode {
+                annotation_call: [
+                    AnnotationCallNode {
+                        annotation_name: AnnotationNameNode {
+                            identifier: IdentifierNode {
+                                span: 1859..1864,
+                            },
+                            span: 1858..1864,
+                        },
+                        call_body: CallBodyNode {
+                            expression: [
+                                ExpressionNode {
+                                    expression_hard: [
+                                        ExpressionHardNode {
+                                            expression_soft: [
+                                                ExpressionSoftNode {
+                                                    expression_tag: [
+                                                        ExpressionTagNode {
+                                                            term: [
+                                                                TermNode {
+                                                                    atomic: Identifier(
+                                                                        IdentifierNode {
+                                                                            span: 1865..1872,
+                                                                        },
+                                                                    ),
+                                                                    prefix: [],
+                                                                    suffix: [],
+                                                                    span: 1865..1872,
+                                                                },
+                                                            ],
+                                                            span: 1865..1872,
+                                                        },
+                                                    ],
+                                                    span: 1865..1872,
+                                                },
+                                            ],
+                                            span: 1865..1872,
+                                        },
+                                    ],
+                                    span: 1865..1872,
+                                },
+                            ],
+                            span: 1864..1873,
+                        },
+                        span: 1858..1873,
+                    },
+                ],
+                modifier_call: [
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            span: 1874..1880,
+                        },
+                        span: 1874..1880,
+                    },
+                ],
+                union_block: UnionBlockNode {
+                    union_branch: [
+                        UnionBranchNode {
+                            branch_tag: None,
+                            expression: ExpressionNode {
+                                expression_hard: [
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: FunctionCall(
+                                                                    FunctionCallNode {
+                                                                        call_body: CallBodyNode {
+                                                                            expression: [
+                                                                                ExpressionNode {
+                                                                                    expression_hard: [
+                                                                                        ExpressionHardNode {
+                                                                                            expression_soft: [
+                                                                                                ExpressionSoftNode {
+                                                                                                    expression_tag: [
+                                                                                                        ExpressionTagNode {
+                                                                                                            term: [
+                                                                                                                TermNode {
+                                                                                                                    atomic: String(
+                                                                                                                        String0,
+                                                                                                                    ),
+                                                                                                                    prefix: [],
+                                                                                                                    suffix: [],
+                                                                                                                    span: 1917..1921,
+                                                                                                                },
+                                                                                                            ],
+                                                                                                            span: 1917..1921,
+                                                                                                        },
+                                                                                                    ],
+                                                                                                    span: 1917..1921,
+                                                                                                },
+                                                                                            ],
+                                                                                            span: 1917..1921,
+                                                                                        },
+                                                                                    ],
+                                                                                    span: 1917..1921,
+                                                                                },
+                                                                            ],
+                                                                            span: 1916..1922,
+                                                                        },
+                                                                        function_name: FunctionNameNode {
+                                                                            identifier: IdentifierNode {
+                                                                                span: 1904..1916,
+                                                                            },
+                                                                            span: 1903..1916,
+                                                                        },
+                                                                        span: 1903..1922,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 1903..1927,
+                                                            },
+                                                        ],
+                                                        span: 1903..1927,
+                                                    },
+                                                ],
+                                                span: 1903..1927,
+                                            },
+                                        ],
+                                        span: 1903..1927,
+                                    },
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: FunctionCall(
+                                                                    FunctionCallNode {
+                                                                        call_body: CallBodyNode {
+                                                                            expression: [
+                                                                                ExpressionNode {
+                                                                                    expression_hard: [
+                                                                                        ExpressionHardNode {
+                                                                                            expression_soft: [
+                                                                                                ExpressionSoftNode {
+                                                                                                    expression_tag: [
+                                                                                                        ExpressionTagNode {
+                                                                                                            term: [
+                                                                                                                TermNode {
+                                                                                                                    atomic: String(
+                                                                                                                        String0,
+                                                                                                                    ),
+                                                                                                                    prefix: [],
+                                                                                                                    suffix: [],
+                                                                                                                    span: 1943..1946,
+                                                                                                                },
+                                                                                                            ],
+                                                                                                            span: 1943..1946,
+                                                                                                        },
+                                                                                                    ],
+                                                                                                    span: 1943..1946,
+                                                                                                },
+                                                                                            ],
+                                                                                            span: 1943..1946,
+                                                                                        },
+                                                                                    ],
+                                                                                    span: 1943..1946,
+                                                                                },
+                                                                            ],
+                                                                            span: 1942..1947,
+                                                                        },
+                                                                        function_name: FunctionNameNode {
+                                                                            identifier: IdentifierNode {
+                                                                                span: 1930..1942,
+                                                                            },
+                                                                            span: 1929..1942,
+                                                                        },
+                                                                        span: 1929..1947,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 1929..1952,
+                                                            },
+                                                        ],
+                                                        span: 1929..1952,
+                                                    },
+                                                ],
+                                                span: 1929..1952,
+                                            },
+                                        ],
+                                        span: 1929..1952,
+                                    },
+                                    ExpressionHardNode {
+                                        expression_soft: [
+                                            ExpressionSoftNode {
+                                                expression_tag: [
+                                                    ExpressionTagNode {
+                                                        term: [
+                                                            TermNode {
+                                                                atomic: FunctionCall(
+                                                                    FunctionCallNode {
+                                                                        call_body: CallBodyNode {
+                                                                            expression: [
+                                                                                ExpressionNode {
+                                                                                    expression_hard: [
+                                                                                        ExpressionHardNode {
+                                                                                            expression_soft: [
+                                                                                                ExpressionSoftNode {
+                                                                                                    expression_tag: [
+                                                                                                        ExpressionTagNode {
+                                                                                                            term: [
+                                                                                                                TermNode {
+                                                                                                                    atomic: String(
+                                                                                                                        String0,
+                                                                                                                    ),
+                                                                                                                    prefix: [],
+                                                                                                                    suffix: [],
+                                                                                                                    span: 1969..1973,
+                                                                                                                },
+                                                                                                            ],
+                                                                                                            span: 1969..1973,
+                                                                                                        },
+                                                                                                    ],
+                                                                                                    span: 1969..1973,
+                                                                                                },
+                                                                                            ],
+                                                                                            span: 1969..1973,
+                                                                                        },
+                                                                                    ],
+                                                                                    span: 1969..1973,
+                                                                                },
+                                                                                ExpressionNode {
+                                                                                    expression_hard: [
+                                                                                        ExpressionHardNode {
+                                                                                            expression_soft: [
+                                                                                                ExpressionSoftNode {
+                                                                                                    expression_tag: [
+                                                                                                        ExpressionTagNode {
+                                                                                                            term: [
+                                                                                                                TermNode {
+                                                                                                                    atomic: String(
+                                                                                                                        String0,
+                                                                                                                    ),
+                                                                                                                    prefix: [],
+                                                                                                                    suffix: [],
+                                                                                                                    span: 1975..1979,
+                                                                                                                },
+                                                                                                            ],
+                                                                                                            span: 1975..1979,
+                                                                                                        },
+                                                                                                    ],
+                                                                                                    span: 1975..1979,
+                                                                                                },
+                                                                                            ],
+                                                                                            span: 1975..1979,
+                                                                                        },
+                                                                                    ],
+                                                                                    span: 1975..1979,
+                                                                                },
+                                                                                ExpressionNode {
+                                                                                    expression_hard: [
+                                                                                        ExpressionHardNode {
+                                                                                            expression_soft: [
+                                                                                                ExpressionSoftNode {
+                                                                                                    expression_tag: [
+                                                                                                        ExpressionTagNode {
+                                                                                                            term: [
+                                                                                                                TermNode {
+                                                                                                                    atomic: Identifier(
+                                                                                                                        IdentifierNode {
+                                                                                                                            span: 1981..1985,
+                                                                                                                        },
+                                                                                                                    ),
+                                                                                                                    prefix: [],
+                                                                                                                    suffix: [],
+                                                                                                                    span: 1981..1985,
+                                                                                                                },
+                                                                                                                TermNode {
+                                                                                                                    atomic: Boolean(
+                                                                                                                        Boolean1,
+                                                                                                                    ),
+                                                                                                                    prefix: [],
+                                                                                                                    suffix: [],
+                                                                                                                    span: 1987..1992,
+                                                                                                                },
+                                                                                                            ],
+                                                                                                            span: 1981..1992,
+                                                                                                        },
+                                                                                                    ],
+                                                                                                    span: 1981..1992,
+                                                                                                },
+                                                                                            ],
+                                                                                            span: 1981..1992,
+                                                                                        },
+                                                                                    ],
+                                                                                    span: 1981..1992,
+                                                                                },
+                                                                            ],
+                                                                            span: 1968..1993,
+                                                                        },
+                                                                        function_name: FunctionNameNode {
+                                                                            identifier: IdentifierNode {
+                                                                                span: 1955..1968,
+                                                                            },
+                                                                            span: 1954..1968,
+                                                                        },
+                                                                        span: 1954..1993,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 1954..1994,
+                                                            },
+                                                        ],
+                                                        span: 1954..1994,
+                                                    },
+                                                ],
+                                                span: 1954..1994,
+                                            },
+                                        ],
+                                        span: 1954..1994,
+                                    },
+                                ],
+                                span: 1903..1994,
+                            },
+                            span: 1901..1994,
+                        },
+                    ],
+                    span: 1895..1995,
+                },
+                name: IdentifierNode {
+                    span: 1887..1894,
+                },
+                span: 1858..1995,
+            },
+        ),
     ],
-    span: 0..37,
+    span: 0..1995,
 }
