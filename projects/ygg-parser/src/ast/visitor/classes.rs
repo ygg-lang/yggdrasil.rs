@@ -65,11 +65,11 @@ impl<'i> Extractor<Class_expressionContextAll<'i>> for YggdrasilExpression {
 impl<'i> Extractor<SuffixContextAll<'i>> for YggdrasilOperator {
     fn take_one(node: &SuffixContextAll<'i>) -> Option<Self> {
         match node {
-            SuffixContextAll::OptionalContext(_) => Some(YggdrasilOperator::Optional),
-            SuffixContextAll::MaybeContext(_) => Some(YggdrasilOperator::Optional),
-            SuffixContextAll::MaybeGreedyContext(_) => Some(YggdrasilOperator::Repeats),
-            SuffixContextAll::ManyGreedyContext(_) => Some(YggdrasilOperator::Repeat1),
-            SuffixContextAll::ManyContext(_) => Some(YggdrasilOperator::Repeat1),
+            SuffixContextAll::OptionalContext(_) => Some(YggdrasilOperator::OPTIONAL),
+            SuffixContextAll::MaybeContext(_) => Some(YggdrasilOperator::REPEAT1),
+            SuffixContextAll::MaybeGreedyContext(_) => Some(YggdrasilOperator::REPEAT1),
+            SuffixContextAll::ManyGreedyContext(_) => Some(YggdrasilOperator::REPEATS),
+            SuffixContextAll::ManyContext(_) => Some(YggdrasilOperator::REPEATS),
             SuffixContextAll::Error(_) => None,
         }
     }

@@ -118,22 +118,9 @@ impl AsRailroad for UnaryExpression {
         let mut base = self.base.as_railroad(config);
         for o in &self.operators {
             match o {
-                YggdrasilOperator::Optional => base = Box::new(Optional::new(base)),
-                YggdrasilOperator::Repeats => {
-                    base = Box::new(Repeat::new(base, Comment::new("*".to_string())));
-                }
-                YggdrasilOperator::Repeat1 => {
-                    base = Box::new(Repeat::new(base, Comment::new("+".to_string())));
-                }
-                YggdrasilOperator::RepeatsBetween(s, e) => {
-                    let start = match s {
-                        Some(s) => s.to_string(),
-                        None => String::from("0"),
-                    };
-                    let end = match e {
-                        Some(s) => s.to_string(),
-                        None => String::from("∞"),
-                    };
+                YggdrasilOperator::RepeatsBetween { min, max } => {
+                    let start = min.to_string();
+                    let end = if *max >= 65536 { String::from("∞") } else { max.to_string() };
                     let c = Comment::new(format!("[{}, {}]", start, end));
                     base = Box::new(Repeat::new(base, c));
                 }

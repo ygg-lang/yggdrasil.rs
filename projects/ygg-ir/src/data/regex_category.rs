@@ -1,6 +1,4 @@
 use super::*;
-use crate::rule::YggdrasilNamepath;
-
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct YggdrasilRegex {

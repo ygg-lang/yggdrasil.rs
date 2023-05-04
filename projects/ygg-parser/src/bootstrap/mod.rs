@@ -3,8 +3,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![doc = include_str!("readme.md")]
 
-mod parse_ast;
 mod parse_cst;
+mod parse_ast;
 
 use core::str::FromStr;
 use std::{borrow::Cow, ops::Range, sync::OnceLock};
@@ -140,7 +140,7 @@ impl YggdrasilRule for BootstrapRule {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RootNode {
-    pub statement: StatementNode,
+    pub statement: Vec<StatementNode>,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -168,14 +168,14 @@ pub struct GrammarBlockNode {
 pub struct ClassStatementNode {
     pub annotation: Option<AnnotationNode>,
     pub class_block: ClassBlockNode,
-    pub cast: IdentifierNode,
+    pub cast: Option<IdentifierNode>,
     pub name: IdentifierNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ClassBlockNode {
-    pub expression: ExpressionNode,
+    pub expression: Vec<ExpressionNode>,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -222,7 +222,7 @@ pub struct GroupStatementNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GroupBlockNode {
-    pub group_pair: GroupPairNode,
+    pub group_pair: Vec<GroupPairNode>,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -235,8 +235,8 @@ pub struct GroupPairNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AnnotationNode {
-    pub annotation_call: AnnotationCallNode,
-    pub modifier_call: ModifierCallNode,
+    pub annotation_call: Vec<AnnotationCallNode>,
+    pub modifier_call: Vec<ModifierCallNode>,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -279,7 +279,6 @@ pub struct ExpressionNode {
     pub term: TermNode,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ExpressionResidualNode {
@@ -291,8 +290,8 @@ pub struct ExpressionResidualNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct TermNode {
     pub atomic: AtomicNode,
-    pub prefix: PrefixNode,
-    pub suffix: SuffixNode,
+    pub prefix: Vec<PrefixNode>,
+    pub suffix: Vec<SuffixNode>,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]

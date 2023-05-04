@@ -199,7 +199,7 @@ impl YggdrasilOperator {
             YggdrasilOperator::Positive => FieldCounter::ONE,
             YggdrasilOperator::Negative => FieldCounter::NEVER,
             YggdrasilOperator::Boxing => FieldCounter::ONE,
-            YggdrasilOperator::RepeatsBetween { min, max } => FieldCounter::MANY,
+            YggdrasilOperator::RepeatsBetween { min, max } => FieldCounter::new(*min, *max),
             YggdrasilOperator::Recursive => FieldCounter::ONE,
         }
     }

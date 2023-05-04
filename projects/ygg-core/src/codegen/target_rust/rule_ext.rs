@@ -66,12 +66,7 @@ impl NodeExt for YggdrasilExpression {
                     match o {
                         YggdrasilOperator::Positive => w.push_str("s.lookahead(true, |s|"),
                         YggdrasilOperator::Negative => w.push_str("s.lookahead(false, |s|"),
-                        YggdrasilOperator::Optional => w.push_str("s.optional(|s|"),
-                        YggdrasilOperator::Repeats => write!(w, "s.repeat({}..{}, |s|", 0, u32::MAX)?,
-                        YggdrasilOperator::Repeat1 => write!(w, "s.repeat({}..{}, |s|", 1, u32::MAX)?,
-                        YggdrasilOperator::RepeatsBetween(min, max) => {
-                            write!(w, "s.repeat({}..{}, |s|", min.unwrap_or(0), max.unwrap_or(u32::MAX))?
-                        }
+                        YggdrasilOperator::RepeatsBetween { min, max } => write!(w, "s.repeat({}..{}, |s|", min, max)?,
                         YggdrasilOperator::Boxing => {
                             todo!()
                         }
