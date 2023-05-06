@@ -1,0 +1,10 @@
+GrammarInfo {
+    url: None,
+    name: Identifier("Bootstrap", 8..17),
+    extensions: [],
+    imports: {},
+    exports: [],
+    rules: {},
+    token_sets: {},
+    functions: {},
+}

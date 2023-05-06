@@ -1,6 +1,7 @@
 use std::{
     error::Error,
     fmt::{Debug, Display, Formatter},
+    ops::Range,
     path::PathBuf,
 };
 
@@ -14,6 +15,7 @@ pub enum YggdrasilErrorKind {
     Io { error: String, file: Option<PathBuf> },
     Runtime { message: String },
     Config { message: String },
+    Syntax { message: String, range: Range<usize> },
 }
 
 impl Error for YggdrasilError {}
@@ -49,6 +51,9 @@ impl Display for YggdrasilErrorKind {
             YggdrasilErrorKind::Config { message } => {
                 write!(f, "ConfigError: {}", message)
             }
+            YggdrasilErrorKind::Syntax { message, range } => {
+                write!(f, "SyntaxError: {} at {:?}", message, range)
+            }
         }
     }
 }
@@ -59,5 +64,8 @@ impl YggdrasilError {
     }
     pub fn runtime_error<S: Display>(message: S) -> Self {
         Self { kind: Box::new(YggdrasilErrorKind::Runtime { message: message.to_string() }) }
+    }
+    pub fn syntax_error<S: Display>(message: S, range: Range<usize>) -> Self {
+        Self { kind: Box::new(YggdrasilErrorKind::Syntax { message: message.to_string(), range }) }
     }
 }

@@ -24,7 +24,7 @@ class ClassStatement {
     AnnotationCall* ModifierCall* ^KW_CLASS (name:Identifier) ('->' cast:Identifier)? ClassBlock
 }
 class ClassBlock {
-    '{' '|'? Expression* '}'
+    '{' '|'? Expression '}'
 }
 // === union === -----------------------------------------------------------------------------------------------------
 class UnionStatement {

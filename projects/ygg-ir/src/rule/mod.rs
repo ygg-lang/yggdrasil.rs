@@ -229,12 +229,6 @@ impl GrammarRule {
 }
 
 impl GrammarRule {
-    pub fn create_class(name: YggdrasilIdentifier, body: Option<YggdrasilExpression>, range: Range<usize>) -> Self {
-        match body {
-            Some(s) => Self { name, range, body: GrammarBody::Class { term: s }, ..Default::default() },
-            None => Self { name, range, body: GrammarBody::Empty {}, ..Default::default() },
-        }
-    }
     pub fn create_union(name: YggdrasilIdentifier, body: Vec<YggdrasilExpression>, range: Range<usize>) -> Self {
         if body.is_empty() {
             Self { name, range, body: GrammarBody::Empty {}, ..Default::default() }

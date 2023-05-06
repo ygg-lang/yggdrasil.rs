@@ -140,7 +140,7 @@ impl YggdrasilNode for ClassBlockNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            expression: pair.take_tagged_items::<ExpressionNode>(Cow::Borrowed("expression"))?,
+            expression: pair.take_tagged_one::<ExpressionNode>(Cow::Borrowed("expression"))?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }

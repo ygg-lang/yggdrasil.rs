@@ -176,7 +176,7 @@ pub struct ClassStatementNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ClassBlockNode {
-    pub expression: Vec<ExpressionNode>,
+    pub expression: ExpressionNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
