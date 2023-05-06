@@ -11,4 +11,6 @@ pub mod rule;
 pub mod traits;
 mod utils;
 
+mod parser;
+
 pub use indexmap::{IndexMap, IndexSet};

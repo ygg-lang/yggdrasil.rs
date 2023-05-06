@@ -22,10 +22,14 @@ num = { version = "0.4.1" }
 serde = { version = "1.0.188", optional = true}
 url = { version = "2.4.1"}
 
+[dependencies.yggdrasil-parser]
+version = "0.0.*"
+path = "../ygg-parser"
+
 [dependencies.yggdrasil-error]
 version = "0.1.*"
 path = "../ygg-error"
-features = []
+features = ["yggdrasil-rt"]
 
 [features]
 serde = ["dep:serde", "serde/derive", "indexmap/serde", "num/serde", "url/serde"]

@@ -21,7 +21,6 @@ use yggdrasil_ir::{
     rule::GrammarRule,
     traits::{CodeGenerator, CodeOptimizer},
 };
-use yggdrasil_parser::YggdrasilANTLR;
 
 mod build_main;
 mod build_readme;

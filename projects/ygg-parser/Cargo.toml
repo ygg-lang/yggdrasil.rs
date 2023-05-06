@@ -1,8 +1,8 @@
 [package]
 name = "yggdrasil-parser"
-version = "0.0.2"
+version = "0.0.3"
 authors = ["Aster <192607617@qq.com>"]
-description = "AWSL Window Structure Language"
+description = "Yggdrasil parser by yggdrasil"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
 documentation = "https://docs.rs/yggdrasil-parser"
 readme = "Readme.md"
@@ -10,14 +10,10 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-tracing = "0.1.37"
+#tracing = "0.1.37"
 
-[dependencies.antlr-rust]
-version = "0.3.0-beta"
-
-[dependencies.yggdrasil-ir]
-version = "0.1.*"
-path = "../ygg-ir"
+#[dependencies.antlr-rust]
+#version = "0.3.0-beta"
 
 [dependencies.yggdrasil-rt]
 version = "0.0.*"

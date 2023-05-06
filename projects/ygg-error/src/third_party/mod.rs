@@ -9,9 +9,10 @@ mod for_askama;
 #[cfg(feature = "json5")]
 mod for_json5;
 
+#[cfg(feature = "yggdrasil-rt")]
+mod for_runtime;
 #[cfg(feature = "wax")]
 mod for_wax;
-
 impl From<std::io::Error> for YggdrasilError {
     fn from(value: std::io::Error) -> Self {
         YggdrasilError { kind: Box::new(YggdrasilErrorKind::Io { error: value.to_string(), file: None }) }

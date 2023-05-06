@@ -17,7 +17,7 @@ anyhow = "1.0.75"
 url = "2.4.1"
 
 [dependencies.yggdrasil-shared]
-version = "0.2.5"
+version = "0.2.4"
 path = '../ygg-core'
 
 [features]

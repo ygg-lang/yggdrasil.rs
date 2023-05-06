@@ -13,4 +13,3 @@ pub use yggdrasil_ir::{
     nodes::{ChoiceExpression, ConcatExpression, ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
     rule::GrammarRule,
 };
-pub use yggdrasil_parser::YggdrasilANTLR;
