@@ -471,6 +471,7 @@ impl YggdrasilNode for ExpressionNode {
         let _span = pair.get_span();
         Ok(Self {
             expression_hard: pair.take_tagged_items::<ExpressionHardNode>(Cow::Borrowed("expression_hard"))?,
+            text: pair.get_string(),
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
@@ -700,17 +701,17 @@ impl YggdrasilNode for StringNode {
 
     fn get_range(&self) -> Option<Range<usize>> {
         match self {
-            Self::String0 => None,
-            Self::String1 => None,
+            Self::String0(_) => None,
+            Self::String1(_) => None,
         }
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         if let Some(_) = pair.find_first_tag("string_0") {
-            return Ok(Self::String0);
+            return Ok(Self::String0(pair.get_string()));
         }
         if let Some(_) = pair.find_first_tag("string_1") {
-            return Ok(Self::String1);
+            return Ok(Self::String1(pair.get_string()));
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::String, _span))
     }
@@ -732,7 +733,7 @@ impl YggdrasilNode for RegexEmbedNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+        Ok(Self { text: pair.get_string(), span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
     }
 }
 #[automatically_derived]
@@ -752,10 +753,7 @@ impl YggdrasilNode for RegexRangeNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self {
-            regex_negative: pair.take_tagged_option::<RegexNegativeNode>(Cow::Borrowed("regex_negative")),
-            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
-        })
+        Ok(Self { text: pair.get_string(), span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
     }
 }
 #[automatically_derived]

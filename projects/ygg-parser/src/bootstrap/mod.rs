@@ -271,6 +271,7 @@ pub struct CallBodyNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ExpressionNode {
     pub expression_hard: Vec<ExpressionHardNode>,
+    pub text: String,
     pub span: Range<u32>,
 }
 
@@ -329,18 +330,19 @@ pub enum AtomicNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StringNode {
-    String0,
-    String1,
+    String0(String),
+    String1(String),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RegexEmbedNode {
+    pub text: String,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RegexRangeNode {
-    pub regex_negative: Option<RegexNegativeNode>,
+    pub text: String,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]

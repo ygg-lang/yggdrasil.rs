@@ -153,15 +153,7 @@ fn parse_class_block(state: Input) -> Output {
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| s.repeat(0..1, |s| builtin_text(s, "|", false)))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| {
-                    s.repeat(0..4294967295, |s| {
-                        s.sequence(|s| {
-                            Ok(s)
-                                .and_then(|s| builtin_ignore(s))
-                                .and_then(|s| parse_expression(s).and_then(|s| s.tag_node("expression")))
-                        })
-                    })
-                })
+                .and_then(|s| parse_expression(s).and_then(|s| s.tag_node("expression")))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| builtin_text(s, "}", false))
         })
