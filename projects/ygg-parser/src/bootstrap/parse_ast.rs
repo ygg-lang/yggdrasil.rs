@@ -1,4 +1,5 @@
 use super::*;
+
 #[automatically_derived]
 impl YggdrasilNode for RootNode {
     type Rule = BootstrapRule;
@@ -663,9 +664,12 @@ impl YggdrasilNode for AtomicNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        if let Ok(s) = pair.take_tagged_one::<ExpressionNode>(Cow::Borrowed("atomic_0")) {
+        if let Ok(s) = pair.take_tagged_one::<ExpressionNode>(Cow::Borrowed("expression")) {
             return Ok(Self::Atomic0(s));
         }
+        // if let Some(inner) = pair.find_first_tag("atomic_0") {
+        //
+        // }
         if let Ok(s) = pair.take_tagged_one::<BooleanNode>(Cow::Borrowed("boolean")) {
             return Ok(Self::Boolean(s));
         }

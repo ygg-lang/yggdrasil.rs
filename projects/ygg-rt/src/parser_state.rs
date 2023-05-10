@@ -320,29 +320,29 @@ where
         if self.attempt_pos == pos { self.pos_attempts.len() + self.neg_attempts.len() } else { 0 }
     }
 
-    fn track(&mut self, rule: R, pos: usize, pos_attempts_index: usize, neg_attempts_index: usize, prev_attempts: usize) {
+    fn track(&mut self, rule: R, offset: usize, pos_attempts_index: usize, neg_attempts_index: usize, prev_attempts: usize) {
         // If nested rules made no progress, there is no use to report them; it's only useful to
         // track the current rule, the exception being when only one attempt has been made during
         // the children rules.
-        let curr_attempts = self.attempts_at(pos);
+        let curr_attempts = self.attempts_at(offset);
         if curr_attempts > prev_attempts && curr_attempts - prev_attempts == 1 {
             return;
         }
 
-        if pos == self.attempt_pos {
+        if offset == self.attempt_pos {
             self.pos_attempts.truncate(pos_attempts_index);
             self.neg_attempts.truncate(neg_attempts_index);
         }
 
-        if pos > self.attempt_pos {
+        if offset > self.attempt_pos {
             self.pos_attempts.clear();
             self.neg_attempts.clear();
-            self.attempt_pos = pos;
+            self.attempt_pos = offset;
         }
 
         let attempts = if self.lookahead != Lookahead::Negative { &mut self.pos_attempts } else { &mut self.neg_attempts };
 
-        if pos == self.attempt_pos {
+        if offset == self.attempt_pos {
             attempts.push(rule);
         }
     }
@@ -392,17 +392,17 @@ where
         F: FnOnce(Box<Self>) -> Either<Box<Self>>,
     {
         let token_index = self.queue.len();
-        let initial_pos = self.position;
+        let initial = self.position;
 
         let result = f(self);
 
         match result {
-            Ok(new_state) => Ok(new_state),
-            Err(mut new_state) => {
+            Ok(new) => Ok(new),
+            Err(mut new) => {
                 // Restore the initial position and truncate the token queue.
-                new_state.position = initial_pos;
-                new_state.queue.truncate(token_index);
-                Err(new_state)
+                new.position = initial;
+                new.queue.truncate(token_index);
+                Err(new)
             }
         }
     }

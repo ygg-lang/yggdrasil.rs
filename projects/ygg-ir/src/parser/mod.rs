@@ -145,7 +145,7 @@ impl YggdrasilExpression {
                 BooleanNode::Boolean0 => YggdrasilExpression::boolean(true),
                 BooleanNode::Boolean1 => YggdrasilExpression::boolean(true),
             },
-            AtomicNode::FunctionCall(_) => {
+            AtomicNode::FunctionCall(v) => {
                 todo!()
             }
             AtomicNode::Identifier(v) => YggdrasilIdentifier::build(v).into(),

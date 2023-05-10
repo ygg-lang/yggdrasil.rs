@@ -206,6 +206,16 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
     }
     /// check
     #[inline]
+    pub fn find_first_rule(&self, rule: R) -> Option<TokenPair<R>> {
+        for pair in self.clone().into_inner() {
+            if self.get_rule() == rule {
+                return Some(pair);
+            }
+        }
+        None
+    }
+    /// check
+    #[inline]
     pub fn find_first_tag(&self, tag: &str) -> Option<TokenPair<R>> {
         for pair in self.clone().into_inner() {
             match pair.get_tag() {

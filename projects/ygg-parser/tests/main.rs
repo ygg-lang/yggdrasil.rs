@@ -1,7 +1,7 @@
 use std::{fs::File, io::Write, str::FromStr};
 use yggdrasil_parser::bootstrap::{
-    BootstrapParser, BootstrapRule, ClassBlockNode, ClassStatementNode, ExpressionNode, RootNode, TermNode, UnionBranchNode,
-    UnionStatementNode,
+    AtomicNode, BootstrapParser, BootstrapRule, ClassBlockNode, ClassStatementNode, ExpressionNode, RootNode, TermNode,
+    UnionBranchNode, UnionStatementNode,
 };
 use yggdrasil_rt::YggdrasilParser;
 
@@ -22,11 +22,20 @@ fn test_json5() {
 
 #[test]
 fn test_string() {
-    let text = r##"
-    | Object  #Object
-    "##;
-    let cst = BootstrapParser::parse_cst(text, BootstrapRule::UnionBranch).unwrap();
+    let text = r##"class ClassStatement {
+    AnnotationCall* ModifierCall* ^KW_CLASS (name:Identifier) ('->' cast:Identifier)? ClassBlock
+}"##;
+    let cst = BootstrapParser::parse_cst(text, BootstrapRule::ClassStatement).unwrap();
     println!("Short Form:\n{}", cst);
-    let ast = UnionBranchNode::from_str(text).unwrap();
+    let ast = ClassStatementNode::from_str(text).unwrap();
+    println!("{ast:#?}")
+}
+
+#[test]
+fn test_atomic() {
+    let text = r##"(name : Identifier)"##;
+    let cst = BootstrapParser::parse_cst(text, BootstrapRule::Atomic).unwrap();
+    println!("Short Form:\n{}", cst);
+    let ast = AtomicNode::from_str(text).unwrap();
     println!("{ast:#?}")
 }
