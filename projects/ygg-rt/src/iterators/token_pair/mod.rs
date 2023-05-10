@@ -1,6 +1,24 @@
-use alloc::{borrow::ToOwned, boxed::Box};
-
 use super::*;
+
+mod filter;
+
+/// find tags in toke pair
+pub struct TokenTreeFilterTags<'i, N>
+where
+    N: YggdrasilNode,
+{
+    tree: TokenTree<'i, N::Rule>,
+    target: Cow<'static, str>,
+}
+
+/// find tags in toke pair
+pub struct TokenTreeFilterRules<'i, N>
+where
+    N: YggdrasilNode,
+{
+    tree: TokenTree<'i, N::Rule>,
+    target: N::Rule,
+}
 
 /// A matching pair of [`Token`]s and everything between them.
 ///
@@ -240,13 +258,19 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
         }
         Err(YggdrasilError::missing_tag(tag, self.get_span()))
     }
+    /// Find children based on rule
+
     #[inline]
-    pub fn take_tagged_box<N>(&self, tag: Cow<'static, str>) -> Result<Box<N>, YggdrasilError<N::Rule>>
+    pub fn take_rule_one<N>(&self, target: R) -> Result<N, YggdrasilError<N::Rule>>
     where
         N: YggdrasilNode<Rule = R>,
     {
-        Ok(Box::new(self.take_tagged_one(tag)?))
+        match self.take_rule_items(target.clone()).next() {
+            Some(s) => s,
+            None => Err(YggdrasilError::invalid_node(target, self.get_span())),
+        }
     }
+
     /// Take option
     #[inline]
     pub fn take_tagged_option<N>(&self, tag: Cow<'static, str>) -> Option<N>
@@ -258,24 +282,20 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
 
     /// Finds the first pair that has its node or branch tagged with the provided
     /// label. Searches in the flattened [`TokenTree`] iterator.
-    ///
-    /// **Warning: This operation will not panic when running, ensuring that the element must exist!**
     #[inline]
-    pub fn take_tagged_items<N>(&self, tag: Cow<'static, str>) -> Result<Vec<N>, YggdrasilError<N::Rule>>
+    pub fn take_tagged_items<N>(&self, target: Cow<'static, str>) -> TokenTreeFilterTags<N>
     where
         N: YggdrasilNode<Rule = R>,
     {
-        // TODO: SIZE_HINT
-        let mut out = Vec::with_capacity(0);
-        for pair in self.clone().into_inner() {
-            match pair.get_tag() {
-                Some(s) if tag.eq(s) => out.push(N::from_pair(pair)?),
-                _ => {}
-            }
-        }
-        Ok(out)
+        TokenTreeFilterTags { tree: self.clone().into_inner(), target }
     }
-
+    #[inline]
+    pub fn take_rule_items<N>(&self, target: R) -> TokenTreeFilterRules<N>
+    where
+        N: YggdrasilNode<Rule = R>,
+    {
+        TokenTreeFilterRules { tree: self.clone().into_inner(), target }
+    }
     /// Returns the inner `Pairs` between the `Pair`, consuming it.
     ///
     /// # Examples

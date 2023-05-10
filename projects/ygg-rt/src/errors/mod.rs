@@ -35,7 +35,7 @@ pub enum ErrorKind<R> {
     InvalidNode {
         expect: R,
     },
-    MissingTag {
+    InvalidTag {
         expect: Cow<'static, str>,
     },
     /// Custom error with a message
@@ -180,7 +180,11 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
     }
     /// unable to create node
     pub fn missing_tag(expect: Cow<'static, str>, span: TextSpan) -> YggdrasilError<R> {
-        Self::new_from_span(ErrorKind::MissingTag { expect }, span)
+        Self::new_from_span(ErrorKind::InvalidTag { expect }, span)
+    }
+    /// missing rule
+    pub fn missing_rule(expect: R, span: TextSpan) -> YggdrasilError<R> {
+        Self::new_from_span(ErrorKind::InvalidNode { expect }, span)
     }
     /// Returns `Error` variant with `path` which is shown when formatted with `Display`.
     ///
@@ -501,7 +505,7 @@ impl<R: YggdrasilRule> ErrorKind<R> {
             }
             ErrorKind::CustomError { ref message } => Cow::Borrowed(message),
             ErrorKind::InvalidNode { expect } => Cow::Owned(format!("invalid node, expected node {expect:?}")),
-            ErrorKind::MissingTag { .. } => {
+            ErrorKind::InvalidTag { .. } => {
                 todo!()
             }
         }
@@ -521,7 +525,7 @@ impl<R: YggdrasilRule> fmt::Display for ErrorKind<R> {
             ErrorKind::InvalidNode { .. } => {
                 write!(f, "{}", self.message())
             }
-            ErrorKind::MissingTag { .. } => {
+            ErrorKind::InvalidTag { .. } => {
                 todo!()
             }
             ErrorKind::CustomError { .. } => write!(f, "{}", self.message()),

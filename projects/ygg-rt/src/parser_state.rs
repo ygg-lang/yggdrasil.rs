@@ -1,10 +1,9 @@
 use crate::{
     enhance::stack::Stack,
     errors::{ErrorKind, YggdrasilError},
-    iterators::{TokenQueue, TokenTree},
     position::{self, Position},
     span::TextSpan,
-    YggdrasilRule,
+    TokenQueue, TokenTree, YggdrasilRule,
 };
 use alloc::{boxed::Box, rc::Rc, vec, vec::Vec};
 use core::ops::Range;

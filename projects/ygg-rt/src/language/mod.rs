@@ -1,8 +1,4 @@
-use crate::{
-    errors::YggdrasilError,
-    iterators::{TokenStream, TokenTree},
-    YggdrasilRule,
-};
+use crate::{errors::YggdrasilError, TokenStream, TokenTree, YggdrasilRule};
 
 /// A trait with a single method that parses strings.
 pub trait YggdrasilParser {
