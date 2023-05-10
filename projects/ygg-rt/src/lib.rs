@@ -32,7 +32,10 @@ pub use crate::{
     token::Token,
 };
 use core::{fmt::Debug, hash::Hash};
+#[cfg(not(debug_assertions))]
 pub use regex_automata::dfa::regex::Regex;
+#[cfg(debug_assertions)]
+pub use regex_automata::meta::Regex;
 
 /// Output result alias
 pub type OutputResult<'i, R> = Result<TokenTree<'i, R>, YggdrasilError<R>>;

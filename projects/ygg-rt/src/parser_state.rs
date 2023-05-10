@@ -8,7 +8,6 @@ use crate::{
 };
 use alloc::{boxed::Box, rc::Rc, vec, vec::Vec};
 use core::ops::Range;
-use regex_automata::dfa::regex::Regex;
 
 /// The current lookahead status of a [`ParserState`].
 ///
@@ -669,7 +668,7 @@ where
     /// assert_eq!(result.unwrap_err().position().pos(), 0);
     /// ```
     #[inline]
-    pub fn match_regex(mut self: Box<Self>, regex: &Regex) -> Either<Box<Self>> {
+    pub fn match_regex(mut self: Box<Self>, regex: &crate::Regex) -> Either<Box<Self>> {
         if self.position.match_regex(regex) { Ok(self) } else { Err(self) }
     }
 

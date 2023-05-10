@@ -437,7 +437,7 @@ impl<'i> Position<'i> {
     }
 
     #[inline]
-    pub(crate) fn match_regex(&mut self, regex: &Regex) -> bool {
+    pub(crate) fn match_regex(&mut self, regex: &crate::Regex) -> bool {
         match regex.find(self.rest_text()) {
             Some(s) => {
                 self.position += s.end();
