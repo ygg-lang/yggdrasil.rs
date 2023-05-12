@@ -5,7 +5,6 @@ use core::{
     ops::Range,
     ptr, str,
 };
-use regex_automata::dfa::regex::Regex;
 use span::TextSpan;
 
 use crate::span;

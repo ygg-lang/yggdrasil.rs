@@ -1,6 +1,6 @@
 use super::*;
 
-impl<'i, N> Iterator for TokenTreeFilterTags<'i, N>
+impl<'i, N> Iterator for TokenTreeFilterTag<'i, N>
 where
     N: YggdrasilNode,
 {
@@ -8,15 +8,14 @@ where
 
     fn next(&mut self) -> Option<Self::Item> {
         let pair = self.tree.next()?;
-        let tag = pair.get_tag()?;
-        if tag.eq(&self.target) {
-            return Some(N::from_pair(pair));
+        match pair.get_tag() {
+            Some(s) if s.eq(&self.target) => Some(N::from_pair(pair)),
+            _ => self.next(),
         }
-        self.next()
     }
 }
 
-impl<'i, N> Iterator for TokenTreeFilterRules<'i, N>
+impl<'i, N> Iterator for TokenTreeFilterRule<'i, N>
 where
     N: YggdrasilNode,
 {

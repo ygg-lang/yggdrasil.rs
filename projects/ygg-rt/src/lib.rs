@@ -18,7 +18,7 @@ pub use crate::{
     enhance::{stack::Stack, RegexCompiled},
     errors::YggdrasilError,
     iterators::{
-        token_pair::{TokenPair, TokenTreeFilterRules, TokenTreeFilterTags},
+        token_pair::{TokenPair, TokenTreeFilterRule, TokenTreeFilterTag},
         token_queue::TokenQueue,
         token_stream::TokenStream,
         token_tree::TokenTree,

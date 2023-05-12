@@ -1,8 +1,5 @@
 use std::{fs::File, io::Write, str::FromStr};
-use yggdrasil_parser::bootstrap::{
-    AtomicNode, BootstrapParser, BootstrapRule, ClassBlockNode, ClassStatementNode, ExpressionNode, RootNode, TermNode,
-    UnionBranchNode, UnionStatementNode,
-};
+use yggdrasil_parser::bootstrap::{AtomicNode, BootstrapParser, BootstrapRule, ClassStatementNode, RootNode};
 use yggdrasil_rt::YggdrasilParser;
 
 #[test]
