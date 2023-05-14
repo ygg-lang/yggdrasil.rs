@@ -37,7 +37,7 @@ impl YggdrasilNode for {{ rule.node_name() }} {
 {%- else if field.count.is_optional() %}
             {{ field.field_name()|safe_rust_id }}: pair.take_tagged_option::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}")),
 {%- else %}
-            {{ field.field_name()|safe_rust_id }}: pair.take_tagged_items::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}"))?,
+            {{ field.field_name()|safe_rust_id }}: pair.take_tagged_items::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}")).collect::<Result<Vec<_>, _>>(),
 {%- endif %}
 {%- endif %}
 {%- endfor %}

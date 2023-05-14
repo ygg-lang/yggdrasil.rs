@@ -1,0 +1,153 @@
+grammar Bootstrap {
+
+}
+
+entry class Root {
+    Statement*
+}
+
+union Statement {
+    | GrammarStatement
+    | ClassStatement
+    | UnionStatement
+    | GroupStatement
+}
+// === grammar === -----------------------------------------------------------------------------------------------------
+class GrammarStatement {
+    ^KW_GRAMMAR Identifier GrammarBlock
+}
+class GrammarBlock {
+    '{' '}'
+}
+// === class === -----------------------------------------------------------------------------------------------------
+class ClassStatement {
+    AnnotationCall* ModifierCall* ^KW_CLASS (name:Identifier) ('->' cast:Identifier)? ClassBlock
+}
+class ClassBlock {
+    '{' '|'? Expression '}'
+}
+// === union === -----------------------------------------------------------------------------------------------------
+class UnionStatement {
+    AnnotationCall* ModifierCall* ^KW_UNION (name:Identifier) UnionBlock
+}
+class UnionBlock {
+    '{' UnionBranch* '}'
+}
+class UnionBranch {
+    '|' Expression BranchTag?
+}
+@style(field)
+atomic class BranchTag {
+    '#' Identifier RightAssociativity?
+}
+class RightAssociativity {
+    '>'
+}
+// === group === -------------------------------------------------------------------------------------------------------
+class GroupStatement {
+    AnnotationCall* ModifierCall* ^KW_GROUP Identifier? GroupBlock
+}
+class GroupBlock {
+    '{' GroupPair* '}'
+}
+class GroupPair {
+    Identifier ':' Atomic
+}
+// === annotations === -------------------------------------------------------------------------------------------------
+class AnnotationCall {
+    AnnotationName CallBody
+}
+@style(annotation)
+class AnnotationName {
+    [@#] Identifier
+}
+class FunctionCall {
+    FunctionName CallBody
+}
+@style(function)
+class FunctionName {
+    [@] Identifier
+}
+class CallBody {
+    '(' (Expression (',' Expression)* ','?)? ')'
+}
+// === expression === --------------------------------------------------------------------------------------------------
+class Expression     { ExpressionHard ('|' ExpressionHard)* }
+class ExpressionHard { ExpressionSoft ('~' ExpressionSoft)* }
+class ExpressionSoft { ExpressionTag ExpressionTag* }
+class ExpressionTag  { Term (':' Term)* }
+class Term {
+    Prefix* Atomic Suffix*
+}
+union Prefix {
+    | '!' #Negative
+    | '&' #Positive
+    | '^' #Remark
+}
+union Suffix {
+    | '?' #Negative
+    | '*' #Positive
+    | '+' #Remark
+}
+// === atoms === -------------------------------------------------------------------------------------------------------
+union Atomic {
+    | '(' '|'? Expression ')'
+    | FunctionCall
+    | Boolean
+    | String
+    | RegexEmbed
+    | RegexRange
+    | Identifier
+}
+// === String === -------------------------------------------------------------------------------------------------------
+atomic union String {
+    | "'" (!"'" ANY)* "'" #Raw
+    | '"' (!'"' ANY)* '"' #Escaped
+}
+// === regex === -------------------------------------------------------------------------------------------------------
+atomic class RegexEmbed {
+    '/' (!'/' ANY)* '/'
+}
+atomic class RegexRange {
+    '[' RegexNegative? (!']' ANY)* ']'
+}
+class RegexNegative {
+    '^'
+}
+// === identifier === --------------------------------------------------------------------------------------------------
+class NamepathFree -> Namepath {
+    Identifier (('.' | '::') Identifier)*
+}
+class Namepath {
+    Identifier ('::' Identifier)*
+}
+class Identifier {
+    /[_\p{XID_start}]\p{XID_continue}*/
+}
+union Boolean {
+    | 'true'  #True
+    | 'false' #False
+}
+// === keywords === ----------------------------------------------------------------------------------------------------
+atomic class ModifierCall ^ {
+    !(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) ^Identifier
+}
+@style(keyword)
+token {
+    KW_GRAMMAR: /grammar/
+    KW_IMPORT: /using|import|use/
+    KW_CLASS: /class|struct/
+    KW_UNION: /union|enum/
+    KW_GROUP: /group|token/
+    KW_CLIMB: /climb/
+    KW_MACRO: /macro|def|function|func|fun|fn/
+}
+// === ignores === -----------------------------------------------------------------------------------------------------
+atomic ignore class WhiteSpace {
+    /\p{White_Space}+/
+}
+@style(comment)
+atomic ignore union Comment {
+    | '//' /[^\n\r]*/
+    | '#'  /[^\n\r]*/
+}

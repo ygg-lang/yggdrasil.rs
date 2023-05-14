@@ -8,6 +8,16 @@ fn ready() {
 }
 
 #[test]
+fn test_bootstrap() {
+    let cst = BootstrapParser::parse_cst(include_str!("bootstrap.ygg"), BootstrapRule::Root).unwrap();
+    println!("Short Form:\n{}", cst);
+    let ast = RootNode::from_str(include_str!("bootstrap.ygg")).unwrap();
+    let mut file = File::create("tests/bootstrap.ron").unwrap();
+    file.write_all(format!("{:#?}", ast).as_bytes()).unwrap();
+    // file.write_all(out.to_string().as_bytes()).unwrap();
+}
+
+#[test]
 fn test_json5() {
     let cst = BootstrapParser::parse_cst(include_str!("json5.ygg"), BootstrapRule::Root).unwrap();
     println!("Short Form:\n{}", cst);
