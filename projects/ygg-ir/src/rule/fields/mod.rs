@@ -67,9 +67,9 @@ impl GrammarRule {
         match &self.body {
             GrammarBody::Union { branches } => {
                 let mut variants = BTreeMap::default();
-                for expr in branches {
+                for (branch, expr) in branches {
                     let field = expr.field_map();
-                    match &expr.tag {
+                    match branch {
                         Some(s) => variants.insert(s.text.clone().to_case(Case::Pascal), field),
                         None => unreachable!("have you run remark?"),
                     };

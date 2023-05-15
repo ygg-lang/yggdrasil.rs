@@ -25,7 +25,7 @@ impl CodeOptimizer for RefineRules {
                     Err(e) => errors.push(e),
                 },
                 GrammarBody::Union { branches } => {
-                    for x in branches.iter_mut() {
+                    for (_, x) in branches.iter_mut() {
                         match self.refine_node(x) {
                             Ok(_) => {}
                             Err(e) => errors.push(e),

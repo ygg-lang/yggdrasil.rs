@@ -4,8 +4,7 @@ use yggdrasil_error::YggdrasilError;
 use yggdrasil_parser::{
     bootstrap::{
         AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
-        GrammarStatementNode, IdentifierNode, RootNode, StatementNode, StringNode, TermNode, UnionBlockNode, UnionBranchNode,
-        UnionStatementNode,
+        GrammarStatementNode, IdentifierNode, RootNode, StatementNode, StringNode, TermNode, UnionBranchNode, UnionStatementNode,
     },
     YggdrasilNode,
 };
@@ -34,14 +33,18 @@ impl TryFrom<RootNode> for GrammarInfo {
             match s {
                 StatementNode::GrammarStatement(v) => out.visit_grammar(v)?,
                 StatementNode::ClassStatement(v) => match GrammarRule::build_class(v) {
-                    Ok(_) => {}
+                    Ok(o) => {
+                        out.rules.insert(o.name.text.clone(), o);
+                    }
                     Err(e) => {
                         println!("{e:?}");
                         println!("Class: {}", v.class_block.expression.text);
                     }
                 },
                 StatementNode::UnionStatement(v) => match GrammarRule::build_union(v) {
-                    Ok(_) => {}
+                    Ok(o) => {
+                        out.rules.insert(o.name.text.clone(), o);
+                    }
                     Err(e) => {
                         println!("{e:?}");
                         for i in &v.union_block.union_branch {
@@ -78,8 +81,14 @@ impl GrammarRule {
 
     fn build_union(node: &UnionStatementNode) -> Result<Self, YggdrasilError> {
         let name = YggdrasilIdentifier::build(&node.name);
-        let rule =
-            Self { name, body: GrammarBody::Union { branches: vec![] }, range: node.get_range().unwrap_or_default(), ..Default::default() };
+        let mut branches = vec![];
+        for branch in &node.union_block.union_branch {
+            match YggdrasilExpression::build_tag_branch(branch) {
+                Ok(o) => branches.push(o),
+                Err(_) => {}
+            }
+        }
+        let rule = Self { name, body: GrammarBody::Union { branches }, range: node.get_range().unwrap_or_default(), ..Default::default() };
         Ok(rule)
     }
 }
@@ -122,15 +131,17 @@ impl YggdrasilExpression {
             _ => Err(YggdrasilError::syntax_error("empty class soft", node.get_range().unwrap_or_default()))?,
         }
     }
-    fn build_tag_branch(node: &UnionBranchNode) -> Result<Vec<Self>, YggdrasilError> {
-        todo!()
+    fn build_tag_branch(node: &UnionBranchNode) -> Result<(Option<YggdrasilIdentifier>, Self), YggdrasilError> {
+        let id = node.branch_tag.as_ref().map(|o| YggdrasilIdentifier::build(&o.identifier));
+        let expr = YggdrasilExpression::build_or(&node.expression)?;
+        Ok((id, expr))
     }
     fn build_tag_node(node: &ExpressionTagNode) -> Result<Self, YggdrasilError> {
         match node.term.as_slice() {
-            [head, rest @ ..] => {
-                let head = YggdrasilExpression::build_term(head)?;
+            [FIXME @ .., last] => {
+                let expr = YggdrasilExpression::build_term(last)?;
 
-                Ok(head)
+                Ok(expr)
             }
             _ => Err(YggdrasilError::syntax_error("empty class", node.get_range().unwrap_or_default()))?,
         }

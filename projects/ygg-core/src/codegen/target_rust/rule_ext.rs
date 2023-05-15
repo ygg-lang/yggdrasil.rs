@@ -23,7 +23,7 @@ impl RuleExt for GrammarRule {
             }
             GrammarBody::Union { branches } => {
                 w.push_str("Err(s)");
-                for pat in branches {
+                for (_, pat) in branches {
                     w.push_str(".or_else(|s|");
                     pat.write(&mut w, self, false).unwrap();
                     w.push_str(")");

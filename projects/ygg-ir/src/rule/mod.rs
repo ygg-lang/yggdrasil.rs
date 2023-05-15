@@ -8,6 +8,7 @@ use std::{
 use convert_case::{Case, Casing};
 pub use num::BigInt;
 use num::Zero;
+use yggdrasil_parser::bootstrap::IdentifierNode;
 
 use crate::{
     data::RuleReference,
@@ -35,6 +36,7 @@ mod identifier;
 mod unions;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct FunctionRule {}
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -151,8 +153,8 @@ pub struct GrammarCaptures {
 pub enum GrammarBody {
     Empty {},
     Class { term: YggdrasilExpression },
-    Union { branches: Vec<YggdrasilExpression> },
-    Climb { priority: Vec<YggdrasilExpression> },
+    Union { branches: Vec<(Option<YggdrasilIdentifier>, YggdrasilExpression)> },
+    Climb { priority: Vec<(Option<YggdrasilIdentifier>, YggdrasilExpression)> },
     TokenSet { rules: Vec<YggdrasilIdentifier> },
 }
 
@@ -164,8 +166,8 @@ impl GrammarBody {
         match self {
             GrammarBody::Empty { .. } => {}
             GrammarBody::Class { term } => f(term),
-            GrammarBody::Union { branches } => branches.iter_mut().for_each(f),
-            GrammarBody::Climb { priority } => priority.iter_mut().for_each(f),
+            GrammarBody::Union { branches } => branches.iter_mut().for_each(|v| f(&mut v.1)),
+            GrammarBody::Climb { priority } => priority.iter_mut().for_each(|v| f(&mut v.1)),
             GrammarBody::TokenSet { .. } => {}
         }
     }
@@ -229,14 +231,6 @@ impl GrammarRule {
 }
 
 impl GrammarRule {
-    pub fn create_union(name: YggdrasilIdentifier, body: Vec<YggdrasilExpression>, range: Range<usize>) -> Self {
-        if body.is_empty() {
-            Self { name, range, body: GrammarBody::Empty {}, ..Default::default() }
-        }
-        else {
-            Self { name, range, body: GrammarBody::Union { branches: body }, ..Default::default() }
-        }
-    }
     pub fn with_annotation(mut self, extra: &YggdrasilAnnotations) -> Self {
         self.atomic = extra.get_atomic();
         self.ignored = extra.get_ignored();

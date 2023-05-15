@@ -10,7 +10,7 @@ use std::collections::BTreeMap;
 use url::Url;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GrammarInfo {
     /// File path of the grammar
     pub url: Option<Url>,

@@ -21,14 +21,17 @@ class GrammarBlock {
 }
 // === class === -----------------------------------------------------------------------------------------------------
 class ClassStatement {
-    AnnotationCall* ModifierCall* ^KW_CLASS (name:Identifier) ('->' cast:Identifier)? ClassBlock
+    AnnotationCall* ModifierCall* ^KW_CLASS (name:Identifier) ('->' cast:Identifier)? OP_REMARK? ClassBlock
 }
 class ClassBlock {
     '{' '|'? Expression '}'
 }
+token {
+    OP_REMARK: '^'
+}
 // === union === -----------------------------------------------------------------------------------------------------
 class UnionStatement {
-    AnnotationCall* ModifierCall* ^KW_UNION (name:Identifier) UnionBlock
+    AnnotationCall* ModifierCall* ^KW_UNION (name:Identifier) OP_REMARK? UnionBlock
 }
 class UnionBlock {
     '{' UnionBranch* '}'
@@ -75,7 +78,7 @@ class CallBody {
 class Expression     { ExpressionHard ('|' ExpressionHard)* }
 class ExpressionHard { ExpressionSoft ('~' ExpressionSoft)* }
 class ExpressionSoft { ExpressionTag ExpressionTag* }
-class ExpressionTag  { Term (':' Term)* }
+class ExpressionTag  { (Identifier ':')? Term }
 class Term {
     Prefix* Atomic Suffix*
 }
@@ -91,13 +94,16 @@ union Suffix {
 }
 // === atoms === -------------------------------------------------------------------------------------------------------
 union Atomic {
-    | '(' '|'? Expression ')'
+    | GroupExpression
     | FunctionCall
     | Boolean
     | String
     | RegexEmbed
     | RegexRange
     | Identifier
+}
+class GroupExpression {
+    '(' '|'? Expression ')'
 }
 // === String === -------------------------------------------------------------------------------------------------------
 atomic union String {
