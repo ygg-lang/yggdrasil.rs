@@ -21,7 +21,7 @@ pub use self::{
     atomic::GrammarAtomic,
     classes::YggdrasilVariants,
     derive::RuleDerive,
-    fields::{counter::FieldCounter, FieldKind, YggdrasilField},
+    fields::{counter::FieldCounter, YggdrasilField},
     identifier::{YggdrasilIdentifier, YggdrasilNamepath},
     unions::YggdrasilEnumerates,
 };
@@ -223,7 +223,11 @@ impl GrammarRule {
         matches!(self.body, GrammarBody::Union { .. })
     }
     pub fn node_name(&self) -> String {
-        format!("{}Node", self.name.text).to_case(Case::Pascal)
+        let id = match &self.redirect {
+            Some(s) => s.text.as_str(),
+            None => self.name.text.as_str(),
+        };
+        format!("{}Node", id).to_case(Case::Pascal)
     }
     pub fn parser_name(&self) -> String {
         format!("parse_{}", self.name.text).to_case(Case::Snake)

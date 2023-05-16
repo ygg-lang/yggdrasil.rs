@@ -71,7 +71,7 @@ pub struct {{ rule.node_name() }} {
 
 
 {%- if field.field_type(self.grammar).is_empty() %}
-        // Missing rule {{ field.kind }}
+        // Missing rule {{ field.rhs }}
 {%- else %}
 {%- if field.count.is_one() %}
     pub {{ field.field_name()|safe_rust_id }}: {{ field.field_type(self.grammar) }},
@@ -103,7 +103,7 @@ pub enum {{ rule.node_name() }} {
 
 
 {%- if field.field_type(self.grammar).is_empty() %}
-        // Missing rule {{ field.kind }}
+        // Missing rule {{ field.rhs }}
 {%- else %}
 {%- if field.count.is_one() %}
         {{ field.field_name()|safe_rust_id }}: {{ field.field_type(self.grammar) }},

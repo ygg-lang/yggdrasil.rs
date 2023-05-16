@@ -42,12 +42,10 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::IgnoreRegex => unreachable!(),
     })
 }
-
 #[inline]
 fn parse_root(state: Input) -> Output {
     state.rule(BootstrapRule::Root, |s| parse_statement(s))
 }
-
 #[inline]
 fn parse_statement(state: Input) -> Output {
     state.rule(BootstrapRule::Statement, |s| {
@@ -60,7 +58,6 @@ fn parse_statement(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_grammar_statement(state: Input) -> Output {
     state.rule(BootstrapRule::GrammarStatement, |s| {
@@ -69,14 +66,12 @@ fn parse_grammar_statement(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_grammar_block(state: Input) -> Output {
     state.rule(BootstrapRule::GrammarBlock, |s| {
         s.sequence(|s| Ok(s).and_then(|s| builtin_text(s, "{", false)).and_then(|s| builtin_text(s, "}", false)))
     })
 }
-
 #[inline]
 fn parse_class_statement(state: Input) -> Output {
     state.rule(BootstrapRule::ClassStatement, |s| {
@@ -93,7 +88,6 @@ fn parse_class_statement(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_class_block(state: Input) -> Output {
     state.rule(BootstrapRule::ClassBlock, |s| {
@@ -106,7 +100,6 @@ fn parse_class_block(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_union_statement(state: Input) -> Output {
     state.rule(BootstrapRule::UnionStatement, |s| {
@@ -121,7 +114,6 @@ fn parse_union_statement(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_union_block(state: Input) -> Output {
     state.rule(BootstrapRule::UnionBlock, |s| {
@@ -133,7 +125,6 @@ fn parse_union_block(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_union_branch(state: Input) -> Output {
     state.rule(BootstrapRule::UnionBranch, |s| {
@@ -142,7 +133,6 @@ fn parse_union_branch(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_branch_tag(state: Input) -> Output {
     state.rule(BootstrapRule::BranchTag, |s| {
@@ -154,12 +144,10 @@ fn parse_branch_tag(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_right_associativity(state: Input) -> Output {
     state.rule(BootstrapRule::RightAssociativity, |s| s.match_string(">", false))
 }
-
 #[inline]
 fn parse_group_statement(state: Input) -> Output {
     state.rule(BootstrapRule::GroupStatement, |s| {
@@ -173,7 +161,6 @@ fn parse_group_statement(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_group_block(state: Input) -> Output {
     state.rule(BootstrapRule::GroupBlock, |s| {
@@ -185,7 +172,6 @@ fn parse_group_block(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_group_pair(state: Input) -> Output {
     state.rule(BootstrapRule::GroupPair, |s| {
@@ -194,14 +180,12 @@ fn parse_group_pair(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_annotation_call(state: Input) -> Output {
     state.rule(BootstrapRule::AnnotationCall, |s| {
         s.sequence(|s| Ok(s).and_then(|s| parse_annotation_name(s)).and_then(|s| parse_call_body(s)))
     })
 }
-
 #[inline]
 fn parse_annotation_name(state: Input) -> Output {
     state.rule(BootstrapRule::AnnotationName, |s| {
@@ -217,14 +201,12 @@ fn parse_annotation_name(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_function_call(state: Input) -> Output {
     state.rule(BootstrapRule::FunctionCall, |s| {
         s.sequence(|s| Ok(s).and_then(|s| parse_function_name(s)).and_then(|s| parse_call_body(s)))
     })
 }
-
 #[inline]
 fn parse_function_name(state: Input) -> Output {
     state.rule(BootstrapRule::FunctionName, |s| {
@@ -240,7 +222,6 @@ fn parse_function_name(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_call_body(state: Input) -> Output {
     state.rule(BootstrapRule::CallBody, |s| {
@@ -263,7 +244,6 @@ fn parse_call_body(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_expression(state: Input) -> Output {
     state.rule(BootstrapRule::Expression, |s| {
@@ -274,7 +254,6 @@ fn parse_expression(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_expression_hard(state: Input) -> Output {
     state.rule(BootstrapRule::ExpressionHard, |s| {
@@ -285,14 +264,12 @@ fn parse_expression_hard(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_expression_soft(state: Input) -> Output {
     state.rule(BootstrapRule::ExpressionSoft, |s| {
         s.sequence(|s| Ok(s).and_then(|s| parse_expression_tag(s)).and_then(|s| parse_expression_tag(s)))
     })
 }
-
 #[inline]
 fn parse_expression_tag(state: Input) -> Output {
     state.rule(BootstrapRule::ExpressionTag, |s| {
@@ -301,14 +278,12 @@ fn parse_expression_tag(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_term(state: Input) -> Output {
     state.rule(BootstrapRule::Term, |s| {
         s.sequence(|s| Ok(s).and_then(|s| parse_prefix(s)).and_then(|s| parse_atomic(s)).and_then(|s| parse_suffix(s)))
     })
 }
-
 #[inline]
 fn parse_prefix(state: Input) -> Output {
     state.rule(BootstrapRule::Prefix, |s| {
@@ -320,7 +295,6 @@ fn parse_prefix(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_suffix(state: Input) -> Output {
     state.rule(BootstrapRule::Suffix, |s| {
@@ -332,7 +306,6 @@ fn parse_suffix(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_atomic(state: Input) -> Output {
     state.rule(BootstrapRule::Atomic, |s| {
@@ -348,7 +321,6 @@ fn parse_atomic(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_group_expression(state: Input) -> Output {
     state.rule(BootstrapRule::GroupExpression, |s| {
@@ -361,7 +333,6 @@ fn parse_group_expression(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_string(state: Input) -> Output {
     state.rule(BootstrapRule::String, |s| {
@@ -390,7 +361,6 @@ fn parse_string(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_regex_embed(state: Input) -> Output {
     state.rule(BootstrapRule::RegexEmbed, |s| {
@@ -402,7 +372,6 @@ fn parse_regex_embed(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_regex_range(state: Input) -> Output {
     state.rule(BootstrapRule::RegexRange, |s| {
@@ -416,12 +385,10 @@ fn parse_regex_range(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_regex_negative(state: Input) -> Output {
     state.rule(BootstrapRule::RegexNegative, |s| s.match_string("^", false))
 }
-
 #[inline]
 fn parse_namepath_free(state: Input) -> Output {
     state.rule(BootstrapRule::NamepathFree, |s| {
@@ -436,7 +403,6 @@ fn parse_namepath_free(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_namepath(state: Input) -> Output {
     state.rule(BootstrapRule::Namepath, |s| {
@@ -447,7 +413,6 @@ fn parse_namepath(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_identifier(state: Input) -> Output {
     state.rule(BootstrapRule::Identifier, |s| {
@@ -457,7 +422,6 @@ fn parse_identifier(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_boolean(state: Input) -> Output {
     state.rule(BootstrapRule::Boolean, |s| {

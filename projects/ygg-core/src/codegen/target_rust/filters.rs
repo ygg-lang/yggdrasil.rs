@@ -1,9 +1,6 @@
 use convert_case::{Case, Casing};
 use std::{borrow::Cow, fmt::Write};
-use yggdrasil_ir::{
-    grammar::GrammarInfo,
-    rule::{FieldKind, YggdrasilField},
-};
+use yggdrasil_ir::{grammar::GrammarInfo, rule::YggdrasilField};
 
 pub fn safe_rust_id<'i, S>(raw: S) -> askama::Result<Cow<'i, str>>
 where
@@ -21,15 +18,9 @@ where
 
 pub fn field_type(field: &YggdrasilField, grammar: &GrammarInfo) -> askama::Result<String> {
     let mut w = String::new();
-    match &field.kind {
-        FieldKind::Rule(name) => match grammar.rules.get(name) {
-            Some(s) => writeln!(w, "pub {}: {},", safe_rust_id(&field.bind)?, s.node_name())?,
-            None => writeln!(w, "// Missing rule {}", field.bind)?,
-        },
-        FieldKind::IgnoreText => {}
-        FieldKind::IgnoreRegex => {}
-        FieldKind::IgnoreComment => {}
-        FieldKind::IgnoreWhitespace => {}
+    match grammar.rules.get(&field.rhs) {
+        Some(s) => writeln!(w, "pub {}: {},", safe_rust_id(&field.lhs)?, s.node_name())?,
+        None => writeln!(w, "// Missing rule {}", field.lhs)?,
     }
     Ok(w)
 }

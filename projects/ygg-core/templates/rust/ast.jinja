@@ -30,7 +30,7 @@ impl YggdrasilNode for {{ rule.node_name() }} {
         Ok(Self {
 {%- for field in rule.class_fields() %}
 {%- if field.field_type(self.grammar).is_empty() %}
-            // Missing rule {{ field.kind }}
+            // Missing rule {{ field.rhs }}
 {%- else %}
 {%- if field.count.is_one() %}
             {{ field.field_name()|safe_rust_id }}: pair.take_tagged_one::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}"))?,

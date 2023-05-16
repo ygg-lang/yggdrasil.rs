@@ -85,9 +85,10 @@ impl YggdrasilVariants {
     pub fn rule(bind: &YggdrasilIdentifier, rule: &RuleReference, counter: FieldCounter) -> Self {
         let mut out = BTreeMap::default();
         let field = YggdrasilField {
-            bind: bind.text.clone(),
-            kind: FieldKind::Rule(rule.name.text.clone()),
+            lhs: bind.text.clone(),
+            rhs: rule.name.text.clone(),
             count: counter,
+            boxing: rule.boxed,
             bind_position: vec![bind.range.clone()],
             rule_position: vec![rule.name.range.clone()],
         };

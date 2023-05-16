@@ -2,21 +2,6 @@ use super::*;
 
 pub mod counter;
 
-#[derive(Debug)]
-pub enum FieldKind {
-    Rule(String),
-    IgnoreText,
-    IgnoreRegex,
-    IgnoreComment,
-    IgnoreWhitespace,
-}
-
-impl Display for FieldKind {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        Debug::fmt(self, f)
-    }
-}
-
 /// ```ygg
 /// name: Kind
 /// ```
@@ -31,27 +16,31 @@ impl Display for FieldKind {
 /// ```
 #[derive(Debug)]
 pub struct YggdrasilField {
-    pub bind: String,
-    pub kind: FieldKind,
+    /// field name to be created
+    pub lhs: String,
+    /// field type to be created, does not include the container type
+    pub rhs: String,
+    /// what containers are needed for storage
     pub count: FieldCounter,
+    /// weather to add `box` to break the circular dependency
+    pub boxing: bool,
+    /// the position where all left labels appear
     pub bind_position: Vec<Range<usize>>,
+    /// the position where all right labels appear
     pub rule_position: Vec<Range<usize>>,
 }
 
 impl YggdrasilField {
+    /// Expected field name
+    ///
+    /// *Warning*: Be careful not to conflict with keywords in the corresponding language
     pub fn field_name(&self) -> String {
-        self.bind.to_case(Case::Snake)
+        self.lhs.to_case(Case::Snake)
     }
     pub fn field_type(&self, grammar: &GrammarInfo) -> String {
-        match &self.kind {
-            FieldKind::Rule(r) => match grammar.rules.get(r) {
-                Some(s) => s.node_name(),
-                None => "".to_string(),
-            },
-            FieldKind::IgnoreText => "".to_string(),
-            FieldKind::IgnoreRegex => "".to_string(),
-            FieldKind::IgnoreComment => "".to_string(),
-            FieldKind::IgnoreWhitespace => "".to_string(),
+        match grammar.rules.get(&self.rhs) {
+            Some(s) => s.node_name(),
+            None => "".to_string(),
         }
     }
 }
