@@ -103,15 +103,6 @@ impl YggdrasilExpression {
     {
         ExpressionBody::Integer(int.into()).into()
     }
-    pub fn unary(mut base: YggdrasilExpression, o: YggdrasilOperator) -> Self {
-        match base.body {
-            ExpressionBody::Unary(ref mut v) if base.tag.is_none() => {
-                v.operators.push(o);
-                base
-            }
-            _ => ExpressionBody::Unary(UnaryExpression { base: Box::new(base), operators: vec![o] }).into(),
-        }
-    }
     pub fn ignored() -> Self {
         ExpressionBody::Ignored.into()
     }

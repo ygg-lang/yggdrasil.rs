@@ -4,7 +4,8 @@ use yggdrasil_error::YggdrasilError;
 use yggdrasil_parser::{
     bootstrap::{
         AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
-        GrammarStatementNode, IdentifierNode, RootNode, StatementNode, StringNode, TermNode, UnionBranchNode, UnionStatementNode,
+        GrammarStatementNode, IdentifierNode, PrefixNode, RootNode, StatementNode, StringNode, SuffixNode, TermNode, UnionBranchNode,
+        UnionStatementNode,
     },
     YggdrasilNode,
 };
@@ -12,7 +13,7 @@ use yggdrasil_parser::{
 use crate::{
     data::{YggdrasilRegex, YggdrasilText},
     grammar::GrammarInfo,
-    nodes::YggdrasilExpression,
+    nodes::{ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
     rule::{GrammarBody, GrammarRule, YggdrasilIdentifier},
 };
 
@@ -138,16 +139,37 @@ impl YggdrasilExpression {
     }
     fn build_tag_node(node: &ExpressionTagNode) -> Result<Self, YggdrasilError> {
         match node.term.as_slice() {
-            [FIXME @ .., last] => {
+            [last] => {
                 let expr = YggdrasilExpression::build_term(last)?;
-
                 Ok(expr)
             }
-            _ => Err(YggdrasilError::syntax_error("empty class", node.get_range().unwrap_or_default()))?,
+            [first, last] => {
+                let id = YggdrasilExpression::build_term(first)?;
+                let mut expr = YggdrasilExpression::build_term(last)?;
+                expr.tag = id.as_identifier().cloned();
+                Ok(expr)
+            }
+            _ => Err(YggdrasilError::syntax_error("FIXME: TAG MODE", node.get_range().unwrap_or_default()))?,
         }
     }
     fn build_term(node: &TermNode) -> Result<Self, YggdrasilError> {
-        YggdrasilExpression::build_atomic(&node.atomic)
+        let mut base = YggdrasilExpression::build_atomic(&node.atomic)?;
+        let mut unary = Vec::with_capacity(node.prefix.len() + node.suffix.len());
+        for i in &node.suffix {
+            match i {
+                SuffixNode::Suffix0 => unary.push(YggdrasilOperator::OPTIONAL),
+                SuffixNode::Suffix1 => unary.push(YggdrasilOperator::REPEATS),
+                SuffixNode::Suffix2 => unary.push(YggdrasilOperator::REPEAT1),
+            }
+        }
+        for i in node.prefix.iter().rev() {
+            match i {
+                PrefixNode::Prefix0 => unary.push(YggdrasilOperator::Negative),
+                PrefixNode::Prefix1 => unary.push(YggdrasilOperator::Positive),
+                PrefixNode::Prefix2 => base.remark = true,
+            }
+        }
+        if unary.is_empty() { Ok(base) } else { Ok(UnaryExpression { base: Box::new(base), operators: unary }.into()) }
     }
     fn build_atomic(node: &AtomicNode) -> Result<Self, YggdrasilError> {
         let expr = match node {

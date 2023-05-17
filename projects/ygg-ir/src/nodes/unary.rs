@@ -26,9 +26,9 @@ pub struct UnaryExpression {
     pub operators: Vec<YggdrasilOperator>,
 }
 
-impl From<UnaryExpression> for ExpressionBody {
+impl From<UnaryExpression> for YggdrasilExpression {
     fn from(e: UnaryExpression) -> Self {
-        Self::Unary(e)
+        ExpressionBody::Unary(e).into()
     }
 }
 

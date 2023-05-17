@@ -88,9 +88,9 @@ union Prefix {
     | '^' #Remark
 }
 union Suffix {
-    | '?' #Negative
-    | '*' #Positive
-    | '+' #Remark
+    | '?' #Optional
+    | '*' #Many
+    | '+' #Many1
 }
 // === atoms === -------------------------------------------------------------------------------------------------------
 union Atomic {

@@ -1,5 +1,6 @@
 use super::*;
 use crate::data::RuleReference;
+use yggdrasil_parser::bootstrap::IdentifierNode;
 
 impl YggdrasilExpression {
     #[inline]
@@ -21,6 +22,11 @@ impl YggdrasilExpression {
             _ => None,
         }
     }
+    #[inline]
+    pub fn as_identifier(&self) -> Option<&YggdrasilIdentifier> {
+        Some(&self.as_rule()?.name)
+    }
+
     #[inline]
     pub fn is_rule(&self) -> bool {
         self.as_rule().is_some()
