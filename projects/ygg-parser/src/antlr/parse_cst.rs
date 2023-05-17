@@ -44,7 +44,13 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
 }
 #[inline]
 fn parse_root(state: Input) -> Output {
-    state.rule(BootstrapRule::Root, |s| s.repeat(0..4294967295, |s| parse_statement(s)))
+    state.rule(BootstrapRule::Root, |s| {
+        s.repeat(0..4294967295, |s| {
+            s.sequence(|s| {
+                Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| parse_statement(s).and_then(|s| s.tag_node("statement")))
+            })
+        })
+    })
 }
 #[inline]
 fn parse_statement(state: Input) -> Output {
@@ -63,16 +69,23 @@ fn parse_grammar_statement(state: Input) -> Output {
     state.rule(BootstrapRule::GrammarStatement, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| parse_kw_grammar(s).and_then(|s| s.tag_node("kw_grammar")))
-                .and_then(|s| parse_identifier(s))
-                .and_then(|s| parse_grammar_block(s))
+                .and_then(|s| parse_kw_grammar(s))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_grammar_block(s).and_then(|s| s.tag_node("grammar_block")))
         })
     })
 }
 #[inline]
 fn parse_grammar_block(state: Input) -> Output {
     state.rule(BootstrapRule::GrammarBlock, |s| {
-        s.sequence(|s| Ok(s).and_then(|s| builtin_text(s, "{", false)).and_then(|s| builtin_text(s, "}", false)))
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| builtin_text(s, "{", false))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, "}", false))
+        })
     })
 }
 #[inline]
@@ -83,23 +96,46 @@ fn parse_class_statement(state: Input) -> Output {
                 .and_then(|s| {
                     s.sequence(|s| {
                         Ok(s)
-                            .and_then(|s| s.repeat(0..4294967295, |s| parse_annotation_call(s)))
-                            .and_then(|s| s.repeat(0..4294967295, |s| parse_modifier_call(s)))
-                            .and_then(|s| parse_kw_class(s).and_then(|s| s.tag_node("kw_class")))
+                            .and_then(|s| {
+                                s.repeat(0..4294967295, |s| {
+                                    s.sequence(|s| {
+                                        Ok(s)
+                                            .and_then(|s| builtin_ignore(s))
+                                            .and_then(|s| parse_annotation_call(s).and_then(|s| s.tag_node("annotation_call")))
+                                    })
+                                })
+                            })
+                            .and_then(|s| builtin_ignore(s))
+                            .and_then(|s| {
+                                s.repeat(0..4294967295, |s| {
+                                    s.sequence(|s| {
+                                        Ok(s)
+                                            .and_then(|s| builtin_ignore(s))
+                                            .and_then(|s| parse_modifier_call(s).and_then(|s| s.tag_node("modifier_call")))
+                                    })
+                                })
+                            })
+                            .and_then(|s| builtin_ignore(s))
+                            .and_then(|s| parse_kw_class(s))
                     })
                 })
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("name")))
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| {
                     s.optional(|s| {
                         s.sequence(|s| {
                             Ok(s)
                                 .and_then(|s| builtin_text(s, "->", false))
+                                .and_then(|s| builtin_ignore(s))
                                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("cast")))
                         })
                     })
                 })
-                .and_then(|s| s.optional(|s| parse_op_remark(s)))
-                .and_then(|s| parse_class_block(s))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| s.optional(|s| parse_op_remark(s).and_then(|s| s.tag_node("op_remark"))))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_class_block(s).and_then(|s| s.tag_node("class_block")))
         })
     })
 }
@@ -109,8 +145,11 @@ fn parse_class_block(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| builtin_text(s, "{", false))
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| s.optional(|s| builtin_text(s, "|", false)))
-                .and_then(|s| parse_expression(s))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_expression(s).and_then(|s| s.tag_node("expression")))
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| builtin_text(s, "}", false))
         })
     })
@@ -123,14 +162,35 @@ fn parse_union_statement(state: Input) -> Output {
                 .and_then(|s| {
                     s.sequence(|s| {
                         Ok(s)
-                            .and_then(|s| s.repeat(0..4294967295, |s| parse_annotation_call(s)))
-                            .and_then(|s| s.repeat(0..4294967295, |s| parse_modifier_call(s)))
-                            .and_then(|s| parse_kw_union(s).and_then(|s| s.tag_node("kw_union")))
+                            .and_then(|s| {
+                                s.repeat(0..4294967295, |s| {
+                                    s.sequence(|s| {
+                                        Ok(s)
+                                            .and_then(|s| builtin_ignore(s))
+                                            .and_then(|s| parse_annotation_call(s).and_then(|s| s.tag_node("annotation_call")))
+                                    })
+                                })
+                            })
+                            .and_then(|s| builtin_ignore(s))
+                            .and_then(|s| {
+                                s.repeat(0..4294967295, |s| {
+                                    s.sequence(|s| {
+                                        Ok(s)
+                                            .and_then(|s| builtin_ignore(s))
+                                            .and_then(|s| parse_modifier_call(s).and_then(|s| s.tag_node("modifier_call")))
+                                    })
+                                })
+                            })
+                            .and_then(|s| builtin_ignore(s))
+                            .and_then(|s| parse_kw_union(s))
                     })
                 })
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("name")))
-                .and_then(|s| s.optional(|s| parse_op_remark(s)))
-                .and_then(|s| parse_union_block(s))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| s.optional(|s| parse_op_remark(s).and_then(|s| s.tag_node("op_remark"))))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_union_block(s).and_then(|s| s.tag_node("union_block")))
         })
     })
 }
@@ -140,7 +200,17 @@ fn parse_union_block(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| builtin_text(s, "{", false))
-                .and_then(|s| s.repeat(0..4294967295, |s| parse_union_branch(s)))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s)
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_union_branch(s).and_then(|s| s.tag_node("union_branch")))
+                        })
+                    })
+                })
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| builtin_text(s, "}", false))
         })
     })
@@ -151,8 +221,10 @@ fn parse_union_branch(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| builtin_text(s, "|", false))
-                .and_then(|s| parse_expression(s))
-                .and_then(|s| s.optional(|s| parse_branch_tag(s)))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_expression(s).and_then(|s| s.tag_node("expression")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| s.optional(|s| parse_branch_tag(s).and_then(|s| s.tag_node("branch_tag"))))
         })
     })
 }
@@ -162,8 +234,8 @@ fn parse_branch_tag(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| builtin_text(s, "#", false))
-                .and_then(|s| parse_identifier(s))
-                .and_then(|s| s.optional(|s| parse_right_associativity(s)))
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                .and_then(|s| s.optional(|s| parse_right_associativity(s).and_then(|s| s.tag_node("right_associativity"))))
         })
     })
 }
@@ -176,11 +248,31 @@ fn parse_group_statement(state: Input) -> Output {
     state.rule(BootstrapRule::GroupStatement, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| s.repeat(0..4294967295, |s| parse_annotation_call(s)))
-                .and_then(|s| s.repeat(0..4294967295, |s| parse_modifier_call(s)))
-                .and_then(|s| parse_kw_group(s).and_then(|s| s.tag_node("kw_group")))
-                .and_then(|s| s.optional(|s| parse_identifier(s)))
-                .and_then(|s| parse_group_block(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s)
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_annotation_call(s).and_then(|s| s.tag_node("annotation_call")))
+                        })
+                    })
+                })
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s)
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_modifier_call(s).and_then(|s| s.tag_node("modifier_call")))
+                        })
+                    })
+                })
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_kw_group(s))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| s.optional(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier"))))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_group_block(s).and_then(|s| s.tag_node("group_block")))
         })
     })
 }
@@ -190,7 +282,17 @@ fn parse_group_block(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| builtin_text(s, "{", false))
-                .and_then(|s| s.repeat(0..4294967295, |s| parse_group_pair(s)))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s)
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_group_pair(s).and_then(|s| s.tag_node("group_pair")))
+                        })
+                    })
+                })
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| builtin_text(s, "}", false))
         })
     })
@@ -199,14 +301,24 @@ fn parse_group_block(state: Input) -> Output {
 fn parse_group_pair(state: Input) -> Output {
     state.rule(BootstrapRule::GroupPair, |s| {
         s.sequence(|s| {
-            Ok(s).and_then(|s| parse_identifier(s)).and_then(|s| builtin_text(s, ":", false)).and_then(|s| parse_atomic(s))
+            Ok(s)
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, ":", false))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_atomic(s).and_then(|s| s.tag_node("atomic")))
         })
     })
 }
 #[inline]
 fn parse_annotation_call(state: Input) -> Output {
     state.rule(BootstrapRule::AnnotationCall, |s| {
-        s.sequence(|s| Ok(s).and_then(|s| parse_annotation_name(s)).and_then(|s| parse_call_body(s)))
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| parse_annotation_name(s).and_then(|s| s.tag_node("annotation_name")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_call_body(s).and_then(|s| s.tag_node("call_body")))
+        })
     })
 }
 #[inline]
@@ -220,14 +332,20 @@ fn parse_annotation_name(state: Input) -> Output {
                         REGEX.get_or_init(|| Regex::new("^([@#])").unwrap())
                     })
                 })
-                .and_then(|s| parse_identifier(s))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
         })
     })
 }
 #[inline]
 fn parse_function_call(state: Input) -> Output {
     state.rule(BootstrapRule::FunctionCall, |s| {
-        s.sequence(|s| Ok(s).and_then(|s| parse_function_name(s)).and_then(|s| parse_call_body(s)))
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| parse_function_name(s).and_then(|s| s.tag_node("function_name")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_call_body(s).and_then(|s| s.tag_node("call_body")))
+        })
     })
 }
 #[inline]
@@ -241,7 +359,8 @@ fn parse_function_name(state: Input) -> Output {
                         REGEX.get_or_init(|| Regex::new("^([@])").unwrap())
                     })
                 })
-                .and_then(|s| parse_identifier(s))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
         })
     })
 }
@@ -251,22 +370,35 @@ fn parse_call_body(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| builtin_text(s, "(", false))
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| {
                     s.optional(|s| {
                         s.sequence(|s| {
                             Ok(s)
-                                .and_then(|s| parse_expression(s))
+                                .and_then(|s| parse_expression(s).and_then(|s| s.tag_node("expression")))
+                                .and_then(|s| builtin_ignore(s))
                                 .and_then(|s| {
                                     s.repeat(0..4294967295, |s| {
                                         s.sequence(|s| {
-                                            Ok(s).and_then(|s| builtin_text(s, ",", false)).and_then(|s| parse_expression(s))
+                                            Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                                s.sequence(|s| {
+                                                    Ok(s)
+                                                        .and_then(|s| builtin_text(s, ",", false))
+                                                        .and_then(|s| builtin_ignore(s))
+                                                        .and_then(|s| {
+                                                            parse_expression(s).and_then(|s| s.tag_node("expression"))
+                                                        })
+                                                })
+                                            })
                                         })
                                     })
                                 })
+                                .and_then(|s| builtin_ignore(s))
                                 .and_then(|s| s.optional(|s| builtin_text(s, ",", false)))
                         })
                     })
                 })
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| builtin_text(s, ")", false))
         })
     })
@@ -275,11 +407,23 @@ fn parse_call_body(state: Input) -> Output {
 fn parse_expression(state: Input) -> Output {
     state.rule(BootstrapRule::Expression, |s| {
         s.sequence(|s| {
-            Ok(s).and_then(|s| parse_expression_hard(s)).and_then(|s| {
-                s.repeat(0..4294967295, |s| {
-                    s.sequence(|s| Ok(s).and_then(|s| builtin_text(s, "|", false)).and_then(|s| parse_expression_hard(s)))
+            Ok(s)
+                .and_then(|s| parse_expression_hard(s).and_then(|s| s.tag_node("expression_hard")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                s.sequence(|s| {
+                                    Ok(s)
+                                        .and_then(|s| builtin_text(s, "|", false))
+                                        .and_then(|s| builtin_ignore(s))
+                                        .and_then(|s| parse_expression_hard(s).and_then(|s| s.tag_node("expression_hard")))
+                                })
+                            })
+                        })
+                    })
                 })
-            })
         })
     })
 }
@@ -287,11 +431,23 @@ fn parse_expression(state: Input) -> Output {
 fn parse_expression_hard(state: Input) -> Output {
     state.rule(BootstrapRule::ExpressionHard, |s| {
         s.sequence(|s| {
-            Ok(s).and_then(|s| parse_expression_soft(s)).and_then(|s| {
-                s.repeat(0..4294967295, |s| {
-                    s.sequence(|s| Ok(s).and_then(|s| builtin_text(s, "~", false)).and_then(|s| parse_expression_soft(s)))
+            Ok(s)
+                .and_then(|s| parse_expression_soft(s).and_then(|s| s.tag_node("expression_soft")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                s.sequence(|s| {
+                                    Ok(s)
+                                        .and_then(|s| builtin_text(s, "~", false))
+                                        .and_then(|s| builtin_ignore(s))
+                                        .and_then(|s| parse_expression_soft(s).and_then(|s| s.tag_node("expression_soft")))
+                                })
+                            })
+                        })
+                    })
                 })
-            })
         })
     })
 }
@@ -299,7 +455,18 @@ fn parse_expression_hard(state: Input) -> Output {
 fn parse_expression_soft(state: Input) -> Output {
     state.rule(BootstrapRule::ExpressionSoft, |s| {
         s.sequence(|s| {
-            Ok(s).and_then(|s| parse_expression_tag(s)).and_then(|s| s.repeat(0..4294967295, |s| parse_expression_tag(s)))
+            Ok(s)
+                .and_then(|s| parse_expression_tag(s).and_then(|s| s.tag_node("expression_tag")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s)
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_expression_tag(s).and_then(|s| s.tag_node("expression_tag")))
+                        })
+                    })
+                })
         })
     })
 }
@@ -310,10 +477,16 @@ fn parse_expression_tag(state: Input) -> Output {
             Ok(s)
                 .and_then(|s| {
                     s.optional(|s| {
-                        s.sequence(|s| Ok(s).and_then(|s| parse_identifier(s)).and_then(|s| builtin_text(s, ":", false)))
+                        s.sequence(|s| {
+                            Ok(s)
+                                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| builtin_text(s, ":", false))
+                        })
                     })
                 })
-                .and_then(|s| parse_term(s))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_term(s).and_then(|s| s.tag_node("term")))
         })
     })
 }
@@ -322,9 +495,27 @@ fn parse_term(state: Input) -> Output {
     state.rule(BootstrapRule::Term, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| s.repeat(0..4294967295, |s| parse_prefix(s)))
-                .and_then(|s| parse_atomic(s))
-                .and_then(|s| s.repeat(0..4294967295, |s| parse_suffix(s)))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s)
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_prefix(s).and_then(|s| s.tag_node("prefix")))
+                        })
+                    })
+                })
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_atomic(s).and_then(|s| s.tag_node("atomic")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s)
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_suffix(s).and_then(|s| s.tag_node("suffix")))
+                        })
+                    })
+                })
         })
     })
 }
@@ -371,8 +562,11 @@ fn parse_group_expression(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| builtin_text(s, "(", false))
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| s.optional(|s| builtin_text(s, "|", false)))
-                .and_then(|s| parse_expression(s))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_expression(s).and_then(|s| s.tag_node("expression")))
+                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| builtin_text(s, ")", false))
         })
     })
@@ -386,15 +580,22 @@ fn parse_string(state: Input) -> Output {
                     s.sequence(|s| {
                         Ok(s)
                             .and_then(|s| builtin_text(s, "'", false))
+                            .and_then(|s| builtin_ignore(s))
                             .and_then(|s| {
                                 s.repeat(0..4294967295, |s| {
                                     s.sequence(|s| {
-                                        Ok(s)
-                                            .and_then(|s| s.lookahead(false, |s| builtin_text(s, "'", false)))
-                                            .and_then(|s| builtin_any(s))
+                                        Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                            s.sequence(|s| {
+                                                Ok(s)
+                                                    .and_then(|s| s.lookahead(false, |s| builtin_text(s, "'", false)))
+                                                    .and_then(|s| builtin_ignore(s))
+                                                    .and_then(|s| builtin_any(s))
+                                            })
+                                        })
                                     })
                                 })
                             })
+                            .and_then(|s| builtin_ignore(s))
                             .and_then(|s| builtin_text(s, "'", false))
                     })
                 })
@@ -402,15 +603,22 @@ fn parse_string(state: Input) -> Output {
                     s.sequence(|s| {
                         Ok(s)
                             .and_then(|s| builtin_text(s, "\"", false))
+                            .and_then(|s| builtin_ignore(s))
                             .and_then(|s| {
                                 s.repeat(0..4294967295, |s| {
                                     s.sequence(|s| {
-                                        Ok(s)
-                                            .and_then(|s| s.lookahead(false, |s| builtin_text(s, "\"", false)))
-                                            .and_then(|s| builtin_any(s))
+                                        Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                            s.sequence(|s| {
+                                                Ok(s)
+                                                    .and_then(|s| s.lookahead(false, |s| builtin_text(s, "\"", false)))
+                                                    .and_then(|s| builtin_ignore(s))
+                                                    .and_then(|s| builtin_any(s))
+                                            })
+                                        })
                                     })
                                 })
                             })
+                            .and_then(|s| builtin_ignore(s))
                             .and_then(|s| builtin_text(s, "\"", false))
                     })
                 })
@@ -440,7 +648,7 @@ fn parse_regex_range(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| builtin_text(s, "[", false))
-                .and_then(|s| s.optional(|s| parse_regex_negative(s)))
+                .and_then(|s| s.optional(|s| parse_regex_negative(s).and_then(|s| s.tag_node("regex_negative"))))
                 .and_then(|s| {
                     s.repeat(0..4294967295, |s| {
                         s.sequence(|s| {
@@ -460,17 +668,27 @@ fn parse_regex_negative(state: Input) -> Output {
 fn parse_namepath_free(state: Input) -> Output {
     state.rule(BootstrapRule::NamepathFree, |s| {
         s.sequence(|s| {
-            Ok(s).and_then(|s| parse_identifier(s)).and_then(|s| {
-                s.repeat(0..4294967295, |s| {
-                    s.sequence(|s| {
-                        Ok(s)
-                            .and_then(|s| {
-                                Err(s).or_else(|s| builtin_text(s, ".", false)).or_else(|s| builtin_text(s, "::", false))
+            Ok(s)
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                s.sequence(|s| {
+                                    Ok(s)
+                                        .and_then(|s| {
+                                            Err(s)
+                                                .or_else(|s| builtin_text(s, ".", false))
+                                                .or_else(|s| builtin_text(s, "::", false))
+                                        })
+                                        .and_then(|s| builtin_ignore(s))
+                                        .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                                })
                             })
-                            .and_then(|s| parse_identifier(s))
+                        })
                     })
                 })
-            })
         })
     })
 }
@@ -478,11 +696,23 @@ fn parse_namepath_free(state: Input) -> Output {
 fn parse_namepath(state: Input) -> Output {
     state.rule(BootstrapRule::Namepath, |s| {
         s.sequence(|s| {
-            Ok(s).and_then(|s| parse_identifier(s)).and_then(|s| {
-                s.repeat(0..4294967295, |s| {
-                    s.sequence(|s| Ok(s).and_then(|s| builtin_text(s, "::", false)).and_then(|s| parse_identifier(s)))
+            Ok(s)
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                s.sequence(|s| {
+                                    Ok(s)
+                                        .and_then(|s| builtin_text(s, "::", false))
+                                        .and_then(|s| builtin_ignore(s))
+                                        .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                                })
+                            })
+                        })
+                    })
                 })
-            })
         })
     })
 }

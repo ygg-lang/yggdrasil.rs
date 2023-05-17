@@ -197,7 +197,7 @@ impl Default for GrammarRule {
             redirect: None,
             document: String::new(),
             derives: RuleDerive::default(),
-            atomic: GrammarAtomic::Atomic,
+            atomic: GrammarAtomic::Combined,
             auto_inline: false,
             entry: false,
             hide: false,

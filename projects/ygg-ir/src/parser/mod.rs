@@ -3,9 +3,9 @@ use std::str::FromStr;
 use yggdrasil_error::YggdrasilError;
 use yggdrasil_parser::{
     bootstrap::{
-        AnnotationCallNode, AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode,
-        ExpressionTagNode, GrammarStatementNode, IdentifierNode, ModifierCallNode, PrefixNode, RootNode, StatementNode, StringNode, SuffixNode,
-        TermNode, UnionBranchNode, UnionStatementNode,
+        AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
+        GrammarStatementNode, IdentifierNode, PrefixNode, RootNode, StatementNode, StringNode, SuffixNode, TermNode, UnionBranchNode,
+        UnionStatementNode,
     },
     TakeAnnotations, YggdrasilNode,
 };
@@ -14,7 +14,7 @@ use crate::{
     data::{YggdrasilRegex, YggdrasilText},
     grammar::GrammarInfo,
     nodes::{UnaryExpression, YggdrasilExpression, YggdrasilOperator},
-    rule::{GrammarBody, GrammarRule, YggdrasilIdentifier},
+    rule::{GrammarAtomic, GrammarBody, GrammarRule, YggdrasilIdentifier},
 };
 
 mod annotations;
@@ -66,22 +66,6 @@ impl GrammarInfo {
     fn visit_grammar(&mut self, node: &GrammarStatementNode) -> Result<(), YggdrasilError> {
         self.name = YggdrasilIdentifier::build(&node.identifier);
         Ok(())
-    }
-}
-
-impl GrammarRule {
-    fn with_annotation(mut self, extra: TakeAnnotations) -> Self {
-        self.atomic = extra.get_atomic();
-        self.ignored = extra.get_ignored();
-        self.hide = extra.get_keep();
-        self.entry = extra.get_entry();
-        if let Some(s) = extra.get_auto_capture() {
-            self.captures.auto = s
-        };
-        if let Some(s) = extra.get_text_capture() {
-            self.captures.text = s
-        }
-        self
     }
 }
 
