@@ -3,19 +3,21 @@ use std::str::FromStr;
 use yggdrasil_error::YggdrasilError;
 use yggdrasil_parser::{
     bootstrap::{
-        AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
-        GrammarStatementNode, IdentifierNode, PrefixNode, RootNode, StatementNode, StringNode, SuffixNode, TermNode, UnionBranchNode,
-        UnionStatementNode,
+        AnnotationCallNode, AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode,
+        ExpressionTagNode, GrammarStatementNode, IdentifierNode, ModifierCallNode, PrefixNode, RootNode, StatementNode, StringNode, SuffixNode,
+        TermNode, UnionBranchNode, UnionStatementNode,
     },
-    YggdrasilNode,
+    TakeAnnotations, YggdrasilNode,
 };
 
 use crate::{
     data::{YggdrasilRegex, YggdrasilText},
     grammar::GrammarInfo,
-    nodes::{ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
+    nodes::{UnaryExpression, YggdrasilExpression, YggdrasilOperator},
     rule::{GrammarBody, GrammarRule, YggdrasilIdentifier},
 };
+
+mod annotations;
 
 impl FromStr for GrammarInfo {
     type Err = YggdrasilError;
@@ -63,8 +65,23 @@ impl TryFrom<RootNode> for GrammarInfo {
 impl GrammarInfo {
     fn visit_grammar(&mut self, node: &GrammarStatementNode) -> Result<(), YggdrasilError> {
         self.name = YggdrasilIdentifier::build(&node.identifier);
-
         Ok(())
+    }
+}
+
+impl GrammarRule {
+    fn with_annotation(mut self, extra: TakeAnnotations) -> Self {
+        self.atomic = extra.get_atomic();
+        self.ignored = extra.get_ignored();
+        self.hide = extra.get_keep();
+        self.entry = extra.get_entry();
+        if let Some(s) = extra.get_auto_capture() {
+            self.captures.auto = s
+        };
+        if let Some(s) = extra.get_text_capture() {
+            self.captures.text = s
+        }
+        self
     }
 }
 
@@ -76,7 +93,8 @@ impl GrammarRule {
             body: GrammarBody::Class { term: YggdrasilExpression::build_or(&node.class_block.expression)? },
             range: node.get_range().unwrap_or_default(),
             ..Default::default()
-        };
+        }
+        .with_annotation(node.annotations());
         Ok(rule)
     }
 

@@ -1,15 +1,5 @@
 use super::*;
 
-mod modifiers;
-
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct YggdrasilAnnotations {
-    pub auto_tag: bool,
-    pub macros: Vec<YggdrasilMacroCall>,
-    pub modifiers: YggdrasilModifiers,
-}
-
 #[derive(Clone, Debug, Default, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct YggdrasilModifiers {
@@ -34,31 +24,5 @@ pub struct YggdrasilMacroArgument {
 impl From<YggdrasilMacroCall> for YggdrasilExpression {
     fn from(value: YggdrasilMacroCall) -> Self {
         ExpressionBody::Call(value).into()
-    }
-}
-
-impl YggdrasilAnnotations {
-    pub fn get_atomic(&self) -> GrammarAtomic {
-        self.modifiers.get_atomic().unwrap_or(GrammarAtomic::Combined)
-    }
-    pub fn get_ignored(&self) -> bool {
-        self.modifiers.get_ignored().unwrap_or(false)
-    }
-    pub fn get_entry(&self) -> bool {
-        self.modifiers.get_entry().unwrap_or(false)
-    }
-
-    pub fn get_keep(&self) -> bool {
-        self.modifiers.get_keep().unwrap_or(false)
-    }
-    /// Whether to automatically mark all tags in the rule
-    ///
-    /// To ensure the highest priority, it needs to be called after with_annotation
-    pub fn get_auto_capture(&self) -> Option<bool> {
-        Some(self.auto_tag)
-    }
-
-    pub fn get_text_capture(&self) -> Option<bool> {
-        self.modifiers.get_text()
     }
 }

@@ -1,6 +1,4 @@
 use super::*;
-use crate::data::RuleReference;
-use yggdrasil_parser::bootstrap::IdentifierNode;
 
 impl YggdrasilExpression {
     #[inline]

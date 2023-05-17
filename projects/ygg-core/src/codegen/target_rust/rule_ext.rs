@@ -64,9 +64,16 @@ impl NodeExt for YggdrasilExpression {
             ExpressionBody::Unary(v) => {
                 for o in &v.operators {
                     match o {
-                        YggdrasilOperator::Positive => w.push_str("s.lookahead(true, |s|"),
-                        YggdrasilOperator::Negative => w.push_str("s.lookahead(false, |s|"),
-                        YggdrasilOperator::RepeatsBetween { min, max } => write!(w, "s.repeat({}..{}, |s|", min, max)?,
+                        YggdrasilOperator::Positive => w.push_str("s.lookahead(true,|s|"),
+                        YggdrasilOperator::Negative => w.push_str("s.lookahead(false,|s|"),
+                        YggdrasilOperator::RepeatsBetween { min, max } => {
+                            if *min == 0 && *max == 1 {
+                                write!(w, "s.optional(|s|")?
+                            }
+                            else {
+                                write!(w, "s.repeat({}..{},|s|", min, max)?
+                            }
+                        }
                         YggdrasilOperator::Boxing => {
                             todo!()
                         }
@@ -87,9 +94,9 @@ impl NodeExt for YggdrasilExpression {
                 write!(w, "{name}(s)")?
             }
             ExpressionBody::Text(v) if root => write!(w, "s.match_string({:?}, {})", v.text, v.insensitive)?,
-            ExpressionBody::Text(v) => write!(w, "builtin_text(s, {:?}, {})", v.text, v.insensitive)?,
+            ExpressionBody::Text(v) => write!(w, "builtin_text(s,{:?},{})", v.text, v.insensitive)?,
             ExpressionBody::Regex(r) if root => {
-                w.push_str("s.match_regex({static REGEX:OnceLock<Regex>=OnceLock::new();REGEX.get_or_init(|| Regex::new(");
+                w.push_str("s.match_regex({static REGEX:OnceLock<Regex>=OnceLock::new();REGEX.get_or_init(||Regex::new(");
                 write!(w, "{}", r)?;
                 w.push_str(").unwrap())})");
             }
@@ -98,7 +105,7 @@ impl NodeExt for YggdrasilExpression {
                 write!(w, "{}", r)?;
                 w.push_str(").unwrap())})");
             }
-            ExpressionBody::CharacterAny if root => w.push_str("s.match_char_if(|_| true)"),
+            ExpressionBody::CharacterAny if root => w.push_str("s.match_char_if(|_|true)"),
             ExpressionBody::CharacterAny => w.push_str("builtin_any(s)"),
             ExpressionBody::CharacterRestOfLine => {}
             ExpressionBody::CharacterRange(_) if root => {}

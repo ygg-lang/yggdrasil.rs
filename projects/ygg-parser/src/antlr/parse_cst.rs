@@ -90,7 +90,7 @@ fn parse_class_statement(state: Input) -> Output {
                 })
                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("name")))
                 .and_then(|s| {
-                    s.repeat(0..1, |s| {
+                    s.optional(|s| {
                         s.sequence(|s| {
                             Ok(s)
                                 .and_then(|s| builtin_text(s, "->", false))
@@ -98,7 +98,7 @@ fn parse_class_statement(state: Input) -> Output {
                         })
                     })
                 })
-                .and_then(|s| s.repeat(0..1, |s| parse_op_remark(s)))
+                .and_then(|s| s.optional(|s| parse_op_remark(s)))
                 .and_then(|s| parse_class_block(s))
         })
     })
@@ -109,7 +109,7 @@ fn parse_class_block(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| builtin_text(s, "{", false))
-                .and_then(|s| s.repeat(0..1, |s| builtin_text(s, "|", false)))
+                .and_then(|s| s.optional(|s| builtin_text(s, "|", false)))
                 .and_then(|s| parse_expression(s))
                 .and_then(|s| builtin_text(s, "}", false))
         })
@@ -129,7 +129,7 @@ fn parse_union_statement(state: Input) -> Output {
                     })
                 })
                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("name")))
-                .and_then(|s| s.repeat(0..1, |s| parse_op_remark(s)))
+                .and_then(|s| s.optional(|s| parse_op_remark(s)))
                 .and_then(|s| parse_union_block(s))
         })
     })
@@ -152,7 +152,7 @@ fn parse_union_branch(state: Input) -> Output {
             Ok(s)
                 .and_then(|s| builtin_text(s, "|", false))
                 .and_then(|s| parse_expression(s))
-                .and_then(|s| s.repeat(0..1, |s| parse_branch_tag(s)))
+                .and_then(|s| s.optional(|s| parse_branch_tag(s)))
         })
     })
 }
@@ -163,7 +163,7 @@ fn parse_branch_tag(state: Input) -> Output {
             Ok(s)
                 .and_then(|s| builtin_text(s, "#", false))
                 .and_then(|s| parse_identifier(s))
-                .and_then(|s| s.repeat(0..1, |s| parse_right_associativity(s)))
+                .and_then(|s| s.optional(|s| parse_right_associativity(s)))
         })
     })
 }
@@ -179,7 +179,7 @@ fn parse_group_statement(state: Input) -> Output {
                 .and_then(|s| s.repeat(0..4294967295, |s| parse_annotation_call(s)))
                 .and_then(|s| s.repeat(0..4294967295, |s| parse_modifier_call(s)))
                 .and_then(|s| parse_kw_group(s).and_then(|s| s.tag_node("kw_group")))
-                .and_then(|s| s.repeat(0..1, |s| parse_identifier(s)))
+                .and_then(|s| s.optional(|s| parse_identifier(s)))
                 .and_then(|s| parse_group_block(s))
         })
     })
@@ -252,7 +252,7 @@ fn parse_call_body(state: Input) -> Output {
             Ok(s)
                 .and_then(|s| builtin_text(s, "(", false))
                 .and_then(|s| {
-                    s.repeat(0..1, |s| {
+                    s.optional(|s| {
                         s.sequence(|s| {
                             Ok(s)
                                 .and_then(|s| parse_expression(s))
@@ -263,7 +263,7 @@ fn parse_call_body(state: Input) -> Output {
                                         })
                                     })
                                 })
-                                .and_then(|s| s.repeat(0..1, |s| builtin_text(s, ",", false)))
+                                .and_then(|s| s.optional(|s| builtin_text(s, ",", false)))
                         })
                     })
                 })
@@ -309,7 +309,7 @@ fn parse_expression_tag(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| {
-                    s.repeat(0..1, |s| {
+                    s.optional(|s| {
                         s.sequence(|s| Ok(s).and_then(|s| parse_identifier(s)).and_then(|s| builtin_text(s, ":", false)))
                     })
                 })
@@ -371,7 +371,7 @@ fn parse_group_expression(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| builtin_text(s, "(", false))
-                .and_then(|s| s.repeat(0..1, |s| builtin_text(s, "|", false)))
+                .and_then(|s| s.optional(|s| builtin_text(s, "|", false)))
                 .and_then(|s| parse_expression(s))
                 .and_then(|s| builtin_text(s, ")", false))
         })
@@ -440,7 +440,7 @@ fn parse_regex_range(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| builtin_text(s, "[", false))
-                .and_then(|s| s.repeat(0..1, |s| parse_regex_negative(s)))
+                .and_then(|s| s.optional(|s| parse_regex_negative(s)))
                 .and_then(|s| {
                     s.repeat(0..4294967295, |s| {
                         s.sequence(|s| {

@@ -8,7 +8,6 @@ use std::{
 use convert_case::{Case, Casing};
 pub use num::BigInt;
 use num::Zero;
-use yggdrasil_parser::bootstrap::IdentifierNode;
 
 use crate::{
     data::RuleReference,
@@ -17,7 +16,7 @@ use crate::{
 };
 
 pub use self::{
-    annotations::{YggdrasilAnnotations, YggdrasilMacroArgument, YggdrasilMacroCall, YggdrasilModifiers},
+    annotations::{YggdrasilMacroArgument, YggdrasilMacroCall, YggdrasilModifiers},
     atomic::GrammarAtomic,
     classes::YggdrasilVariants,
     derive::RuleDerive,
@@ -231,21 +230,5 @@ impl GrammarRule {
     }
     pub fn parser_name(&self) -> String {
         format!("parse_{}", self.name.text).to_case(Case::Snake)
-    }
-}
-
-impl GrammarRule {
-    pub fn with_annotation(mut self, extra: &YggdrasilAnnotations) -> Self {
-        self.atomic = extra.get_atomic();
-        self.ignored = extra.get_ignored();
-        self.hide = extra.get_keep();
-        self.entry = extra.get_entry();
-        if let Some(s) = extra.get_auto_capture() {
-            self.captures.auto = s
-        };
-        if let Some(s) = extra.get_text_capture() {
-            self.captures.text = s
-        }
-        self
     }
 }
