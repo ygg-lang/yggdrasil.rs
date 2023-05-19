@@ -1,5 +1,6 @@
+use crate::bootstrap::{ClassStatementNode, GroupPairNode, GroupStatementNode, UnionStatementNode};
+
 use super::*;
-use crate::bootstrap::{ClassStatementNode, GroupStatementNode, UnionStatementNode};
 
 impl ClassStatementNode {
     pub fn annotations(&self) -> TakeAnnotations {
@@ -21,12 +22,22 @@ impl GroupStatementNode {
     }
 }
 
+impl GroupPairNode {
+    pub fn annotations(&self) -> TakeAnnotations {
+        TakeAnnotations { auto_tag: false, macros: &[], modifiers: &[] }
+    }
+}
+
 impl<'i> TakeAnnotations<'i> {
     pub fn get_atomic(&self) -> Option<bool> {
-        self.find_modifiers(&["atom", "atomic"], &["combine", "combined"])
+        match self.get_ignored() {
+            // ignored rule must atomic rule
+            Some(true) => Some(true),
+            _ => self.find_modifiers(&["atom", "atomic"], &["combine", "combined"]),
+        }
     }
     pub fn get_ignored(&self) -> Option<bool> {
-        self.find_modifiers(&["ignore"], &[])
+        self.find_modifiers(&["ignore", "ignored"], &[])
     }
     pub fn get_entry(&self) -> Option<bool> {
         self.find_modifiers(&["entry"], &[])

@@ -36,6 +36,7 @@ pub enum BootstrapRule {
     GrammarBlock,
     ClassStatement,
     ClassBlock,
+    OP_REMARK,
     UnionStatement,
     UnionBlock,
     UnionBranch,
@@ -44,8 +45,8 @@ pub enum BootstrapRule {
     GroupStatement,
     GroupBlock,
     GroupPair,
-    AnnotationCall,
-    AnnotationName,
+    DecoratorCall,
+    DecoratorName,
     FunctionCall,
     FunctionName,
     CallBody,
@@ -85,6 +86,7 @@ impl YggdrasilRule for BootstrapRule {
             Self::GrammarBlock => "",
             Self::ClassStatement => "",
             Self::ClassBlock => "",
+            Self::OP_REMARK => "",
             Self::UnionStatement => "",
             Self::UnionBlock => "",
             Self::UnionBranch => "",
@@ -93,8 +95,8 @@ impl YggdrasilRule for BootstrapRule {
             Self::GroupStatement => "",
             Self::GroupBlock => "",
             Self::GroupPair => "",
-            Self::AnnotationCall => "",
-            Self::AnnotationName => "",
+            Self::DecoratorCall => "",
+            Self::DecoratorName => "",
             Self::FunctionCall => "",
             Self::FunctionName => "",
             Self::CallBody => "",
@@ -145,10 +147,10 @@ pub struct GrammarBlockNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ClassStatementNode {
-    pub annotation_call: Vec<AnnotationCallNode>,
     pub class_block: ClassBlockNode,
+    pub decorator_call: Vec<DecoratorCallNode>,
     // Missing rule ModifierCall
-    // Missing rule OP_REMARK
+    pub op_remark: Option<OpRemarkNode>,
     pub cast: Option<IdentifierNode>,
     pub name: IdentifierNode,
     pub span: Range<u32>,
@@ -159,12 +161,18 @@ pub struct ClassBlockNode {
     pub expression: ExpressionNode,
     pub span: Range<u32>,
 }
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct OpRemarkNode {
+    pub span: Range<u32>,
+}
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnionStatementNode {
-    pub annotation_call: Vec<AnnotationCallNode>,
+    pub decorator_call: Vec<DecoratorCallNode>,
     // Missing rule ModifierCall
-    // Missing rule OP_REMARK
+    pub op_remark: Option<OpRemarkNode>,
     pub union_block: UnionBlockNode,
     pub name: IdentifierNode,
     pub span: Range<u32>,
@@ -197,7 +205,7 @@ pub struct RightAssociativityNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GroupStatementNode {
-    pub annotation_call: Vec<AnnotationCallNode>,
+    pub decorator_call: Vec<DecoratorCallNode>,
     pub group_block: GroupBlockNode,
     pub identifier: Option<IdentifierNode>,
     // Missing rule ModifierCall
@@ -218,14 +226,14 @@ pub struct GroupPairNode {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct AnnotationCallNode {
-    pub annotation_name: AnnotationNameNode,
+pub struct DecoratorCallNode {
     pub call_body: CallBodyNode,
+    pub decorator_name: DecoratorNameNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct AnnotationNameNode {
+pub struct DecoratorNameNode {
     pub identifier: IdentifierNode,
     pub span: Range<u32>,
 }

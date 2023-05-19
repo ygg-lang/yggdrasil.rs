@@ -4,8 +4,8 @@ use yggdrasil_error::YggdrasilError;
 use yggdrasil_parser::{
     bootstrap::{
         AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
-        GrammarStatementNode, IdentifierNode, PrefixNode, RootNode, StatementNode, StringNode, SuffixNode, TermNode, UnionBranchNode,
-        UnionStatementNode,
+        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, PrefixNode, RootNode, StatementNode, StringNode, SuffixNode,
+        TermNode, UnionBranchNode, UnionStatementNode,
     },
     TakeAnnotations, YggdrasilNode,
 };
@@ -55,7 +55,26 @@ impl TryFrom<RootNode> for GrammarInfo {
                         }
                     }
                 },
-                StatementNode::GroupStatement(v) => {}
+                StatementNode::GroupStatement(v) => match GrammarRule::build_group(v) {
+                    Ok((id, terms)) => match id {
+                        Some(id) => {
+                            let mut name = vec![];
+                            for o in terms {
+                                name.push(o.name.clone());
+                                out.rules.insert(o.name.text.clone(), o);
+                            }
+                            out.token_sets.insert(id.text.clone(), name);
+                        }
+                        None => {
+                            for o in terms {
+                                out.rules.insert(o.name.text.clone(), o);
+                            }
+                        }
+                    },
+                    Err(e) => {
+                        println!("{e:?}");
+                    }
+                },
             }
         }
         Ok(out)
@@ -81,7 +100,16 @@ impl GrammarRule {
         .with_annotation(node.annotations());
         Ok(rule)
     }
-
+    fn build_class_in_group(node: &GroupPairNode) -> Result<Self, YggdrasilError> {
+        let name = YggdrasilIdentifier::build(&node.identifier);
+        let rule = Self {
+            name,
+            body: GrammarBody::Class { term: YggdrasilExpression::build_atomic(&node.atomic)? },
+            range: node.get_range().unwrap_or_default(),
+            ..Default::default()
+        };
+        Ok(rule)
+    }
     fn build_union(node: &UnionStatementNode) -> Result<Self, YggdrasilError> {
         let name = YggdrasilIdentifier::build(&node.name);
         let mut branches = vec![];
@@ -93,6 +121,17 @@ impl GrammarRule {
         }
         let rule = Self { name, body: GrammarBody::Union { branches }, range: node.get_range().unwrap_or_default(), ..Default::default() };
         Ok(rule)
+    }
+    fn build_group(node: &GroupStatementNode) -> Result<(Option<YggdrasilIdentifier>, Vec<Self>), YggdrasilError> {
+        let name = node.identifier.as_ref().map(YggdrasilIdentifier::build);
+        let mut out = vec![];
+        for term in &node.group_block.group_pair {
+            match GrammarRule::build_class_in_group(term) {
+                Ok(o) => out.push(o.with_annotation(node.annotations())),
+                Err(_) => {}
+            }
+        }
+        Ok((name, out))
     }
 }
 

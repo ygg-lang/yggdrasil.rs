@@ -21,7 +21,7 @@ class GrammarBlock {
 }
 // === class === -----------------------------------------------------------------------------------------------------
 class ClassStatement {
-    AnnotationCall* ModifierCall* ^KW_CLASS (name:Identifier) ('->' cast:Identifier)? OP_REMARK? ClassBlock
+    DecoratorCall* ModifierCall* ^KW_CLASS (name:Identifier) ('->' cast:Identifier)? OP_REMARK? ClassBlock
 }
 class ClassBlock {
     '{' '|'? Expression '}'
@@ -31,7 +31,7 @@ token {
 }
 // === union === -----------------------------------------------------------------------------------------------------
 class UnionStatement {
-    AnnotationCall* ModifierCall* ^KW_UNION (name:Identifier) OP_REMARK? UnionBlock
+    DecoratorCall* ModifierCall* ^KW_UNION (name:Identifier) OP_REMARK? UnionBlock
 }
 class UnionBlock {
     '{' UnionBranch* '}'
@@ -48,7 +48,7 @@ class RightAssociativity {
 }
 // === group === -------------------------------------------------------------------------------------------------------
 class GroupStatement {
-    AnnotationCall* ModifierCall* ^KW_GROUP Identifier? GroupBlock
+    DecoratorCall* ModifierCall* ^KW_GROUP Identifier? GroupBlock
 }
 class GroupBlock {
     '{' GroupPair* '}'
@@ -56,12 +56,12 @@ class GroupBlock {
 class GroupPair {
     Identifier ':' Atomic
 }
-// === annotations === -------------------------------------------------------------------------------------------------
-class AnnotationCall {
-    AnnotationName CallBody
+// === Decorators === -------------------------------------------------------------------------------------------------
+class DecoratorCall {
+    DecoratorName CallBody
 }
 @style(annotation)
-class AnnotationName {
+class DecoratorName {
     [@#] Identifier
 }
 class FunctionCall {
