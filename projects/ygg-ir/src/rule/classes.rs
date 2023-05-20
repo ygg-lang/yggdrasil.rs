@@ -2,11 +2,11 @@ use super::*;
 
 // Class rule
 #[derive(Default, Debug)]
-pub struct YggdrasilVariants {
+pub struct FieldMap {
     pub fields: BTreeMap<String, YggdrasilField>,
 }
 
-impl IntoIterator for YggdrasilVariants {
+impl IntoIterator for FieldMap {
     type Item = YggdrasilField;
     type IntoIter = impl Iterator<Item = YggdrasilField>;
 
@@ -15,7 +15,7 @@ impl IntoIterator for YggdrasilVariants {
     }
 }
 
-impl BitAndAssign for YggdrasilVariants {
+impl BitAndAssign for FieldMap {
     fn bitand_assign(&mut self, rhs: Self) {
         for (key, value) in rhs.fields {
             match self.fields.get_mut(&key) {
@@ -32,7 +32,7 @@ impl BitAndAssign for YggdrasilVariants {
     }
 }
 
-impl BitOrAssign for YggdrasilVariants {
+impl BitOrAssign for FieldMap {
     fn bitor_assign(&mut self, rhs: Self) {
         for (key, value) in rhs.fields {
             match self.fields.get_mut(&key) {
@@ -49,7 +49,7 @@ impl BitOrAssign for YggdrasilVariants {
     }
 }
 
-impl BitXorAssign for YggdrasilVariants {
+impl BitXorAssign for FieldMap {
     fn bitxor_assign(&mut self, rhs: Self) {
         for (key, value) in rhs.fields {
             match self.fields.get_mut(&key) {
@@ -66,7 +66,7 @@ impl BitXorAssign for YggdrasilVariants {
     }
 }
 
-impl YggdrasilVariants {
+impl FieldMap {
     pub fn is_empty(&self) -> bool {
         self.fields.is_empty()
     }
@@ -81,7 +81,7 @@ impl YggdrasilVariants {
     }
 }
 
-impl YggdrasilVariants {
+impl FieldMap {
     pub fn rule(bind: &YggdrasilIdentifier, rule: &RuleReference, counter: FieldCounter) -> Self {
         let mut out = BTreeMap::default();
         let field = YggdrasilField {

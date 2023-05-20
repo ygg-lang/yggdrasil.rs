@@ -37,7 +37,7 @@ class UnionBlock {
     '{' UnionBranch* '}'
 }
 class UnionBranch {
-    '|' Expression BranchTag?
+    '|' ExpressionHard BranchTag?
 }
 @style(field)
 atomic class BranchTag {

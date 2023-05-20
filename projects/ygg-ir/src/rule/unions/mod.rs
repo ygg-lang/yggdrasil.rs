@@ -2,12 +2,12 @@ use super::*;
 use std::collections::btree_map::IntoIter;
 
 pub struct YggdrasilEnumerates {
-    pub variants: BTreeMap<String, YggdrasilVariants>,
+    pub variants: BTreeMap<String, FieldMap>,
 }
 
 impl IntoIterator for YggdrasilEnumerates {
-    type Item = (String, YggdrasilVariants);
-    type IntoIter = IntoIter<String, YggdrasilVariants>;
+    type Item = (String, FieldMap);
+    type IntoIter = IntoIter<String, FieldMap>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.variants.into_iter()

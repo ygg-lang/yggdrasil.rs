@@ -225,7 +225,7 @@ fn parse_union_branch(state: Input) -> Output {
             Ok(s)
                 .and_then(|s| builtin_text(s, "|", false))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_expression(s).and_then(|s| s.tag_node("expression")))
+                .and_then(|s| parse_expression_hard(s).and_then(|s| s.tag_node("expression_hard")))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| s.repeat(0..1, |s| parse_branch_tag(s).and_then(|s| s.tag_node("branch_tag"))))
         })

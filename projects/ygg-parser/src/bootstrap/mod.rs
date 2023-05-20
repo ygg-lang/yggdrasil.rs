@@ -198,7 +198,7 @@ pub struct UnionBlockNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnionBranchNode {
     pub branch_tag: Option<BranchTagNode>,
-    pub expression: ExpressionNode,
+    pub expression: ExpressionHardNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -279,6 +279,7 @@ pub struct ExpressionNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ExpressionHardNode {
     pub expression_soft: Vec<ExpressionSoftNode>,
+    pub text: String,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]

@@ -175,7 +175,7 @@ impl YggdrasilExpression {
     }
     fn build_tag_branch(node: &UnionBranchNode) -> Result<(Option<YggdrasilIdentifier>, Self), YggdrasilError> {
         let id = node.branch_tag.as_ref().map(|o| YggdrasilIdentifier::build(&o.identifier));
-        let expr = YggdrasilExpression::build_or(&node.expression)?;
+        let expr = YggdrasilExpression::build_hard(&node.expression)?;
         Ok((id, expr))
     }
     fn build_tag_node(node: &ExpressionTagNode) -> Result<Self, YggdrasilError> {

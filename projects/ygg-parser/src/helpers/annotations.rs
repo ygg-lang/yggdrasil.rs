@@ -1,4 +1,4 @@
-use crate::bootstrap::{ClassStatementNode, GroupPairNode, GroupStatementNode, UnionStatementNode};
+use crate::bootstrap::{CallBodyNode, ClassStatementNode, GroupPairNode, GroupStatementNode, UnionStatementNode};
 
 use super::*;
 
@@ -55,9 +55,28 @@ impl<'i> TakeAnnotations<'i> {
     pub fn get_text_capture(&self) -> Option<bool> {
         self.find_modifiers(&["text"], &[])
     }
+    pub fn get_styles(&self) -> Vec<String> {
+        let mut out = vec![];
+        for body in self.find_functions("style") {
+            for e in &body.expression {
+                match e.as_identifier() {
+                    Some(s) => out.push(s.text.clone()),
+                    None => {}
+                }
+            }
+        }
+        out
+    }
 }
 
 impl<'i> TakeAnnotations<'i> {
+    fn find_functions<'a>(&'i self, name: &'a str) -> impl Iterator<Item = &'i CallBodyNode> + 'a
+    where
+        'i: 'a,
+    {
+        self.macros.iter().filter(|v| v.annotation_name.identifier.text.eq_ignore_ascii_case(name)).map(move |v| &v.call_body)
+    }
+
     fn find_modifiers(&self, positive: &[&str], negative: &[&str]) -> Option<bool> {
         for m in self.modifiers {
             for accept in positive {

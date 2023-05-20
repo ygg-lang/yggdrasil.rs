@@ -224,7 +224,7 @@ impl YggdrasilNode for UnionBranchNode {
         let _span = pair.get_span();
         Ok(Self {
             branch_tag: pair.take_tagged_option::<BranchTagNode>(Cow::Borrowed("branch_tag")),
-            expression: pair.take_tagged_one::<ExpressionNode>(Cow::Borrowed("expression"))?,
+            expression: pair.take_tagged_one::<ExpressionHardNode>(Cow::Borrowed("expression_hard"))?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
@@ -514,6 +514,7 @@ impl YggdrasilNode for ExpressionHardNode {
             expression_soft: pair
                 .take_tagged_items::<ExpressionSoftNode>(Cow::Borrowed("expression_soft"))
                 .collect::<Result<Vec<_>, _>>()?,
+            text: pair.get_string(),
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }

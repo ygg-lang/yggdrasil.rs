@@ -56,13 +56,11 @@ fn parse_root(state: Input) -> Output {
 #[inline]
 fn parse_statement(state: Input) -> Output {
     state.rule(BootstrapRule::Statement, |s| {
-        Err(s).or_else(|s| {
-            Err(s)
-                .or_else(|s| parse_grammar_statement(s))
-                .or_else(|s| parse_class_statement(s))
-                .or_else(|s| parse_union_statement(s))
-                .or_else(|s| parse_group_statement(s))
-        })
+        Err(s)
+            .or_else(|s| parse_grammar_statement(s))
+            .or_else(|s| parse_class_statement(s))
+            .or_else(|s| parse_union_statement(s))
+            .or_else(|s| parse_group_statement(s))
     })
 }
 #[inline]
@@ -155,7 +153,6 @@ fn parse_class_block(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_op_remark(state: Input) -> Output {
     state.rule(BootstrapRule::OP_REMARK, |s| s.match_string("^", false))
@@ -228,7 +225,7 @@ fn parse_union_branch(state: Input) -> Output {
             Ok(s)
                 .and_then(|s| builtin_text(s, "|", false))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_expression(s).and_then(|s| s.tag_node("expression")))
+                .and_then(|s| parse_expression_hard(s).and_then(|s| s.tag_node("expression_hard")))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| s.optional(|s| parse_branch_tag(s).and_then(|s| s.tag_node("branch_tag"))))
         })
@@ -528,38 +525,32 @@ fn parse_term(state: Input) -> Output {
 #[inline]
 fn parse_prefix(state: Input) -> Output {
     state.rule(BootstrapRule::Prefix, |s| {
-        Err(s).or_else(|s| {
-            Err(s)
-                .or_else(|s| builtin_text(s, "!", false))
-                .or_else(|s| builtin_text(s, "&", false))
-                .or_else(|s| builtin_text(s, "^", false))
-        })
+        Err(s)
+            .or_else(|s| builtin_text(s, "!", false))
+            .or_else(|s| builtin_text(s, "&", false))
+            .or_else(|s| builtin_text(s, "^", false))
     })
 }
 #[inline]
 fn parse_suffix(state: Input) -> Output {
     state.rule(BootstrapRule::Suffix, |s| {
-        Err(s).or_else(|s| {
-            Err(s)
-                .or_else(|s| builtin_text(s, "?", false))
-                .or_else(|s| builtin_text(s, "*", false))
-                .or_else(|s| builtin_text(s, "+", false))
-        })
+        Err(s)
+            .or_else(|s| builtin_text(s, "?", false))
+            .or_else(|s| builtin_text(s, "*", false))
+            .or_else(|s| builtin_text(s, "+", false))
     })
 }
 #[inline]
 fn parse_atomic(state: Input) -> Output {
     state.rule(BootstrapRule::Atomic, |s| {
-        Err(s).or_else(|s| {
-            Err(s)
-                .or_else(|s| parse_group_expression(s))
-                .or_else(|s| parse_function_call(s))
-                .or_else(|s| parse_boolean(s))
-                .or_else(|s| parse_string(s))
-                .or_else(|s| parse_regex_embed(s))
-                .or_else(|s| parse_regex_range(s))
-                .or_else(|s| parse_identifier(s))
-        })
+        Err(s)
+            .or_else(|s| parse_group_expression(s))
+            .or_else(|s| parse_function_call(s))
+            .or_else(|s| parse_boolean(s))
+            .or_else(|s| parse_string(s))
+            .or_else(|s| parse_regex_embed(s))
+            .or_else(|s| parse_regex_range(s))
+            .or_else(|s| parse_identifier(s))
     })
 }
 #[inline]
@@ -580,55 +571,53 @@ fn parse_group_expression(state: Input) -> Output {
 #[inline]
 fn parse_string(state: Input) -> Output {
     state.rule(BootstrapRule::String, |s| {
-        Err(s).or_else(|s| {
-            Err(s)
-                .or_else(|s| {
-                    s.sequence(|s| {
-                        Ok(s)
-                            .and_then(|s| builtin_text(s, "'", false))
-                            .and_then(|s| builtin_ignore(s))
-                            .and_then(|s| {
-                                s.repeat(0..4294967295, |s| {
-                                    s.sequence(|s| {
-                                        Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
-                                            s.sequence(|s| {
-                                                Ok(s)
-                                                    .and_then(|s| s.lookahead(false, |s| builtin_text(s, "'", false)))
-                                                    .and_then(|s| builtin_ignore(s))
-                                                    .and_then(|s| builtin_any(s))
-                                            })
+        Err(s)
+            .or_else(|s| {
+                s.sequence(|s| {
+                    Ok(s)
+                        .and_then(|s| builtin_text(s, "'", false))
+                        .and_then(|s| builtin_ignore(s))
+                        .and_then(|s| {
+                            s.repeat(0..4294967295, |s| {
+                                s.sequence(|s| {
+                                    Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                        s.sequence(|s| {
+                                            Ok(s)
+                                                .and_then(|s| s.lookahead(false, |s| builtin_text(s, "'", false)))
+                                                .and_then(|s| builtin_ignore(s))
+                                                .and_then(|s| builtin_any(s))
                                         })
                                     })
                                 })
                             })
-                            .and_then(|s| builtin_ignore(s))
-                            .and_then(|s| builtin_text(s, "'", false))
-                    })
+                        })
+                        .and_then(|s| builtin_ignore(s))
+                        .and_then(|s| builtin_text(s, "'", false))
                 })
-                .or_else(|s| {
-                    s.sequence(|s| {
-                        Ok(s)
-                            .and_then(|s| builtin_text(s, "\"", false))
-                            .and_then(|s| builtin_ignore(s))
-                            .and_then(|s| {
-                                s.repeat(0..4294967295, |s| {
-                                    s.sequence(|s| {
-                                        Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
-                                            s.sequence(|s| {
-                                                Ok(s)
-                                                    .and_then(|s| s.lookahead(false, |s| builtin_text(s, "\"", false)))
-                                                    .and_then(|s| builtin_ignore(s))
-                                                    .and_then(|s| builtin_any(s))
-                                            })
+            })
+            .or_else(|s| {
+                s.sequence(|s| {
+                    Ok(s)
+                        .and_then(|s| builtin_text(s, "\"", false))
+                        .and_then(|s| builtin_ignore(s))
+                        .and_then(|s| {
+                            s.repeat(0..4294967295, |s| {
+                                s.sequence(|s| {
+                                    Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                        s.sequence(|s| {
+                                            Ok(s)
+                                                .and_then(|s| s.lookahead(false, |s| builtin_text(s, "\"", false)))
+                                                .and_then(|s| builtin_ignore(s))
+                                                .and_then(|s| builtin_any(s))
                                         })
                                     })
                                 })
                             })
-                            .and_then(|s| builtin_ignore(s))
-                            .and_then(|s| builtin_text(s, "\"", false))
-                    })
+                        })
+                        .and_then(|s| builtin_ignore(s))
+                        .and_then(|s| builtin_text(s, "\"", false))
                 })
-        })
+            })
     })
 }
 #[inline]
@@ -734,7 +723,7 @@ fn parse_identifier(state: Input) -> Output {
 #[inline]
 fn parse_boolean(state: Input) -> Output {
     state.rule(BootstrapRule::Boolean, |s| {
-        Err(s).or_else(|s| Err(s).or_else(|s| builtin_text(s, "true", false)).or_else(|s| builtin_text(s, "false", false)))
+        Err(s).or_else(|s| builtin_text(s, "true", false)).or_else(|s| builtin_text(s, "false", false))
     })
 }
 

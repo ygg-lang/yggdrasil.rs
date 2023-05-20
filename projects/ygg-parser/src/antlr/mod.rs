@@ -130,7 +130,10 @@ pub struct RootNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StatementNode {
-    Statement0,
+    ClassStatement,
+    GrammarStatement,
+    GroupStatement,
+    UnionStatement,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -161,7 +164,6 @@ pub struct ClassBlockNode {
     pub expression: ExpressionNode,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct OpRemarkNode {
@@ -187,7 +189,7 @@ pub struct UnionBlockNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnionBranchNode {
     pub branch_tag: Option<BranchTagNode>,
-    pub expression: ExpressionNode,
+    pub expression_hard: ExpressionHardNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -293,16 +295,26 @@ pub struct TermNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum PrefixNode {
     Prefix0,
+    Prefix1,
+    Prefix2,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SuffixNode {
     Suffix0,
+    Suffix1,
+    Suffix2,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum AtomicNode {
-    Atomic0,
+    Boolean,
+    FunctionCall,
+    GroupExpression,
+    Identifier,
+    RegexEmbed,
+    RegexRange,
+    String,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -314,6 +326,7 @@ pub struct GroupExpressionNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StringNode {
     String0,
+    String1,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -352,4 +365,5 @@ pub struct IdentifierNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum BooleanNode {
     Boolean0,
+    Boolean1,
 }

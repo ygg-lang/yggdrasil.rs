@@ -88,7 +88,7 @@ impl MulAssign for FieldCounter {
     }
 }
 
-impl MulAssign<FieldCounter> for YggdrasilVariants {
+impl MulAssign<FieldCounter> for FieldMap {
     fn mul_assign(&mut self, rhs: FieldCounter) {
         for x in self.fields.values_mut() {
             x.count *= rhs

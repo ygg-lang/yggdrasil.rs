@@ -18,7 +18,7 @@ use crate::{
 pub use self::{
     annotations::{YggdrasilMacroArgument, YggdrasilMacroCall, YggdrasilModifiers},
     atomic::GrammarAtomic,
-    classes::YggdrasilVariants,
+    classes::FieldMap,
     derive::RuleDerive,
     fields::{counter::FieldCounter, YggdrasilField},
     identifier::{YggdrasilIdentifier, YggdrasilNamepath},

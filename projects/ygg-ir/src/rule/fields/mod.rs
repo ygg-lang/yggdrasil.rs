@@ -46,9 +46,9 @@ impl YggdrasilField {
 }
 
 impl GrammarRule {
-    pub fn class_fields(&self) -> YggdrasilVariants {
+    pub fn class_fields(&self) -> FieldMap {
         match &self.body {
-            GrammarBody::Class { term } => YggdrasilVariants { fields: term.field_map().fields },
+            GrammarBody::Class { term } => FieldMap { fields: term.field_map().fields },
             _ => unreachable!("do you filter with class?"),
         }
     }
@@ -59,7 +59,7 @@ impl GrammarRule {
                 for (branch, expr) in branches {
                     let field = expr.field_map();
                     match branch {
-                        Some(s) => variants.insert(s.text.clone().to_case(Case::Pascal), field),
+                        Some(s) => variants.insert(s.text.clone(), field),
                         None => unreachable!("have you run remark?"),
                     };
                 }
@@ -71,7 +71,7 @@ impl GrammarRule {
 }
 
 impl YggdrasilExpression {
-    pub fn field_map(&self) -> YggdrasilVariants {
+    pub fn field_map(&self) -> FieldMap {
         // let tag = self.tag.as_ref().or(candidate);
         match &self.body {
             ExpressionBody::Choice(many) => many.field_map(),
@@ -81,10 +81,10 @@ impl YggdrasilExpression {
             // a:(b:x)
             ExpressionBody::Unary(one) => one.field_map(),
             ExpressionBody::Rule(one) => match &self.tag {
-                Some(s) => YggdrasilVariants::rule(s, one, FieldCounter::ONE),
-                None => YggdrasilVariants::default(),
+                Some(s) => FieldMap::rule(s, one, FieldCounter::ONE),
+                None => FieldMap::default(),
             },
-            _ => YggdrasilVariants::default(),
+            _ => FieldMap::default(),
         }
     }
 }
@@ -118,7 +118,7 @@ impl ConcatExpression {
     /// T? ~ T+ -> T*
     /// T? ~ T? -> T*
     /// ```
-    fn field_map(&self) -> YggdrasilVariants {
+    fn field_map(&self) -> FieldMap {
         let (head, rest) = self.split();
         let mut map = head.field_map();
         for item in rest {
@@ -133,7 +133,7 @@ impl ChoiceExpression {
     /// T?+ -> *
     /// T?? -> ?
     /// ```
-    fn field_map(&self) -> YggdrasilVariants {
+    fn field_map(&self) -> FieldMap {
         let (head, rest) = self.split();
         let mut map = head.field_map();
         for item in rest {
@@ -144,7 +144,7 @@ impl ChoiceExpression {
 }
 
 impl UnaryExpression {
-    pub fn field_map(&self) -> YggdrasilVariants {
+    pub fn field_map(&self) -> FieldMap {
         let mut map = self.base.field_map();
         map *= self.counter();
         map
