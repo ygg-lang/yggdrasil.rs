@@ -36,6 +36,7 @@ pub enum BootstrapRule {
     GrammarBlock,
     ClassStatement,
     ClassBlock,
+    OP_REMARK,
     UnionStatement,
     UnionBlock,
     UnionBranch,
@@ -44,8 +45,8 @@ pub enum BootstrapRule {
     GroupStatement,
     GroupBlock,
     GroupPair,
-    AnnotationCall,
-    AnnotationName,
+    DecoratorCall,
+    DecoratorName,
     FunctionCall,
     FunctionName,
     CallBody,
@@ -57,6 +58,7 @@ pub enum BootstrapRule {
     Prefix,
     Suffix,
     Atomic,
+    GroupExpression,
     String,
     RegexEmbed,
     RegexRange,
@@ -83,7 +85,7 @@ pub enum BootstrapRule {
 
 impl YggdrasilRule for BootstrapRule {
     fn is_ignore(&self) -> bool {
-        matches!(self, Self::IgnoreText | Self::IgnoreRegex | Self::WhiteSpace | Self::Comment)
+        matches!(self, Self::IgnoreText | Self::IgnoreRegex | Self::WhiteSpace)
     }
 
     fn get_style(&self) -> &'static str {
@@ -94,6 +96,7 @@ impl YggdrasilRule for BootstrapRule {
             Self::GrammarBlock => "",
             Self::ClassStatement => "",
             Self::ClassBlock => "",
+            Self::OP_REMARK => "",
             Self::UnionStatement => "",
             Self::UnionBlock => "",
             Self::UnionBranch => "",
@@ -102,8 +105,8 @@ impl YggdrasilRule for BootstrapRule {
             Self::GroupStatement => "",
             Self::GroupBlock => "",
             Self::GroupPair => "",
-            Self::AnnotationCall => "",
-            Self::AnnotationName => "",
+            Self::DecoratorCall => "",
+            Self::DecoratorName => "",
             Self::FunctionCall => "",
             Self::FunctionName => "",
             Self::CallBody => "",
@@ -115,6 +118,7 @@ impl YggdrasilRule for BootstrapRule {
             Self::Prefix => "",
             Self::Suffix => "",
             Self::Atomic => "",
+            Self::GroupExpression => "",
             Self::String => "",
             Self::RegexEmbed => "",
             Self::RegexRange => "",
@@ -166,9 +170,10 @@ pub struct GrammarBlockNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ClassStatementNode {
-    pub annotation_call: Vec<AnnotationCallNode>,
     pub class_block: ClassBlockNode,
+    pub decorator_call: Vec<DecoratorCallNode>,
     pub modifier_call: Vec<ModifierCallNode>,
+    pub op_remark: Option<OpRemarkNode>,
     pub cast: Option<IdentifierNode>,
     pub name: IdentifierNode,
     pub span: Range<u32>,
@@ -179,11 +184,18 @@ pub struct ClassBlockNode {
     pub expression: ExpressionNode,
     pub span: Range<u32>,
 }
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct OpRemarkNode {
+    pub span: Range<u32>,
+}
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnionStatementNode {
-    pub annotation_call: Vec<AnnotationCallNode>,
+    pub decorator_call: Vec<DecoratorCallNode>,
     pub modifier_call: Vec<ModifierCallNode>,
+    pub op_remark: Option<OpRemarkNode>,
     pub union_block: UnionBlockNode,
     pub name: IdentifierNode,
     pub span: Range<u32>,
@@ -198,7 +210,7 @@ pub struct UnionBlockNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnionBranchNode {
     pub branch_tag: Option<BranchTagNode>,
-    pub expression: ExpressionHardNode,
+    pub expression_hard: ExpressionHardNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -216,7 +228,7 @@ pub struct RightAssociativityNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GroupStatementNode {
-    pub annotation_call: Vec<AnnotationCallNode>,
+    pub decorator_call: Vec<DecoratorCallNode>,
     pub group_block: GroupBlockNode,
     pub identifier: Option<IdentifierNode>,
     pub modifier_call: Vec<ModifierCallNode>,
@@ -237,14 +249,14 @@ pub struct GroupPairNode {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct AnnotationCallNode {
-    pub annotation_name: AnnotationNameNode,
+pub struct DecoratorCallNode {
     pub call_body: CallBodyNode,
+    pub decorator_name: DecoratorNameNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct AnnotationNameNode {
+pub struct DecoratorNameNode {
     pub identifier: IdentifierNode,
     pub span: Range<u32>,
 }
@@ -271,15 +283,12 @@ pub struct CallBodyNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ExpressionNode {
     pub expression_hard: Vec<ExpressionHardNode>,
-    pub text: String,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ExpressionHardNode {
     pub expression_soft: Vec<ExpressionSoftNode>,
-    pub text: String,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -288,11 +297,11 @@ pub struct ExpressionSoftNode {
     pub expression_tag: Vec<ExpressionTagNode>,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ExpressionTagNode {
-    pub term: Vec<TermNode>,
+    pub identifier: Option<IdentifierNode>,
+    pub term: TermNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -320,13 +329,20 @@ pub enum SuffixNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum AtomicNode {
-    Atomic0(ExpressionNode),
     Boolean(BooleanNode),
     FunctionCall(FunctionCallNode),
+    GroupExpression(GroupExpressionNode),
     Identifier(IdentifierNode),
     RegexEmbed(RegexEmbedNode),
     RegexRange(RegexRangeNode),
     String(StringNode),
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GroupExpressionNode {
+    pub expression: ExpressionNode,
+    pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -337,13 +353,12 @@ pub enum StringNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RegexEmbedNode {
-    pub text: String,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RegexRangeNode {
-    pub text: String,
+    pub regex_negative: Option<RegexNegativeNode>,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]

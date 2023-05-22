@@ -39,6 +39,16 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::Namepath => parse_namepath(state),
         BootstrapRule::Identifier => parse_identifier(state),
         BootstrapRule::Boolean => parse_boolean(state),
+        BootstrapRule::ModifierCall => parse_modifier_call(state),
+        BootstrapRule::KW_GRAMMAR => parse_kw_grammar(state),
+        BootstrapRule::KW_IMPORT => parse_kw_import(state),
+        BootstrapRule::KW_CLASS => parse_kw_class(state),
+        BootstrapRule::KW_UNION => parse_kw_union(state),
+        BootstrapRule::KW_GROUP => parse_kw_group(state),
+        BootstrapRule::KW_CLIMB => parse_kw_climb(state),
+        BootstrapRule::KW_MACRO => parse_kw_macro(state),
+        BootstrapRule::WhiteSpace => parse_white_space(state),
+        BootstrapRule::Comment => parse_comment(state),
         BootstrapRule::IgnoreText => unreachable!(),
         BootstrapRule::IgnoreRegex => unreachable!(),
     })
@@ -57,10 +67,10 @@ fn parse_root(state: Input) -> Output {
 fn parse_statement(state: Input) -> Output {
     state.rule(BootstrapRule::Statement, |s| {
         Err(s)
-            .or_else(|s| parse_grammar_statement(s))
-            .or_else(|s| parse_class_statement(s))
-            .or_else(|s| parse_union_statement(s))
-            .or_else(|s| parse_group_statement(s))
+            .or_else(|s| parse_grammar_statement(s).and_then(|s| s.tag_node("grammar_statement")))
+            .or_else(|s| parse_class_statement(s).and_then(|s| s.tag_node("class_statement")))
+            .or_else(|s| parse_union_statement(s).and_then(|s| s.tag_node("union_statement")))
+            .or_else(|s| parse_group_statement(s).and_then(|s| s.tag_node("group_statement")))
     })
 }
 #[inline]
@@ -544,13 +554,13 @@ fn parse_suffix(state: Input) -> Output {
 fn parse_atomic(state: Input) -> Output {
     state.rule(BootstrapRule::Atomic, |s| {
         Err(s)
-            .or_else(|s| parse_group_expression(s))
-            .or_else(|s| parse_function_call(s))
-            .or_else(|s| parse_boolean(s))
-            .or_else(|s| parse_string(s))
-            .or_else(|s| parse_regex_embed(s))
-            .or_else(|s| parse_regex_range(s))
-            .or_else(|s| parse_identifier(s))
+            .or_else(|s| parse_group_expression(s).and_then(|s| s.tag_node("group_expression")))
+            .or_else(|s| parse_function_call(s).and_then(|s| s.tag_node("function_call")))
+            .or_else(|s| parse_boolean(s).and_then(|s| s.tag_node("boolean")))
+            .or_else(|s| parse_string(s).and_then(|s| s.tag_node("string")))
+            .or_else(|s| parse_regex_embed(s).and_then(|s| s.tag_node("regex_embed")))
+            .or_else(|s| parse_regex_range(s).and_then(|s| s.tag_node("regex_range")))
+            .or_else(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
     })
 }
 #[inline]
@@ -727,9 +737,136 @@ fn parse_boolean(state: Input) -> Output {
     })
 }
 
+#[inline]
+fn parse_modifier_call(state: Input) -> Output {
+    state.rule(BootstrapRule::ModifierCall, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| {
+                    s.lookahead(false, |s| {
+                        Err(s)
+                            .or_else(|s| parse_kw_class(s).and_then(|s| s.tag_node("kw_class")))
+                            .or_else(|s| parse_kw_union(s).and_then(|s| s.tag_node("kw_union")))
+                            .or_else(|s| parse_kw_group(s).and_then(|s| s.tag_node("kw_group")))
+                            .or_else(|s| parse_kw_macro(s).and_then(|s| s.tag_node("kw_macro")))
+                            .or_else(|s| parse_kw_climb(s).and_then(|s| s.tag_node("kw_climb")))
+                    })
+                })
+                .and_then(|s| parse_identifier(s))
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_grammar(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_GRAMMAR, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(grammar)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_import(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_IMPORT, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(using|import|use)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_class(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_CLASS, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(class|struct)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_union(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_UNION, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(union|enum)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_group(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_GROUP, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(group|token)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_climb(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_CLIMB, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(climb)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_macro(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_MACRO, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(macro|def|function|func|fun|fn)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_white_space(state: Input) -> Output {
+    state.rule(BootstrapRule::WhiteSpace, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(\\p{White_Space}+)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_comment(state: Input) -> Output {
+    state.rule(BootstrapRule::Comment, |s| {
+        Err(s)
+            .or_else(|s| {
+                s.sequence(|s| {
+                    Ok(s).and_then(|s| builtin_text(s, "//", false)).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                        builtin_regex(s, {
+                            static REGEX: OnceLock<Regex> = OnceLock::new();
+                            REGEX.get_or_init(|| Regex::new("^([^\\n\\r]*)").unwrap())
+                        })
+                    })
+                })
+            })
+            .or_else(|s| {
+                s.sequence(|s| {
+                    Ok(s).and_then(|s| builtin_text(s, "#", false)).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                        builtin_regex(s, {
+                            static REGEX: OnceLock<Regex> = OnceLock::new();
+                            REGEX.get_or_init(|| Regex::new("^([^\\n\\r]*)").unwrap())
+                        })
+                    })
+                })
+            })
+    })
+}
+
 /// All rules ignored in ast mode, inline is not recommended
 fn builtin_ignore(state: Input) -> Output {
-    state.repeat(0..u32::MAX, |s| {})
+    state.repeat(0..u32::MAX, |s| parse_white_space(s))
 }
 
 fn builtin_any(state: Input) -> Output {

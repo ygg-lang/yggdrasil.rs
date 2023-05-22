@@ -28,25 +28,25 @@ impl YggdrasilNode for StatementNode {
 
     fn get_range(&self) -> Option<Range<usize>> {
         match self {
-            Self::ClassStatement => None,
-            Self::GrammarStatement => None,
-            Self::GroupStatement => None,
-            Self::UnionStatement => None,
+            Self::ClassStatement(s) => s.get_range(),
+            Self::GrammarStatement(s) => s.get_range(),
+            Self::GroupStatement(s) => s.get_range(),
+            Self::UnionStatement(s) => s.get_range(),
         }
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        if let Some(_) = pair.find_first_tag("class_statement") {
-            return Ok(Self::ClassStatement)
+        if let Ok(s) = pair.take_tagged_one::<ClassStatementNode>(Cow::Borrowed("class_statement")) {
+            return Ok(Self::ClassStatement(s));
         }
-        if let Some(_) = pair.find_first_tag("grammar_statement") {
-            return Ok(Self::GrammarStatement)
+        if let Ok(s) = pair.take_tagged_one::<GrammarStatementNode>(Cow::Borrowed("grammar_statement")) {
+            return Ok(Self::GrammarStatement(s));
         }
-        if let Some(_) = pair.find_first_tag("group_statement") {
-            return Ok(Self::GroupStatement)
+        if let Ok(s) = pair.take_tagged_one::<GroupStatementNode>(Cow::Borrowed("group_statement")) {
+            return Ok(Self::GroupStatement(s));
         }
-        if let Some(_) = pair.find_first_tag("union_statement") {
-            return Ok(Self::UnionStatement)
+        if let Ok(s) = pair.take_tagged_one::<UnionStatementNode>(Cow::Borrowed("union_statement")) {
+            return Ok(Self::UnionStatement(s));
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::Statement, _span))
     }
@@ -92,9 +92,7 @@ impl YggdrasilNode for GrammarBlockNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self {
-            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
-        })
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
     }
 }
 #[automatically_derived]
@@ -116,8 +114,12 @@ impl YggdrasilNode for ClassStatementNode {
         let _span = pair.get_span();
         Ok(Self {
             class_block: pair.take_tagged_one::<ClassBlockNode>(Cow::Borrowed("class_block"))?,
-            decorator_call: pair.take_tagged_items::<DecoratorCallNode>(Cow::Borrowed("decorator_call")).collect::<Result<Vec<_>, _>>(),
-            // Missing rule ModifierCall
+            decorator_call: pair
+                .take_tagged_items::<DecoratorCallNode>(Cow::Borrowed("decorator_call"))
+                .collect::<Result<Vec<_>, _>>(),
+            modifier_call: pair
+                .take_tagged_items::<ModifierCallNode>(Cow::Borrowed("modifier_call"))
+                .collect::<Result<Vec<_>, _>>(),
             op_remark: pair.take_tagged_option::<OpRemarkNode>(Cow::Borrowed("op_remark")),
             cast: pair.take_tagged_option::<IdentifierNode>(Cow::Borrowed("cast")),
             name: pair.take_tagged_one::<IdentifierNode>(Cow::Borrowed("name"))?,
@@ -165,9 +167,7 @@ impl YggdrasilNode for OpRemarkNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self {
-            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
-        })
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
     }
 }
 #[automatically_derived]
@@ -188,8 +188,12 @@ impl YggdrasilNode for UnionStatementNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            decorator_call: pair.take_tagged_items::<DecoratorCallNode>(Cow::Borrowed("decorator_call")).collect::<Result<Vec<_>, _>>(),
-            // Missing rule ModifierCall
+            decorator_call: pair
+                .take_tagged_items::<DecoratorCallNode>(Cow::Borrowed("decorator_call"))
+                .collect::<Result<Vec<_>, _>>(),
+            modifier_call: pair
+                .take_tagged_items::<ModifierCallNode>(Cow::Borrowed("modifier_call"))
+                .collect::<Result<Vec<_>, _>>(),
             op_remark: pair.take_tagged_option::<OpRemarkNode>(Cow::Borrowed("op_remark")),
             union_block: pair.take_tagged_one::<UnionBlockNode>(Cow::Borrowed("union_block"))?,
             name: pair.take_tagged_one::<IdentifierNode>(Cow::Borrowed("name"))?,
@@ -215,7 +219,9 @@ impl YggdrasilNode for UnionBlockNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            union_branch: pair.take_tagged_items::<UnionBranchNode>(Cow::Borrowed("union_branch")).collect::<Result<Vec<_>, _>>(),
+            union_branch: pair
+                .take_tagged_items::<UnionBranchNode>(Cow::Borrowed("union_branch"))
+                .collect::<Result<Vec<_>, _>>(),
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
@@ -285,9 +291,7 @@ impl YggdrasilNode for RightAssociativityNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self {
-            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
-        })
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
     }
 }
 #[automatically_derived]
@@ -308,10 +312,14 @@ impl YggdrasilNode for GroupStatementNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            decorator_call: pair.take_tagged_items::<DecoratorCallNode>(Cow::Borrowed("decorator_call")).collect::<Result<Vec<_>, _>>(),
+            decorator_call: pair
+                .take_tagged_items::<DecoratorCallNode>(Cow::Borrowed("decorator_call"))
+                .collect::<Result<Vec<_>, _>>(),
             group_block: pair.take_tagged_one::<GroupBlockNode>(Cow::Borrowed("group_block"))?,
             identifier: pair.take_tagged_option::<IdentifierNode>(Cow::Borrowed("identifier")),
-            // Missing rule ModifierCall
+            modifier_call: pair
+                .take_tagged_items::<ModifierCallNode>(Cow::Borrowed("modifier_call"))
+                .collect::<Result<Vec<_>, _>>(),
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
@@ -498,7 +506,9 @@ impl YggdrasilNode for ExpressionNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            expression_hard: pair.take_tagged_items::<ExpressionHardNode>(Cow::Borrowed("expression_hard")).collect::<Result<Vec<_>, _>>(),
+            expression_hard: pair
+                .take_tagged_items::<ExpressionHardNode>(Cow::Borrowed("expression_hard"))
+                .collect::<Result<Vec<_>, _>>(),
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
@@ -521,7 +531,9 @@ impl YggdrasilNode for ExpressionHardNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            expression_soft: pair.take_tagged_items::<ExpressionSoftNode>(Cow::Borrowed("expression_soft")).collect::<Result<Vec<_>, _>>(),
+            expression_soft: pair
+                .take_tagged_items::<ExpressionSoftNode>(Cow::Borrowed("expression_soft"))
+                .collect::<Result<Vec<_>, _>>(),
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
@@ -544,7 +556,9 @@ impl YggdrasilNode for ExpressionSoftNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            expression_tag: pair.take_tagged_items::<ExpressionTagNode>(Cow::Borrowed("expression_tag")).collect::<Result<Vec<_>, _>>(),
+            expression_tag: pair
+                .take_tagged_items::<ExpressionTagNode>(Cow::Borrowed("expression_tag"))
+                .collect::<Result<Vec<_>, _>>(),
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
@@ -620,13 +634,13 @@ impl YggdrasilNode for PrefixNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         if let Some(_) = pair.find_first_tag("prefix_0") {
-            return Ok(Self::Prefix0)
+            return Ok(Self::Prefix0);
         }
         if let Some(_) = pair.find_first_tag("prefix_1") {
-            return Ok(Self::Prefix1)
+            return Ok(Self::Prefix1);
         }
         if let Some(_) = pair.find_first_tag("prefix_2") {
-            return Ok(Self::Prefix2)
+            return Ok(Self::Prefix2);
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::Prefix, _span))
     }
@@ -653,13 +667,13 @@ impl YggdrasilNode for SuffixNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         if let Some(_) = pair.find_first_tag("suffix_0") {
-            return Ok(Self::Suffix0)
+            return Ok(Self::Suffix0);
         }
         if let Some(_) = pair.find_first_tag("suffix_1") {
-            return Ok(Self::Suffix1)
+            return Ok(Self::Suffix1);
         }
         if let Some(_) = pair.find_first_tag("suffix_2") {
-            return Ok(Self::Suffix2)
+            return Ok(Self::Suffix2);
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::Suffix, _span))
     }
@@ -678,37 +692,37 @@ impl YggdrasilNode for AtomicNode {
 
     fn get_range(&self) -> Option<Range<usize>> {
         match self {
-            Self::Boolean => None,
-            Self::FunctionCall => None,
-            Self::GroupExpression => None,
-            Self::Identifier => None,
-            Self::RegexEmbed => None,
-            Self::RegexRange => None,
-            Self::String => None,
+            Self::Boolean(s) => s.get_range(),
+            Self::FunctionCall(s) => s.get_range(),
+            Self::GroupExpression(s) => s.get_range(),
+            Self::Identifier(s) => s.get_range(),
+            Self::RegexEmbed(s) => s.get_range(),
+            Self::RegexRange(s) => s.get_range(),
+            Self::String(s) => s.get_range(),
         }
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        if let Some(_) = pair.find_first_tag("boolean") {
-            return Ok(Self::Boolean)
+        if let Ok(s) = pair.take_tagged_one::<BooleanNode>(Cow::Borrowed("boolean")) {
+            return Ok(Self::Boolean(s));
         }
-        if let Some(_) = pair.find_first_tag("function_call") {
-            return Ok(Self::FunctionCall)
+        if let Ok(s) = pair.take_tagged_one::<FunctionCallNode>(Cow::Borrowed("function_call")) {
+            return Ok(Self::FunctionCall(s));
         }
-        if let Some(_) = pair.find_first_tag("group_expression") {
-            return Ok(Self::GroupExpression)
+        if let Ok(s) = pair.take_tagged_one::<GroupExpressionNode>(Cow::Borrowed("group_expression")) {
+            return Ok(Self::GroupExpression(s));
         }
-        if let Some(_) = pair.find_first_tag("identifier") {
-            return Ok(Self::Identifier)
+        if let Ok(s) = pair.take_tagged_one::<IdentifierNode>(Cow::Borrowed("identifier")) {
+            return Ok(Self::Identifier(s));
         }
-        if let Some(_) = pair.find_first_tag("regex_embed") {
-            return Ok(Self::RegexEmbed)
+        if let Ok(s) = pair.take_tagged_one::<RegexEmbedNode>(Cow::Borrowed("regex_embed")) {
+            return Ok(Self::RegexEmbed(s));
         }
-        if let Some(_) = pair.find_first_tag("regex_range") {
-            return Ok(Self::RegexRange)
+        if let Ok(s) = pair.take_tagged_one::<RegexRangeNode>(Cow::Borrowed("regex_range")) {
+            return Ok(Self::RegexRange(s));
         }
-        if let Some(_) = pair.find_first_tag("string") {
-            return Ok(Self::String)
+        if let Ok(s) = pair.take_tagged_one::<StringNode>(Cow::Borrowed("string")) {
+            return Ok(Self::String(s));
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::Atomic, _span))
     }
@@ -757,10 +771,10 @@ impl YggdrasilNode for StringNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         if let Some(_) = pair.find_first_tag("string_0") {
-            return Ok(Self::String0)
+            return Ok(Self::String0);
         }
         if let Some(_) = pair.find_first_tag("string_1") {
-            return Ok(Self::String1)
+            return Ok(Self::String1);
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::String, _span))
     }
@@ -782,9 +796,7 @@ impl YggdrasilNode for RegexEmbedNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self {
-            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
-        })
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
     }
 }
 #[automatically_derived]
@@ -827,9 +839,7 @@ impl YggdrasilNode for RegexNegativeNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self {
-            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
-        })
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
     }
 }
 #[automatically_derived]
@@ -895,9 +905,7 @@ impl YggdrasilNode for IdentifierNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self {
-            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
-        })
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
     }
 }
 #[automatically_derived]
@@ -921,10 +929,10 @@ impl YggdrasilNode for BooleanNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         if let Some(_) = pair.find_first_tag("boolean_0") {
-            return Ok(Self::Boolean0)
+            return Ok(Self::Boolean0);
         }
         if let Some(_) = pair.find_first_tag("boolean_1") {
-            return Ok(Self::Boolean1)
+            return Ok(Self::Boolean1);
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::Boolean, _span))
     }
@@ -935,5 +943,241 @@ impl FromStr for BooleanNode {
 
     fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
         Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::Boolean)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for ModifierCallNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self {
+            kw_class: pair.take_tagged_items::<KwClassNode>(Cow::Borrowed("kw_class")).collect::<Result<Vec<_>, _>>(),
+            kw_climb: pair.take_tagged_items::<KwClimbNode>(Cow::Borrowed("kw_climb")).collect::<Result<Vec<_>, _>>(),
+            kw_group: pair.take_tagged_items::<KwGroupNode>(Cow::Borrowed("kw_group")).collect::<Result<Vec<_>, _>>(),
+            kw_macro: pair.take_tagged_items::<KwMacroNode>(Cow::Borrowed("kw_macro")).collect::<Result<Vec<_>, _>>(),
+            kw_union: pair.take_tagged_items::<KwUnionNode>(Cow::Borrowed("kw_union")).collect::<Result<Vec<_>, _>>(),
+            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+        })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for ModifierCallNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::ModifierCall)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for KwGrammarNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for KwGrammarNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::KW_GRAMMAR)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for KwImportNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for KwImportNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::KW_IMPORT)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for KwClassNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for KwClassNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::KW_CLASS)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for KwUnionNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for KwUnionNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::KW_UNION)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for KwGroupNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for KwGroupNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::KW_GROUP)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for KwClimbNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for KwClimbNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::KW_CLIMB)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for KwMacroNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for KwMacroNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::KW_MACRO)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for WhiteSpaceNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for WhiteSpaceNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::WhiteSpace)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for CommentNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        match self {
+            Self::Comment0 => None,
+            Self::Comment1 => None,
+        }
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        if let Some(_) = pair.find_first_tag("comment_0") {
+            return Ok(Self::Comment0);
+        }
+        if let Some(_) = pair.find_first_tag("comment_1") {
+            return Ok(Self::Comment1);
+        }
+        Err(YggdrasilError::invalid_node(BootstrapRule::Comment, _span))
+    }
+}
+
+#[automatically_derived]
+impl FromStr for CommentNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::Comment)?)
     }
 }

@@ -5,20 +5,20 @@ use super::*;
 impl ClassStatementNode {
     pub fn annotations(&self) -> TakeAnnotations {
         // FIXME: AUTO TAG
-        TakeAnnotations { auto_tag: true, macros: &self.annotation_call, modifiers: &self.modifier_call }
+        TakeAnnotations { auto_tag: self.op_remark.is_none(), macros: &self.decorator_call, modifiers: &self.modifier_call }
     }
 }
 
 impl UnionStatementNode {
     pub fn annotations(&self) -> TakeAnnotations {
         // FIXME: AUTO TAG
-        TakeAnnotations { auto_tag: true, macros: &self.annotation_call, modifiers: &self.modifier_call }
+        TakeAnnotations { auto_tag: self.op_remark.is_none(), macros: &self.decorator_call, modifiers: &self.modifier_call }
     }
 }
 
 impl GroupStatementNode {
     pub fn annotations(&self) -> TakeAnnotations {
-        TakeAnnotations { auto_tag: false, macros: &self.annotation_call, modifiers: &self.modifier_call }
+        TakeAnnotations { auto_tag: false, macros: &self.decorator_call, modifiers: &self.modifier_call }
     }
 }
 
@@ -74,7 +74,7 @@ impl<'i> TakeAnnotations<'i> {
     where
         'i: 'a,
     {
-        self.macros.iter().filter(|v| v.annotation_name.identifier.text.eq_ignore_ascii_case(name)).map(move |v| &v.call_body)
+        self.macros.iter().filter(|v| v.decorator_name.identifier.text.eq_ignore_ascii_case(name)).map(move |v| &v.call_body)
     }
 
     fn find_modifiers(&self, positive: &[&str], negative: &[&str]) -> Option<bool> {

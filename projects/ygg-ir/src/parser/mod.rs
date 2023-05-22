@@ -214,7 +214,7 @@ impl YggdrasilExpression {
     }
     fn build_atomic(node: &AtomicNode) -> Result<Self, YggdrasilError> {
         let expr = match node {
-            AtomicNode::Atomic0(e) => YggdrasilExpression::build_or(e)?,
+            AtomicNode::GroupExpression(e) => YggdrasilExpression::build_or(e)?,
             AtomicNode::Boolean(v) => match v {
                 BooleanNode::Boolean0 => YggdrasilExpression::boolean(true),
                 BooleanNode::Boolean1 => YggdrasilExpression::boolean(true),

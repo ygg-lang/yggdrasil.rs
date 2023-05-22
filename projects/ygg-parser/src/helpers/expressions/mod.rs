@@ -14,10 +14,10 @@ impl ExpressionNode {
             return None;
         }
         let expr = expr.expression_tag.first()?;
-        if expr.term.len() != 1 {
+        if expr.identifier.is_some() {
             return None;
         }
-        let expr = expr.term.first()?;
+        let expr = &expr.term;
         if expr.prefix.is_empty() && expr.suffix.is_empty() {
             if let AtomicNode::Identifier(v) = &expr.atomic {
                 return Some(v);
