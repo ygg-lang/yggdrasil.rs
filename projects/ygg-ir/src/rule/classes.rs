@@ -2,6 +2,7 @@ use super::*;
 
 // Class rule
 #[derive(Default, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct FieldMap {
     pub fields: BTreeMap<String, YggdrasilField>,
 }

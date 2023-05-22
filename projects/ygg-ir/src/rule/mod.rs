@@ -22,7 +22,7 @@ pub use self::{
     derive::RuleDerive,
     fields::{counter::FieldCounter, YggdrasilField},
     identifier::{YggdrasilIdentifier, YggdrasilNamepath},
-    unions::YggdrasilEnumerates,
+    unions::{YggdrasilEnumerate, YggdrasilVariant},
 };
 
 mod classes;
@@ -150,11 +150,11 @@ pub struct GrammarCaptures {
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum GrammarBody {
-    Empty {},
+    // Empty {},
     Class { term: YggdrasilExpression },
-    Union { branches: Vec<(Option<YggdrasilIdentifier>, YggdrasilExpression)> },
-    Climb { priority: Vec<(Option<YggdrasilIdentifier>, YggdrasilExpression)> },
-    TokenSet { rules: Vec<YggdrasilIdentifier> },
+    Union { branches: Vec<YggdrasilVariant> },
+    Climb { priority: Vec<YggdrasilVariant> },
+    // TokenSet { rules: Vec<YggdrasilIdentifier> },
 }
 
 impl GrammarBody {
@@ -163,18 +163,16 @@ impl GrammarBody {
         F: FnMut(&mut YggdrasilExpression),
     {
         match self {
-            GrammarBody::Empty { .. } => {}
             GrammarBody::Class { term } => f(term),
-            GrammarBody::Union { branches } => branches.iter_mut().for_each(|v| f(&mut v.1)),
-            GrammarBody::Climb { priority } => priority.iter_mut().for_each(|v| f(&mut v.1)),
-            GrammarBody::TokenSet { .. } => {}
+            GrammarBody::Union { branches } => branches.iter_mut().for_each(|v| f(&mut v.branch)),
+            GrammarBody::Climb { priority } => priority.iter_mut().for_each(|v| f(&mut v.branch)),
         }
     }
 }
 
 impl Default for GrammarBody {
     fn default() -> Self {
-        Self::Empty {}
+        Self::Union { branches: vec![] }
     }
 }
 

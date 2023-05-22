@@ -79,11 +79,11 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    (
-                        Some(
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("GrammarStatement", 85..101),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: RuleReference {
@@ -92,12 +92,12 @@ GrammarInfo {
                                 inline: false,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("ClassStatement", 108..122),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: RuleReference {
@@ -106,12 +106,12 @@ GrammarInfo {
                                 inline: false,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("UnionStatement", 129..143),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: RuleReference {
@@ -120,12 +120,12 @@ GrammarInfo {
                                 inline: false,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("GroupStatement", 150..164),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: RuleReference {
@@ -134,7 +134,7 @@ GrammarInfo {
                                 inline: false,
                             },
                         },
-                    ),
+                    },
                 ],
             },
             range: 61..166,
@@ -2238,11 +2238,11 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    (
-                        Some(
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("Prefix0", 0..0),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: YggdrasilText {
@@ -2251,12 +2251,12 @@ GrammarInfo {
                                 range: 0..0,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("Prefix1", 0..0),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: YggdrasilText {
@@ -2265,12 +2265,12 @@ GrammarInfo {
                                 range: 0..0,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("Prefix2", 0..0),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: YggdrasilText {
@@ -2279,7 +2279,7 @@ GrammarInfo {
                                 range: 0..0,
                             },
                         },
-                    ),
+                    },
                 ],
             },
             range: 2266..2340,
@@ -2303,11 +2303,11 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    (
-                        Some(
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("Suffix0", 0..0),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: YggdrasilText {
@@ -2316,12 +2316,12 @@ GrammarInfo {
                                 range: 0..0,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("Suffix1", 0..0),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: YggdrasilText {
@@ -2330,12 +2330,12 @@ GrammarInfo {
                                 range: 0..0,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("Suffix2", 0..0),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: YggdrasilText {
@@ -2344,7 +2344,7 @@ GrammarInfo {
                                 range: 0..0,
                             },
                         },
-                    ),
+                    },
                 ],
             },
             range: 2341..2410,
@@ -2368,11 +2368,11 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    (
-                        Some(
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("GroupExpression", 2553..2568),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: RuleReference {
@@ -2381,12 +2381,12 @@ GrammarInfo {
                                 inline: false,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("FunctionCall", 2575..2587),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: RuleReference {
@@ -2395,12 +2395,12 @@ GrammarInfo {
                                 inline: false,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("Boolean", 2594..2601),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: RuleReference {
@@ -2409,12 +2409,12 @@ GrammarInfo {
                                 inline: false,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("String", 2608..2614),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: RuleReference {
@@ -2423,12 +2423,12 @@ GrammarInfo {
                                 inline: false,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("RegexEmbed", 2621..2631),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: RuleReference {
@@ -2437,12 +2437,12 @@ GrammarInfo {
                                 inline: false,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("RegexRange", 2638..2648),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: RuleReference {
@@ -2451,12 +2451,12 @@ GrammarInfo {
                                 inline: false,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("Identifier", 2655..2665),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: RuleReference {
@@ -2465,7 +2465,7 @@ GrammarInfo {
                                 inline: false,
                             },
                         },
-                    ),
+                    },
                 ],
             },
             range: 2532..2667,
@@ -2581,11 +2581,11 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    (
-                        Some(
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("String0", 0..0),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: ConcatExpression {
@@ -2682,12 +2682,12 @@ GrammarInfo {
                                 ],
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("String1", 0..0),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: ConcatExpression {
@@ -2784,7 +2784,7 @@ GrammarInfo {
                                 ],
                             },
                         },
-                    ),
+                    },
                 ],
             },
             range: 2844..2933,
@@ -3283,11 +3283,11 @@ GrammarInfo {
             },
             body: Union {
                 branches: [
-                    (
-                        Some(
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("Boolean0", 0..0),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: YggdrasilText {
@@ -3296,12 +3296,12 @@ GrammarInfo {
                                 range: 0..0,
                             },
                         },
-                    ),
-                    (
-                        Some(
+                    },
+                    YggdrasilVariant {
+                        tag: Some(
                             Identifier("Boolean1", 0..0),
                         ),
-                        Expression {
+                        branch: Expression {
                             tag: None,
                             remark: false,
                             body: YggdrasilText {
@@ -3310,7 +3310,7 @@ GrammarInfo {
                                 range: 0..0,
                             },
                         },
-                    ),
+                    },
                 ],
             },
             range: 3518..3576,

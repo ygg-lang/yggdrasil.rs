@@ -1,11 +1,13 @@
 use super::*;
 
 #[derive(Copy, Clone, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct FieldCounter {
     min: u32,
     max: u32,
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum FieldCounterType {
     Never,
     Optional,

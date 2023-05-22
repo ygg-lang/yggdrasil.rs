@@ -19,21 +19,19 @@ impl CodeOptimizer for RefineRules {
         let mut out = info.clone();
         for rule in out.rules.values_mut() {
             match &mut rule.body {
-                GrammarBody::Empty {} => {}
                 GrammarBody::Class { term } => match self.refine_node(term) {
                     Ok(_) => {}
                     Err(e) => errors.push(e),
                 },
                 GrammarBody::Union { branches } => {
-                    for (_, x) in branches.iter_mut() {
-                        match self.refine_node(x) {
+                    for variant in branches.iter_mut() {
+                        match self.refine_node(&mut variant.branch) {
                             Ok(_) => {}
                             Err(e) => errors.push(e),
                         }
                     }
                 }
                 GrammarBody::Climb { .. } => {}
-                GrammarBody::TokenSet { .. } => {}
             }
         }
         Validation::Success { value: out, diagnostics: errors }

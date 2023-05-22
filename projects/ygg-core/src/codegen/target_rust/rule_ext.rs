@@ -15,7 +15,7 @@ impl RuleExt for GrammarRule {
     fn parser_expression(&self) -> String {
         let mut w = String::new();
         match &self.body {
-            GrammarBody::Empty { .. } => w.push_str("Err(/* empty node */s)"),
+            // GrammarBody::Empty { .. } => w.push_str("Err(/* empty node */s)"),
             GrammarBody::Class { term } => {
                 if let Err(e) = term.write(&mut w, self, true) {
                     w.push_str(&format!("Err(/*{e}*/s)"))
@@ -23,14 +23,14 @@ impl RuleExt for GrammarRule {
             }
             GrammarBody::Union { branches } => {
                 w.push_str("Err(s)");
-                for (_, pat) in branches {
+                for variant in branches {
                     w.push_str(".or_else(|s|");
-                    pat.write(&mut w, self, false).unwrap();
+                    variant.branch.write(&mut w, self, false).unwrap();
                     w.push_str(")");
                 }
             }
             GrammarBody::Climb { .. } => w.push_str("Err(/* Climb node */s)"),
-            GrammarBody::TokenSet { .. } => unreachable!("TokenSet is not an expression"),
+            // GrammarBody::TokenSet { .. } => unreachable!("TokenSet is not an expression"),
         }
         w
     }

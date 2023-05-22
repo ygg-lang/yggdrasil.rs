@@ -58,16 +58,14 @@ impl AsRailroad for GrammarRule {
         s.push(Box::new(SimpleStart));
         s.push(Box::new(RuleName::new(self.name.text.to_string())));
         match &self.body {
-            GrammarBody::Empty { .. } => {}
             GrammarBody::Class { term } => {
                 s.push(term.as_railroad(config));
             }
             GrammarBody::Union { branches } => {
-                let concat = ChoiceExpression { branches: branches.iter().map(|(_, e)| e.clone()).collect() };
+                let concat = ChoiceExpression { branches: branches.iter().map(|v| v.branch.clone()).collect() };
                 s.push(concat.as_railroad(config));
             }
             GrammarBody::Climb { .. } => {}
-            GrammarBody::TokenSet { .. } => {}
         }
         s.push(Box::new(SimpleEnd));
         return Box::new(s);

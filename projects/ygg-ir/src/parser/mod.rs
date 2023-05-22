@@ -14,7 +14,7 @@ use crate::{
     data::{YggdrasilRegex, YggdrasilText},
     grammar::GrammarInfo,
     nodes::{UnaryExpression, YggdrasilExpression, YggdrasilOperator},
-    rule::{GrammarAtomic, GrammarBody, GrammarRule, YggdrasilIdentifier},
+    rule::{GrammarAtomic, GrammarBody, GrammarRule, YggdrasilIdentifier, YggdrasilVariant},
 };
 
 mod annotations;
@@ -173,10 +173,10 @@ impl YggdrasilExpression {
             _ => Err(YggdrasilError::syntax_error("empty class soft", node.get_range().unwrap_or_default()))?,
         }
     }
-    fn build_tag_branch(node: &UnionBranchNode) -> Result<(Option<YggdrasilIdentifier>, Self), YggdrasilError> {
+    fn build_tag_branch(node: &UnionBranchNode) -> Result<YggdrasilVariant, YggdrasilError> {
         let id = node.branch_tag.as_ref().map(|o| YggdrasilIdentifier::build(&o.identifier));
         let expr = YggdrasilExpression::build_hard(&node.expression)?;
-        Ok((id, expr))
+        Ok(YggdrasilVariant { tag: id, branch: expr })
     }
     fn build_tag_node(node: &ExpressionTagNode) -> Result<Self, YggdrasilError> {
         match node.term.as_slice() {

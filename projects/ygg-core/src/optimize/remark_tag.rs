@@ -1,7 +1,7 @@
 use super::*;
 use convert_case::{Case, Casing};
 use yggdrasil_error::Validation;
-use yggdrasil_ir::rule::{GrammarBody, YggdrasilIdentifier};
+use yggdrasil_ir::rule::{GrammarBody, YggdrasilIdentifier, YggdrasilVariant};
 use yggdrasil_parser::bootstrap::IdentifierNode;
 
 /// Automatically insert or remove tags
@@ -14,16 +14,14 @@ impl CodeOptimizer for RemarkTags {
         for rule in info.rules.values_mut() {
             let rule_name = rule.name.text.as_str();
             match &mut rule.body {
-                GrammarBody::Empty {} => {}
                 GrammarBody::Class { term } => self.remark(term, rule.captures.auto),
                 GrammarBody::Union { branches } => {
                     self.remark_union_root(branches, rule_name);
-                    for (_, branch) in branches.iter_mut() {
-                        self.remark(branch, rule.captures.auto)
+                    for variant in branches.iter_mut() {
+                        self.remark(&mut variant.branch, rule.captures.auto)
                     }
                 }
                 GrammarBody::Climb { .. } => {}
-                GrammarBody::TokenSet { .. } => {}
             }
         }
 
@@ -64,21 +62,17 @@ impl RemarkTags {
             _ => {}
         }
     }
-    fn remark_union_root(&self, expr: &mut [(Option<YggdrasilIdentifier>, YggdrasilExpression)], rule: &str) {
-        for (index, (branch, e)) in expr.iter_mut().enumerate() {
-            match branch {
+    fn remark_union_root(&self, expr: &mut [YggdrasilVariant], rule: &str) {
+        for (index, variant) in expr.iter_mut().enumerate() {
+            match variant.tag {
                 Some(_) => {}
-                None => match &e.body {
-                    ExpressionBody::Rule(r) => {
-                        *branch =
-                            Some(YggdrasilIdentifier { text: r.name.text.to_case(Case::Pascal), range: r.name.range.clone() })
-                    }
-                    _ => {
-                        *branch = Some(YggdrasilIdentifier {
-                            text: format!("{rule}{index}").to_case(Case::Pascal),
-                            range: Default::default(),
-                        })
-                    }
+                None => match &variant.branch.body {
+                    ExpressionBody::Rule(r) => variant
+                        .remark(YggdrasilIdentifier { text: r.name.text.to_case(Case::Pascal), range: r.name.range.clone() }),
+                    _ => variant.remark(YggdrasilIdentifier {
+                        text: format!("{rule}{index}").to_case(Case::Pascal),
+                        range: Default::default(),
+                    }),
                 },
             }
         }

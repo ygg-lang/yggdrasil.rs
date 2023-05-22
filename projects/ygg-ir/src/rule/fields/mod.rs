@@ -15,6 +15,7 @@ pub mod counter;
 /// }
 /// ```
 #[derive(Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct YggdrasilField {
     /// field name to be created
     pub lhs: String,
@@ -52,18 +53,14 @@ impl GrammarRule {
             _ => unreachable!("do you filter with class?"),
         }
     }
-    pub fn union_fields(&self) -> YggdrasilEnumerates {
+    pub fn union_fields(&self) -> YggdrasilEnumerate {
         match &self.body {
             GrammarBody::Union { branches } => {
-                let mut variants = BTreeMap::default();
-                for (branch, expr) in branches {
-                    let field = expr.field_map();
-                    match branch {
-                        Some(s) => variants.insert(s.text.clone(), field),
-                        None => unreachable!("have you run remark?"),
-                    };
+                let mut variants = YggdrasilEnumerate::default();
+                for variant in branches {
+                    variants.insert(variant)
                 }
-                YggdrasilEnumerates { variants }
+                variants
             }
             _ => unreachable!("do you filter with `union`?"),
         }
