@@ -4,8 +4,8 @@ use yggdrasil_error::YggdrasilError;
 use yggdrasil_parser::{
     bootstrap::{
         AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
-        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, PrefixNode, RootNode, StatementNode, StringNode, SuffixNode,
-        TermNode, UnionBranchNode, UnionStatementNode,
+        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, PrefixNode, RootNode, StatementNode, StringItemNode,
+        StringNode, SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
     },
     TakeAnnotations, YggdrasilNode,
 };
@@ -186,16 +186,16 @@ impl YggdrasilExpression {
         let mut unary = Vec::with_capacity(node.prefix.len() + node.suffix.len());
         for i in &node.suffix {
             match i {
-                SuffixNode::Suffix0 => unary.push(YggdrasilOperator::OPTIONAL),
-                SuffixNode::Suffix1 => unary.push(YggdrasilOperator::REPEATS),
-                SuffixNode::Suffix2 => unary.push(YggdrasilOperator::REPEAT1),
+                SuffixNode::Optional => unary.push(YggdrasilOperator::OPTIONAL),
+                SuffixNode::Many => unary.push(YggdrasilOperator::REPEATS),
+                SuffixNode::Many1 => unary.push(YggdrasilOperator::REPEAT1),
             }
         }
         for i in node.prefix.iter().rev() {
             match i {
-                PrefixNode::Prefix0 => unary.push(YggdrasilOperator::Negative),
-                PrefixNode::Prefix1 => unary.push(YggdrasilOperator::Positive),
-                PrefixNode::Prefix2 => base.remark = true,
+                PrefixNode::Negative => unary.push(YggdrasilOperator::Negative),
+                PrefixNode::Positive => unary.push(YggdrasilOperator::Positive),
+                PrefixNode::Remark => base.remark = true,
             }
         }
         if unary.is_empty() { Ok(base) } else { Ok(UnaryExpression { base: Box::new(base), operators: unary }.into()) }
@@ -204,8 +204,8 @@ impl YggdrasilExpression {
         let expr = match node {
             AtomicNode::GroupExpression(e) => YggdrasilExpression::build_or(&e.expression)?,
             AtomicNode::Boolean(v) => match v {
-                BooleanNode::Boolean0 => YggdrasilExpression::boolean(true),
-                BooleanNode::Boolean1 => YggdrasilExpression::boolean(true),
+                BooleanNode::False => YggdrasilExpression::boolean(false),
+                BooleanNode::True => YggdrasilExpression::boolean(true),
             },
             AtomicNode::FunctionCall(v) => {
                 todo!()
@@ -214,8 +214,20 @@ impl YggdrasilExpression {
             AtomicNode::RegexEmbed(v) => YggdrasilRegex::new(v.text.trim_matches('/'), v.get_range().unwrap_or_default()).into(),
             AtomicNode::RegexRange(v) => YggdrasilRegex::new(&v.text, v.get_range().unwrap_or_default()).into(),
             AtomicNode::String(v) => match v {
-                StringNode::String0(s) => YggdrasilText::new(s.trim_matches('\''), Default::default()).into(),
-                StringNode::String1(s) => YggdrasilText::new(s.trim_matches('"'), Default::default()).into(),
+                StringNode::Escaped(s) => {
+                    YggdrasilText::new(s.text.trim_matches('\"'), Default::default()).into()
+                    // let mut buffer = String::new();
+                    // match s {
+                    //     StringItemNode::Escaped(s) => buffer.push_str(s),
+                    //     StringItemNode::Other(s) => buffer.push_str(s),
+                    //     StringItemNode::Unicode(s) => buffer.push_str(s),
+                    // }
+                    // YggdrasilText::new(buffer, Default::default()).into()
+                }
+                StringNode::Raw(s) => {
+                    YggdrasilText::new(s.text.trim_matches('\''), Default::default()).into()
+                    // YggdrasilText::new(s.text.clone(), s.get_range().unwrap_or_default()).into()
+                }
             },
         };
         Ok(expr)

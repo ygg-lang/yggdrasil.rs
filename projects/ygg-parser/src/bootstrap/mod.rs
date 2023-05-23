@@ -3,12 +3,13 @@
 #![allow(clippy::unnecessary_cast)]
 #![doc = include_str!("readme.md")]
 
-mod parse_ast;
-mod parse_cst;
-
 use core::str::FromStr;
 use std::{borrow::Cow, ops::Range, sync::OnceLock};
+
 use yggdrasil_rt::*;
+
+mod parse_ast;
+mod parse_cst;
 
 type Input<'i> = Box<State<'i, BootstrapRule>>;
 type Output<'i> = Result<Box<State<'i, BootstrapRule>>, Box<State<'i, BootstrapRule>>>;
@@ -60,6 +61,8 @@ pub enum BootstrapRule {
     Atomic,
     GroupExpression,
     String,
+    StringRaw,
+    StringItem,
     RegexEmbed,
     RegexRange,
     RegexNegative,
@@ -76,7 +79,6 @@ pub enum BootstrapRule {
     KW_CLIMB,
     KW_MACRO,
     WhiteSpace,
-    Comment,
     /// Label for text literal
     IgnoreText,
     /// Label for regex literal
@@ -120,6 +122,8 @@ impl YggdrasilRule for BootstrapRule {
             Self::Atomic => "",
             Self::GroupExpression => "",
             Self::String => "",
+            Self::StringRaw => "",
+            Self::StringItem => "",
             Self::RegexEmbed => "",
             Self::RegexRange => "",
             Self::RegexNegative => "",
@@ -136,7 +140,6 @@ impl YggdrasilRule for BootstrapRule {
             Self::KW_CLIMB => "",
             Self::KW_MACRO => "",
             Self::WhiteSpace => "",
-            Self::Comment => "",
             _ => "",
         }
     }
@@ -170,12 +173,12 @@ pub struct GrammarBlockNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ClassStatementNode {
-    pub name: IdentifierNode,
+    pub class_block: ClassBlockNode,
     pub decorator_call: Vec<DecoratorCallNode>,
     pub modifier_call: Vec<ModifierCallNode>,
     pub op_remark: Option<OpRemarkNode>,
     pub cast: Option<IdentifierNode>,
-    pub class_block: ClassBlockNode,
+    pub name: IdentifierNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -184,7 +187,6 @@ pub struct ClassBlockNode {
     pub expression: ExpressionNode,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct OpRemarkNode {
@@ -315,16 +317,16 @@ pub struct TermNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum PrefixNode {
-    Prefix0,
-    Prefix1,
-    Prefix2,
+    Negative,
+    Positive,
+    Remark,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SuffixNode {
-    Suffix0,
-    Suffix1,
-    Suffix2,
+    Many,
+    Many1,
+    Optional,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -337,7 +339,6 @@ pub enum AtomicNode {
     RegexRange(RegexRangeNode),
     String(StringNode),
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GroupExpressionNode {
@@ -347,8 +348,22 @@ pub struct GroupExpressionNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StringNode {
-    String0(String),
-    String1(String),
+    Escaped(StringItemNode),
+    Raw(StringRawNode),
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct StringRawNode {
+    pub text: String,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct StringItemNode {
+    pub text: String,
+    pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -359,8 +374,8 @@ pub struct RegexEmbedNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RegexRangeNode {
-    pub text: String,
     pub regex_negative: Option<RegexNegativeNode>,
+    pub text: String,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -389,8 +404,8 @@ pub struct IdentifierNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum BooleanNode {
-    Boolean0,
-    Boolean1,
+    False,
+    True,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -437,10 +452,4 @@ pub struct KwMacroNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct WhiteSpaceNode {
     pub span: Range<u32>,
-}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum CommentNode {
-    Comment0,
-    Comment1,
 }

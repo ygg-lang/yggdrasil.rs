@@ -107,16 +107,21 @@ class GroupExpression {
 }
 // === String === -------------------------------------------------------------------------------------------------------
 atomic union String {
-    | "'" StringRaw "'" #Raw
-    | '"' StringItem* '"' #Escaped
+    | "'" StringRaw "'"     #Raw
+    | '"' StringNormal* '"' #Escaped
 }
-text atomic class StringRaw {
-    [^']*
+text class StringRaw {
+    /[^']*/
 }
-text atomic union StringItem {
-    | /\\u[0-9a-zA-Z]{4}/ #Unicode
-    | /\\./               #Escaped
-    | /[^"\]+/            #Other
+union StringNormal {
+    | EscapedUnicode
+    | EscapedCharacter
+    | TextAny
+}
+text group {
+    EscapedUnicode: /\\u[0-9a-zA-Z]{4}/
+    EscapedCharacter: /\\./
+    TextAny: /[^"\]+/
 }
 // === regex === -------------------------------------------------------------------------------------------------------
 text atomic class RegexEmbed {
@@ -162,6 +167,6 @@ ignore class WhiteSpace {
 }
 @style(comment)
 ignore class Comment {
-    | '//' /[^\n\r]*/
-    | '/*'  '*/'
+    | /\\[^\n\r]*/
+//  | '/*'  '*/'
 }
