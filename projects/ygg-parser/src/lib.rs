@@ -1,6 +1,6 @@
 #![feature(lazy_cell)]
 
-// pub(crate) mod antlr;
+pub mod antlr;
 
 // mod ast;
 pub mod bootstrap;

@@ -17,8 +17,7 @@ impl CodeOptimizer for RemarkTags {
                 GrammarBody::Class { term } => self.remark(term, rule.captures.auto),
                 GrammarBody::Union { branches } => {
                     for variant in branches.iter_mut() {
-                        println!("FIXME AUTO: {}", rule.captures.auto);
-                        self.remark(&mut variant.branch, true)
+                        self.remark(&mut variant.branch, rule.captures.auto)
                     }
                     self.remark_union_root(branches, rule_name);
                 }

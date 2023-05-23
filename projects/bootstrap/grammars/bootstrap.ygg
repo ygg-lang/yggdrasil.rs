@@ -69,7 +69,7 @@ class FunctionCall {
 }
 @style(function)
 class FunctionName {
-    [@] Identifier
+    '@' Identifier
 }
 class CallBody {
     '(' (Expression (',' Expression)* ','?)? ')'
@@ -118,6 +118,7 @@ union StringNormal {
     | EscapedCharacter
     | TextAny
 }
+@style(escape)
 text group {
     EscapedUnicode: /\\u[0-9a-zA-Z]{4}/
     EscapedCharacter: /\\./

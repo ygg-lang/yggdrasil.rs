@@ -1,6 +1,16 @@
-use super::*;
 use yggdrasil_error::Validation;
 
+use super::*;
+
+/// According to atomic rules, insert necessary ignore nodes
+///
+/// | Before | After |
+/// | :-: | :-: |
+/// | `A B` | `A ~ B` |
+/// | `A \| B` | `A \| B` |
+/// | `A?` | `A?` |
+/// | `A*` | `(~ A)*` |
+/// | `A+` | `(~ A)+` |
 pub struct InsertIgnore {
     grammar: GrammarInfo,
 }
@@ -19,6 +29,7 @@ impl CodeOptimizer for InsertIgnore {
             match rule.atomic {
                 GrammarAtomic::Atomic => rule.atomic.optimize(),
                 GrammarAtomic::Combined => {
+                    // println!("Combined: {}", rule.name.text);
                     rule.body.for_each(|e| self.update_node(e));
                     rule.atomic.optimize()
                 }

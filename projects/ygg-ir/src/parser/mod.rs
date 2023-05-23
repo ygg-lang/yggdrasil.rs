@@ -115,7 +115,8 @@ impl GrammarRule {
                 Err(_) => {}
             }
         }
-        let rule = Self { name, body: GrammarBody::Union { branches }, range: node.get_range().unwrap_or_default(), ..Default::default() };
+        let rule = Self { name, body: GrammarBody::Union { branches }, range: node.get_range().unwrap_or_default(), ..Default::default() }
+            .with_annotation(node.annotations());
         Ok(rule)
     }
     fn build_group(node: &GroupStatementNode) -> Result<(Option<YggdrasilIdentifier>, Vec<Self>), YggdrasilError> {

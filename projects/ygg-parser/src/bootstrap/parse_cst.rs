@@ -584,32 +584,16 @@ fn parse_string(state: Input) -> Output {
     state.rule(BootstrapRule::String, |s| {
         Err(s)
             .or_else(|s| {
-                s.sequence(|s| {
-                    Ok(s)
-                        .and_then(|s| builtin_text(s, "'", false))
-                        .and_then(|s| builtin_ignore(s))
-                        .and_then(|s| parse_string_raw(s).and_then(|s| s.tag_node("string_raw")))
-                        .and_then(|s| builtin_ignore(s))
-                        .and_then(|s| builtin_text(s, "'", false))
+                builtin_regex(s, {
+                    static REGEX: OnceLock<Regex> = OnceLock::new();
+                    REGEX.get_or_init(|| Regex::new("^(\'[^\']*\')").unwrap())
                 })
                 .and_then(|s| s.tag_node("raw"))
             })
             .or_else(|s| {
-                s.sequence(|s| {
-                    Ok(s)
-                        .and_then(|s| builtin_text(s, "\"", false))
-                        .and_then(|s| builtin_ignore(s))
-                        .and_then(|s| {
-                            s.repeat(0..4294967295, |s| {
-                                s.sequence(|s| {
-                                    Ok(s)
-                                        .and_then(|s| builtin_ignore(s))
-                                        .and_then(|s| parse_string_item(s).and_then(|s| s.tag_node("string_item")))
-                                })
-                            })
-                        })
-                        .and_then(|s| builtin_ignore(s))
-                        .and_then(|s| builtin_text(s, "\"", false))
+                builtin_regex(s, {
+                    static REGEX: OnceLock<Regex> = OnceLock::new();
+                    REGEX.get_or_init(|| Regex::new("^(\"[^\"]*\")").unwrap())
                 })
                 .and_then(|s| s.tag_node("escaped"))
             })

@@ -14,22 +14,6 @@ RootNode {
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "Root",
-                    span: 36..40,
-                },
-                decorator_call: [],
-                modifier_call: [
-                    ModifierCallNode {
-                        identifier: IdentifierNode {
-                            text: "entry",
-                            span: 24..29,
-                        },
-                        span: 24..29,
-                    },
-                ],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -48,7 +32,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 47..57,
                                                 },
@@ -64,6 +48,22 @@ RootNode {
                         span: 47..58,
                     },
                     span: 41..59,
+                },
+                decorator_call: [],
+                modifier_call: [
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            text: "entry",
+                            span: 24..29,
+                        },
+                        span: 24..29,
+                    },
+                ],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "Root",
+                    span: 36..40,
                 },
                 span: 24..59,
             },
@@ -203,14 +203,6 @@ RootNode {
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "GrammarStatement",
-                    span: 294..310,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -228,7 +220,7 @@ RootNode {
                                                         },
                                                     ),
                                                     prefix: [
-                                                        Prefix2,
+                                                        Remark,
                                                     ],
                                                     suffix: [],
                                                     span: 317..329,
@@ -276,19 +268,19 @@ RootNode {
                     },
                     span: 311..354,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "GrammarStatement",
+                    span: 294..310,
+                },
                 span: 288..354,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "GrammarBlock",
-                    span: 361..373,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -300,8 +292,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'{'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'{'",
+                                                                span: 380..383,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -314,8 +309,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'}'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'}'",
+                                                                span: 384..387,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -335,19 +333,19 @@ RootNode {
                     },
                     span: 374..389,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "GrammarBlock",
+                    span: 361..373,
+                },
                 span: 355..389,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "ClassStatement",
-                    span: 515..529,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -366,7 +364,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 536..550,
                                                 },
@@ -383,7 +381,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 551..564,
                                                 },
@@ -399,7 +397,7 @@ RootNode {
                                                         },
                                                     ),
                                                     prefix: [
-                                                        Prefix2,
+                                                        Remark,
                                                     ],
                                                     suffix: [],
                                                     span: 565..575,
@@ -470,8 +468,11 @@ RootNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
                                                                                             atomic: String(
-                                                                                                String0(
-                                                                                                    "'->'",
+                                                                                                Raw(
+                                                                                                    StringRawNode {
+                                                                                                        text: "'->'",
+                                                                                                        span: 594..598,
+                                                                                                    },
                                                                                                 ),
                                                                                             ),
                                                                                             prefix: [],
@@ -514,7 +515,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix0,
+                                                        Optional,
                                                     ],
                                                     span: 593..616,
                                                 },
@@ -531,7 +532,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix0,
+                                                        Optional,
                                                     ],
                                                     span: 617..627,
                                                 },
@@ -563,19 +564,19 @@ RootNode {
                     },
                     span: 530..640,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "ClassStatement",
+                    span: 515..529,
+                },
                 span: 509..640,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "ClassBlock",
-                    span: 647..657,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -587,8 +588,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'{'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'{'",
+                                                                span: 664..667,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -601,13 +605,16 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'|'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'|'",
+                                                                span: 668..671,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix0,
+                                                        Optional,
                                                     ],
                                                     span: 668..672,
                                                 },
@@ -632,8 +639,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'}'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'}'",
+                                                                span: 684..687,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -653,6 +663,14 @@ RootNode {
                     },
                     span: 658..689,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "ClassBlock",
+                    span: 647..657,
+                },
                 span: 641..689,
             },
         ),
@@ -663,8 +681,11 @@ RootNode {
                     group_pair: [
                         GroupPairNode {
                             atomic: String(
-                                String0(
-                                    "'^'",
+                                Raw(
+                                    StringRawNode {
+                                        text: "'^'",
+                                        span: 713..716,
+                                    },
                                 ),
                             ),
                             identifier: IdentifierNode {
@@ -683,14 +704,6 @@ RootNode {
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "UnionStatement",
-                    span: 844..858,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -709,7 +722,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 865..879,
                                                 },
@@ -726,7 +739,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 880..893,
                                                 },
@@ -742,7 +755,7 @@ RootNode {
                                                         },
                                                     ),
                                                     prefix: [
-                                                        Prefix2,
+                                                        Remark,
                                                     ],
                                                     suffix: [],
                                                     span: 894..904,
@@ -809,7 +822,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix0,
+                                                        Optional,
                                                     ],
                                                     span: 922..932,
                                                 },
@@ -841,19 +854,19 @@ RootNode {
                     },
                     span: 859..945,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "UnionStatement",
+                    span: 844..858,
+                },
                 span: 838..945,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "UnionBlock",
-                    span: 952..962,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -865,8 +878,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'{'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'{'",
+                                                                span: 969..972,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -886,7 +902,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 973..985,
                                                 },
@@ -896,8 +912,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'}'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'}'",
+                                                                span: 986..989,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -917,19 +936,19 @@ RootNode {
                     },
                     span: 963..991,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "UnionBlock",
+                    span: 952..962,
+                },
                 span: 946..991,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "UnionBranch",
-                    span: 998..1009,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -941,8 +960,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'|'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'|'",
+                                                                span: 1016..1019,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -977,7 +999,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix0,
+                                                        Optional,
                                                     ],
                                                     span: 1035..1045,
                                                 },
@@ -994,14 +1016,85 @@ RootNode {
                     },
                     span: 1010..1047,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "UnionBranch",
+                    span: 998..1009,
+                },
                 span: 992..1047,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "BranchTag",
-                    span: 1075..1084,
+                class_block: ClassBlockNode {
+                    expression: ExpressionNode {
+                        expression_hard: [
+                            ExpressionHardNode {
+                                expression_soft: [
+                                    ExpressionSoftNode {
+                                        expression_tag: [
+                                            ExpressionTagNode {
+                                                identifier: None,
+                                                term: TermNode {
+                                                    atomic: String(
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'#'",
+                                                                span: 1091..1094,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    prefix: [],
+                                                    suffix: [],
+                                                    span: 1091..1095,
+                                                },
+                                                span: 1091..1095,
+                                            },
+                                            ExpressionTagNode {
+                                                identifier: None,
+                                                term: TermNode {
+                                                    atomic: Identifier(
+                                                        IdentifierNode {
+                                                            text: "Identifier",
+                                                            span: 1095..1105,
+                                                        },
+                                                    ),
+                                                    prefix: [],
+                                                    suffix: [],
+                                                    span: 1095..1106,
+                                                },
+                                                span: 1095..1106,
+                                            },
+                                            ExpressionTagNode {
+                                                identifier: None,
+                                                term: TermNode {
+                                                    atomic: Identifier(
+                                                        IdentifierNode {
+                                                            text: "RightAssociativity",
+                                                            span: 1106..1124,
+                                                        },
+                                                    ),
+                                                    prefix: [],
+                                                    suffix: [
+                                                        Optional,
+                                                    ],
+                                                    span: 1106..1125,
+                                                },
+                                                span: 1106..1125,
+                                            },
+                                        ],
+                                        span: 1091..1125,
+                                    },
+                                ],
+                                span: 1091..1126,
+                            },
+                        ],
+                        span: 1091..1126,
+                    },
+                    span: 1085..1127,
                 },
                 decorator_call: [
                     DecoratorCallNode {
@@ -1061,83 +1154,15 @@ RootNode {
                 ],
                 op_remark: None,
                 cast: None,
-                class_block: ClassBlockNode {
-                    expression: ExpressionNode {
-                        expression_hard: [
-                            ExpressionHardNode {
-                                expression_soft: [
-                                    ExpressionSoftNode {
-                                        expression_tag: [
-                                            ExpressionTagNode {
-                                                identifier: None,
-                                                term: TermNode {
-                                                    atomic: String(
-                                                        String0(
-                                                            "'#'",
-                                                        ),
-                                                    ),
-                                                    prefix: [],
-                                                    suffix: [],
-                                                    span: 1091..1095,
-                                                },
-                                                span: 1091..1095,
-                                            },
-                                            ExpressionTagNode {
-                                                identifier: None,
-                                                term: TermNode {
-                                                    atomic: Identifier(
-                                                        IdentifierNode {
-                                                            text: "Identifier",
-                                                            span: 1095..1105,
-                                                        },
-                                                    ),
-                                                    prefix: [],
-                                                    suffix: [],
-                                                    span: 1095..1106,
-                                                },
-                                                span: 1095..1106,
-                                            },
-                                            ExpressionTagNode {
-                                                identifier: None,
-                                                term: TermNode {
-                                                    atomic: Identifier(
-                                                        IdentifierNode {
-                                                            text: "RightAssociativity",
-                                                            span: 1106..1124,
-                                                        },
-                                                    ),
-                                                    prefix: [],
-                                                    suffix: [
-                                                        Suffix0,
-                                                    ],
-                                                    span: 1106..1125,
-                                                },
-                                                span: 1106..1125,
-                                            },
-                                        ],
-                                        span: 1091..1125,
-                                    },
-                                ],
-                                span: 1091..1126,
-                            },
-                        ],
-                        span: 1091..1126,
-                    },
-                    span: 1085..1127,
+                name: IdentifierNode {
+                    text: "BranchTag",
+                    span: 1075..1084,
                 },
                 span: 1048..1127,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "RightAssociativity",
-                    span: 1134..1152,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -1149,8 +1174,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'>'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'>'",
+                                                                span: 1159..1162,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -1170,19 +1198,19 @@ RootNode {
                     },
                     span: 1153..1164,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "RightAssociativity",
+                    span: 1134..1152,
+                },
                 span: 1128..1164,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "GroupStatement",
-                    span: 1292..1306,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -1201,7 +1229,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 1313..1327,
                                                 },
@@ -1218,7 +1246,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 1328..1341,
                                                 },
@@ -1234,7 +1262,7 @@ RootNode {
                                                         },
                                                     ),
                                                     prefix: [
-                                                        Prefix2,
+                                                        Remark,
                                                     ],
                                                     suffix: [],
                                                     span: 1342..1352,
@@ -1252,7 +1280,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix0,
+                                                        Optional,
                                                     ],
                                                     span: 1352..1363,
                                                 },
@@ -1284,19 +1312,19 @@ RootNode {
                     },
                     span: 1307..1376,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "GroupStatement",
+                    span: 1292..1306,
+                },
                 span: 1286..1376,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "GroupBlock",
-                    span: 1383..1393,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -1308,8 +1336,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'{'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'{'",
+                                                                span: 1400..1403,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -1329,7 +1360,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 1404..1414,
                                                 },
@@ -1339,8 +1370,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'}'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'}'",
+                                                                span: 1415..1418,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -1360,19 +1394,19 @@ RootNode {
                     },
                     span: 1394..1420,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "GroupBlock",
+                    span: 1383..1393,
+                },
                 span: 1377..1420,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "GroupPair",
-                    span: 1427..1436,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -1399,8 +1433,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "':'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "':'",
+                                                                span: 1454..1457,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -1435,19 +1472,19 @@ RootNode {
                     },
                     span: 1437..1466,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "GroupPair",
+                    span: 1427..1436,
+                },
                 span: 1421..1466,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "DecoratorCall",
-                    span: 1593..1606,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -1496,14 +1533,67 @@ RootNode {
                     },
                     span: 1607..1637,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "DecoratorCall",
+                    span: 1593..1606,
+                },
                 span: 1587..1637,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "DecoratorName",
-                    span: 1663..1676,
+                class_block: ClassBlockNode {
+                    expression: ExpressionNode {
+                        expression_hard: [
+                            ExpressionHardNode {
+                                expression_soft: [
+                                    ExpressionSoftNode {
+                                        expression_tag: [
+                                            ExpressionTagNode {
+                                                identifier: None,
+                                                term: TermNode {
+                                                    atomic: RegexRange(
+                                                        RegexRangeNode {
+                                                            regex_negative: None,
+                                                            text: "[@#]",
+                                                            span: 1683..1687,
+                                                        },
+                                                    ),
+                                                    prefix: [],
+                                                    suffix: [],
+                                                    span: 1683..1688,
+                                                },
+                                                span: 1683..1688,
+                                            },
+                                            ExpressionTagNode {
+                                                identifier: None,
+                                                term: TermNode {
+                                                    atomic: Identifier(
+                                                        IdentifierNode {
+                                                            text: "Identifier",
+                                                            span: 1688..1698,
+                                                        },
+                                                    ),
+                                                    prefix: [],
+                                                    suffix: [],
+                                                    span: 1688..1699,
+                                                },
+                                                span: 1688..1699,
+                                            },
+                                        ],
+                                        span: 1683..1699,
+                                    },
+                                ],
+                                span: 1683..1699,
+                            },
+                        ],
+                        span: 1683..1699,
+                    },
+                    span: 1677..1700,
                 },
                 decorator_call: [
                     DecoratorCallNode {
@@ -1555,68 +1645,15 @@ RootNode {
                 modifier_call: [],
                 op_remark: None,
                 cast: None,
-                class_block: ClassBlockNode {
-                    expression: ExpressionNode {
-                        expression_hard: [
-                            ExpressionHardNode {
-                                expression_soft: [
-                                    ExpressionSoftNode {
-                                        expression_tag: [
-                                            ExpressionTagNode {
-                                                identifier: None,
-                                                term: TermNode {
-                                                    atomic: RegexRange(
-                                                        RegexRangeNode {
-                                                            text: "[@#]",
-                                                            regex_negative: None,
-                                                            span: 1683..1687,
-                                                        },
-                                                    ),
-                                                    prefix: [],
-                                                    suffix: [],
-                                                    span: 1683..1688,
-                                                },
-                                                span: 1683..1688,
-                                            },
-                                            ExpressionTagNode {
-                                                identifier: None,
-                                                term: TermNode {
-                                                    atomic: Identifier(
-                                                        IdentifierNode {
-                                                            text: "Identifier",
-                                                            span: 1688..1698,
-                                                        },
-                                                    ),
-                                                    prefix: [],
-                                                    suffix: [],
-                                                    span: 1688..1699,
-                                                },
-                                                span: 1688..1699,
-                                            },
-                                        ],
-                                        span: 1683..1699,
-                                    },
-                                ],
-                                span: 1683..1699,
-                            },
-                        ],
-                        span: 1683..1699,
-                    },
-                    span: 1677..1700,
+                name: IdentifierNode {
+                    text: "DecoratorName",
+                    span: 1663..1676,
                 },
                 span: 1638..1700,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "FunctionCall",
-                    span: 1707..1719,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -1665,14 +1702,67 @@ RootNode {
                     },
                     span: 1720..1749,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "FunctionCall",
+                    span: 1707..1719,
+                },
                 span: 1701..1749,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "FunctionName",
-                    span: 1773..1785,
+                class_block: ClassBlockNode {
+                    expression: ExpressionNode {
+                        expression_hard: [
+                            ExpressionHardNode {
+                                expression_soft: [
+                                    ExpressionSoftNode {
+                                        expression_tag: [
+                                            ExpressionTagNode {
+                                                identifier: None,
+                                                term: TermNode {
+                                                    atomic: RegexRange(
+                                                        RegexRangeNode {
+                                                            regex_negative: None,
+                                                            text: "[@]",
+                                                            span: 1792..1795,
+                                                        },
+                                                    ),
+                                                    prefix: [],
+                                                    suffix: [],
+                                                    span: 1792..1796,
+                                                },
+                                                span: 1792..1796,
+                                            },
+                                            ExpressionTagNode {
+                                                identifier: None,
+                                                term: TermNode {
+                                                    atomic: Identifier(
+                                                        IdentifierNode {
+                                                            text: "Identifier",
+                                                            span: 1796..1806,
+                                                        },
+                                                    ),
+                                                    prefix: [],
+                                                    suffix: [],
+                                                    span: 1796..1807,
+                                                },
+                                                span: 1796..1807,
+                                            },
+                                        ],
+                                        span: 1792..1807,
+                                    },
+                                ],
+                                span: 1792..1807,
+                            },
+                        ],
+                        span: 1792..1807,
+                    },
+                    span: 1786..1808,
                 },
                 decorator_call: [
                     DecoratorCallNode {
@@ -1724,68 +1814,15 @@ RootNode {
                 modifier_call: [],
                 op_remark: None,
                 cast: None,
-                class_block: ClassBlockNode {
-                    expression: ExpressionNode {
-                        expression_hard: [
-                            ExpressionHardNode {
-                                expression_soft: [
-                                    ExpressionSoftNode {
-                                        expression_tag: [
-                                            ExpressionTagNode {
-                                                identifier: None,
-                                                term: TermNode {
-                                                    atomic: RegexRange(
-                                                        RegexRangeNode {
-                                                            text: "[@]",
-                                                            regex_negative: None,
-                                                            span: 1792..1795,
-                                                        },
-                                                    ),
-                                                    prefix: [],
-                                                    suffix: [],
-                                                    span: 1792..1796,
-                                                },
-                                                span: 1792..1796,
-                                            },
-                                            ExpressionTagNode {
-                                                identifier: None,
-                                                term: TermNode {
-                                                    atomic: Identifier(
-                                                        IdentifierNode {
-                                                            text: "Identifier",
-                                                            span: 1796..1806,
-                                                        },
-                                                    ),
-                                                    prefix: [],
-                                                    suffix: [],
-                                                    span: 1796..1807,
-                                                },
-                                                span: 1796..1807,
-                                            },
-                                        ],
-                                        span: 1792..1807,
-                                    },
-                                ],
-                                span: 1792..1807,
-                            },
-                        ],
-                        span: 1792..1807,
-                    },
-                    span: 1786..1808,
+                name: IdentifierNode {
+                    text: "FunctionName",
+                    span: 1773..1785,
                 },
                 span: 1750..1808,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "CallBody",
-                    span: 1815..1823,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -1797,8 +1834,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'('",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'('",
+                                                                span: 1830..1833,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -1848,8 +1888,11 @@ RootNode {
                                                                                                                                 identifier: None,
                                                                                                                                 term: TermNode {
                                                                                                                                     atomic: String(
-                                                                                                                                        String0(
-                                                                                                                                            "','",
+                                                                                                                                        Raw(
+                                                                                                                                            StringRawNode {
+                                                                                                                                                text: "','",
+                                                                                                                                                span: 1847..1850,
+                                                                                                                                            },
                                                                                                                                         ),
                                                                                                                                     ),
                                                                                                                                     prefix: [],
@@ -1887,7 +1930,7 @@ RootNode {
                                                                                             ),
                                                                                             prefix: [],
                                                                                             suffix: [
-                                                                                                Suffix1,
+                                                                                                Many,
                                                                                             ],
                                                                                             span: 1846..1863,
                                                                                         },
@@ -1897,13 +1940,16 @@ RootNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
                                                                                             atomic: String(
-                                                                                                String0(
-                                                                                                    "','",
+                                                                                                Raw(
+                                                                                                    StringRawNode {
+                                                                                                        text: "','",
+                                                                                                        span: 1864..1867,
+                                                                                                    },
                                                                                                 ),
                                                                                             ),
                                                                                             prefix: [],
                                                                                             suffix: [
-                                                                                                Suffix0,
+                                                                                                Optional,
                                                                                             ],
                                                                                             span: 1864..1868,
                                                                                         },
@@ -1923,7 +1969,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix0,
+                                                        Optional,
                                                     ],
                                                     span: 1834..1870,
                                                 },
@@ -1933,8 +1979,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "')'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "')'",
+                                                                span: 1871..1874,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -1954,19 +2003,19 @@ RootNode {
                     },
                     span: 1824..1876,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "CallBody",
+                    span: 1815..1823,
+                },
                 span: 1809..1876,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "Expression",
-                    span: 2004..2014,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -2004,8 +2053,11 @@ RootNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
                                                                                             atomic: String(
-                                                                                                String0(
-                                                                                                    "'|'",
+                                                                                                Raw(
+                                                                                                    StringRawNode {
+                                                                                                        text: "'|'",
+                                                                                                        span: 2037..2040,
+                                                                                                    },
                                                                                                 ),
                                                                                             ),
                                                                                             prefix: [],
@@ -2043,7 +2095,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 2036..2057,
                                                 },
@@ -2060,19 +2112,19 @@ RootNode {
                     },
                     span: 2019..2059,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "Expression",
+                    span: 2004..2014,
+                },
                 span: 1998..2059,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "ExpressionHard",
-                    span: 2066..2080,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -2110,8 +2162,11 @@ RootNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
                                                                                             atomic: String(
-                                                                                                String0(
-                                                                                                    "'~'",
+                                                                                                Raw(
+                                                                                                    StringRawNode {
+                                                                                                        text: "'~'",
+                                                                                                        span: 2099..2102,
+                                                                                                    },
                                                                                                 ),
                                                                                             ),
                                                                                             prefix: [],
@@ -2149,7 +2204,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 2098..2119,
                                                 },
@@ -2166,19 +2221,19 @@ RootNode {
                     },
                     span: 2081..2121,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "ExpressionHard",
+                    span: 2066..2080,
+                },
                 span: 2060..2121,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "ExpressionSoft",
-                    span: 2128..2142,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -2212,7 +2267,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 2159..2173,
                                                 },
@@ -2229,19 +2284,19 @@ RootNode {
                     },
                     span: 2143..2175,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "ExpressionSoft",
+                    span: 2128..2142,
+                },
                 span: 2122..2175,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "ExpressionTag",
-                    span: 2182..2195,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -2279,8 +2334,11 @@ RootNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
                                                                                             atomic: String(
-                                                                                                String0(
-                                                                                                    "':'",
+                                                                                                Raw(
+                                                                                                    StringRawNode {
+                                                                                                        text: "':'",
+                                                                                                        span: 2211..2214,
+                                                                                                    },
                                                                                                 ),
                                                                                             ),
                                                                                             prefix: [],
@@ -2303,7 +2361,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix0,
+                                                        Optional,
                                                     ],
                                                     span: 2199..2216,
                                                 },
@@ -2335,19 +2393,19 @@ RootNode {
                     },
                     span: 2197..2223,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "ExpressionTag",
+                    span: 2182..2195,
+                },
                 span: 2176..2223,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "Term",
-                    span: 2230..2234,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -2366,7 +2424,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 2241..2248,
                                                 },
@@ -2398,7 +2456,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 2256..2263,
                                                 },
@@ -2414,6 +2472,14 @@ RootNode {
                         span: 2241..2264,
                     },
                     span: 2235..2265,
+                },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "Term",
+                    span: 2230..2234,
                 },
                 span: 2224..2265,
             },
@@ -2444,8 +2510,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'!'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'!'",
+                                                                span: 2287..2290,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -2481,8 +2550,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'&'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'&'",
+                                                                span: 2307..2310,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -2518,8 +2590,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'^'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'^'",
+                                                                span: 2327..2330,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -2572,8 +2647,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'?'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'?'",
+                                                                span: 2362..2365,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -2609,8 +2687,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'*'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'*'",
+                                                                span: 2382..2385,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -2646,8 +2727,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'+'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'+'",
+                                                                span: 2398..2401,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -2896,14 +2980,6 @@ RootNode {
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "GroupExpression",
-                    span: 2674..2689,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -2915,8 +2991,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'('",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'('",
+                                                                span: 2696..2699,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -2929,13 +3008,16 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'|'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'|'",
+                                                                span: 2700..2703,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix0,
+                                                        Optional,
                                                     ],
                                                     span: 2700..2704,
                                                 },
@@ -2960,8 +3042,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "')'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "')'",
+                                                                span: 2716..2719,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -2980,6 +3065,14 @@ RootNode {
                         span: 2696..2720,
                     },
                     span: 2690..2721,
+                },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "GroupExpression",
+                    span: 2674..2689,
                 },
                 span: 2668..2721,
             },
@@ -3018,8 +3111,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String1(
-                                                            "\"'\"",
+                                                        Escaped(
+                                                            StringItemNode {
+                                                                text: "\"'\"",
+                                                                span: 2872..2875,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -3047,8 +3143,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String1(
-                                                            "\"'\"",
+                                                        Escaped(
+                                                            StringItemNode {
+                                                                text: "\"'\"",
+                                                                span: 2886..2889,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -3084,8 +3183,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'\"'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'\"'",
+                                                                span: 2901..2904,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -3113,8 +3215,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'\"'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'\"'",
+                                                                span: 2919..2922,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -3143,29 +3248,6 @@ RootNode {
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "StringRaw",
-                    span: 2952..2961,
-                },
-                decorator_call: [],
-                modifier_call: [
-                    ModifierCallNode {
-                        identifier: IdentifierNode {
-                            text: "text",
-                            span: 2934..2938,
-                        },
-                        span: 2934..2938,
-                    },
-                    ModifierCallNode {
-                        identifier: IdentifierNode {
-                            text: "atomic",
-                            span: 2939..2945,
-                        },
-                        span: 2939..2945,
-                    },
-                ],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -3188,12 +3270,15 @@ RootNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
                                                                                             atomic: String(
-                                                                                                String1(
-                                                                                                    "\"'\"",
+                                                                                                Escaped(
+                                                                                                    StringItemNode {
+                                                                                                        text: "\"'\"",
+                                                                                                        span: 2970..2973,
+                                                                                                    },
                                                                                                 ),
                                                                                             ),
                                                                                             prefix: [
-                                                                                                Prefix0,
+                                                                                                Negative,
                                                                                             ],
                                                                                             suffix: [],
                                                                                             span: 2969..2974,
@@ -3229,7 +3314,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 2968..2979,
                                                 },
@@ -3246,34 +3331,34 @@ RootNode {
                     },
                     span: 2962..2981,
                 },
-                span: 2934..2981,
-            },
-        ),
-        ClassStatement(
-            ClassStatementNode {
-                name: IdentifierNode {
-                    text: "StringEscaped",
-                    span: 3000..3013,
-                },
                 decorator_call: [],
                 modifier_call: [
                     ModifierCallNode {
                         identifier: IdentifierNode {
                             text: "text",
-                            span: 2982..2986,
+                            span: 2934..2938,
                         },
-                        span: 2982..2986,
+                        span: 2934..2938,
                     },
                     ModifierCallNode {
                         identifier: IdentifierNode {
                             text: "atomic",
-                            span: 2987..2993,
+                            span: 2939..2945,
                         },
-                        span: 2987..2993,
+                        span: 2939..2945,
                     },
                 ],
                 op_remark: None,
                 cast: None,
+                name: IdentifierNode {
+                    text: "StringRaw",
+                    span: 2952..2961,
+                },
+                span: 2934..2981,
+            },
+        ),
+        ClassStatement(
+            ClassStatementNode {
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -3296,12 +3381,15 @@ RootNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
                                                                                             atomic: String(
-                                                                                                String0(
-                                                                                                    "'\"'",
+                                                                                                Raw(
+                                                                                                    StringRawNode {
+                                                                                                        text: "'\"'",
+                                                                                                        span: 3022..3025,
+                                                                                                    },
                                                                                                 ),
                                                                                             ),
                                                                                             prefix: [
-                                                                                                Prefix0,
+                                                                                                Negative,
                                                                                             ],
                                                                                             suffix: [],
                                                                                             span: 3021..3026,
@@ -3337,7 +3425,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 3020..3031,
                                                 },
@@ -3354,34 +3442,34 @@ RootNode {
                     },
                     span: 3014..3033,
                 },
-                span: 2982..3033,
-            },
-        ),
-        ClassStatement(
-            ClassStatementNode {
-                name: IdentifierNode {
-                    text: "RegexEmbed",
-                    span: 3173..3183,
-                },
                 decorator_call: [],
                 modifier_call: [
                     ModifierCallNode {
                         identifier: IdentifierNode {
                             text: "text",
-                            span: 3155..3159,
+                            span: 2982..2986,
                         },
-                        span: 3155..3159,
+                        span: 2982..2986,
                     },
                     ModifierCallNode {
                         identifier: IdentifierNode {
                             text: "atomic",
-                            span: 3160..3166,
+                            span: 2987..2993,
                         },
-                        span: 3160..3166,
+                        span: 2987..2993,
                     },
                 ],
                 op_remark: None,
                 cast: None,
+                name: IdentifierNode {
+                    text: "StringEscaped",
+                    span: 3000..3013,
+                },
+                span: 2982..3033,
+            },
+        ),
+        ClassStatement(
+            ClassStatementNode {
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -3393,8 +3481,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'/'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'/'",
+                                                                span: 3190..3193,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -3418,12 +3509,15 @@ RootNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
                                                                                             atomic: String(
-                                                                                                String0(
-                                                                                                    "'/'",
+                                                                                                Raw(
+                                                                                                    StringRawNode {
+                                                                                                        text: "'/'",
+                                                                                                        span: 3196..3199,
+                                                                                                    },
                                                                                                 ),
                                                                                             ),
                                                                                             prefix: [
-                                                                                                Prefix0,
+                                                                                                Negative,
                                                                                             ],
                                                                                             suffix: [],
                                                                                             span: 3195..3200,
@@ -3459,7 +3553,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 3194..3205,
                                                 },
@@ -3469,8 +3563,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'/'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'/'",
+                                                                span: 3206..3209,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -3490,34 +3587,34 @@ RootNode {
                     },
                     span: 3184..3211,
                 },
-                span: 3155..3211,
-            },
-        ),
-        ClassStatement(
-            ClassStatementNode {
-                name: IdentifierNode {
-                    text: "RegexRange",
-                    span: 3230..3240,
-                },
                 decorator_call: [],
                 modifier_call: [
                     ModifierCallNode {
                         identifier: IdentifierNode {
                             text: "text",
-                            span: 3212..3216,
+                            span: 3155..3159,
                         },
-                        span: 3212..3216,
+                        span: 3155..3159,
                     },
                     ModifierCallNode {
                         identifier: IdentifierNode {
                             text: "atomic",
-                            span: 3217..3223,
+                            span: 3160..3166,
                         },
-                        span: 3217..3223,
+                        span: 3160..3166,
                     },
                 ],
                 op_remark: None,
                 cast: None,
+                name: IdentifierNode {
+                    text: "RegexEmbed",
+                    span: 3173..3183,
+                },
+                span: 3155..3211,
+            },
+        ),
+        ClassStatement(
+            ClassStatementNode {
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -3529,8 +3626,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'['",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'['",
+                                                                span: 3247..3250,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -3550,7 +3650,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix0,
+                                                        Optional,
                                                     ],
                                                     span: 3251..3265,
                                                 },
@@ -3571,12 +3671,15 @@ RootNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
                                                                                             atomic: String(
-                                                                                                String0(
-                                                                                                    "']'",
+                                                                                                Raw(
+                                                                                                    StringRawNode {
+                                                                                                        text: "']'",
+                                                                                                        span: 3268..3271,
+                                                                                                    },
                                                                                                 ),
                                                                                             ),
                                                                                             prefix: [
-                                                                                                Prefix0,
+                                                                                                Negative,
                                                                                             ],
                                                                                             suffix: [],
                                                                                             span: 3267..3272,
@@ -3612,7 +3715,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 3266..3277,
                                                 },
@@ -3622,8 +3725,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "']'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "']'",
+                                                                span: 3278..3281,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -3643,19 +3749,34 @@ RootNode {
                     },
                     span: 3241..3283,
                 },
+                decorator_call: [],
+                modifier_call: [
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            text: "text",
+                            span: 3212..3216,
+                        },
+                        span: 3212..3216,
+                    },
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            text: "atomic",
+                            span: 3217..3223,
+                        },
+                        span: 3217..3223,
+                    },
+                ],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "RegexRange",
+                    span: 3230..3240,
+                },
                 span: 3212..3283,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "RegexNegative",
-                    span: 3290..3303,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -3667,8 +3788,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'^'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'^'",
+                                                                span: 3310..3313,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -3688,24 +3812,19 @@ RootNode {
                     },
                     span: 3304..3315,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "RegexNegative",
+                    span: 3290..3303,
+                },
                 span: 3284..3315,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "NamepathFree",
-                    span: 3443..3455,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: Some(
-                    IdentifierNode {
-                        text: "Namepath",
-                        span: 3459..3467,
-                    },
-                ),
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -3754,8 +3873,11 @@ RootNode {
                                                                                                                                 identifier: None,
                                                                                                                                 term: TermNode {
                                                                                                                                     atomic: String(
-                                                                                                                                        String0(
-                                                                                                                                            "'.'",
+                                                                                                                                        Raw(
+                                                                                                                                            StringRawNode {
+                                                                                                                                                text: "'.'",
+                                                                                                                                                span: 3487..3490,
+                                                                                                                                            },
                                                                                                                                         ),
                                                                                                                                     ),
                                                                                                                                     prefix: [],
@@ -3778,8 +3900,11 @@ RootNode {
                                                                                                                                 identifier: None,
                                                                                                                                 term: TermNode {
                                                                                                                                     atomic: String(
-                                                                                                                                        String0(
-                                                                                                                                            "'::'",
+                                                                                                                                        Raw(
+                                                                                                                                            StringRawNode {
+                                                                                                                                                text: "'::'",
+                                                                                                                                                span: 3493..3497,
+                                                                                                                                            },
                                                                                                                                         ),
                                                                                                                                     ),
                                                                                                                                     prefix: [],
@@ -3835,7 +3960,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 3485..3511,
                                                 },
@@ -3852,19 +3977,24 @@ RootNode {
                     },
                     span: 3468..3513,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: Some(
+                    IdentifierNode {
+                        text: "Namepath",
+                        span: 3459..3467,
+                    },
+                ),
+                name: IdentifierNode {
+                    text: "NamepathFree",
+                    span: 3443..3455,
+                },
                 span: 3437..3513,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "Namepath",
-                    span: 3520..3528,
-                },
-                decorator_call: [],
-                modifier_call: [],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -3902,8 +4032,11 @@ RootNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
                                                                                             atomic: String(
-                                                                                                String0(
-                                                                                                    "'::'",
+                                                                                                Raw(
+                                                                                                    StringRawNode {
+                                                                                                        text: "'::'",
+                                                                                                        span: 3547..3551,
+                                                                                                    },
                                                                                                 ),
                                                                                             ),
                                                                                             prefix: [],
@@ -3941,7 +4074,7 @@ RootNode {
                                                     ),
                                                     prefix: [],
                                                     suffix: [
-                                                        Suffix1,
+                                                        Many,
                                                     ],
                                                     span: 3546..3564,
                                                 },
@@ -3958,27 +4091,19 @@ RootNode {
                     },
                     span: 3529..3566,
                 },
+                decorator_call: [],
+                modifier_call: [],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "Namepath",
+                    span: 3520..3528,
+                },
                 span: 3514..3566,
             },
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "Identifier",
-                    span: 3578..3588,
-                },
-                decorator_call: [],
-                modifier_call: [
-                    ModifierCallNode {
-                        identifier: IdentifierNode {
-                            text: "text",
-                            span: 3567..3571,
-                        },
-                        span: 3567..3571,
-                    },
-                ],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -4012,6 +4137,22 @@ RootNode {
                     },
                     span: 3589..3632,
                 },
+                decorator_call: [],
+                modifier_call: [
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            text: "text",
+                            span: 3567..3571,
+                        },
+                        span: 3567..3571,
+                    },
+                ],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "Identifier",
+                    span: 3578..3588,
+                },
                 span: 3567..3632,
             },
         ),
@@ -4041,8 +4182,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'true'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'true'",
+                                                                span: 3655..3661,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -4078,8 +4222,11 @@ RootNode {
                                                 identifier: None,
                                                 term: TermNode {
                                                     atomic: String(
-                                                        String0(
-                                                            "'false'",
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'false'",
+                                                                span: 3675..3682,
+                                                            },
                                                         ),
                                                     ),
                                                     prefix: [],
@@ -4108,26 +4255,6 @@ RootNode {
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "ModifierCall",
-                    span: 3826..3838,
-                },
-                decorator_call: [],
-                modifier_call: [
-                    ModifierCallNode {
-                        identifier: IdentifierNode {
-                            text: "atomic",
-                            span: 3813..3819,
-                        },
-                        span: 3813..3819,
-                    },
-                ],
-                op_remark: Some(
-                    OpRemarkNode {
-                        span: 3839..3840,
-                    },
-                ),
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -4274,7 +4401,7 @@ RootNode {
                                                         },
                                                     ),
                                                     prefix: [
-                                                        Prefix0,
+                                                        Negative,
                                                     ],
                                                     suffix: [],
                                                     span: 3847..3903,
@@ -4291,7 +4418,7 @@ RootNode {
                                                         },
                                                     ),
                                                     prefix: [
-                                                        Prefix2,
+                                                        Remark,
                                                     ],
                                                     suffix: [],
                                                     span: 3903..3915,
@@ -4308,6 +4435,26 @@ RootNode {
                         span: 3847..3915,
                     },
                     span: 3841..3916,
+                },
+                decorator_call: [],
+                modifier_call: [
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            text: "atomic",
+                            span: 3813..3819,
+                        },
+                        span: 3813..3819,
+                    },
+                ],
+                op_remark: Some(
+                    OpRemarkNode {
+                        span: 3839..3840,
+                    },
+                ),
+                cast: None,
+                name: IdentifierNode {
+                    text: "ModifierCall",
+                    span: 3826..3838,
                 },
                 span: 3813..3916,
             },
@@ -4464,29 +4611,6 @@ RootNode {
         ),
         ClassStatement(
             ClassStatementNode {
-                name: IdentifierNode {
-                    text: "WhiteSpace",
-                    span: 4297..4307,
-                },
-                decorator_call: [],
-                modifier_call: [
-                    ModifierCallNode {
-                        identifier: IdentifierNode {
-                            text: "atomic",
-                            span: 4277..4283,
-                        },
-                        span: 4277..4283,
-                    },
-                    ModifierCallNode {
-                        identifier: IdentifierNode {
-                            text: "ignore",
-                            span: 4284..4290,
-                        },
-                        span: 4284..4290,
-                    },
-                ],
-                op_remark: None,
-                cast: None,
                 class_block: ClassBlockNode {
                     expression: ExpressionNode {
                         expression_hard: [
@@ -4520,9 +4644,202 @@ RootNode {
                     },
                     span: 4308..4334,
                 },
+                decorator_call: [],
+                modifier_call: [
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            text: "atomic",
+                            span: 4277..4283,
+                        },
+                        span: 4277..4283,
+                    },
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            text: "ignore",
+                            span: 4284..4290,
+                        },
+                        span: 4284..4290,
+                    },
+                ],
+                op_remark: None,
+                cast: None,
+                name: IdentifierNode {
+                    text: "WhiteSpace",
+                    span: 4297..4307,
+                },
                 span: 4277..4334,
             },
         ),
+        UnionStatement(
+            UnionStatementNode {
+                decorator_call: [
+                    DecoratorCallNode {
+                        call_body: CallBodyNode {
+                            expression: [
+                                ExpressionNode {
+                                    expression_hard: [
+                                        ExpressionHardNode {
+                                            expression_soft: [
+                                                ExpressionSoftNode {
+                                                    expression_tag: [
+                                                        ExpressionTagNode {
+                                                            identifier: None,
+                                                            term: TermNode {
+                                                                atomic: Identifier(
+                                                                    IdentifierNode {
+                                                                        text: "comment",
+                                                                        span: 4342..4349,
+                                                                    },
+                                                                ),
+                                                                prefix: [],
+                                                                suffix: [],
+                                                                span: 4342..4349,
+                                                            },
+                                                            span: 4342..4349,
+                                                        },
+                                                    ],
+                                                    span: 4342..4349,
+                                                },
+                                            ],
+                                            span: 4342..4349,
+                                        },
+                                    ],
+                                    span: 4342..4349,
+                                },
+                            ],
+                            span: 4341..4350,
+                        },
+                        decorator_name: DecoratorNameNode {
+                            identifier: IdentifierNode {
+                                text: "style",
+                                span: 4336..4341,
+                            },
+                            span: 4335..4341,
+                        },
+                        span: 4335..4350,
+                    },
+                ],
+                modifier_call: [
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            text: "atomic",
+                            span: 4351..4357,
+                        },
+                        span: 4351..4357,
+                    },
+                    ModifierCallNode {
+                        identifier: IdentifierNode {
+                            text: "ignore",
+                            span: 4358..4364,
+                        },
+                        span: 4358..4364,
+                    },
+                ],
+                op_remark: None,
+                union_block: UnionBlockNode {
+                    union_branch: [
+                        UnionBranchNode {
+                            branch_tag: None,
+                            expression_hard: ExpressionHardNode {
+                                expression_soft: [
+                                    ExpressionSoftNode {
+                                        expression_tag: [
+                                            ExpressionTagNode {
+                                                identifier: None,
+                                                term: TermNode {
+                                                    atomic: String(
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'//'",
+                                                                span: 4387..4391,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    prefix: [],
+                                                    suffix: [],
+                                                    span: 4387..4392,
+                                                },
+                                                span: 4387..4392,
+                                            },
+                                            ExpressionTagNode {
+                                                identifier: None,
+                                                term: TermNode {
+                                                    atomic: RegexEmbed(
+                                                        RegexEmbedNode {
+                                                            text: "/[^\\n\\r]*/",
+                                                            span: 4392..4402,
+                                                        },
+                                                    ),
+                                                    prefix: [],
+                                                    suffix: [],
+                                                    span: 4392..4407,
+                                                },
+                                                span: 4392..4407,
+                                            },
+                                        ],
+                                        span: 4387..4407,
+                                    },
+                                ],
+                                span: 4387..4407,
+                            },
+                            span: 4385..4407,
+                        },
+                        UnionBranchNode {
+                            branch_tag: None,
+                            expression_hard: ExpressionHardNode {
+                                expression_soft: [
+                                    ExpressionSoftNode {
+                                        expression_tag: [
+                                            ExpressionTagNode {
+                                                identifier: None,
+                                                term: TermNode {
+                                                    atomic: String(
+                                                        Raw(
+                                                            StringRawNode {
+                                                                text: "'#'",
+                                                                span: 4409..4412,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    prefix: [],
+                                                    suffix: [],
+                                                    span: 4409..4414,
+                                                },
+                                                span: 4409..4414,
+                                            },
+                                            ExpressionTagNode {
+                                                identifier: None,
+                                                term: TermNode {
+                                                    atomic: RegexEmbed(
+                                                        RegexEmbedNode {
+                                                            text: "/[^\\n\\r]*/",
+                                                            span: 4414..4424,
+                                                        },
+                                                    ),
+                                                    prefix: [],
+                                                    suffix: [],
+                                                    span: 4414..4425,
+                                                },
+                                                span: 4414..4425,
+                                            },
+                                        ],
+                                        span: 4409..4425,
+                                    },
+                                ],
+                                span: 4409..4425,
+                            },
+                            span: 4407..4425,
+                        },
+                    ],
+                    span: 4379..4426,
+                },
+                name: IdentifierNode {
+                    text: "Comment",
+                    span: 4371..4378,
+                },
+                span: 4335..4426,
+            },
+        ),
     ],
-    span: 0..4334,
+    span: 0..4426,
 }

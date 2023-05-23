@@ -96,9 +96,9 @@ fn parse_grammar_block(state: Input) -> Output {
     state.rule(BootstrapRule::GrammarBlock, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "{", false))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "}", false))
         })
     })
 }
@@ -140,7 +140,7 @@ fn parse_class_statement(state: Input) -> Output {
                     s.optional(|s| {
                         s.sequence(|s| {
                             Ok(s)
-                                .and_then(|s| builtin_text(s, "", false))
+                                .and_then(|s| builtin_text(s, "->", false))
                                 .and_then(|s| builtin_ignore(s))
                                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("cast")))
                         })
@@ -158,19 +158,19 @@ fn parse_class_block(state: Input) -> Output {
     state.rule(BootstrapRule::ClassBlock, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "{", false))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| s.optional(|s| builtin_text(s, "", false)))
+                .and_then(|s| s.optional(|s| builtin_text(s, "|", false)))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_expression(s).and_then(|s| s.tag_node("expression")))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "}", false))
         })
     })
 }
 #[inline]
 fn parse_op_remark(state: Input) -> Output {
-    state.rule(BootstrapRule::OP_REMARK, |s| s.match_string("", false))
+    state.rule(BootstrapRule::OP_REMARK, |s| s.match_string("^", false))
 }
 #[inline]
 fn parse_union_statement(state: Input) -> Output {
@@ -217,7 +217,7 @@ fn parse_union_block(state: Input) -> Output {
     state.rule(BootstrapRule::UnionBlock, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "{", false))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| {
                     s.repeat(0..4294967295, |s| {
@@ -229,7 +229,7 @@ fn parse_union_block(state: Input) -> Output {
                     })
                 })
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "}", false))
         })
     })
 }
@@ -238,7 +238,7 @@ fn parse_union_branch(state: Input) -> Output {
     state.rule(BootstrapRule::UnionBranch, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "|", false))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_expression_hard(s).and_then(|s| s.tag_node("expression_hard")))
                 .and_then(|s| builtin_ignore(s))
@@ -251,7 +251,7 @@ fn parse_branch_tag(state: Input) -> Output {
     state.rule(BootstrapRule::BranchTag, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "#", false))
                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
                 .and_then(|s| s.optional(|s| parse_right_associativity(s).and_then(|s| s.tag_node("right_associativity"))))
         })
@@ -259,7 +259,7 @@ fn parse_branch_tag(state: Input) -> Output {
 }
 #[inline]
 fn parse_right_associativity(state: Input) -> Output {
-    state.rule(BootstrapRule::RightAssociativity, |s| s.match_string("", false))
+    state.rule(BootstrapRule::RightAssociativity, |s| s.match_string(">", false))
 }
 #[inline]
 fn parse_group_statement(state: Input) -> Output {
@@ -299,7 +299,7 @@ fn parse_group_block(state: Input) -> Output {
     state.rule(BootstrapRule::GroupBlock, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "{", false))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| {
                     s.repeat(0..4294967295, |s| {
@@ -311,7 +311,7 @@ fn parse_group_block(state: Input) -> Output {
                     })
                 })
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "}", false))
         })
     })
 }
@@ -322,7 +322,7 @@ fn parse_group_pair(state: Input) -> Output {
             Ok(s)
                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, ":", false))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_atomic(s).and_then(|s| s.tag_node("atomic")))
         })
@@ -371,12 +371,7 @@ fn parse_function_name(state: Input) -> Output {
     state.rule(BootstrapRule::FunctionName, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| {
-                    builtin_regex(s, {
-                        static REGEX: OnceLock<Regex> = OnceLock::new();
-                        REGEX.get_or_init(|| Regex::new("^([@])").unwrap())
-                    })
-                })
+                .and_then(|s| builtin_text(s, "@", false))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
         })
@@ -387,7 +382,7 @@ fn parse_call_body(state: Input) -> Output {
     state.rule(BootstrapRule::CallBody, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "(", false))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| {
                     s.optional(|s| {
@@ -401,7 +396,7 @@ fn parse_call_body(state: Input) -> Output {
                                             Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
                                                 s.sequence(|s| {
                                                     Ok(s)
-                                                        .and_then(|s| builtin_text(s, "", false))
+                                                        .and_then(|s| builtin_text(s, ",", false))
                                                         .and_then(|s| builtin_ignore(s))
                                                         .and_then(|s| {
                                                             parse_expression(s).and_then(|s| s.tag_node("expression"))
@@ -412,12 +407,12 @@ fn parse_call_body(state: Input) -> Output {
                                     })
                                 })
                                 .and_then(|s| builtin_ignore(s))
-                                .and_then(|s| s.optional(|s| builtin_text(s, "", false)))
+                                .and_then(|s| s.optional(|s| builtin_text(s, ",", false)))
                         })
                     })
                 })
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, ")", false))
         })
     })
 }
@@ -434,7 +429,7 @@ fn parse_expression(state: Input) -> Output {
                             Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
                                 s.sequence(|s| {
                                     Ok(s)
-                                        .and_then(|s| builtin_text(s, "", false))
+                                        .and_then(|s| builtin_text(s, "|", false))
                                         .and_then(|s| builtin_ignore(s))
                                         .and_then(|s| parse_expression_hard(s).and_then(|s| s.tag_node("expression_hard")))
                                 })
@@ -458,7 +453,7 @@ fn parse_expression_hard(state: Input) -> Output {
                             Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
                                 s.sequence(|s| {
                                     Ok(s)
-                                        .and_then(|s| builtin_text(s, "", false))
+                                        .and_then(|s| builtin_text(s, "~", false))
                                         .and_then(|s| builtin_ignore(s))
                                         .and_then(|s| parse_expression_soft(s).and_then(|s| s.tag_node("expression_soft")))
                                 })
@@ -499,7 +494,7 @@ fn parse_expression_tag(state: Input) -> Output {
                             Ok(s)
                                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
                                 .and_then(|s| builtin_ignore(s))
-                                .and_then(|s| builtin_text(s, "", false))
+                                .and_then(|s| builtin_text(s, ":", false))
                         })
                     })
                 })
@@ -541,18 +536,18 @@ fn parse_term(state: Input) -> Output {
 fn parse_prefix(state: Input) -> Output {
     state.rule(BootstrapRule::Prefix, |s| {
         Err(s)
-            .or_else(|s| builtin_text(s, "", false).and_then(|s| s.tag_node("negative")))
-            .or_else(|s| builtin_text(s, "", false).and_then(|s| s.tag_node("positive")))
-            .or_else(|s| builtin_text(s, "", false).and_then(|s| s.tag_node("remark")))
+            .or_else(|s| builtin_text(s, "!", false).and_then(|s| s.tag_node("negative")))
+            .or_else(|s| builtin_text(s, "&", false).and_then(|s| s.tag_node("positive")))
+            .or_else(|s| builtin_text(s, "^", false).and_then(|s| s.tag_node("remark")))
     })
 }
 #[inline]
 fn parse_suffix(state: Input) -> Output {
     state.rule(BootstrapRule::Suffix, |s| {
         Err(s)
-            .or_else(|s| builtin_text(s, "", false).and_then(|s| s.tag_node("optional")))
-            .or_else(|s| builtin_text(s, "", false).and_then(|s| s.tag_node("many")))
-            .or_else(|s| builtin_text(s, "", false).and_then(|s| s.tag_node("many_1")))
+            .or_else(|s| builtin_text(s, "?", false).and_then(|s| s.tag_node("optional")))
+            .or_else(|s| builtin_text(s, "*", false).and_then(|s| s.tag_node("many")))
+            .or_else(|s| builtin_text(s, "+", false).and_then(|s| s.tag_node("many_1")))
     })
 }
 #[inline]
@@ -573,13 +568,13 @@ fn parse_group_expression(state: Input) -> Output {
     state.rule(BootstrapRule::GroupExpression, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "(", false))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| s.optional(|s| builtin_text(s, "", false)))
+                .and_then(|s| s.optional(|s| builtin_text(s, "|", false)))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_expression(s).and_then(|s| s.tag_node("expression")))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, ")", false))
         })
     })
 }
@@ -590,30 +585,20 @@ fn parse_string(state: Input) -> Output {
             .or_else(|s| {
                 s.sequence(|s| {
                     Ok(s)
-                        .and_then(|s| builtin_text(s, "", false))
-                        .and_then(|s| builtin_ignore(s))
+                        .and_then(|s| builtin_text(s, "'", false))
                         .and_then(|s| parse_string_raw(s).and_then(|s| s.tag_node("string_raw")))
-                        .and_then(|s| builtin_ignore(s))
-                        .and_then(|s| builtin_text(s, "", false))
+                        .and_then(|s| builtin_text(s, "'", false))
                 })
                 .and_then(|s| s.tag_node("raw"))
             })
             .or_else(|s| {
                 s.sequence(|s| {
                     Ok(s)
-                        .and_then(|s| builtin_text(s, "", false))
-                        .and_then(|s| builtin_ignore(s))
+                        .and_then(|s| builtin_text(s, "\"", false))
                         .and_then(|s| {
-                            s.repeat(0..4294967295, |s| {
-                                s.sequence(|s| {
-                                    Ok(s)
-                                        .and_then(|s| builtin_ignore(s))
-                                        .and_then(|s| parse_string_normal(s).and_then(|s| s.tag_node("string_normal")))
-                                })
-                            })
+                            s.repeat(0..4294967295, |s| parse_string_normal(s).and_then(|s| s.tag_node("string_normal")))
                         })
-                        .and_then(|s| builtin_ignore(s))
-                        .and_then(|s| builtin_text(s, "", false))
+                        .and_then(|s| builtin_text(s, "\"", false))
                 })
                 .and_then(|s| s.tag_node("escaped"))
             })
@@ -628,7 +613,6 @@ fn parse_string_raw(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_string_normal(state: Input) -> Output {
     state.rule(BootstrapRule::StringNormal, |s| {
@@ -638,23 +622,21 @@ fn parse_string_normal(state: Input) -> Output {
             .or_else(|s| parse_text_any(s).and_then(|s| s.tag_node("text_any")))
     })
 }
-
 #[inline]
 fn parse_escaped_unicode(state: Input) -> Output {
     state.rule(BootstrapRule::EscapedUnicode, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(\\u[0-9a-zA-Z]{4})").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(\\\\u[0-9a-zA-Z]{4})").unwrap())
         })
     })
 }
-
 #[inline]
 fn parse_escaped_character(state: Input) -> Output {
     state.rule(BootstrapRule::EscapedCharacter, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(\\.)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(\\\\.)").unwrap())
         })
     })
 }
@@ -672,15 +654,15 @@ fn parse_regex_embed(state: Input) -> Output {
     state.rule(BootstrapRule::RegexEmbed, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "/", false))
                 .and_then(|s| {
                     s.repeat(0..4294967295, |s| {
                         s.sequence(|s| {
-                            Ok(s).and_then(|s| s.lookahead(false, |s| builtin_text(s, "", false))).and_then(|s| builtin_any(s))
+                            Ok(s).and_then(|s| s.lookahead(false, |s| builtin_text(s, "/", false))).and_then(|s| builtin_any(s))
                         })
                     })
                 })
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "/", false))
         })
     })
 }
@@ -689,22 +671,22 @@ fn parse_regex_range(state: Input) -> Output {
     state.rule(BootstrapRule::RegexRange, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "[", false))
                 .and_then(|s| s.optional(|s| parse_regex_negative(s).and_then(|s| s.tag_node("regex_negative"))))
                 .and_then(|s| {
                     s.repeat(0..4294967295, |s| {
                         s.sequence(|s| {
-                            Ok(s).and_then(|s| s.lookahead(false, |s| builtin_text(s, "", false))).and_then(|s| builtin_any(s))
+                            Ok(s).and_then(|s| s.lookahead(false, |s| builtin_text(s, "]", false))).and_then(|s| builtin_any(s))
                         })
                     })
                 })
-                .and_then(|s| builtin_text(s, "", false))
+                .and_then(|s| builtin_text(s, "]", false))
         })
     })
 }
 #[inline]
 fn parse_regex_negative(state: Input) -> Output {
-    state.rule(BootstrapRule::RegexNegative, |s| s.match_string("", false))
+    state.rule(BootstrapRule::RegexNegative, |s| s.match_string("^", false))
 }
 #[inline]
 fn parse_namepath_free(state: Input) -> Output {
@@ -721,8 +703,8 @@ fn parse_namepath_free(state: Input) -> Output {
                                     Ok(s)
                                         .and_then(|s| {
                                             Err(s)
-                                                .or_else(|s| builtin_text(s, "", false))
-                                                .or_else(|s| builtin_text(s, "", false))
+                                                .or_else(|s| builtin_text(s, ".", false))
+                                                .or_else(|s| builtin_text(s, "::", false))
                                         })
                                         .and_then(|s| builtin_ignore(s))
                                         .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
@@ -747,7 +729,7 @@ fn parse_namepath(state: Input) -> Output {
                             Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
                                 s.sequence(|s| {
                                     Ok(s)
-                                        .and_then(|s| builtin_text(s, "", false))
+                                        .and_then(|s| builtin_text(s, "::", false))
                                         .and_then(|s| builtin_ignore(s))
                                         .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
                                 })
@@ -771,8 +753,8 @@ fn parse_identifier(state: Input) -> Output {
 fn parse_boolean(state: Input) -> Output {
     state.rule(BootstrapRule::Boolean, |s| {
         Err(s)
-            .or_else(|s| builtin_text(s, "", false).and_then(|s| s.tag_node("true")))
-            .or_else(|s| builtin_text(s, "", false).and_then(|s| s.tag_node("false")))
+            .or_else(|s| builtin_text(s, "true", false).and_then(|s| s.tag_node("true")))
+            .or_else(|s| builtin_text(s, "false", false).and_then(|s| s.tag_node("false")))
     })
 }
 #[inline]
@@ -866,13 +848,12 @@ fn parse_white_space(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_comment(state: Input) -> Output {
     state.rule(BootstrapRule::Comment, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(\\[^\\n\\r]*)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(\\\\[^\\n\\r]*)").unwrap())
         })
     })
 }
