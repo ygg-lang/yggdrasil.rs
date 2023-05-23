@@ -41,7 +41,6 @@ impl TryFrom<RootNode> for GrammarInfo {
                     }
                     Err(e) => {
                         println!("{e:?}");
-                        println!("Class: {}", v.class_block.expression.text);
                     }
                 },
                 StatementNode::UnionStatement(v) => match GrammarRule::build_union(v) {
@@ -50,9 +49,6 @@ impl TryFrom<RootNode> for GrammarInfo {
                     }
                     Err(e) => {
                         println!("{e:?}");
-                        for i in &v.union_block.union_branch {
-                            println!("Union: {}", i.expression.text);
-                        }
                     }
                 },
                 StatementNode::GroupStatement(v) => match GrammarRule::build_group(v) {
@@ -175,23 +171,15 @@ impl YggdrasilExpression {
     }
     fn build_tag_branch(node: &UnionBranchNode) -> Result<YggdrasilVariant, YggdrasilError> {
         let id = node.branch_tag.as_ref().map(|o| YggdrasilIdentifier::build(&o.identifier));
-        let expr = YggdrasilExpression::build_hard(&node.expression)?;
+        let expr = YggdrasilExpression::build_hard(&node.expression_hard)?;
         Ok(YggdrasilVariant { tag: id, branch: expr })
     }
     fn build_tag_node(node: &ExpressionTagNode) -> Result<Self, YggdrasilError> {
-        match node.term.as_slice() {
-            [last] => {
-                let expr = YggdrasilExpression::build_term(last)?;
-                Ok(expr)
-            }
-            [first, last] => {
-                let id = YggdrasilExpression::build_term(first)?;
-                let mut expr = YggdrasilExpression::build_term(last)?;
-                expr.tag = id.as_identifier().cloned();
-                Ok(expr)
-            }
-            _ => Err(YggdrasilError::syntax_error("FIXME: TAG MODE", node.get_range().unwrap_or_default()))?,
-        }
+        let e = match &node.identifier {
+            Some(first) => YggdrasilExpression::build_term(&node.term)?.with_tag(YggdrasilIdentifier::build(first)),
+            None => YggdrasilExpression::build_term(&node.term)?,
+        };
+        Ok(e)
     }
     fn build_term(node: &TermNode) -> Result<Self, YggdrasilError> {
         let mut base = YggdrasilExpression::build_atomic(&node.atomic)?;
@@ -214,7 +202,7 @@ impl YggdrasilExpression {
     }
     fn build_atomic(node: &AtomicNode) -> Result<Self, YggdrasilError> {
         let expr = match node {
-            AtomicNode::GroupExpression(e) => YggdrasilExpression::build_or(e)?,
+            AtomicNode::GroupExpression(e) => YggdrasilExpression::build_or(&e.expression)?,
             AtomicNode::Boolean(v) => match v {
                 BooleanNode::Boolean0 => YggdrasilExpression::boolean(true),
                 BooleanNode::Boolean1 => YggdrasilExpression::boolean(true),

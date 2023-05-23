@@ -40,4 +40,10 @@ impl YggdrasilVariant {
     pub fn remark(&mut self, tag: YggdrasilIdentifier) {
         self.tag = Some(tag)
     }
+    pub fn unmark(&mut self) {
+        match &self.tag {
+            Some(s) => self.branch.tag = Some(s.clone()),
+            None => unreachable!("have you run remark?"),
+        }
+    }
 }

@@ -32,6 +32,8 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::Atomic => parse_atomic(state),
         BootstrapRule::GroupExpression => parse_group_expression(state),
         BootstrapRule::String => parse_string(state),
+        BootstrapRule::StringRaw => parse_string_raw(state),
+        BootstrapRule::StringEscaped => parse_string_escaped(state),
         BootstrapRule::RegexEmbed => parse_regex_embed(state),
         BootstrapRule::RegexRange => parse_regex_range(state),
         BootstrapRule::RegexNegative => parse_regex_negative(state),
@@ -48,7 +50,6 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::KW_CLIMB => parse_kw_climb(state),
         BootstrapRule::KW_MACRO => parse_kw_macro(state),
         BootstrapRule::WhiteSpace => parse_white_space(state),
-        BootstrapRule::Comment => parse_comment(state),
         BootstrapRule::IgnoreText => unreachable!(),
         BootstrapRule::IgnoreRegex => unreachable!(),
     })
@@ -536,18 +537,18 @@ fn parse_term(state: Input) -> Output {
 fn parse_prefix(state: Input) -> Output {
     state.rule(BootstrapRule::Prefix, |s| {
         Err(s)
-            .or_else(|s| builtin_text(s, "!", false))
-            .or_else(|s| builtin_text(s, "&", false))
-            .or_else(|s| builtin_text(s, "^", false))
+            .or_else(|s| builtin_text(s, "!", false).and_then(|s| s.tag_node("negative")))
+            .or_else(|s| builtin_text(s, "&", false).and_then(|s| s.tag_node("positive")))
+            .or_else(|s| builtin_text(s, "^", false).and_then(|s| s.tag_node("remark")))
     })
 }
 #[inline]
 fn parse_suffix(state: Input) -> Output {
     state.rule(BootstrapRule::Suffix, |s| {
         Err(s)
-            .or_else(|s| builtin_text(s, "?", false))
-            .or_else(|s| builtin_text(s, "*", false))
-            .or_else(|s| builtin_text(s, "+", false))
+            .or_else(|s| builtin_text(s, "?", false).and_then(|s| s.tag_node("optional")))
+            .or_else(|s| builtin_text(s, "*", false).and_then(|s| s.tag_node("many")))
+            .or_else(|s| builtin_text(s, "+", false).and_then(|s| s.tag_node("many_1")))
     })
 }
 #[inline]
@@ -587,47 +588,43 @@ fn parse_string(state: Input) -> Output {
                     Ok(s)
                         .and_then(|s| builtin_text(s, "'", false))
                         .and_then(|s| builtin_ignore(s))
-                        .and_then(|s| {
-                            s.repeat(0..4294967295, |s| {
-                                s.sequence(|s| {
-                                    Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
-                                        s.sequence(|s| {
-                                            Ok(s)
-                                                .and_then(|s| s.lookahead(false, |s| builtin_text(s, "'", false)))
-                                                .and_then(|s| builtin_ignore(s))
-                                                .and_then(|s| builtin_any(s))
-                                        })
-                                    })
-                                })
-                            })
-                        })
+                        .and_then(|s| parse_raw_string(s).and_then(|s| s.tag_node("raw_string")))
                         .and_then(|s| builtin_ignore(s))
                         .and_then(|s| builtin_text(s, "'", false))
                 })
+                .and_then(|s| s.tag_node("raw"))
             })
             .or_else(|s| {
                 s.sequence(|s| {
                     Ok(s)
                         .and_then(|s| builtin_text(s, "\"", false))
                         .and_then(|s| builtin_ignore(s))
-                        .and_then(|s| {
-                            s.repeat(0..4294967295, |s| {
-                                s.sequence(|s| {
-                                    Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
-                                        s.sequence(|s| {
-                                            Ok(s)
-                                                .and_then(|s| s.lookahead(false, |s| builtin_text(s, "\"", false)))
-                                                .and_then(|s| builtin_ignore(s))
-                                                .and_then(|s| builtin_any(s))
-                                        })
-                                    })
-                                })
-                            })
-                        })
+                        .and_then(|s| parse_string_escaped(s).and_then(|s| s.tag_node("string_escaped")))
                         .and_then(|s| builtin_ignore(s))
                         .and_then(|s| builtin_text(s, "\"", false))
                 })
+                .and_then(|s| s.tag_node("escaped"))
             })
+    })
+}
+
+#[inline]
+fn parse_string_raw(state: Input) -> Output {
+    state.rule(BootstrapRule::StringRaw, |s| {
+        s.repeat(0..4294967295, |s| {
+            s.sequence(|s| Ok(s).and_then(|s| s.lookahead(false, |s| builtin_text(s, "'", false))).and_then(|s| builtin_any(s)))
+        })
+    })
+}
+
+#[inline]
+fn parse_string_escaped(state: Input) -> Output {
+    state.rule(BootstrapRule::StringEscaped, |s| {
+        s.repeat(0..4294967295, |s| {
+            s.sequence(|s| {
+                Ok(s).and_then(|s| s.lookahead(false, |s| builtin_text(s, "\"", false))).and_then(|s| builtin_any(s))
+            })
+        })
     })
 }
 #[inline]
@@ -733,10 +730,11 @@ fn parse_identifier(state: Input) -> Output {
 #[inline]
 fn parse_boolean(state: Input) -> Output {
     state.rule(BootstrapRule::Boolean, |s| {
-        Err(s).or_else(|s| builtin_text(s, "true", false)).or_else(|s| builtin_text(s, "false", false))
+        Err(s)
+            .or_else(|s| builtin_text(s, "true", false).and_then(|s| s.tag_node("true")))
+            .or_else(|s| builtin_text(s, "false", false).and_then(|s| s.tag_node("false")))
     })
 }
-
 #[inline]
 fn parse_modifier_call(state: Input) -> Output {
     state.rule(BootstrapRule::ModifierCall, |s| {
@@ -745,18 +743,17 @@ fn parse_modifier_call(state: Input) -> Output {
                 .and_then(|s| {
                     s.lookahead(false, |s| {
                         Err(s)
-                            .or_else(|s| parse_kw_class(s).and_then(|s| s.tag_node("kw_class")))
-                            .or_else(|s| parse_kw_union(s).and_then(|s| s.tag_node("kw_union")))
-                            .or_else(|s| parse_kw_group(s).and_then(|s| s.tag_node("kw_group")))
-                            .or_else(|s| parse_kw_macro(s).and_then(|s| s.tag_node("kw_macro")))
-                            .or_else(|s| parse_kw_climb(s).and_then(|s| s.tag_node("kw_climb")))
+                            .or_else(|s| parse_kw_class(s))
+                            .or_else(|s| parse_kw_union(s))
+                            .or_else(|s| parse_kw_group(s))
+                            .or_else(|s| parse_kw_macro(s))
+                            .or_else(|s| parse_kw_climb(s))
                     })
                 })
-                .and_then(|s| parse_identifier(s))
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
         })
     })
 }
-
 #[inline]
 fn parse_kw_grammar(state: Input) -> Output {
     state.rule(BootstrapRule::KW_GRAMMAR, |s| {
@@ -766,7 +763,6 @@ fn parse_kw_grammar(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_kw_import(state: Input) -> Output {
     state.rule(BootstrapRule::KW_IMPORT, |s| {
@@ -776,7 +772,6 @@ fn parse_kw_import(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_kw_class(state: Input) -> Output {
     state.rule(BootstrapRule::KW_CLASS, |s| {
@@ -786,7 +781,6 @@ fn parse_kw_class(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_kw_union(state: Input) -> Output {
     state.rule(BootstrapRule::KW_UNION, |s| {
@@ -796,7 +790,6 @@ fn parse_kw_union(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_kw_group(state: Input) -> Output {
     state.rule(BootstrapRule::KW_GROUP, |s| {
@@ -806,7 +799,6 @@ fn parse_kw_group(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_kw_climb(state: Input) -> Output {
     state.rule(BootstrapRule::KW_CLIMB, |s| {
@@ -816,7 +808,6 @@ fn parse_kw_climb(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_kw_macro(state: Input) -> Output {
     state.rule(BootstrapRule::KW_MACRO, |s| {
@@ -826,7 +817,6 @@ fn parse_kw_macro(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_white_space(state: Input) -> Output {
     state.rule(BootstrapRule::WhiteSpace, |s| {
@@ -834,33 +824,6 @@ fn parse_white_space(state: Input) -> Output {
             static REGEX: OnceLock<Regex> = OnceLock::new();
             REGEX.get_or_init(|| Regex::new("^(\\p{White_Space}+)").unwrap())
         })
-    })
-}
-
-#[inline]
-fn parse_comment(state: Input) -> Output {
-    state.rule(BootstrapRule::Comment, |s| {
-        Err(s)
-            .or_else(|s| {
-                s.sequence(|s| {
-                    Ok(s).and_then(|s| builtin_text(s, "//", false)).and_then(|s| builtin_ignore(s)).and_then(|s| {
-                        builtin_regex(s, {
-                            static REGEX: OnceLock<Regex> = OnceLock::new();
-                            REGEX.get_or_init(|| Regex::new("^([^\\n\\r]*)").unwrap())
-                        })
-                    })
-                })
-            })
-            .or_else(|s| {
-                s.sequence(|s| {
-                    Ok(s).and_then(|s| builtin_text(s, "#", false)).and_then(|s| builtin_ignore(s)).and_then(|s| {
-                        builtin_regex(s, {
-                            static REGEX: OnceLock<Regex> = OnceLock::new();
-                            REGEX.get_or_init(|| Regex::new("^([^\\n\\r]*)").unwrap())
-                        })
-                    })
-                })
-            })
     })
 }
 

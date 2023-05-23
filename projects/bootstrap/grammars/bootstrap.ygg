@@ -107,14 +107,20 @@ class GroupExpression {
 }
 // === String === -------------------------------------------------------------------------------------------------------
 atomic union String {
-    | "'" (!"'" ANY)* "'" #Raw
-    | '"' (!'"' ANY)* '"' #Escaped
+    | "'" RawString "'" #Raw
+    | '"' StringEscaped '"' #Escaped
+}
+text atomic class StringRaw {
+    (!"'" ANY)*
+}
+text atomic class StringEscaped {
+    (!'"' ANY)*
 }
 // === regex === -------------------------------------------------------------------------------------------------------
-atomic class RegexEmbed {
+text atomic class RegexEmbed {
     '/' (!'/' ANY)* '/'
 }
-atomic class RegexRange {
+text atomic class RegexRange {
     '[' RegexNegative? (!']' ANY)* ']'
 }
 class RegexNegative {
@@ -127,7 +133,7 @@ class NamepathFree -> Namepath {
 class Namepath {
     Identifier ('::' Identifier)*
 }
-class Identifier {
+text class Identifier {
     /[_\p{XID_start}]\p{XID_continue}*/
 }
 union Boolean {
@@ -149,11 +155,11 @@ token {
     KW_MACRO: /macro|def|function|func|fun|fn/
 }
 // === ignores === -----------------------------------------------------------------------------------------------------
-atomic ignore class WhiteSpace {
+ignore class WhiteSpace {
     /\p{White_Space}+/
 }
 @style(comment)
-atomic ignore union Comment {
+ignore class Comment {
     | '//' /[^\n\r]*/
-    | '#'  /[^\n\r]*/
+    | '/*'  '*/'
 }

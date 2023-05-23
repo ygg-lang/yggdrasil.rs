@@ -170,12 +170,12 @@ pub struct GrammarBlockNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ClassStatementNode {
-    pub class_block: ClassBlockNode,
+    pub name: IdentifierNode,
     pub decorator_call: Vec<DecoratorCallNode>,
     pub modifier_call: Vec<ModifierCallNode>,
     pub op_remark: Option<OpRemarkNode>,
     pub cast: Option<IdentifierNode>,
-    pub name: IdentifierNode,
+    pub class_block: ClassBlockNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -353,11 +353,13 @@ pub enum StringNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RegexEmbedNode {
+    pub text: String,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RegexRangeNode {
+    pub text: String,
     pub regex_negative: Option<RegexNegativeNode>,
     pub span: Range<u32>,
 }

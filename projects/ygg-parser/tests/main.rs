@@ -1,5 +1,5 @@
 use std::{fs::File, io::Write, str::FromStr};
-use yggdrasil_parser::bootstrap::{AtomicNode, BootstrapParser, BootstrapRule, ClassStatementNode, RootNode};
+use yggdrasil_parser::bootstrap::{BootstrapParser, BootstrapRule, ClassStatementNode, ExpressionNode, RootNode};
 use yggdrasil_rt::YggdrasilParser;
 
 #[test]
@@ -18,19 +18,9 @@ fn test_bootstrap() {
 }
 
 #[test]
-fn test_json5() {
-    let cst = BootstrapParser::parse_cst(include_str!("json5.ygg"), BootstrapRule::Root).unwrap();
-    println!("Short Form:\n{}", cst);
-    let ast = RootNode::from_str(include_str!("json5.ygg")).unwrap();
-    let mut file = File::create("tests/json5.ron").unwrap();
-    file.write_all(format!("{:#?}", ast).as_bytes()).unwrap();
-    // file.write_all(out.to_string().as_bytes()).unwrap();
-}
-
-#[test]
 fn test_string() {
-    let text = r##"class ClassStatement {
-    AnnotationCall* ModifierCall* ^KW_CLASS (name:Identifier) ('->' cast:Identifier)? ClassBlock
+    let text = r##"class GrammarStatement {
+     ^KW_GRAMMAR Identifier // GrammarBlock
 }"##;
     let cst = BootstrapParser::parse_cst(text, BootstrapRule::ClassStatement).unwrap();
     println!("Short Form:\n{}", cst);
@@ -40,9 +30,9 @@ fn test_string() {
 
 #[test]
 fn test_atomic() {
-    let text = r##"(name : Identifier)"##;
-    let cst = BootstrapParser::parse_cst(text, BootstrapRule::Atomic).unwrap();
+    let text = r##"'2'"##;
+    let cst = BootstrapParser::parse_cst(text, BootstrapRule::Expression).unwrap();
     println!("Short Form:\n{}", cst);
-    let ast = AtomicNode::from_str(text).unwrap();
+    let ast = ExpressionNode::from_str(text).unwrap();
     println!("{ast:#?}")
 }

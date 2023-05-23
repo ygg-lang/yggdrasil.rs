@@ -537,18 +537,18 @@ fn parse_term(state: Input) -> Output {
 fn parse_prefix(state: Input) -> Output {
     state.rule(BootstrapRule::Prefix, |s| {
         Err(s)
-            .or_else(|s| builtin_text(s, "!", false))
-            .or_else(|s| builtin_text(s, "&", false))
-            .or_else(|s| builtin_text(s, "^", false))
+            .or_else(|s| builtin_text(s, "!", false).and_then(|s| s.tag_node("prefix_0")))
+            .or_else(|s| builtin_text(s, "&", false).and_then(|s| s.tag_node("prefix_1")))
+            .or_else(|s| builtin_text(s, "^", false).and_then(|s| s.tag_node("prefix_2")))
     })
 }
 #[inline]
 fn parse_suffix(state: Input) -> Output {
     state.rule(BootstrapRule::Suffix, |s| {
         Err(s)
-            .or_else(|s| builtin_text(s, "?", false))
-            .or_else(|s| builtin_text(s, "*", false))
-            .or_else(|s| builtin_text(s, "+", false))
+            .or_else(|s| builtin_text(s, "?", false).and_then(|s| s.tag_node("suffix_0")))
+            .or_else(|s| builtin_text(s, "*", false).and_then(|s| s.tag_node("suffix_1")))
+            .or_else(|s| builtin_text(s, "+", false).and_then(|s| s.tag_node("suffix_2")))
     })
 }
 #[inline]
@@ -606,6 +606,7 @@ fn parse_string(state: Input) -> Output {
                         .and_then(|s| builtin_ignore(s))
                         .and_then(|s| builtin_text(s, "'", false))
                 })
+                .and_then(|s| s.tag_node("string_0"))
             })
             .or_else(|s| {
                 s.sequence(|s| {
@@ -629,23 +630,16 @@ fn parse_string(state: Input) -> Output {
                         .and_then(|s| builtin_ignore(s))
                         .and_then(|s| builtin_text(s, "\"", false))
                 })
+                .and_then(|s| s.tag_node("string_1"))
             })
     })
 }
 #[inline]
 fn parse_regex_embed(state: Input) -> Output {
     state.rule(BootstrapRule::RegexEmbed, |s| {
-        s.sequence(|s| {
-            Ok(s)
-                .and_then(|s| builtin_text(s, "/", false))
-                .and_then(|s| {
-                    s.repeat(0..4294967295, |s| {
-                        s.sequence(|s| {
-                            Ok(s).and_then(|s| s.lookahead(false, |s| builtin_text(s, "/", false))).and_then(|s| builtin_any(s))
-                        })
-                    })
-                })
-                .and_then(|s| builtin_text(s, "/", false))
+        builtin_regex(s, {
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(/[^/]+/)").unwrap())
         })
     })
 }
@@ -825,40 +819,23 @@ fn parse_white_space(state: Input) -> Output {
     state.rule(BootstrapRule::WhiteSpace, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(\\p{White_Space}+)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(//[^\n\r]*|\\p{White_Space}+)").unwrap())
         })
     })
 }
 #[inline]
 fn parse_comment(state: Input) -> Output {
     state.rule(BootstrapRule::Comment, |s| {
-        Err(s)
-            .or_else(|s| {
-                s.sequence(|s| {
-                    Ok(s).and_then(|s| builtin_text(s, "//", false)).and_then(|s| builtin_ignore(s)).and_then(|s| {
-                        builtin_regex(s, {
-                            static REGEX: OnceLock<Regex> = OnceLock::new();
-                            REGEX.get_or_init(|| Regex::new("^([^\\n\\r]*)").unwrap())
-                        })
-                    })
-                })
-            })
-            .or_else(|s| {
-                s.sequence(|s| {
-                    Ok(s).and_then(|s| builtin_text(s, "#", false)).and_then(|s| builtin_ignore(s)).and_then(|s| {
-                        builtin_regex(s, {
-                            static REGEX: OnceLock<Regex> = OnceLock::new();
-                            REGEX.get_or_init(|| Regex::new("^([^\\n\\r]*)").unwrap())
-                        })
-                    })
-                })
-            })
+        builtin_regex(s, {
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(//[^\n\r]*)").unwrap())
+        })
     })
 }
 
 /// All rules ignored in ast mode, inline is not recommended
 fn builtin_ignore(state: Input) -> Output {
-    state.repeat(0..u32::MAX, |s| parse_white_space(s))
+    state.repeat(0..u32::MAX, parse_white_space)
 }
 
 fn builtin_any(state: Input) -> Output {

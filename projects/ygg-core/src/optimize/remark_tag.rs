@@ -16,11 +16,11 @@ impl CodeOptimizer for RemarkTags {
             match &mut rule.body {
                 GrammarBody::Class { term } => self.remark(term, rule.captures.auto),
                 GrammarBody::Union { branches } => {
-                    self.remark_union_root(branches, rule_name);
                     for variant in branches.iter_mut() {
                         println!("FIXME AUTO: {}", rule.captures.auto);
                         self.remark(&mut variant.branch, true)
                     }
+                    self.remark_union_root(branches, rule_name);
                 }
                 GrammarBody::Climb { .. } => {}
             }
@@ -76,6 +76,7 @@ impl RemarkTags {
                     }),
                 },
             }
+            variant.unmark()
         }
     }
 }
