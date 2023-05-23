@@ -107,14 +107,16 @@ class GroupExpression {
 }
 // === String === -------------------------------------------------------------------------------------------------------
 atomic union String {
-    | "'" RawString "'" #Raw
-    | '"' StringEscaped '"' #Escaped
+    | "'" StringRaw "'" #Raw
+    | '"' StringItem* '"' #Escaped
 }
 text atomic class StringRaw {
-    (!"'" ANY)*
+    [^']*
 }
-text atomic class StringEscaped {
-    (!'"' ANY)*
+text atomic class StringItem {
+    | /\\u[0-9a-zA-Z]{4}/ #P
+    | /\\./               #Escaped
+    | [^"\]+              #Other
 }
 // === regex === -------------------------------------------------------------------------------------------------------
 text atomic class RegexEmbed {

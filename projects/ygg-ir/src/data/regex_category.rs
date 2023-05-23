@@ -1,4 +1,5 @@
 use super::*;
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct YggdrasilRegex {
@@ -26,11 +27,8 @@ impl Display for YggdrasilRegex {
 }
 
 impl YggdrasilRegex {
-    pub fn new<S>(text: S, span: Range<usize>) -> Self
-    where
-        S: Display,
-    {
-        Self { raw: text.to_string(), span }
+    pub fn new(text: &str, span: Range<usize>) -> Self {
+        Self { raw: text.replace("\\\\", "\\"), span }
     }
     // pub fn build(&mut self) -> Result<(), BuildError> {
     //     let regex = Regex::new(&self.to_string())?;

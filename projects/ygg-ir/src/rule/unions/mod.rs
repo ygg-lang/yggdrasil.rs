@@ -1,7 +1,5 @@
 use super::*;
 use std::collections::btree_map::IntoIter;
-use yggdrasil_parser::bootstrap::IdentifierNode;
-
 #[derive(Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct YggdrasilEnumerate {

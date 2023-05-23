@@ -30,7 +30,7 @@ impl From<YggdrasilIdentifier> for YggdrasilExpression {
         let name = value.text.as_ref();
         let properties = &["XID_START", "XID_CONTINUE"];
         let out: ExpressionBody = match name {
-            p if properties.contains(&p) => ExpressionBody::Regex(YggdrasilRegex::new(format!("[\\p{{{name}}}]"), 0..p.len())),
+            p if properties.contains(&p) => ExpressionBody::Regex(YggdrasilRegex::new(&format!("[\\p{{{name}}}]"), 0..p.len())),
             "ANY" => ExpressionBody::CharacterAny.into(),
             "IGNORE" | "IGNORED" => ExpressionBody::Ignored.into(),
             "ASCII_DIGIT" => ExpressionBody::CharacterRange(RangeInclusive::new('0', '9')),
