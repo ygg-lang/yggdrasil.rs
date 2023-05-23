@@ -33,6 +33,23 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::GroupExpression => parse_group_expression(state),
         BootstrapRule::String => parse_string(state),
         BootstrapRule::StringRaw => parse_string_raw(state),
+        BootstrapRule::StringItem => parse_string_item(state),
+        BootstrapRule::RegexEmbed => parse_regex_embed(state),
+        BootstrapRule::RegexRange => parse_regex_range(state),
+        BootstrapRule::RegexNegative => parse_regex_negative(state),
+        BootstrapRule::NamepathFree => parse_namepath_free(state),
+        BootstrapRule::Namepath => parse_namepath(state),
+        BootstrapRule::Identifier => parse_identifier(state),
+        BootstrapRule::Boolean => parse_boolean(state),
+        BootstrapRule::ModifierCall => parse_modifier_call(state),
+        BootstrapRule::KW_GRAMMAR => parse_kw_grammar(state),
+        BootstrapRule::KW_IMPORT => parse_kw_import(state),
+        BootstrapRule::KW_CLASS => parse_kw_class(state),
+        BootstrapRule::KW_UNION => parse_kw_union(state),
+        BootstrapRule::KW_GROUP => parse_kw_group(state),
+        BootstrapRule::KW_CLIMB => parse_kw_climb(state),
+        BootstrapRule::KW_MACRO => parse_kw_macro(state),
+        BootstrapRule::WhiteSpace => parse_white_space(state),
         BootstrapRule::IgnoreText => unreachable!(),
         BootstrapRule::IgnoreRegex => unreachable!(),
     })
@@ -610,9 +627,252 @@ fn parse_string_raw(state: Input) -> Output {
     })
 }
 
+#[inline]
+fn parse_string_item(state: Input) -> Output {
+    state.rule(BootstrapRule::StringItem, |s| {
+        Err(s)
+            .or_else(|s| {
+                builtin_regex(s, {
+                    static REGEX: OnceLock<Regex> = OnceLock::new();
+                    REGEX.get_or_init(|| Regex::new("^(\\u[0-9a-zA-Z]{4})").unwrap())
+                })
+                .and_then(|s| s.tag_node("unicode"))
+            })
+            .or_else(|s| {
+                builtin_regex(s, {
+                    static REGEX: OnceLock<Regex> = OnceLock::new();
+                    REGEX.get_or_init(|| Regex::new("^(\\.)").unwrap())
+                })
+                .and_then(|s| s.tag_node("escaped"))
+            })
+            .or_else(|s| {
+                builtin_regex(s, {
+                    static REGEX: OnceLock<Regex> = OnceLock::new();
+                    REGEX.get_or_init(|| Regex::new("^([^\"\\]+)").unwrap())
+                })
+                .and_then(|s| s.tag_node("other"))
+            })
+    })
+}
+
+#[inline]
+fn parse_regex_embed(state: Input) -> Output {
+    state.rule(BootstrapRule::RegexEmbed, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| builtin_text(s, "/", false))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s).and_then(|s| s.lookahead(false, |s| builtin_text(s, "/", false))).and_then(|s| builtin_any(s))
+                        })
+                    })
+                })
+                .and_then(|s| builtin_text(s, "/", false))
+        })
+    })
+}
+
+#[inline]
+fn parse_regex_range(state: Input) -> Output {
+    state.rule(BootstrapRule::RegexRange, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| builtin_text(s, "[", false))
+                .and_then(|s| s.optional(|s| parse_regex_negative(s).and_then(|s| s.tag_node("regex_negative"))))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s).and_then(|s| s.lookahead(false, |s| builtin_text(s, "]", false))).and_then(|s| builtin_any(s))
+                        })
+                    })
+                })
+                .and_then(|s| builtin_text(s, "]", false))
+        })
+    })
+}
+
+#[inline]
+fn parse_regex_negative(state: Input) -> Output {
+    state.rule(BootstrapRule::RegexNegative, |s| s.match_string("^", false))
+}
+
+#[inline]
+fn parse_namepath_free(state: Input) -> Output {
+    state.rule(BootstrapRule::NamepathFree, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                s.sequence(|s| {
+                                    Ok(s)
+                                        .and_then(|s| {
+                                            Err(s)
+                                                .or_else(|s| builtin_text(s, ".", false))
+                                                .or_else(|s| builtin_text(s, "::", false))
+                                        })
+                                        .and_then(|s| builtin_ignore(s))
+                                        .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                                })
+                            })
+                        })
+                    })
+                })
+        })
+    })
+}
+
+#[inline]
+fn parse_namepath(state: Input) -> Output {
+    state.rule(BootstrapRule::Namepath, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                s.sequence(|s| {
+                                    Ok(s)
+                                        .and_then(|s| builtin_text(s, "::", false))
+                                        .and_then(|s| builtin_ignore(s))
+                                        .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                                })
+                            })
+                        })
+                    })
+                })
+        })
+    })
+}
+
+#[inline]
+fn parse_identifier(state: Input) -> Output {
+    state.rule(BootstrapRule::Identifier, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^([_\\p{XID_start}]\\p{XID_continue}*)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_boolean(state: Input) -> Output {
+    state.rule(BootstrapRule::Boolean, |s| {
+        Err(s)
+            .or_else(|s| builtin_text(s, "true", false).and_then(|s| s.tag_node("true")))
+            .or_else(|s| builtin_text(s, "false", false).and_then(|s| s.tag_node("false")))
+    })
+}
+
+#[inline]
+fn parse_modifier_call(state: Input) -> Output {
+    state.rule(BootstrapRule::ModifierCall, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| {
+                    s.lookahead(false, |s| {
+                        Err(s)
+                            .or_else(|s| parse_kw_class(s))
+                            .or_else(|s| parse_kw_union(s))
+                            .or_else(|s| parse_kw_group(s))
+                            .or_else(|s| parse_kw_macro(s))
+                            .or_else(|s| parse_kw_climb(s))
+                    })
+                })
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_grammar(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_GRAMMAR, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(grammar)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_import(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_IMPORT, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(using|import|use)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_class(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_CLASS, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(class|struct)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_union(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_UNION, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(union|enum)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_group(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_GROUP, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(group|token)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_climb(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_CLIMB, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(climb)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_macro(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_MACRO, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(macro|def|function|func|fun|fn)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_white_space(state: Input) -> Output {
+    state.rule(BootstrapRule::WhiteSpace, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(\\p{White_Space}+)").unwrap())
+        })
+    })
+}
+
 /// All rules ignored in ast mode, inline is not recommended
 fn builtin_ignore(state: Input) -> Output {
-    state.repeat(0..u32::MAX, |s| {})
+    state.repeat(0..u32::MAX, |s| parse_white_space(s))
 }
 
 fn builtin_any(state: Input) -> Output {

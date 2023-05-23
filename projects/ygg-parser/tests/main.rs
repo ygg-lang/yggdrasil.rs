@@ -1,5 +1,7 @@
 use std::{fs::File, io::Write, str::FromStr};
-use yggdrasil_parser::bootstrap::{BootstrapParser, BootstrapRule, ClassStatementNode, ExpressionNode, RootNode};
+use yggdrasil_parser::bootstrap::{
+    BootstrapParser, BootstrapRule, ClassStatementNode, ExpressionNode, RootNode, UnionStatementNode,
+};
 use yggdrasil_rt::YggdrasilParser;
 
 #[test]
@@ -19,12 +21,14 @@ fn test_bootstrap() {
 
 #[test]
 fn test_string() {
-    let text = r##"class GrammarStatement {
-     ^KW_GRAMMAR Identifier // GrammarBlock
+    let text = r##"text atomic union StringItem {
+    | /\\u[0-9a-zA-Z]{4}/ #Unicode
+    | /\\./               #Escaped
+    | /[^"\]+/            #Other
 }"##;
-    let cst = BootstrapParser::parse_cst(text, BootstrapRule::ClassStatement).unwrap();
+    let cst = BootstrapParser::parse_cst(text, BootstrapRule::UnionStatement).unwrap();
     println!("Short Form:\n{}", cst);
-    let ast = ClassStatementNode::from_str(text).unwrap();
+    let ast = UnionStatementNode::from_str(text).unwrap();
     println!("{ast:#?}")
 }
 

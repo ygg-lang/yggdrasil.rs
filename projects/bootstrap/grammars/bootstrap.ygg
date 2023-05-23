@@ -113,10 +113,10 @@ atomic union String {
 text atomic class StringRaw {
     [^']*
 }
-text atomic class StringItem {
-    | /\\u[0-9a-zA-Z]{4}/ #P
+text atomic union StringItem {
+    | /\\u[0-9a-zA-Z]{4}/ #Unicode
     | /\\./               #Escaped
-    | [^"\]+              #Other
+    | /[^"\]+/            #Other
 }
 // === regex === -------------------------------------------------------------------------------------------------------
 text atomic class RegexEmbed {
