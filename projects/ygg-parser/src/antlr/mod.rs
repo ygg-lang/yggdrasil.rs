@@ -3,8 +3,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![doc = include_str!("readme.md")]
 
-mod parse_cst;
 mod parse_ast;
+mod parse_cst;
 
 use core::str::FromStr;
 use std::{borrow::Cow, ops::Range, sync::OnceLock};
@@ -62,10 +62,12 @@ pub enum BootstrapRule {
     String,
     StringRaw,
     StringNormal,
+    StringItem,
     EscapedUnicode,
     EscapedCharacter,
     TextAny,
     RegexEmbed,
+    RegexInner,
     RegexRange,
     RegexNegative,
     NamepathFree,
@@ -127,10 +129,12 @@ impl YggdrasilRule for BootstrapRule {
             Self::String => "",
             Self::StringRaw => "",
             Self::StringNormal => "",
+            Self::StringItem => "",
             Self::EscapedUnicode => "",
             Self::EscapedCharacter => "",
             Self::TextAny => "",
             Self::RegexEmbed => "",
+            Self::RegexInner => "",
             Self::RegexRange => "",
             Self::RegexNegative => "",
             Self::NamepathFree => "",
@@ -355,7 +359,7 @@ pub struct GroupExpressionNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StringNode {
-    Escaped(StringNormalNode),
+    Normal(StringNormalNode),
     Raw(StringRawNode),
 }
 #[derive(Clone, Debug, Hash)]
@@ -366,7 +370,14 @@ pub struct StringRawNode {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum StringNormalNode {
+pub struct StringNormalNode {
+    pub string_item: Vec<StringItemNode>,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub enum StringItemNode {
     EscapedCharacter(EscapedCharacterNode),
     EscapedUnicode(EscapedUnicodeNode),
     TextAny(TextAnyNode),
@@ -392,6 +403,13 @@ pub struct TextAnyNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RegexEmbedNode {
+    pub regex_inner: RegexInnerNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct RegexInnerNode {
     pub text: String,
     pub span: Range<u32>,
 }

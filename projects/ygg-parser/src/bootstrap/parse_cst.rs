@@ -646,10 +646,9 @@ fn parse_regex_embed(state: Input) -> Output {
             Ok(s)
                 .and_then(|s| builtin_text(s, "/", false))
                 .and_then(|s| {
-                    s.repeat(0..4294967295, |s| {
-                        s.sequence(|s| {
-                            Ok(s).and_then(|s| s.lookahead(false, |s| builtin_text(s, "/", false))).and_then(|s| builtin_any(s))
-                        })
+                    s.match_regex({
+                        static REGEX: OnceLock<Regex> = OnceLock::new();
+                        REGEX.get_or_init(|| Regex::new(r#"^(([^\\\/]|\\.)+)"#).unwrap())
                     })
                 })
                 .and_then(|s| builtin_text(s, "/", false))

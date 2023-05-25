@@ -1,4 +1,5 @@
 use super::*;
+use regex_automata::dfa::dense::BuildError;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -33,23 +34,23 @@ impl YggdrasilRegex {
     {
         Self { raw: text.to_string(), span }
     }
-    // pub fn build(&mut self) -> Result<(), BuildError> {
-    //     let regex = Regex::new(&self.to_string())?;
-    //     let (fwd_bytes, fwd_pad) = regex.forward().to_bytes_little_endian();
-    //     let (rev_bytes, rev_pad) = regex.reverse().to_bytes_little_endian();
-    //     self.forward_le = fwd_bytes[fwd_pad..].to_vec();
-    //     self.reverse_le = rev_bytes[rev_pad..].to_vec();
-    //     let (fwd_bytes, fwd_pad) = regex.forward().to_bytes_big_endian();
-    //     let (rev_bytes, rev_pad) = regex.reverse().to_bytes_big_endian();
-    //     self.forward_be = fwd_bytes[fwd_pad..].to_vec();
-    //     self.reverse_be = rev_bytes[rev_pad..].to_vec();
-    //     Ok(())
-    // }
-    // pub fn built(&self) -> Result<Self, BuildError> {
-    //     let mut out = self.clone();
-    //     out.build()?;
-    //     Ok(out)
-    // }
+    pub fn build(&mut self) -> Result<(), BuildError> {
+        // let regex = Regex::new(&self.to_string())?;
+        // let (fwd_bytes, fwd_pad) = regex.forward().to_bytes_little_endian();
+        // let (rev_bytes, rev_pad) = regex.reverse().to_bytes_little_endian();
+        // self.forward_le = fwd_bytes[fwd_pad..].to_vec();
+        // self.reverse_le = rev_bytes[rev_pad..].to_vec();
+        // let (fwd_bytes, fwd_pad) = regex.forward().to_bytes_big_endian();
+        // let (rev_bytes, rev_pad) = regex.reverse().to_bytes_big_endian();
+        // self.forward_be = fwd_bytes[fwd_pad..].to_vec();
+        // self.reverse_be = rev_bytes[rev_pad..].to_vec();
+        Ok(())
+    }
+    pub fn built(&self) -> Result<Self, BuildError> {
+        let mut out = self.clone();
+        out.build()?;
+        Ok(out)
+    }
 }
 
 // impl Display for YggdrasilRegex {

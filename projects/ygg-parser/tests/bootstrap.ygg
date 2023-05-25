@@ -69,7 +69,7 @@ class FunctionCall {
 }
 @style(function)
 class FunctionName {
-    [@] Identifier
+    '@' Identifier
 }
 class CallBody {
     '(' (Expression (',' Expression)* ','?)? ')'
@@ -107,18 +107,32 @@ class GroupExpression {
 }
 // === String === -------------------------------------------------------------------------------------------------------
 atomic union String {
-    | "'" RawString "'" #Raw
-    | '"' StringEscaped '"' #Escaped
+    | "'" StringRaw "'"    #Raw
+    | '"' StringNormal '"' #Normal
 }
-text atomic class StringRaw {
-    (!"'" ANY)*
+text class StringRaw {
+    /[^']*/
 }
-text atomic class StringEscaped {
-    (!'"' ANY)*
+class StringNormal {
+    StringItem*
+}
+union StringItem {
+    | EscapedUnicode
+    | EscapedCharacter
+    | TextAny
+}
+@style(escape)
+text group {
+    EscapedUnicode: /\\\\u[0-9a-zA-Z]{4}/
+    EscapedCharacter: /\\./
+    TextAny: /[^\"\\]+/
 }
 // === regex === -------------------------------------------------------------------------------------------------------
-text atomic class RegexEmbed {
-    '/' (!'/' ANY)* '/'
+atomic class RegexEmbed {
+    '/' RegexInner '/'
+}
+text class RegexInner {
+    /([^\\\\\\/]|\\\\.)+/
 }
 text atomic class RegexRange {
     '[' RegexNegative? (!']' ANY)* ']'
@@ -155,11 +169,11 @@ token {
     KW_MACRO: /macro|def|function|func|fun|fn/
 }
 // === ignores === -----------------------------------------------------------------------------------------------------
-atomic ignore class WhiteSpace {
+ignore class WhiteSpace {
     /\p{White_Space}+/
 }
 @style(comment)
-atomic ignore union Comment {
-    | '//' /[^\n\r]*/
-    | '#'  /[^\n\r]*/
+ignore class Comment {
+    | /\/\/[^\n\r]*/
+//  | '/*'  '*/'
 }

@@ -34,10 +34,12 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::String => parse_string(state),
         BootstrapRule::StringRaw => parse_string_raw(state),
         BootstrapRule::StringNormal => parse_string_normal(state),
+        BootstrapRule::StringItem => parse_string_item(state),
         BootstrapRule::EscapedUnicode => parse_escaped_unicode(state),
         BootstrapRule::EscapedCharacter => parse_escaped_character(state),
         BootstrapRule::TextAny => parse_text_any(state),
         BootstrapRule::RegexEmbed => parse_regex_embed(state),
+        BootstrapRule::RegexInner => parse_regex_inner(state),
         BootstrapRule::RegexRange => parse_regex_range(state),
         BootstrapRule::RegexNegative => parse_regex_negative(state),
         BootstrapRule::NamepathFree => parse_namepath_free(state),
@@ -595,12 +597,10 @@ fn parse_string(state: Input) -> Output {
                 s.sequence(|s| {
                     Ok(s)
                         .and_then(|s| builtin_text(s, "\"", false))
-                        .and_then(|s| {
-                            s.repeat(0..4294967295, |s| parse_string_normal(s).and_then(|s| s.tag_node("string_normal")))
-                        })
+                        .and_then(|s| parse_string_normal(s).and_then(|s| s.tag_node("string_normal")))
                         .and_then(|s| builtin_text(s, "\"", false))
                 })
-                .and_then(|s| s.tag_node("escaped"))
+                .and_then(|s| s.tag_node("normal"))
             })
     })
 }
@@ -616,6 +616,17 @@ fn parse_string_raw(state: Input) -> Output {
 #[inline]
 fn parse_string_normal(state: Input) -> Output {
     state.rule(BootstrapRule::StringNormal, |s| {
+        s.repeat(0..4294967295, |s| {
+            s.sequence(|s| {
+                Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| parse_string_item(s).and_then(|s| s.tag_node("string_item")))
+            })
+        })
+    })
+}
+
+#[inline]
+fn parse_string_item(state: Input) -> Output {
+    state.rule(BootstrapRule::StringItem, |s| {
         Err(s)
             .or_else(|s| parse_escaped_unicode(s).and_then(|s| s.tag_node("escaped_unicode")))
             .or_else(|s| parse_escaped_character(s).and_then(|s| s.tag_node("escaped_character")))
@@ -627,7 +638,7 @@ fn parse_escaped_unicode(state: Input) -> Output {
     state.rule(BootstrapRule::EscapedUnicode, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(\\\\u[0-9a-zA-Z]{4})").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(\\\\\\\\u[0-9a-zA-Z]{4})").unwrap())
         })
     })
 }
@@ -645,7 +656,7 @@ fn parse_text_any(state: Input) -> Output {
     state.rule(BootstrapRule::TextAny, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^([^\"\\]+)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^([^\\\"\\\\]+)").unwrap())
         })
     })
 }
@@ -655,14 +666,33 @@ fn parse_regex_embed(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| builtin_text(s, "/", false))
-                .and_then(|s| {
-                    s.repeat(0..4294967295, |s| {
-                        s.sequence(|s| {
-                            Ok(s).and_then(|s| s.lookahead(false, |s| builtin_text(s, "/", false))).and_then(|s| builtin_any(s))
-                        })
-                    })
-                })
+                .and_then(|s| parse_regex_inner(s).and_then(|s| s.tag_node("regex_inner")))
                 .and_then(|s| builtin_text(s, "/", false))
+        })
+    })
+}
+
+#[inline]
+fn parse_regex_inner(state: Input) -> Output {
+    state.rule(BootstrapRule::RegexInner, |s| {
+        s.repeat(1..4294967295, |s| {
+            s.sequence(|s| {
+                Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                    Err(s)
+                        .or_else(|s| {
+                            builtin_regex(s, {
+                                static REGEX: OnceLock<Regex> = OnceLock::new();
+                                REGEX.get_or_init(|| Regex::new("^([^\\/\\\\])").unwrap())
+                            })
+                        })
+                        .or_else(|s| {
+                            builtin_regex(s, {
+                                static REGEX: OnceLock<Regex> = OnceLock::new();
+                                REGEX.get_or_init(|| Regex::new("^(\\\\.)").unwrap())
+                            })
+                        })
+                })
+            })
         })
     })
 }
@@ -853,7 +883,7 @@ fn parse_comment(state: Input) -> Output {
     state.rule(BootstrapRule::Comment, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(\\\\[^\\n\\r]*)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(\\/\\/[^\\n\\r]*)").unwrap())
         })
     })
 }
