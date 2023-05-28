@@ -3,13 +3,12 @@
 #![allow(clippy::unnecessary_cast)]
 #![doc = include_str!("readme.md")]
 
-use core::str::FromStr;
-use std::{borrow::Cow, ops::Range, sync::OnceLock};
-
-use yggdrasil_rt::*;
-
 mod parse_ast;
 mod parse_cst;
+
+use core::str::FromStr;
+use std::{borrow::Cow, ops::Range, sync::OnceLock};
+use yggdrasil_rt::*;
 
 type Input<'i> = Box<State<'i, BootstrapRule>>;
 type Output<'i> = Result<Box<State<'i, BootstrapRule>>, Box<State<'i, BootstrapRule>>>;
@@ -62,8 +61,13 @@ pub enum BootstrapRule {
     GroupExpression,
     String,
     StringRaw,
+    StringNormal,
     StringItem,
+    EscapedUnicode,
+    EscapedCharacter,
+    TextAny,
     RegexEmbed,
+    RegexInner,
     RegexRange,
     RegexNegative,
     NamepathFree,
@@ -79,6 +83,7 @@ pub enum BootstrapRule {
     KW_CLIMB,
     KW_MACRO,
     WhiteSpace,
+    Comment,
     /// Label for text literal
     IgnoreText,
     /// Label for regex literal
@@ -87,7 +92,7 @@ pub enum BootstrapRule {
 
 impl YggdrasilRule for BootstrapRule {
     fn is_ignore(&self) -> bool {
-        matches!(self, Self::IgnoreText | Self::IgnoreRegex | Self::WhiteSpace)
+        matches!(self, Self::IgnoreText | Self::IgnoreRegex | Self::WhiteSpace | Self::Comment)
     }
 
     fn get_style(&self) -> &'static str {
@@ -123,8 +128,13 @@ impl YggdrasilRule for BootstrapRule {
             Self::GroupExpression => "",
             Self::String => "",
             Self::StringRaw => "",
+            Self::StringNormal => "",
             Self::StringItem => "",
+            Self::EscapedUnicode => "",
+            Self::EscapedCharacter => "",
+            Self::TextAny => "",
             Self::RegexEmbed => "",
+            Self::RegexInner => "",
             Self::RegexRange => "",
             Self::RegexNegative => "",
             Self::NamepathFree => "",
@@ -140,6 +150,7 @@ impl YggdrasilRule for BootstrapRule {
             Self::KW_CLIMB => "",
             Self::KW_MACRO => "",
             Self::WhiteSpace => "",
+            Self::Comment => "",
             _ => "",
         }
     }
@@ -348,10 +359,9 @@ pub struct GroupExpressionNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StringNode {
-    Escaped(StringItemNode),
+    Normal(StringNormalNode),
     Raw(StringRawNode),
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StringRawNode {
@@ -361,13 +371,48 @@ pub struct StringRawNode {
 
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct StringItemNode {
+pub struct StringNormalNode {
+    pub string_item: Vec<StringItemNode>,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub enum StringItemNode {
+    EscapedCharacter(EscapedCharacterNode),
+    EscapedUnicode(EscapedUnicodeNode),
+    TextAny(TextAnyNode),
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct EscapedUnicodeNode {
+    pub text: String,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct EscapedCharacterNode {
+    pub text: String,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct TextAnyNode {
     pub text: String,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RegexEmbedNode {
+    pub regex_inner: RegexInnerNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct RegexInnerNode {
     pub text: String,
     pub span: Range<u32>,
 }
@@ -451,5 +496,11 @@ pub struct KwMacroNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct WhiteSpaceNode {
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct CommentNode {
     pub span: Range<u32>,
 }

@@ -232,7 +232,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "{",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -246,7 +246,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "}",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -407,7 +407,7 @@ GrammarInfo {
                                                     tag: None,
                                                     remark: false,
                                                     body: YggdrasilText {
-                                                        text: "->",
+                                                        text: "",
                                                         insensitive: false,
                                                         range: 0..0,
                                                     },
@@ -510,7 +510,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "{",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -528,7 +528,7 @@ GrammarInfo {
                                         tag: None,
                                         remark: false,
                                         body: YggdrasilText {
-                                            text: "|",
+                                            text: "",
                                             insensitive: false,
                                             range: 0..0,
                                         },
@@ -564,7 +564,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "}",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -597,7 +597,7 @@ GrammarInfo {
                     tag: None,
                     remark: false,
                     body: YggdrasilText {
-                        text: "^",
+                        text: "",
                         insensitive: false,
                         range: 0..0,
                     },
@@ -810,7 +810,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "{",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -863,7 +863,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "}",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -901,7 +901,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "|",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -979,7 +979,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "#",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -1042,7 +1042,7 @@ GrammarInfo {
                     tag: None,
                     remark: false,
                     body: YggdrasilText {
-                        text: ">",
+                        text: "",
                         insensitive: false,
                         range: 0..0,
                     },
@@ -1233,7 +1233,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "{",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -1286,7 +1286,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "}",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -1338,7 +1338,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: ":",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -1545,7 +1545,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "@",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -1597,7 +1597,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "(",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -1653,7 +1653,7 @@ GrammarInfo {
                                                                                     tag: None,
                                                                                     remark: false,
                                                                                     body: YggdrasilText {
-                                                                                        text: ",",
+                                                                                        text: "",
                                                                                         insensitive: false,
                                                                                         range: 0..0,
                                                                                     },
@@ -1699,7 +1699,7 @@ GrammarInfo {
                                                             tag: None,
                                                             remark: false,
                                                             body: YggdrasilText {
-                                                                text: ",",
+                                                                text: "",
                                                                 insensitive: false,
                                                                 range: 0..0,
                                                             },
@@ -1732,7 +1732,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: ")",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -1803,7 +1803,7 @@ GrammarInfo {
                                                                 tag: None,
                                                                 remark: false,
                                                                 body: YggdrasilText {
-                                                                    text: "|",
+                                                                    text: "",
                                                                     insensitive: false,
                                                                     range: 0..0,
                                                                 },
@@ -1902,7 +1902,7 @@ GrammarInfo {
                                                                 tag: None,
                                                                 remark: false,
                                                                 body: YggdrasilText {
-                                                                    text: "~",
+                                                                    text: "",
                                                                     insensitive: false,
                                                                     range: 0..0,
                                                                 },
@@ -2068,7 +2068,7 @@ GrammarInfo {
                                                     tag: None,
                                                     remark: false,
                                                     body: YggdrasilText {
-                                                        text: ":",
+                                                        text: "",
                                                         insensitive: false,
                                                         range: 0..0,
                                                     },
@@ -2247,7 +2247,7 @@ GrammarInfo {
                             tag: Identifier("Negative", 2292..2300),
                             remark: false,
                             body: YggdrasilText {
-                                text: "!",
+                                text: "",
                                 insensitive: false,
                                 range: 0..0,
                             },
@@ -2261,7 +2261,7 @@ GrammarInfo {
                             tag: Identifier("Positive", 2312..2320),
                             remark: false,
                             body: YggdrasilText {
-                                text: "&",
+                                text: "",
                                 insensitive: false,
                                 range: 0..0,
                             },
@@ -2275,7 +2275,7 @@ GrammarInfo {
                             tag: Identifier("Remark", 2332..2338),
                             remark: false,
                             body: YggdrasilText {
-                                text: "^",
+                                text: "",
                                 insensitive: false,
                                 range: 0..0,
                             },
@@ -2312,7 +2312,7 @@ GrammarInfo {
                             tag: Identifier("Optional", 2367..2375),
                             remark: false,
                             body: YggdrasilText {
-                                text: "?",
+                                text: "",
                                 insensitive: false,
                                 range: 0..0,
                             },
@@ -2326,7 +2326,7 @@ GrammarInfo {
                             tag: Identifier("Many", 2387..2391),
                             remark: false,
                             body: YggdrasilText {
-                                text: "*",
+                                text: "",
                                 insensitive: false,
                                 range: 0..0,
                             },
@@ -2340,7 +2340,7 @@ GrammarInfo {
                             tag: Identifier("Many1", 2403..2408),
                             remark: false,
                             body: YggdrasilText {
-                                text: "+",
+                                text: "",
                                 insensitive: false,
                                 range: 0..0,
                             },
@@ -2498,7 +2498,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "(",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -2516,7 +2516,7 @@ GrammarInfo {
                                         tag: None,
                                         remark: false,
                                         body: YggdrasilText {
-                                            text: "|",
+                                            text: "",
                                             insensitive: false,
                                             range: 0..0,
                                         },
@@ -2552,7 +2552,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: ")",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -2595,7 +2595,7 @@ GrammarInfo {
                                         tag: None,
                                         remark: false,
                                         body: YggdrasilText {
-                                            text: "'",
+                                            text: "",
                                             insensitive: false,
                                             range: 0..0,
                                         },
@@ -2613,7 +2613,7 @@ GrammarInfo {
                                         tag: None,
                                         remark: false,
                                         body: YggdrasilText {
-                                            text: "'",
+                                            text: "",
                                             insensitive: false,
                                             range: 0..0,
                                         },
@@ -2635,7 +2635,7 @@ GrammarInfo {
                                         tag: None,
                                         remark: false,
                                         body: YggdrasilText {
-                                            text: "\"",
+                                            text: "",
                                             insensitive: false,
                                             range: 0..0,
                                         },
@@ -2653,7 +2653,7 @@ GrammarInfo {
                                         tag: None,
                                         remark: false,
                                         body: YggdrasilText {
-                                            text: "\"",
+                                            text: "",
                                             insensitive: false,
                                             range: 0..0,
                                         },
@@ -2929,7 +2929,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "/",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -2947,7 +2947,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "/",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -3055,7 +3055,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "[",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -3098,7 +3098,7 @@ GrammarInfo {
                                                             tag: None,
                                                             remark: false,
                                                             body: YggdrasilText {
-                                                                text: "]",
+                                                                text: "",
                                                                 insensitive: false,
                                                                 range: 0..0,
                                                             },
@@ -3128,7 +3128,7 @@ GrammarInfo {
                                 tag: None,
                                 remark: false,
                                 body: YggdrasilText {
-                                    text: "]",
+                                    text: "",
                                     insensitive: false,
                                     range: 0..0,
                                 },
@@ -3161,7 +3161,7 @@ GrammarInfo {
                     tag: None,
                     remark: false,
                     body: YggdrasilText {
-                        text: "^",
+                        text: "",
                         insensitive: false,
                         range: 0..0,
                     },
@@ -3234,7 +3234,7 @@ GrammarInfo {
                                                                             tag: None,
                                                                             remark: false,
                                                                             body: YggdrasilText {
-                                                                                text: ".",
+                                                                                text: "",
                                                                                 insensitive: false,
                                                                                 range: 0..0,
                                                                             },
@@ -3243,7 +3243,7 @@ GrammarInfo {
                                                                             tag: None,
                                                                             remark: false,
                                                                             body: YggdrasilText {
-                                                                                text: "::",
+                                                                                text: "",
                                                                                 insensitive: false,
                                                                                 range: 0..0,
                                                                             },
@@ -3345,7 +3345,7 @@ GrammarInfo {
                                                                 tag: None,
                                                                 remark: false,
                                                                 body: YggdrasilText {
-                                                                    text: "::",
+                                                                    text: "",
                                                                     insensitive: false,
                                                                     range: 0..0,
                                                                 },
@@ -3440,7 +3440,7 @@ GrammarInfo {
                             tag: Identifier("True", 3887..3891),
                             remark: false,
                             body: YggdrasilText {
-                                text: "true",
+                                text: "",
                                 insensitive: false,
                                 range: 0..0,
                             },
@@ -3454,7 +3454,7 @@ GrammarInfo {
                             tag: Identifier("False", 3907..3912),
                             remark: false,
                             body: YggdrasilText {
-                                text: "false",
+                                text: "",
                                 insensitive: false,
                                 range: 0..0,
                             },

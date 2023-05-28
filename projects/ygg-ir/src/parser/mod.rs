@@ -212,18 +212,28 @@ impl YggdrasilExpression {
                 todo!()
             }
             AtomicNode::Identifier(v) => YggdrasilIdentifier::build(v).into(),
-            AtomicNode::RegexEmbed(v) => YggdrasilRegex::new(v.text.trim_matches('/'), v.get_range().unwrap_or_default()).into(),
+            AtomicNode::RegexEmbed(v) => YggdrasilRegex::new(&v.regex_inner.text, v.get_range().unwrap_or_default()).into(),
             AtomicNode::RegexRange(v) => YggdrasilRegex::new(&v.text, v.get_range().unwrap_or_default()).into(),
             AtomicNode::String(v) => match v {
-                StringNode::Escaped(s) => {
-                    YggdrasilText::new(s.text.trim_matches('\"'), Default::default()).into()
-                    // let mut buffer = String::new();
-                    // match s {
-                    //     StringItemNode::Escaped(s) => buffer.push_str(s),
-                    //     StringItemNode::Other(s) => buffer.push_str(s),
-                    //     StringItemNode::Unicode(s) => buffer.push_str(s),
-                    // }
-                    // YggdrasilText::new(buffer, Default::default()).into()
+                StringNode::Normal(s) => {
+                    let mut buffer = String::new();
+                    for s in &s.string_item {
+                        match s {
+                            StringItemNode::EscapedCharacter(item) => match item.text.chars().last() {
+                                Some(c) => match c {
+                                    'r' => buffer.push('\r'),
+                                    'n' => buffer.push('\n'),
+                                    _ => buffer.push(c),
+                                },
+                                None => unreachable!(),
+                            },
+                            StringItemNode::EscapedUnicode(_) => {
+                                unimplemented!()
+                            }
+                            StringItemNode::TextAny(s) => buffer.push_str(&s.text),
+                        }
+                    }
+                    YggdrasilText::new(buffer, Default::default()).into()
                 }
                 StringNode::Raw(s) => {
                     YggdrasilText::new(s.text.trim_matches('\''), Default::default()).into()

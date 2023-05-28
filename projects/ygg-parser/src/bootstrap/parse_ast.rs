@@ -764,14 +764,14 @@ impl YggdrasilNode for StringNode {
 
     fn get_range(&self) -> Option<Range<usize>> {
         match self {
-            Self::Escaped(s) => s.get_range(),
+            Self::Normal(s) => s.get_range(),
             Self::Raw(s) => s.get_range(),
         }
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        if let Ok(s) = pair.take_tagged_one::<StringItemNode>(Cow::Borrowed("escaped")) {
-            return Ok(Self::Escaped(s));
+        if let Ok(s) = pair.take_tagged_one::<StringNormalNode>(Cow::Borrowed("normal")) {
+            return Ok(Self::Normal(s));
         }
         if let Ok(s) = pair.take_tagged_one::<StringRawNode>(Cow::Borrowed("raw")) {
             return Ok(Self::Raw(s));
@@ -787,7 +787,6 @@ impl FromStr for StringNode {
         Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::String)?)
     }
 }
-
 #[automatically_derived]
 impl YggdrasilNode for StringRawNode {
     type Rule = BootstrapRule;
@@ -800,7 +799,6 @@ impl YggdrasilNode for StringRawNode {
         Ok(Self { text: pair.get_string(), span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
     }
 }
-
 #[automatically_derived]
 impl FromStr for StringRawNode {
     type Err = YggdrasilError<BootstrapRule>;
@@ -811,11 +809,71 @@ impl FromStr for StringRawNode {
 }
 
 #[automatically_derived]
+impl YggdrasilNode for StringNormalNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self {
+            string_item: pair
+                .take_tagged_items::<StringItemNode>(Cow::Borrowed("string_item"))
+                .collect::<Result<Vec<_>, _>>()?,
+            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+        })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for StringNormalNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::StringNormal)?)
+    }
+}
+#[automatically_derived]
 impl YggdrasilNode for StringItemNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Option<Range<usize>> {
-        None
+        match self {
+            Self::EscapedCharacter(s) => s.get_range(),
+            Self::EscapedUnicode(s) => s.get_range(),
+            Self::TextAny(s) => s.get_range(),
+        }
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        if let Ok(s) = pair.take_tagged_one::<EscapedCharacterNode>(Cow::Borrowed("escaped_character")) {
+            return Ok(Self::EscapedCharacter(s));
+        }
+        if let Ok(s) = pair.take_tagged_one::<EscapedUnicodeNode>(Cow::Borrowed("escaped_unicode")) {
+            return Ok(Self::EscapedUnicode(s));
+        }
+        if let Ok(s) = pair.take_tagged_one::<TextAnyNode>(Cow::Borrowed("text_any")) {
+            return Ok(Self::TextAny(s));
+        }
+        Err(YggdrasilError::invalid_node(BootstrapRule::StringItem, _span))
+    }
+}
+#[automatically_derived]
+impl FromStr for StringItemNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::StringItem)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for EscapedUnicodeNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
@@ -824,11 +882,55 @@ impl YggdrasilNode for StringItemNode {
 }
 
 #[automatically_derived]
-impl FromStr for StringItemNode {
+impl FromStr for EscapedUnicodeNode {
     type Err = YggdrasilError<BootstrapRule>;
 
     fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
-        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::StringItem)?)
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::EscapedUnicode)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for EscapedCharacterNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { text: pair.get_string(), span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for EscapedCharacterNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::EscapedCharacter)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for TextAnyNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { text: pair.get_string(), span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for TextAnyNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::TextAny)?)
     }
 }
 #[automatically_derived]
@@ -840,7 +942,10 @@ impl YggdrasilNode for RegexEmbedNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { text: pair.get_string(), span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+        Ok(Self {
+            regex_inner: pair.take_tagged_one::<RegexInnerNode>(Cow::Borrowed("regex_inner"))?,
+            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+        })
     }
 }
 #[automatically_derived]
@@ -849,6 +954,28 @@ impl FromStr for RegexEmbedNode {
 
     fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
         Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::RegexEmbed)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for RegexInnerNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { text: pair.get_string(), span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for RegexInnerNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::RegexInner)?)
     }
 }
 #[automatically_derived]
@@ -1171,5 +1298,27 @@ impl FromStr for WhiteSpaceNode {
 
     fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
         Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::WhiteSpace)?)
+    }
+}
+
+#[automatically_derived]
+impl YggdrasilNode for CommentNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+    }
+}
+
+#[automatically_derived]
+impl FromStr for CommentNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::Comment)?)
     }
 }
