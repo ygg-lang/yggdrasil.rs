@@ -12,7 +12,7 @@ edition = "2021"
 [dependencies]
 serde = "1.0.188"
 pex-trie = "0.0.3"
-proc-macro2 = "1.0.68"
+#proc-macro2 = "1.0.68"
 character-set = "0.4.0"
 unicode-xid = "0.2.4"
 convert_case = "0.6.0"
@@ -27,13 +27,13 @@ version = "0.1.*"
 path = "../ygg-ir"
 
 [dependencies.yggdrasil-parser]
-version = "0.0.*"
+version = "0.1.*"
 path = "../ygg-parser"
 
 [dependencies.yggdrasil-error]
 version = "0.1.*"
 path = "../ygg-error"
-features = ["askama", "antlr-rust", "yggdrasil-rt"]
+features = ["askama", "yggdrasil-rt"]
 
 [dev-dependencies]
 serde_yaml = "0.9.25"
