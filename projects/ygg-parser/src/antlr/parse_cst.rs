@@ -46,6 +46,8 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::Namepath => parse_namepath(state),
         BootstrapRule::Identifier => parse_identifier(state),
         BootstrapRule::Boolean => parse_boolean(state),
+        BootstrapRule::Integer => parse_integer(state),
+        BootstrapRule::Range => parse_range(state),
         BootstrapRule::ModifierCall => parse_modifier_call(state),
         BootstrapRule::KW_GRAMMAR => parse_kw_grammar(state),
         BootstrapRule::KW_IMPORT => parse_kw_import(state),
@@ -550,6 +552,7 @@ fn parse_suffix(state: Input) -> Output {
             .or_else(|s| builtin_text(s, "", false).and_then(|s| s.tag_node("optional")))
             .or_else(|s| builtin_text(s, "", false).and_then(|s| s.tag_node("many")))
             .or_else(|s| builtin_text(s, "", false).and_then(|s| s.tag_node("many_1")))
+            .or_else(|s| parse_range(s).and_then(|s| s.tag_node("range")))
     })
 }
 #[inline]
@@ -559,6 +562,7 @@ fn parse_atomic(state: Input) -> Output {
             .or_else(|s| parse_group_expression(s).and_then(|s| s.tag_node("group_expression")))
             .or_else(|s| parse_function_call(s).and_then(|s| s.tag_node("function_call")))
             .or_else(|s| parse_boolean(s).and_then(|s| s.tag_node("boolean")))
+            .or_else(|s| parse_integer(s).and_then(|s| s.tag_node("integer")))
             .or_else(|s| parse_string(s).and_then(|s| s.tag_node("string")))
             .or_else(|s| parse_regex_embed(s).and_then(|s| s.tag_node("regex_embed")))
             .or_else(|s| parse_regex_range(s).and_then(|s| s.tag_node("regex_range")))
@@ -783,6 +787,39 @@ fn parse_boolean(state: Input) -> Output {
         Err(s)
             .or_else(|s| builtin_text(s, "", false).and_then(|s| s.tag_node("true")))
             .or_else(|s| builtin_text(s, "", false).and_then(|s| s.tag_node("false")))
+    })
+}
+#[inline]
+fn parse_integer(state: Input) -> Output {
+    state.rule(BootstrapRule::Integer, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(0|[1-9][0-9]*)").unwrap())
+        })
+    })
+}
+#[inline]
+fn parse_range(state: Input) -> Output {
+    state.rule(BootstrapRule::Range, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| {
+                    s.sequence(|s| {
+                        Ok(s)
+                            .and_then(|s| builtin_text(s, "", false))
+                            .and_then(|s| builtin_ignore(s))
+                            .and_then(|s| parse_integer(s).and_then(|s| s.tag_node("min")))
+                            .and_then(|s| builtin_ignore(s))
+                            .and_then(|s| builtin_text(s, "", false))
+                    })
+                })
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.optional(|s| parse_integer(s).and_then(|s| s.tag_node("integer"))).and_then(|s| s.tag_node("max"))
+                })
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, "", false))
+        })
     })
 }
 #[inline]

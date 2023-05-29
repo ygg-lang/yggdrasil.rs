@@ -2,15 +2,7 @@
 name = "bootstrap"
 publish = false
 version = "0.0.0"
-authors = ["Aster <192607617@qq.com>"]
-description = "Rust script build example"
-homepage = "https://github.com/ygg-lang/yggdrasil-rs"
-repository = "https://github.com/ygg-lang/yggdrasil-template/tree/master/projects/build_by_dep"
-documentation = "https://ygg-lang.github.io/yggdrasil-template/build_by_script/struct.Json5Language.html"
-readme = "readme.md"
-license = "MPL-2.0"
 edition = "2021"
-exclude = ["package.json", "tests/**"]
 
 [dependencies]
 anyhow = "1.0.75"

@@ -648,6 +648,7 @@ impl YggdrasilNode for SuffixNode {
             Self::Many => None,
             Self::Many1 => None,
             Self::Optional => None,
+            Self::Range(s) => s.get_range(),
         }
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
@@ -660,6 +661,9 @@ impl YggdrasilNode for SuffixNode {
         }
         if let Some(_) = pair.find_first_tag("optional") {
             return Ok(Self::Optional)
+        }
+        if let Ok(s) = pair.take_tagged_one::<RangeNode>(Cow::Borrowed("range")) {
+            return Ok(Self::Range(s));
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::Suffix, _span))
     }
@@ -682,6 +686,7 @@ impl YggdrasilNode for AtomicNode {
             Self::FunctionCall(s) => s.get_range(),
             Self::GroupExpression(s) => s.get_range(),
             Self::Identifier(s) => s.get_range(),
+            Self::Integer(s) => s.get_range(),
             Self::RegexEmbed(s) => s.get_range(),
             Self::RegexRange(s) => s.get_range(),
             Self::String(s) => s.get_range(),
@@ -700,6 +705,9 @@ impl YggdrasilNode for AtomicNode {
         }
         if let Ok(s) = pair.take_tagged_one::<IdentifierNode>(Cow::Borrowed("identifier")) {
             return Ok(Self::Identifier(s));
+        }
+        if let Ok(s) = pair.take_tagged_one::<IntegerNode>(Cow::Borrowed("integer")) {
+            return Ok(Self::Integer(s));
         }
         if let Ok(s) = pair.take_tagged_one::<RegexEmbedNode>(Cow::Borrowed("regex_embed")) {
             return Ok(Self::RegexEmbed(s));
@@ -1109,6 +1117,53 @@ impl FromStr for BooleanNode {
 
     fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
         Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::Boolean)?)
+    }
+}
+#[automatically_derived]
+impl YggdrasilNode for IntegerNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self {
+            text: pair.get_string(),
+            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+        })
+    }
+}
+#[automatically_derived]
+impl FromStr for IntegerNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::Integer)?)
+    }
+}
+#[automatically_derived]
+impl YggdrasilNode for RangeNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self {
+            integer: pair.take_tagged_option::<IntegerNode>(Cow::Borrowed("integer")),
+            min: pair.take_tagged_one::<IntegerNode>(Cow::Borrowed("min"))?,
+            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+        })
+    }
+}
+#[automatically_derived]
+impl FromStr for RangeNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::Range)?)
     }
 }
 #[automatically_derived]

@@ -74,6 +74,8 @@ pub enum BootstrapRule {
     Namepath,
     Identifier,
     Boolean,
+    Integer,
+    Range,
     ModifierCall,
     KW_GRAMMAR,
     KW_IMPORT,
@@ -141,6 +143,8 @@ impl YggdrasilRule for BootstrapRule {
             Self::Namepath => "",
             Self::Identifier => "",
             Self::Boolean => "",
+            Self::Integer => "",
+            Self::Range => "",
             Self::ModifierCall => "",
             Self::KW_GRAMMAR => "",
             Self::KW_IMPORT => "",
@@ -338,6 +342,7 @@ pub enum SuffixNode {
     Many,
     Many1,
     Optional,
+    Range(RangeNode),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -346,6 +351,7 @@ pub enum AtomicNode {
     FunctionCall(FunctionCallNode),
     GroupExpression(GroupExpressionNode),
     Identifier(IdentifierNode),
+    Integer(IntegerNode),
     RegexEmbed(RegexEmbedNode),
     RegexRange(RegexRangeNode),
     String(StringNode),
@@ -446,6 +452,19 @@ pub struct IdentifierNode {
 pub enum BooleanNode {
     False,
     True,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct IntegerNode {
+    pub text: String,
+    pub span: Range<u32>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct RangeNode {
+    pub integer: Option<IntegerNode>,
+    pub min: IntegerNode,
+    pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

@@ -91,12 +91,14 @@ union Suffix {
     | '?' #Optional
     | '*' #Many
     | '+' #Many1
+    | Range
 }
 // === atoms === -------------------------------------------------------------------------------------------------------
 union Atomic {
     | GroupExpression
     | FunctionCall
     | Boolean
+    | Integer
     | String
     | RegexEmbed
     | RegexRange
@@ -122,6 +124,7 @@ union StringItem {
     | TextAny
 }
 @style(escape)
+@railroad(false)
 text group {
     EscapedUnicode: /\\\\u[0-9a-zA-Z]{4}/
     EscapedCharacter: /\\./
@@ -154,10 +157,18 @@ union Boolean {
     | 'true'  #True
     | 'false' #False
 }
+// === number === ----------------------------------------------------------------------------------------------------
+text class Integer {
+    /0|[1-9][0-9]*/
+}
+class Range {
+    '{' min:Integer ',' max:Integer? '}'
+}
 // === keywords === ----------------------------------------------------------------------------------------------------
 atomic class ModifierCall ^ {
     !(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) ^Identifier
 }
+@railroad(false)
 @style(keyword)
 token {
     KW_GRAMMAR: /grammar/
@@ -169,10 +180,12 @@ token {
     KW_MACRO: /macro|def|function|func|fun|fn/
 }
 // === ignores === -----------------------------------------------------------------------------------------------------
+@railroad(false)
 ignore class WhiteSpace {
     /\p{White_Space}+/
 }
 @style(comment)
+@railroad(false)
 ignore class Comment {
     | /\/\/[^\n\r]*/
 //  | '/*'  '*/'
