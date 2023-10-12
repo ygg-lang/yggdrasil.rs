@@ -8,6 +8,8 @@ mod unions;
 // mod let_binding;
 mod modifiers;
 
+mod tokens;
+
 use std::{mem::take, str::FromStr};
 use yggdrasil_ir::{
     data::{YggdrasilRegex, YggdrasilText},
