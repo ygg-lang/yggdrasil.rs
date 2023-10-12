@@ -58,6 +58,7 @@ impl AddAssign for YggdrasilExpression {
     fn add_assign(&mut self, rhs: Self) {
         match &mut self.body {
             ExpressionBody::Concat(this) if self.tag.is_none() && rhs.tag.is_none() => {
+                this.sequence.push(YggdrasilExpression::ignored());
                 match rhs.body {
                     ExpressionBody::Concat(that) => this.sequence.extend(that.sequence),
                     _ => this.sequence.push(rhs),
@@ -66,7 +67,7 @@ impl AddAssign for YggdrasilExpression {
             }
             _ => {}
         }
-        *self = ConcatExpression { sequence: vec![self.clone(), rhs] }.into()
+        *self = ConcatExpression { sequence: vec![self.clone(), YggdrasilExpression::ignored(), rhs] }.into()
     }
 }
 

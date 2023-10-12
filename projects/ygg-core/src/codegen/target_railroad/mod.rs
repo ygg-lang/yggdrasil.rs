@@ -63,7 +63,7 @@ impl AsRailroad for GrammarRule {
                 s.push(term.as_railroad(config));
             }
             GrammarBody::Union { branches } => {
-                let concat = ConcatExpression { sequence: branches.clone() };
+                let concat = ChoiceExpression { branches: branches.clone() };
                 s.push(concat.as_railroad(config));
             }
             GrammarBody::Climb { .. } => {}
