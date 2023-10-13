@@ -14,11 +14,11 @@ impl CodeOptimizer for RemarkTags {
             let rule_name = rule.name.text.as_str();
             match &mut rule.body {
                 GrammarBody::Empty {} => {}
-                GrammarBody::Class { term } => self.remark(term, true),
+                GrammarBody::Class { term } => self.remark(term, rule.auto_tag),
                 GrammarBody::Union { branches } => {
                     self.remark_union_root(rule_name, branches);
                     for branch in branches.iter_mut() {
-                        self.remark(branch, true)
+                        self.remark(branch, rule.auto_tag)
                     }
                 }
                 GrammarBody::Climb { .. } => {}
@@ -51,9 +51,7 @@ impl RemarkTags {
             ExpressionBody::Unary(v) => self.remark(&mut v.base, mark),
             ExpressionBody::Rule(v) if mark => match &mut expr.tag {
                 Some(_) => {}
-                None => {
-                    expr.tag = Some(v.name.clone());
-                }
+                None => expr.tag = Some(v.name.clone()),
             },
             ExpressionBody::Text(_) => {}
             _ => {}

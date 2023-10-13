@@ -54,5 +54,13 @@ impl YggdrasilNode for {{ rule.node_name() }} {
 {%- endif %}
     }
 }
+#[automatically_derived]
+impl FromStr for {{ rule.node_name() }} {
+    type Err = YggdrasilError<{{ self.grammar.rule_name() }}>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<{{ self.grammar.rule_name() }}>> {
+        Self::from_cst({{ self.grammar.parser_name() }}::parse_cst(input, {{ self.grammar.rule_name() }}::{{ rule.name.text|safe_rust_id }})?)
+    }
+}
 {%- endfor %}
 

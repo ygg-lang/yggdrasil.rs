@@ -6,6 +6,7 @@
 mod parse_cst;
 mod parse_ast;
 
+use core::str::FromStr;
 use std::{borrow::Cow, ops::Range, sync::OnceLock};
 use yggdrasil_rt::*;
 
