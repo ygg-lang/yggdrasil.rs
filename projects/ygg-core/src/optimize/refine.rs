@@ -33,6 +33,7 @@ impl CodeOptimizer for RefineRules {
                     }
                 }
                 GrammarBody::Climb { .. } => {}
+                GrammarBody::TokenSet { .. } => {}
             }
         }
         Validation::Success { value: out, diagnostics: errors }
