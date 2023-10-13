@@ -3,7 +3,6 @@
 #![allow(nonstandard_style)]
 #![allow(unused_imports)]
 #![allow(unused_variables)]
-
 use antlr_rust::{
     atn::ATN,
     atn_deserializer::ATNDeserializer,
@@ -298,7 +297,6 @@ impl<'input, Input: CharStream<From<'input>>>
     for YggdrasilAntlrLexerActions
 {
 }
-
 impl<'input> TokenAware<'input> for YggdrasilAntlrLexerActions {
     type TF = LocalTokenFactory<'input>;
 }

@@ -47,9 +47,10 @@ impl<'i> Extractor<Union_expressionContextAll<'i>> for YggdrasilExpression {
                 Some(Self::unary(base, suffix))
             }
             Union_expressionContextAll::UETagContext(u) => {
-                let base = Self::take(u.union_expression())?;
-                let id = YggdrasilIdentifier::take(u.identifier())?;
-                Some(base.with_tag(id))
+                let inner = u.union_tag()?;
+                let name = YggdrasilIdentifier::take(inner.identifier_free())?;
+                let base = Self::take(inner.union_expression())?;
+                Some(base.with_tag(name))
             }
             Union_expressionContextAll::UtomContext(v) => Self::take(v.atomic()),
             Union_expressionContextAll::UNotContext(u) => {

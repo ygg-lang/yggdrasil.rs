@@ -57,6 +57,22 @@ impl<'i> Extractor<IdentifierContextAll<'i>> for YggdrasilExpression {
     }
 }
 
+impl<'i> Extractor<Identifier_freeContextAll<'i>> for YggdrasilIdentifier {
+    fn take_one(node: &Identifier_freeContextAll<'i>) -> Option<Self> {
+        let range = Range { start: node.start().start as usize, end: node.stop().stop as usize };
+        if let Some(s) = YggdrasilIdentifier::take(node.identifier()) {
+            return Some(s);
+        }
+        if let Some(_) = node.KW_CLASS() {
+            return Some(YggdrasilIdentifier { text: "class".to_string(), range });
+        }
+        if let Some(_) = node.KW_UNION() {
+            return Some(YggdrasilIdentifier { text: "union".to_string(), range });
+        }
+        None
+    }
+}
+
 impl<'i> Extractor<IdentifierContextAll<'i>> for YggdrasilIdentifier {
     fn take_one(node: &IdentifierContextAll<'i>) -> Option<Self> {
         if let Some(s) = node.UNICODE_ID() {
