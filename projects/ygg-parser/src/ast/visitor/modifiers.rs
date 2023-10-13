@@ -6,6 +6,17 @@ impl<'i> Extractor<ModifiersContextAll<'i>> for YggdrasilModifiers {
         Some(Self { identifiers: modifiers })
     }
 }
+impl<'i> Extractor<AnnotationContextAll<'i>> for YggdrasilMacroCall {
+    fn take_one(node: &AnnotationContextAll<'i>) -> Option<Self> {
+        let name = YggdrasilNamepath::take(node.namepath())?;
+        let range = Range { start: node.start().start as usize, end: node.stop().stop as usize };
+        let arguments = match node.tuple_block() {
+            Some(s) => YggdrasilMacroArgument::take_many(&s.class_expression_all()),
+            None => vec![],
+        };
+        Some(Self { name, arguments, range })
+    }
+}
 
 impl<'i> Extractor<Macro_callContextAll<'i>> for YggdrasilMacroCall {
     fn take_one(node: &Macro_callContextAll<'i>) -> Option<Self> {

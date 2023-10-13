@@ -5,13 +5,14 @@ impl<'i> Extractor<Define_unionContext<'i>> for GrammarRule {
         let id = YggdrasilIdentifier::take(node.name.clone())?;
         let range = Range { start: node.start().start as usize, end: node.stop().stop as usize };
         let modifiers = YggdrasilModifiers::take(node.modifiers()).unwrap_or_default();
-        let anno = YggdrasilAnnotations { macros: vec![], modifiers };
+        let macros = YggdrasilMacroCall::take_many(&node.annotation_all());
+        let anno = YggdrasilAnnotations { macros, modifiers };
+        let auto_tag = node.OP_UNTAG().is_none();
         let body = match node.union_block() {
             Some(s) => YggdrasilExpression::take_many(&s.union_term_all()),
             None => vec![],
         };
-
-        Some(GrammarRule::create_union(id, body, range).with_annotation(&anno))
+        Some(GrammarRule::create_union(id, body, range).with_annotation(&anno).with_auto_tag(auto_tag))
     }
 }
 
