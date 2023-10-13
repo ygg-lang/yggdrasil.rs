@@ -44,4 +44,15 @@ impl YggdrasilAntlrVisitor<'_> for YggdrasilANTLR {
             self.grammar.insert(s);
         }
     }
+    fn visit_define_token(&mut self, ctx: &Define_tokenContext<'_>) {
+        // TODO: insert token set
+        self.visit_children(ctx)
+    }
+    fn visit_token_pair(&mut self, ctx: &Token_pairContext<'_>) {
+        todo!()
+    }
+}
+
+struct BatchClass {
+    classes: Vec<GrammarRule>,
 }

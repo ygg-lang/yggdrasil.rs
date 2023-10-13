@@ -144,6 +144,7 @@ pub enum GrammarBody {
     Class { term: YggdrasilExpression },
     Union { branches: Vec<YggdrasilExpression> },
     Climb { priority: Vec<YggdrasilExpression> },
+    TokenSet { rules: Vec<YggdrasilIdentifier> },
 }
 
 impl GrammarBody {
@@ -156,6 +157,7 @@ impl GrammarBody {
             GrammarBody::Class { term } => f(term),
             GrammarBody::Union { branches } => branches.iter_mut().for_each(f),
             GrammarBody::Climb { priority } => priority.iter_mut().for_each(f),
+            GrammarBody::TokenSet { .. } => {}
         }
     }
 }
@@ -235,7 +237,7 @@ impl GrammarRule {
         self
     }
     /// Whether to automatically mark all tags in the rule
-    /// 
+    ///
     /// To ensure the highest priority, it needs to be called after with_annotation
     pub fn with_auto_tag(self, on: bool) -> Self {
         Self { auto_tag: on, ..self }
