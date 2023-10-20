@@ -14,8 +14,7 @@ use crate::{
     nodes::{ExpressionBody, YggdrasilExpression},
     rule::YggdrasilIdentifier,
 };
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
+
 use std::{
     collections::hash_map::DefaultHasher,
     fmt::{Debug, Display, Formatter, Write},

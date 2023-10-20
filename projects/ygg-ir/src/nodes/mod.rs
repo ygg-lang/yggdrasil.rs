@@ -6,8 +6,6 @@ use std::{
 
 use convert_case::{Case, Casing};
 use num::BigInt;
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
 
 use crate::{
     data::{RuleReference, YggdrasilRegex, YggdrasilText},

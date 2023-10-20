@@ -23,10 +23,10 @@ toml = "0.8.2"
 
 [dependencies.yggdrasil-shared]
 version = "0.2.5"
-#path = "../ygg-core"
-features = []
+path = "../ygg-core"
+features = ["serde"]
 
 [dependencies.yggdrasil-error]
 version = "0.1.4"
-#path = "../ygg-error"
-features = ["json5", "wax"]
+path = "../ygg-error"
+features = ["toml", "json5", "wax"]

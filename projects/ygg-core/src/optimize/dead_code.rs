@@ -25,13 +25,8 @@ impl CodeOptimizer for DeadCodeEliminator {
 }
 
 impl DeadCodeEliminator {
-    fn find_entry(&mut self, info: &GrammarInfo) {
+    fn find_entry(&mut self, _: &GrammarInfo) {
         todo!()
-        // for (_, rule) in &info.rules {
-        //     if info.exports.contains(&rule.name) || rule.entry {
-        //         self.new.insert(rule.name.to_owned());
-        //     }
-        // }
     }
     fn find_unvisited(&mut self) {
         self.unvisited.clear();

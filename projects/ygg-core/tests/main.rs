@@ -1,5 +1,5 @@
 use std::fs::read_to_string;
-use yggdrasil_shared::codegen::RustCodegen;
+use yggdrasil_shared::codegen::BuildRust;
 
 #[test]
 fn ready() {
@@ -8,7 +8,7 @@ fn ready() {
 
 #[test]
 fn run_json5() {
-    let builder = RustCodegen::default();
+    let builder = BuildRust::default();
     builder
         .generate(
             &read_to_string(r#"C:\Users\Dell\CLionProjects\dejavu-engine\projects\dejavu-parser\grammars\dejavu.ygg"#).unwrap(),

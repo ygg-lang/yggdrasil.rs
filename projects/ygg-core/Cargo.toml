@@ -10,7 +10,7 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-serde = "1.0.188"
+serde = { version = "1.0.188", optional = true }
 pex-trie = "0.0.3"
 character-set = "0.4.0"
 unicode-xid = "0.2.4"
@@ -39,3 +39,4 @@ json5 = "0.4.1"
 
 [features]
 default = []
+serde = ["dep:serde", "yggdrasil-ir/serde"]

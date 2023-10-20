@@ -1,0 +1,9 @@
+include = """
+grammars/**.ygg
+!debug.ygg
+"""
+
+[[build]]
+target = "rust"
+export = "src"
+

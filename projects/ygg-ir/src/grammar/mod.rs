@@ -4,8 +4,6 @@ use crate::{
 };
 
 use indexmap::IndexMap;
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use url::Url;
 

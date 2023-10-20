@@ -15,6 +15,8 @@ pub struct ExternalManager {
     inspector: BTreeMap<String, BTreeMap<ProgramLanguage, Vec<YggdrasilIdentifier>>>,
 }
 
+#[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ProgramLanguage {
     Rust,
     Kotlin,

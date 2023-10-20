@@ -10,7 +10,7 @@ use yggdrasil_error::Result;
 mod cache;
 mod subs;
 
-mod config;
+pub mod config;
 
 pub use cache::{GaiaSystem, GrammarCache};
 

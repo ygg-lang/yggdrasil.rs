@@ -1,5 +1,5 @@
 use crate::{
-    codegen::Railroad,
+    codegen::BuildRailway,
     optimize::{InsertIgnore, RefineRules},
     parse_grammar,
 };
@@ -31,16 +31,19 @@ mod rule_ext;
 use self::{grammar_ext::GrammarExt, rule_ext::RuleExt};
 
 #[derive(Clone, Debug)]
-pub struct RustCodegen {
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct BuildRust {
+    pub export: String,
     pub range_type: String,
     pub rule_prefix: String,
     pub node_suffix: String,
-    pub railway: Railroad,
+    pub railway: BuildRailway,
 }
 
-impl Default for RustCodegen {
+impl Default for BuildRust {
     fn default() -> Self {
         Self {
+            export: "src".to_string(),
             range_type: "u32".to_string(),
             rule_prefix: "".to_string(),
             node_suffix: "Node".to_string(),
@@ -53,35 +56,35 @@ impl Default for RustCodegen {
 #[template(path = "rust/main.jinja", escape = "none")]
 pub struct RustWriteMain<'i> {
     grammar: &'i GrammarInfo,
-    config: RustCodegen,
+    config: BuildRust,
 }
 
 #[derive(Template)]
 #[template(path = "rust/lex.jinja", escape = "none")]
 pub struct RustWriteLex<'i> {
     grammar: &'i GrammarInfo,
-    config: RustCodegen,
+    config: BuildRust,
 }
 
 #[derive(Template)]
 #[template(path = "rust/cst.jinja", escape = "none")]
 pub struct RustWriteCST<'i> {
     grammar: &'i GrammarInfo,
-    config: RustCodegen,
+    config: BuildRust,
 }
 
 #[derive(Template)]
 #[template(path = "rust/ast.jinja", escape = "none")]
 pub struct RustWriteAST<'i> {
     grammar: &'i GrammarInfo,
-    config: RustCodegen,
+    config: BuildRust,
 }
 
 #[derive(Template)]
 #[template(path = "rust/readme.jinja", escape = "none")]
 pub struct RustWriteReadme<'i> {
     grammar: &'i GrammarInfo,
-    config: RustCodegen,
+    config: BuildRust,
     railroad: Diagram<VerticalGrid<Box<dyn Node>>>,
 }
 
@@ -97,7 +100,7 @@ pub struct RustModule {
     pub ron: String,
 }
 
-impl CodeGenerator for RustCodegen {
+impl CodeGenerator for BuildRust {
     type Output = RustModule;
 
     fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
@@ -120,11 +123,11 @@ impl CodeGenerator for RustCodegen {
     }
 }
 
-impl RustCodegen {
+impl BuildRust {
     pub fn generate<P: AsRef<Path>>(&self, grammar: &str, output: P) -> Validation<PathBuf> {
         let mut errors = vec![];
         let info = parse_grammar(grammar).validate(&mut errors)?;
-        let out = info.generate(RustCodegen::default()).validate(&mut errors)?;
+        let out = info.generate(BuildRust::default()).validate(&mut errors)?;
         out.save(output).validate(&mut errors)
     }
 }

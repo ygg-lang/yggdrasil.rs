@@ -1,9 +1,0 @@
-{
-    mode: "rs",
-    export: "src/",
-    includes: [
-        "grammars/*.ygg"
-    ],
-    excludes: [
-    ],
-}

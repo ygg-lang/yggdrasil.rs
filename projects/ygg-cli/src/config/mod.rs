@@ -1,27 +1,35 @@
-use clap::builder::Str;
-use serde::{Deserialize, Deserializer, Serialize};
 use std::{
     env::current_dir,
-    ffi::OsStr,
+    fmt::{Formatter, Write},
     fs::{read_dir, read_to_string, DirEntry, ReadDir},
     path::{Path, PathBuf},
 };
-use wax::{Any, Glob};
+
+use serde::{
+    de::{Error, SeqAccess, Visitor},
+    Deserialize, Deserializer, Serialize,
+};
+use wax::Any;
+
 use yggdrasil_error::YggdrasilError;
+use yggdrasil_shared::codegen::{BuildRailway, BuildRust};
+
+pub use self::patterns::YccPatterns;
 
 mod modes;
+mod patterns;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct YccConfig {
-    pub mode: SupportedMode,
-    pub export: String,
-    pub includes: Vec<String>,
-    pub excludes: Vec<String>,
+    pub include: YccPatterns,
+    pub build: Vec<YccBuild>,
 }
 
-#[derive(Clone, Debug, Serialize)]
-pub enum SupportedMode {
-    Rust,
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum YccBuild {
+    Rail(BuildRailway),
+    Rust(BuildRust),
 }
 
 impl YccConfig {
@@ -30,15 +38,14 @@ impl YccConfig {
         file.resolve(config);
         let config: Self = match file.extension() {
             "json" | "json5" => json5::from_str(file.content())?,
+            "toml" => toml::from_str(file.content())?,
+
             _ => {
                 unimplemented!()
             }
         };
         println!("{:#?}", config);
         Ok(config)
-    }
-    pub fn get_glob(&self) -> Result<Any, YggdrasilError> {
-        Ok(wax::any(self.includes.iter().map(|s| s.as_str())).unwrap())
     }
 }
 
@@ -82,12 +89,12 @@ impl ConfigResolver {
 
 impl ConfigResolver {
     pub fn content(&self) -> &str {
-        if self.txt.is_empty() { include_str!("Default.json5") } else { &self.txt }
+        if self.txt.is_empty() { include_str!("Default.toml") } else { &self.txt }
     }
     pub fn extension(&self) -> &str {
         if self.ext.is_empty() {
-            tracing::warn!("ConfigError: 无法识别格式, 假定为 json");
-            "json"
+            tracing::warn!("ConfigError: 无法识别格式, 假定为 toml");
+            "toml"
         }
         else {
             &self.ext
