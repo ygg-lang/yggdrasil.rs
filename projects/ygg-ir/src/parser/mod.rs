@@ -196,6 +196,11 @@ impl YggdrasilExpression {
                 SuffixNode::Optional => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::OPTIONAL),
                 SuffixNode::Many => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY),
                 SuffixNode::Many1 => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY1),
+                SuffixNode::RangeExact(u) => {
+                    // TODO: Error with range
+                    let i = u32::from_str(&u.integer.text)?;
+                    YggdrasilOperator::RepeatsBetween(YggdrasilCounter::new(i, i))
+                }
                 SuffixNode::Range(v) => {
                     let min = match &v.min {
                         Some(v) => u32::from_str(&v.text).unwrap_or(0),
