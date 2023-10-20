@@ -3,8 +3,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![doc = include_str!("readme.md")]
 
-mod parse_cst;
 mod parse_ast;
+mod parse_cst;
 
 use core::str::FromStr;
 use std::{borrow::Cow, ops::Range, sync::OnceLock};
@@ -79,6 +79,7 @@ pub enum BootstrapRule {
     Identifier,
     Boolean,
     Integer,
+    RangeExact,
     Range,
     ModifierCall,
     KW_GRAMMAR,
@@ -152,6 +153,7 @@ impl YggdrasilRule for BootstrapRule {
             Self::Identifier => "",
             Self::Boolean => "",
             Self::Integer => "",
+            Self::RangeExact => "",
             Self::Range => "",
             Self::ModifierCall => "",
             Self::KW_GRAMMAR => "",
@@ -380,6 +382,7 @@ pub enum SuffixNode {
     Many1,
     Optional,
     Range(RangeNode),
+    RangeExact(RangeExactNode),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -494,6 +497,13 @@ pub enum BooleanNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct IntegerNode {
     pub text: String,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct RangeExactNode {
+    pub integer: IntegerNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]

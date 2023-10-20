@@ -857,7 +857,6 @@ fn parse_integer(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_range_exact(state: Input) -> Output {
     state.rule(BootstrapRule::RangeExact, |s| {
