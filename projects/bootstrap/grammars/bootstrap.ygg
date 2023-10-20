@@ -118,8 +118,10 @@ union Atomic {
     | FunctionCall
     | Boolean
     | Integer
-    | String
+    | StringRaw
+    | StringNormal
     | Category
+    | EscapedUnicode
     | RegexEmbed
     | RegexRange
     | Identifier
@@ -128,15 +130,14 @@ class GroupExpression {
     '(' '|'? Expression ')'
 }
 // === String === -------------------------------------------------------------------------------------------------------
-atomic union String {
-    | "'" StringRaw "'"    #Raw
-    | '"' StringNormal '"' #Normal
+atomic class StringRaw {
+    "'" StringRawText "'"
 }
-text class StringRaw {
+text class StringRawText {
     /[^']*/
 }
 atomic class StringNormal {
-    StringItem*
+    '"' StringItem* '"'
 }
 union StringItem {
     | EscapedUnicode
@@ -144,11 +145,18 @@ union StringItem {
     | TextAny
 }
 @style(escape)
-@railroad(false)
-text group {
-    EscapedUnicode: /\\u[0-9a-zA-Z]{4}/
-    EscapedCharacter: /\\./
-    TextAny: /[^"\\]+/
+atomic class EscapedUnicode {
+    '\u{' HEX '}'
+}
+@style(escape)
+text class EscapedCharacter {
+    /\\./
+}
+text class HEX {
+    [0-9a-fA-F]{1, 6}
+}
+text class TextAny {
+    /[^"\\]+/
 }
 // === regex === -------------------------------------------------------------------------------------------------------
 atomic class RegexEmbed {

@@ -35,12 +35,13 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::Suffix => parse_suffix(state),
         BootstrapRule::Atomic => parse_atomic(state),
         BootstrapRule::GroupExpression => parse_group_expression(state),
-        BootstrapRule::String => parse_string(state),
         BootstrapRule::StringRaw => parse_string_raw(state),
+        BootstrapRule::StringRawText => parse_string_raw_text(state),
         BootstrapRule::StringNormal => parse_string_normal(state),
         BootstrapRule::StringItem => parse_string_item(state),
         BootstrapRule::EscapedUnicode => parse_escaped_unicode(state),
         BootstrapRule::EscapedCharacter => parse_escaped_character(state),
+        BootstrapRule::HEX => parse_hex(state),
         BootstrapRule::TextAny => parse_text_any(state),
         BootstrapRule::RegexEmbed => parse_regex_embed(state),
         BootstrapRule::RegexInner => parse_regex_inner(state),
@@ -628,8 +629,10 @@ fn parse_atomic(state: Input) -> Output {
             .or_else(|s| parse_function_call(s).and_then(|s| s.tag_node("function_call")))
             .or_else(|s| parse_boolean(s).and_then(|s| s.tag_node("boolean")))
             .or_else(|s| parse_integer(s).and_then(|s| s.tag_node("integer")))
-            .or_else(|s| parse_string(s).and_then(|s| s.tag_node("string")))
+            .or_else(|s| parse_string_raw(s).and_then(|s| s.tag_node("string_raw")))
+            .or_else(|s| parse_string_normal(s).and_then(|s| s.tag_node("string_normal")))
             .or_else(|s| parse_category(s).and_then(|s| s.tag_node("category")))
+            .or_else(|s| parse_escaped_unicode(s).and_then(|s| s.tag_node("escaped_unicode")))
             .or_else(|s| parse_regex_embed(s).and_then(|s| s.tag_node("regex_embed")))
             .or_else(|s| parse_regex_range(s).and_then(|s| s.tag_node("regex_range")))
             .or_else(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
@@ -651,32 +654,19 @@ fn parse_group_expression(state: Input) -> Output {
     })
 }
 #[inline]
-fn parse_string(state: Input) -> Output {
-    state.rule(BootstrapRule::String, |s| {
-        Err(s)
-            .or_else(|s| {
-                s.sequence(|s| {
-                    Ok(s)
-                        .and_then(|s| builtin_text(s, "'", false))
-                        .and_then(|s| parse_string_raw(s).and_then(|s| s.tag_node("string_raw")))
-                        .and_then(|s| builtin_text(s, "'", false))
-                })
-                .and_then(|s| s.tag_node("raw"))
-            })
-            .or_else(|s| {
-                s.sequence(|s| {
-                    Ok(s)
-                        .and_then(|s| builtin_text(s, "\"", false))
-                        .and_then(|s| parse_string_normal(s).and_then(|s| s.tag_node("string_normal")))
-                        .and_then(|s| builtin_text(s, "\"", false))
-                })
-                .and_then(|s| s.tag_node("normal"))
-            })
+fn parse_string_raw(state: Input) -> Output {
+    state.rule(BootstrapRule::StringRaw, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| builtin_text(s, "'", false))
+                .and_then(|s| parse_string_raw_text(s).and_then(|s| s.tag_node("string_raw_text")))
+                .and_then(|s| builtin_text(s, "'", false))
+        })
     })
 }
 #[inline]
-fn parse_string_raw(state: Input) -> Output {
-    state.rule(BootstrapRule::StringRaw, |s| {
+fn parse_string_raw_text(state: Input) -> Output {
+    state.rule(BootstrapRule::StringRawText, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
             REGEX.get_or_init(|| Regex::new("^([^']*)").unwrap())
@@ -686,7 +676,12 @@ fn parse_string_raw(state: Input) -> Output {
 #[inline]
 fn parse_string_normal(state: Input) -> Output {
     state.rule(BootstrapRule::StringNormal, |s| {
-        s.repeat(0..4294967295, |s| parse_string_item(s).and_then(|s| s.tag_node("string_item")))
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| builtin_text(s, "\"", false))
+                .and_then(|s| s.repeat(0..4294967295, |s| parse_string_item(s).and_then(|s| s.tag_node("string_item"))))
+                .and_then(|s| builtin_text(s, "\"", false))
+        })
     })
 }
 #[inline]
@@ -701,9 +696,11 @@ fn parse_string_item(state: Input) -> Output {
 #[inline]
 fn parse_escaped_unicode(state: Input) -> Output {
     state.rule(BootstrapRule::EscapedUnicode, |s| {
-        s.match_regex({
-            static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(\\\\u[0-9a-zA-Z]{4})").unwrap())
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| builtin_text(s, "\\u{", false))
+                .and_then(|s| parse_hex(s).and_then(|s| s.tag_node("hex")))
+                .and_then(|s| builtin_text(s, "}", false))
         })
     })
 }
@@ -713,6 +710,21 @@ fn parse_escaped_character(state: Input) -> Output {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
             REGEX.get_or_init(|| Regex::new("^(\\\\.)").unwrap())
+        })
+    })
+}
+#[inline]
+fn parse_hex(state: Input) -> Output {
+    state.rule(BootstrapRule::HEX, |s| {
+        s.repeat(1..6, |s| {
+            s.sequence(|s| {
+                Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                    builtin_regex(s, {
+                        static REGEX: OnceLock<Regex> = OnceLock::new();
+                        REGEX.get_or_init(|| Regex::new("^([0-9a-fA-F])").unwrap())
+                    })
+                })
+            })
         })
     })
 }
@@ -782,7 +794,6 @@ fn parse_regex_range(state: Input) -> Output {
 fn parse_regex_negative(state: Input) -> Output {
     state.rule(BootstrapRule::RegexNegative, |s| s.match_string("^", false))
 }
-
 #[inline]
 fn parse_category(state: Input) -> Output {
     state.rule(BootstrapRule::Category, |s| {
@@ -941,7 +952,6 @@ fn parse_modifier_call(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_op_category(state: Input) -> Output {
     state.rule(BootstrapRule::OP_CATEGORY, |s| {
