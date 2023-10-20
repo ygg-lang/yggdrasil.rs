@@ -2634,47 +2634,41 @@
                 Range
             </text>
             <g class="sequence">
-                <g class="sequence">
-                    <g class="string">
-                        <rect height="22" rx="10" ry="10" width="28" x="90" y="3133"/>
-                        <text x="104" y="3149">
-                            {
-                        </text>
-                    </g>
-                    <g class="character">
-                        <rect height="22" rx="10" ry="10" width="76" x="128" y="3133"/>
-                        <text x="166" y="3149">
-                            IGNORED
-                        </text>
-                    </g>
-                    <g class="optional">
-                        <path
-                            d=" M 214 3144 h 24 m -24 0 a 12 12 0 0 0 12 -12 v 0 a 12 12 0 0 1 12 -12 h 76 m -35 0 l -5 -5 m 0 10 l 5 -5 m 35 0 a 12 12 0 0 1 12 12 v 0 a 12 12 0 0 0 12 12 h -24"/>
-                        <a class="link" xlink:href="#Integer">
-                            <g class="symbol">
-                                <rect height="22" width="76" x="238" y="3133"/>
-                                <text x="276" y="3149">
-                                    Integer
-                                </text>
-                            </g>
-                        </a>
-                    </g>
-                    <g class="character">
-                        <rect height="22" rx="10" ry="10" width="76" x="348" y="3133"/>
-                        <text x="386" y="3149">
-                            IGNORED
-                        </text>
-                    </g>
-                    <g class="string">
-                        <rect height="22" rx="10" ry="10" width="28" x="434" y="3133"/>
-                        <text x="448" y="3149">
-                            ,
-                        </text>
-                    </g>
-                    <path d=" M 118 3144 h 10"/>
-                    <path d=" M 204 3144 h 10"/>
-                    <path d=" M 338 3144 h 10"/>
-                    <path d=" M 424 3144 h 10"/>
+                <g class="string">
+                    <rect height="22" rx="10" ry="10" width="28" x="90" y="3133"/>
+                    <text x="104" y="3149">
+                        {
+                    </text>
+                </g>
+                <g class="character">
+                    <rect height="22" rx="10" ry="10" width="76" x="128" y="3133"/>
+                    <text x="166" y="3149">
+                        IGNORED
+                    </text>
+                </g>
+                <g class="optional">
+                    <path
+                        d=" M 214 3144 h 24 m -24 0 a 12 12 0 0 0 12 -12 v 0 a 12 12 0 0 1 12 -12 h 76 m -35 0 l -5 -5 m 0 10 l 5 -5 m 35 0 a 12 12 0 0 1 12 12 v 0 a 12 12 0 0 0 12 12 h -24"/>
+                    <a class="link" xlink:href="#Integer">
+                        <g class="symbol">
+                            <rect height="22" width="76" x="238" y="3133"/>
+                            <text x="276" y="3149">
+                                Integer
+                            </text>
+                        </g>
+                    </a>
+                </g>
+                <g class="character">
+                    <rect height="22" rx="10" ry="10" width="76" x="348" y="3133"/>
+                    <text x="386" y="3149">
+                        IGNORED
+                    </text>
+                </g>
+                <g class="string">
+                    <rect height="22" rx="10" ry="10" width="28" x="434" y="3133"/>
+                    <text x="448" y="3149">
+                        ,
+                    </text>
                 </g>
                 <g class="character">
                     <rect height="22" rx="10" ry="10" width="76" x="472" y="3133"/>
@@ -2706,6 +2700,10 @@
                         }
                     </text>
                 </g>
+                <path d=" M 118 3144 h 10"/>
+                <path d=" M 204 3144 h 10"/>
+                <path d=" M 338 3144 h 10"/>
+                <path d=" M 424 3144 h 10"/>
                 <path d=" M 462 3144 h 10"/>
                 <path d=" M 548 3144 h 10"/>
                 <path d=" M 682 3144 h 10"/>

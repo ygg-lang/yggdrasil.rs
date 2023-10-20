@@ -337,7 +337,6 @@ fn parse_group_pair(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_external_statement(state: Input) -> Output {
     state.rule(BootstrapRule::ExternalStatement, |s| {
@@ -351,7 +350,6 @@ fn parse_external_statement(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_linker_block(state: Input) -> Output {
     state.rule(BootstrapRule::LinkerBlock, |s| {
@@ -373,7 +371,6 @@ fn parse_linker_block(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_linker_pair(state: Input) -> Output {
     state.rule(BootstrapRule::LinkerPair, |s| {
@@ -387,7 +384,6 @@ fn parse_linker_pair(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_kw_external(state: Input) -> Output {
     state.rule(BootstrapRule::KW_EXTERNAL, |s| {
@@ -850,7 +846,6 @@ fn parse_boolean(state: Input) -> Output {
             .or_else(|s| builtin_text(s, "false", false).and_then(|s| s.tag_node("false")))
     })
 }
-
 #[inline]
 fn parse_integer(state: Input) -> Output {
     state.rule(BootstrapRule::Integer, |s| {
@@ -860,26 +855,18 @@ fn parse_integer(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_range(state: Input) -> Output {
     state.rule(BootstrapRule::Range, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| {
-                    s.sequence(|s| {
-                        Ok(s)
-                            .and_then(|s| builtin_text(s, "{", false))
-                            .and_then(|s| builtin_ignore(s))
-                            .and_then(|s| parse_integer(s).and_then(|s| s.tag_node("min")))
-                            .and_then(|s| builtin_ignore(s))
-                            .and_then(|s| builtin_text(s, ",", false))
-                    })
-                })
+                .and_then(|s| builtin_text(s, "{", false))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| {
-                    s.optional(|s| parse_integer(s).and_then(|s| s.tag_node("integer"))).and_then(|s| s.tag_node("max"))
-                })
+                .and_then(|s| s.optional(|s| parse_integer(s).and_then(|s| s.tag_node("min"))))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, ",", false))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| s.optional(|s| parse_integer(s).and_then(|s| s.tag_node("max"))))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| builtin_text(s, "}", false))
         })

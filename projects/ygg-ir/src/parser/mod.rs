@@ -192,14 +192,18 @@ impl YggdrasilExpression {
         let mut base = YggdrasilExpression::build_atomic(&node.atomic)?;
         let mut unary = Vec::with_capacity(node.prefix.len() + node.suffix.len());
         for i in &node.suffix {
-            match i {
-                SuffixNode::Optional => unary.push(YggdrasilOperator::RepeatsBetween(YggdrasilCounter::OPTIONAL)),
-                SuffixNode::Many => unary.push(YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY)),
-                SuffixNode::Many1 => unary.push(YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY1)),
+            let suffix = match i {
+                SuffixNode::Optional => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::OPTIONAL),
+                SuffixNode::Many => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY),
+                SuffixNode::Many1 => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY1),
                 SuffixNode::Range(v) => {
+                    let min = &v.integer;
+                    let max = &v.integer;
                     todo!()
+                    // YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY1)
                 }
-            }
+            };
+            unary.push(suffix)
         }
         for i in node.prefix.iter().rev() {
             match i {

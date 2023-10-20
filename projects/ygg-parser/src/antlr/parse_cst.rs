@@ -860,23 +860,13 @@ fn parse_range(state: Input) -> Output {
     state.rule(BootstrapRule::Range, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| {
-                    s.sequence(|s| {
-                        Ok(s)
-                            .and_then(|s| builtin_text(s, "{", false))
-                            .and_then(|s| builtin_ignore(s))
-                            .and_then(|s| {
-                                s.optional(|s| parse_integer(s).and_then(|s| s.tag_node("integer")))
-                                    .and_then(|s| s.tag_node("min"))
-                            })
-                            .and_then(|s| builtin_ignore(s))
-                            .and_then(|s| builtin_text(s, ",", false))
-                    })
-                })
+                .and_then(|s| builtin_text(s, "{", false))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| {
-                    s.optional(|s| parse_integer(s).and_then(|s| s.tag_node("integer"))).and_then(|s| s.tag_node("max"))
-                })
+                .and_then(|s| s.optional(|s| parse_integer(s).and_then(|s| s.tag_node("min"))))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, ",", false))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| s.optional(|s| parse_integer(s).and_then(|s| s.tag_node("max"))))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| builtin_text(s, "}", false))
         })

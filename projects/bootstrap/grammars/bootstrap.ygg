@@ -180,7 +180,7 @@ text class Integer {
     /0|[1-9][0-9]*/
 }
 class Range {
-    '{' min:Integer? ',' max:Integer? '}'
+    '{' (min:Integer)? ',' (max:Integer)? '}'
 }
 // === keywords === ----------------------------------------------------------------------------------------------------
 atomic class ModifierCall ^ {

@@ -383,7 +383,6 @@ impl FromStr for GroupPairNode {
         Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::GroupPair)?)
     }
 }
-
 #[automatically_derived]
 impl YggdrasilNode for ExternalStatementNode {
     type Rule = BootstrapRule;
@@ -401,7 +400,6 @@ impl YggdrasilNode for ExternalStatementNode {
         })
     }
 }
-
 #[automatically_derived]
 impl FromStr for ExternalStatementNode {
     type Err = YggdrasilError<BootstrapRule>;
@@ -410,7 +408,6 @@ impl FromStr for ExternalStatementNode {
         Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::ExternalStatement)?)
     }
 }
-
 #[automatically_derived]
 impl YggdrasilNode for LinkerBlockNode {
     type Rule = BootstrapRule;
@@ -428,7 +425,6 @@ impl YggdrasilNode for LinkerBlockNode {
         })
     }
 }
-
 #[automatically_derived]
 impl FromStr for LinkerBlockNode {
     type Err = YggdrasilError<BootstrapRule>;
@@ -437,7 +433,6 @@ impl FromStr for LinkerBlockNode {
         Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::LinkerBlock)?)
     }
 }
-
 #[automatically_derived]
 impl YggdrasilNode for LinkerPairNode {
     type Rule = BootstrapRule;
@@ -454,7 +449,6 @@ impl YggdrasilNode for LinkerPairNode {
         })
     }
 }
-
 #[automatically_derived]
 impl FromStr for LinkerPairNode {
     type Err = YggdrasilError<BootstrapRule>;
@@ -463,7 +457,6 @@ impl FromStr for LinkerPairNode {
         Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::LinkerPair)?)
     }
 }
-
 #[automatically_derived]
 impl YggdrasilNode for KwExternalNode {
     type Rule = BootstrapRule;
@@ -489,7 +482,6 @@ impl YggdrasilNode for KwExternalNode {
         Err(YggdrasilError::invalid_node(BootstrapRule::KW_EXTERNAL, _span))
     }
 }
-
 #[automatically_derived]
 impl FromStr for KwExternalNode {
     type Err = YggdrasilError<BootstrapRule>;
@@ -1234,7 +1226,6 @@ impl FromStr for BooleanNode {
         Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::Boolean)?)
     }
 }
-
 #[automatically_derived]
 impl YggdrasilNode for IntegerNode {
     type Rule = BootstrapRule;
@@ -1247,7 +1238,6 @@ impl YggdrasilNode for IntegerNode {
         Ok(Self { text: pair.get_string(), span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
     }
 }
-
 #[automatically_derived]
 impl FromStr for IntegerNode {
     type Err = YggdrasilError<BootstrapRule>;
@@ -1256,7 +1246,6 @@ impl FromStr for IntegerNode {
         Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::Integer)?)
     }
 }
-
 #[automatically_derived]
 impl YggdrasilNode for RangeNode {
     type Rule = BootstrapRule;
@@ -1267,13 +1256,12 @@ impl YggdrasilNode for RangeNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            integer: pair.take_tagged_option::<IntegerNode>(Cow::Borrowed("integer")),
-            min: pair.take_tagged_one::<IntegerNode>(Cow::Borrowed("min"))?,
+            max: pair.take_tagged_option::<IntegerNode>(Cow::Borrowed("max")),
+            min: pair.take_tagged_option::<IntegerNode>(Cow::Borrowed("min")),
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
 }
-
 #[automatically_derived]
 impl FromStr for RangeNode {
     type Err = YggdrasilError<BootstrapRule>;
