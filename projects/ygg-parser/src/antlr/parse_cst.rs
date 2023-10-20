@@ -46,6 +46,7 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::RegexInner => parse_regex_inner(state),
         BootstrapRule::RegexRange => parse_regex_range(state),
         BootstrapRule::RegexNegative => parse_regex_negative(state),
+        BootstrapRule::Category => parse_category(state),
         BootstrapRule::NamepathFree => parse_namepath_free(state),
         BootstrapRule::Namepath => parse_namepath(state),
         BootstrapRule::Identifier => parse_identifier(state),
@@ -54,6 +55,7 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::RangeExact => parse_range_exact(state),
         BootstrapRule::Range => parse_range(state),
         BootstrapRule::ModifierCall => parse_modifier_call(state),
+        BootstrapRule::OP_CATEGORY => parse_op_category(state),
         BootstrapRule::KW_GRAMMAR => parse_kw_grammar(state),
         BootstrapRule::KW_IMPORT => parse_kw_import(state),
         BootstrapRule::KW_CLASS => parse_kw_class(state),
@@ -627,6 +629,7 @@ fn parse_atomic(state: Input) -> Output {
             .or_else(|s| parse_boolean(s).and_then(|s| s.tag_node("boolean")))
             .or_else(|s| parse_integer(s).and_then(|s| s.tag_node("integer")))
             .or_else(|s| parse_string(s).and_then(|s| s.tag_node("string")))
+            .or_else(|s| parse_category(s).and_then(|s| s.tag_node("category")))
             .or_else(|s| parse_regex_embed(s).and_then(|s| s.tag_node("regex_embed")))
             .or_else(|s| parse_regex_range(s).and_then(|s| s.tag_node("regex_range")))
             .or_else(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
@@ -779,6 +782,38 @@ fn parse_regex_range(state: Input) -> Output {
 fn parse_regex_negative(state: Input) -> Output {
     state.rule(BootstrapRule::RegexNegative, |s| s.match_string("^", false))
 }
+
+#[inline]
+fn parse_category(state: Input) -> Output {
+    state.rule(BootstrapRule::Category, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| {
+                    s.sequence(|s| {
+                        Ok(s)
+                            .and_then(|s| parse_op_category(s))
+                            .and_then(|s| builtin_ignore(s))
+                            .and_then(|s| builtin_text(s, "{", false))
+                            .and_then(|s| builtin_ignore(s))
+                            .and_then(|s| {
+                                s.optional(|s| {
+                                    s.sequence(|s| {
+                                        Ok(s)
+                                            .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("group")))
+                                            .and_then(|s| builtin_ignore(s))
+                                            .and_then(|s| builtin_text(s, "=", false))
+                                    })
+                                })
+                            })
+                    })
+                })
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("script")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, "}", false))
+        })
+    })
+}
 #[inline]
 fn parse_namepath_free(state: Input) -> Output {
     state.rule(BootstrapRule::NamepathFree, |s| {
@@ -903,6 +938,16 @@ fn parse_modifier_call(state: Input) -> Output {
                     })
                 })
                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+        })
+    })
+}
+
+#[inline]
+fn parse_op_category(state: Input) -> Output {
+    state.rule(BootstrapRule::OP_CATEGORY, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(\\\\p)").unwrap())
         })
     })
 }

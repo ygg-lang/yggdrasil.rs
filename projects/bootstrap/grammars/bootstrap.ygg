@@ -119,6 +119,7 @@ union Atomic {
     | Boolean
     | Integer
     | String
+    | Category
     | RegexEmbed
     | RegexRange
     | Identifier
@@ -162,6 +163,10 @@ text atomic class RegexRange {
 class RegexNegative {
     '^'
 }
+// === unicode category === --------------------------------------------------------------------------------------------------
+class Category {
+    ^OP_CATEGORY '{' (group:Identifier '=')? script:Identifier '}'
+}
 // === identifier === --------------------------------------------------------------------------------------------------
 class NamepathFree -> Namepath {
     Identifier (('.' | '::') Identifier)*
@@ -189,6 +194,11 @@ class Range {
 // === keywords === ----------------------------------------------------------------------------------------------------
 atomic class ModifierCall ^ {
     !(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) ^Identifier
+}
+@railroad(false)
+@style(keyword)
+token {
+    OP_CATEGORY: /\\p/
 }
 @railroad(false)
 @style(keyword)

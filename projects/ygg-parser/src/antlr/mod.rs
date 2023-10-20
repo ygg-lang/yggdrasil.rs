@@ -3,8 +3,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![doc = include_str!("readme.md")]
 
-mod parse_cst;
 mod parse_ast;
+mod parse_cst;
 
 use core::str::FromStr;
 use std::{borrow::Cow, ops::Range, sync::OnceLock};
@@ -74,6 +74,7 @@ pub enum BootstrapRule {
     RegexInner,
     RegexRange,
     RegexNegative,
+    Category,
     NamepathFree,
     Namepath,
     Identifier,
@@ -82,6 +83,7 @@ pub enum BootstrapRule {
     RangeExact,
     Range,
     ModifierCall,
+    OP_CATEGORY,
     KW_GRAMMAR,
     KW_IMPORT,
     KW_CLASS,
@@ -148,6 +150,7 @@ impl YggdrasilRule for BootstrapRule {
             Self::RegexInner => "",
             Self::RegexRange => "",
             Self::RegexNegative => "",
+            Self::Category => "",
             Self::NamepathFree => "",
             Self::Namepath => "",
             Self::Identifier => "",
@@ -156,6 +159,7 @@ impl YggdrasilRule for BootstrapRule {
             Self::RangeExact => "",
             Self::Range => "",
             Self::ModifierCall => "",
+            Self::OP_CATEGORY => "",
             Self::KW_GRAMMAR => "",
             Self::KW_IMPORT => "",
             Self::KW_CLASS => "",
@@ -388,6 +392,7 @@ pub enum SuffixNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum AtomicNode {
     Boolean(BooleanNode),
+    Category(CategoryNode),
     FunctionCall(FunctionCallNode),
     GroupExpression(GroupExpressionNode),
     Identifier(IdentifierNode),
@@ -469,6 +474,14 @@ pub struct RegexRangeNode {
 pub struct RegexNegativeNode {
     pub span: Range<u32>,
 }
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct CategoryNode {
+    pub group: Option<IdentifierNode>,
+    pub script: IdentifierNode,
+    pub span: Range<u32>,
+}
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct NamepathFreeNode {
@@ -516,6 +529,12 @@ pub struct RangeNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ModifierCallNode {
     pub identifier: IdentifierNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct OpCategoryNode {
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]

@@ -197,8 +197,7 @@ impl YggdrasilExpression {
                 SuffixNode::Many => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY),
                 SuffixNode::Many1 => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY1),
                 SuffixNode::RangeExact(u) => {
-                    // TODO: Error with range
-                    let i = u32::from_str(&u.integer.text)?;
+                    let i = u32::from_str(&u.integer.text).unwrap_or(u32::MAX);
                     YggdrasilOperator::RepeatsBetween(YggdrasilCounter::new(i, i))
                 }
                 SuffixNode::Range(v) => {
