@@ -250,7 +250,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "{",
                                     insensitive: false,
-                                    range: 405..406,
+                                    range: 404..407,
                                 },
                             },
                             Expression {
@@ -264,7 +264,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "}",
                                     insensitive: false,
-                                    range: 409..410,
+                                    range: 408..411,
                                 },
                             },
                         ],
@@ -429,7 +429,7 @@ GrammarInfo {
                                                     body: YggdrasilText {
                                                         text: "->",
                                                         insensitive: false,
-                                                        range: 619..621,
+                                                        range: 618..622,
                                                     },
                                                 },
                                                 Expression {
@@ -536,7 +536,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "{",
                                     insensitive: false,
-                                    range: 689..690,
+                                    range: 688..691,
                                 },
                             },
                             Expression {
@@ -554,7 +554,7 @@ GrammarInfo {
                                         body: YggdrasilText {
                                             text: "|",
                                             insensitive: false,
-                                            range: 693..694,
+                                            range: 692..695,
                                         },
                                     },
                                     operators: [
@@ -592,7 +592,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "}",
                                     insensitive: false,
-                                    range: 709..710,
+                                    range: 708..711,
                                 },
                             },
                         ],
@@ -625,7 +625,7 @@ GrammarInfo {
                     body: YggdrasilText {
                         text: "^",
                         insensitive: false,
-                        range: 738..739,
+                        range: 737..740,
                     },
                 },
             },
@@ -844,7 +844,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "{",
                                     insensitive: false,
-                                    range: 994..995,
+                                    range: 993..996,
                                 },
                             },
                             Expression {
@@ -899,7 +899,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "}",
                                     insensitive: false,
-                                    range: 1011..1012,
+                                    range: 1010..1013,
                                 },
                             },
                         ],
@@ -937,7 +937,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "|",
                                     insensitive: false,
-                                    range: 1041..1042,
+                                    range: 1040..1043,
                                 },
                             },
                             Expression {
@@ -1017,7 +1017,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "#",
                                     insensitive: false,
-                                    range: 1116..1117,
+                                    range: 1115..1118,
                                 },
                             },
                             Expression {
@@ -1082,7 +1082,7 @@ GrammarInfo {
                     body: YggdrasilText {
                         text: ">",
                         insensitive: false,
-                        range: 1184..1185,
+                        range: 1183..1186,
                     },
                 },
             },
@@ -1279,7 +1279,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "{",
                                     insensitive: false,
-                                    range: 1425..1426,
+                                    range: 1424..1427,
                                 },
                             },
                             Expression {
@@ -1334,7 +1334,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "}",
                                     insensitive: false,
-                                    range: 1440..1441,
+                                    range: 1439..1442,
                                 },
                             },
                         ],
@@ -1386,7 +1386,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: ":",
                                     insensitive: false,
-                                    range: 1479..1480,
+                                    range: 1478..1481,
                                 },
                             },
                             Expression {
@@ -1504,7 +1504,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "{",
                                     insensitive: false,
-                                    range: 1707..1708,
+                                    range: 1706..1709,
                                 },
                             },
                             Expression {
@@ -1559,7 +1559,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "}",
                                     insensitive: false,
-                                    range: 1723..1724,
+                                    range: 1722..1725,
                                 },
                             },
                         ],
@@ -1611,7 +1611,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: ":",
                                     insensitive: false,
-                                    range: 1763..1764,
+                                    range: 1762..1765,
                                 },
                             },
                             Expression {
@@ -1663,7 +1663,7 @@ GrammarInfo {
                             body: YggdrasilText {
                                 text: "parser",
                                 insensitive: false,
-                                range: 1841..1847,
+                                range: 1840..1848,
                             },
                         },
                     },
@@ -1677,7 +1677,7 @@ GrammarInfo {
                             body: YggdrasilText {
                                 text: "inspector",
                                 insensitive: false,
-                                range: 1867..1876,
+                                range: 1866..1877,
                             },
                         },
                     },
@@ -1691,7 +1691,7 @@ GrammarInfo {
                             body: YggdrasilText {
                                 text: "external",
                                 insensitive: false,
-                                range: 1896..1904,
+                                range: 1895..1905,
                             },
                         },
                     },
@@ -1883,7 +1883,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "@",
                                     insensitive: false,
-                                    range: 2246..2247,
+                                    range: 2245..2248,
                                 },
                             },
                             Expression {
@@ -1935,7 +1935,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "(",
                                     insensitive: false,
-                                    range: 2284..2285,
+                                    range: 2283..2286,
                                 },
                             },
                             Expression {
@@ -1991,7 +1991,7 @@ GrammarInfo {
                                                                                     body: YggdrasilText {
                                                                                         text: ",",
                                                                                         insensitive: false,
-                                                                                        range: 2301..2302,
+                                                                                        range: 2300..2303,
                                                                                     },
                                                                                 },
                                                                                 Expression {
@@ -2039,7 +2039,7 @@ GrammarInfo {
                                                             body: YggdrasilText {
                                                                 text: ",",
                                                                 insensitive: false,
-                                                                range: 2318..2319,
+                                                                range: 2317..2320,
                                                             },
                                                         },
                                                         operators: [
@@ -2076,7 +2076,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: ")",
                                     insensitive: false,
-                                    range: 2325..2326,
+                                    range: 2324..2327,
                                 },
                             },
                         ],
@@ -2147,7 +2147,7 @@ GrammarInfo {
                                                                 body: YggdrasilText {
                                                                     text: "|",
                                                                     insensitive: false,
-                                                                    range: 2491..2492,
+                                                                    range: 2490..2493,
                                                                 },
                                                             },
                                                             Expression {
@@ -2248,7 +2248,7 @@ GrammarInfo {
                                                                 body: YggdrasilText {
                                                                     text: "~",
                                                                     insensitive: false,
-                                                                    range: 2553..2554,
+                                                                    range: 2552..2555,
                                                                 },
                                                             },
                                                             Expression {
@@ -2418,7 +2418,7 @@ GrammarInfo {
                                                     body: YggdrasilText {
                                                         text: ":",
                                                         insensitive: false,
-                                                        range: 2665..2666,
+                                                        range: 2664..2667,
                                                     },
                                                 },
                                             ],
@@ -2603,7 +2603,7 @@ GrammarInfo {
                             body: YggdrasilText {
                                 text: "!",
                                 insensitive: false,
-                                range: 2741..2742,
+                                range: 2740..2743,
                             },
                         },
                     },
@@ -2617,7 +2617,7 @@ GrammarInfo {
                             body: YggdrasilText {
                                 text: "&",
                                 insensitive: false,
-                                range: 2761..2762,
+                                range: 2760..2763,
                             },
                         },
                     },
@@ -2631,7 +2631,7 @@ GrammarInfo {
                             body: YggdrasilText {
                                 text: "^",
                                 insensitive: false,
-                                range: 2781..2782,
+                                range: 2780..2783,
                             },
                         },
                     },
@@ -2668,7 +2668,7 @@ GrammarInfo {
                             body: YggdrasilText {
                                 text: "?",
                                 insensitive: false,
-                                range: 2816..2817,
+                                range: 2815..2818,
                             },
                         },
                     },
@@ -2682,7 +2682,7 @@ GrammarInfo {
                             body: YggdrasilText {
                                 text: "*",
                                 insensitive: false,
-                                range: 2836..2837,
+                                range: 2835..2838,
                             },
                         },
                     },
@@ -2696,7 +2696,7 @@ GrammarInfo {
                             body: YggdrasilText {
                                 text: "+",
                                 insensitive: false,
-                                range: 2852..2853,
+                                range: 2851..2854,
                             },
                         },
                     },
@@ -2938,7 +2938,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "(",
                                     insensitive: false,
-                                    range: 3251..3252,
+                                    range: 3250..3253,
                                 },
                             },
                             Expression {
@@ -2956,7 +2956,7 @@ GrammarInfo {
                                         body: YggdrasilText {
                                             text: "|",
                                             insensitive: false,
-                                            range: 3255..3256,
+                                            range: 3254..3257,
                                         },
                                     },
                                     operators: [
@@ -2994,7 +2994,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: ")",
                                     insensitive: false,
-                                    range: 3271..3272,
+                                    range: 3270..3273,
                                 },
                             },
                         ],
@@ -3032,7 +3032,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "'",
                                     insensitive: false,
-                                    range: 3428..3429,
+                                    range: 3427..3430,
                                 },
                             },
                             Expression {
@@ -3050,7 +3050,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "'",
                                     insensitive: false,
-                                    range: 3446..3447,
+                                    range: 3445..3448,
                                 },
                             },
                         ],
@@ -3117,7 +3117,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "\"",
                                     insensitive: false,
-                                    range: 3525..3526,
+                                    range: 3524..3527,
                                 },
                             },
                             Expression {
@@ -3149,7 +3149,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "\"",
                                     insensitive: false,
-                                    range: 3541..3542,
+                                    range: 3540..3543,
                                 },
                             },
                         ],
@@ -3252,7 +3252,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "\\u{",
                                     insensitive: false,
-                                    range: 3675..3678,
+                                    range: 3674..3679,
                                 },
                             },
                             Expression {
@@ -3270,7 +3270,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "}",
                                     insensitive: false,
-                                    range: 3685..3686,
+                                    range: 3684..3687,
                                 },
                             },
                         ],
@@ -3422,7 +3422,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "/",
                                     insensitive: false,
-                                    range: 3977..3978,
+                                    range: 3976..3979,
                                 },
                             },
                             Expression {
@@ -3440,7 +3440,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "/",
                                     insensitive: false,
-                                    range: 3992..3993,
+                                    range: 3991..3994,
                                 },
                             },
                         ],
@@ -3550,7 +3550,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "[",
                                     insensitive: false,
-                                    range: 4082..4083,
+                                    range: 4081..4084,
                                 },
                             },
                             Expression {
@@ -3595,7 +3595,7 @@ GrammarInfo {
                                                             body: YggdrasilText {
                                                                 text: "]",
                                                                 insensitive: false,
-                                                                range: 4103..4104,
+                                                                range: 4102..4105,
                                                             },
                                                         },
                                                         operators: [
@@ -3627,7 +3627,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "]",
                                     insensitive: false,
-                                    range: 4113..4114,
+                                    range: 4112..4115,
                                 },
                             },
                         ],
@@ -3660,7 +3660,7 @@ GrammarInfo {
                     body: YggdrasilText {
                         text: "^",
                         insensitive: false,
-                        range: 4145..4146,
+                        range: 4144..4147,
                     },
                 },
             },
@@ -3714,7 +3714,7 @@ GrammarInfo {
                                             body: YggdrasilText {
                                                 text: "{",
                                                 insensitive: false,
-                                                range: 4312..4313,
+                                                range: 4311..4314,
                                             },
                                         },
                                         Expression {
@@ -3751,7 +3751,7 @@ GrammarInfo {
                                                                 body: YggdrasilText {
                                                                     text: "=",
                                                                     insensitive: false,
-                                                                    range: 4334..4335,
+                                                                    range: 4333..4336,
                                                                 },
                                                             },
                                                         ],
@@ -3795,7 +3795,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "}",
                                     insensitive: false,
-                                    range: 4358..4359,
+                                    range: 4357..4360,
                                 },
                             },
                         ],
@@ -3871,7 +3871,7 @@ GrammarInfo {
                                                                             body: YggdrasilText {
                                                                                 text: ".",
                                                                                 insensitive: false,
-                                                                                range: 4535..4536,
+                                                                                range: 4534..4537,
                                                                             },
                                                                         },
                                                                         Expression {
@@ -3880,7 +3880,7 @@ GrammarInfo {
                                                                             body: YggdrasilText {
                                                                                 text: "::",
                                                                                 insensitive: false,
-                                                                                range: 4541..4543,
+                                                                                range: 4540..4544,
                                                                             },
                                                                         },
                                                                     ],
@@ -3984,7 +3984,7 @@ GrammarInfo {
                                                                 body: YggdrasilText {
                                                                     text: "::",
                                                                     insensitive: false,
-                                                                    range: 4595..4597,
+                                                                    range: 4594..4598,
                                                                 },
                                                             },
                                                             Expression {
@@ -4081,7 +4081,7 @@ GrammarInfo {
                             body: YggdrasilText {
                                 text: "true",
                                 insensitive: false,
-                                range: 4703..4707,
+                                range: 4702..4708,
                             },
                         },
                     },
@@ -4095,7 +4095,7 @@ GrammarInfo {
                             body: YggdrasilText {
                                 text: "false",
                                 insensitive: false,
-                                range: 4723..4728,
+                                range: 4722..4729,
                             },
                         },
                     },
@@ -4161,7 +4161,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "{",
                                     insensitive: false,
-                                    range: 4925..4926,
+                                    range: 4924..4927,
                                 },
                             },
                             Expression {
@@ -4189,7 +4189,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "}",
                                     insensitive: false,
-                                    range: 4937..4938,
+                                    range: 4936..4939,
                                 },
                             },
                         ],
@@ -4227,7 +4227,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "{",
                                     insensitive: false,
-                                    range: 4961..4962,
+                                    range: 4960..4963,
                                 },
                             },
                             Expression {
@@ -4269,7 +4269,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: ",",
                                     insensitive: false,
-                                    range: 4980..4981,
+                                    range: 4979..4982,
                                 },
                             },
                             Expression {
@@ -4311,7 +4311,7 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "}",
                                     insensitive: false,
-                                    range: 4999..5000,
+                                    range: 4998..5001,
                                 },
                             },
                         ],

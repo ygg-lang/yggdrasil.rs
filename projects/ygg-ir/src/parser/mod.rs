@@ -1,12 +1,13 @@
-use num::BigInt;
 use std::str::FromStr;
+
+use num::BigInt;
 
 use yggdrasil_error::YggdrasilError;
 use yggdrasil_parser::{
     bootstrap::{
         AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
-        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, IntegerNode, KwExternalNode, PrefixNode, RootNode,
-        StatementNode, StringItemNode, StringNode, SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
+        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, KwExternalNode, PrefixNode, RootNode, StatementNode,
+        StringItemNode, SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
     },
     TakeAnnotations, YggdrasilNode,
 };
@@ -233,32 +234,40 @@ impl YggdrasilExpression {
             AtomicNode::FunctionCall(_) => {
                 todo!()
             }
-            AtomicNode::Identifier(v) => YggdrasilIdentifier::build(v).into(),
             AtomicNode::RegexEmbed(v) => YggdrasilRegex::new(&v.regex_inner.text, v.get_range().unwrap_or_default()).into(),
             AtomicNode::RegexRange(v) => YggdrasilRegex::new(&v.text, v.get_range().unwrap_or_default()).into(),
-            AtomicNode::String(v) => match v {
-                StringNode::Normal(s) => {
-                    let mut buffer = String::new();
-                    for item in &s.string_item {
-                        match item {
-                            StringItemNode::EscapedCharacter(item) => match item.text.chars().last() {
-                                Some(c) => match c {
-                                    'r' => buffer.push('\r'),
-                                    'n' => buffer.push('\n'),
-                                    _ => buffer.push(c),
-                                },
-                                None => unreachable!(),
+            AtomicNode::StringRaw(s) => YggdrasilText::new(&s.string_raw_text.text, s.get_range().unwrap_or_default()).into(),
+            AtomicNode::StringNormal(s) => {
+                let mut buffer = String::new();
+                for item in &s.string_item {
+                    match item {
+                        StringItemNode::EscapedCharacter(item) => match item.text.chars().last() {
+                            Some(c) => match c {
+                                'r' => buffer.push('\r'),
+                                'n' => buffer.push('\n'),
+                                _ => buffer.push(c),
                             },
-                            StringItemNode::EscapedUnicode(_) => {
-                                unimplemented!()
+                            None => unreachable!(),
+                        },
+                        StringItemNode::EscapedUnicode(unicode) => match unicode.as_char() {
+                            Some(c) => buffer.push(c),
+                            None => {
+                                println!("parse fail: {:?}", unicode)
                             }
-                            StringItemNode::TextAny(s) => buffer.push_str(&s.text),
-                        }
+                        },
+                        StringItemNode::TextAny(s) => buffer.push_str(&s.text),
                     }
-                    YggdrasilText::new(buffer, s.get_range().unwrap_or_default()).into()
                 }
-                StringNode::Raw(s) => YggdrasilText::new(&s.text, s.get_range().unwrap_or_default()).into(),
+                YggdrasilText::new(buffer, s.get_range().unwrap_or_default()).into()
+            }
+            AtomicNode::Category(_) => {
+                todo!()
+            }
+            AtomicNode::EscapedUnicode(unicode) => match unicode.as_char() {
+                Some(c) => YggdrasilText::new(c, unicode.get_range().unwrap_or_default()).into(),
+                None => Err(YggdrasilError::syntax_error(&unicode.hex.text, unicode.get_range().unwrap_or_default()))?,
             },
+            AtomicNode::Identifier(v) => YggdrasilIdentifier::build(v).into(),
             AtomicNode::Integer(v) => BigInt::from_str(&v.text)?.into(),
         };
         Ok(expr)
