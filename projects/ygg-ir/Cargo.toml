@@ -25,7 +25,7 @@ path = "../ygg-parser"
 [dependencies.yggdrasil-error]
 version = "0.1.*"
 path = "../ygg-error"
-features = ["yggdrasil-rt"]
+features = ["yggdrasil-rt", "num"]
 
 [features]
 serde = ["dep:serde", "serde/derive", "indexmap/serde", "num/serde", "url/serde"]

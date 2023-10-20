@@ -337,7 +337,6 @@ fn parse_group_pair(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_external_statement(state: Input) -> Output {
     state.rule(BootstrapRule::ExternalStatement, |s| {
@@ -351,7 +350,6 @@ fn parse_external_statement(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_linker_block(state: Input) -> Output {
     state.rule(BootstrapRule::LinkerBlock, |s| {
@@ -373,7 +371,6 @@ fn parse_linker_block(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_linker_pair(state: Input) -> Output {
     state.rule(BootstrapRule::LinkerPair, |s| {
@@ -387,7 +384,6 @@ fn parse_linker_pair(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_kw_external(state: Input) -> Output {
     state.rule(BootstrapRule::KW_EXTERNAL, |s| {

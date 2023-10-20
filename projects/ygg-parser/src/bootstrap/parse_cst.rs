@@ -17,6 +17,10 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::GroupStatement => parse_group_statement(state),
         BootstrapRule::GroupBlock => parse_group_block(state),
         BootstrapRule::GroupPair => parse_group_pair(state),
+        BootstrapRule::ExternalStatement => parse_external_statement(state),
+        BootstrapRule::LinkerBlock => parse_linker_block(state),
+        BootstrapRule::LinkerPair => parse_linker_pair(state),
+        BootstrapRule::KW_EXTERNAL => parse_kw_external(state),
         BootstrapRule::DecoratorCall => parse_decorator_call(state),
         BootstrapRule::DecoratorName => parse_decorator_name(state),
         BootstrapRule::FunctionCall => parse_function_call(state),
@@ -46,6 +50,8 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::Namepath => parse_namepath(state),
         BootstrapRule::Identifier => parse_identifier(state),
         BootstrapRule::Boolean => parse_boolean(state),
+        BootstrapRule::Integer => parse_integer(state),
+        BootstrapRule::Range => parse_range(state),
         BootstrapRule::ModifierCall => parse_modifier_call(state),
         BootstrapRule::KW_GRAMMAR => parse_kw_grammar(state),
         BootstrapRule::KW_IMPORT => parse_kw_import(state),
@@ -78,6 +84,7 @@ fn parse_statement(state: Input) -> Output {
             .or_else(|s| parse_class_statement(s).and_then(|s| s.tag_node("class_statement")))
             .or_else(|s| parse_union_statement(s).and_then(|s| s.tag_node("union_statement")))
             .or_else(|s| parse_group_statement(s).and_then(|s| s.tag_node("group_statement")))
+            .or_else(|s| parse_external_statement(s).and_then(|s| s.tag_node("external_statement")))
     })
 }
 #[inline]
@@ -330,6 +337,66 @@ fn parse_group_pair(state: Input) -> Output {
         })
     })
 }
+
+#[inline]
+fn parse_external_statement(state: Input) -> Output {
+    state.rule(BootstrapRule::ExternalStatement, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| parse_kw_external(s).and_then(|s| s.tag_node("kw_external")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_linker_block(s).and_then(|s| s.tag_node("linker_block")))
+        })
+    })
+}
+
+#[inline]
+fn parse_linker_block(state: Input) -> Output {
+    state.rule(BootstrapRule::LinkerBlock, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| builtin_text(s, "{", false))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s)
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_linker_pair(s).and_then(|s| s.tag_node("linker_pair")))
+                        })
+                    })
+                })
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, "}", false))
+        })
+    })
+}
+
+#[inline]
+fn parse_linker_pair(state: Input) -> Output {
+    state.rule(BootstrapRule::LinkerPair, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, ":", false))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_namepath_free(s).and_then(|s| s.tag_node("namepath_free")))
+        })
+    })
+}
+
+#[inline]
+fn parse_kw_external(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_EXTERNAL, |s| {
+        Err(s)
+            .or_else(|s| builtin_text(s, "parser", false).and_then(|s| s.tag_node("parser")))
+            .or_else(|s| builtin_text(s, "inspector", false).and_then(|s| s.tag_node("inspector")))
+            .or_else(|s| builtin_text(s, "external", false).and_then(|s| s.tag_node("external")))
+    })
+}
 #[inline]
 fn parse_decorator_call(state: Input) -> Output {
     state.rule(BootstrapRule::DecoratorCall, |s| {
@@ -550,6 +617,7 @@ fn parse_suffix(state: Input) -> Output {
             .or_else(|s| builtin_text(s, "?", false).and_then(|s| s.tag_node("optional")))
             .or_else(|s| builtin_text(s, "*", false).and_then(|s| s.tag_node("many")))
             .or_else(|s| builtin_text(s, "+", false).and_then(|s| s.tag_node("many_1")))
+            .or_else(|s| parse_range(s).and_then(|s| s.tag_node("range")))
     })
 }
 #[inline]
@@ -559,6 +627,7 @@ fn parse_atomic(state: Input) -> Output {
             .or_else(|s| parse_group_expression(s).and_then(|s| s.tag_node("group_expression")))
             .or_else(|s| parse_function_call(s).and_then(|s| s.tag_node("function_call")))
             .or_else(|s| parse_boolean(s).and_then(|s| s.tag_node("boolean")))
+            .or_else(|s| parse_integer(s).and_then(|s| s.tag_node("integer")))
             .or_else(|s| parse_string(s).and_then(|s| s.tag_node("string")))
             .or_else(|s| parse_regex_embed(s).and_then(|s| s.tag_node("regex_embed")))
             .or_else(|s| parse_regex_range(s).and_then(|s| s.tag_node("regex_range")))
@@ -613,13 +682,10 @@ fn parse_string_raw(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_string_normal(state: Input) -> Output {
     state.rule(BootstrapRule::StringNormal, |s| {
-        s.repeat(0..4294967295, |s| {
-            s.sequence(|s| Ok(s).and_then(|s| parse_string_item(s).and_then(|s| s.tag_node("string_item"))))
-        })
+        s.repeat(0..4294967295, |s| parse_string_item(s).and_then(|s| s.tag_node("string_item")))
     })
 }
 #[inline]
@@ -631,7 +697,6 @@ fn parse_string_item(state: Input) -> Output {
             .or_else(|s| parse_text_any(s).and_then(|s| s.tag_node("text_any")))
     })
 }
-
 #[inline]
 fn parse_escaped_unicode(state: Input) -> Output {
     state.rule(BootstrapRule::EscapedUnicode, |s| {
@@ -641,7 +706,6 @@ fn parse_escaped_unicode(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_escaped_character(state: Input) -> Output {
     state.rule(BootstrapRule::EscapedCharacter, |s| {
@@ -651,7 +715,6 @@ fn parse_escaped_character(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_text_any(state: Input) -> Output {
     state.rule(BootstrapRule::TextAny, |s| {
@@ -672,7 +735,6 @@ fn parse_regex_embed(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_regex_inner(state: Input) -> Output {
     state.rule(BootstrapRule::RegexInner, |s| {
@@ -788,6 +850,41 @@ fn parse_boolean(state: Input) -> Output {
             .or_else(|s| builtin_text(s, "false", false).and_then(|s| s.tag_node("false")))
     })
 }
+
+#[inline]
+fn parse_integer(state: Input) -> Output {
+    state.rule(BootstrapRule::Integer, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(0|[1-9][0-9]*)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_range(state: Input) -> Output {
+    state.rule(BootstrapRule::Range, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| {
+                    s.sequence(|s| {
+                        Ok(s)
+                            .and_then(|s| builtin_text(s, "{", false))
+                            .and_then(|s| builtin_ignore(s))
+                            .and_then(|s| parse_integer(s).and_then(|s| s.tag_node("min")))
+                            .and_then(|s| builtin_ignore(s))
+                            .and_then(|s| builtin_text(s, ",", false))
+                    })
+                })
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.optional(|s| parse_integer(s).and_then(|s| s.tag_node("integer"))).and_then(|s| s.tag_node("max"))
+                })
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, "}", false))
+        })
+    })
+}
 #[inline]
 fn parse_modifier_call(state: Input) -> Output {
     state.rule(BootstrapRule::ModifierCall, |s| {
@@ -879,7 +976,6 @@ fn parse_white_space(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_comment(state: Input) -> Output {
     state.rule(BootstrapRule::Comment, |s| {

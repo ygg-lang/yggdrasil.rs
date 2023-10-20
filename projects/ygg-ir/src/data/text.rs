@@ -1,4 +1,5 @@
 use super::*;
+use num::BigInt;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -14,6 +15,11 @@ impl From<YggdrasilText> for YggdrasilExpression {
     }
 }
 
+impl From<BigInt> for YggdrasilExpression {
+    fn from(value: BigInt) -> Self {
+        ExpressionBody::Integer(value).into()
+    }
+}
 impl YggdrasilText {
     pub fn new<S>(text: S, span: Range<usize>) -> Self
     where

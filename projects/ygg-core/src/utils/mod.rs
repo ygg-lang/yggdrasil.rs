@@ -3,7 +3,6 @@ use std::str::FromStr;
 use yggdrasil_error::{Validate, Validation, YggdrasilError};
 use yggdrasil_ir::{grammar::GrammarInfo, traits::CodeOptimizer};
 
-
 pub fn parse_grammar_raw(grammar: &str) -> Result<GrammarInfo, YggdrasilError> {
     Ok(GrammarInfo::from_str(grammar)?)
 }

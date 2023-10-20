@@ -11,8 +11,7 @@ fn run_json5() {
     let builder = RustCodegen::default();
     builder
         .generate(
-            &read_to_string(r#"C:\Users\Dell\CLionProjects\dejavu-engine\projects\dejavu-parser\grammars\dejavu.ygg"#)
-                .unwrap(),
+            &read_to_string(r#"C:\Users\Dell\CLionProjects\dejavu-engine\projects\dejavu-parser\grammars\dejavu.ygg"#).unwrap(),
             r#"C:\Users\Dell\CLionProjects\dejavu-engine\projects\dejavu-parser\src\dejavu\"#,
         )
         .unwrap();

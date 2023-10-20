@@ -1,11 +1,12 @@
+use num::BigInt;
 use std::str::FromStr;
 
 use yggdrasil_error::YggdrasilError;
 use yggdrasil_parser::{
     bootstrap::{
         AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
-        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, PrefixNode, RootNode, StatementNode, StringItemNode,
-        StringNode, SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
+        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, KwExternalNode, PrefixNode, RootNode, StatementNode,
+        StringItemNode, StringNode, SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
     },
     TakeAnnotations, YggdrasilNode,
 };
@@ -70,6 +71,11 @@ impl TryFrom<RootNode> for GrammarInfo {
                     Err(e) => {
                         println!("{e:?}");
                     }
+                },
+                StatementNode::ExternalStatement(v) => match v.kw_external {
+                    KwExternalNode::External => {}
+                    KwExternalNode::Inspector => {}
+                    KwExternalNode::Parser => {}
                 },
             }
         }
@@ -190,6 +196,9 @@ impl YggdrasilExpression {
                 SuffixNode::Optional => unary.push(YggdrasilOperator::OPTIONAL),
                 SuffixNode::Many => unary.push(YggdrasilOperator::REPEATS),
                 SuffixNode::Many1 => unary.push(YggdrasilOperator::REPEAT1),
+                SuffixNode::Range(_) => {
+                    todo!()
+                }
             }
         }
         for i in node.prefix.iter().rev() {
@@ -237,6 +246,7 @@ impl YggdrasilExpression {
                 }
                 StringNode::Raw(s) => YggdrasilText::new(&s.text, s.get_range().unwrap_or_default()).into(),
             },
+            AtomicNode::Integer(v) => BigInt::from_str(&v.text)?.into(),
         };
         Ok(expr)
     }

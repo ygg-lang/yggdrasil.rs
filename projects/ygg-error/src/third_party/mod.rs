@@ -9,6 +9,8 @@ mod for_askama;
 #[cfg(feature = "json5")]
 mod for_json5;
 
+#[cfg(feature = "num")]
+mod for_num;
 #[cfg(feature = "yggdrasil-rt")]
 mod for_runtime;
 #[cfg(feature = "wax")]
