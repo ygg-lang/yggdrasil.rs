@@ -3,8 +3,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![doc = include_str!("readme.md")]
 
-mod parse_cst;
 mod parse_ast;
+mod parse_cst;
 
 use core::str::FromStr;
 use std::{borrow::Cow, ops::Range, sync::OnceLock};
@@ -45,6 +45,10 @@ pub enum BootstrapRule {
     GroupStatement,
     GroupBlock,
     GroupPair,
+    ExternalStatement,
+    LinkerBlock,
+    LinkerPair,
+    KW_EXTERNAL,
     DecoratorCall,
     DecoratorName,
     FunctionCall,
@@ -114,6 +118,10 @@ impl YggdrasilRule for BootstrapRule {
             Self::GroupStatement => "",
             Self::GroupBlock => "",
             Self::GroupPair => "",
+            Self::ExternalStatement => "",
+            Self::LinkerBlock => "",
+            Self::LinkerPair => "",
+            Self::KW_EXTERNAL => "",
             Self::DecoratorCall => "",
             Self::DecoratorName => "",
             Self::FunctionCall => "",
@@ -169,6 +177,7 @@ pub struct RootNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StatementNode {
     ClassStatement(ClassStatementNode),
+    ExternalStatement(ExternalStatementNode),
     GrammarStatement(GrammarStatementNode),
     GroupStatement(GroupStatementNode),
     UnionStatement(UnionStatementNode),
@@ -263,6 +272,38 @@ pub struct GroupPairNode {
     pub atomic: AtomicNode,
     pub identifier: IdentifierNode,
     pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct ExternalStatementNode {
+    pub identifier: IdentifierNode,
+    pub kw_external: KwExternalNode,
+    pub linker_block: LinkerBlockNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct LinkerBlockNode {
+    pub linker_pair: Vec<LinkerPairNode>,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct LinkerPairNode {
+    pub identifier: IdentifierNode,
+    pub namepath_free: NamepathFreeNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub enum KwExternalNode {
+    External,
+    Inspector,
+    Parser,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

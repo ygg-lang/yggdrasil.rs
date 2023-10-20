@@ -1,4 +1,5 @@
 use super::*;
+
 #[automatically_derived]
 impl YggdrasilNode for RootNode {
     type Rule = BootstrapRule;
@@ -770,10 +771,10 @@ impl YggdrasilNode for StringNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        if let Ok(s) = pair.take_tagged_one::<StringNormalNode>(Cow::Borrowed("normal")) {
+        if let Ok(s) = pair.take_tagged_one::<StringNormalNode>(Cow::Borrowed("string_normal")) {
             return Ok(Self::Normal(s));
         }
-        if let Ok(s) = pair.take_tagged_one::<StringRawNode>(Cow::Borrowed("raw")) {
+        if let Ok(s) = pair.take_tagged_one::<StringRawNode>(Cow::Borrowed("string_raw")) {
             return Ok(Self::Raw(s));
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::String, _span))

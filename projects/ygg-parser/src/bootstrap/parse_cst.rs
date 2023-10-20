@@ -618,9 +618,7 @@ fn parse_string_raw(state: Input) -> Output {
 fn parse_string_normal(state: Input) -> Output {
     state.rule(BootstrapRule::StringNormal, |s| {
         s.repeat(0..4294967295, |s| {
-            s.sequence(|s| {
-                Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| parse_string_item(s).and_then(|s| s.tag_node("string_item")))
-            })
+            s.sequence(|s| Ok(s).and_then(|s| parse_string_item(s).and_then(|s| s.tag_node("string_item"))))
         })
     })
 }
@@ -639,7 +637,7 @@ fn parse_escaped_unicode(state: Input) -> Output {
     state.rule(BootstrapRule::EscapedUnicode, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(\\\\\\\\u[0-9a-zA-Z]{4})").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(\\\\u[0-9a-zA-Z]{4})").unwrap())
         })
     })
 }
@@ -659,7 +657,7 @@ fn parse_text_any(state: Input) -> Output {
     state.rule(BootstrapRule::TextAny, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^([^\\\"\\\\]+)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^([^\"\\\\]+)").unwrap())
         })
     })
 }

@@ -208,7 +208,7 @@ impl YggdrasilExpression {
                 BooleanNode::False => YggdrasilExpression::boolean(false),
                 BooleanNode::True => YggdrasilExpression::boolean(true),
             },
-            AtomicNode::FunctionCall(v) => {
+            AtomicNode::FunctionCall(_) => {
                 todo!()
             }
             AtomicNode::Identifier(v) => YggdrasilIdentifier::build(v).into(),
@@ -217,8 +217,8 @@ impl YggdrasilExpression {
             AtomicNode::String(v) => match v {
                 StringNode::Normal(s) => {
                     let mut buffer = String::new();
-                    for s in &s.string_item {
-                        match s {
+                    for item in &s.string_item {
+                        match item {
                             StringItemNode::EscapedCharacter(item) => match item.text.chars().last() {
                                 Some(c) => match c {
                                     'r' => buffer.push('\r'),
@@ -233,12 +233,9 @@ impl YggdrasilExpression {
                             StringItemNode::TextAny(s) => buffer.push_str(&s.text),
                         }
                     }
-                    YggdrasilText::new(buffer, Default::default()).into()
+                    YggdrasilText::new(buffer, s.get_range().unwrap_or_default()).into()
                 }
-                StringNode::Raw(s) => {
-                    YggdrasilText::new(s.text.trim_matches('\''), Default::default()).into()
-                    // YggdrasilText::new(s.text.clone(), s.get_range().unwrap_or_default()).into()
-                }
+                StringNode::Raw(s) => YggdrasilText::new(&s.text, s.get_range().unwrap_or_default()).into(),
             },
         };
         Ok(expr)

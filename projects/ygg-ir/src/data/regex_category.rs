@@ -7,12 +7,6 @@ pub struct YggdrasilRegex {
     pub raw: String,
     pub span: Range<usize>,
 }
-
-impl From<YggdrasilRegex> for YggdrasilExpression {
-    fn from(value: YggdrasilRegex) -> Self {
-        ExpressionBody::Regex(value).into()
-    }
-}
 impl Display for YggdrasilRegex {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.write_str("\"^(")?;
@@ -27,6 +21,11 @@ impl Display for YggdrasilRegex {
     }
 }
 
+impl From<YggdrasilRegex> for YggdrasilExpression {
+    fn from(value: YggdrasilRegex) -> Self {
+        ExpressionBody::Regex(value).into()
+    }
+}
 impl YggdrasilRegex {
     pub fn new<S>(text: S, span: Range<usize>) -> Self
     where

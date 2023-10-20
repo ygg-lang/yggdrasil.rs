@@ -45,7 +45,7 @@ mod standard {
 
     #[test]
     fn test_atomic() {
-        let text = r##"("->")"##;
+        let text = r##"'->'"##;
         let cst = BootstrapParser::parse_cst(text, BootstrapRule::Expression).unwrap();
         println!("Short Form:\n{}", cst);
         let ast = ExpressionNode::from_str(text).unwrap();
@@ -80,6 +80,16 @@ mod preview {
     }
 
     #[test]
+    fn test_external() {
+        let text = r###"external string {
+            rust: crate::utils::helper
+        }"###;
+        let cst = BootstrapParser::parse_cst(text, BootstrapRule::ExternalStatement).unwrap();
+        println!("Short Form:\n{}", cst);
+        let ast = ExternalStatementNode::from_str(text).unwrap();
+        println!("{ast:#?}")
+    }
+    #[test]
     fn test_comment() {
         let text = r##"//"##;
         let cst = BootstrapParser::parse_cst(text, BootstrapRule::Comment).unwrap();
@@ -90,10 +100,13 @@ mod preview {
 
     #[test]
     fn test_string() {
-        let text = r##""->""##;
-        let cst = BootstrapParser::parse_cst(text, BootstrapRule::String).unwrap();
+        let text = r##"'->'"##;
+        let mut cst = BootstrapParser::parse_cst(text, BootstrapRule::Expression).unwrap();
         println!("Short Form:\n{}", cst);
-        let ast = yggdrasil_parser::antlr::StringNode::from_str(text).unwrap();
+        let root = cst.next().unwrap();
+        println!("{:?}", root.get_tag());
+
+        let ast = ExpressionNode::from_str(text).unwrap();
         println!("{ast:#?}")
     }
 }

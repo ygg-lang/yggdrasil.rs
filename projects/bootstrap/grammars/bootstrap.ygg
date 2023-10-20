@@ -11,6 +11,7 @@ union Statement {
     | ClassStatement
     | UnionStatement
     | GroupStatement
+    | ExternalStatement
 }
 // === grammar === -----------------------------------------------------------------------------------------------------
 class GrammarStatement {
@@ -56,7 +57,24 @@ class GroupBlock {
 class GroupPair {
     Identifier ':' Atomic
 }
-// === Decorators === -------------------------------------------------------------------------------------------------
+// === external === -------------------------------------------------------------------------------------------------------
+class ExternalStatement {
+    KW_EXTERNAL Identifier LinkerBlock
+}
+class LinkerBlock {
+    '{' LinkerPair* '}'
+}
+class LinkerPair {
+    Identifier ':' NamepathFree
+}
+@railroad(false)
+@style(keyword)
+union KW_EXTERNAL {
+    | 'parser'    #Parser
+    | 'inspector' #Inspector
+    | 'external'  #External
+}
+// === decorators === --------------------------------------------------------------------------------------------------
 class DecoratorCall {
     DecoratorName CallBody
 }
@@ -115,7 +133,7 @@ atomic union String {
 text class StringRaw {
     /[^']*/
 }
-class StringNormal {
+atomic class StringNormal {
     StringItem*
 }
 union StringItem {
@@ -126,9 +144,9 @@ union StringItem {
 @style(escape)
 @railroad(false)
 text group {
-    EscapedUnicode: /\\\\u[0-9a-zA-Z]{4}/
+    EscapedUnicode: /\\u[0-9a-zA-Z]{4}/
     EscapedCharacter: /\\./
-    TextAny: /[^\"\\]+/
+    TextAny: /[^"\\]+/
 }
 // === regex === -------------------------------------------------------------------------------------------------------
 atomic class RegexEmbed {

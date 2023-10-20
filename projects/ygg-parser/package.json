@@ -1,6 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "p": "cargo publish --allow-dirty"
+        "p": "cargo publish --allow-dirty",
+        "rm-tags": "git push --prune origin refs/tags/*"
     }
 }

@@ -17,7 +17,7 @@ impl Default for DeadCodeEliminator {
 impl CodeOptimizer for DeadCodeEliminator {
     // TODO: Tri-Color mark and sweep algorithm
     fn optimize(&mut self, info: &GrammarInfo) -> Validation<GrammarInfo> {
-        let mut errors = vec![];
+        let errors = vec![];
         self.find_entry(info);
         self.find_unvisited();
         Validation::Success { value: info.clone(), diagnostics: errors }

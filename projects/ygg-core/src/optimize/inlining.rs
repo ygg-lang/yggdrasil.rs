@@ -1,5 +1,5 @@
-use yggdrasil_error::Validation;
 use super::*;
+use yggdrasil_error::Validation;
 
 pub struct InlineRules {
     grammar: GrammarInfo,
@@ -15,7 +15,7 @@ impl Default for InlineRules {
 impl CodeOptimizer for InlineRules {
     fn optimize(&mut self, info: &GrammarInfo) -> Validation<GrammarInfo> {
         self.grammar = info.clone();
-        let mut out = info.clone();
+        let out = info.clone();
         Validation::Success { value: out, diagnostics: vec![] }
     }
 }

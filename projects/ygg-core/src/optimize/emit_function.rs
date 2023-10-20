@@ -1,5 +1,5 @@
-use yggdrasil_error::Validation;
 use super::*;
+use yggdrasil_error::Validation;
 
 pub struct EmitFunction {
     functions: IndexMap<String, FunctionRule>,
@@ -29,7 +29,7 @@ impl CodeOptimizer for EmitFunction {
 
 impl EmitFunction {
     fn emit(&mut self, rules: &mut IndexMap<String, GrammarRule>) -> Result<(), YggdrasilError> {
-        for (_, rule) in rules.iter_mut() {
+        for (_, _) in rules.iter_mut() {
             // self.emit_expression(&mut rule.body)?;
         }
         Ok(())
