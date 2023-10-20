@@ -5,8 +5,8 @@ use yggdrasil_error::YggdrasilError;
 use yggdrasil_parser::{
     bootstrap::{
         AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
-        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, KwExternalNode, PrefixNode, RootNode, StatementNode,
-        StringItemNode, StringNode, SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
+        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, IntegerNode, KwExternalNode, PrefixNode, RootNode,
+        StatementNode, StringItemNode, StringNode, SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
     },
     TakeAnnotations, YggdrasilNode,
 };
@@ -197,10 +197,15 @@ impl YggdrasilExpression {
                 SuffixNode::Many => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY),
                 SuffixNode::Many1 => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY1),
                 SuffixNode::Range(v) => {
-                    let min = &v.integer;
-                    let max = &v.integer;
-                    todo!()
-                    // YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY1)
+                    let min = match &v.min {
+                        Some(v) => u32::from_str(&v.text).unwrap_or(0),
+                        None => 0,
+                    };
+                    let max = match &v.max {
+                        Some(v) => u32::from_str(&v.text).unwrap_or(u32::MAX),
+                        None => u32::MAX,
+                    };
+                    YggdrasilOperator::RepeatsBetween(YggdrasilCounter::new(min, max))
                 }
             };
             unary.push(suffix)

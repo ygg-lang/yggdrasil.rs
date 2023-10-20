@@ -51,6 +51,7 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::Identifier => parse_identifier(state),
         BootstrapRule::Boolean => parse_boolean(state),
         BootstrapRule::Integer => parse_integer(state),
+        BootstrapRule::RangeExact => parse_range_exact(state),
         BootstrapRule::Range => parse_range(state),
         BootstrapRule::ModifierCall => parse_modifier_call(state),
         BootstrapRule::KW_GRAMMAR => parse_kw_grammar(state),
@@ -613,6 +614,7 @@ fn parse_suffix(state: Input) -> Output {
             .or_else(|s| builtin_text(s, "?", false).and_then(|s| s.tag_node("optional")))
             .or_else(|s| builtin_text(s, "*", false).and_then(|s| s.tag_node("many")))
             .or_else(|s| builtin_text(s, "+", false).and_then(|s| s.tag_node("many_1")))
+            .or_else(|s| parse_range_exact(s).and_then(|s| s.tag_node("range_exact")))
             .or_else(|s| parse_range(s).and_then(|s| s.tag_node("range")))
     })
 }
@@ -852,6 +854,20 @@ fn parse_integer(state: Input) -> Output {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
             REGEX.get_or_init(|| Regex::new("^(0|[1-9][0-9]*)").unwrap())
+        })
+    })
+}
+
+#[inline]
+fn parse_range_exact(state: Input) -> Output {
+    state.rule(BootstrapRule::RangeExact, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| builtin_text(s, "{", false))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_integer(s).and_then(|s| s.tag_node("integer")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, "}", false))
         })
     })
 }
