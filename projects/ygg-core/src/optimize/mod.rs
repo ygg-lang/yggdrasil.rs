@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use std::{collections::HashSet, mem::take};
+use std::mem::take;
 use yggdrasil_error::YggdrasilError;
 pub use yggdrasil_ir::traits::{CodeGenerator, CodeOptimizer};
 use yggdrasil_ir::{

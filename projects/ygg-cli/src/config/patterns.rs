@@ -2,7 +2,7 @@ use super::*;
 
 #[derive(Clone, Debug, Serialize)]
 pub struct YccPatterns {
-    pub patterns: Vec<String>,
+    patterns: Vec<String>,
 }
 
 impl Default for YccPatterns {

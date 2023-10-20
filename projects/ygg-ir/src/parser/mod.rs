@@ -15,7 +15,7 @@ use crate::{
     data::{YggdrasilRegex, YggdrasilText},
     grammar::GrammarInfo,
     nodes::{UnaryExpression, YggdrasilExpression, YggdrasilOperator},
-    rule::{GrammarAtomic, GrammarBody, GrammarRule, YggdrasilIdentifier, YggdrasilVariant},
+    rule::{GrammarAtomic, GrammarBody, GrammarRule, YggdrasilCounter, YggdrasilIdentifier, YggdrasilVariant},
 };
 
 mod annotations;
@@ -193,10 +193,10 @@ impl YggdrasilExpression {
         let mut unary = Vec::with_capacity(node.prefix.len() + node.suffix.len());
         for i in &node.suffix {
             match i {
-                SuffixNode::Optional => unary.push(YggdrasilOperator::OPTIONAL),
-                SuffixNode::Many => unary.push(YggdrasilOperator::REPEATS),
-                SuffixNode::Many1 => unary.push(YggdrasilOperator::REPEAT1),
-                SuffixNode::Range(_) => {
+                SuffixNode::Optional => unary.push(YggdrasilOperator::RepeatsBetween(YggdrasilCounter::OPTIONAL)),
+                SuffixNode::Many => unary.push(YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY)),
+                SuffixNode::Many1 => unary.push(YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY1)),
+                SuffixNode::Range(v) => {
                     todo!()
                 }
             }

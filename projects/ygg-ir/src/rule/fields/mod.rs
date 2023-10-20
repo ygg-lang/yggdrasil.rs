@@ -22,7 +22,7 @@ pub struct YggdrasilField {
     /// field type to be created, does not include the container type
     pub rhs: String,
     /// what containers are needed for storage
-    pub count: FieldCounter,
+    pub count: YggdrasilCounter,
     /// weather to add `box` to break the circular dependency
     pub boxing: bool,
     /// the position where all left labels appear
@@ -78,7 +78,7 @@ impl YggdrasilExpression {
             // a:(b:x)
             ExpressionBody::Unary(one) => one.field_map(),
             ExpressionBody::Rule(one) => match &self.tag {
-                Some(s) => FieldMap::rule(s, one, FieldCounter::ONE),
+                Some(s) => FieldMap::rule(s, one, YggdrasilCounter::ONE),
                 None => FieldMap::default(),
             },
             _ => FieldMap::default(),
@@ -151,7 +151,7 @@ impl UnaryExpression {
     /// T?+ -> *
     /// T?? -> ?
     /// ```
-    pub fn counter(&self) -> FieldCounter {
+    pub fn counter(&self) -> YggdrasilCounter {
         match self.operators.split_first() {
             Some((head, rest)) => {
                 let mut out = head.counter();
@@ -160,7 +160,7 @@ impl UnaryExpression {
                 }
                 out
             }
-            None => FieldCounter::ONE,
+            None => YggdrasilCounter::ONE,
         }
     }
 }
@@ -172,21 +172,13 @@ impl YggdrasilOperator {
             _ => unreachable!(),
         }
     }
-    pub fn suffix(o: &str) -> YggdrasilOperator {
-        match o {
-            "?" => Self::RepeatsBetween { min: 0, max: 1 },
-            "+" => Self::RepeatsBetween { min: 1, max: u32::MAX },
-            "*" => Self::RepeatsBetween { min: 0, max: u32::MAX },
-            _ => unreachable!(),
-        }
-    }
-    pub fn counter(&self) -> FieldCounter {
+    pub fn counter(&self) -> YggdrasilCounter {
         match self {
-            YggdrasilOperator::Positive => FieldCounter::ONE,
-            YggdrasilOperator::Negative => FieldCounter::NEVER,
-            YggdrasilOperator::Boxing => FieldCounter::ONE,
-            YggdrasilOperator::RepeatsBetween { min, max } => FieldCounter::new(*min, *max),
-            YggdrasilOperator::Recursive => FieldCounter::ONE,
+            YggdrasilOperator::Positive => YggdrasilCounter::ONE,
+            YggdrasilOperator::Negative => YggdrasilCounter::NEVER,
+            YggdrasilOperator::Boxing => YggdrasilCounter::ONE,
+            YggdrasilOperator::RepeatsBetween(c) => *c,
+            YggdrasilOperator::Recursive => YggdrasilCounter::ONE,
         }
     }
 }

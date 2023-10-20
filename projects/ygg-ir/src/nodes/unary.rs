@@ -14,7 +14,7 @@ pub enum YggdrasilOperator {
     /// no such literal
     Boxing,
     /// e+
-    RepeatsBetween { min: u32, max: u32 },
+    RepeatsBetween(YggdrasilCounter),
     /// *e
     Recursive,
 }
@@ -49,10 +49,4 @@ impl Add<YggdrasilOperator> for YggdrasilExpression {
             }
         }
     }
-}
-
-impl YggdrasilOperator {
-    pub const OPTIONAL: YggdrasilOperator = Self::RepeatsBetween { min: 0, max: 1 };
-    pub const REPEATS: YggdrasilOperator = Self::RepeatsBetween { min: 0, max: u32::MAX };
-    pub const REPEAT1: YggdrasilOperator = Self::RepeatsBetween { min: 1, max: u32::MAX };
 }

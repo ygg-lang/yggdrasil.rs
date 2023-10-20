@@ -1,12 +1,13 @@
 use super::*;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct FieldCounter {
-    min: u32,
-    max: u32,
+pub struct YggdrasilCounter {
+    pub min: u32,
+    pub max: u32,
 }
 
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum FieldCounterType {
     Never,
@@ -16,7 +17,13 @@ pub enum FieldCounterType {
     ArrayNonZero,
 }
 
-impl FieldCounter {
+impl Display for YggdrasilCounter {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        if self.max >= 65536 { write!(f, "[{}, ∞]", self.min) } else { write!(f, "[{}, {}]", self.min, self.max) }
+    }
+}
+
+impl YggdrasilCounter {
     pub const NEVER: Self = Self { min: 0, max: 0 };
     pub const OPTIONAL: Self = Self { min: 0, max: 1 };
     pub const ONE: Self = Self { min: 1, max: 1 };
@@ -24,7 +31,7 @@ impl FieldCounter {
     pub const MANY1: Self = Self { min: 1, max: u32::MAX };
 }
 
-impl FieldCounter {
+impl YggdrasilCounter {
     pub fn new(min: u32, max: u32) -> Self {
         Self { min, max }
     }
@@ -61,7 +68,7 @@ impl FieldCounter {
 /// a? ~ a+ => a*
 /// a? ~ a? => a*
 /// ```
-impl BitAndAssign for FieldCounter {
+impl BitAndAssign for YggdrasilCounter {
     fn bitand_assign(&mut self, rhs: Self) {
         self.min = self.min.saturating_add(rhs.min);
         self.max = self.max.saturating_add(rhs.max);
@@ -72,7 +79,7 @@ impl BitAndAssign for FieldCounter {
 /// a? | a+ => a*
 /// a? | a? => a?
 /// ```
-impl BitOrAssign for FieldCounter {
+impl BitOrAssign for YggdrasilCounter {
     fn bitor_assign(&mut self, rhs: Self) {
         self.min = self.min.max(rhs.min);
         self.max = self.max.max(rhs.max);
@@ -83,15 +90,15 @@ impl BitOrAssign for FieldCounter {
 /// a?+ => a*
 /// a?? => a?
 /// ```
-impl MulAssign for FieldCounter {
+impl MulAssign for YggdrasilCounter {
     fn mul_assign(&mut self, rhs: Self) {
         self.min = self.min.saturating_mul(rhs.min);
         self.max = self.max.saturating_mul(rhs.max);
     }
 }
 
-impl MulAssign<FieldCounter> for FieldMap {
-    fn mul_assign(&mut self, rhs: FieldCounter) {
+impl MulAssign<YggdrasilCounter> for FieldMap {
+    fn mul_assign(&mut self, rhs: YggdrasilCounter) {
         for x in self.fields.values_mut() {
             x.count *= rhs
         }

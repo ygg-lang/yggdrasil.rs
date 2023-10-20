@@ -1,12 +1,12 @@
 use std::{
     env::current_dir,
-    fmt::{Formatter, Write},
+    fmt::Formatter,
     fs::{read_dir, read_to_string, DirEntry, ReadDir},
     path::{Path, PathBuf},
 };
 
 use serde::{
-    de::{Error, SeqAccess, Visitor},
+    de::{Error, Visitor},
     Deserialize, Deserializer, Serialize,
 };
 use wax::Any;

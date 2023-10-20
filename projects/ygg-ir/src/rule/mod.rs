@@ -20,7 +20,7 @@ pub use self::{
     atomic::GrammarAtomic,
     classes::FieldMap,
     derive::RuleDerive,
-    fields::{counter::FieldCounter, YggdrasilField},
+    fields::{counter::YggdrasilCounter, YggdrasilField},
     identifier::{YggdrasilIdentifier, YggdrasilNamepath},
     unions::{YggdrasilEnumerate, YggdrasilVariant},
 };

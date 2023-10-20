@@ -499,8 +499,7 @@ pub struct IntegerNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RangeNode {
-    pub integer: Option<IntegerNode>,
-    pub min: IntegerNode,
+    pub integer: Vec<IntegerNode>,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]

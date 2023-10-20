@@ -50,10 +50,12 @@ GrammarInfo {
                             },
                         },
                         operators: [
-                            RepeatsBetween {
-                                min: 0,
-                                max: 4294967295,
-                            },
+                            RepeatsBetween(
+                                YggdrasilCounter {
+                                    min: 0,
+                                    max: 4294967295,
+                                },
+                            ),
                         ],
                     },
                 },
@@ -326,10 +328,12 @@ GrammarInfo {
                                                     },
                                                 },
                                                 operators: [
-                                                    RepeatsBetween {
-                                                        min: 0,
-                                                        max: 4294967295,
-                                                    },
+                                                    RepeatsBetween(
+                                                        YggdrasilCounter {
+                                                            min: 0,
+                                                            max: 4294967295,
+                                                        },
+                                                    ),
                                                 ],
                                             },
                                         },
@@ -365,10 +369,12 @@ GrammarInfo {
                                                     },
                                                 },
                                                 operators: [
-                                                    RepeatsBetween {
-                                                        min: 0,
-                                                        max: 4294967295,
-                                                    },
+                                                    RepeatsBetween(
+                                                        YggdrasilCounter {
+                                                            min: 0,
+                                                            max: 4294967295,
+                                                        },
+                                                    ),
                                                 ],
                                             },
                                         },
@@ -444,10 +450,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 1,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 1,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -470,10 +478,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 1,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 1,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -548,10 +558,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 1,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 1,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -674,10 +686,12 @@ GrammarInfo {
                                                     },
                                                 },
                                                 operators: [
-                                                    RepeatsBetween {
-                                                        min: 0,
-                                                        max: 4294967295,
-                                                    },
+                                                    RepeatsBetween(
+                                                        YggdrasilCounter {
+                                                            min: 0,
+                                                            max: 4294967295,
+                                                        },
+                                                    ),
                                                 ],
                                             },
                                         },
@@ -713,10 +727,12 @@ GrammarInfo {
                                                     },
                                                 },
                                                 operators: [
-                                                    RepeatsBetween {
-                                                        min: 0,
-                                                        max: 4294967295,
-                                                    },
+                                                    RepeatsBetween(
+                                                        YggdrasilCounter {
+                                                            min: 0,
+                                                            max: 4294967295,
+                                                        },
+                                                    ),
                                                 ],
                                             },
                                         },
@@ -770,10 +786,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 1,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 1,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -861,10 +879,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 4294967295,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 4294967295,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -953,10 +973,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 1,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 1,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -1021,10 +1043,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 1,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 1,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -1114,10 +1138,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 4294967295,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 4294967295,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -1153,10 +1179,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 4294967295,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 4294967295,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -1193,10 +1221,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 1,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 1,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -1284,10 +1314,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 4294967295,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 4294967295,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -1507,10 +1539,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 4294967295,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 4294967295,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -1981,10 +2015,12 @@ GrammarInfo {
                                                             },
                                                         },
                                                         operators: [
-                                                            RepeatsBetween {
-                                                                min: 0,
-                                                                max: 4294967295,
-                                                            },
+                                                            RepeatsBetween(
+                                                                YggdrasilCounter {
+                                                                    min: 0,
+                                                                    max: 4294967295,
+                                                                },
+                                                            ),
                                                         ],
                                                     },
                                                 },
@@ -2007,10 +2043,12 @@ GrammarInfo {
                                                             },
                                                         },
                                                         operators: [
-                                                            RepeatsBetween {
-                                                                min: 0,
-                                                                max: 1,
-                                                            },
+                                                            RepeatsBetween(
+                                                                YggdrasilCounter {
+                                                                    min: 0,
+                                                                    max: 1,
+                                                                },
+                                                            ),
                                                         ],
                                                     },
                                                 },
@@ -2018,10 +2056,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 1,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 1,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -2131,10 +2171,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 4294967295,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 4294967295,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -2230,10 +2272,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 4294967295,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 4294967295,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -2307,10 +2351,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 4294967295,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 4294967295,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -2379,10 +2425,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 1,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 1,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -2456,10 +2504,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 4294967295,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 4294967295,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -2509,10 +2559,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 4294967295,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 4294967295,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -2852,10 +2904,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 1,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 1,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -3057,10 +3111,12 @@ GrammarInfo {
                             },
                         },
                         operators: [
-                            RepeatsBetween {
-                                min: 0,
-                                max: 4294967295,
-                            },
+                            RepeatsBetween(
+                                YggdrasilCounter {
+                                    min: 0,
+                                    max: 4294967295,
+                                },
+                            ),
                         ],
                     },
                 },
@@ -3335,10 +3391,12 @@ GrammarInfo {
                             },
                         },
                         operators: [
-                            RepeatsBetween {
-                                min: 1,
-                                max: 4294967295,
-                            },
+                            RepeatsBetween(
+                                YggdrasilCounter {
+                                    min: 1,
+                                    max: 4294967295,
+                                },
+                            ),
                         ],
                     },
                 },
@@ -3391,10 +3449,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 1,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 1,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -3434,10 +3494,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 4294967295,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 4294967295,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -3589,10 +3651,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 4294967295,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 4294967295,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -3688,10 +3752,12 @@ GrammarInfo {
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 4294967295,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 4294967295,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -3855,10 +3921,24 @@ GrammarInfo {
                                         Expression {
                                             tag: Identifier("min", 4599..4602),
                                             remark: false,
-                                            body: RuleReference {
-                                                name: Identifier("Integer", 4603..4610),
-                                                boxed: false,
-                                                inline: false,
+                                            body: UnaryExpression {
+                                                base: Expression {
+                                                    tag: Identifier("Integer", 4603..4610),
+                                                    remark: false,
+                                                    body: RuleReference {
+                                                        name: Identifier("Integer", 4603..4610),
+                                                        boxed: false,
+                                                        inline: false,
+                                                    },
+                                                },
+                                                operators: [
+                                                    RepeatsBetween(
+                                                        YggdrasilCounter {
+                                                            min: 0,
+                                                            max: 1,
+                                                        },
+                                                    ),
+                                                ],
                                             },
                                         },
                                         Expression {
@@ -3872,7 +3952,7 @@ GrammarInfo {
                                             body: YggdrasilText {
                                                 text: ",",
                                                 insensitive: false,
-                                                range: 4612..4613,
+                                                range: 4613..4614,
                                             },
                                         },
                                     ],
@@ -3884,23 +3964,25 @@ GrammarInfo {
                                 body: IGNORED,
                             },
                             Expression {
-                                tag: Identifier("max", 4615..4618),
+                                tag: Identifier("max", 4616..4619),
                                 remark: false,
                                 body: UnaryExpression {
                                     base: Expression {
-                                        tag: Identifier("Integer", 4619..4626),
+                                        tag: Identifier("Integer", 4620..4627),
                                         remark: false,
                                         body: RuleReference {
-                                            name: Identifier("Integer", 4619..4626),
+                                            name: Identifier("Integer", 4620..4627),
                                             boxed: false,
                                             inline: false,
                                         },
                                     },
                                     operators: [
-                                        RepeatsBetween {
-                                            min: 0,
-                                            max: 1,
-                                        },
+                                        RepeatsBetween(
+                                            YggdrasilCounter {
+                                                min: 0,
+                                                max: 1,
+                                            },
+                                        ),
                                     ],
                                 },
                             },
@@ -3915,17 +3997,17 @@ GrammarInfo {
                                 body: YggdrasilText {
                                     text: "}",
                                     insensitive: false,
-                                    range: 4629..4630,
+                                    range: 4630..4631,
                                 },
                             },
                         ],
                     },
                 },
             },
-            range: 4577..4633,
+            range: 4577..4634,
         },
         "ModifierCall": GrammarRule {
-            name: Identifier("ModifierCall", 4768..4780),
+            name: Identifier("ModifierCall", 4769..4781),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -3960,7 +4042,7 @@ GrammarInfo {
                                                     tag: None,
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("KW_CLASS", 4791..4799),
+                                                        name: Identifier("KW_CLASS", 4792..4800),
                                                         boxed: false,
                                                         inline: false,
                                                     },
@@ -3969,7 +4051,7 @@ GrammarInfo {
                                                     tag: None,
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("KW_UNION", 4802..4810),
+                                                        name: Identifier("KW_UNION", 4803..4811),
                                                         boxed: false,
                                                         inline: false,
                                                     },
@@ -3978,7 +4060,7 @@ GrammarInfo {
                                                     tag: None,
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("KW_GROUP", 4813..4821),
+                                                        name: Identifier("KW_GROUP", 4814..4822),
                                                         boxed: false,
                                                         inline: false,
                                                     },
@@ -3987,7 +4069,7 @@ GrammarInfo {
                                                     tag: None,
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("KW_MACRO", 4824..4832),
+                                                        name: Identifier("KW_MACRO", 4825..4833),
                                                         boxed: false,
                                                         inline: false,
                                                     },
@@ -3996,7 +4078,7 @@ GrammarInfo {
                                                     tag: None,
                                                     remark: false,
                                                     body: RuleReference {
-                                                        name: Identifier("KW_CLIMB", 4835..4843),
+                                                        name: Identifier("KW_CLIMB", 4836..4844),
                                                         boxed: false,
                                                         inline: false,
                                                     },
@@ -4010,10 +4092,10 @@ GrammarInfo {
                                 },
                             },
                             Expression {
-                                tag: Identifier("Identifier", 4846..4856),
+                                tag: Identifier("Identifier", 4847..4857),
                                 remark: false,
                                 body: RuleReference {
-                                    name: Identifier("Identifier", 4846..4856),
+                                    name: Identifier("Identifier", 4847..4857),
                                     boxed: false,
                                     inline: false,
                                 },
@@ -4022,10 +4104,10 @@ GrammarInfo {
                     },
                 },
             },
-            range: 4755..4858,
+            range: 4756..4859,
         },
         "KW_GRAMMAR": GrammarRule {
-            name: Identifier("KW_GRAMMAR", 4904..4914),
+            name: Identifier("KW_GRAMMAR", 4905..4915),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -4047,14 +4129,14 @@ GrammarInfo {
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "grammar",
-                        span: 4916..4925,
+                        span: 4917..4926,
                     },
                 },
             },
-            range: 4904..4925,
+            range: 4905..4926,
         },
         "KW_IMPORT": GrammarRule {
-            name: Identifier("KW_IMPORT", 4930..4939),
+            name: Identifier("KW_IMPORT", 4931..4940),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -4076,14 +4158,14 @@ GrammarInfo {
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "using|import|use",
-                        span: 4941..4959,
+                        span: 4942..4960,
                     },
                 },
             },
-            range: 4930..4959,
+            range: 4931..4960,
         },
         "KW_CLASS": GrammarRule {
-            name: Identifier("KW_CLASS", 4964..4972),
+            name: Identifier("KW_CLASS", 4965..4973),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -4105,14 +4187,14 @@ GrammarInfo {
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "class|struct",
-                        span: 4974..4988,
+                        span: 4975..4989,
                     },
                 },
             },
-            range: 4964..4988,
+            range: 4965..4989,
         },
         "KW_UNION": GrammarRule {
-            name: Identifier("KW_UNION", 4993..5001),
+            name: Identifier("KW_UNION", 4994..5002),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -4134,14 +4216,14 @@ GrammarInfo {
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "union|enum",
-                        span: 5003..5015,
+                        span: 5004..5016,
                     },
                 },
             },
-            range: 4993..5015,
+            range: 4994..5016,
         },
         "KW_GROUP": GrammarRule {
-            name: Identifier("KW_GROUP", 5020..5028),
+            name: Identifier("KW_GROUP", 5021..5029),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -4163,14 +4245,14 @@ GrammarInfo {
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "group|token",
-                        span: 5030..5043,
+                        span: 5031..5044,
                     },
                 },
             },
-            range: 5020..5043,
+            range: 5021..5044,
         },
         "KW_CLIMB": GrammarRule {
-            name: Identifier("KW_CLIMB", 5048..5056),
+            name: Identifier("KW_CLIMB", 5049..5057),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -4192,14 +4274,14 @@ GrammarInfo {
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "climb",
-                        span: 5058..5065,
+                        span: 5059..5066,
                     },
                 },
             },
-            range: 5048..5065,
+            range: 5049..5066,
         },
         "KW_MACRO": GrammarRule {
-            name: Identifier("KW_MACRO", 5070..5078),
+            name: Identifier("KW_MACRO", 5071..5079),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -4221,14 +4303,14 @@ GrammarInfo {
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "macro|def|function|func|fun|fn",
-                        span: 5080..5112,
+                        span: 5081..5113,
                     },
                 },
             },
-            range: 5070..5112,
+            range: 5071..5113,
         },
         "WhiteSpace": GrammarRule {
-            name: Identifier("WhiteSpace", 5266..5276),
+            name: Identifier("WhiteSpace", 5267..5277),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -4250,14 +4332,14 @@ GrammarInfo {
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "\\p{White_Space}+",
-                        span: 5283..5301,
+                        span: 5284..5302,
                     },
                 },
             },
-            range: 5236..5303,
+            range: 5237..5304,
         },
         "Comment": GrammarRule {
-            name: Identifier("Comment", 5350..5357),
+            name: Identifier("Comment", 5351..5358),
             redirect: None,
             document: "",
             derives: RuleDerive {
@@ -4279,11 +4361,11 @@ GrammarInfo {
                     remark: false,
                     body: YggdrasilRegex {
                         raw: "\\/\\/[^\\n\\r]*",
-                        span: 5366..5380,
+                        span: 5367..5381,
                     },
                 },
             },
-            range: 5304..5399,
+            range: 5305..5400,
         },
     },
     token_sets: {},

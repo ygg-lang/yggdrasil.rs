@@ -1,11 +1,11 @@
+use crate::rule::YggdrasilCounter;
+use convert_case::{Case, Casing};
+use num::BigInt;
 use std::{
     fmt::{Debug, Formatter},
     hash::{Hash, Hasher},
     ops::{Add, BitAnd, BitOr, RangeInclusive},
 };
-
-use convert_case::{Case, Casing};
-use num::BigInt;
 
 use crate::{
     data::{RuleReference, YggdrasilRegex, YggdrasilText},

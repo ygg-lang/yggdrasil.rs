@@ -1,11 +1,11 @@
 use std::{
     collections::BTreeMap,
-    sync::{LazyLock, Mutex, RwLock},
+    sync::{LazyLock, Mutex},
 };
 use yggdrasil_error::{Validate, Validation, YggdrasilError};
 use yggdrasil_shared::{
     optimize::{CodeOptimizer, InsertIgnore, RefineRules, RemarkTags},
-    parse_grammar, parse_grammar_raw, GrammarInfo,
+    parse_grammar_raw, GrammarInfo,
 };
 
 static CACHE_MANAGER: LazyLock<Mutex<CacheManager>> = LazyLock::new(|| Mutex::new(CacheManager::default()));

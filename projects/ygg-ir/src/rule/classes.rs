@@ -83,7 +83,7 @@ impl FieldMap {
 }
 
 impl FieldMap {
-    pub fn rule(bind: &YggdrasilIdentifier, rule: &RuleReference, counter: FieldCounter) -> Self {
+    pub fn rule(bind: &YggdrasilIdentifier, rule: &RuleReference, counter: YggdrasilCounter) -> Self {
         let mut out = BTreeMap::default();
         let field = YggdrasilField {
             lhs: bind.text.clone(),

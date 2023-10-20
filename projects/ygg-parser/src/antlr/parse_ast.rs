@@ -1261,8 +1261,7 @@ impl YggdrasilNode for RangeNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            integer: pair.take_tagged_option::<IntegerNode>(Cow::Borrowed("integer")),
-            min: pair.take_tagged_one::<IntegerNode>(Cow::Borrowed("min"))?,
+            integer: pair.take_tagged_items::<IntegerNode>(Cow::Borrowed("integer")).collect::<Result<Vec<_>, _>>()?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
