@@ -1,32 +1,44 @@
 use alloc::vec::Vec;
-use core::slice::Iter;
+use core::marker::PhantomData;
 
 use super::*;
 
+///
 pub struct SequenceBuilder {
     buffer: Vec<Character>,
 }
 
-pub struct SequenceView<'i> {
-    utf8: Peekable<Iter<'i, Character>>,
+#[derive(Clone)]
+pub struct SequenceView<'i, I>
+where
+    I: Iterator<Item = Character>,
+{
+    utf8: Peekable<I>,
+    phantom: PhantomData<&'i ()>,
 }
 
 impl SequenceBuilder {
-    pub fn build(&self) -> SequenceView {
-        SequenceView { utf8: self.buffer.iter().peekable() }
+    pub fn build<'i>(&'i self) -> SequenceView<impl Iterator<Item = Character> + 'i> {
+        SequenceView::new(self.buffer.iter().map(|f| *f))
     }
 }
 
-impl<'i> SequenceView<'i> {
-    pub fn new(s: &'i [Character]) -> Self {
-        Self { utf8: s.iter().peekable() }
+impl<'i, I> SequenceView<'i, I>
+where
+    I: Iterator<Item = Character>,
+{
+    pub fn new(s: I) -> Self {
+        Self { utf8: s.peekable(), phantom: Default::default() }
     }
 }
 
-impl<'i> InputStream for SequenceView<'i> {
+impl<'i, I> InputStream for SequenceView<'i, I>
+where
+    I: Iterator<Item = Character> + Clone,
+{
     fn read<R>(&mut self) -> Result<Character, YggdrasilError<R>> {
         match self.utf8.next() {
-            Some(s) => Ok(*s),
+            Some(s) => Ok(s),
             None => {
                 todo!()
             }
@@ -35,7 +47,7 @@ impl<'i> InputStream for SequenceView<'i> {
 
     fn peek<R>(&mut self) -> Result<Character, YggdrasilError<R>> {
         match self.utf8.peek() {
-            Some(s) => Ok(**s),
+            Some(s) => Ok(*s),
             None => {
                 todo!()
             }

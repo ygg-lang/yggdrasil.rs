@@ -1,5 +1,6 @@
 use super::*;
 
+#[derive(Clone)]
 pub struct Utf8View<'i> {
     utf8: Peekable<Chars<'i>>,
     offset: u32,

@@ -1,3 +1,5 @@
+#![doc = include_str!("readme.md")]
+
 use core::{
     fmt::{Display, Formatter, Write},
     iter::Peekable,
@@ -6,10 +8,15 @@ use core::{
 
 use crate::YggdrasilError;
 
-pub mod adapt_utf8;
-pub mod adapt_vec;
+pub use self::{
+    adapt_utf8::Utf8View,
+    adapt_vec::{SequenceBuilder, SequenceView},
+};
 
-pub mod adapt_reader;
+mod adapt_utf8;
+mod adapt_vec;
+
+mod adapt_reader;
 
 pub trait InputStream {
     fn read<R>(&mut self) -> Result<Character, YggdrasilError<R>>;
