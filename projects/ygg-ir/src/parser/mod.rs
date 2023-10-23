@@ -280,6 +280,6 @@ impl YggdrasilExpression {
 
 impl YggdrasilIdentifier {
     fn build(node: &IdentifierNode) -> Self {
-        Self { text: node.text.clone(), range: node.get_range().unwrap_or_default() }
+        Self { text: node.text.clone(), span: node.get_range().unwrap_or_default() }
     }
 }

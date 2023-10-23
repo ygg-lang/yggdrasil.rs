@@ -1,5 +1,11 @@
-use super::*;
+use std::path::Path;
+
 use itertools::Itertools;
+use url::Url;
+
+use yggdrasil_error::FileSpan;
+
+use super::*;
 
 #[derive(Clone, Debug, Default, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -28,18 +34,35 @@ impl PartialEq<str> for YggdrasilNamepath {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct YggdrasilIdentifier {
     pub text: String,
-    pub range: Range<usize>,
+    pub span: FileSpan,
 }
 
 impl Debug for YggdrasilIdentifier {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Identifier({:?}, {:?})", self.text, self.range)
+        write!(f, "Identifier({:?}, {:?})", self.text, self.span.range)
     }
 }
 
 impl YggdrasilIdentifier {
     pub fn trim_underscore(&self) -> YggdrasilIdentifier {
-        Self { text: self.text.trim_start_matches('_').to_string(), range: self.range.clone() }
+        Self { text: self.text.trim_start_matches('_').to_string(), span: self.span.clone() }
+    }
+    pub fn with_range(mut self, range: &Range<usize>) -> Self {
+        self.span.range = range.clone();
+        self
+    }
+    pub fn with_local(mut self, path: &Path) -> Self {
+        match path.canonicalize() {
+            Ok(o) => match Url::from_file_path(o) {
+                Ok(o) => self.set_remote(o),
+                Err(_) => {}
+            },
+            Err(_) => {}
+        }
+        self
+    }
+    pub fn set_remote(&mut self, link: Url) {
+        self.span.path = Some(link);
     }
     pub fn is_ignore(&self) -> bool {
         self.text.starts_with('_')

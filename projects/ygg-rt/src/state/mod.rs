@@ -32,7 +32,7 @@ where
     I: InputStream,
 {
     pub fn match_char<R>(mut self, target: char) -> ParseOutput<I, R> {
-        /// Once a string is read, it can never be read again
+        // Once a char is read, it can never be read again
         match self.stream.read::<R>() {
             Ok(c) => {
                 if c.unicode == target {

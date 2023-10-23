@@ -1,9 +1,12 @@
+use diagnostic::FileSpan;
 use std::{
     error::Error,
     fmt::{Debug, Display, Formatter},
     ops::Range,
     path::PathBuf,
 };
+
+pub mod file_span;
 
 #[derive(Clone, Debug)]
 pub struct YggdrasilError {
@@ -15,7 +18,7 @@ pub enum YggdrasilErrorKind {
     Io { error: String, file: Option<PathBuf> },
     Runtime { message: String },
     Config { message: String },
-    Syntax { message: String, range: Range<usize> },
+    Syntax { message: String, span: FileSpan },
 }
 
 impl Error for YggdrasilError {}
@@ -51,8 +54,8 @@ impl Display for YggdrasilErrorKind {
             YggdrasilErrorKind::Config { message } => {
                 write!(f, "ConfigError: {}", message)
             }
-            YggdrasilErrorKind::Syntax { message, range } => {
-                write!(f, "SyntaxError: {} at {:?}", message, range)
+            YggdrasilErrorKind::Syntax { message, span: range } => {
+                write!(f, "SyntaxError: {} at {:?}", message, range.range)
             }
         }
     }
@@ -66,6 +69,8 @@ impl YggdrasilError {
         Self { kind: Box::new(YggdrasilErrorKind::Runtime { message: message.to_string() }) }
     }
     pub fn syntax_error<S: Display>(message: S, range: Range<usize>) -> Self {
-        Self { kind: Box::new(YggdrasilErrorKind::Syntax { message: message.to_string(), range }) }
+        Self {
+            kind: Box::new(YggdrasilErrorKind::Syntax { message: message.to_string(), span: FileSpan { path: None, range } }),
+        }
     }
 }

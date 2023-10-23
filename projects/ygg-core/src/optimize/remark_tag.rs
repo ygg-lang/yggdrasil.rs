@@ -67,10 +67,10 @@ impl RemarkTags {
                 Some(_) => {}
                 None => match &variant.branch.body {
                     ExpressionBody::Rule(r) => variant
-                        .remark(YggdrasilIdentifier { text: r.name.text.to_case(Case::Pascal), range: r.name.range.clone() }),
+                        .remark(YggdrasilIdentifier { text: r.name.text.to_case(Case::Pascal), span: r.name.span.clone() }),
                     _ => variant.remark(YggdrasilIdentifier {
                         text: format!("{rule}{index}").to_case(Case::Pascal),
-                        range: Default::default(),
+                        span: Default::default(),
                     }),
                 },
             }

@@ -5,8 +5,7 @@
 mod errors;
 mod third_party;
 
-pub use crate::errors::{YggdrasilError, YggdrasilErrorKind};
-
+pub use crate::errors::{file_span::FileSpan, YggdrasilError, YggdrasilErrorKind};
 pub type Validation<T> = validatus::Validation<T, YggdrasilError>;
 pub type Result<T> = core::result::Result<T, YggdrasilError>;
 

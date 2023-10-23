@@ -90,8 +90,8 @@ impl FieldMap {
             rhs: rule.name.text.clone(),
             count: counter,
             boxing: rule.boxed,
-            bind_position: vec![bind.range.clone()],
-            rule_position: vec![rule.name.range.clone()],
+            bind_position: vec![bind.span.range.clone()],
+            rule_position: vec![rule.name.span.range.clone()],
         };
         out.insert(bind.text.clone(), field);
         Self { fields: out }

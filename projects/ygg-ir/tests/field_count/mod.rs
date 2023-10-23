@@ -6,7 +6,7 @@ use yggdrasil_ir::{
 
 #[test]
 pub fn counter() {
-    let id = YggdrasilIdentifier { text: "a".to_string(), range: Default::default() };
+    let id = YggdrasilIdentifier { text: "a".to_string(), span: Default::default() };
     let base = YggdrasilExpression {
         tag: Some(id.clone()),
         remark: false,
