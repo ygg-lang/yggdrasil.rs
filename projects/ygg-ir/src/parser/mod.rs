@@ -238,7 +238,7 @@ impl YggdrasilExpression {
             AtomicNode::RegexRange(v) => YggdrasilRegex::new(&v.text, v.get_range().unwrap_or_default()).into(),
             AtomicNode::StringRaw(s) => YggdrasilText::new(&s.string_raw_text.text, s.get_range().unwrap_or_default()).into(),
             AtomicNode::StringNormal(s) => {
-                let mut buffer = String::new();
+                let mut buffer = String::with_capacity(s.string_item.len() * 2);
                 for item in &s.string_item {
                     match item {
                         StringItemNode::EscapedCharacter(item) => match item.text.chars().last() {
@@ -260,8 +260,12 @@ impl YggdrasilExpression {
                 }
                 YggdrasilText::new(buffer, s.get_range().unwrap_or_default()).into()
             }
-            AtomicNode::Category(_) => {
-                todo!()
+            AtomicNode::Category(cat) => {
+                let r = cat.get_range().unwrap_or_default();
+                match &cat.group {
+                    Some(g) => YggdrasilRegex::new(format!("\\p{{{}={}}}", g.text, cat.script.text), r).into(),
+                    None => YggdrasilRegex::new(format!("\\p{{{}}}", cat.script.text), r).into(),
+                }
             }
             AtomicNode::EscapedUnicode(unicode) => match unicode.as_char() {
                 Some(c) => YggdrasilText::new(c, unicode.get_range().unwrap_or_default()).into(),

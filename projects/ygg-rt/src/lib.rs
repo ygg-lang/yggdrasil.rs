@@ -44,6 +44,7 @@ mod span;
 mod token;
 
 mod highlighters;
+pub mod input;
 
 /// Output result alias
 pub type OutputResult<'i, R> = Result<TokenTree<'i, R>, YggdrasilError<R>>;

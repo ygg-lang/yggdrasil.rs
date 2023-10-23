@@ -30,7 +30,7 @@ where
             for _ in 0..depth {
                 f.write_str("  ")?
             }
-            if term.has_child() {
+            if term.has_child(false) {
                 f.write_str("\x1b[34m+\x1b[0m ")?
             }
             else {

@@ -326,8 +326,16 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
     ///
     /// assert!(pair.into_inner().next().is_none());
     /// ```
-    pub fn has_child(&self) -> bool {
-        self.clone().into_inner().len() != 0
+    pub fn has_child(&self, with_ignored: bool) -> bool {
+        for pair in self.clone().into_inner() {
+            if !with_ignored {
+                if pair.get_rule().is_ignore() {
+                    continue;
+                }
+            }
+            return true;
+        }
+        false
     }
 
     /// Returns the `Tokens` for the `Pair`.
