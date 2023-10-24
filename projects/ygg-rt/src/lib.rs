@@ -16,7 +16,7 @@ pub use regex_automata::meta::Regex;
 
 pub use crate::{
     ast::YggdrasilNode,
-    enhance::{RegexCompiled, stack::Stack},
+    enhance::{stack::Stack, RegexCompiled},
     errors::YggdrasilError,
     iterators::{
         token_pair::{TokenPair, TokenTreeFilterRule, TokenTreeFilterTag},
@@ -26,9 +26,9 @@ pub use crate::{
         tokens::Tokens,
     },
     language::YggdrasilParser,
-    parser_state::{Either, Lookahead, MatchDir, state, State},
+    parser_state::{state, Either, Lookahead, MatchDir, State},
     position::Position,
-    span::{Lines, LinesSpan, merge_spans, TextSpan},
+    span::{merge_spans, Lines, LinesSpan, TextSpan},
     token::Token,
 };
 

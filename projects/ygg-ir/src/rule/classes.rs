@@ -35,7 +35,14 @@ impl BitAndAssign for FieldMap {
 
 impl BitOrAssign for FieldMap {
     fn bitor_assign(&mut self, rhs: Self) {
-        for (key, value) in rhs.fields {
+        // If it does not exist in this set, the lower bound is 0
+        for (key, value) in self.fields.iter_mut() {
+            match rhs.fields.get(key) {
+                Some(_) => {}
+                None => value.count.min = 0,
+            }
+        }
+        for (key, mut value) in rhs.fields {
             match self.fields.get_mut(&key) {
                 Some(s) => {
                     s.count |= value.count;
@@ -43,23 +50,7 @@ impl BitOrAssign for FieldMap {
                     s.rule_position.extend(value.rule_position);
                 }
                 None => {
-                    self.fields.insert(key, value);
-                }
-            }
-        }
-    }
-}
-
-impl BitXorAssign for FieldMap {
-    fn bitxor_assign(&mut self, rhs: Self) {
-        for (key, value) in rhs.fields {
-            match self.fields.get_mut(&key) {
-                Some(s) => {
-                    s.count *= value.count;
-                    s.bind_position.extend(value.bind_position);
-                    s.rule_position.extend(value.rule_position);
-                }
-                None => {
+                    value.count.min = 0;
                     self.fields.insert(key, value);
                 }
             }

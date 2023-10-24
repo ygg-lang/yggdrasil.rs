@@ -2,7 +2,7 @@ use std::{
     cmp::Ordering,
     collections::{BTreeMap, BTreeSet},
     fmt::{Debug, Display, Formatter},
-    ops::{BitAndAssign, BitOrAssign, BitXorAssign, MulAssign, Range},
+    ops::{BitAndAssign, BitOrAssign, MulAssign, Range},
 };
 
 use convert_case::{Case, Casing};

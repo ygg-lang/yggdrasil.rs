@@ -44,6 +44,12 @@ pub trait InputStream {
     {
         self.match_char_if(|c| !condition(c))
     }
+    fn match_char_any<R>(&mut self) -> Result<char, YggdrasilError<R>>
+    where
+        R: YggdrasilRule,
+    {
+        self.match_char_if(|_| true)
+    }
     fn match_char_range<R>(&mut self, range: RangeInclusive<char>) -> Result<char, YggdrasilError<R>>
     where
         R: YggdrasilRule,

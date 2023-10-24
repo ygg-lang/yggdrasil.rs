@@ -13,7 +13,7 @@ pub struct SequenceView<'i, I>
 where
     I: Iterator<Item = Character>,
 {
-    utf8: Peekable<I>,
+    iterator: Peekable<I>,
     phantom: PhantomData<&'i ()>,
 }
 
@@ -28,6 +28,6 @@ where
     I: Iterator<Item = Character>,
 {
     pub fn new(s: I) -> Self {
-        Self { utf8: s.peekable(), phantom: Default::default() }
+        Self { iterator: s.peekable(), phantom: Default::default() }
     }
 }
