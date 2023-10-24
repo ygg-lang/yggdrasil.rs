@@ -81,7 +81,7 @@ impl BitAndAssign for YggdrasilCounter {
 /// ```
 impl BitOrAssign for YggdrasilCounter {
     fn bitor_assign(&mut self, rhs: Self) {
-        self.min = self.min.max(rhs.min);
+        self.min = self.min.min(rhs.min);
         self.max = self.max.max(rhs.max);
     }
 }

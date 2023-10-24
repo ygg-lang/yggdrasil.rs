@@ -58,7 +58,7 @@ impl BitOrAssign for YggdrasilExpression {
         match &mut self.body {
             ExpressionBody::Choice(this) => {
                 match rhs.body {
-                    ExpressionBody::Concat(that) => this.branches.extend(that.sequence),
+                    ExpressionBody::Choice(that) => this.branches.extend(that.branches),
                     _ => this.branches.push(rhs),
                 }
                 return;

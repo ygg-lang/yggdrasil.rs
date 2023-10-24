@@ -10,8 +10,8 @@ pub fn parse_grammar_raw(grammar: &str) -> Result<GrammarInfo, YggdrasilError> {
 pub fn parse_grammar(grammar: &str) -> Validation<GrammarInfo> {
     let mut errors = vec![];
     let mut info = GrammarInfo::from_str(grammar).validate(&mut errors)?;
-    info = RefineRules::default().optimize(&info).validate(&mut errors)?;
     info = InsertIgnore::default().optimize(&info).validate(&mut errors)?;
+    info = RefineRules::default().optimize(&info).validate(&mut errors)?;
     info = RemarkTags::default().optimize(&info).validate(&mut errors)?;
     Validation::Success { value: info, diagnostics: errors }
 }
