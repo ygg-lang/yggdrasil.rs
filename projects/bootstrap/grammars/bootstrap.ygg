@@ -67,13 +67,6 @@ class LinkerBlock {
 class LinkerPair {
     Identifier ':' NamepathFree
 }
-@railroad(false)
-@style(keyword)
-union KW_EXTERNAL {
-    | 'parser'    #Parser
-    | 'inspector' #Inspector
-    | 'external'  #External
-}
 // === decorators === --------------------------------------------------------------------------------------------------
 class DecoratorCall {
     DecoratorName CallBody
@@ -210,9 +203,16 @@ token {
 }
 @railroad(false)
 @style(keyword)
+union KW_EXTERNAL {
+    | 'parser'    #Parser
+    | 'inspector' #Inspector
+    | 'external'  #External
+}
+@railroad(false)
+@style(keyword)
 token {
     KW_GRAMMAR: /grammar/
-    KW_IMPORT: /using|import|use/
+    KW_IMPORT: /using|use|import/
     KW_CLASS: /class|struct/
     KW_UNION: /union|enum/
     KW_GROUP: /group|token/

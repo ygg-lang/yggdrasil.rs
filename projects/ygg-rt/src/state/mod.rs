@@ -1,20 +1,21 @@
 #![doc = include_str!("readme.md")]
 
-use crate::input::InputStream;
-use alloc::vec::Vec;
+use alloc::{rc::Rc, vec::Vec};
+use core::cell::RefCell;
 
 use crate::YggdrasilError;
 
 #[derive(Clone)]
-pub struct ParseInput<I> {
-    stream: I,
+pub struct ParseInput<I, P> {
+    pub stream: Rc<RefCell<I>>,
+    pub parser: P,
 }
 
 #[derive(Clone)]
-pub enum ParseOutput<I, R> {
+pub enum ParseOutput<R, I, P> {
     /// The current status can continue
     Fine {
-        state: ParseInput<I>,
+        state: ParseInput<I, P>,
         /// Some recoverable errors
         error: Vec<YggdrasilError<R>>,
     },
@@ -25,26 +26,4 @@ pub enum ParseOutput<I, R> {
         /// Some recoverable errors
         error: Vec<YggdrasilError<R>>,
     },
-}
-
-impl<I> ParseInput<I>
-where
-    I: InputStream,
-{
-    pub fn match_char<R>(mut self, target: char) -> ParseOutput<I, R> {
-        // Once a char is read, it can never be read again
-        match self.stream.read::<R>() {
-            Ok(c) => {
-                if c.unicode == target {
-                    todo!()
-                }
-                else {
-                    todo!()
-                }
-            }
-            Err(_) => {
-                todo!()
-            }
-        }
-    }
 }

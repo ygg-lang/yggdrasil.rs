@@ -21,4 +21,4 @@ serde = { version = "1.0.189", optional = true }
 regex-automata = "0.4.1"
 # memchr = { version = "2", optional = true }
 # ucd-trie = { version = "0.1.5", optional = true, default-features = false }
-# daachorse = "1.0.0"
+daachorse = "1.0.0"

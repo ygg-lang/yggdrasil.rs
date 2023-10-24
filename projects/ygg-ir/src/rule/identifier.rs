@@ -39,7 +39,7 @@ pub struct YggdrasilIdentifier {
 
 impl Debug for YggdrasilIdentifier {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Identifier({:?}, {:?})", self.text, self.span.range)
+        write!(f, "Identifier({:?}, {:?})", self.text, self.span.get_range())
     }
 }
 
@@ -48,7 +48,7 @@ impl YggdrasilIdentifier {
         Self { text: self.text.trim_start_matches('_').to_string(), span: self.span.clone() }
     }
     pub fn with_range(mut self, range: &Range<usize>) -> Self {
-        self.span.range = range.clone();
+        self.span.set_range(range.clone());
         self
     }
     pub fn with_local(mut self, path: &Path) -> Self {
@@ -61,8 +61,8 @@ impl YggdrasilIdentifier {
         }
         self
     }
-    pub fn set_remote(&mut self, link: Url) {
-        self.span.path = Some(link);
+    pub fn set_remote(&mut self, _link: Url) {
+        // self.span.set_file(link.into())
     }
     pub fn is_ignore(&self) -> bool {
         self.text.starts_with('_')

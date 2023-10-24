@@ -6,6 +6,7 @@ use alloc::{
     vec::Vec,
 };
 use core::{cmp, fmt, mem};
+use core::fmt::Display;
 
 /// Parse-related error type.
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -186,6 +187,12 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
     pub fn missing_rule(expect: R, span: TextSpan) -> YggdrasilError<R> {
         Self::new_from_span(ErrorKind::InvalidNode { expect }, span)
     }
+
+    /// missing rule
+    pub fn custom_error<S: Display>(message: S, span: TextSpan) -> YggdrasilError<R> {
+        Self::new_from_span(ErrorKind::CustomError { message: message.to_string() }, span)
+    }
+    
     /// Returns `Error` variant with `path` which is shown when formatted with `Display`.
     ///
     /// # Examples

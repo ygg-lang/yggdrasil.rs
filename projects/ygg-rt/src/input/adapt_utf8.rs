@@ -1,36 +1,102 @@
+use crate::{TextSpan, YggdrasilRule};
+
 use super::*;
 
 #[derive(Clone)]
 pub struct Utf8View<'i> {
-    utf8: Peekable<Chars<'i>>,
-    offset: u32,
+    utf8: &'i str,
+    offset: usize,
 }
 
+#[allow(unused_variables)]
 impl<'i> InputStream for Utf8View<'i> {
-    fn read<R>(&mut self) -> Result<Character, YggdrasilError<R>> {
-        match self.utf8.next() {
-            Some(s) => {
-                let out = Character { unicode: s, offset: self.offset };
-                self.offset += len_utf8(s);
-                Ok(out)
-            }
-            None => {
-                todo!()
-            }
+    fn match_start_of_input<R>(&mut self) -> Result<(), YggdrasilError<R>>
+    where
+        R: YggdrasilRule,
+    {
+        match self.offset {
+            0 => Ok(()),
+            _ => unsafe {
+                Err(YggdrasilError::custom_error(
+                    "Unexpected character",
+                    TextSpan::new_unchecked(self.utf8, self.offset, self.offset),
+                ))
+            },
         }
     }
 
-    fn peek<R>(&mut self) -> Result<Character, YggdrasilError<R>> {
-        match self.utf8.peek() {
-            Some(s) => {
-                let out = Character { unicode: *s, offset: self.offset };
-                self.offset += len_utf8(*s);
-                Ok(out)
-            }
-            None => {
-                todo!()
-            }
+    fn match_end_of_input<R>(&mut self) -> Result<usize, YggdrasilError<R>>
+    where
+        R: YggdrasilRule,
+    {
+        match self.utf8.chars().next() {
+            Some(c) => unsafe {
+                Err(YggdrasilError::custom_error(
+                    "Unexpected character",
+                    TextSpan::new_unchecked(self.utf8, self.offset, self.offset + len_utf8(c) as usize),
+                ))
+            },
+            None => Ok(self.offset),
         }
+    }
+
+    fn match_char_if<R, F>(&mut self, condition: F) -> Result<char, YggdrasilError<R>>
+    where
+        R: YggdrasilRule,
+        F: FnOnce(char) -> bool,
+    {
+        match self.utf8.chars().next() {
+            Some(c) => {
+                let start = self.offset;
+                if condition(c) {
+                    self.offset += c.len_utf8();
+                    Ok(c)
+                }
+                else {
+                    unsafe {
+                        Err(YggdrasilError::custom_error(
+                            "Unexpected character",
+                            TextSpan::new_unchecked(self.utf8, start, self.offset),
+                        ))
+                    }
+                }
+            }
+            None => unsafe {
+                Err(YggdrasilError::custom_error(
+                    "Unexpected EOF",
+                    TextSpan::new_unchecked(self.utf8, self.offset, self.offset),
+                ))
+            },
+        }
+    }
+
+    fn match_str<R>(&mut self, target: &str, case: bool) -> Result<&str, YggdrasilError<R>> {
+        todo!()
+    }
+
+    fn match_str_group<R>(&mut self, target: AhoCorasick) -> Result<&str, YggdrasilError<R>> {
+        todo!()
+    }
+
+    fn match_fn<R, F>(&mut self, parser: F) -> Result<&str, YggdrasilError<R>>
+    where
+        R: YggdrasilRule,
+    {
+        todo!()
+    }
+
+    fn match_optional<R, F>(&mut self, parser: F) -> Result<&str, YggdrasilError<R>>
+    where
+        R: YggdrasilRule,
+    {
+        todo!()
+    }
+
+    fn match_repeats<R, F>(&mut self, parser: F, repeats: RangeInclusive<u32>) -> Result<&str, YggdrasilError<R>>
+    where
+        R: YggdrasilRule,
+    {
+        todo!()
     }
 }
 

@@ -1,4 +1,4 @@
-use diagnostic::FileSpan;
+use diagnostic::{FileID, FileSpan};
 use std::{
     error::Error,
     fmt::{Debug, Display, Formatter},
@@ -55,7 +55,7 @@ impl Display for YggdrasilErrorKind {
                 write!(f, "ConfigError: {}", message)
             }
             YggdrasilErrorKind::Syntax { message, span: range } => {
-                write!(f, "SyntaxError: {} at {:?}", message, range.range)
+                write!(f, "SyntaxError: {} at {:?}", message, range.get_range())
             }
         }
     }
@@ -70,7 +70,10 @@ impl YggdrasilError {
     }
     pub fn syntax_error<S: Display>(message: S, range: Range<usize>) -> Self {
         Self {
-            kind: Box::new(YggdrasilErrorKind::Syntax { message: message.to_string(), span: FileSpan { path: None, range } }),
+            kind: Box::new(YggdrasilErrorKind::Syntax {
+                message: message.to_string(),
+                span: unsafe { FileID::new(0) }.with_range(range),
+            }),
         }
     }
 }

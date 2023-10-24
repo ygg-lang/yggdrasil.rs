@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use num::BigInt;
 
-use yggdrasil_error::YggdrasilError;
+use yggdrasil_error::{FileID, YggdrasilError};
 use yggdrasil_parser::{
     bootstrap::{
         AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
@@ -280,6 +280,6 @@ impl YggdrasilExpression {
 
 impl YggdrasilIdentifier {
     fn build(node: &IdentifierNode) -> Self {
-        Self { text: node.text.clone(), span: node.get_range().unwrap_or_default() }
+        Self { text: node.text.clone(), span: unsafe { FileID::new(0) }.with_range(node.get_range().unwrap_or_default()) }
     }
 }

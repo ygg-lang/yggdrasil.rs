@@ -8,6 +8,7 @@ extern crate alloc;
 
 use core::{fmt::Debug, hash::Hash};
 
+use daachorse::CharwiseDoubleArrayAhoCorasick;
 #[cfg(not(debug_assertions))]
 pub use regex_automata::dfa::regex::Regex;
 #[cfg(debug_assertions)]
@@ -15,7 +16,7 @@ pub use regex_automata::meta::Regex;
 
 pub use crate::{
     ast::YggdrasilNode,
-    enhance::{stack::Stack, RegexCompiled},
+    enhance::{RegexCompiled, stack::Stack},
     errors::YggdrasilError,
     iterators::{
         token_pair::{TokenPair, TokenTreeFilterRule, TokenTreeFilterTag},
@@ -25,11 +26,13 @@ pub use crate::{
         tokens::Tokens,
     },
     language::YggdrasilParser,
-    parser_state::{state, Either, Lookahead, MatchDir, State},
+    parser_state::{Either, Lookahead, MatchDir, state, State},
     position::Position,
-    span::{merge_spans, Lines, LinesSpan, TextSpan},
+    span::{Lines, LinesSpan, merge_spans, TextSpan},
     token::Token,
 };
+
+pub type AhoCorasick<'i> = CharwiseDoubleArrayAhoCorasick<&'i str>;
 
 mod errors;
 mod iterators;

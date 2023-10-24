@@ -31,26 +31,3 @@ where
         Self { utf8: s.peekable(), phantom: Default::default() }
     }
 }
-
-impl<'i, I> InputStream for SequenceView<'i, I>
-where
-    I: Iterator<Item = Character> + Clone,
-{
-    fn read<R>(&mut self) -> Result<Character, YggdrasilError<R>> {
-        match self.utf8.next() {
-            Some(s) => Ok(s),
-            None => {
-                todo!()
-            }
-        }
-    }
-
-    fn peek<R>(&mut self) -> Result<Character, YggdrasilError<R>> {
-        match self.utf8.peek() {
-            Some(s) => Ok(*s),
-            None => {
-                todo!()
-            }
-        }
-    }
-}
