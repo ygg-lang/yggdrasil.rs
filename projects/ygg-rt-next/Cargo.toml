@@ -1,0 +1,25 @@
+[package]
+name = "yggdrasil-rt-next"
+publish = false
+version = "0.0.13"
+authors = ["Aster <192607617@qq.com>"]
+description = "Yggdrasil Shared Structure"
+repository = "https://github.com/ygg-lang/yggdrasil-rs"
+documentation = "https://docs.rs/yggdrasil-rt"
+keywords = ["parser", "generator", "peg", "grammar"]
+categories = ["parsing"]
+license = "MPL-2.0"
+readme = "readme.md"
+edition = "2021"
+
+[features]
+default = []
+dynamic = []
+
+[dependencies]
+#url = "2.4.1"
+serde = { version = "1.0.189", optional = true }
+regex-automata = "0.4.1"
+# memchr = { version = "2", optional = true }
+# ucd-trie = { version = "0.1.5", optional = true, default-features = false }
+daachorse = "1.0.0"
