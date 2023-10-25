@@ -7,16 +7,6 @@ pub struct YggdrasilCounter {
     pub max: u32,
 }
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum FieldCounterType {
-    Never,
-    Optional,
-    One,
-    Array,
-    ArrayNonZero,
-}
-
 impl Display for YggdrasilCounter {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         if self.max >= 65536 { write!(f, "[{}, ∞]", self.min) } else { write!(f, "[{}, {}]", self.min, self.max) }
@@ -46,18 +36,6 @@ impl YggdrasilCounter {
     }
     pub fn is_many(&self) -> bool {
         self.min == 0 && self.max > 1
-    }
-
-    pub fn as_count(&self) -> FieldCounterType {
-        if self.is_never() {
-            return FieldCounterType::Never;
-        }
-        if self.max == 1 {
-            if self.min.is_zero() { FieldCounterType::Optional } else { FieldCounterType::One }
-        }
-        else {
-            if self.min.is_zero() { FieldCounterType::Array } else { FieldCounterType::ArrayNonZero }
-        }
     }
     pub fn as_range(&self) -> Range<u32> {
         self.min..self.max
