@@ -7,7 +7,6 @@ use std::{
 
 use convert_case::{Case, Casing};
 pub use num::BigInt;
-use num::Zero;
 
 use crate::{
     data::RuleReference,

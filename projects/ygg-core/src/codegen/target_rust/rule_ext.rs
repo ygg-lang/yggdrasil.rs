@@ -1,8 +1,10 @@
-use convert_case::{Case, Casing};
 use std::fmt::Debug;
+
+use convert_case::{Case, Casing};
+
 use yggdrasil_ir::{
-    nodes::{ExpressionBody, YggdrasilExpression, YggdrasilOperator},
-    rule::{GrammarBody, YggdrasilIdentifier},
+    nodes::{ExpressionBody, StreamControl, YggdrasilExpression, YggdrasilOperator},
+    rule::GrammarBody,
 };
 
 use super::*;
@@ -87,7 +89,7 @@ impl NodeExt for YggdrasilExpression {
                     w.push_str(")")
                 }
             }
-            ExpressionBody::Ignored => w.push_str("builtin_ignore(s)"),
+            ExpressionBody::Hidden => w.push_str("builtin_ignore(s)"),
             ExpressionBody::Call(v) => write!(w, "Err(/*{}*/s)", v.name.to_string())?,
             ExpressionBody::Rule(r) => {
                 let name = format!("parse_{}", r.name.text).to_case(Case::Snake);
@@ -107,13 +109,18 @@ impl NodeExt for YggdrasilExpression {
             }
             ExpressionBody::CharacterAny if root => w.push_str("s.match_char_if(|_|true)"),
             ExpressionBody::CharacterAny => w.push_str("builtin_any(s)"),
-            ExpressionBody::CharacterRestOfLine => {}
             ExpressionBody::CharacterRange(_) if root => {}
             ExpressionBody::CharacterRange(_) => {}
             ExpressionBody::Boolean(_) if root => {}
             ExpressionBody::Boolean(_) => {}
             ExpressionBody::Integer(_) if root => {}
             ExpressionBody::Integer(_) => {}
+            ExpressionBody::Stream(v) => match v {
+                StreamControl::StartOfInput => w.push_str("s.check_start_of_input()"),
+                StreamControl::EndOfInput => w.push_str("s.check_end_of_input()"),
+                StreamControl::RestOfLine if root => w.push_str("s.match_char_if(|c|c!='\n'&&c!='\r')"),
+                StreamControl::RestOfLine => w.push_str("s.match_char_if(|c|c!='\n'&&c!='\r')"),
+            },
         }
         match &self.tag {
             Some(s) => write!(w, ".and_then(|s| s.tag_node({:?}))", s.text.to_case(Case::Snake))?,

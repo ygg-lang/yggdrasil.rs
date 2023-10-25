@@ -1,3 +1,5 @@
+use crate::nodes::StreamControl;
+
 use super::*;
 
 //
@@ -32,7 +34,10 @@ impl From<YggdrasilIdentifier> for YggdrasilExpression {
         let out: ExpressionBody = match name {
             p if properties.contains(&p) => ExpressionBody::Regex(YggdrasilRegex::new(&format!("[\\p{{{name}}}]"), 0..p.len())),
             "ANY" => ExpressionBody::CharacterAny.into(),
-            "IGNORE" | "IGNORED" => ExpressionBody::Ignored.into(),
+            "HIDE" | "HIDDEN" => ExpressionBody::Hidden.into(),
+            "SOL" | "START_OF_INPUT" => ExpressionBody::Stream(StreamControl::StartOfInput),
+            "EOL" | "END_OF_INPUT" => ExpressionBody::Stream(StreamControl::EndOfInput),
+            "ROL" | "REST_OF_LINE" => ExpressionBody::Stream(StreamControl::RestOfLine),
             "ASCII_DIGIT" => ExpressionBody::CharacterRange(RangeInclusive::new('0', '9')),
             _ => ExpressionBody::Rule(RuleReference::new(value)),
         };

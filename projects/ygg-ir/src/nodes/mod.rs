@@ -37,6 +37,14 @@ pub struct YggdrasilExpression {
 
 #[derive(Clone, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub enum StreamControl {
+    StartOfInput,
+    EndOfInput,
+    RestOfLine,
+}
+
+#[derive(Clone, Hash, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ExpressionBody {
     Choice(ChoiceExpression),
     Concat(ConcatExpression),
@@ -45,11 +53,11 @@ pub enum ExpressionBody {
     Rule(RuleReference),
     Text(YggdrasilText),
     /// Any ignored rule
-    Ignored,
+    Hidden,
     /// Any character
     CharacterAny,
-    CharacterRestOfLine,
     CharacterRange(RangeInclusive<char>),
+    Stream(StreamControl),
     Integer(BigInt),
     Boolean(bool),
     Regex(YggdrasilRegex),
@@ -71,7 +79,7 @@ impl Debug for YggdrasilExpression {
 impl Debug for ExpressionBody {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ExpressionBody::Ignored => f.write_str("IGNORED"),
+            ExpressionBody::Hidden => f.write_str("HIDE"),
             ExpressionBody::Choice(v) => Debug::fmt(v, f),
             ExpressionBody::Concat(v) => Debug::fmt(v, f),
             ExpressionBody::Call(v) => Debug::fmt(v, f),
@@ -79,11 +87,15 @@ impl Debug for ExpressionBody {
             ExpressionBody::Rule(v) => Debug::fmt(v, f),
             ExpressionBody::Text(v) => Debug::fmt(v, f),
             ExpressionBody::CharacterAny => f.write_str("ANY"),
-            ExpressionBody::CharacterRestOfLine => f.write_str("ROL"),
             ExpressionBody::CharacterRange(v) => Debug::fmt(v, f),
             ExpressionBody::Integer(v) => Debug::fmt(v, f),
             ExpressionBody::Boolean(v) => Debug::fmt(v, f),
             ExpressionBody::Regex(v) => Debug::fmt(v, f),
+            ExpressionBody::Stream(v) => match v {
+                StreamControl::StartOfInput => f.write_str("ANY"),
+                StreamControl::EndOfInput => f.write_str("ANY"),
+                StreamControl::RestOfLine => f.write_str("ROL"),
+            },
         }
     }
 }
@@ -102,13 +114,19 @@ impl YggdrasilExpression {
         ExpressionBody::Integer(int.into()).into()
     }
     pub fn ignored() -> Self {
-        ExpressionBody::Ignored.into()
+        ExpressionBody::Hidden.into()
     }
     pub fn any() -> Self {
         ExpressionBody::CharacterAny.into()
     }
-    pub fn rol() -> Self {
-        ExpressionBody::CharacterRestOfLine.into()
+    pub fn start_of_input() -> Self {
+        ExpressionBody::Stream(StreamControl::StartOfInput).into()
+    }
+    pub fn end_of_line() -> Self {
+        ExpressionBody::Stream(StreamControl::StartOfInput).into()
+    }
+    pub fn rest_of_line() -> Self {
+        ExpressionBody::Stream(StreamControl::RestOfLine).into()
     }
     pub fn boolean(bool: bool) -> Self {
         ExpressionBody::Boolean(bool).into()
