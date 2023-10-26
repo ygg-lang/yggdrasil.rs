@@ -7,11 +7,11 @@ impl GrammarRule {
             Some(false) => self.atomic = GrammarAtomic::Combined,
             _ => {}
         };
-        if let Some(s) = extra.get_ignored() {
-            self.ignored = s
+        if let Some(s) = extra.get_hidden() {
+            self.hidden = s
         };
         if let Some(s) = extra.get_keep() {
-            self.hide = s
+            self.view = s
         };
         if let Some(s) = extra.get_entry() {
             self.entry = s

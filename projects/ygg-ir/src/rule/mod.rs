@@ -40,7 +40,9 @@ pub struct FunctionRule {}
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GrammarRule {
-    /// Automatically inline when this rule is called
+    /// Determine the name of the parser
+    ///
+    /// If there is no redirect rule, it is also the name of the type.
     ///
     /// ## Examples
     /// ```ygg
@@ -78,16 +80,14 @@ pub struct GrammarRule {
     /// atomic class Rule { }
     /// ```
     pub atomic: GrammarAtomic,
-    /// Automatically inline when this rule is called
+    /// This rule should not generate nodes
     ///
     /// ## Examples
     /// ```ygg
     /// #inline(true)
     /// inline class Rule { }
-    /// class _Rule { }
     /// ```
-    pub auto_inline: bool,
-
+    pub inline: bool,
     /// The entry of the ast mode, the name of the ast_mode to be exported
     ///
     /// ## Examples
@@ -95,30 +95,28 @@ pub struct GrammarRule {
     /// #entry(true)
     /// entry class Rule { }
     /// ```
-    pub entry: bool,
-    /// Keep this rule even if it is not used.
-    ///
-    /// ## Examples
-    /// ```ygg
-    /// #hide(true)
-    /// hidden class Rule { }
-    /// ```
-    pub hide: bool,
-
-    /// Ignore this node in ast mode.
-    ///
-    /// ## Examples
-    /// ```ygg
-    /// #ignore(true)
-    /// ignore class Rule { }
-    /// ```
-    pub ignored: bool,
+    pub viewer: GrammarViewer,
     ///
     pub captures: GrammarCaptures,
     ///
     pub body: GrammarBody,
     /// position of all parts
     pub range: Range<usize>,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GrammarViewer {
+    /// Hide this node in normal show
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// #hidden(true)
+    /// hide class Rule { }
+    /// ```
+    pub hidden: bool,
+    pub styles: Vec<String>,
+    pub railway: bool,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -195,14 +193,18 @@ impl Default for GrammarRule {
             document: String::new(),
             derives: RuleDerive::default(),
             atomic: GrammarAtomic::Combined,
-            auto_inline: false,
-            entry: false,
-            hide: false,
-            ignored: false,
+            inline: false,
+            viewer: Default::default(),
             captures: Default::default(),
             body: Default::default(),
             range: Default::default(),
         }
+    }
+}
+
+impl Default for GrammarViewer {
+    fn default() -> Self {
+        Self { hidden: false, styles: vec![], railway: true }
     }
 }
 
@@ -211,6 +213,7 @@ impl Default for GrammarCaptures {
         Self { range: "usize".to_string(), text: false, auto: false }
     }
 }
+
 impl GrammarRule {
     pub fn is_class(&self) -> bool {
         matches!(self.body, GrammarBody::Class { .. })

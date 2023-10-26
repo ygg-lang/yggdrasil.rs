@@ -30,14 +30,14 @@ impl GroupPairNode {
 
 impl<'i> TakeAnnotations<'i> {
     pub fn get_atomic(&self) -> Option<bool> {
-        match self.get_ignored() {
+        match self.get_hidden() {
             // ignored rule must atomic rule
             Some(true) => Some(true),
             _ => self.find_modifiers(&["atom", "atomic"], &["combine", "combined"]),
         }
     }
-    pub fn get_ignored(&self) -> Option<bool> {
-        self.find_modifiers(&["ignore", "ignored"], &[])
+    pub fn get_hidden(&self) -> Option<bool> {
+        self.find_modifiers(&["hide", "hidden"], &[])
     }
     pub fn get_entry(&self) -> Option<bool> {
         self.find_modifiers(&["entry"], &[])
