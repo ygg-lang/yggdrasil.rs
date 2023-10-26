@@ -14,13 +14,13 @@ impl GrammarExt for GrammarInfo {
         format!("{}Rule", self.name.text)
     }
     fn ignore_rules(&self) -> Vec<GrammarRule> {
-        self.rules.values().sorted().filter(|v| v.hidden).cloned().collect_vec()
+        self.rules.values().sorted().filter(|v| v.viewer.hidden).cloned().collect_vec()
     }
     fn ignore_rules_empty(&self) -> bool {
         false
     }
     fn ignore_rule_pattern(&self) -> String {
-        let mut out = String::from("Self::HiddenTex");
+        let mut out = String::from("Self::HiddenText");
         for ignore in self.ignore_rules() {
             out.push_str(&format!(" | Self::{}", safe_rust_id(&ignore.name.text).unwrap()))
         }

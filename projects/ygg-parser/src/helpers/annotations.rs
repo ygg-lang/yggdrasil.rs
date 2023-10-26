@@ -43,8 +43,14 @@ impl<'i> TakeAnnotations<'i> {
         self.find_modifiers(&["entry"], &[])
     }
 
-    pub fn get_keep(&self) -> Option<bool> {
-        self.find_modifiers(&["keep"], &[])
+    pub fn get_railway(&self) -> Option<bool> {
+        for body in self.find_functions("railway") {
+            match body.expression.as_slice() {
+                [first] => return first.as_boolean(),
+                _ => {}
+            }
+        }
+        return None;
     }
     /// Whether to automatically mark all tags in the rule
     ///

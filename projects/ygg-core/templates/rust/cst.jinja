@@ -9,8 +9,7 @@ pub(super) fn parse_cst(input: &str, rule: {{ rule_name }}) -> OutputResult<{{ r
 {%- for rule in rules.iter() %}
         {{ rule_name }}::{{ rule.name.text|safe_rust_id }} => {{ rule.parser_name() }}(state),
 {%- endfor %}
-        {{ rule_name }}::IgnoreText => unreachable!(),
-        {{ rule_name }}::IgnoreRegex => unreachable!(),
+        {{ rule_name }}::HiddenText => unreachable!(),
     })
 }
 
@@ -35,13 +34,13 @@ fn builtin_ignore(state: Input) -> Output {
 }
 
 fn builtin_any(state: Input) -> Output {
-    state.rule({{ rule_name }}::IgnoreText, |s| s.match_char_if(|_| true))
+    state.rule({{ rule_name }}::HiddenText, |s| s.match_char_if(|_| true))
 }
 
 fn builtin_text<'i>(state: Input<'i>, text: &'static str, case: bool) -> Output<'i> {
-    state.rule({{ rule_name }}::IgnoreText, |s| s.match_string(text, case))
+    state.rule({{ rule_name }}::HiddenText, |s| s.match_string(text, case))
 }
 
 fn builtin_regex<'i, 'r>(state: Input<'i>, regex: &'r Regex) -> Output<'i> {
-    state.rule({{ rule_name }}::IgnoreRegex, |s| s.match_regex(regex))
+    state.rule({{ rule_name }}::HiddenText, |s| s.match_regex(regex))
 }

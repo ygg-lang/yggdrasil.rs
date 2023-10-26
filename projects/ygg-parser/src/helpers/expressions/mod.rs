@@ -1,7 +1,7 @@
-use crate::bootstrap::{AtomicNode, ExpressionNode, IdentifierNode};
+use crate::bootstrap::{AtomicNode, BooleanNode, ExpressionNode, IdentifierNode};
 
 impl ExpressionNode {
-    pub fn as_identifier(&self) -> Option<&IdentifierNode> {
+    pub fn as_atom(&self) -> Option<&AtomicNode> {
         if self.expression_hard.len() != 1 {
             return None;
         }
@@ -19,9 +19,20 @@ impl ExpressionNode {
         }
         let expr = &expr.term;
         if expr.prefix.is_empty() && expr.suffix.is_empty() {
-            if let AtomicNode::Identifier(v) = &expr.atomic {
-                return Some(v);
-            }
+            return Some(&expr.atomic);
+        }
+        return None;
+    }
+    pub fn as_boolean(&self) -> Option<bool> {
+        match self.as_atom()? {
+            AtomicNode::Boolean(BooleanNode::True) => Some(true),
+            AtomicNode::Boolean(BooleanNode::False) => Some(false),
+            _ => None,
+        }
+    }
+    pub fn as_identifier(&self) -> Option<&IdentifierNode> {
+        if let AtomicNode::Identifier(v) = self.as_atom()? {
+            return Some(v);
         }
         return None;
     }

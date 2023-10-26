@@ -37,10 +37,8 @@ pub enum {{ rule_name }} {
 {%- for rule in rules.iter() %}
     {{ rule.name.text|safe_rust_id }},
 {%- endfor %}
-    /// Label for text literal
-    IgnoreText,
-    /// Label for regex literal
-    IgnoreRegex,
+    /// Label for unnamed text literal
+    HiddenText,
 }
 
 impl YggdrasilRule for {{ rule_name }} {

@@ -8,14 +8,12 @@ impl GrammarRule {
             _ => {}
         };
         if let Some(s) = extra.get_hidden() {
-            self.hidden = s
+            self.viewer.hidden = s
         };
-        if let Some(s) = extra.get_keep() {
-            self.view = s
+        if let Some(s) = extra.get_railway() {
+            self.viewer.railway = s
         };
-        if let Some(s) = extra.get_entry() {
-            self.entry = s
-        };
+        self.viewer.styles.extend(extra.get_styles());
         if let Some(s) = extra.get_auto_capture() {
             self.captures.auto = s
         };
