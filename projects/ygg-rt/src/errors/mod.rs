@@ -5,8 +5,7 @@ use alloc::{
     string::{String, ToString},
     vec::Vec,
 };
-use core::{cmp, fmt, mem};
-use core::fmt::Display;
+use core::{fmt, fmt::Display};
 
 /// Parse-related error type.
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -16,7 +15,6 @@ pub struct YggdrasilError<R> {
     /// Location within the input string
     pub location: InputLocation,
     /// Line/column within the input string
-    pub line_col: LineColLocation,
     path: Option<String>,
     line: String,
     continued_line: Option<String>,
@@ -108,14 +106,7 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
         let visualize_ws = pos.match_char('\n') || pos.match_char('\r');
         let line_of = pos.line_of();
         let line = if visualize_ws { visualize_whitespace(line_of) } else { line_of.replace(&['\r', '\n'][..], "") };
-        Self {
-            variant,
-            location: InputLocation::Pos(pos.offset()),
-            path: None,
-            line,
-            continued_line: None,
-            line_col: LineColLocation::Pos(pos.line_column()),
-        }
+        Self { variant, location: InputLocation::Pos(pos.offset()), path: None, line, continued_line: None }
     }
 
     /// Creates `Error` from `ErrorVariant` and `Span`.
@@ -148,13 +139,11 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
     /// ```
     pub fn new_from_span(variant: ErrorKind<R>, span: TextSpan<'_>) -> YggdrasilError<R> {
         let end = span.end_pos();
-        let mut end_line_col = end.line_column();
+        let end_line_col = end.line_column();
         // end position is after a \n, so we want to point to the visual lf symbol
         if end_line_col.1 == 1 {
             let mut visual_end = end;
             visual_end.skip_back(1);
-            let lc = visual_end.line_column();
-            end_line_col = (lc.0, lc.1 + 1);
         };
 
         let mut line_iter = span.lines();
@@ -171,7 +160,6 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
             path: None,
             line: start_line,
             continued_line,
-            line_col: LineColLocation::Span(span.start_pos().line_column(), end_line_col),
         }
     }
 
@@ -192,7 +180,7 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
     pub fn custom_error<S: Display>(message: S, span: TextSpan) -> YggdrasilError<R> {
         Self::new_from_span(ErrorKind::CustomError { message: message.to_string() }, span)
     }
-    
+
     /// Returns `Error` variant with `path` which is shown when formatted with `Display`.
     ///
     /// # Examples
@@ -309,73 +297,7 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
         self
     }
 
-    fn start(&self) -> (usize, usize) {
-        match self.line_col {
-            LineColLocation::Pos(line_col) => line_col,
-            LineColLocation::Span(start_line_col, _) => start_line_col,
-        }
-    }
-
-    fn spacing(&self) -> String {
-        let line = match self.line_col {
-            LineColLocation::Pos((line, _)) => line,
-            LineColLocation::Span((start_line, _), (end_line, _)) => cmp::max(start_line, end_line),
-        };
-
-        let line_str_len = format!("{}", line).len();
-
-        let mut spacing = String::new();
-        for _ in 0..line_str_len {
-            spacing.push(' ');
-        }
-
-        spacing
-    }
-
-    fn underline(&self) -> String {
-        let mut underline = String::new();
-
-        let mut start = self.start().1;
-        let end = match self.line_col {
-            LineColLocation::Span(_, (_, mut end)) => {
-                let inverted_cols = start > end;
-                if inverted_cols {
-                    mem::swap(&mut start, &mut end);
-                    start -= 1;
-                    end += 1;
-                }
-
-                Some(end)
-            }
-            _ => None,
-        };
-        let offset = start - 1;
-        let line_chars = self.line.chars();
-
-        for c in line_chars.take(offset) {
-            match c {
-                '\t' => underline.push('\t'),
-                _ => underline.push(' '),
-            }
-        }
-
-        if let Some(end) = end {
-            underline.push('^');
-            if end - start > 1 {
-                for _ in 2..(end - start) {
-                    underline.push('-');
-                }
-                underline.push('^');
-            }
-        }
-        else {
-            underline.push_str("^---")
-        }
-
-        underline
-    }
-
-    fn message(&self) -> String {
+    pub fn message(&self) -> String {
         self.variant.message().to_string()
     }
 
@@ -409,76 +331,6 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
                 let separated = rules.iter().take(l - 1).map(f).collect::<Vec<_>>().join(", ");
                 format!("{}, or {}", separated, non_separated)
             }
-        }
-    }
-
-    pub(crate) fn format(&self) -> String {
-        let spacing = self.spacing();
-        let path = self.path.as_ref().map(|path| format!("{}:", path)).unwrap_or_default();
-
-        let pair = (self.line_col.clone(), &self.continued_line);
-        if let (LineColLocation::Span(_, end), Some(ref continued_line)) = pair {
-            let has_line_gap = end.0 - self.start().0 > 1;
-            if has_line_gap {
-                format!(
-                    "{s    }--> {p}{ls}:{c}\n\
-                     {s    } |\n\
-                     {ls:w$} | {line}\n\
-                     {s    } | ...\n\
-                     {le:w$} | {continued_line}\n\
-                     {s    } | {underline}\n\
-                     {s    } |\n\
-                     {s    } = {message}",
-                    s = spacing,
-                    w = spacing.len(),
-                    p = path,
-                    ls = self.start().0,
-                    le = end.0,
-                    c = self.start().1,
-                    line = self.line,
-                    continued_line = continued_line,
-                    underline = self.underline(),
-                    message = self.message()
-                )
-            }
-            else {
-                format!(
-                    "{s    }--> {p}{ls}:{c}\n\
-                     {s    } |\n\
-                     {ls:w$} | {line}\n\
-                     {le:w$} | {continued_line}\n\
-                     {s    } | {underline}\n\
-                     {s    } |\n\
-                     {s    } = {message}",
-                    s = spacing,
-                    w = spacing.len(),
-                    p = path,
-                    ls = self.start().0,
-                    le = end.0,
-                    c = self.start().1,
-                    line = self.line,
-                    continued_line = continued_line,
-                    underline = self.underline(),
-                    message = self.message()
-                )
-            }
-        }
-        else {
-            format!(
-                "{s}--> {p}{l}:{c}\n\
-                 {s} |\n\
-                 {l} | {line}\n\
-                 {s} | {underline}\n\
-                 {s} |\n\
-                 {s} = {message}",
-                s = spacing,
-                p = path,
-                l = self.start().0,
-                c = self.start().1,
-                line = self.line,
-                underline = self.underline(),
-                message = self.message()
-            )
         }
     }
 }
@@ -519,9 +371,9 @@ impl<R: YggdrasilRule> ErrorKind<R> {
     }
 }
 
-impl<R: YggdrasilRule> fmt::Display for YggdrasilError<R> {
+impl<R: YggdrasilRule> Display for YggdrasilError<R> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.format())
+        Display::fmt(&self.variant, f)
     }
 }
 
