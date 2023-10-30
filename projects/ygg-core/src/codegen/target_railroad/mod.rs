@@ -35,7 +35,9 @@ impl CodeGenerator for BuildRailway {
     type Output = Diagram<VerticalGrid<Box<dyn Node>>>;
 
     fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
-        let grid = VerticalGrid::new(info.rules.iter().map(|(_, rule)| rule.as_railroad(self)).collect());
+        let grid = VerticalGrid::new(
+            info.rules.iter().filter(|(_, rule)| rule.viewer.railway).map(|(_, rule)| rule.as_railroad(self)).collect(),
+        );
         let mut diagram = Diagram::new(grid);
         let mut element = Element::new("style").set("type", "text/css");
         if self.with_css {
@@ -90,7 +92,7 @@ impl AsRailroad for ExpressionBody {
             ExpressionBody::Unary(e) => e.as_railroad(config),
             ExpressionBody::Rule(e) => e.as_railroad(config),
             ExpressionBody::Call(e) => Box::new(Terminal::new(e.name.to_string(), &vec!["function"])),
-            ExpressionBody::Hidden => Box::new(Terminal::new("IGNORED".to_string(), &vec!["character"])),
+            ExpressionBody::Hidden => Box::new(Terminal::new("HIDE".to_string(), &vec!["character"])),
             ExpressionBody::Text(v) => Box::new(Terminal::new(v.text.to_string(), &vec!["string"])),
             ExpressionBody::CharacterAny => Box::new(Terminal::new("ANY".to_string(), &vec!["character"])),
             ExpressionBody::CharacterRange(v) => Box::new(Terminal::new(format!("{}-{}", v.start(), v.end()), &vec!["string"])),

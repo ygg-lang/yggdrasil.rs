@@ -44,7 +44,7 @@ impl YggdrasilNode for {{ rule.node_name() }} {
 {%- if rule.captures.text %}
             text: pair.get_string(),
 {%- endif %}
-            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+            span: Range { start: _span.start() as {{ self.config.range_type }}, end: _span.end() as {{ self.config.range_type }} },
         })
 {%- else if rule.is_union() %}
         let _span = pair.get_span();

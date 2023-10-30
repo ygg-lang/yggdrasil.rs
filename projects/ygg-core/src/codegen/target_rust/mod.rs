@@ -44,7 +44,7 @@ impl Default for BuildRust {
     fn default() -> Self {
         Self {
             export: "src".to_string(),
-            range_type: "u32".to_string(),
+            range_type: "usize".to_string(),
             rule_prefix: "".to_string(),
             node_suffix: "Node".to_string(),
             railway: Default::default(),
