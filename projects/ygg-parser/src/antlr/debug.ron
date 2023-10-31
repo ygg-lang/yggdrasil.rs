@@ -3433,7 +3433,7 @@ GrammarInfo {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
-                        raw: "[^\"\\\\]+",
+                        raw: "[^\"\\]+",
                         span: 3684..3693,
                     },
                 },
@@ -4155,7 +4155,7 @@ GrammarInfo {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
-                        raw: "[_\\p{XID_start}]\\p{XID_continue}*",
+                        raw: "[_p{XID_start}]p{XID_continue}*",
                         span: 4578..4613,
                     },
                 },
@@ -4566,7 +4566,7 @@ GrammarInfo {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
-                        raw: "\\\\p",
+                        raw: "\\p",
                         span: 5223..5228,
                     },
                 },
@@ -4897,7 +4897,7 @@ GrammarInfo {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
-                        raw: "\\p{White_Space}+",
+                        raw: "p{White_Space}+",
                         span: 5791..5809,
                     },
                 },
@@ -4930,7 +4930,7 @@ GrammarInfo {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
-                        raw: "\\/\\/[^\\n\\r]*",
+                        raw: "//[^nr]*",
                         span: 5872..5886,
                     },
                 },

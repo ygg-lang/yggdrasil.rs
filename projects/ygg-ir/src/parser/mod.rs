@@ -6,8 +6,8 @@ use yggdrasil_error::{FileID, YggdrasilError};
 use yggdrasil_parser::{
     bootstrap::{
         AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
-        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, KwExternalNode, PrefixNode, RootNode, StatementNode,
-        StringItemNode, SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
+        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, KwExternalNode, PrefixNode, RegexItemNode, RootNode,
+        StatementNode, StringItemNode, SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
     },
     TakeAnnotations, YggdrasilNode,
 };
@@ -234,7 +234,23 @@ impl YggdrasilExpression {
             AtomicNode::FunctionCall(_) => {
                 todo!()
             }
-            AtomicNode::RegexEmbed(v) => YggdrasilRegex::new(&v.regex_inner.text, v.get_range().unwrap_or_default()).into(),
+            AtomicNode::RegexEmbed(v) => {
+                let mut regex = String::with_capacity(v.regex_item.len() * 2);
+                for x in v.regex_item.iter() {
+                    match x {
+                        RegexItemNode::EscapedCharacter(v) => {
+                            match v.text.chars().last() {
+                                Some(c) => regex.push(c),
+                                None => {
+                                    // error
+                                }
+                            }
+                        }
+                        RegexItemNode::RegexCharacter(v) => regex.push_str(&v.text),
+                    }
+                }
+                YggdrasilRegex::new(regex, v.get_range().unwrap_or_default()).into()
+            }
             AtomicNode::RegexRange(v) => YggdrasilRegex::new(&v.text, v.get_range().unwrap_or_default()).into(),
             AtomicNode::StringRaw(s) => YggdrasilText::new(&s.string_raw_text.text, s.get_range().unwrap_or_default()).into(),
             AtomicNode::StringNormal(s) => {
