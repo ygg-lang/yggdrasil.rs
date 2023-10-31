@@ -149,7 +149,7 @@ text class HEX {
     [0-9a-fA-F]{1, 6}
 }
 text class TextAny {
-    /[^"\\]+/
+    /[^"\\\\]+/
 }
 // === regex === -------------------------------------------------------------------------------------------------------
 atomic class RegexEmbed {
@@ -203,7 +203,7 @@ atomic class ModifierCall ^ {
 @railroad(false)
 @style(keyword)
 token {
-    OP_CATEGORY: /\\p/
+    OP_CATEGORY: '\p'
 }
 @railroad(false)
 @style(keyword)

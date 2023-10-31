@@ -1956,14 +1956,14 @@ HIDE</text>
 <text class="comment" id="TextAny" x="64" y="2627">
 TextAny</text>
 <g class="string">
-<rect height="22" rx="10" ry="10" width="68" x="104" y="2611"/>
-<text x="138" y="2627">
-[^&quot;\]+</text>
+<rect height="22" rx="10" ry="10" width="76" x="104" y="2611"/>
+<text x="142" y="2627">
+[^&quot;\\]+</text>
 </g>
-<path d=" M 182 2622 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 190 2622 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
 <path d=" M 25 2622 h 10"/>
 <path d=" M 94 2622 h 10"/>
-<path d=" M 172 2622 h 10"/>
+<path d=" M 180 2622 h 10"/>
 </g>
 <g class="sequence">
 <path d=" M 10 2656 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
@@ -2338,14 +2338,14 @@ Identifier</text>
 <text class="comment" id="Identifier" x="75" y="3145">
 Identifier</text>
 <g class="string">
-<rect height="22" rx="10" ry="10" width="276" x="125" y="3129"/>
-<text x="263" y="3145">
-[_p{XID_start}]p{XID_continue}*</text>
+<rect height="22" rx="10" ry="10" width="292" x="125" y="3129"/>
+<text x="271" y="3145">
+[_\p{XID_start}]\p{XID_continue}*</text>
 </g>
-<path d=" M 411 3140 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 427 3140 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
 <path d=" M 25 3140 h 10"/>
 <path d=" M 115 3140 h 10"/>
-<path d=" M 401 3140 h 10"/>
+<path d=" M 417 3140 h 10"/>
 </g>
 <g class="sequence">
 <path d=" M 10 3174 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
@@ -2714,28 +2714,28 @@ macro|def|function|func|fun|fn</text>
 <text class="comment" id="WhiteSpace" x="75" y="3899">
 WhiteSpace</text>
 <g class="string">
-<rect height="22" rx="10" ry="10" width="140" x="125" y="3883"/>
-<text x="195" y="3899">
-p{White_Space}+</text>
+<rect height="22" rx="10" ry="10" width="148" x="125" y="3883"/>
+<text x="199" y="3899">
+\p{White_Space}+</text>
 </g>
-<path d=" M 275 3894 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 283 3894 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
 <path d=" M 25 3894 h 10"/>
 <path d=" M 115 3894 h 10"/>
-<path d=" M 265 3894 h 10"/>
+<path d=" M 273 3894 h 10"/>
 </g>
 <g class="sequence">
 <path d=" M 10 3928 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
 <text class="comment" id="Comment" x="64" y="3933">
 Comment</text>
 <g class="string">
-<rect height="22" rx="10" ry="10" width="84" x="104" y="3917"/>
-<text x="146" y="3933">
-//[^nr]*</text>
+<rect height="22" rx="10" ry="10" width="100" x="104" y="3917"/>
+<text x="154" y="3933">
+//[^\n\r]*</text>
 </g>
-<path d=" M 198 3928 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 214 3928 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
 <path d=" M 25 3928 h 10"/>
 <path d=" M 94 3928 h 10"/>
-<path d=" M 188 3928 h 10"/>
+<path d=" M 204 3928 h 10"/>
 </g>
 </g>
 </svg>

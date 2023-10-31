@@ -935,12 +935,7 @@ fn parse_modifier_call(state: Input) -> Output {
 }
 #[inline]
 fn parse_op_category(state: Input) -> Output {
-    state.rule(BootstrapRule::OP_CATEGORY, |s| {
-        s.match_regex({
-            static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(\\\\p)").unwrap())
-        })
-    })
+    state.rule(BootstrapRule::OP_CATEGORY, |s| s.match_string("\\p", false))
 }
 #[inline]
 fn parse_kw_external(state: Input) -> Output {
@@ -1028,7 +1023,7 @@ fn parse_comment(state: Input) -> Output {
     state.rule(BootstrapRule::Comment, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(\\/\\/[^\\n\\r]*)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(//[^\\n\\r]*)").unwrap())
         })
     })
 }

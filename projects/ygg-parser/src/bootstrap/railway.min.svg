@@ -2571,14 +2571,14 @@ Identifier</text>
 <text class="comment" id="OP_CATEGORY" x="78" y="3527">
 OP_CATEGORY</text>
 <g class="string">
-<rect height="22" rx="10" ry="10" width="44" x="132" y="3511"/>
-<text x="154" y="3527">
-\\p</text>
+<rect height="22" rx="10" ry="10" width="36" x="132" y="3511"/>
+<text x="150" y="3527">
+\p</text>
 </g>
-<path d=" M 186 3522 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 178 3522 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
 <path d=" M 25 3522 h 10"/>
 <path d=" M 122 3522 h 10"/>
-<path d=" M 176 3522 h 10"/>
+<path d=" M 168 3522 h 10"/>
 </g>
 <g class="sequence">
 <path d=" M 10 3556 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
@@ -2728,14 +2728,14 @@ WhiteSpace</text>
 <text class="comment" id="Comment" x="64" y="3933">
 Comment</text>
 <g class="string">
-<rect height="22" rx="10" ry="10" width="116" x="104" y="3917"/>
-<text x="162" y="3933">
-\/\/[^\n\r]*</text>
+<rect height="22" rx="10" ry="10" width="100" x="104" y="3917"/>
+<text x="154" y="3933">
+//[^\n\r]*</text>
 </g>
-<path d=" M 230 3928 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 214 3928 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
 <path d=" M 25 3928 h 10"/>
 <path d=" M 94 3928 h 10"/>
-<path d=" M 220 3928 h 10"/>
+<path d=" M 204 3928 h 10"/>
 </g>
 </g>
 </svg>

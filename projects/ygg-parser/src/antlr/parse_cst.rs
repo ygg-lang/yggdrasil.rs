@@ -724,7 +724,7 @@ fn parse_text_any(state: Input) -> Output {
     state.rule(BootstrapRule::TextAny, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^([^\"\\]+)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^([^\"\\\\]+)").unwrap())
         })
     })
 }
@@ -863,7 +863,7 @@ fn parse_identifier(state: Input) -> Output {
     state.rule(BootstrapRule::Identifier, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^([_p{XID_start}]p{XID_continue}*)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^([_\\p{XID_start}]\\p{XID_continue}*)").unwrap())
         })
     })
 }
@@ -935,12 +935,7 @@ fn parse_modifier_call(state: Input) -> Output {
 }
 #[inline]
 fn parse_op_category(state: Input) -> Output {
-    state.rule(BootstrapRule::OP_CATEGORY, |s| {
-        s.match_regex({
-            static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(\\p)").unwrap())
-        })
-    })
+    state.rule(BootstrapRule::OP_CATEGORY, |s| s.match_string("\\p", false))
 }
 #[inline]
 fn parse_kw_external(state: Input) -> Output {
@@ -1019,7 +1014,7 @@ fn parse_white_space(state: Input) -> Output {
     state.rule(BootstrapRule::WhiteSpace, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(p{White_Space}+)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(\\p{White_Space}+)").unwrap())
         })
     })
 }
@@ -1028,7 +1023,7 @@ fn parse_comment(state: Input) -> Output {
     state.rule(BootstrapRule::Comment, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(//[^nr]*)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(//[^\\n\\r]*)").unwrap())
         })
     })
 }

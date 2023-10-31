@@ -22,7 +22,14 @@ impl Display for RegexEmbedNode {
         for item in &self.regex_item {
             match item {
                 RegexItemNode::EscapedCharacter(v) => match v.text.chars().last() {
-                    Some(c) => f.write_char(c)?,
+                    Some(c) => match c {
+                        's' => f.write_str("\\s")?,
+                        'n' => f.write_str("\\n")?,
+                        'r' => f.write_str("\\r")?,
+                        'd' => f.write_str("\\d")?,
+                        'p' => f.write_str("\\p")?,
+                        _ => f.write_char(c)?,
+                    },
                     None => {}
                 },
                 RegexItemNode::RegexCharacter(v) => f.write_str(&v.text)?,

@@ -234,23 +234,7 @@ impl YggdrasilExpression {
             AtomicNode::FunctionCall(_) => {
                 todo!()
             }
-            AtomicNode::RegexEmbed(v) => {
-                let mut regex = String::with_capacity(v.regex_item.len() * 2);
-                for x in v.regex_item.iter() {
-                    match x {
-                        RegexItemNode::EscapedCharacter(v) => {
-                            match v.text.chars().last() {
-                                Some(c) => regex.push(c),
-                                None => {
-                                    // error
-                                }
-                            }
-                        }
-                        RegexItemNode::RegexCharacter(v) => regex.push_str(&v.text),
-                    }
-                }
-                YggdrasilRegex::new(regex, v.get_range().unwrap_or_default()).into()
-            }
+            AtomicNode::RegexEmbed(v) => YggdrasilRegex::new(v.to_string(), v.span.clone()).into(),
             AtomicNode::RegexRange(v) => YggdrasilRegex::new(&v.text, v.get_range().unwrap_or_default()).into(),
             AtomicNode::StringRaw(s) => YggdrasilText::new(&s.string_raw_text.text, s.get_range().unwrap_or_default()).into(),
             AtomicNode::StringNormal(s) => {
