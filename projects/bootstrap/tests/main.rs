@@ -24,8 +24,8 @@ fn debug_v() -> std::io::Result<()> {
 #[test]
 #[ignore]
 fn debug_re0() -> std::io::Result<()> {
-    let input = read_to_string(r#"C:\Users\Dell\CLionProjects\re0-script\projects\re0-parser\grammars\re0.ygg"#)?;
-    let output = r#"C:\Users\Dell\CLionProjects\re0-script\projects\re0-parser\src\codegen"#;
+    let input = read_to_string(r#"C:\Users\Dell\CLionProjects\re0-script\projects\re0-vm\grammars\re0.ygg"#)?;
+    let output = r#"C:\Users\Dell\CLionProjects\re0-script\projects\re0-vm\src\codegen"#;
     let builder = BuildRust::default();
     builder.generate(&input, output).unwrap();
     Ok(())

@@ -26,7 +26,7 @@ pub use crate::{
         tokens::Tokens,
     },
     language::YggdrasilParser,
-    parser_state::{state, Either, Lookahead, MatchDir, State},
+    parser_state::{state, Lookahead, MatchDirection, State},
     position::Position,
     span::{merge_spans, Lines, LinesSpan, TextSpan},
     token::Token,
@@ -34,7 +34,7 @@ pub use crate::{
 
 pub type AhoCorasick<'i> = CharwiseDoubleArrayAhoCorasick<&'i str>;
 
-mod errors;
+pub mod errors;
 mod iterators;
 mod language;
 mod parser_state;

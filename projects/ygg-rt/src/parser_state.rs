@@ -1,7 +1,7 @@
 use crate::{
     enhance::stack::Stack,
-    errors::{ErrorKind, YggdrasilError},
-    position::{self, Position},
+    errors::{YggdrasilError, YggdrasilErrorKind},
+    position::Position,
     span::TextSpan,
     TokenQueue, TokenTree, YggdrasilRule,
 };
@@ -39,7 +39,7 @@ pub type Either<S> = Result<S, S>;
 
 /// Match direction for the stack. Used in `PEEK[a..b]`/`stack_match_peek_slice`.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum MatchDir {
+pub enum MatchDirection {
     /// from the bottom to the top of the stack
     BottomToTop,
     /// from the top to the bottom of the stack
@@ -91,13 +91,13 @@ where
                 state.pos_attempts.dedup();
                 state.neg_attempts.sort();
                 state.neg_attempts.dedup();
-                ErrorKind::ParsingError { positives: state.pos_attempts.clone(), negatives: state.neg_attempts.clone() }
+                YggdrasilErrorKind::InvalidRule { positives: state.pos_attempts.clone(), negatives: state.neg_attempts.clone() }
             };
 
-            Err(YggdrasilError::new_from_offset(
+            Err(YggdrasilError::new_from_span(
                 variant,
                 // TODO(performance): Guarantee state.attempt_pos is a valid position
-                position::Position::new(input, state.attempt_pos).unwrap(),
+                TextSpan::new(input, state.attempt_pos, state.attempt_pos).unwrap(),
             ))
         }
     }
@@ -891,7 +891,12 @@ where
     /// assert_eq!(result.unwrap().position().pos(), 10);
     /// ```
     #[inline]
-    pub fn stack_match_peek_slice(mut self: Box<Self>, start: i32, end: Option<i32>, match_dir: MatchDir) -> Either<Box<Self>> {
+    pub fn stack_match_peek_slice(
+        mut self: Box<Self>,
+        start: i32,
+        end: Option<i32>,
+        match_dir: MatchDirection,
+    ) -> Either<Box<Self>> {
         let range = match constrain_idxs(start, end, self.stack.len()) {
             Some(r) => r,
             None => return Err(self),
@@ -906,8 +911,8 @@ where
             let mut iter_b2t = self.stack[range].iter();
             let matcher = |span: &TextSpan<'_>| position.match_string(span.as_str());
             match match_dir {
-                MatchDir::BottomToTop => iter_b2t.all(matcher),
-                MatchDir::TopToBottom => iter_b2t.rev().all(matcher),
+                MatchDirection::BottomToTop => iter_b2t.all(matcher),
+                MatchDirection::TopToBottom => iter_b2t.rev().all(matcher),
             }
         };
         if result {
@@ -941,7 +946,7 @@ where
     /// ```
     #[inline]
     pub fn stack_match_peek(self: Box<Self>) -> Either<Box<Self>> {
-        self.stack_match_peek_slice(0, None, MatchDir::TopToBottom)
+        self.stack_match_peek_slice(0, None, MatchDirection::TopToBottom)
     }
 
     /// Matches the full state of the stack. This method will clear the stack as it evaluates.

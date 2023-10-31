@@ -97,7 +97,25 @@ mod preview {
         let ast = CommentNode::from_str(text).unwrap();
         println!("{ast:#?}")
     }
-
+    #[test]
+    fn test_regex() {
+        let text = r##"/    | 增加 | \+=
+    | 减 | -
+    | 减少 | -=
+    | 大于 | >
+    | 大于等于 | >=
+    | 小于 | <
+    | 小于等于 | <=
+    | 为 | 等于 | ==
+    | 不等于 | !=
+    | 有 | has | contains
+    | && | 且
+    | [|]{2} | 或/"##;
+        let cst = BootstrapParser::parse_cst(text, BootstrapRule::RegexEmbed).unwrap();
+        println!("Short Form:\n{}", cst);
+        let ast = RegexEmbedNode::from_str(text).unwrap();
+        println!("{ast:#?}")
+    }
     #[test]
     fn test_string() {
         let text = r##"'->'"##;

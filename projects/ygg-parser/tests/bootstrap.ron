@@ -291,13 +291,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 382..383,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "{",
+                                                                span: 381..382,
                                                             },
-                                                        ),
+                                                            span: 380..383,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -308,13 +309,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 386..387,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "}",
+                                                                span: 385..386,
                                                             },
-                                                        ),
+                                                            span: 384..387,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -467,13 +469,14 @@ RootNode {
                                                                                     ExpressionTagNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
-                                                                                            atomic: String(
-                                                                                                Raw(
-                                                                                                    StringRawNode {
-                                                                                                        text: "'",
-                                                                                                        span: 597..598,
+                                                                                            atomic: StringRaw(
+                                                                                                StringRawNode {
+                                                                                                    string_raw_text: StringRawTextNode {
+                                                                                                        text: "->",
+                                                                                                        span: 595..597,
                                                                                                     },
-                                                                                                ),
+                                                                                                    span: 594..598,
+                                                                                                },
                                                                                             ),
                                                                                             prefix: [],
                                                                                             suffix: [],
@@ -587,13 +590,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 666..667,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "{",
+                                                                span: 665..666,
                                                             },
-                                                        ),
+                                                            span: 664..667,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -604,13 +608,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 670..671,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "|",
+                                                                span: 669..670,
                                                             },
-                                                        ),
+                                                            span: 668..671,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [
@@ -638,13 +643,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 686..687,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "}",
+                                                                span: 685..686,
                                                             },
-                                                        ),
+                                                            span: 684..687,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -680,13 +686,14 @@ RootNode {
                 group_block: GroupBlockNode {
                     group_pair: [
                         GroupPairNode {
-                            atomic: String(
-                                Raw(
-                                    StringRawNode {
-                                        text: "'",
-                                        span: 715..716,
+                            atomic: StringRaw(
+                                StringRawNode {
+                                    string_raw_text: StringRawTextNode {
+                                        text: "^",
+                                        span: 714..715,
                                     },
-                                ),
+                                    span: 713..716,
+                                },
                             ),
                             identifier: IdentifierNode {
                                 text: "OP_REMARK",
@@ -877,13 +884,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 971..972,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "{",
+                                                                span: 970..971,
                                                             },
-                                                        ),
+                                                            span: 969..972,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -911,13 +919,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 988..989,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "}",
+                                                                span: 987..988,
                                                             },
-                                                        ),
+                                                            span: 986..989,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -959,13 +968,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 1018..1019,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "|",
+                                                                span: 1017..1018,
                                                             },
-                                                        ),
+                                                            span: 1016..1019,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -1039,13 +1049,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 1093..1094,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "#",
+                                                                span: 1092..1093,
                                                             },
-                                                        ),
+                                                            span: 1091..1094,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -1173,13 +1184,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 1161..1162,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: ">",
+                                                                span: 1160..1161,
                                                             },
-                                                        ),
+                                                            span: 1159..1162,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -1335,13 +1347,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 1402..1403,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "{",
+                                                                span: 1401..1402,
                                                             },
-                                                        ),
+                                                            span: 1400..1403,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -1369,13 +1382,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 1417..1418,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "}",
+                                                                span: 1416..1417,
                                                             },
-                                                        ),
+                                                            span: 1415..1418,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -1432,13 +1446,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 1456..1457,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: ":",
+                                                                span: 1455..1456,
                                                             },
-                                                        ),
+                                                            span: 1454..1457,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -1725,13 +1740,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 1794..1795,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "@",
+                                                                span: 1793..1794,
                                                             },
-                                                        ),
+                                                            span: 1792..1795,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -1834,13 +1850,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 1832..1833,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "(",
+                                                                span: 1831..1832,
                                                             },
-                                                        ),
+                                                            span: 1830..1833,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -1888,13 +1905,14 @@ RootNode {
                                                                                                                             ExpressionTagNode {
                                                                                                                                 identifier: None,
                                                                                                                                 term: TermNode {
-                                                                                                                                    atomic: String(
-                                                                                                                                        Raw(
-                                                                                                                                            StringRawNode {
-                                                                                                                                                text: "'",
-                                                                                                                                                span: 1849..1850,
+                                                                                                                                    atomic: StringRaw(
+                                                                                                                                        StringRawNode {
+                                                                                                                                            string_raw_text: StringRawTextNode {
+                                                                                                                                                text: ",",
+                                                                                                                                                span: 1848..1849,
                                                                                                                                             },
-                                                                                                                                        ),
+                                                                                                                                            span: 1847..1850,
+                                                                                                                                        },
                                                                                                                                     ),
                                                                                                                                     prefix: [],
                                                                                                                                     suffix: [],
@@ -1940,13 +1958,14 @@ RootNode {
                                                                                     ExpressionTagNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
-                                                                                            atomic: String(
-                                                                                                Raw(
-                                                                                                    StringRawNode {
-                                                                                                        text: "'",
-                                                                                                        span: 1866..1867,
+                                                                                            atomic: StringRaw(
+                                                                                                StringRawNode {
+                                                                                                    string_raw_text: StringRawTextNode {
+                                                                                                        text: ",",
+                                                                                                        span: 1865..1866,
                                                                                                     },
-                                                                                                ),
+                                                                                                    span: 1864..1867,
+                                                                                                },
                                                                                             ),
                                                                                             prefix: [],
                                                                                             suffix: [
@@ -1979,13 +1998,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 1873..1874,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: ")",
+                                                                span: 1872..1873,
                                                             },
-                                                        ),
+                                                            span: 1871..1874,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -2053,13 +2073,14 @@ RootNode {
                                                                                     ExpressionTagNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
-                                                                                            atomic: String(
-                                                                                                Raw(
-                                                                                                    StringRawNode {
-                                                                                                        text: "'",
-                                                                                                        span: 2039..2040,
+                                                                                            atomic: StringRaw(
+                                                                                                StringRawNode {
+                                                                                                    string_raw_text: StringRawTextNode {
+                                                                                                        text: "|",
+                                                                                                        span: 2038..2039,
                                                                                                     },
-                                                                                                ),
+                                                                                                    span: 2037..2040,
+                                                                                                },
                                                                                             ),
                                                                                             prefix: [],
                                                                                             suffix: [],
@@ -2162,13 +2183,14 @@ RootNode {
                                                                                     ExpressionTagNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
-                                                                                            atomic: String(
-                                                                                                Raw(
-                                                                                                    StringRawNode {
-                                                                                                        text: "'",
-                                                                                                        span: 2101..2102,
+                                                                                            atomic: StringRaw(
+                                                                                                StringRawNode {
+                                                                                                    string_raw_text: StringRawTextNode {
+                                                                                                        text: "~",
+                                                                                                        span: 2100..2101,
                                                                                                     },
-                                                                                                ),
+                                                                                                    span: 2099..2102,
+                                                                                                },
                                                                                             ),
                                                                                             prefix: [],
                                                                                             suffix: [],
@@ -2334,13 +2356,14 @@ RootNode {
                                                                                     ExpressionTagNode {
                                                                                         identifier: None,
                                                                                         term: TermNode {
-                                                                                            atomic: String(
-                                                                                                Raw(
-                                                                                                    StringRawNode {
-                                                                                                        text: "'",
-                                                                                                        span: 2213..2214,
+                                                                                            atomic: StringRaw(
+                                                                                                StringRawNode {
+                                                                                                    string_raw_text: StringRawTextNode {
+                                                                                                        text: ":",
+                                                                                                        span: 2212..2213,
                                                                                                     },
-                                                                                                ),
+                                                                                                    span: 2211..2214,
+                                                                                                },
                                                                                             ),
                                                                                             prefix: [],
                                                                                             suffix: [],
@@ -2510,13 +2533,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 2289..2290,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "!",
+                                                                span: 2288..2289,
                                                             },
-                                                        ),
+                                                            span: 2287..2290,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -2550,13 +2574,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 2309..2310,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "&",
+                                                                span: 2308..2309,
                                                             },
-                                                        ),
+                                                            span: 2307..2310,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -2590,13 +2615,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 2329..2330,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "^",
+                                                                span: 2328..2329,
                                                             },
-                                                        ),
+                                                            span: 2327..2330,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -2647,13 +2673,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 2364..2365,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "?",
+                                                                span: 2363..2364,
                                                             },
-                                                        ),
+                                                            span: 2362..2365,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -2687,13 +2714,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 2384..2385,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "*",
+                                                                span: 2383..2384,
                                                             },
-                                                        ),
+                                                            span: 2382..2385,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -2727,13 +2755,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 2400..2401,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "+",
+                                                                span: 2399..2400,
                                                             },
-                                                        ),
+                                                            span: 2398..2401,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -2991,13 +3020,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 2698..2699,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "(",
+                                                                span: 2697..2698,
                                                             },
-                                                        ),
+                                                            span: 2696..2699,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -3008,13 +3038,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 2702..2703,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "|",
+                                                                span: 2701..2702,
                                                             },
-                                                        ),
+                                                            span: 2700..2703,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [
@@ -3042,13 +3073,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 2718..2719,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: ")",
+                                                                span: 2717..2718,
                                                             },
-                                                        ),
+                                                            span: 2716..2719,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -3111,13 +3143,18 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Normal(
-                                                            StringNormalNode {
-                                                                string_item: [],
-                                                                span: 2874..2875,
-                                                            },
-                                                        ),
+                                                    atomic: StringNormal(
+                                                        StringNormalNode {
+                                                            string_item: [
+                                                                TextAny(
+                                                                    TextAnyNode {
+                                                                        text: "'",
+                                                                        span: 2873..2874,
+                                                                    },
+                                                                ),
+                                                            ],
+                                                            span: 2872..2875,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -3143,13 +3180,18 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Normal(
-                                                            StringNormalNode {
-                                                                string_item: [],
-                                                                span: 2888..2889,
-                                                            },
-                                                        ),
+                                                    atomic: StringNormal(
+                                                        StringNormalNode {
+                                                            string_item: [
+                                                                TextAny(
+                                                                    TextAnyNode {
+                                                                        text: "'",
+                                                                        span: 2887..2888,
+                                                                    },
+                                                                ),
+                                                            ],
+                                                            span: 2886..2889,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -3183,13 +3225,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 2906..2907,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "\"",
+                                                                span: 2905..2906,
                                                             },
-                                                        ),
+                                                            span: 2904..2907,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -3215,13 +3258,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 2923..2924,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "\"",
+                                                                span: 2922..2923,
                                                             },
-                                                        ),
+                                                            span: 2921..2924,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -3261,10 +3305,38 @@ RootNode {
                                                 term: TermNode {
                                                     atomic: RegexEmbed(
                                                         RegexEmbedNode {
-                                                            regex_inner: RegexInnerNode {
-                                                                text: "[^']*",
-                                                                span: 2963..2968,
-                                                            },
+                                                            regex_item: [
+                                                                RegexCharacter(
+                                                                    RegexCharacterNode {
+                                                                        text: "[",
+                                                                        span: 2963..2964,
+                                                                    },
+                                                                ),
+                                                                RegexCharacter(
+                                                                    RegexCharacterNode {
+                                                                        text: "^",
+                                                                        span: 2964..2965,
+                                                                    },
+                                                                ),
+                                                                RegexCharacter(
+                                                                    RegexCharacterNode {
+                                                                        text: "'",
+                                                                        span: 2965..2966,
+                                                                    },
+                                                                ),
+                                                                RegexCharacter(
+                                                                    RegexCharacterNode {
+                                                                        text: "]",
+                                                                        span: 2966..2967,
+                                                                    },
+                                                                ),
+                                                                RegexCharacter(
+                                                                    RegexCharacterNode {
+                                                                        text: "*",
+                                                                        span: 2967..2968,
+                                                                    },
+                                                                ),
+                                                            ],
                                                             span: 2962..2969,
                                                         },
                                                     ),
@@ -3510,10 +3582,110 @@ RootNode {
                         GroupPairNode {
                             atomic: RegexEmbed(
                                 RegexEmbedNode {
-                                    regex_inner: RegexInnerNode {
-                                        text: "\\\\\\\\u[0-9a-zA-Z]{4}",
-                                        span: 3139..3158,
-                                    },
+                                    regex_item: [
+                                        EscapedCharacter(
+                                            EscapedCharacterNode {
+                                                text: "\\\\",
+                                                span: 3139..3141,
+                                            },
+                                        ),
+                                        EscapedCharacter(
+                                            EscapedCharacterNode {
+                                                text: "\\\\",
+                                                span: 3141..3143,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "u",
+                                                span: 3143..3144,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "[",
+                                                span: 3144..3145,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "0",
+                                                span: 3145..3146,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "-",
+                                                span: 3146..3147,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "9",
+                                                span: 3147..3148,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "a",
+                                                span: 3148..3149,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "-",
+                                                span: 3149..3150,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "z",
+                                                span: 3150..3151,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "A",
+                                                span: 3151..3152,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "-",
+                                                span: 3152..3153,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "Z",
+                                                span: 3153..3154,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "]",
+                                                span: 3154..3155,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "{",
+                                                span: 3155..3156,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "4",
+                                                span: 3156..3157,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "}",
+                                                span: 3157..3158,
+                                            },
+                                        ),
+                                    ],
                                     span: 3138..3159,
                                 },
                             ),
@@ -3526,10 +3698,20 @@ RootNode {
                         GroupPairNode {
                             atomic: RegexEmbed(
                                 RegexEmbedNode {
-                                    regex_inner: RegexInnerNode {
-                                        text: "\\\\.",
-                                        span: 3183..3186,
-                                    },
+                                    regex_item: [
+                                        EscapedCharacter(
+                                            EscapedCharacterNode {
+                                                text: "\\\\",
+                                                span: 3183..3185,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: ".",
+                                                span: 3185..3186,
+                                            },
+                                        ),
+                                    ],
                                     span: 3182..3187,
                                 },
                             ),
@@ -3542,10 +3724,44 @@ RootNode {
                         GroupPairNode {
                             atomic: RegexEmbed(
                                 RegexEmbedNode {
-                                    regex_inner: RegexInnerNode {
-                                        text: "[^\\\"\\\\]+",
-                                        span: 3202..3210,
-                                    },
+                                    regex_item: [
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "[",
+                                                span: 3202..3203,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "^",
+                                                span: 3203..3204,
+                                            },
+                                        ),
+                                        EscapedCharacter(
+                                            EscapedCharacterNode {
+                                                text: "\\\"",
+                                                span: 3204..3206,
+                                            },
+                                        ),
+                                        EscapedCharacter(
+                                            EscapedCharacterNode {
+                                                text: "\\\\",
+                                                span: 3206..3208,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "]",
+                                                span: 3208..3209,
+                                            },
+                                        ),
+                                        RegexCharacter(
+                                            RegexCharacterNode {
+                                                text: "+",
+                                                span: 3209..3210,
+                                            },
+                                        ),
+                                    ],
                                     span: 3201..3211,
                                 },
                             ),
@@ -3583,13 +3799,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 3367..3368,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "/",
+                                                                span: 3366..3367,
                                                             },
-                                                        ),
+                                                            span: 3365..3368,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
@@ -3615,13 +3832,14 @@ RootNode {
                                             ExpressionTagNode {
                                                 identifier: None,
                                                 term: TermNode {
-                                                    atomic: String(
-                                                        Raw(
-                                                            StringRawNode {
-                                                                text: "'",
-                                                                span: 3382..3383,
+                                                    atomic: StringRaw(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "/",
+                                                                span: 3381..3382,
                                                             },
-                                                        ),
+                                                            span: 3380..3383,
+                                                        },
                                                     ),
                                                     prefix: [],
                                                     suffix: [],
