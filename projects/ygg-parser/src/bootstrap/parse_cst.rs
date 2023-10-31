@@ -20,7 +20,6 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::ExternalStatement => parse_external_statement(state),
         BootstrapRule::LinkerBlock => parse_linker_block(state),
         BootstrapRule::LinkerPair => parse_linker_pair(state),
-        BootstrapRule::KW_EXTERNAL => parse_kw_external(state),
         BootstrapRule::DecoratorCall => parse_decorator_call(state),
         BootstrapRule::DecoratorName => parse_decorator_name(state),
         BootstrapRule::FunctionCall => parse_function_call(state),
@@ -44,7 +43,8 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::HEX => parse_hex(state),
         BootstrapRule::TextAny => parse_text_any(state),
         BootstrapRule::RegexEmbed => parse_regex_embed(state),
-        BootstrapRule::RegexInner => parse_regex_inner(state),
+        BootstrapRule::RegexItem => parse_regex_item(state),
+        BootstrapRule::RegexCharacter => parse_regex_character(state),
         BootstrapRule::RegexRange => parse_regex_range(state),
         BootstrapRule::RegexNegative => parse_regex_negative(state),
         BootstrapRule::Category => parse_category(state),
@@ -57,6 +57,7 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::Range => parse_range(state),
         BootstrapRule::ModifierCall => parse_modifier_call(state),
         BootstrapRule::OP_CATEGORY => parse_op_category(state),
+        BootstrapRule::KW_EXTERNAL => parse_kw_external(state),
         BootstrapRule::KW_GRAMMAR => parse_kw_grammar(state),
         BootstrapRule::KW_IMPORT => parse_kw_import(state),
         BootstrapRule::KW_CLASS => parse_kw_class(state),
@@ -66,8 +67,7 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::KW_MACRO => parse_kw_macro(state),
         BootstrapRule::WhiteSpace => parse_white_space(state),
         BootstrapRule::Comment => parse_comment(state),
-        BootstrapRule::IgnoreText => unreachable!(),
-        BootstrapRule::IgnoreRegex => unreachable!(),
+        BootstrapRule::HiddenText => unreachable!(),
     })
 }
 #[inline]
@@ -144,17 +144,20 @@ fn parse_class_statement(state: Input) -> Output {
                             })
                             .and_then(|s| builtin_ignore(s))
                             .and_then(|s| parse_kw_class(s))
+                            .and_then(|s| builtin_ignore(s))
                     })
                 })
-                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("name")))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| {
                     s.optional(|s| {
                         s.sequence(|s| {
                             Ok(s)
-                                .and_then(|s| builtin_text(s, "->", false))
-                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| {
+                                    s.sequence(|s| {
+                                        Ok(s).and_then(|s| builtin_text(s, "->", false)).and_then(|s| builtin_ignore(s))
+                                    })
+                                })
                                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("cast")))
                         })
                     })
@@ -214,9 +217,9 @@ fn parse_union_statement(state: Input) -> Output {
                             })
                             .and_then(|s| builtin_ignore(s))
                             .and_then(|s| parse_kw_union(s))
+                            .and_then(|s| builtin_ignore(s))
                     })
                 })
-                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("name")))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| s.optional(|s| parse_op_remark(s).and_then(|s| s.tag_node("op_remark"))))
@@ -386,15 +389,6 @@ fn parse_linker_pair(state: Input) -> Output {
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_namepath_free(s).and_then(|s| s.tag_node("namepath_free")))
         })
-    })
-}
-#[inline]
-fn parse_kw_external(state: Input) -> Output {
-    state.rule(BootstrapRule::KW_EXTERNAL, |s| {
-        Err(s)
-            .or_else(|s| builtin_text(s, "parser", false).and_then(|s| s.tag_node("parser")))
-            .or_else(|s| builtin_text(s, "inspector", false).and_then(|s| s.tag_node("inspector")))
-            .or_else(|s| builtin_text(s, "external", false).and_then(|s| s.tag_node("external")))
     })
 }
 #[inline]
@@ -664,7 +658,6 @@ fn parse_string_raw(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_string_raw_text(state: Input) -> Output {
     state.rule(BootstrapRule::StringRawText, |s| {
@@ -708,13 +701,9 @@ fn parse_escaped_unicode(state: Input) -> Output {
 #[inline]
 fn parse_escaped_character(state: Input) -> Output {
     state.rule(BootstrapRule::EscapedCharacter, |s| {
-        s.match_regex({
-            static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(\\\\.)").unwrap())
-        })
+        s.sequence(|s| Ok(s).and_then(|s| builtin_text(s, "\\", false)).and_then(|s| builtin_any(s)))
     })
 }
-
 #[inline]
 fn parse_hex(state: Input) -> Output {
     state.rule(BootstrapRule::HEX, |s| {
@@ -745,33 +734,23 @@ fn parse_regex_embed(state: Input) -> Output {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| builtin_text(s, "/", false))
-                .and_then(|s| parse_regex_inner(s).and_then(|s| s.tag_node("regex_inner")))
+                .and_then(|s| s.repeat(1..4294967295, |s| parse_regex_item(s).and_then(|s| s.tag_node("regex_item"))))
                 .and_then(|s| builtin_text(s, "/", false))
         })
     })
 }
 #[inline]
-fn parse_regex_inner(state: Input) -> Output {
-    state.rule(BootstrapRule::RegexInner, |s| {
-        s.repeat(1..4294967295, |s| {
-            s.sequence(|s| {
-                Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
-                    Err(s)
-                        .or_else(|s| {
-                            builtin_regex(s, {
-                                static REGEX: OnceLock<Regex> = OnceLock::new();
-                                REGEX.get_or_init(|| Regex::new("^([^\\/\\\\])").unwrap())
-                            })
-                        })
-                        .or_else(|s| {
-                            builtin_regex(s, {
-                                static REGEX: OnceLock<Regex> = OnceLock::new();
-                                REGEX.get_or_init(|| Regex::new("^(\\\\.)").unwrap())
-                            })
-                        })
-                })
-            })
-        })
+fn parse_regex_item(state: Input) -> Output {
+    state.rule(BootstrapRule::RegexItem, |s| {
+        Err(s)
+            .or_else(|s| parse_escaped_character(s).and_then(|s| s.tag_node("escaped_character")))
+            .or_else(|s| parse_regex_character(s).and_then(|s| s.tag_node("regex_character")))
+    })
+}
+#[inline]
+fn parse_regex_character(state: Input) -> Output {
+    state.rule(BootstrapRule::RegexCharacter, |s| {
+        s.sequence(|s| Ok(s).and_then(|s| s.lookahead(false, |s| builtin_text(s, "/", false))).and_then(|s| builtin_any(s)))
     })
 }
 #[inline]
@@ -796,7 +775,6 @@ fn parse_regex_range(state: Input) -> Output {
 fn parse_regex_negative(state: Input) -> Output {
     state.rule(BootstrapRule::RegexNegative, |s| s.match_string("^", false))
 }
-
 #[inline]
 fn parse_category(state: Input) -> Output {
     state.rule(BootstrapRule::Category, |s| {
@@ -819,9 +797,9 @@ fn parse_category(state: Input) -> Output {
                                     })
                                 })
                             })
+                            .and_then(|s| builtin_ignore(s))
                     })
                 })
-                .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("script")))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| builtin_text(s, "}", false))
@@ -955,7 +933,6 @@ fn parse_modifier_call(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_op_category(state: Input) -> Output {
     state.rule(BootstrapRule::OP_CATEGORY, |s| {
@@ -963,6 +940,15 @@ fn parse_op_category(state: Input) -> Output {
             static REGEX: OnceLock<Regex> = OnceLock::new();
             REGEX.get_or_init(|| Regex::new("^(\\\\p)").unwrap())
         })
+    })
+}
+#[inline]
+fn parse_kw_external(state: Input) -> Output {
+    state.rule(BootstrapRule::KW_EXTERNAL, |s| {
+        Err(s)
+            .or_else(|s| builtin_text(s, "parser", false).and_then(|s| s.tag_node("parser")))
+            .or_else(|s| builtin_text(s, "inspector", false).and_then(|s| s.tag_node("inspector")))
+            .or_else(|s| builtin_text(s, "external", false).and_then(|s| s.tag_node("external")))
     })
 }
 #[inline]
@@ -979,7 +965,7 @@ fn parse_kw_import(state: Input) -> Output {
     state.rule(BootstrapRule::KW_IMPORT, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(using|import|use)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(using|use|import)").unwrap())
         })
     })
 }
@@ -1053,13 +1039,13 @@ fn builtin_ignore(state: Input) -> Output {
 }
 
 fn builtin_any(state: Input) -> Output {
-    state.rule(BootstrapRule::IgnoreText, |s| s.match_char_if(|_| true))
+    state.rule(BootstrapRule::HiddenText, |s| s.match_char_if(|_| true))
 }
 
 fn builtin_text<'i>(state: Input<'i>, text: &'static str, case: bool) -> Output<'i> {
-    state.rule(BootstrapRule::IgnoreText, |s| s.match_string(text, case))
+    state.rule(BootstrapRule::HiddenText, |s| s.match_string(text, case))
 }
 
 fn builtin_regex<'i, 'r>(state: Input<'i>, regex: &'r Regex) -> Output<'i> {
-    state.rule(BootstrapRule::IgnoreRegex, |s| s.match_regex(regex))
+    state.rule(BootstrapRule::HiddenText, |s| s.match_regex(regex))
 }
