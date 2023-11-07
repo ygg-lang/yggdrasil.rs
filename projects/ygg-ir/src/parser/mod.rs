@@ -234,7 +234,7 @@ impl YggdrasilExpression {
             AtomicNode::FunctionCall(_) => {
                 todo!()
             }
-            AtomicNode::RegexEmbed(v) => YggdrasilRegex::new(v.to_string(), v.span.clone()).into(),
+            AtomicNode::RegexEmbed(v) => YggdrasilRegex::new(v.to_string().trim(), v.span.clone()).into(),
             AtomicNode::RegexRange(v) => YggdrasilRegex::new(&v.text, v.get_range().unwrap_or_default()).into(),
             AtomicNode::StringRaw(s) => YggdrasilText::new(&s.string_raw_text.text, s.get_range().unwrap_or_default()).into(),
             AtomicNode::StringNormal(s) => {

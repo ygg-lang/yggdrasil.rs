@@ -127,7 +127,7 @@ impl BuildRust {
     pub fn generate<P: AsRef<Path>>(&self, grammar: &str, output: P) -> Validation<PathBuf> {
         let mut errors = vec![];
         let info = parse_grammar(grammar).validate(&mut errors)?;
-        let out = info.generate(BuildRust::default()).validate(&mut errors)?;
+        let out = info.generate(self.clone()).validate(&mut errors)?;
         out.save(output).validate(&mut errors)
     }
 }

@@ -9,7 +9,7 @@ pub struct YggdrasilRegex {
 }
 impl Display for YggdrasilRegex {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.write_str("\"^(")?;
+        f.write_str("\"^(?x)(")?;
         for char in self.raw.chars() {
             match char {
                 '\\' => f.write_str("\\\\")?,
