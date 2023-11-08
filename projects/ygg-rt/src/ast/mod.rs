@@ -11,8 +11,8 @@ pub trait YggdrasilNode: Clone + Debug {
         None
     }
     ///
-    fn get_range(&self) -> Option<Range<usize>> {
-        None
+    fn get_range(&self) -> Range<usize> {
+        0..0
     }
     /// from
     fn from_cst(mut tree: TokenTree<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {

@@ -97,7 +97,7 @@ impl GrammarRule {
         let rule = Self {
             name,
             body: GrammarBody::Class { term: YggdrasilExpression::build_or(&node.class_block.expression)? },
-            range: node.get_range().unwrap_or_default(),
+            range: node.get_range(),
             ..Default::default()
         }
         .with_annotation(node.annotations());
@@ -108,7 +108,7 @@ impl GrammarRule {
         let rule = Self {
             name,
             body: GrammarBody::Class { term: YggdrasilExpression::build_atomic(&node.atomic)? },
-            range: node.get_range().unwrap_or_default(),
+            range: node.get_range(),
             ..Default::default()
         };
         Ok(rule)
@@ -122,7 +122,7 @@ impl GrammarRule {
                 Err(_) => {}
             }
         }
-        let rule = Self { name, body: GrammarBody::Union { branches }, range: node.get_range().unwrap_or_default(), ..Default::default() }
+        let rule = Self { name, body: GrammarBody::Union { branches }, range: node.get_range(), ..Default::default() }
             .with_annotation(node.annotations());
         Ok(rule)
     }
@@ -149,7 +149,7 @@ impl YggdrasilExpression {
                 }
                 Ok(head)
             }
-            _ => Err(YggdrasilError::syntax_error("empty class or", node.get_range().unwrap_or_default()))?,
+            _ => Err(YggdrasilError::syntax_error("empty class or", node.get_range()))?,
         }
     }
 
@@ -162,7 +162,7 @@ impl YggdrasilExpression {
                 }
                 Ok(head)
             }
-            _ => Err(YggdrasilError::syntax_error("empty class hard", node.get_range().unwrap_or_default()))?,
+            _ => Err(YggdrasilError::syntax_error("empty class hard", node.get_range()))?,
         }
     }
     fn build_soft(node: &ExpressionSoftNode) -> Result<Self, YggdrasilError> {
@@ -174,7 +174,7 @@ impl YggdrasilExpression {
                 }
                 Ok(head)
             }
-            _ => Err(YggdrasilError::syntax_error("empty class soft", node.get_range().unwrap_or_default()))?,
+            _ => Err(YggdrasilError::syntax_error("empty class soft", node.get_range()))?,
         }
     }
     fn build_tag_branch(node: &UnionBranchNode) -> Result<YggdrasilVariant, YggdrasilError> {
@@ -235,8 +235,8 @@ impl YggdrasilExpression {
                 todo!()
             }
             AtomicNode::RegexEmbed(v) => YggdrasilRegex::new(v.to_string().trim(), v.span.clone()).into(),
-            AtomicNode::RegexRange(v) => YggdrasilRegex::new(&v.text, v.get_range().unwrap_or_default()).into(),
-            AtomicNode::StringRaw(s) => YggdrasilText::new(&s.string_raw_text.text, s.get_range().unwrap_or_default()).into(),
+            AtomicNode::RegexRange(v) => YggdrasilRegex::new(&v.text, v.get_range()).into(),
+            AtomicNode::StringRaw(s) => YggdrasilText::new(&s.string_raw_text.text, s.get_range()).into(),
             AtomicNode::StringNormal(s) => {
                 let mut buffer = String::with_capacity(s.string_item.len() * 2);
                 for item in &s.string_item {
@@ -258,18 +258,18 @@ impl YggdrasilExpression {
                         StringItemNode::TextAny(s) => buffer.push_str(&s.text),
                     }
                 }
-                YggdrasilText::new(buffer, s.get_range().unwrap_or_default()).into()
+                YggdrasilText::new(buffer, s.get_range()).into()
             }
             AtomicNode::Category(cat) => {
-                let r = cat.get_range().unwrap_or_default();
+                let r = cat.get_range();
                 match &cat.group {
                     Some(g) => YggdrasilRegex::new(format!("\\p{{{}={}}}", g.text, cat.script.text), r).into(),
                     None => YggdrasilRegex::new(format!("\\p{{{}}}", cat.script.text), r).into(),
                 }
             }
             AtomicNode::EscapedUnicode(unicode) => match unicode.as_char() {
-                Some(c) => YggdrasilText::new(c, unicode.get_range().unwrap_or_default()).into(),
-                None => Err(YggdrasilError::syntax_error(&unicode.hex.text, unicode.get_range().unwrap_or_default()))?,
+                Some(c) => YggdrasilText::new(c, unicode.get_range()).into(),
+                None => Err(YggdrasilError::syntax_error(&unicode.hex.text, unicode.get_range()))?,
             },
             AtomicNode::Identifier(v) => YggdrasilIdentifier::build(v).into(),
             AtomicNode::Integer(v) => BigInt::from_str(&v.text)?.into(),
@@ -280,6 +280,6 @@ impl YggdrasilExpression {
 
 impl YggdrasilIdentifier {
     fn build(node: &IdentifierNode) -> Self {
-        Self { text: node.text.clone(), span: unsafe { FileID::new(0) }.with_range(node.get_range().unwrap_or_default()) }
+        Self { text: node.text.clone(), span: unsafe { FileID::new(0) }.with_range(node.get_range()) }
     }
 }
