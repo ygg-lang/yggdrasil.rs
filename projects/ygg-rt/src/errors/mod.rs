@@ -274,6 +274,7 @@ impl<R: YggdrasilRule> Display for YggdrasilErrorKind<R> {
     }
 }
 
+#[allow(unused)]
 fn visualize_whitespace(input: &str) -> String {
     input.to_owned().replace('\r', "␍").replace('\n', "␊")
 }

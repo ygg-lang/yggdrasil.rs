@@ -73,10 +73,19 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
 #[inline]
 fn parse_root(state: Input) -> Output {
     state.rule(BootstrapRule::Root, |s| {
-        s.repeat(0..4294967295, |s| {
-            s.sequence(|s| {
-                Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| parse_statement(s).and_then(|s| s.tag_node("statement")))
-            })
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s)
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_statement(s).and_then(|s| s.tag_node("statement")))
+                        })
+                    })
+                })
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| s.end_of_input())
         })
     })
 }
@@ -410,7 +419,7 @@ fn parse_decorator_name(state: Input) -> Output {
                 .and_then(|s| {
                     builtin_regex(s, {
                         static REGEX: OnceLock<Regex> = OnceLock::new();
-                        REGEX.get_or_init(|| Regex::new("^([@#])").unwrap())
+                        REGEX.get_or_init(|| Regex::new("^(?x)([@\\#])").unwrap())
                     })
                 })
                 .and_then(|s| builtin_ignore(s))
@@ -663,7 +672,7 @@ fn parse_string_raw_text(state: Input) -> Output {
     state.rule(BootstrapRule::StringRawText, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^([^']*)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(?x)([^']*)").unwrap())
         })
     })
 }
@@ -712,7 +721,7 @@ fn parse_hex(state: Input) -> Output {
                 Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
                     builtin_regex(s, {
                         static REGEX: OnceLock<Regex> = OnceLock::new();
-                        REGEX.get_or_init(|| Regex::new("^([0-9a-fA-F])").unwrap())
+                        REGEX.get_or_init(|| Regex::new("^(?x)([0-9a-fA-F])").unwrap())
                     })
                 })
             })
@@ -724,7 +733,7 @@ fn parse_text_any(state: Input) -> Output {
     state.rule(BootstrapRule::TextAny, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^([^\"\\\\]+)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(?x)([^\"\\\\]+)").unwrap())
         })
     })
 }
@@ -863,7 +872,7 @@ fn parse_identifier(state: Input) -> Output {
     state.rule(BootstrapRule::Identifier, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^([_\\p{XID_start}]\\p{XID_continue}*)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(?x)([_\\p{XID_start}]\\p{XID_continue}*)").unwrap())
         })
     })
 }
@@ -880,7 +889,7 @@ fn parse_integer(state: Input) -> Output {
     state.rule(BootstrapRule::Integer, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(0|[1-9][0-9]*)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(?x)(0|[1-9][0-9]*)").unwrap())
         })
     })
 }
@@ -951,7 +960,7 @@ fn parse_kw_grammar(state: Input) -> Output {
     state.rule(BootstrapRule::KW_GRAMMAR, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(grammar)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(?x)(grammar)").unwrap())
         })
     })
 }
@@ -960,7 +969,7 @@ fn parse_kw_import(state: Input) -> Output {
     state.rule(BootstrapRule::KW_IMPORT, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(using|use|import)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(?x)(using|use|import)").unwrap())
         })
     })
 }
@@ -969,7 +978,7 @@ fn parse_kw_class(state: Input) -> Output {
     state.rule(BootstrapRule::KW_CLASS, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(class|struct)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(?x)(class|struct)").unwrap())
         })
     })
 }
@@ -978,7 +987,7 @@ fn parse_kw_union(state: Input) -> Output {
     state.rule(BootstrapRule::KW_UNION, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(union|enum)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(?x)(union|enum)").unwrap())
         })
     })
 }
@@ -987,7 +996,7 @@ fn parse_kw_group(state: Input) -> Output {
     state.rule(BootstrapRule::KW_GROUP, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(group|token)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(?x)(group|token)").unwrap())
         })
     })
 }
@@ -996,7 +1005,7 @@ fn parse_kw_climb(state: Input) -> Output {
     state.rule(BootstrapRule::KW_CLIMB, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(climb)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(?x)(climb)").unwrap())
         })
     })
 }
@@ -1005,7 +1014,7 @@ fn parse_kw_macro(state: Input) -> Output {
     state.rule(BootstrapRule::KW_MACRO, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(macro|def|function|func|fun|fn)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(?x)(macro|def|function|func|fun|fn)").unwrap())
         })
     })
 }
@@ -1014,7 +1023,7 @@ fn parse_white_space(state: Input) -> Output {
     state.rule(BootstrapRule::WhiteSpace, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(\\p{White_Space}+)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(?x)(\\p{White_Space}+)").unwrap())
         })
     })
 }
@@ -1023,7 +1032,7 @@ fn parse_comment(state: Input) -> Output {
     state.rule(BootstrapRule::Comment, |s| {
         s.match_regex({
             static REGEX: OnceLock<Regex> = OnceLock::new();
-            REGEX.get_or_init(|| Regex::new("^(//[^\\n\\r]*)").unwrap())
+            REGEX.get_or_init(|| Regex::new("^(?x)(//[^\\n\\r]*)").unwrap())
         })
     })
 }

@@ -704,9 +704,9 @@ impl YggdrasilNode for PrefixNode {
 
     fn get_range(&self) -> Range<usize> {
         match self {
-            Self::Negative => 0..0,
-            Self::Positive => 0..0,
-            Self::Remark => 0..0,
+            Self::Negative => Range::default(),
+            Self::Positive => Range::default(),
+            Self::Remark => Range::default(),
         }
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
@@ -737,9 +737,9 @@ impl YggdrasilNode for SuffixNode {
 
     fn get_range(&self) -> Range<usize> {
         match self {
-            Self::Many => 0..0,
-            Self::Many1 => 0..0,
-            Self::Optional => 0..0,
+            Self::Many => Range::default(),
+            Self::Many1 => Range::default(),
+            Self::Optional => Range::default(),
             Self::Range(s) => s.get_range(),
             Self::RangeExact(s) => s.get_range(),
         }

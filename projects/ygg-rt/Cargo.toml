@@ -1,6 +1,6 @@
 [package]
 name = "yggdrasil-rt"
-version = "0.0.14"
+version = "0.0.15"
 authors = ["Aster <192607617@qq.com>"]
 description = "Yggdrasil Shared Structure"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"

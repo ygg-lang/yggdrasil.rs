@@ -1,10 +1,11 @@
-<svg class="railroad" viewBox="0 0 1712 3949" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg class="railroad" viewBox="0 0 1712 3543" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <style type="text/css">svg.railroad{background-color:hsl(30,20%,95%);background-size:15px 15px;background-image:linear-gradient(to right,rgba(30,30,30,.05) 1px,transparent 1px),linear-gradient(to bottom,rgba(30,30,30,.05) 1px,transparent 1px);}svg.railroad path{stroke-width:3px;stroke:black;fill:transparent;}svg.railroad .debug{stroke-width:1px;stroke:red;}svg.railroad text{font-size:14px;font-family:monospace;text-anchor:middle;}svg.railroad .nonterminal text{font-weight:bold;}svg.railroad text.comment{font-family:serif;font-style:italic;font-size:12px;}svg.railroad rect{stroke-width:3px;stroke:black;}svg.railroad g.labeledbox>rect{stroke-width:1px;stroke:grey;stroke-dasharray:5px;fill:rgba(90,90,150,.1);}svg.railroad .symbol>rect{fill:rgba(90,90,150,.1);}svg.railroad .regex>rect{fill:honeydew;}svg.railroad .string>rect{fill:cornsilk;}svg.railroad .character>rect{fill:lightcoral;}</style>
 <g class="verticalgrid">
 <g class="sequence">
 <path d=" M 10 21 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
 <text class="comment" id="Root" x="54" y="26">
 Root</text>
+<g class="sequence">
 <g class="repeat">
 <path d=" M 83 21 h 12 m 154 0 h 12 m -12 0 a 12 12 0 0 1 12 12 v 7 a 12 12 0 0 1 -12 12 m -52 0 h -102 m 54 0 l 5 -5 m 0 10 l -5 -5 m -54 0 a 12 12 0 0 1 -12 -12 v -7 a 12 12 0 0 1 12 -12"/>
 <text class="comment" x="223" y="57">
@@ -25,10 +26,23 @@ Statement</text>
 <path d=" M 147 21 h 10"/>
 </g>
 </g>
-<path d=" M 271 21 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<g class="character">
+<rect height="22" rx="10" ry="10" width="52" x="271" y="10"/>
+<text x="297" y="26">
+HIDE</text>
+</g>
+<g class="character">
+<rect height="22" rx="10" ry="10" width="116" x="333" y="10"/>
+<text x="391" y="26">
+END_OF_INPUT</text>
+</g>
+<path d=" M 261 21 h 10"/>
+<path d=" M 323 21 h 10"/>
+</g>
+<path d=" M 459 21 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
 <path d=" M 25 21 h 10"/>
 <path d=" M 73 21 h 10"/>
-<path d=" M 261 21 h 10"/>
+<path d=" M 449 21 h 10"/>
 </g>
 <g class="sequence">
 <path d=" M 10 85 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
@@ -1037,29 +1051,29 @@ CallBody</text>
 DecoratorName</text>
 <g class="sequence">
 <g class="string">
-<rect height="22" rx="10" ry="10" width="52" x="146" y="1076"/>
-<text x="172" y="1092">
-[@#]</text>
+<rect height="22" rx="10" ry="10" width="60" x="146" y="1076"/>
+<text x="176" y="1092">
+[@\#]</text>
 </g>
 <g class="character">
-<rect height="22" rx="10" ry="10" width="52" x="208" y="1076"/>
-<text x="234" y="1092">
+<rect height="22" rx="10" ry="10" width="52" x="216" y="1076"/>
+<text x="242" y="1092">
 HIDE</text>
 </g>
 <a class="link" xlink:href="#Identifier">
 <g class="symbol">
-<rect height="22" width="100" x="270" y="1076"/>
-<text x="320" y="1092">
+<rect height="22" width="100" x="278" y="1076"/>
+<text x="328" y="1092">
 Identifier</text>
 </g>
 </a>
-<path d=" M 198 1087 h 10"/>
-<path d=" M 260 1087 h 10"/>
+<path d=" M 206 1087 h 10"/>
+<path d=" M 268 1087 h 10"/>
 </g>
-<path d=" M 380 1087 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 388 1087 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
 <path d=" M 25 1087 h 10"/>
 <path d=" M 136 1087 h 10"/>
-<path d=" M 370 1087 h 10"/>
+<path d=" M 378 1087 h 10"/>
 </g>
 <g class="sequence">
 <path d=" M 10 1121 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
@@ -2568,174 +2582,17 @@ Identifier</text>
 </g>
 <g class="sequence">
 <path d=" M 10 3522 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-<text class="comment" id="OP_CATEGORY" x="78" y="3527">
-OP_CATEGORY</text>
-<g class="string">
-<rect height="22" rx="10" ry="10" width="36" x="132" y="3511"/>
-<text x="150" y="3527">
-\p</text>
-</g>
-<path d=" M 178 3522 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-<path d=" M 25 3522 h 10"/>
-<path d=" M 122 3522 h 10"/>
-<path d=" M 168 3522 h 10"/>
-</g>
-<g class="sequence">
-<path d=" M 10 3556 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-<text class="comment" id="KW_EXTERNAL" x="78" y="3561">
-KW_EXTERNAL</text>
-<g class="choice">
-<path d=" M 132 3556 h 24 m 68 0 h 48"/>
-<g class="string">
-<rect height="22" rx="10" ry="10" width="68" x="156" y="3545"/>
-<text x="190" y="3561">
-parser</text>
-</g>
-<path d=" M 132 3556 a 12 12 0 0 1 12 12 v 9 m 116 0 v -9 a 12 12 0 0 1 12 -12"/>
-<path d=" M 144 3577 v 33 m 116 0 v -33"/>
-<path d=" M 144 3577 v 0 a 12 12 0 0 0 12 12 m 92 0 h 0 a 12 12 0 0 0 12 -12 v 0"/>
-<g class="string">
-<rect height="22" rx="10" ry="10" width="92" x="156" y="3578"/>
-<text x="202" y="3594">
-inspector</text>
-</g>
-<path d=" M 144 3610 v 0 a 12 12 0 0 0 12 12 m 84 0 h 8 a 12 12 0 0 0 12 -12 v 0"/>
-<g class="string">
-<rect height="22" rx="10" ry="10" width="84" x="156" y="3611"/>
-<text x="198" y="3627">
-external</text>
-</g>
-</g>
-<path d=" M 282 3556 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-<path d=" M 25 3556 h 10"/>
-<path d=" M 122 3556 h 10"/>
-<path d=" M 272 3556 h 10"/>
-</g>
-<g class="sequence">
-<path d=" M 10 3656 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-<text class="comment" id="KW_GRAMMAR" x="75" y="3661">
-KW_GRAMMAR</text>
-<g class="string">
-<rect height="22" rx="10" ry="10" width="76" x="125" y="3645"/>
-<text x="163" y="3661">
-grammar</text>
-</g>
-<path d=" M 211 3656 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-<path d=" M 25 3656 h 10"/>
-<path d=" M 115 3656 h 10"/>
-<path d=" M 201 3656 h 10"/>
-</g>
-<g class="sequence">
-<path d=" M 10 3690 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-<text class="comment" id="KW_IMPORT" x="71" y="3695">
-KW_IMPORT</text>
-<g class="string">
-<rect height="22" rx="10" ry="10" width="148" x="118" y="3679"/>
-<text x="192" y="3695">
-using|use|import</text>
-</g>
-<path d=" M 276 3690 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-<path d=" M 25 3690 h 10"/>
-<path d=" M 108 3690 h 10"/>
-<path d=" M 266 3690 h 10"/>
-</g>
-<g class="sequence">
-<path d=" M 10 3724 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-<text class="comment" id="KW_CLASS" x="68" y="3729">
-KW_CLASS</text>
-<g class="string">
-<rect height="22" rx="10" ry="10" width="116" x="111" y="3713"/>
-<text x="169" y="3729">
-class|struct</text>
-</g>
-<path d=" M 237 3724 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-<path d=" M 25 3724 h 10"/>
-<path d=" M 101 3724 h 10"/>
-<path d=" M 227 3724 h 10"/>
-</g>
-<g class="sequence">
-<path d=" M 10 3758 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-<text class="comment" id="KW_UNION" x="68" y="3763">
-KW_UNION</text>
-<g class="string">
-<rect height="22" rx="10" ry="10" width="100" x="111" y="3747"/>
-<text x="161" y="3763">
-union|enum</text>
-</g>
-<path d=" M 221 3758 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-<path d=" M 25 3758 h 10"/>
-<path d=" M 101 3758 h 10"/>
-<path d=" M 211 3758 h 10"/>
-</g>
-<g class="sequence">
-<path d=" M 10 3792 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-<text class="comment" id="KW_GROUP" x="68" y="3797">
-KW_GROUP</text>
-<g class="string">
-<rect height="22" rx="10" ry="10" width="108" x="111" y="3781"/>
-<text x="165" y="3797">
-group|token</text>
-</g>
-<path d=" M 229 3792 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-<path d=" M 25 3792 h 10"/>
-<path d=" M 101 3792 h 10"/>
-<path d=" M 219 3792 h 10"/>
-</g>
-<g class="sequence">
-<path d=" M 10 3826 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-<text class="comment" id="KW_CLIMB" x="68" y="3831">
-KW_CLIMB</text>
-<g class="string">
-<rect height="22" rx="10" ry="10" width="60" x="111" y="3815"/>
-<text x="141" y="3831">
-climb</text>
-</g>
-<path d=" M 181 3826 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-<path d=" M 25 3826 h 10"/>
-<path d=" M 101 3826 h 10"/>
-<path d=" M 171 3826 h 10"/>
-</g>
-<g class="sequence">
-<path d=" M 10 3860 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-<text class="comment" id="KW_MACRO" x="68" y="3865">
-KW_MACRO</text>
-<g class="string">
-<rect height="22" rx="10" ry="10" width="268" x="111" y="3849"/>
-<text x="245" y="3865">
-macro|def|function|func|fun|fn</text>
-</g>
-<path d=" M 389 3860 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-<path d=" M 25 3860 h 10"/>
-<path d=" M 101 3860 h 10"/>
-<path d=" M 379 3860 h 10"/>
-</g>
-<g class="sequence">
-<path d=" M 10 3894 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-<text class="comment" id="WhiteSpace" x="75" y="3899">
-WhiteSpace</text>
-<g class="string">
-<rect height="22" rx="10" ry="10" width="148" x="125" y="3883"/>
-<text x="199" y="3899">
-\p{White_Space}+</text>
-</g>
-<path d=" M 283 3894 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-<path d=" M 25 3894 h 10"/>
-<path d=" M 115 3894 h 10"/>
-<path d=" M 273 3894 h 10"/>
-</g>
-<g class="sequence">
-<path d=" M 10 3928 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
-<text class="comment" id="Comment" x="64" y="3933">
+<text class="comment" id="Comment" x="64" y="3527">
 Comment</text>
 <g class="string">
-<rect height="22" rx="10" ry="10" width="100" x="104" y="3917"/>
-<text x="154" y="3933">
+<rect height="22" rx="10" ry="10" width="100" x="104" y="3511"/>
+<text x="154" y="3527">
 //[^\n\r]*</text>
 </g>
-<path d=" M 214 3928 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
-<path d=" M 25 3928 h 10"/>
-<path d=" M 94 3928 h 10"/>
-<path d=" M 204 3928 h 10"/>
+<path d=" M 214 3522 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 25 3522 h 10"/>
+<path d=" M 94 3522 h 10"/>
+<path d=" M 204 3522 h 10"/>
 </g>
 </g>
 </svg>

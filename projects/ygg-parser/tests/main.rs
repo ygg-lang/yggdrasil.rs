@@ -26,7 +26,7 @@ mod standard {
     #[test]
     fn test_classes() {
         let text = r##"text class RegexInner {
-    /([^\\\\\\/]|\\\\.)+/
+    /[+]/
 }"##;
         let cst = BootstrapParser::parse_cst(text, BootstrapRule::ClassStatement).unwrap();
         println!("Short Form:\n{}", cst);

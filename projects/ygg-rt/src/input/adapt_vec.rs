@@ -7,7 +7,7 @@ use super::*;
 pub struct SequenceBuilder {
     buffer: Vec<Character>,
 }
-
+#[allow(unused)]
 #[derive(Clone)]
 pub struct SequenceView<'i, I>
 where

@@ -1,3 +1,4 @@
+#![allow(unused)]
 use crate::{grammar::GrammarInfo, rule::YggdrasilIdentifier};
 use std::collections::BTreeMap;
 

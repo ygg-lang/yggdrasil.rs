@@ -7,18 +7,18 @@ use super::*;
 impl YggdrasilNode for {{ rule.node_name() }} {
     type Rule = {{ self.grammar.rule_name() }};
 
-    fn get_range(&self) -> Option<Range<usize>> {
+    fn get_range(&self) -> Range<usize> {
 {%- if rule.is_class() %}
-        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+        Range { start: self.span.start as usize, end: self.span.end as usize }
 {%- else %}
         match self {
 {%- for (name, variant) in rule.union_fields() %}
 {%- if variant.is_empty() %}
-            Self::{{ name }} => None,
+            Self::{{ name }} => Range::default(),
 {%- else if variant.as_single().is_some() %}
             Self::{{ name }}(s) => s.get_range(),
 {%- else %}
-            Self::{{ name }} {..} => None,
+            Self::{{ name }} {..} => Range::default(),
 {%- endif %}
 {%- endfor %}
         }

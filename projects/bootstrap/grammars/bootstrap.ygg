@@ -2,8 +2,8 @@ grammar Bootstrap {
 
 }
 
-entry class Root {
-    Statement*
+class Root {
+    Statement* EOI
 }
 
 union Statement {
@@ -73,7 +73,7 @@ class DecoratorCall {
 }
 @style(annotation)
 class DecoratorName {
-    [@#] Identifier
+    [@\#] Identifier
 }
 class FunctionCall {
     FunctionName CallBody
@@ -200,19 +200,19 @@ class Range {
 atomic class ModifierCall ^ {
     !(KW_CLASS | KW_UNION | KW_GROUP | KW_MACRO | KW_CLIMB) ^Identifier
 }
-@railroad(false)
+@railway(false)
 @style(keyword)
 token {
     OP_CATEGORY: '\p'
 }
-@railroad(false)
+@railway(false)
 @style(keyword)
 union KW_EXTERNAL {
     | 'parser'    #Parser
     | 'inspector' #Inspector
     | 'external'  #External
 }
-@railroad(false)
+@railway(false)
 @style(keyword)
 token {
     KW_GRAMMAR: /grammar/
@@ -224,13 +224,13 @@ token {
     KW_MACRO: /macro|def|function|func|fun|fn/
 }
 // === ignores === -----------------------------------------------------------------------------------------------------
-@railroad(false)
+@railway(false)
 hide class WhiteSpace {
     /\p{White_Space}+/
 }
 @style(comment)
-@railroad(false)
 hide class Comment {
     | /\/\/[^\n\r]*/
 //  | '/*'  '*/'
 }
+
