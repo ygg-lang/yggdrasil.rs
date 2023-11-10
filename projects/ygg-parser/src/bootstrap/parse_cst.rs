@@ -5,7 +5,10 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::Root => parse_root(state),
         BootstrapRule::Statement => parse_statement(state),
         BootstrapRule::GrammarStatement => parse_grammar_statement(state),
-        BootstrapRule::GrammarBlock => parse_grammar_block(state),
+        BootstrapRule::GrammarTerm => parse_grammar_term(state),
+        BootstrapRule::GrammarPair => parse_grammar_pair(state),
+        BootstrapRule::GrammarValue => parse_grammar_value(state),
+        BootstrapRule::GrammarList => parse_grammar_list(state),
         BootstrapRule::ClassStatement => parse_class_statement(state),
         BootstrapRule::ClassBlock => parse_class_block(state),
         BootstrapRule::OP_REMARK => parse_op_remark(state),
@@ -109,18 +112,93 @@ fn parse_grammar_statement(state: Input) -> Output {
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_grammar_block(s).and_then(|s| s.tag_node("grammar_block")))
+                .and_then(|s| builtin_text(s, "{", false))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s)
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_grammar_term(s).and_then(|s| s.tag_node("grammar_term")))
+                        })
+                    })
+                })
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, "}", false))
         })
     })
 }
 #[inline]
-fn parse_grammar_block(state: Input) -> Output {
-    state.rule(BootstrapRule::GrammarBlock, |s| {
+fn parse_grammar_term(state: Input) -> Output {
+    state.rule(BootstrapRule::GrammarTerm, |s| {
+        Err(s).or_else(|s| parse_grammar_pair(s).and_then(|s| s.tag_node("grammar_pair"))).or_else(|s| {
+            builtin_regex(s, {
+                static REGEX: OnceLock<Regex> = OnceLock::new();
+                REGEX.get_or_init(|| Regex::new("^(?x)([,;])").unwrap())
+            })
+            .and_then(|s| s.tag_node("comma"))
+        })
+    })
+}
+#[inline]
+fn parse_grammar_pair(state: Input) -> Output {
+    state.rule(BootstrapRule::GrammarPair, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| builtin_text(s, "{", false))
+                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("key")))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| builtin_text(s, "}", false))
+                .and_then(|s| builtin_text(s, ":", false))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| parse_grammar_value(s).and_then(|s| s.tag_node("grammar_value")))
+        })
+    })
+}
+#[inline]
+fn parse_grammar_value(state: Input) -> Output {
+    state.rule(BootstrapRule::GrammarValue, |s| {
+        Err(s)
+            .or_else(|s| parse_grammar_list(s).and_then(|s| s.tag_node("grammar_list")))
+            .or_else(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+            .or_else(|s| parse_string_raw(s).and_then(|s| s.tag_node("string_raw")))
+            .or_else(|s| parse_string_normal(s).and_then(|s| s.tag_node("string_normal")))
+    })
+}
+#[inline]
+fn parse_grammar_list(state: Input) -> Output {
+    state.rule(BootstrapRule::GrammarList, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| builtin_text(s, "[", false))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.optional(|s| {
+                        s.sequence(|s| {
+                            Ok(s)
+                                .and_then(|s| parse_grammar_value(s).and_then(|s| s.tag_node("grammar_value")))
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| {
+                                    s.repeat(0..4294967295, |s| {
+                                        s.sequence(|s| {
+                                            Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                                s.sequence(|s| {
+                                                    Ok(s)
+                                                        .and_then(|s| builtin_text(s, ",", false))
+                                                        .and_then(|s| builtin_ignore(s))
+                                                        .and_then(|s| {
+                                                            parse_grammar_value(s).and_then(|s| s.tag_node("grammar_value"))
+                                                        })
+                                                })
+                                            })
+                                        })
+                                    })
+                                })
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| s.optional(|s| builtin_text(s, ",", false)))
+                        })
+                    })
+                })
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| builtin_text(s, "]", false))
         })
     })
 }
