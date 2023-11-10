@@ -73,7 +73,9 @@ impl YggdrasilNode for GrammarStatementNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            grammar_block: pair.take_tagged_one::<GrammarBlockNode>(Cow::Borrowed("grammar_block"))?,
+            grammar_term: pair
+                .take_tagged_items::<GrammarTermNode>(Cow::Borrowed("grammar_term"))
+                .collect::<Result<Vec<_>, _>>()?,
             identifier: pair.take_tagged_one::<IdentifierNode>(Cow::Borrowed("identifier"))?,
             span: Range { start: _span.start() as usize, end: _span.end() as usize },
         })
@@ -88,7 +90,36 @@ impl FromStr for GrammarStatementNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for GrammarBlockNode {
+impl YggdrasilNode for GrammarTermNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Range<usize> {
+        match self {
+            Self::Comma => Range::default(),
+            Self::GrammarPair(s) => s.get_range(),
+        }
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        if let Some(_) = pair.find_first_tag("comma") {
+            return Ok(Self::Comma);
+        }
+        if let Ok(s) = pair.take_tagged_one::<GrammarPairNode>(Cow::Borrowed("grammar_pair")) {
+            return Ok(Self::GrammarPair(s));
+        }
+        Err(YggdrasilError::invalid_node(BootstrapRule::GrammarTerm, _span))
+    }
+}
+#[automatically_derived]
+impl FromStr for GrammarTermNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::GrammarTerm)?)
+    }
+}
+#[automatically_derived]
+impl YggdrasilNode for GrammarPairNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -96,15 +127,70 @@ impl YggdrasilNode for GrammarBlockNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as usize, end: _span.end() as usize } })
+        Ok(Self {
+            grammar_value: pair.take_tagged_one::<GrammarValueNode>(Cow::Borrowed("grammar_value"))?,
+            key: pair.take_tagged_one::<IdentifierNode>(Cow::Borrowed("key"))?,
+            span: Range { start: _span.start() as usize, end: _span.end() as usize },
+        })
     }
 }
 #[automatically_derived]
-impl FromStr for GrammarBlockNode {
+impl FromStr for GrammarPairNode {
     type Err = YggdrasilError<BootstrapRule>;
 
     fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
-        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::GrammarBlock)?)
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::GrammarPair)?)
+    }
+}
+#[automatically_derived]
+impl YggdrasilNode for GrammarValueNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Range<usize> {
+        Range { start: self.span.start as usize, end: self.span.end as usize }
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self {
+            grammar_list: pair.take_tagged_option::<GrammarListNode>(Cow::Borrowed("grammar_list")),
+            identifier: pair.take_tagged_option::<IdentifierNode>(Cow::Borrowed("identifier")),
+            string_normal: pair.take_tagged_option::<StringNormalNode>(Cow::Borrowed("string_normal")),
+            string_raw: pair.take_tagged_option::<StringRawNode>(Cow::Borrowed("string_raw")),
+            span: Range { start: _span.start() as usize, end: _span.end() as usize },
+        })
+    }
+}
+#[automatically_derived]
+impl FromStr for GrammarValueNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::GrammarValue)?)
+    }
+}
+#[automatically_derived]
+impl YggdrasilNode for GrammarListNode {
+    type Rule = BootstrapRule;
+
+    fn get_range(&self) -> Range<usize> {
+        Range { start: self.span.start as usize, end: self.span.end as usize }
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self {
+            grammar_value: pair
+                .take_tagged_items::<GrammarValueNode>(Cow::Borrowed("grammar_value"))
+                .collect::<Result<Vec<_>, _>>()?,
+            span: Range { start: _span.start() as usize, end: _span.end() as usize },
+        })
+    }
+}
+#[automatically_derived]
+impl FromStr for GrammarListNode {
+    type Err = YggdrasilError<BootstrapRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<BootstrapRule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::GrammarList)?)
     }
 }
 #[automatically_derived]

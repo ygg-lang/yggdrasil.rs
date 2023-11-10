@@ -1,5 +1,5 @@
 grammar Bootstrap {
-
+    patterns: ['*.ygg']
 }
 
 class Root {
@@ -15,10 +15,23 @@ union Statement {
 }
 // === grammar === -----------------------------------------------------------------------------------------------------
 class GrammarStatement {
-    ^KW_GRAMMAR Identifier GrammarBlock
+    ^KW_GRAMMAR Identifier '{' GrammarTerm* '}'
 }
-class GrammarBlock {
-    '{' '}'
+union GrammarTerm {
+    | GrammarPair
+    | [,;]         #Comma
+}
+class GrammarPair {
+    key:Identifier ':' GrammarValue
+}
+class GrammarValue {
+    | GrammarList
+    | Identifier
+    | StringRaw
+    | StringNormal
+}
+class GrammarList {
+    '[' (GrammarValue (',' GrammarValue)* ','?)? ']'
 }
 // === class === -----------------------------------------------------------------------------------------------------
 class ClassStatement {

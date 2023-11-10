@@ -113,7 +113,7 @@ mod preview {
     | [|]{2} | 或/"##;
         let cst = BootstrapParser::parse_cst(text, BootstrapRule::RegexEmbed).unwrap();
         println!("Short Form:\n{}", cst);
-        let ast = ClassStatementNode::from_str(text).unwrap();
+        let ast = RegexEmbedNode::from_str(text).unwrap();
         println!("{ast:#?}")
     }
     #[test]

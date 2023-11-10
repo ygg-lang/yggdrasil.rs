@@ -33,7 +33,10 @@ pub enum BootstrapRule {
     Root,
     Statement,
     GrammarStatement,
-    GrammarBlock,
+    GrammarTerm,
+    GrammarPair,
+    GrammarValue,
+    GrammarList,
     ClassStatement,
     ClassBlock,
     OP_REMARK,
@@ -109,7 +112,10 @@ impl YggdrasilRule for BootstrapRule {
             Self::Root => "",
             Self::Statement => "",
             Self::GrammarStatement => "",
-            Self::GrammarBlock => "",
+            Self::GrammarTerm => "",
+            Self::GrammarPair => "",
+            Self::GrammarValue => "",
+            Self::GrammarList => "",
             Self::ClassStatement => "",
             Self::ClassBlock => "",
             Self::OP_REMARK => "",
@@ -193,13 +199,36 @@ pub enum StatementNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GrammarStatementNode {
-    pub grammar_block: GrammarBlockNode,
+    pub grammar_term: Vec<GrammarTermNode>,
     pub identifier: IdentifierNode,
     pub span: Range<usize>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct GrammarBlockNode {
+pub enum GrammarTermNode {
+    Comma,
+    GrammarPair(GrammarPairNode),
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GrammarPairNode {
+    pub grammar_value: GrammarValueNode,
+    pub key: IdentifierNode,
+    pub span: Range<usize>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GrammarValueNode {
+    pub grammar_list: Option<GrammarListNode>,
+    pub identifier: Option<IdentifierNode>,
+    pub string_normal: Option<StringNormalNode>,
+    pub string_raw: Option<StringRawNode>,
+    pub span: Range<usize>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GrammarListNode {
+    pub grammar_value: Vec<GrammarValueNode>,
     pub span: Range<usize>,
 }
 #[derive(Clone, Debug, Hash)]
