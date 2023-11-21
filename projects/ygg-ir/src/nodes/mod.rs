@@ -92,9 +92,9 @@ impl Debug for ExpressionBody {
             ExpressionBody::Boolean(v) => Debug::fmt(v, f),
             ExpressionBody::Regex(v) => Debug::fmt(v, f),
             ExpressionBody::Stream(v) => match v {
-                StreamControl::StartOfInput => f.write_str("ANY"),
-                StreamControl::EndOfInput => f.write_str("ANY"),
-                StreamControl::RestOfLine => f.write_str("ROL"),
+                StreamControl::StartOfInput => f.write_str("START_OF_INPUT"),
+                StreamControl::EndOfInput => f.write_str("END_OF_INPUT"),
+                StreamControl::RestOfLine => f.write_str("REST_OF_LINE"),
             },
         }
     }

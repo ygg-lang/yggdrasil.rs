@@ -75,12 +75,12 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
     /// ```
     pub fn new_from_span(variant: YggdrasilErrorKind<R>, span: TextSpan<'_>) -> YggdrasilError<R> {
         let end = span.end_pos();
-        let end_line_col = end.line_column();
+        // let end_line_col = end.line_column();
         // end position is after a \n, so we want to point to the visual lf symbol
-        if end_line_col.1 == 1 {
-            let mut visual_end = end;
-            visual_end.skip_back(1);
-        };
+        // if end_line_col.1 == 1 {
+        //     let mut visual_end = end;
+        //     visual_end.skip_back(1);
+        // };
         Self { variant, location: span.start()..end.offset(), source: Default::default() }
     }
 

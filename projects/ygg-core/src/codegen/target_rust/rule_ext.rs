@@ -116,10 +116,10 @@ impl NodeExt for YggdrasilExpression {
             ExpressionBody::Integer(_) if root => {}
             ExpressionBody::Integer(_) => {}
             ExpressionBody::Stream(v) => match v {
-                StreamControl::StartOfInput => w.push_str("s.check_start_of_input()"),
+                StreamControl::StartOfInput => w.push_str("s.start_of_input()"),
                 StreamControl::EndOfInput => w.push_str("s.end_of_input()"),
-                StreamControl::RestOfLine if root => w.push_str("s.match_char_if(|c|c!='\n'&&c!='\r')"),
-                StreamControl::RestOfLine => w.push_str("s.match_char_if(|c|c!='\n'&&c!='\r')"),
+                StreamControl::RestOfLine if root => w.push_str("s.rest_of_line()"),
+                StreamControl::RestOfLine => w.push_str("s.rest_of_line()"),
             },
         }
         match &self.tag {

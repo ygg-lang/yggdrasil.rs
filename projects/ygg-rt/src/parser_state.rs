@@ -664,18 +664,18 @@ where
     /// enum Rule {}
     ///
     /// let input = "ab";
-    /// let mut state: Box<yggdrasil_rt::State<'_, Rule>> = yggdrasil_rt::State::new(input);
+    /// let mut state: Box<State<'_, Rule>> = State::new(input);
     /// let mut result = state.start_of_input();
     /// assert!(result.is_ok());
     ///
-    /// state = yggdrasil_rt::State::new(input);
+    /// state = State::new(input);
     /// state = state.match_string("ab").unwrap();
     /// result = state.start_of_input();
     /// assert!(result.is_err());
     /// ```
     #[inline]
     pub fn start_of_input(self: Box<Self>) -> Either<Box<Self>> {
-        if self.position.at_start() { Ok(self) } else { Err(self) }
+        if self.position.match_soi() { Ok(self) } else { Err(self) }
     }
 
     /// Attempts to match the end of the input. Returns `Ok` with the current `Box<ParserState>` if
@@ -702,7 +702,30 @@ where
     /// ```
     #[inline]
     pub fn end_of_input(self: Box<Self>) -> Either<Box<Self>> {
-        if self.position.at_end() { Ok(self) } else { Err(self) }
+        if self.position.match_eoi() { Ok(self) } else { Err(self) }
+    }
+
+    /// Attempts to match the rest of line, never fails, return empty string if match nothing.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use yggdrasil_rt::{state, State, YggdrasilRule};
+    /// # impl YggdrasilRule for Rule { }
+    /// # #[allow(non_camel_case_types)]
+    /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+    /// enum Rule {}
+    ///
+    /// let input = "a\nb";
+    /// let mut state: Box<State<'_, Rule>> = State::new(input);
+    /// state = State::new(input);
+    /// let out = state.rest_of_line().unwrap();
+    /// assert!(out.position().pos() == 2);
+    /// ```
+    #[inline]
+    pub fn rest_of_line(mut self: Box<Self>) -> Either<Box<Self>> {
+        self.position.match_rol();
+        Ok(self)
     }
 
     /// Starts a lookahead transformation provided by `f` from the `Box<ParserState>`. It returns

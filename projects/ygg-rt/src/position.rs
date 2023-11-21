@@ -227,14 +227,26 @@ impl<'i> Position<'i> {
 
     /// Returns `true` when the `Position` points to the start of the input `&str`.
     #[inline]
-    pub(crate) fn at_start(&self) -> bool {
+    pub(crate) fn match_soi(&self) -> bool {
         self.position == 0
     }
 
     /// Returns `true` when the `Position` points to the end of the input `&str`.
     #[inline]
-    pub(crate) fn at_end(&self) -> bool {
+    pub(crate) fn match_eoi(&self) -> bool {
         self.position == self.input.len()
+    }
+
+    /// Match rest of line
+    #[inline]
+    pub(crate) fn match_rol(&mut self) -> bool {
+        for c in self.input.chars() {
+            match c {
+                '\n' | '\r' => break,
+                _ => self.position += c.len_utf8(),
+            }
+        }
+        return true;
     }
 
     /// Skips `n` `char`s from the `Position` and returns `true` if the skip was possible or `false`

@@ -367,7 +367,7 @@ impl<'i> Iterator for LinesSpan<'i> {
             return None;
         }
         let pos = position::Position::new(self.span.input, self.pos)?;
-        if pos.at_end() {
+        if pos.match_eoi() {
             return None;
         }
 
