@@ -1,7 +1,7 @@
 use crate::{
     codegen::BuildRailway,
     optimize::{InsertIgnore, RefineRules},
-    parse_grammar,
+    parse_grammar, FileCache,
 };
 use askama::Template;
 use itertools::Itertools;
@@ -15,7 +15,7 @@ use std::{
     io::{Error, ErrorKind, Write as _},
     path::{Path, PathBuf},
 };
-use yggdrasil_error::{Failure, Success, Validate, Validation};
+use yggdrasil_error::{Failure, FileID, Success, Validate, Validation};
 use yggdrasil_ir::{
     grammar::GrammarInfo,
     rule::GrammarRule,
@@ -124,9 +124,9 @@ impl CodeGenerator for BuildRust {
 }
 
 impl BuildRust {
-    pub fn generate<P: AsRef<Path>>(&self, grammar: &str, output: P) -> Validation<PathBuf> {
+    pub fn generate<P: AsRef<Path>>(&self, id: FileID, cache: &mut FileCache, output: P) -> Validation<PathBuf> {
         let mut errors = vec![];
-        let info = parse_grammar(grammar).validate(&mut errors)?;
+        let info = parse_grammar(id, cache).validate(&mut errors)?;
         let out = info.generate(self.clone()).validate(&mut errors)?;
         out.save(output).validate(&mut errors)
     }

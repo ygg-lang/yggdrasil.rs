@@ -2,7 +2,7 @@ use std::{
     collections::BTreeMap,
     sync::{LazyLock, Mutex},
 };
-use yggdrasil_error::{Validate, Validation, YggdrasilError};
+use yggdrasil_error::{FileCache, Validate, Validation, YggdrasilError};
 use yggdrasil_shared::{
     optimize::{CodeOptimizer, InsertIgnore, RefineRules, RemarkTags},
     parse_grammar_raw, GrammarInfo,
@@ -17,7 +17,9 @@ struct CacheManager {
 
 /// Proxy interface for global cache
 #[derive(Default)]
-pub struct GaiaSystem {}
+pub struct GaiaSystem {
+    cache: FileCache,
+}
 
 pub struct GrammarCache {
     hash: u64,

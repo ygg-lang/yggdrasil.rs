@@ -237,15 +237,17 @@ impl<'i> Position<'i> {
         self.position == self.input.len()
     }
 
-    /// Match rest of line
+    /// Match rest of line, never fails
     #[inline]
     pub(crate) fn match_rol(&mut self) -> bool {
-        for c in self.input.chars() {
+        let mut offset = 0;
+        for c in self.rest_text().chars() {
             match c {
                 '\n' | '\r' => break,
-                _ => self.position += c.len_utf8(),
+                _ => offset += c.len_utf8(),
             }
         }
+        self.position += offset;
         return true;
     }
 
@@ -275,6 +277,7 @@ impl<'i> Position<'i> {
     /// Goes back `n` `char`s from the `Position` and returns `true` if the skip was possible or `false`
     /// otherwise. If the return value is `false`, `pos` will not be updated.
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn skip_back(&mut self, n: usize) -> bool {
         let skipped = {
             let mut len = 0;
@@ -384,7 +387,7 @@ impl<'i> Position<'i> {
     }
 
     fn rest_text(&self) -> &str {
-        &self.input[self.position..]
+        if cfg!(debug_assertions) { &self.input[self.position..] } else { unsafe { self.input.get_unchecked(self.position..) } }
     }
 }
 

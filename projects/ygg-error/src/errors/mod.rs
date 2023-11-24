@@ -1,12 +1,10 @@
-use diagnostic::{FileID, FileSpan};
+use diagnostic::{Diagnostic, DiagnosticBuilder, FileID, FileSpan, ReportKind};
 use std::{
     error::Error,
     fmt::{Debug, Display, Formatter},
     ops::Range,
     path::PathBuf,
 };
-
-pub mod file_span;
 
 #[derive(Clone, Debug)]
 pub struct YggdrasilError {
@@ -18,7 +16,7 @@ pub enum YggdrasilErrorKind {
     Io { error: String, file: Option<PathBuf> },
     Runtime { message: String },
     Config { message: String },
-    Syntax { message: String, span: FileSpan },
+    Syntax { message: String, hint: String, span: FileSpan },
 }
 
 impl Error for YggdrasilError {}
@@ -54,7 +52,7 @@ impl Display for YggdrasilErrorKind {
             YggdrasilErrorKind::Config { message } => {
                 write!(f, "ConfigError: {}", message)
             }
-            YggdrasilErrorKind::Syntax { message, span: range } => {
+            YggdrasilErrorKind::Syntax { message, hint: _, span: range } => {
                 write!(f, "SyntaxError: {} at {:?}", message, range.get_range())
             }
         }
@@ -72,8 +70,53 @@ impl YggdrasilError {
         Self {
             kind: Box::new(YggdrasilErrorKind::Syntax {
                 message: message.to_string(),
-                span: unsafe { FileID::new(0) }.with_range(range),
+                hint: "".to_string(),
+                span: FileID::default().with_range(range),
             }),
+        }
+    }
+}
+
+impl YggdrasilError {
+    pub fn with_file(mut self, file: FileID) -> Self {
+        self.kind.set_file(file);
+        self
+    }
+}
+
+impl YggdrasilError {
+    pub fn as_report(&self) -> Diagnostic {
+        self.kind.as_report(Diagnostic::new(ReportKind::Error))
+    }
+}
+
+impl From<YggdrasilErrorKind> for YggdrasilError {
+    fn from(value: YggdrasilErrorKind) -> Self {
+        Self { kind: Box::new(value) }
+    }
+}
+
+impl YggdrasilErrorKind {
+    fn set_file(&mut self, file: FileID) {
+        match self {
+            Self::Io { .. } => {}
+            Self::Runtime { .. } => {}
+            Self::Config { .. } => {}
+            Self::Syntax { span, .. } => span.set_file(file),
+        }
+    }
+    fn as_report(&self, builder: DiagnosticBuilder) -> Diagnostic {
+        match self {
+            Self::Io { error, file } => {
+                todo!()
+            }
+            Self::Runtime { message } => todo!(),
+            Self::Config { message } => todo!(),
+            Self::Syntax { message, hint, span } => builder
+                .with_location(span.get_file(), Some(span.get_start()))
+                .with_message(message.to_string())
+                .with_label(span.as_label(hint.to_string()))
+                .finish(),
         }
     }
 }
