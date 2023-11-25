@@ -1,3 +1,5 @@
+use std::path::Path;
+use url::Url;
 use yggdrasil_shared::{codegen::BuildRust, Failure, FileCache, Success};
 
 #[test]
@@ -14,9 +16,15 @@ fn debug() -> std::io::Result<()> {
 #[ignore]
 fn debug_v() -> std::io::Result<()> {
     let mut cache = FileCache::default();
-    let file = cache.load_local(r#"C:\Users\Dell\CLionProjects\valkyrie.rs\projects\valkyrie-parser\grammars\valkyrie.ygg"#)?;
+    let input = Path::new(r#"C:\Users\Dell\CLionProjects\valkyrie.rs\projects\valkyrie-parser\grammars\valkyrie.ygg"#);
     let output = r#"C:\Users\Dell\CLionProjects\valkyrie.rs\projects\valkyrie-parser\src\codegen"#;
     let builder = BuildRust { range_type: "u32".to_string(), ..Default::default() };
+
+    let url = Url::from_file_path(&input).unwrap();
+    let file = cache.load_local(input)?;
+    unsafe {
+        cache.set_source(file, url.to_string());
+    }
     match builder.generate(file, &mut cache, output) {
         Success { value: _, diagnostics } => {
             for x in diagnostics {

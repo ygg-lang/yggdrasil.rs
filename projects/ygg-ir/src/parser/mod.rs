@@ -1,11 +1,11 @@
-use std::{io::Error, str::FromStr};
+use std::str::FromStr;
 
 use num::BigInt;
 
 use yggdrasil_error::{Failure, FileCache, FileID, Success, Validation, YggdrasilError};
 use yggdrasil_parser::{
     bootstrap::{
-        AtomicNode, BooleanNode, BootstrapRule, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
+        AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
         GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, KwExternalNode, PrefixNode, RootNode, StatementNode,
         StringItemNode, SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
     },
@@ -51,17 +51,13 @@ impl GrammarInfo {
                     Ok(o) => {
                         out.rules.insert(o.name.text.clone(), o);
                     }
-                    Err(e) => {
-                        println!("{e:?}");
-                    }
+                    Err(e) => ctx.add_error(e),
                 },
                 StatementNode::UnionStatement(v) => match GrammarRule::build_union(v) {
                     Ok(o) => {
                         out.rules.insert(o.name.text.clone(), o);
                     }
-                    Err(e) => {
-                        println!("{e:?}");
-                    }
+                    Err(e) => ctx.add_error(e),
                 },
                 StatementNode::GroupStatement(v) => match GrammarRule::build_group(v) {
                     Ok((id, terms)) => match id {
@@ -79,9 +75,7 @@ impl GrammarInfo {
                             }
                         }
                     },
-                    Err(e) => {
-                        println!("{e:?}");
-                    }
+                    Err(e) => ctx.add_error(e),
                 },
                 StatementNode::ExternalStatement(v) => match v.kw_external {
                     KwExternalNode::External => {}

@@ -3,8 +3,8 @@ use std::{
     error::Error,
     fmt::{Debug, Display, Formatter},
     ops::Range,
-    path::PathBuf,
 };
+use url::Url;
 
 #[derive(Clone, Debug)]
 pub struct YggdrasilError {
@@ -13,7 +13,7 @@ pub struct YggdrasilError {
 
 #[derive(Clone, Debug)]
 pub enum YggdrasilErrorKind {
-    Io { error: String, file: Option<PathBuf> },
+    Io { error: String, file: Option<Url> },
     Runtime { message: String },
     Config { message: String },
     Syntax { message: String, hint: String, span: FileSpan },
@@ -40,7 +40,7 @@ impl Display for YggdrasilErrorKind {
         match self {
             YggdrasilErrorKind::Io { error, file } => match file {
                 Some(s) => {
-                    write!(f, "{} at {}", error, s.display())
+                    write!(f, "{} at {}", error, s.as_str())
                 }
                 None => {
                     write!(f, "{}", error)
@@ -107,11 +107,9 @@ impl YggdrasilErrorKind {
     }
     fn as_report(&self, builder: DiagnosticBuilder) -> Diagnostic {
         match self {
-            Self::Io { error, file } => {
-                todo!()
-            }
-            Self::Runtime { message } => todo!(),
-            Self::Config { message } => todo!(),
+            Self::Io { error: message, file: _ } => builder.with_message(message).finish(),
+            Self::Runtime { message } => builder.with_message(message).finish(),
+            Self::Config { message } => builder.with_message(message).finish(),
             Self::Syntax { message, hint, span } => builder
                 .with_location(span.get_file(), Some(span.get_start()))
                 .with_message(message.to_string())

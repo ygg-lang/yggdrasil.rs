@@ -28,6 +28,11 @@ impl Display for RegexEmbedNode {
                         'r' => f.write_str("\\r")?,
                         'd' => f.write_str("\\d")?,
                         'p' => f.write_str("\\p")?,
+                        c @ ('(' | ')' | '[' | ']' | '{' | '}') => {
+                            f.write_char('\\')?;
+                            f.write_char(c)?;
+                        }
+                        '.' => f.write_str("\\.")?,
                         _ => f.write_char(c)?,
                     },
                     None => {}

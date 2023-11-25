@@ -5,10 +5,7 @@ use yggdrasil_error::Validation;
 use yggdrasil_ir::{
     data::RuleReference,
     grammar::GrammarInfo,
-    nodes::{
-        ChoiceExpression, ConcatExpression, ExpressionBody, StreamControl, UnaryExpression, YggdrasilExpression,
-        YggdrasilOperator,
-    },
+    nodes::{ChoiceExpression, ConcatExpression, ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
     rule::{GrammarBody, GrammarRule},
     traits::CodeGenerator,
 };
@@ -87,26 +84,19 @@ impl AsRailroad for YggdrasilExpression {
 impl AsRailroad for ExpressionBody {
     fn as_railroad(&self, config: &BuildRailway) -> Box<dyn Node> {
         match self {
-            ExpressionBody::Choice(e) => e.as_railroad(config),
-            ExpressionBody::Concat(e) => e.as_railroad(config),
-            ExpressionBody::Unary(e) => e.as_railroad(config),
-            ExpressionBody::Rule(e) => e.as_railroad(config),
-            ExpressionBody::Call(e) => Box::new(Terminal::new(e.name.to_string(), &vec!["function"])),
-            ExpressionBody::Hidden => Box::new(Terminal::new("HIDE".to_string(), &vec!["character"])),
-            ExpressionBody::Text(v) => Box::new(Terminal::new(v.text.to_string(), &vec!["string"])),
-            ExpressionBody::CharacterAny => Box::new(Terminal::new("ANY".to_string(), &vec!["character"])),
-            ExpressionBody::CharacterRange(v) => Box::new(Terminal::new(format!("{}-{}", v.start(), v.end()), &vec!["string"])),
-            ExpressionBody::Integer(v) => Box::new(Terminal::new(v.to_string(), &vec!["string"])),
-            ExpressionBody::Boolean(_) => Box::new(Terminal::new("Boolean".to_string(), &vec!["character"])),
-            ExpressionBody::Regex(v) => Box::new(Terminal::new(v.raw.to_string(), &vec!["string"])),
-            ExpressionBody::Stream(v) => {
-                let name = match v {
-                    StreamControl::StartOfInput => "START_OF_INPUT",
-                    StreamControl::EndOfInput => "END_OF_INPUT",
-                    StreamControl::RestOfLine => "REST_OF_LINE",
-                };
-                Box::new(Terminal::new(name.to_string(), &vec!["character"]))
-            }
+            Self::Choice(e) => e.as_railroad(config),
+            Self::Concat(e) => e.as_railroad(config),
+            Self::Unary(e) => e.as_railroad(config),
+            Self::Rule(e) => e.as_railroad(config),
+            Self::Call(e) => Box::new(Terminal::new(e.name.to_string(), &vec!["function"])),
+            Self::Hidden => Box::new(Terminal::new("HIDE".to_string(), &vec!["character"])),
+            Self::Text(v) => Box::new(Terminal::new(v.text.to_string(), &vec!["string"])),
+            Self::CharacterAny => Box::new(Terminal::new("ANY".to_string(), &vec!["character"])),
+            Self::CharacterRange(v) => Box::new(Terminal::new(format!("{}-{}", v.start(), v.end()), &vec!["string"])),
+            Self::Integer(v) => Box::new(Terminal::new(v.to_string(), &vec!["string"])),
+            Self::Boolean(_) => Box::new(Terminal::new("Boolean".to_string(), &vec!["character"])),
+            Self::Regex(v) => Box::new(Terminal::new(v.raw.to_string(), &vec!["string"])),
+            Self::Stream(v) => Box::new(Terminal::new(v.full_name().to_string(), &vec!["character"])),
         }
     }
 }

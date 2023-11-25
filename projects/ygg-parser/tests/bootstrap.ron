@@ -2,45 +2,50 @@ RootNode {
     statement: [
         GrammarStatement(
             GrammarStatementNode {
-                grammar_term: [
-                    GrammarPair(
-                        GrammarPairNode {
-                            grammar_value: GrammarValueNode {
-                                grammar_list: Some(
-                                    GrammarListNode {
-                                        grammar_value: [
-                                            GrammarValueNode {
-                                                grammar_list: None,
-                                                identifier: None,
-                                                string_normal: None,
-                                                string_raw: Some(
-                                                    StringRawNode {
-                                                        string_raw_text: StringRawTextNode {
-                                                            text: "*.ygg",
-                                                            span: 36..41,
+                grammar_dict: GrammarDictNode {
+                    grammar_term: [
+                        GrammarPair(
+                            GrammarPairNode {
+                                grammar_value: GrammarValueNode {
+                                    grammar_dict: None,
+                                    grammar_list: Some(
+                                        GrammarListNode {
+                                            grammar_value: [
+                                                GrammarValueNode {
+                                                    grammar_dict: None,
+                                                    grammar_list: None,
+                                                    namepath: None,
+                                                    string_normal: None,
+                                                    string_raw: Some(
+                                                        StringRawNode {
+                                                            string_raw_text: StringRawTextNode {
+                                                                text: "*.ygg",
+                                                                span: 36..41,
+                                                            },
+                                                            span: 35..42,
                                                         },
-                                                        span: 35..42,
-                                                    },
-                                                ),
-                                                span: 35..42,
-                                            },
-                                        ],
-                                        span: 34..43,
-                                    },
-                                ),
-                                identifier: None,
-                                string_normal: None,
-                                string_raw: None,
-                                span: 34..43,
+                                                    ),
+                                                    span: 35..42,
+                                                },
+                                            ],
+                                            span: 34..43,
+                                        },
+                                    ),
+                                    namepath: None,
+                                    string_normal: None,
+                                    string_raw: None,
+                                    span: 34..43,
+                                },
+                                key: IdentifierNode {
+                                    text: "patterns",
+                                    span: 24..32,
+                                },
+                                span: 24..43,
                             },
-                            key: IdentifierNode {
-                                text: "patterns",
-                                span: 24..32,
-                            },
-                            span: 24..43,
-                        },
-                    ),
-                ],
+                        ),
+                    ],
+                    span: 18..45,
+                },
                 identifier: IdentifierNode {
                     text: "Bootstrap",
                     span: 8..17,

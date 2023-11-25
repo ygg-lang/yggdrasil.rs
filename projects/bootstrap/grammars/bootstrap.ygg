@@ -11,27 +11,34 @@ union Statement {
     | ClassStatement
     | UnionStatement
     | GroupStatement
-    | ExternalStatement
 }
 // === grammar === -----------------------------------------------------------------------------------------------------
 class GrammarStatement {
-    ^KW_GRAMMAR Identifier '{' GrammarTerm* '}'
+    ^KW_GRAMMAR Identifier GrammarDict
 }
 union GrammarTerm {
     | GrammarPair
-    | [,;]         #Comma
+    | [,;]
 }
 class GrammarPair {
     key:Identifier ':' GrammarValue
 }
-class GrammarValue {
+union GrammarValue {
+    | GrammarDict
     | GrammarList
-    | Identifier
+    | Namepath
     | StringRaw
     | StringNormal
 }
+class GrammarDict {
+    '{' GrammarTerm* '}'
+}
 class GrammarList {
-    '[' (GrammarValue (',' GrammarValue)* ','?)? ']'
+    | '(' (GrammarValue (',' GrammarValue)* ','?)? ')'
+    | '[' (GrammarValue (',' GrammarValue)* ','?)? ']'
+}
+inline class GrammarListTerms {
+    GrammarValue (',' GrammarValue)* ','?
 }
 // === class === -----------------------------------------------------------------------------------------------------
 class ClassStatement {
@@ -69,16 +76,6 @@ class GroupBlock {
 }
 class GroupPair {
     Identifier ':' Atomic
-}
-// === external === -------------------------------------------------------------------------------------------------------
-class ExternalStatement {
-    KW_EXTERNAL Identifier LinkerBlock
-}
-class LinkerBlock {
-    '{' LinkerPair* '}'
-}
-class LinkerPair {
-    Identifier ':' NamepathFree
 }
 // === decorators === --------------------------------------------------------------------------------------------------
 class DecoratorCall {

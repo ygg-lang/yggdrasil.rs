@@ -36,7 +36,9 @@ pub enum BootstrapRule {
     GrammarTerm,
     GrammarPair,
     GrammarValue,
+    GrammarDict,
     GrammarList,
+    GrammarListTerms,
     ClassStatement,
     ClassBlock,
     OP_REMARK,
@@ -48,9 +50,6 @@ pub enum BootstrapRule {
     GroupStatement,
     GroupBlock,
     GroupPair,
-    ExternalStatement,
-    LinkerBlock,
-    LinkerPair,
     DecoratorCall,
     DecoratorName,
     FunctionCall,
@@ -115,7 +114,9 @@ impl YggdrasilRule for BootstrapRule {
             Self::GrammarTerm => "",
             Self::GrammarPair => "",
             Self::GrammarValue => "",
+            Self::GrammarDict => "",
             Self::GrammarList => "",
+            Self::GrammarListTerms => "",
             Self::ClassStatement => "",
             Self::ClassBlock => "",
             Self::OP_REMARK => "",
@@ -127,9 +128,6 @@ impl YggdrasilRule for BootstrapRule {
             Self::GroupStatement => "",
             Self::GroupBlock => "",
             Self::GroupPair => "",
-            Self::ExternalStatement => "",
-            Self::LinkerBlock => "",
-            Self::LinkerPair => "",
             Self::DecoratorCall => "",
             Self::DecoratorName => "",
             Self::FunctionCall => "",
@@ -191,7 +189,6 @@ pub struct RootNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StatementNode {
     ClassStatement(ClassStatementNode),
-    ExternalStatement(ExternalStatementNode),
     GrammarStatement(GrammarStatementNode),
     GroupStatement(GroupStatementNode),
     UnionStatement(UnionStatementNode),
@@ -199,15 +196,15 @@ pub enum StatementNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GrammarStatementNode {
-    pub grammar_term: Vec<GrammarTermNode>,
+    pub grammar_dict: GrammarDictNode,
     pub identifier: IdentifierNode,
     pub span: Range<usize>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum GrammarTermNode {
-    Comma,
     GrammarPair(GrammarPairNode),
+    GrammarTerm1,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -218,16 +215,28 @@ pub struct GrammarPairNode {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct GrammarValueNode {
-    pub grammar_list: Option<GrammarListNode>,
-    pub identifier: Option<IdentifierNode>,
-    pub string_normal: Option<StringNormalNode>,
-    pub string_raw: Option<StringRawNode>,
+pub enum GrammarValueNode {
+    GrammarDict(GrammarDictNode),
+    GrammarList(GrammarListNode),
+    Namepath(NamepathNode),
+    StringNormal(StringNormalNode),
+    StringRaw(StringRawNode),
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GrammarDictNode {
+    pub grammar_term: Vec<GrammarTermNode>,
     pub span: Range<usize>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GrammarListNode {
+    pub grammar_value: Vec<GrammarValueNode>,
+    pub span: Range<usize>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GrammarListTermsNode {
     pub grammar_value: Vec<GrammarValueNode>,
     pub span: Range<usize>,
 }
@@ -308,27 +317,6 @@ pub struct GroupBlockNode {
 pub struct GroupPairNode {
     pub atomic: AtomicNode,
     pub identifier: IdentifierNode,
-    pub span: Range<usize>,
-}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct ExternalStatementNode {
-    pub identifier: IdentifierNode,
-    pub kw_external: KwExternalNode,
-    pub linker_block: LinkerBlockNode,
-    pub span: Range<usize>,
-}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct LinkerBlockNode {
-    pub linker_pair: Vec<LinkerPairNode>,
-    pub span: Range<usize>,
-}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct LinkerPairNode {
-    pub identifier: IdentifierNode,
-    pub namepath_free: NamepathFreeNode,
     pub span: Range<usize>,
 }
 #[derive(Clone, Debug, Hash)]

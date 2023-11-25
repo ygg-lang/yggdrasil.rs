@@ -43,6 +43,16 @@ pub enum StreamControl {
     RestOfLine,
 }
 
+impl StreamControl {
+    pub fn full_name(&self) -> &'static str {
+        match self {
+            Self::StartOfInput => "START_OF_INPUT",
+            Self::EndOfInput => "END_OF_INPUT",
+            Self::RestOfLine => "REST_OF_LINE",
+        }
+    }
+}
+
 #[derive(Clone, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ExpressionBody {

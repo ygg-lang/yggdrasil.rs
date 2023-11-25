@@ -81,12 +81,12 @@ mod preview {
 
     #[test]
     fn test_external() {
-        let text = r###"external string {
-            rust: crate::utils::helper
-        }"###;
-        let cst = BootstrapParser::parse_cst(text, BootstrapRule::ExternalStatement).unwrap();
+        let text = r##"class ClassStatement {
+    DecoratorCall* ModifierCall* ^KW_CLASS (name:Identifier) ("->" cast:Identifier)? OP_REMARK? ClassBlock
+}"##;
+        let cst = BootstrapParser::parse_cst(text, BootstrapRule::ClassStatement).unwrap();
         println!("Short Form:\n{}", cst);
-        let ast = ExternalStatementNode::from_str(text).unwrap();
+        let ast = ClassStatementNode::from_str(text).unwrap();
         println!("{ast:#?}")
     }
     #[test]

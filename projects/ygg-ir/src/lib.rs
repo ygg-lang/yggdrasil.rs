@@ -14,5 +14,3 @@ mod utils;
 mod parser;
 
 pub use indexmap::{IndexMap, IndexSet};
-
-pub(crate) use crate::utils::ParseContext;
