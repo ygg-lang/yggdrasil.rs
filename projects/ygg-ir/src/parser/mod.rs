@@ -77,11 +77,6 @@ impl GrammarInfo {
                     },
                     Err(e) => ctx.add_error(e),
                 },
-                StatementNode::ExternalStatement(v) => match v.kw_external {
-                    KwExternalNode::External => {}
-                    KwExternalNode::Inspector => {}
-                    KwExternalNode::Parser => {}
-                },
             }
         }
         Ok(out)

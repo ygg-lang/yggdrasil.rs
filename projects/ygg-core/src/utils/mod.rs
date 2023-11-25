@@ -2,7 +2,6 @@ use crate::{
     optimize::{InsertIgnore, RefineRules, RemarkTags},
     FileCache,
 };
-use std::str::FromStr;
 use yggdrasil_error::{FileID, Validate, Validation, YggdrasilError};
 use yggdrasil_ir::{grammar::GrammarInfo, traits::CodeOptimizer};
 

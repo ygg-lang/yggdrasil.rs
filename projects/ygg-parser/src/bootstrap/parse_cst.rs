@@ -8,7 +8,9 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::GrammarTerm => parse_grammar_term(state),
         BootstrapRule::GrammarPair => parse_grammar_pair(state),
         BootstrapRule::GrammarValue => parse_grammar_value(state),
+        BootstrapRule::GrammarDict => parse_grammar_dict(state),
         BootstrapRule::GrammarList => parse_grammar_list(state),
+        BootstrapRule::GrammarListTerms => parse_grammar_list_terms(state),
         BootstrapRule::ClassStatement => parse_class_statement(state),
         BootstrapRule::ClassBlock => parse_class_block(state),
         BootstrapRule::OP_REMARK => parse_op_remark(state),
@@ -20,9 +22,6 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::GroupStatement => parse_group_statement(state),
         BootstrapRule::GroupBlock => parse_group_block(state),
         BootstrapRule::GroupPair => parse_group_pair(state),
-        BootstrapRule::ExternalStatement => parse_external_statement(state),
-        BootstrapRule::LinkerBlock => parse_linker_block(state),
-        BootstrapRule::LinkerPair => parse_linker_pair(state),
         BootstrapRule::DecoratorCall => parse_decorator_call(state),
         BootstrapRule::DecoratorName => parse_decorator_name(state),
         BootstrapRule::FunctionCall => parse_function_call(state),
@@ -100,7 +99,6 @@ fn parse_statement(state: Input) -> Output {
             .or_else(|s| parse_class_statement(s).and_then(|s| s.tag_node("class_statement")))
             .or_else(|s| parse_union_statement(s).and_then(|s| s.tag_node("union_statement")))
             .or_else(|s| parse_group_statement(s).and_then(|s| s.tag_node("group_statement")))
-            .or_else(|s| parse_external_statement(s).and_then(|s| s.tag_node("external_statement")))
     })
 }
 #[inline]
@@ -112,19 +110,7 @@ fn parse_grammar_statement(state: Input) -> Output {
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| builtin_text(s, "{", false))
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| {
-                    s.repeat(0..4294967295, |s| {
-                        s.sequence(|s| {
-                            Ok(s)
-                                .and_then(|s| builtin_ignore(s))
-                                .and_then(|s| parse_grammar_term(s).and_then(|s| s.tag_node("grammar_term")))
-                        })
-                    })
-                })
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| builtin_text(s, "}", false))
+                .and_then(|s| parse_grammar_dict(s).and_then(|s| s.tag_node("grammar_dict")))
         })
     })
 }
@@ -136,7 +122,7 @@ fn parse_grammar_term(state: Input) -> Output {
                 static REGEX: OnceLock<Regex> = OnceLock::new();
                 REGEX.get_or_init(|| Regex::new("^(?x)([,;])").unwrap())
             })
-            .and_then(|s| s.tag_node("comma"))
+            .and_then(|s| s.tag_node("grammar_term_1"))
         })
     })
 }
@@ -157,48 +143,137 @@ fn parse_grammar_pair(state: Input) -> Output {
 fn parse_grammar_value(state: Input) -> Output {
     state.rule(BootstrapRule::GrammarValue, |s| {
         Err(s)
+            .or_else(|s| parse_grammar_dict(s).and_then(|s| s.tag_node("grammar_dict")))
             .or_else(|s| parse_grammar_list(s).and_then(|s| s.tag_node("grammar_list")))
-            .or_else(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+            .or_else(|s| parse_namepath(s).and_then(|s| s.tag_node("namepath")))
             .or_else(|s| parse_string_raw(s).and_then(|s| s.tag_node("string_raw")))
             .or_else(|s| parse_string_normal(s).and_then(|s| s.tag_node("string_normal")))
     })
 }
 #[inline]
-fn parse_grammar_list(state: Input) -> Output {
-    state.rule(BootstrapRule::GrammarList, |s| {
+fn parse_grammar_dict(state: Input) -> Output {
+    state.rule(BootstrapRule::GrammarDict, |s| {
         s.sequence(|s| {
             Ok(s)
-                .and_then(|s| builtin_text(s, "[", false))
+                .and_then(|s| builtin_text(s, "{", false))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| {
-                    s.optional(|s| {
+                    s.repeat(0..4294967295, |s| {
                         s.sequence(|s| {
                             Ok(s)
-                                .and_then(|s| parse_grammar_value(s).and_then(|s| s.tag_node("grammar_value")))
                                 .and_then(|s| builtin_ignore(s))
-                                .and_then(|s| {
-                                    s.repeat(0..4294967295, |s| {
-                                        s.sequence(|s| {
-                                            Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
-                                                s.sequence(|s| {
-                                                    Ok(s)
-                                                        .and_then(|s| builtin_text(s, ",", false))
-                                                        .and_then(|s| builtin_ignore(s))
-                                                        .and_then(|s| {
-                                                            parse_grammar_value(s).and_then(|s| s.tag_node("grammar_value"))
-                                                        })
-                                                })
-                                            })
-                                        })
-                                    })
-                                })
-                                .and_then(|s| builtin_ignore(s))
-                                .and_then(|s| s.optional(|s| builtin_text(s, ",", false)))
+                                .and_then(|s| parse_grammar_term(s).and_then(|s| s.tag_node("grammar_term")))
                         })
                     })
                 })
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| builtin_text(s, "]", false))
+                .and_then(|s| builtin_text(s, "}", false))
+        })
+    })
+}
+#[inline]
+fn parse_grammar_list(state: Input) -> Output {
+    state.rule(BootstrapRule::GrammarList, |s| {
+        Err(s)
+            .or_else(|s| {
+                s.sequence(|s| {
+                    Ok(s)
+                        .and_then(|s| builtin_text(s, "(", false))
+                        .and_then(|s| builtin_ignore(s))
+                        .and_then(|s| {
+                            s.optional(|s| {
+                                s.sequence(|s| {
+                                    Ok(s)
+                                        .and_then(|s| parse_grammar_value(s).and_then(|s| s.tag_node("grammar_value")))
+                                        .and_then(|s| builtin_ignore(s))
+                                        .and_then(|s| {
+                                            s.repeat(0..4294967295, |s| {
+                                                s.sequence(|s| {
+                                                    Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                                        s.sequence(|s| {
+                                                            Ok(s)
+                                                                .and_then(|s| builtin_text(s, ",", false))
+                                                                .and_then(|s| builtin_ignore(s))
+                                                                .and_then(|s| {
+                                                                    parse_grammar_value(s)
+                                                                        .and_then(|s| s.tag_node("grammar_value"))
+                                                                })
+                                                        })
+                                                    })
+                                                })
+                                            })
+                                        })
+                                        .and_then(|s| builtin_ignore(s))
+                                        .and_then(|s| s.optional(|s| builtin_text(s, ",", false)))
+                                })
+                            })
+                        })
+                        .and_then(|s| builtin_ignore(s))
+                        .and_then(|s| builtin_text(s, ")", false))
+                })
+            })
+            .or_else(|s| {
+                s.sequence(|s| {
+                    Ok(s)
+                        .and_then(|s| builtin_text(s, "[", false))
+                        .and_then(|s| builtin_ignore(s))
+                        .and_then(|s| {
+                            s.optional(|s| {
+                                s.sequence(|s| {
+                                    Ok(s)
+                                        .and_then(|s| parse_grammar_value(s).and_then(|s| s.tag_node("grammar_value")))
+                                        .and_then(|s| builtin_ignore(s))
+                                        .and_then(|s| {
+                                            s.repeat(0..4294967295, |s| {
+                                                s.sequence(|s| {
+                                                    Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                                        s.sequence(|s| {
+                                                            Ok(s)
+                                                                .and_then(|s| builtin_text(s, ",", false))
+                                                                .and_then(|s| builtin_ignore(s))
+                                                                .and_then(|s| {
+                                                                    parse_grammar_value(s)
+                                                                        .and_then(|s| s.tag_node("grammar_value"))
+                                                                })
+                                                        })
+                                                    })
+                                                })
+                                            })
+                                        })
+                                        .and_then(|s| builtin_ignore(s))
+                                        .and_then(|s| s.optional(|s| builtin_text(s, ",", false)))
+                                })
+                            })
+                        })
+                        .and_then(|s| builtin_ignore(s))
+                        .and_then(|s| builtin_text(s, "]", false))
+                })
+            })
+    })
+}
+#[inline]
+fn parse_grammar_list_terms(state: Input) -> Output {
+    state.rule(BootstrapRule::GrammarListTerms, |s| {
+        s.sequence(|s| {
+            Ok(s)
+                .and_then(|s| parse_grammar_value(s).and_then(|s| s.tag_node("grammar_value")))
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
+                                s.sequence(|s| {
+                                    Ok(s)
+                                        .and_then(|s| builtin_text(s, ",", false))
+                                        .and_then(|s| builtin_ignore(s))
+                                        .and_then(|s| parse_grammar_value(s).and_then(|s| s.tag_node("grammar_value")))
+                                })
+                            })
+                        })
+                    })
+                })
+                .and_then(|s| builtin_ignore(s))
+                .and_then(|s| s.optional(|s| builtin_text(s, ",", false)))
         })
     })
 }
@@ -428,53 +503,6 @@ fn parse_group_pair(state: Input) -> Output {
                 .and_then(|s| builtin_text(s, ":", false))
                 .and_then(|s| builtin_ignore(s))
                 .and_then(|s| parse_atomic(s).and_then(|s| s.tag_node("atomic")))
-        })
-    })
-}
-#[inline]
-fn parse_external_statement(state: Input) -> Output {
-    state.rule(BootstrapRule::ExternalStatement, |s| {
-        s.sequence(|s| {
-            Ok(s)
-                .and_then(|s| parse_kw_external(s).and_then(|s| s.tag_node("kw_external")))
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_linker_block(s).and_then(|s| s.tag_node("linker_block")))
-        })
-    })
-}
-#[inline]
-fn parse_linker_block(state: Input) -> Output {
-    state.rule(BootstrapRule::LinkerBlock, |s| {
-        s.sequence(|s| {
-            Ok(s)
-                .and_then(|s| builtin_text(s, "{", false))
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| {
-                    s.repeat(0..4294967295, |s| {
-                        s.sequence(|s| {
-                            Ok(s)
-                                .and_then(|s| builtin_ignore(s))
-                                .and_then(|s| parse_linker_pair(s).and_then(|s| s.tag_node("linker_pair")))
-                        })
-                    })
-                })
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| builtin_text(s, "}", false))
-        })
-    })
-}
-#[inline]
-fn parse_linker_pair(state: Input) -> Output {
-    state.rule(BootstrapRule::LinkerPair, |s| {
-        s.sequence(|s| {
-            Ok(s)
-                .and_then(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| builtin_text(s, ":", false))
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_namepath_free(s).and_then(|s| s.tag_node("namepath_free")))
         })
     })
 }
