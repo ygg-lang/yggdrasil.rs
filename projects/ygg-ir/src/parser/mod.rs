@@ -6,8 +6,8 @@ use yggdrasil_error::{Failure, FileCache, FileID, Success, Validation, Yggdrasil
 use yggdrasil_parser::{
     bootstrap::{
         AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
-        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, KwExternalNode, PrefixNode, RootNode, StatementNode,
-        StringItemNode, SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
+        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, PrefixNode, RootNode, StatementNode, StringItemNode,
+        SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
     },
     TakeAnnotations, YggdrasilNode,
 };

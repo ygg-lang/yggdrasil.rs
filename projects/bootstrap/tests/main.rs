@@ -1,7 +1,6 @@
 use bootstrap::build;
 use std::path::Path;
-use url::Url;
-use yggdrasil_shared::{codegen::BuildRust, Failure, FileCache, Success};
+use yggdrasil_shared::codegen::BuildRust;
 
 #[test]
 #[ignore]

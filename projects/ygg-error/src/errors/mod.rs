@@ -1,11 +1,9 @@
-use diagnostic::{Diagnostic, DiagnosticBuilder, FileID, FileSpan, ReportKind};
+use diagnostic::{Diagnostic, DiagnosticBuilder, FileID, FileSpan, ReportKind, Url};
 use std::{
     error::Error,
     fmt::{Debug, Display, Formatter},
     ops::Range,
 };
-use url::Url;
-
 #[derive(Clone, Debug)]
 pub struct YggdrasilError {
     pub(crate) kind: Box<YggdrasilErrorKind>,

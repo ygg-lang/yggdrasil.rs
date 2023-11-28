@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use itertools::Itertools;
-use url::Url;
+use yggdrasil_error::Url;
 
 use yggdrasil_error::FileSpan;
 

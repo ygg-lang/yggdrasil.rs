@@ -9,6 +9,7 @@ pub use diagnostic::{FileCache, FileID, FileSpan};
 pub type Validation<T> = validatus::Validation<T, YggdrasilError>;
 pub type Result<T> = core::result::Result<T, YggdrasilError>;
 
+pub use diagnostic::Url;
 pub use validatus::{
     Validate,
     Validation::{Failure, Success},

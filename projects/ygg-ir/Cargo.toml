@@ -16,7 +16,6 @@ regex-automata = { version = "0.4.1", features = ["std"] }
 convert_case = "0.6.0"
 indexmap = { version = "2.0.2" }
 num = { version = "0.4.1" }
-url = { version = "2.4.1"}
 
 [dependencies.yggdrasil-parser]
 version = "0.1.*"
@@ -28,4 +27,4 @@ path = "../ygg-error"
 features = ["yggdrasil-rt", "num"]
 
 [features]
-serde = ["dep:serde", "serde/derive", "indexmap/serde", "num/serde", "url/serde"]
+serde = ["dep:serde", "serde/derive", "indexmap/serde", "num/serde"]

@@ -5,7 +5,7 @@ use crate::{
 
 use indexmap::IndexMap;
 use std::collections::BTreeMap;
-use url::Url;
+use yggdrasil_error::Url;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
