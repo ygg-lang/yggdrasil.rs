@@ -1,4 +1,5 @@
 use super::*;
+use alloc::borrow::Cow;
 
 impl<Language, Input> ConcreteNode<Language, Input>
 where

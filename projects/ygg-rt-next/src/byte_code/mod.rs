@@ -1,5 +1,6 @@
+use alloc::{string::String, vec::Vec};
+use core::ops::Range;
 use daachorse::CharwiseDoubleArrayAhoCorasick;
-use std::ops::Range;
 
 pub struct Bytecode {
     indentation: bool,
@@ -55,7 +56,7 @@ impl Bytecode {
             unsafe { self.patterns.get_unchecked(range) }
         }
     }
-    pub fn rule_sequence(&self, rule: u32, span: &Range<u32>) -> &[Instruction] {
+    pub fn rule_sequence(&self, _: u32, _: &Range<u32>) -> &[Instruction] {
         todo!()
     }
 }
