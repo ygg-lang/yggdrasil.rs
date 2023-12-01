@@ -1,20 +1,69 @@
 use daachorse::CharwiseDoubleArrayAhoCorasick;
+use std::ops::Range;
 
-pub struct Language {
-    pub indentation: bool,
-    pub patterns: Vec<Bytecode>,
+pub struct Bytecode {
+    indentation: bool,
+    patterns: Vec<Instruction>,
+    strings: Vec<StringPattern>,
 }
 
-pub enum Bytecode {
+pub enum Instruction {
     Any,
-    Character(char),
-    Range(CharacterRange),
-    MatchString(StringPattern),
-    MatchRule { rule: u32, jump: u32, length: u32 },
-    MatchTag { tag: u32, jump: u32, length: u32 },
-    LookAhead {},
+    Character {
+        /// A unicode character
+        unicode: char,
+    },
+    Range {
+        /// Weather this is a negative range
+        negative: bool,
+        /// The character range
+        span: Range<char>,
+    },
+    MatchString {
+        index: u32,
+    },
+    MatchRule {
+        /// The rule id of the language
+        rule: u32,
+        /// The index of start rule
+        span: Range<u32>,
+    },
+    MatchTag {
+        /// The tag id of the language
+        tag: u32,
+        /// The index of start tag
+        span: Range<u32>,
+    },
+    LookAhead {
+        negative: bool,
+        /// The index of start tag
+        jump: u32,
+        /// The length of the pattern
+        length: u32,
+    },
     StartOfStream,
     EndOfStream,
+}
+
+impl Bytecode {
+    pub fn sequence(&self, span: &Range<u32>) -> &[Instruction] {
+        let range = Range { start: span.start as usize, end: span.end as usize };
+        if cfg!(debug_assertions) {
+            self.patterns.get(range).expect("invalid range")
+        }
+        else {
+            unsafe { self.patterns.get_unchecked(range) }
+        }
+    }
+    pub fn rule_sequence(&self, rule: u32, span: &Range<u32>) -> &[Instruction] {
+        let range = (span as usize)..(span + length) as usize;
+        if cfg!(debug_assertions) {
+            self.patterns.get(range).expect("invalid range")
+        }
+        else {
+            unsafe { self.patterns.get_unchecked(range) }
+        }
+    }
 }
 
 pub struct CharacterRange {
