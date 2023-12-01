@@ -1,5 +1,7 @@
 use std::{borrow::Cow, marker::PhantomData, ops::Range, rc::Rc};
 
+mod iters;
+
 pub trait YggdrasilRule: From<u32> {}
 
 pub trait YggdrasilLanguage {
@@ -25,7 +27,7 @@ impl<'i> InputStream for &'i str {
     }
 }
 
-pub struct ConcreteTree<Input, Language> {
+pub struct ConcreteTree<Language, Input> {
     input: Input,
     language: Language,
     arena: Vec<ConcreteNodeData>,
@@ -34,18 +36,23 @@ pub struct ConcreteTree<Input, Language> {
 pub struct ConcreteNodeData {
     this: usize,
     parent: Option<usize>,
-    furthest_prev: Option<usize>,
     prev: Option<usize>,
     next: Option<usize>,
-    furthest_next: Option<usize>,
-    children: Vec<usize>,
-}
-
-pub struct ConcreteNode<Input, Language> {
-    arena: Rc<ConcreteTree<Input, Language>>,
-    this: usize,
+    brother: Range<usize>,
+    children: Option<Range<usize>>,
     rule: u32,
     span: Range<usize>,
+}
+
+pub struct ConcreteNode<Language, Input> {
+    shared: Rc<ConcreteTree<Language, Input>>,
+    id: usize,
+}
+
+pub struct ConcreteNodeIterator<Language, Input> {
+    shared: Rc<ConcreteTree<Language, Input>>,
+    prev: Option<usize>,
+    next: Option<usize>,
 }
 
 impl<Language, Input> ConcreteNode<Language, Input>
@@ -53,9 +60,25 @@ where
     Language: YggdrasilLanguage,
     Input: InputStream,
 {
-    pub fn get_rule(&self) -> Language::Rule {
-        <Language as YggdrasilLanguage>::Rule::from(self.rule)
+    fn get_data(&self) -> Option<&ConcreteNodeData> {
+        self.shared.arena.get(self.id)
     }
+    pub fn get_parent(&self) -> Option<ConcreteNode<Language, Input>> {
+        Some(Self { shared: self.shared.clone(), id: self.get_data()?.parent? })
+    }
+    pub fn get_next(&self) -> Option<ConcreteNode<Language, Input>> {
+        Some(Self { shared: self.shared.clone(), id: self.get_data()?.next? })
+    }
+    pub fn get_back(&self) -> Option<ConcreteNode<Language, Input>> {
+        Some(Self { shared: self.shared.clone(), id: self.get_data()?.prev? })
+    }
+
+    pub fn get_siblings(&self) -> ConcreteNodeIterator<Language, Input>
+
+    pub fn get_rule(&self) -> Language::Rule {
+        self.get_data()
+    }
+
     pub fn get_input(&self) -> &Input {
         &self.input
     }
