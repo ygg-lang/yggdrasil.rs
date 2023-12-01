@@ -5,3 +5,5 @@
 #![doc = include_str!("../readme.md")]
 
 // mod vm;
+mod byte_code;
+mod cst_mode;

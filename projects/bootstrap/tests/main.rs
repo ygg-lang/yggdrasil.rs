@@ -20,6 +20,16 @@ fn debug_v() -> std::io::Result<()> {
     let builder = BuildRust { range_type: "u32".to_string(), ..Default::default() };
     build(input, output, builder)
 }
+
+#[test]
+#[ignore]
+fn debug_json5() -> std::io::Result<()> {
+    let input = r#"C:\Users\Dell\CLionProjects\serde-json5\projects\json5-parser\grammars\json5.ygg"#;
+    let output = r#"C:\Users\Dell\CLionProjects\serde-json5\projects\json5-parser\src\codegen"#;
+    let builder = BuildRust { range_type: "usize".to_string(), ..Default::default() };
+    build(input, output, builder)
+}
+
 #[test]
 #[ignore]
 fn debug_dj() -> std::io::Result<()> {

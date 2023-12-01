@@ -23,16 +23,19 @@ wax = { version = "0.6.0", optional = true }
 
 [dependencies.diagnostic]
 version = "0.6.0"
-path = 'C:\Users\Dell\CLionProjects\diagnostic-rs\projects\diagnostic'
+#path = 'C:\Users\Dell\CLionProjects\diagnostic-rs\projects\diagnostic'
 features = ["serde", "url"]
+
+[dependencies.validatus]
+version = "0.0.6"
+#path = 'C:\Users\Dell\CLionProjects\diagnostic-rs\projects\validation'
 
 [dependencies.yggdrasil-rt]
 version = "0.0.*"
 path = "../ygg-rt"
 optional = true
 
-[dependencies.validatus]
-version = "0.0.5"
+
 
 
 [features]

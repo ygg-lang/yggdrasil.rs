@@ -12,7 +12,7 @@ mod subs;
 
 pub mod config;
 
-pub use cache::{GaiaSystem, GrammarCache};
+pub use cache::GaiaSystem;
 
 #[derive(Parser)]
 // #[clap(version = crate_version!(), author = crate_authors!("\n"))]
