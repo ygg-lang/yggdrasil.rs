@@ -56,13 +56,7 @@ impl Bytecode {
         }
     }
     pub fn rule_sequence(&self, rule: u32, span: &Range<u32>) -> &[Instruction] {
-        let range = (span as usize)..(span + length) as usize;
-        if cfg!(debug_assertions) {
-            self.patterns.get(range).expect("invalid range")
-        }
-        else {
-            unsafe { self.patterns.get_unchecked(range) }
-        }
+        todo!()
     }
 }
 
