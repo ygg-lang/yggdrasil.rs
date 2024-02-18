@@ -18,8 +18,8 @@ dynamic = []
 
 [dependencies]
 #url = "2.4.1"
-serde = { version = "1.0.189", optional = true }
-regex-automata = "0.4.1"
+serde = { version = "1.0.196", optional = true }
+regex-automata = "0.4.5"
 # memchr = { version = "2", optional = true }
 # ucd-trie = { version = "0.1.5", optional = true, default-features = false }
 daachorse = "1.0.0"
