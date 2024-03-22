@@ -1,9 +1,9 @@
-mod ast;
+mod wit;
+
+pub use crate::wit::JsonHost;
 
 wit_bindgen::generate!({
     world: "host",
 });
-
-struct JsonHost;
 
 export!(JsonHost);

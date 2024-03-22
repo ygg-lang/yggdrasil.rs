@@ -2,15 +2,21 @@
 package yggdrasil: json;
 
 world host {
-  export ast;
+  import ast;
+  import visitor;
+  import listener;
 }
 
 interface ast {
-  enum json-rule {
+  enum json-token {
     json,
     json-number,
     json-string,
     json-array
+  }
+  variant json-type {
+    json(json),
+    josn-number(json-number)
   }
 
   variant json {
@@ -18,16 +24,52 @@ interface ast {
     str(json-string),
     array(json-array)
   }
+  record traversal-options {
+    include-self: bool,
+    include-leaf: bool,
+    depth-first: bool,
+  }
+
+  record text-range {
+    head: u32,
+    tail: u32,
+  }
 
   resource json-number {
-    rule: static func() -> json-rule;
+    get-range: func() -> text-range;
+    get-token: func() -> json-token;
+    get-text: func() -> list<string>;
+    get-ancestors: func(include-self: bool) -> list<json-type>;
+    get-last: func(include-leaf: bool, include-self: bool) -> list<json-type>;
+    get-next: func(include-leaf: bool, include-self: bool) -> list<json-type>;
+    get-children: func(include-leaf: bool) -> list<json-type>;
+    get-descendants: func(include-leaf: bool, depth-first: bool) -> list<json-type>;
+
+    //     get-first
+    //     get-siblings: func(include-leaf: bool) -> list<json-type>;
+
+
   }
   resource json-string {
-    rule: static func() -> json-rule;
+    get-parent: func() -> json-type;
+    get-token: func() -> json-token;
+    get-text: func() -> list<string>;
   }
 
   resource json-array {
-    rule: static func() -> json-rule;
-    item: func() -> result<list<json>>;
+    get-rule: func() -> json-rule;
+    get-text: func() -> list<string>;
+
+    item: func() -> list<json>;
   }
 }
+
+interface visitor {
+
+}
+
+interface listener {
+
+}
+
+
