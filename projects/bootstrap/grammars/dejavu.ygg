@@ -1,9 +1,6 @@
 grammar Dejavu {}
 
 
-
-
-
 union Root {
     | DefineImport
     | DefineClass
@@ -25,67 +22,67 @@ class NamepathFree -> Namepath {
     Identifier ((OP_PROPORTION | DOT) Identifier)*
 }
 token {
-OP_PROPORTION: /∷|::/
-DOT: '.'
+    OP_PROPORTION: /∷|::/
+    DOT: '.'
 }
 // === Identifier === --------------------------------------------------------------------------------------------------
 atomic union Identifier {
-| UNICODE_ID                  #Normal
-| ^RAW_ID_L RAW_ID ^RAW_ID_R  #Escape
+    | UNICODE_ID                  #Normal
+    | ^RAW_ID_L RAW_ID ^RAW_ID_R  #Escape
 }
 token {
-RAW_ID: /[^`]+/
-UNICODE_ID: /[_\p{XID_start}]\p{XID_continue}*/
+    RAW_ID: /[^`]+/
+    UNICODE_ID: /[_\p{XID_start}]\p{XID_continue}*/
 }
 // === Text === --------------------------------------------------------------------------------------------------------
 @style(text)
 class TemplateText {
-TEMPLATE_E | TEXT_SPACE | TEXT_WORD | TEXT_OTHER
+    TEMPLATE_E | TEXT_SPACE | TEXT_WORD | TEXT_OTHER
 }
 
 token {
-// outer
-TEMPLATE_E: '<<%'
-TEXT_SPACE: /\p{White_Space}+/
-TEXT_WORD:  /\p{XID_continue}+/
-TEXT_OTHER: /[^<]+/;
-// inner
-@style(operator)
-TEMPLATE_L: '<%'
-@style(operator)
-TEMPLATE_R: '%>'
-@style(keyword)
-SPACE_CONTROL: [_\-=]
+    // outer
+    TEMPLATE_E: '<<%'
+    TEXT_SPACE: /\p{White_Space}+/
+    TEXT_WORD:  /\p{XID_continue}+/
+    TEXT_OTHER: /[^<]+/;
+    // inner
+    #style(operator)
+    TEMPLATE_L: '<%'
+    #style(operator)
+    TEMPLATE_R: '%>'
+    #style(keyword)
+    SPACE_CONTROL: [_\-=]
 }
 
 token {
-// keywords
-KW_IF:   'if';
-KW_ELSE: 'else';
-KW_END:  'end';
+    // keywords
+    KW_IF:   'if';
+    KW_ELSE: 'else';
+    KW_END:  'end';
 
-DOT:   '.';
-COMMA: ',';
-OP_PROPORTION: '::'
-// quotes
+    DOT:   '.';
+    COMMA: ',';
+    OP_PROPORTION: '::'
+    // quotes
 
-RAW_ID_L: '`'
-RAW_ID_R: '`'
-// brackets
-PARENTHESES_L: '('
-PARENTHESES_R: ')'
-BRACKET_L:     '['
-BRACKET_R:     ']'
-BRACE_L:       '{'
-BRACE_R:       '}'
-GENERIC_L:     '⟨'
-GENERIC_R:     '⟩'
-// id
+    RAW_ID_L: '`'
+    RAW_ID_R: '`'
+    // brackets
+    PARENTHESES_L: '('
+    PARENTHESES_R: ')'
+    BRACKET_L:     '['
+    BRACKET_R:     ']'
+    BRACE_L:       '{'
+    BRACE_R:       '}'
+    GENERIC_L:     '⟨'
+    GENERIC_R:     '⟩'
+    // id
 }
 
 
 ignore union Comment {
-| @comment_line('//')
-| @comment_block('/*', '*/', nest: false)
+    | @comment_line('//')
+    | @comment_block('/*', '*/', nest: false)
 }
 

@@ -13,7 +13,7 @@ atomic class Escapes {
 
 atomic class Constants {
     | ASCII_HEX ~ ASCII_DEC
-    | XID_START | XID_CONTINUE
+    | XID_START ~ XID_CONTINUE
     | EMOJI
 }
 atomic union Repeats {
@@ -27,22 +27,22 @@ atomic union Repeats {
 }
 
 atomic union Stacks {
-    | PEEK(..=2)
-    | PEEK(..<2)
-    | PEEK(1..=2)
-    | PEEK(...)
-    | PUSH("  "+ | "\t"+)
-    | PULL
-    | DROP
+    //    | PEEK(..=2)
+    //    | PEEK(..<2)
+    //    | PEEK(1..=2)
+    //    | PEEK(...)
+    //    | PUSH("  "+ | "\t"+)
+    //    | PULL
+    //    | DROP
 }
 
-inspector double {
-    rust: crate::utils::is_double
-}
-external url {
-    rust: url::Url::parse
-    java: java.net.URL
-}
+//inspector double {
+//    rust: crate::utils::is_double
+//}
+//external url {
+//    rust: url::Url::parse
+//    java: java.net.URL
+//}
 
 macro paired(item, delimiter) {
     | '(' ')'

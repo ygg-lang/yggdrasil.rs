@@ -36,12 +36,14 @@ impl GaiaSystem {
         CACHE_MANAGER.lock()?.grammars.insert(text.name.text.clone(), text);
         Ok(())
     }
+
     pub fn get_grammar(&self, language: &str) -> Result<GrammarInfo, YggdrasilError> {
         match CACHE_MANAGER.lock()?.grammars.get(language) {
             Some(s) => Ok(s.clone()),
             None => Err(YggdrasilError::runtime_error("no grammar")),
         }
     }
+
     pub fn get_optimized(&self, language: &str) -> Validation<GrammarInfo> {
         let mut errors = vec![];
         let mut info = self.get_grammar(language).validate(&mut errors)?;

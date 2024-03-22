@@ -96,6 +96,12 @@ class CallBody {
     '(' (Expression (',' Expression)* ','?)? ')'
 }
 // === expression === --------------------------------------------------------------------------------------------------
+//climb Expression {
+//    | Expression '|' Expression #Or
+//    | Expression '~' Expression #Hard
+//    | Expression Expression     #Soft
+//    | (Identifier ':')? (Prefix* Atomic Suffix*)  #Tag
+//}
 class Expression     { ExpressionHard ('|' ExpressionHard)* }
 class ExpressionHard { ExpressionSoft ('~' ExpressionSoft)* }
 class ExpressionSoft { ExpressionTag ExpressionTag* }

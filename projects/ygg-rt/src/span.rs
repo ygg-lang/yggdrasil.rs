@@ -121,6 +121,24 @@ impl<'i> TextSpan<'i> {
         self.end
     }
 
+    /// Returns the `Span`'s end byte position as a `usize`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use yggdrasil_rt::Position;
+    /// let input = "ab";
+    /// let start = Position::from_start(input);
+    /// let end = start.clone();
+    /// let span = start.span(&end);
+    ///
+    /// assert_eq!(span.end(), 0);
+    /// ```
+    #[inline]
+    pub fn range(&self) -> core::ops::Range<usize> {
+        self.start..self.end
+    }
+
     /// Returns the `Span`'s start `Position`.
     ///
     /// # Examples

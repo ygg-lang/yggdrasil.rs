@@ -21,7 +21,6 @@ class ObjectPair {
 
 @style(field)
 union ObjectKey {
-    |
     | Identifier
     | String
 }
@@ -36,15 +35,15 @@ atomic union String {
     | "'" StringText* "'"  #DoubleQuote
 }
 class StringRaw -> StringText {
-/[^"]*/
+    /[^"]*/
 }
 union StringText {
-| StringEscape #Escape
+    | StringEscape #Escape
     | /[^"]+/ #Character
 }
 @style(escape)
 class StringEscape {
-'\' c:ANY
+    '\' c:ANY
 }
 // === number === ------------------------------------------------------------------------------------------------------
 @style(number)
@@ -73,6 +72,6 @@ ignore class WhiteSpace {
 @style(comment)
 ignore union Comment {
     | @comment_line('//')
-| @comment_line('#')
-| @comment_block('/*', '*/', nest: false)
+    | @comment_line('#')
+    | @comment_block('/*', '*/', nest: false)
 }

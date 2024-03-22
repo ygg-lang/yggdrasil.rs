@@ -1,12 +1,13 @@
 pub use self::source::YggdrasilErrorSource;
-use crate::{span::TextSpan, YggdrasilRule};
+use crate::{iterators::Tag, span::TextSpan, YggdrasilRule};
 use alloc::{
-    borrow::{Cow, ToOwned},
+    borrow::ToOwned,
     format,
     string::{String, ToString},
     vec::Vec,
 };
 use core::{fmt, fmt::Display, ops::Range};
+
 mod source;
 
 /// Parse-related error type.
@@ -35,7 +36,7 @@ pub enum YggdrasilErrorKind<R> {
         expect: R,
     },
     InvalidTag {
-        expect: Cow<'static, str>,
+        expect: Tag,
     },
     /// Custom error with a message
     CustomError {
@@ -89,7 +90,7 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
         Self::new_from_span(YggdrasilErrorKind::InvalidNode { expect }, span)
     }
     /// unable to create node
-    pub fn missing_tag(expect: Cow<'static, str>, span: TextSpan) -> YggdrasilError<R> {
+    pub fn missing_tag(expect: Tag, span: TextSpan) -> YggdrasilError<R> {
         Self::new_from_span(YggdrasilErrorKind::InvalidTag { expect }, span)
     }
     /// missing rule

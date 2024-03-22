@@ -1,8 +1,33 @@
 // wit/host.wit
-package example: host;
+package yggdrasil: json;
 
 world host {
-  import print: func(msg: string);
+  export ast;
+}
 
-  export run: func();
+interface ast {
+  enum json-rule {
+    json,
+    json-number,
+    json-string,
+    json-array
+  }
+
+  variant json {
+    number(json-number),
+    str(json-string),
+    array(json-array)
+  }
+
+  resource json-number {
+    rule: static func() -> json-rule;
+  }
+  resource json-string {
+    rule: static func() -> json-rule;
+  }
+
+  resource json-array {
+    rule: static func() -> json-rule;
+    item: func() -> result<list<json>>;
+  }
 }

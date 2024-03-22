@@ -22,3 +22,8 @@ pub mod token_queue;
 pub mod token_stream;
 pub mod token_tree;
 pub mod tokens;
+
+#[cfg(not(feature = "dynamic"))]
+pub type Tag = &'static str;
+#[cfg(feature = "dynamic")]
+pub type Tag = Cow<'static, str>;

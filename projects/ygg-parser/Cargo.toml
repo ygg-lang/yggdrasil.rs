@@ -18,6 +18,7 @@ edition = "2021"
 [dependencies.yggdrasil-rt]
 version = "0.0.*"
 path = "../ygg-rt"
+features = ["dynamic"]
 
 [dev-dependencies]
 

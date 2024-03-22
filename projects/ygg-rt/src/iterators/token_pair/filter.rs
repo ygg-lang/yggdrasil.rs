@@ -9,7 +9,7 @@ where
     fn next(&mut self) -> Option<Self::Item> {
         let pair = self.tree.next()?;
         match pair.get_tag() {
-            Some(s) if s.eq(&self.target) => Some(N::from_pair(pair)),
+            Some(s) if self.target.eq(s) => Some(N::from_pair(pair)),
             _ => self.next(),
         }
     }
