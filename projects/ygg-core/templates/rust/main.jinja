@@ -69,33 +69,8 @@ pub struct {{ rule.node_name() }}<'i> {
 }
 {%- else if rule.is_union() %}
 pub enum {{ rule.node_name() }}<'i> {
-{%- for (name, variant) in rule.union_fields() %}
-{%- if variant.is_empty() %}
-    {{ name }},
-{%- else if variant.as_single().is_some() %}
-    {{ name }}({{ variant.as_single().unwrap().field_type(self.grammar) }}<'i>),
-{%- else %}
-    {{ name }} {
-{%- for field in variant %}
-
-
-
-{%- if field.field_type(self.grammar).is_empty() %}
-        // Missing rule {{ field.rhs }}
-{%- else %}
-{%- if field.count.is_one() %}
-        {{ field.field_name()|safe_rust_id }}: {{ field.field_type(self.grammar) }},
-{%- else if field.count.is_optional() %}
-        {{ field.field_name()|safe_rust_id }}: Option<{{ field.field_type(self.grammar) }}>,
-{%- else %}
-        {{ field.field_name()|safe_rust_id }}: Vec<{{ field.field_type(self.grammar) }}>,
-{%- endif %}
-{%- endif %}
-
-
-{%- endfor %}
-    },
-{%- endif %}
+{%- for (variant, class) in rule.union_fields() %}
+    {{ variant }}({{ class }}Node<'i>),
 {%- endfor %}
 }
 {%- endif %}

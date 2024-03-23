@@ -6,7 +6,9 @@ use std::{
 };
 
 use convert_case::{Case, Casing};
+use indexmap::IndexMap;
 pub use num::BigInt;
+use yggdrasil_parser::bootstrap::IdentifierNode;
 
 use crate::{
     data::RuleReference,
@@ -140,9 +142,16 @@ pub struct GrammarCaptures {
 // #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum GrammarBody {
     // Empty {},
-    Class { term: YggdrasilExpression },
-    Union { branches: BTreeMap<String, String> },
-    Climb { priority: Vec<YggdrasilVariant> },
+    Class {
+        term: YggdrasilExpression,
+    },
+    Union {
+        /// The union mapping
+        branches: IndexMap<String, String>,
+    },
+    Climb {
+        priority: Vec<YggdrasilVariant>,
+    },
     // TokenSet { rules: Vec<YggdrasilIdentifier> },
 }
 
@@ -153,7 +162,7 @@ impl GrammarBody {
     {
         match self {
             GrammarBody::Class { term } => f(term),
-            GrammarBody::Union { branches } => branches.iter_mut().for_each(|v| f(&mut v.branch)),
+            GrammarBody::Union { .. } => {}
             GrammarBody::Climb { priority } => priority.iter_mut().for_each(|v| f(&mut v.branch)),
         }
     }
@@ -161,7 +170,7 @@ impl GrammarBody {
 
 impl Default for GrammarBody {
     fn default() -> Self {
-        Self::Union { branches: vec![] }
+        Self::Union { branches: Default::default() }
     }
 }
 

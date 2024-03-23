@@ -33,6 +33,7 @@ pub enum BootstrapRule {
     Root,
     Statement,
     GrammarStatement,
+    GrammarTerm1,
     GrammarTerm,
     GrammarPair,
     GrammarValue,
@@ -60,7 +61,13 @@ pub enum BootstrapRule {
     ExpressionSoft,
     ExpressionTag,
     Term,
+    Negative,
+    Positive,
+    Remark,
     Prefix,
+    Optional,
+    Many,
+    Many1,
     Suffix,
     Atomic,
     GroupExpression,
@@ -81,12 +88,17 @@ pub enum BootstrapRule {
     NamepathFree,
     Namepath,
     Identifier,
+    True,
+    False,
     Boolean,
     Integer,
     RangeExact,
     Range,
     ModifierCall,
     OP_CATEGORY,
+    Parser,
+    Inspector,
+    External,
     KW_EXTERNAL,
     KW_GRAMMAR,
     KW_IMPORT,
@@ -111,6 +123,7 @@ impl YggdrasilRule for BootstrapRule {
             Self::Root => "",
             Self::Statement => "",
             Self::GrammarStatement => "",
+            Self::GrammarTerm1 => "",
             Self::GrammarTerm => "",
             Self::GrammarPair => "",
             Self::GrammarValue => "",
@@ -138,7 +151,13 @@ impl YggdrasilRule for BootstrapRule {
             Self::ExpressionSoft => "",
             Self::ExpressionTag => "",
             Self::Term => "",
+            Self::Negative => "",
+            Self::Positive => "",
+            Self::Remark => "",
             Self::Prefix => "",
+            Self::Optional => "",
+            Self::Many => "",
+            Self::Many1 => "",
             Self::Suffix => "",
             Self::Atomic => "",
             Self::GroupExpression => "",
@@ -159,12 +178,17 @@ impl YggdrasilRule for BootstrapRule {
             Self::NamepathFree => "",
             Self::Namepath => "",
             Self::Identifier => "",
+            Self::True => "",
+            Self::False => "",
             Self::Boolean => "",
             Self::Integer => "",
             Self::RangeExact => "",
             Self::Range => "",
             Self::ModifierCall => "",
             Self::OP_CATEGORY => "",
+            Self::Parser => "",
+            Self::Inspector => "",
+            Self::External => "",
             Self::KW_EXTERNAL => "",
             Self::KW_GRAMMAR => "",
             Self::KW_IMPORT => "",
@@ -187,10 +211,10 @@ pub struct RootNode<'i> {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StatementNode<'i> {
-    ClassStatement(ClassStatementNode<'i>),
     GrammarStatement(GrammarStatementNode<'i>),
-    GroupStatement(GroupStatementNode<'i>),
+    ClassStatement(ClassStatementNode<'i>),
     UnionStatement(UnionStatementNode<'i>),
+    GroupStatement(GroupStatementNode<'i>),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -199,9 +223,14 @@ pub struct GrammarStatementNode<'i> {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GrammarTerm1Node<'i> {
+    pair: TokenPair<'i, BootstrapRule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum GrammarTermNode<'i> {
     GrammarPair(GrammarPairNode<'i>),
-    GrammarTerm1,
+    GrammarTerm1(GrammarTerm1Node<'i>),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -214,8 +243,8 @@ pub enum GrammarValueNode<'i> {
     GrammarDict(GrammarDictNode<'i>),
     GrammarList(GrammarListNode<'i>),
     Namepath(NamepathNode<'i>),
-    StringNormal(StringNormalNode<'i>),
     StringRaw(StringRawNode<'i>),
+    StringNormal(StringNormalNode<'i>),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -339,34 +368,64 @@ pub struct TermNode<'i> {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct NegativeNode<'i> {
+    pair: TokenPair<'i, BootstrapRule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct PositiveNode<'i> {
+    pair: TokenPair<'i, BootstrapRule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct RemarkNode<'i> {
+    pair: TokenPair<'i, BootstrapRule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum PrefixNode<'i> {
-    Negative,
-    Positive,
-    Remark,
+    Negative(NegativeNode<'i>),
+    Positive(PositiveNode<'i>),
+    Remark(RemarkNode<'i>),
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct OptionalNode<'i> {
+    pair: TokenPair<'i, BootstrapRule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct ManyNode<'i> {
+    pair: TokenPair<'i, BootstrapRule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Many1Node<'i> {
+    pair: TokenPair<'i, BootstrapRule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SuffixNode<'i> {
-    Many,
-    Many1,
-    Optional,
-    Range(RangeNode<'i>),
+    Optional(OptionalNode<'i>),
+    Many(ManyNode<'i>),
+    Many1(Many1Node<'i>),
     RangeExact(RangeExactNode<'i>),
+    Range(RangeNode<'i>),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum AtomicNode<'i> {
+    GroupExpression(GroupExpressionNode<'i>),
+    FunctionCall(FunctionCallNode<'i>),
     Boolean(BooleanNode<'i>),
+    Integer(IntegerNode<'i>),
+    StringRaw(StringRawNode<'i>),
+    StringNormal(StringNormalNode<'i>),
     Category(CategoryNode<'i>),
     EscapedUnicode(EscapedUnicodeNode<'i>),
-    FunctionCall(FunctionCallNode<'i>),
-    GroupExpression(GroupExpressionNode<'i>),
-    Identifier(IdentifierNode<'i>),
-    Integer(IntegerNode<'i>),
     RegexEmbed(RegexEmbedNode<'i>),
     RegexRange(RegexRangeNode<'i>),
-    StringNormal(StringNormalNode<'i>),
-    StringRaw(StringRawNode<'i>),
+    Identifier(IdentifierNode<'i>),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -391,8 +450,8 @@ pub struct StringNormalNode<'i> {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StringItemNode<'i> {
-    EscapedCharacter(EscapedCharacterNode<'i>),
     EscapedUnicode(EscapedUnicodeNode<'i>),
+    EscapedCharacter(EscapedCharacterNode<'i>),
     TextAny(TextAnyNode<'i>),
 }
 #[derive(Clone, Debug, Hash)]
@@ -463,9 +522,19 @@ pub struct IdentifierNode<'i> {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct TrueNode<'i> {
+    pair: TokenPair<'i, BootstrapRule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct FalseNode<'i> {
+    pair: TokenPair<'i, BootstrapRule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum BooleanNode<'i> {
-    False,
-    True,
+    True(TrueNode<'i>),
+    False(FalseNode<'i>),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -494,10 +563,25 @@ pub struct OpCategoryNode<'i> {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct ParserNode<'i> {
+    pair: TokenPair<'i, BootstrapRule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct InspectorNode<'i> {
+    pair: TokenPair<'i, BootstrapRule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct ExternalNode<'i> {
+    pair: TokenPair<'i, BootstrapRule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum KwExternalNode<'i> {
-    External,
-    Inspector,
-    Parser,
+    Parser(ParserNode<'i>),
+    Inspector(InspectorNode<'i>),
+    External(ExternalNode<'i>),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

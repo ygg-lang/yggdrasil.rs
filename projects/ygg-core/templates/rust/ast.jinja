@@ -12,14 +12,8 @@ impl<'i> YggdrasilNode<'i> for {{ rule.node_name() }}<'i> {
         self.pair.get_span().get_range()
 {%- else %}
         match self {
-{%- for (name, variant) in rule.union_fields() %}
-{%- if variant.is_empty() %}
-            Self::{{ name }} => Range::default(),
-{%- else if variant.as_single().is_some() %}
-            Self::{{ name }}(s) => s.get_range(),
-{%- else %}
-            Self::{{ name }} {..} => Range::default(),
-{%- endif %}
+{%- for (variant, class) in rule.union_fields() %}
+            Self::{{ variant }}(s) => s.get_range(),
 {%- endfor %}
         }
 {%- endif %}
@@ -29,19 +23,11 @@ impl<'i> YggdrasilNode<'i> for {{ rule.node_name() }}<'i> {
         Ok(Self { pair })
 {%- else if rule.is_union() %}
         let _span = pair.get_span();
-{%- for (name, variant) in rule.union_fields() %}
-{%- if variant.is_empty() %}
-        if let Some(_) = pair.find_first_tag("{{ name|snake_case }}") {
-            return Ok(Self::{{ name }})
-{%- else if variant.as_single().is_some() %}
-        if let Ok(s) = pair.take_tagged_one::<{{ variant.as_single().unwrap().field_type(self.grammar) }}>(Cow::Borrowed("{{ name|snake_case }}")) {
-            return Ok(Self::{{ name }}(s));
-{%- else %}
-        if let Ok(s) = pair.take_tagged_one(Cow::Borrowed("{{ name|snake_case }}")) {
-            unimplemented!()
-{%- endif %}
+{%- for (variant, class) in rule.union_fields() %}
+        if let Ok(s) = pair.take_tagged_one::<{{ class }}>(Cow::Borrowed("{{ variant|snake_case }}")) {
+            return Ok(Self::{{ variant }}(s));
         }
-    {%- endfor %}
+{%- endfor %}
         Err(YggdrasilError::invalid_node({{ self.grammar.rule_name() }}::{{ rule.name.text|safe_rust_id }}, _span))
 {%- endif %}
     }

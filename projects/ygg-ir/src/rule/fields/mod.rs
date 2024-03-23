@@ -53,15 +53,9 @@ impl GrammarRule {
             _ => unreachable!("do you filter with class?"),
         }
     }
-    pub fn union_fields(&self) -> YggdrasilEnumerate {
+    pub fn union_fields(&self) -> &IndexMap<String, String> {
         match &self.body {
-            GrammarBody::Union { branches } => {
-                let mut variants = YggdrasilEnumerate::default();
-                for variant in branches {
-                    variants.insert(variant)
-                }
-                variants
-            }
+            GrammarBody::Union { branches } => branches,
             _ => unreachable!("do you filter with `union`?"),
         }
     }

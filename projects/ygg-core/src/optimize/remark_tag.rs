@@ -11,19 +11,12 @@ impl CodeOptimizer for RemarkTags {
     fn optimize(&mut self, info: &GrammarInfo) -> Validation<GrammarInfo> {
         let mut info = info.clone();
         for rule in info.rules.values_mut() {
-            let rule_name = rule.name.text.as_str();
             match &mut rule.body {
                 GrammarBody::Class { term } => self.remark(term, rule.captures.auto),
-                GrammarBody::Union { branches } => {
-                    for variant in branches.iter_mut() {
-                        self.remark(&mut variant.branch, rule.captures.auto)
-                    }
-                    self.remark_union_root(branches, rule_name);
-                }
+                GrammarBody::Union { .. } => {}
                 GrammarBody::Climb { .. } => {}
             }
         }
-
         Validation::Success { value: info, diagnostics: vec![] }
     }
 }
@@ -59,22 +52,6 @@ impl RemarkTags {
             },
             ExpressionBody::Text(_) => {}
             _ => {}
-        }
-    }
-    fn remark_union_root(&self, expr: &mut [YggdrasilVariant], rule: &str) {
-        for (index, variant) in expr.iter_mut().enumerate() {
-            match variant.tag {
-                Some(_) => {}
-                None => match &variant.branch.body {
-                    ExpressionBody::Rule(r) => variant
-                        .remark(YggdrasilIdentifier { text: r.name.text.to_case(Case::Pascal), span: r.name.span.clone() }),
-                    _ => variant.remark(YggdrasilIdentifier {
-                        text: format!("{rule}{index}").to_case(Case::Pascal),
-                        span: Default::default(),
-                    }),
-                },
-            }
-            variant.unmark()
         }
     }
 }

@@ -25,10 +25,11 @@ impl RuleExt for GrammarRule {
             }
             GrammarBody::Union { branches } => {
                 w.push_str("Err(s)");
-                for variant in branches {
-                    w.push_str(".or_else(|s|");
-                    variant.branch.write(&mut w, self, false).unwrap();
-                    w.push_str(")");
+                for (variant, class) in branches {
+                    w.push_str(&format!(
+                        ".or_else(|s| parse_{rule}(s).and_then(|s|s.tag_node(\"{rule}\")))",
+                        rule = class.to_case(Case::Snake)
+                    ))
                 }
             }
             GrammarBody::Climb { .. } => w.push_str("Err(/* Climb node */s)"),

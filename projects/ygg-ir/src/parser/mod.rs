@@ -1,7 +1,8 @@
 use indexmap::IndexMap;
 use num::{BigInt, Num};
+use std::collections::BTreeMap;
 
-use yggdrasil_error::{Failure, FileCache, FileID, Success, Validation, YggdrasilError};
+use yggdrasil_error::{Failure, FileCache, FileID, FileSpan, Success, Validation, YggdrasilError};
 use yggdrasil_parser::{
     bootstrap::{
         AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
@@ -52,7 +53,7 @@ impl GrammarInfo {
                     }
                     Err(e) => ctx.add_error(e),
                 },
-                StatementNode::UnionStatement(v) => GrammarRule::register_union(v, &mut out.rules)?,
+                StatementNode::UnionStatement(v) => GrammarRule::register_union(v, &mut out)?,
                 StatementNode::GroupStatement(v) => match GrammarRule::build_group(v) {
                     Ok((id, terms)) => match id {
                         Some(id) => {
@@ -106,20 +107,32 @@ impl GrammarRule {
         };
         Ok(rule)
     }
-    fn register_union(node: &UnionStatementNode, rules: &mut IndexMap<String, GrammarRule>) -> Result<()> {
+    fn register_union(node: &UnionStatementNode, rules: &mut GrammarInfo) -> Result<()> {
         let name = YggdrasilIdentifier::build(&node.name);
-        let mut branches = vec![];
-        for branch in &node.union_block.union_branch {
-            match YggdrasilExpression::build_tag_branch(branch) {
-                Ok(o) => branches.push(o),
-                Err(_) => {}
+        let mut branches = IndexMap::default();
+        for (index, branch) in node.union_block.union_branch.iter().enumerate() {
+            let key = branch.branch_name(&node.name.text, index);
+
+            if !branch.is_single() {
+                let name = YggdrasilIdentifier { text: key.0.to_string(), span: FileID::default().with_range(key.1) };
+                let term = YggdrasilExpression::build_hard(&branch.expression_hard)?;
+                let rule = GrammarRule { name, body: GrammarBody::Class { term }, range: node.get_range(), ..Default::default() };
+
+                match rules.rules.insert(rule.name.text.clone(), rule) {
+                    Some(_) => {}
+                    None => {}
+                }
+            };
+            match branches.insert(key.0.to_string(), key.0.to_string()) {
+                Some(old) => {
+                    panic!("{old}")
+                }
+                None => {}
             }
         }
-
         let rule = Self { name, body: GrammarBody::Union { branches }, range: node.get_range(), ..Default::default() }
             .with_annotation(node.annotations());
-        rules.insert(name.clone(), rule);
-
+        rules.rules.insert(rule.name.text.clone(), rule);
         Ok(())
     }
     fn build_group(node: &GroupStatementNode) -> Result<(Option<YggdrasilIdentifier>, Vec<Self>)> {
@@ -172,11 +185,6 @@ impl YggdrasilExpression {
             }
             _ => Err(YggdrasilError::syntax_error("empty class soft", node.get_range()))?,
         }
-    }
-    fn build_tag_branch(node: &UnionBranchNode) -> Result<YggdrasilVariant> {
-        let id = node.branch_tag.as_ref().map(|o| YggdrasilIdentifier::build(&o.identifier));
-        let expr = YggdrasilExpression::build_hard(&node.expression_hard)?;
-        Ok(YggdrasilVariant { tag: id, branch: expr })
     }
     fn build_tag_node(node: &ExpressionTagNode) -> Result<Self> {
         let e = match &node.identifier {

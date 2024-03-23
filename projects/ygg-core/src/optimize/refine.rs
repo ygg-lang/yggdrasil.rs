@@ -23,11 +23,7 @@ impl CodeOptimizer for RefineRules {
                 GrammarBody::Class { term } => {
                     self.refine_node(term).recover(&mut errors);
                 }
-                GrammarBody::Union { branches } => {
-                    for variant in branches.iter_mut() {
-                        self.refine_node(&mut variant.branch).recover(&mut errors);
-                    }
-                }
+                GrammarBody::Union { .. } => {}
                 GrammarBody::Climb { .. } => {}
             }
         }

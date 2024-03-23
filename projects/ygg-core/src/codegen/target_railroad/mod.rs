@@ -6,7 +6,7 @@ use yggdrasil_ir::{
     data::RuleReference,
     grammar::GrammarInfo,
     nodes::{ChoiceExpression, ConcatExpression, ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
-    rule::{GrammarBody, GrammarRule},
+    rule::{GrammarBody, GrammarRule, YggdrasilIdentifier},
     traits::CodeGenerator,
 };
 
@@ -65,7 +65,19 @@ impl AsRailroad for GrammarRule {
                 s.push(term.as_railroad(config));
             }
             GrammarBody::Union { branches } => {
-                let concat = ChoiceExpression { branches: branches.iter().map(|v| v.branch.clone()).collect() };
+                let concat = ChoiceExpression {
+                    branches: branches
+                        .iter()
+                        .map(|(variant, class)| YggdrasilExpression {
+                            tag: None,
+                            remark: false,
+                            body: ExpressionBody::Rule(RuleReference::new(YggdrasilIdentifier {
+                                text: class.to_string(),
+                                span: Default::default(),
+                            })),
+                        })
+                        .collect(),
+                };
                 s.push(concat.as_railroad(config));
             }
             GrammarBody::Climb { .. } => {}

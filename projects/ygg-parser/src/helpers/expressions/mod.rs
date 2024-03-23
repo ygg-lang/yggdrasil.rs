@@ -39,6 +39,9 @@ impl ExpressionHardNode {
     pub fn as_atom(&self) -> Option<&AtomicNode> {
         self.as_single()?.as_single()?.as_single()?.as_single()
     }
+    pub fn as_identifier(&self) -> Option<&IdentifierNode> {
+        self.as_atom()?.as_identifier()
+    }
 }
 
 impl ExpressionSoftNode {

@@ -12,6 +12,9 @@ mod annotations;
 mod expressions;
 
 impl UnionBranchNode {
+    pub fn is_single(&self) -> bool {
+        self.expression_hard.as_identifier().is_some()
+    }
     pub fn branch_name(&self, name: &str, index: usize) -> (Cow<str>, Range<usize>) {
         match self.try_branch_name() {
             Some(s) => s,
