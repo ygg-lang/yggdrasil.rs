@@ -1,6 +1,4 @@
-use std::str::FromStr;
-
-use num::BigInt;
+use num::{BigInt, Num};
 
 use yggdrasil_error::{Failure, FileCache, FileID, Success, Validation, YggdrasilError};
 use yggdrasil_parser::{
@@ -197,16 +195,16 @@ impl YggdrasilExpression {
                 SuffixNode::Many => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY),
                 SuffixNode::Many1 => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY1),
                 SuffixNode::RangeExact(u) => {
-                    let i = u32::from_str(&u.integer.text).unwrap_or(u32::MAX);
+                    let i = u32::from_str_radix(&u.integer.text, 10).unwrap_or(u32::MAX);
                     YggdrasilOperator::RepeatsBetween(YggdrasilCounter::new(i, i))
                 }
                 SuffixNode::Range(v) => {
                     let min = match &v.min {
-                        Some(v) => u32::from_str(&v.text).unwrap_or(0),
+                        Some(v) => u32::from_str_radix(&v.text, 10).unwrap_or(0),
                         None => 0,
                     };
                     let max = match &v.max {
-                        Some(v) => u32::from_str(&v.text).unwrap_or(u32::MAX),
+                        Some(v) => u32::from_str_radix(&v.text, 10).unwrap_or(u32::MAX),
                         None => u32::MAX,
                     };
                     YggdrasilOperator::RepeatsBetween(YggdrasilCounter::new(min, max))
@@ -271,7 +269,7 @@ impl YggdrasilExpression {
                 None => Err(YggdrasilError::syntax_error(&unicode.hex.text, unicode.get_range()))?,
             },
             AtomicNode::Identifier(v) => YggdrasilIdentifier::build(v).into(),
-            AtomicNode::Integer(v) => BigInt::from_str(&v.text)?.into(),
+            AtomicNode::Integer(v) => BigInt::from_str_radix(&v.text, 10)?.into(),
         };
         Ok(expr)
     }

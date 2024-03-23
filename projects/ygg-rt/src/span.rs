@@ -135,7 +135,7 @@ impl<'i> TextSpan<'i> {
     /// assert_eq!(span.end(), 0);
     /// ```
     #[inline]
-    pub fn range(&self) -> core::ops::Range<usize> {
+    pub fn get_range(&self) -> core::ops::Range<usize> {
         self.start..self.end
     }
 

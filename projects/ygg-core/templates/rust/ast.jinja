@@ -4,12 +4,12 @@ use super::*;
 
 {%- for rule in rules.clone() %}
 #[automatically_derived]
-impl YggdrasilNode for {{ rule.node_name() }} {
+impl<'i> YggdrasilNode<'i> for {{ rule.node_name() }}<'i> {
     type Rule = {{ self.grammar.rule_name() }};
 
     fn get_range(&self) -> Range<usize> {
 {%- if rule.is_class() %}
-        Range { start: self.span.start as usize, end: self.span.end as usize }
+        self.pair.get_span().get_range()
 {%- else %}
         match self {
 {%- for (name, variant) in rule.union_fields() %}
@@ -24,28 +24,9 @@ impl YggdrasilNode for {{ rule.node_name() }} {
         }
 {%- endif %}
     }
-    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+    fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
 {%- if rule.is_class() %}
-        let _span = pair.get_span();
-        Ok(Self {
-{%- for field in rule.class_fields() %}
-{%- if field.field_type(self.grammar).is_empty() %}
-            // Missing rule {{ field.rhs }}
-{%- else %}
-{%- if field.count.is_one() %}
-            {{ field.field_name()|safe_rust_id }}: pair.take_tagged_one::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}"))?,
-{%- else if field.count.is_optional() %}
-            {{ field.field_name()|safe_rust_id }}: pair.take_tagged_option::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}")),
-{%- else %}
-            {{ field.field_name()|safe_rust_id }}: pair.take_tagged_items::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}")).collect::<Result<Vec<_>, _>>()?,
-{%- endif %}
-{%- endif %}
-{%- endfor %}
-{%- if rule.captures.text %}
-            text: pair.get_string(),
-{%- endif %}
-            span: Range { start: _span.start() as {{ self.config.range_type }}, end: _span.end() as {{ self.config.range_type }} },
-        })
+        Ok(Self { pair })
 {%- else if rule.is_union() %}
         let _span = pair.get_span();
 {%- for (name, variant) in rule.union_fields() %}
@@ -65,13 +46,5 @@ impl YggdrasilNode for {{ rule.node_name() }} {
 {%- endif %}
     }
 }
-#[automatically_derived]
-impl FromStr for {{ rule.node_name() }} {
-    type Err = YggdrasilError<{{ self.grammar.rule_name() }}>;
 
-    fn from_str(input: &str) -> Result<Self, YggdrasilError<{{ self.grammar.rule_name() }}>> {
-        Self::from_cst({{ self.grammar.parser_name() }}::parse_cst(input, {{ self.grammar.rule_name() }}::{{ rule.name.text|safe_rust_id }})?)
-    }
-}
 {%- endfor %}
-

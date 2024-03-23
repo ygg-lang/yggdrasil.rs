@@ -2,7 +2,7 @@ use super::*;
 
 impl<'i, N> Iterator for TokenTreeFilterTag<'i, N>
 where
-    N: YggdrasilNode,
+    N: YggdrasilNode<'i>,
 {
     type Item = Result<N, YggdrasilError<N::Rule>>;
 
@@ -17,7 +17,7 @@ where
 
 impl<'i, N> Iterator for TokenTreeFilterRule<'i, N>
 where
-    N: YggdrasilNode,
+    N: YggdrasilNode<'i>,
 {
     type Item = Result<N, YggdrasilError<N::Rule>>;
 

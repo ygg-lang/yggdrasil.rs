@@ -1,10 +1,14 @@
 use super::*;
 #[automatically_derived]
-impl YggdrasilNode for RootNode {
+impl<'i> YggdrasilNode<'i> for RootNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
         Range { start: self.span.start as usize, end: self.span.end as usize }
+    }
+
+    fn from_str(input: &'i str) -> Result<Self, YggdrasilError<Self::Rule>> {
+        Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::Root)?)
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
@@ -23,7 +27,7 @@ impl FromStr for RootNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for StatementNode {
+impl<'i> YggdrasilNode<'i> for StatementNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -60,7 +64,7 @@ impl FromStr for StatementNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for GrammarStatementNode {
+impl<'i> YggdrasilNode<'i> for GrammarStatementNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -84,7 +88,7 @@ impl FromStr for GrammarStatementNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for GrammarTermNode {
+impl<'i> YggdrasilNode<'i> for GrammarTermNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -113,7 +117,7 @@ impl FromStr for GrammarTermNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for GrammarPairNode {
+impl<'i> YggdrasilNode<'i> for GrammarPairNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -137,7 +141,7 @@ impl FromStr for GrammarPairNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for GrammarValueNode {
+impl<'i> YggdrasilNode<'i> for GrammarValueNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -178,7 +182,7 @@ impl FromStr for GrammarValueNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for GrammarDictNode {
+impl<'i> YggdrasilNode<'i> for GrammarDictNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -203,7 +207,7 @@ impl FromStr for GrammarDictNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for GrammarListNode {
+impl<'i> YggdrasilNode<'i> for GrammarListNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -228,7 +232,7 @@ impl FromStr for GrammarListNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for GrammarListTermsNode {
+impl<'i> YggdrasilNode<'i> for GrammarListTermsNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -253,7 +257,7 @@ impl FromStr for GrammarListTermsNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for ClassStatementNode {
+impl<'i> YggdrasilNode<'i> for ClassStatementNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -285,7 +289,7 @@ impl FromStr for ClassStatementNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for ClassBlockNode {
+impl<'i> YggdrasilNode<'i> for ClassBlockNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -308,7 +312,7 @@ impl FromStr for ClassBlockNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for OpRemarkNode {
+impl<'i> YggdrasilNode<'i> for OpRemarkNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -328,7 +332,7 @@ impl FromStr for OpRemarkNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for UnionStatementNode {
+impl<'i> YggdrasilNode<'i> for UnionStatementNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -359,7 +363,7 @@ impl FromStr for UnionStatementNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for UnionBlockNode {
+impl<'i> YggdrasilNode<'i> for UnionBlockNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -384,7 +388,7 @@ impl FromStr for UnionBlockNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for UnionBranchNode {
+impl<'i> YggdrasilNode<'i> for UnionBranchNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -408,7 +412,7 @@ impl FromStr for UnionBranchNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for BranchTagNode {
+impl<'i> YggdrasilNode<'i> for BranchTagNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -432,7 +436,7 @@ impl FromStr for BranchTagNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for RightAssociativityNode {
+impl<'i> YggdrasilNode<'i> for RightAssociativityNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -452,7 +456,7 @@ impl FromStr for RightAssociativityNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for GroupStatementNode {
+impl<'i> YggdrasilNode<'i> for GroupStatementNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -482,7 +486,7 @@ impl FromStr for GroupStatementNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for GroupBlockNode {
+impl<'i> YggdrasilNode<'i> for GroupBlockNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -505,7 +509,7 @@ impl FromStr for GroupBlockNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for GroupPairNode {
+impl<'i> YggdrasilNode<'i> for GroupPairNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -529,7 +533,7 @@ impl FromStr for GroupPairNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for DecoratorCallNode {
+impl<'i> YggdrasilNode<'i> for DecoratorCallNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -553,7 +557,7 @@ impl FromStr for DecoratorCallNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for DecoratorNameNode {
+impl<'i> YggdrasilNode<'i> for DecoratorNameNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -576,7 +580,7 @@ impl FromStr for DecoratorNameNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for FunctionCallNode {
+impl<'i> YggdrasilNode<'i> for FunctionCallNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -600,7 +604,7 @@ impl FromStr for FunctionCallNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for FunctionNameNode {
+impl<'i> YggdrasilNode<'i> for FunctionNameNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -623,7 +627,7 @@ impl FromStr for FunctionNameNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for CallBodyNode {
+impl<'i> YggdrasilNode<'i> for CallBodyNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -646,7 +650,7 @@ impl FromStr for CallBodyNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for ExpressionNode {
+impl<'i> YggdrasilNode<'i> for ExpressionNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -671,7 +675,7 @@ impl FromStr for ExpressionNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for ExpressionHardNode {
+impl<'i> YggdrasilNode<'i> for ExpressionHardNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -696,7 +700,7 @@ impl FromStr for ExpressionHardNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for ExpressionSoftNode {
+impl<'i> YggdrasilNode<'i> for ExpressionSoftNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -721,7 +725,7 @@ impl FromStr for ExpressionSoftNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for ExpressionTagNode {
+impl<'i> YggdrasilNode<'i> for ExpressionTagNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -745,7 +749,7 @@ impl FromStr for ExpressionTagNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for TermNode {
+impl<'i> YggdrasilNode<'i> for TermNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -770,7 +774,7 @@ impl FromStr for TermNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for PrefixNode {
+impl<'i> YggdrasilNode<'i> for PrefixNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -803,7 +807,7 @@ impl FromStr for PrefixNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for SuffixNode {
+impl<'i> YggdrasilNode<'i> for SuffixNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -844,7 +848,7 @@ impl FromStr for SuffixNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for AtomicNode {
+impl<'i> YggdrasilNode<'i> for AtomicNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -909,7 +913,7 @@ impl FromStr for AtomicNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for GroupExpressionNode {
+impl<'i> YggdrasilNode<'i> for GroupExpressionNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -932,7 +936,7 @@ impl FromStr for GroupExpressionNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for StringRawNode {
+impl<'i> YggdrasilNode<'i> for StringRawNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -955,7 +959,7 @@ impl FromStr for StringRawNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for StringRawTextNode {
+impl<'i> YggdrasilNode<'i> for StringRawTextNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -975,7 +979,7 @@ impl FromStr for StringRawTextNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for StringNormalNode {
+impl<'i> YggdrasilNode<'i> for StringNormalNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1000,7 +1004,7 @@ impl FromStr for StringNormalNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for StringItemNode {
+impl<'i> YggdrasilNode<'i> for StringItemNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1033,7 +1037,7 @@ impl FromStr for StringItemNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for EscapedUnicodeNode {
+impl<'i> YggdrasilNode<'i> for EscapedUnicodeNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1056,7 +1060,7 @@ impl FromStr for EscapedUnicodeNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for EscapedCharacterNode {
+impl<'i> YggdrasilNode<'i> for EscapedCharacterNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1076,7 +1080,7 @@ impl FromStr for EscapedCharacterNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for HexNode {
+impl<'i> YggdrasilNode<'i> for HexNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1096,7 +1100,7 @@ impl FromStr for HexNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for TextAnyNode {
+impl<'i> YggdrasilNode<'i> for TextAnyNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1116,7 +1120,7 @@ impl FromStr for TextAnyNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for RegexEmbedNode {
+impl<'i> YggdrasilNode<'i> for RegexEmbedNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1139,7 +1143,7 @@ impl FromStr for RegexEmbedNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for RegexItemNode {
+impl<'i> YggdrasilNode<'i> for RegexItemNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1168,7 +1172,7 @@ impl FromStr for RegexItemNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for RegexCharacterNode {
+impl<'i> YggdrasilNode<'i> for RegexCharacterNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1188,7 +1192,7 @@ impl FromStr for RegexCharacterNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for RegexRangeNode {
+impl<'i> YggdrasilNode<'i> for RegexRangeNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1212,7 +1216,7 @@ impl FromStr for RegexRangeNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for RegexNegativeNode {
+impl<'i> YggdrasilNode<'i> for RegexNegativeNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1232,7 +1236,7 @@ impl FromStr for RegexNegativeNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for CategoryNode {
+impl<'i> YggdrasilNode<'i> for CategoryNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1256,7 +1260,7 @@ impl FromStr for CategoryNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for NamepathFreeNode {
+impl<'i> YggdrasilNode<'i> for NamepathFreeNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1279,7 +1283,7 @@ impl FromStr for NamepathFreeNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for NamepathNode {
+impl<'i> YggdrasilNode<'i> for NamepathNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1302,7 +1306,7 @@ impl FromStr for NamepathNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for IdentifierNode {
+impl<'i> YggdrasilNode<'i> for IdentifierNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1322,7 +1326,7 @@ impl FromStr for IdentifierNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for BooleanNode {
+impl<'i> YggdrasilNode<'i> for BooleanNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1351,7 +1355,7 @@ impl FromStr for BooleanNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for IntegerNode {
+impl<'i> YggdrasilNode<'i> for IntegerNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1371,7 +1375,7 @@ impl FromStr for IntegerNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for RangeExactNode {
+impl<'i> YggdrasilNode<'i> for RangeExactNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1394,7 +1398,7 @@ impl FromStr for RangeExactNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for RangeNode {
+impl<'i> YggdrasilNode<'i> for RangeNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1418,7 +1422,7 @@ impl FromStr for RangeNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for ModifierCallNode {
+impl<'i> YggdrasilNode<'i> for ModifierCallNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1441,7 +1445,7 @@ impl FromStr for ModifierCallNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for OpCategoryNode {
+impl<'i> YggdrasilNode<'i> for OpCategoryNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1461,7 +1465,7 @@ impl FromStr for OpCategoryNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for KwExternalNode {
+impl<'i> YggdrasilNode<'i> for KwExternalNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1494,7 +1498,7 @@ impl FromStr for KwExternalNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for KwGrammarNode {
+impl<'i> YggdrasilNode<'i> for KwGrammarNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1514,7 +1518,7 @@ impl FromStr for KwGrammarNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for KwImportNode {
+impl<'i> YggdrasilNode<'i> for KwImportNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1534,7 +1538,7 @@ impl FromStr for KwImportNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for KwClassNode {
+impl<'i> YggdrasilNode<'i> for KwClassNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1554,7 +1558,7 @@ impl FromStr for KwClassNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for KwUnionNode {
+impl<'i> YggdrasilNode<'i> for KwUnionNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1574,7 +1578,7 @@ impl FromStr for KwUnionNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for KwGroupNode {
+impl<'i> YggdrasilNode<'i> for KwGroupNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1594,7 +1598,7 @@ impl FromStr for KwGroupNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for KwClimbNode {
+impl<'i> YggdrasilNode<'i> for KwClimbNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1614,7 +1618,7 @@ impl FromStr for KwClimbNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for KwMacroNode {
+impl<'i> YggdrasilNode<'i> for KwMacroNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1634,7 +1638,7 @@ impl FromStr for KwMacroNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for WhiteSpaceNode {
+impl<'i> YggdrasilNode<'i> for WhiteSpaceNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {
@@ -1654,7 +1658,7 @@ impl FromStr for WhiteSpaceNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for CommentNode {
+impl<'i> YggdrasilNode<'i> for CommentNode {
     type Rule = BootstrapRule;
 
     fn get_range(&self) -> Range<usize> {

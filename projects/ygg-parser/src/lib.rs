@@ -1,9 +1,8 @@
 #![feature(lazy_cell)]
 
-// #[cfg(debug_assertions)]
-// pub mod antlr;
+#[cfg(debug_assertions)]
+pub mod antlr;
 
-// mod ast;
 pub mod bootstrap;
 
 mod helpers;

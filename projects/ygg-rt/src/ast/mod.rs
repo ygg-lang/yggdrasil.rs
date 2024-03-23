@@ -3,7 +3,7 @@ use alloc::format;
 use core::{fmt::Debug, ops::Range};
 
 /// A typed ast node
-pub trait YggdrasilNode: Clone + Debug {
+pub trait YggdrasilNode<'i>: Clone + Debug {
     /// Specify the rules of this language
     type Rule: YggdrasilRule;
     /// get rule
@@ -14,8 +14,16 @@ pub trait YggdrasilNode: Clone + Debug {
     fn get_range(&self) -> Range<usize> {
         0..0
     }
+
+    fn from_str(input: &'i str) -> Result<Self, YggdrasilError<Self::Rule>> {
+        Err(YggdrasilError::new_from_span(
+            YggdrasilErrorKind::CustomError { message: format!("unimplemented parse from") },
+            TextSpan { input: "", start: 0, end: 0 },
+        ))
+    }
+
     /// from
-    fn from_cst(mut tree: TokenTree<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+    fn from_cst(mut tree: TokenTree<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         match tree.next() {
             Some(s) => Self::from_pair(s),
             None => Err(YggdrasilError::new_from_span(
@@ -25,7 +33,7 @@ pub trait YggdrasilNode: Clone + Debug {
         }
     }
     /// from
-    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+    fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Err(YggdrasilError::new_from_span(
             YggdrasilErrorKind::CustomError { message: format!("unimplemented {:?}", pair) },
             TextSpan { input: "", start: 0, end: 0 },
