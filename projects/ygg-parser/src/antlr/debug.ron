@@ -20,7 +20,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -97,7 +96,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -178,7 +176,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -246,7 +243,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -298,7 +294,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -366,7 +361,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -461,7 +455,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -556,7 +549,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -903,7 +895,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -1034,7 +1025,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -1278,7 +1268,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -1374,7 +1363,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: false,
                 range: "usize",
             },
@@ -1406,7 +1394,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -1592,7 +1579,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -1687,7 +1673,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -1771,7 +1756,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -1843,7 +1827,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -1875,7 +1858,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -2039,7 +2021,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -2134,7 +2115,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -2202,7 +2182,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -2258,7 +2237,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -2311,7 +2289,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -2367,7 +2344,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -2421,7 +2397,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -2602,7 +2577,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -2705,7 +2679,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -2808,7 +2781,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -2889,7 +2861,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -2979,7 +2950,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -3101,7 +3071,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -3168,7 +3137,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -3263,7 +3231,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -3442,7 +3409,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -3538,7 +3504,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -3596,7 +3561,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: true,
                 auto: true,
                 range: "usize",
             },
@@ -3627,7 +3591,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -3699,7 +3662,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -3768,7 +3730,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -3828,7 +3789,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: true,
                 auto: true,
                 range: "usize",
             },
@@ -3873,7 +3833,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: true,
                 auto: true,
                 range: "usize",
             },
@@ -3931,7 +3890,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: true,
                 auto: true,
                 range: "usize",
             },
@@ -3962,7 +3920,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -4034,7 +3991,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -4087,7 +4043,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: true,
                 auto: true,
                 range: "usize",
             },
@@ -4141,7 +4096,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: true,
                 auto: true,
                 range: "usize",
             },
@@ -4258,7 +4212,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -4290,7 +4243,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -4430,7 +4382,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -4550,7 +4501,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -4653,7 +4603,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: true,
                 auto: true,
                 range: "usize",
             },
@@ -4684,7 +4633,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -4737,7 +4685,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: true,
                 auto: true,
                 range: "usize",
             },
@@ -4768,7 +4715,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -4836,7 +4782,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -4960,7 +4905,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: false,
                 range: "usize",
             },
@@ -5064,7 +5008,6 @@ GrammarInfo {
                 railway: false,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: false,
                 range: "usize",
             },
@@ -5098,7 +5041,6 @@ GrammarInfo {
                 railway: false,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -5167,7 +5109,6 @@ GrammarInfo {
                 railway: false,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: false,
                 range: "usize",
             },
@@ -5200,7 +5141,6 @@ GrammarInfo {
                 railway: false,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: false,
                 range: "usize",
             },
@@ -5233,7 +5173,6 @@ GrammarInfo {
                 railway: false,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: false,
                 range: "usize",
             },
@@ -5266,7 +5205,6 @@ GrammarInfo {
                 railway: false,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: false,
                 range: "usize",
             },
@@ -5299,7 +5237,6 @@ GrammarInfo {
                 railway: false,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: false,
                 range: "usize",
             },
@@ -5332,7 +5269,6 @@ GrammarInfo {
                 railway: false,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: false,
                 range: "usize",
             },
@@ -5365,7 +5301,6 @@ GrammarInfo {
                 railway: false,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: false,
                 range: "usize",
             },
@@ -5396,7 +5331,6 @@ GrammarInfo {
                 railway: false,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },
@@ -5429,7 +5363,6 @@ GrammarInfo {
                 railway: true,
             },
             captures: GrammarCaptures {
-                text: false,
                 auto: true,
                 range: "usize",
             },

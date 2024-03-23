@@ -126,14 +126,6 @@ pub struct GrammarCaptures {
     ///
     /// ## Examples
     /// ```ygg
-    /// #text(true)
-    /// text Rule { Tagged }
-    /// ```
-    pub text: bool,
-    /// Don't capture any objects in rule.
-    ///
-    /// ## Examples
-    /// ```ygg
     /// #tag(true)
     /// class Rule { Tagged }
     /// #tag(false)
@@ -145,11 +137,11 @@ pub struct GrammarCaptures {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum GrammarBody {
     // Empty {},
     Class { term: YggdrasilExpression },
-    Union { branches: Vec<YggdrasilVariant> },
+    Union { branches: BTreeMap<String, String> },
     Climb { priority: Vec<YggdrasilVariant> },
     // TokenSet { rules: Vec<YggdrasilIdentifier> },
 }
@@ -210,7 +202,7 @@ impl Default for GrammarViewer {
 
 impl Default for GrammarCaptures {
     fn default() -> Self {
-        Self { range: "usize".to_string(), text: false, auto: false }
+        Self { range: "usize".to_string(), auto: false }
     }
 }
 

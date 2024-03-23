@@ -17,9 +17,6 @@ impl GrammarRule {
         if let Some(s) = extra.get_auto_capture() {
             self.captures.auto = s
         };
-        if let Some(s) = extra.get_text_capture() {
-            self.captures.text = s
-        }
         self
     }
 }

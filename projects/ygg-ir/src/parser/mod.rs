@@ -1,3 +1,4 @@
+use indexmap::IndexMap;
 use num::{BigInt, Num};
 
 use yggdrasil_error::{Failure, FileCache, FileID, Success, Validation, YggdrasilError};
@@ -51,12 +52,7 @@ impl GrammarInfo {
                     }
                     Err(e) => ctx.add_error(e),
                 },
-                StatementNode::UnionStatement(v) => match GrammarRule::build_union(v) {
-                    Ok(o) => {
-                        out.rules.insert(o.name.text.clone(), o);
-                    }
-                    Err(e) => ctx.add_error(e),
-                },
+                StatementNode::UnionStatement(v) => GrammarRule::register_union(v, &mut out.rules)?,
                 StatementNode::GroupStatement(v) => match GrammarRule::build_group(v) {
                     Ok((id, terms)) => match id {
                         Some(id) => {
@@ -110,7 +106,7 @@ impl GrammarRule {
         };
         Ok(rule)
     }
-    fn build_union(node: &UnionStatementNode) -> Result<Self> {
+    fn register_union(node: &UnionStatementNode, rules: &mut IndexMap<String, GrammarRule>) -> Result<()> {
         let name = YggdrasilIdentifier::build(&node.name);
         let mut branches = vec![];
         for branch in &node.union_block.union_branch {
@@ -119,9 +115,12 @@ impl GrammarRule {
                 Err(_) => {}
             }
         }
+
         let rule = Self { name, body: GrammarBody::Union { branches }, range: node.get_range(), ..Default::default() }
             .with_annotation(node.annotations());
-        Ok(rule)
+        rules.insert(name.clone(), rule);
+
+        Ok(())
     }
     fn build_group(node: &GroupStatementNode) -> Result<(Option<YggdrasilIdentifier>, Vec<Self>)> {
         let name = node.identifier.as_ref().map(YggdrasilIdentifier::build);

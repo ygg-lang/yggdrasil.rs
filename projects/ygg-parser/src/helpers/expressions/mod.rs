@@ -1,27 +1,17 @@
-use crate::bootstrap::{AtomicNode, BooleanNode, ExpressionNode, IdentifierNode};
+use crate::bootstrap::{
+    AtomicNode, BooleanNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode, IdentifierNode,
+    TermNode,
+};
 
 impl ExpressionNode {
+    pub fn as_single(&self) -> Option<&ExpressionHardNode> {
+        match self.expression_hard.as_slice() {
+            [one] => Some(one),
+            _ => None,
+        }
+    }
     pub fn as_atom(&self) -> Option<&AtomicNode> {
-        if self.expression_hard.len() != 1 {
-            return None;
-        }
-        let expr = self.expression_hard.first()?;
-        if expr.expression_soft.len() != 1 {
-            return None;
-        }
-        let expr = expr.expression_soft.first()?;
-        if expr.expression_tag.len() != 1 {
-            return None;
-        }
-        let expr = expr.expression_tag.first()?;
-        if expr.identifier.is_some() {
-            return None;
-        }
-        let expr = &expr.term;
-        if expr.prefix.is_empty() && expr.suffix.is_empty() {
-            return Some(&expr.atomic);
-        }
-        return None;
+        self.as_single()?.as_atom()
     }
     pub fn as_boolean(&self) -> Option<bool> {
         match self.as_atom()? {
@@ -35,5 +25,52 @@ impl ExpressionNode {
             return Some(v);
         }
         return None;
+    }
+}
+
+impl ExpressionHardNode {
+    pub fn as_single(&self) -> Option<&ExpressionSoftNode> {
+        match self.expression_soft.as_slice() {
+            [one] => Some(one),
+            _ => None,
+        }
+    }
+
+    pub fn as_atom(&self) -> Option<&AtomicNode> {
+        self.as_single()?.as_single()?.as_single()?.as_single()
+    }
+}
+
+impl ExpressionSoftNode {
+    pub fn as_single(&self) -> Option<&ExpressionTagNode> {
+        match self.expression_tag.as_slice() {
+            [one] => Some(one),
+            _ => None,
+        }
+    }
+}
+impl ExpressionTagNode {
+    pub fn as_single(&self) -> Option<&TermNode> {
+        match self.identifier.as_ref() {
+            Some(_) => None,
+            _ => Some(&self.term),
+        }
+    }
+}
+
+impl TermNode {
+    pub fn as_single(&self) -> Option<&AtomicNode> {
+        if self.prefix.is_empty() && self.suffix.is_empty() {
+            return Some(&self.atomic);
+        }
+        return None;
+    }
+}
+impl AtomicNode {
+    pub fn as_identifier(&self) -> Option<&IdentifierNode> {
+        match self {
+            Self::Identifier(s) => Some(s),
+            _ => None,
+        }
     }
 }

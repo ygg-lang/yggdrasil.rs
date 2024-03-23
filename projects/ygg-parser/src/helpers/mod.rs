@@ -1,8 +1,36 @@
-use crate::bootstrap::{DecoratorCallNode, EscapedUnicodeNode, ModifierCallNode, RegexEmbedNode, RegexItemNode};
-use std::fmt::{Display, Formatter, Write};
+use crate::bootstrap::{
+    BranchTagNode, DecoratorCallNode, EscapedUnicodeNode, IdentifierNode, ModifierCallNode, RegexEmbedNode, RegexItemNode,
+    UnionBranchNode,
+};
+use std::{
+    borrow::Cow,
+    fmt::{Display, Formatter, Write},
+    ops::Range,
+};
 
 mod annotations;
 mod expressions;
+
+impl UnionBranchNode {
+    pub fn branch_name(&self, name: &str, index: usize) -> (Cow<str>, Range<usize>) {
+        match self.try_branch_name() {
+            Some(s) => s,
+            None => match self.try_expression_name() {
+                Some(s) => s,
+                None => (Cow::Owned(format!("{}{}", name, index)), self.expression_hard.span.clone()),
+            },
+        }
+    }
+
+    fn try_branch_name(&self) -> Option<(Cow<str>, Range<usize>)> {
+        let branch = self.branch_tag.as_ref()?;
+        Some((Cow::Borrowed(&branch.identifier.text), branch.span.clone()))
+    }
+    fn try_expression_name(&self) -> Option<(Cow<str>, Range<usize>)> {
+        let id = self.expression_hard.as_atom()?.as_identifier()?;
+        Some((Cow::Borrowed(&id.text), id.span.clone()))
+    }
+}
 
 pub struct TakeAnnotations<'i> {
     auto_tag: bool,
