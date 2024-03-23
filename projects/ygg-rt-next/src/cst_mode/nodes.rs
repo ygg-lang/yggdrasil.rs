@@ -17,7 +17,7 @@ impl<Language, Input> ConcreteNode<Language, Input> {
 impl<Language, Input> ConcreteNode<Language, Input>
 where
     Language: YggdrasilLanguage,
-    Input: InputStream,
+    Input: TextStream,
 {
     pub fn get_parent(&self) -> Option<ConcreteNode<Language, Input>> {
         let parent = unsafe { self.get_data().parent? };

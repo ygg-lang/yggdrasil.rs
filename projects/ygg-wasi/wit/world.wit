@@ -8,59 +8,61 @@ world host {
 }
 
 interface ast {
+  record text-range {
+    /// utf8 offset of the start
+    head: u32,
+      /// utf8 offset of the end
+    tail: u32,
+  }
+  /// Token type of the language
   enum json-token {
     json,
     json-number,
     json-string,
     json-array
   }
+  // Type erased node
   variant json-type {
-    json(json),
-    josn-number(json-number)
+    json(json-node),
+    josn-number(json-number-node)
   }
 
-  variant json {
-    number(json-number),
+  resource json-iterator {
+    prev: func() -> option<json-type>;
+    next: func() -> option<json-type>;
+    skip: func(count: u32);
+    move-head: func();
+    move-tail: func();
+    reverse: func();
+  }
+
+  // AST Types
+  variant json-node {
+    number(json-number-node),
     str(json-string),
     array(json-array)
   }
-  record traversal-options {
-    include-self: bool,
-    include-leaf: bool,
-    depth-first: bool,
-  }
 
-  record text-range {
-    head: u32,
-    tail: u32,
-  }
 
-  resource json-number {
+
+  resource json-number-node {
+    is-leaf: func() -> bool;
+    get-hash: func() -> u64;
     get-range: func() -> text-range;
     get-token: func() -> json-token;
     get-text: func() -> list<string>;
-    get-ancestors: func(include-self: bool) -> list<json-type>;
-    get-last: func(include-leaf: bool, include-self: bool) -> list<json-type>;
-    get-next: func(include-leaf: bool, include-self: bool) -> list<json-type>;
-    get-children: func(include-leaf: bool) -> list<json-type>;
-    get-descendants: func(include-leaf: bool, depth-first: bool) -> list<json-type>;
-
-    //     get-first
-    //     get-siblings: func(include-leaf: bool) -> list<json-type>;
-
-
+    get-ancestors: func(include-self: bool) -> json-iterator;
+    get-prev: func(include-self: bool) -> json-iterator;
+    get-next: func(include-self: bool) -> json-iterator;
+    get-children: func() -> json-iterator;
+    get-descendants: func(depth-first: bool) -> json-iterator;
   }
   resource json-string {
-    get-parent: func() -> json-type;
-    get-token: func() -> json-token;
-    get-text: func() -> list<string>;
+
   }
 
   resource json-array {
-    get-rule: func() -> json-rule;
-    get-text: func() -> list<string>;
-
-    item: func() -> list<json>;
+    item: func() -> list<json-node>;
   }
 }
 

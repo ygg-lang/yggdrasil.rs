@@ -15,5 +15,5 @@ mod streams;
 pub use crate::{
     byte_code::{Bytecode, Instruction},
     rules::{YggdrasilLanguage, YggdrasilRule},
-    streams::InputStream,
+    streams::TextStream,
 };

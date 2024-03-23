@@ -1,4 +1,4 @@
-use crate::InputStream;
+use crate::TextStream;
 use alloc::{rc::Rc, vec::Vec};
 use core::ops::Range;
 mod iters;

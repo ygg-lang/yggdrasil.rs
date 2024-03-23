@@ -64,36 +64,16 @@ impl YggdrasilRule for {{ rule_name }} {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 {%- if rule.is_class() %}
-pub struct {{ rule.node_name() }} {
-{%- for field in rule.class_fields() %}
-
-
-{%- if field.field_type(self.grammar).is_empty() %}
-        // Missing rule {{ field.rhs }}
-{%- else %}
-{%- if field.count.is_one() %}
-    pub {{ field.field_name()|safe_rust_id }}: {{ field.field_type(self.grammar) }},
-{%- else if field.count.is_optional() %}
-    pub {{ field.field_name()|safe_rust_id }}: Option<{{ field.field_type(self.grammar) }}>,
-{%- else %}
-    pub {{ field.field_name()|safe_rust_id }}: Vec<{{ field.field_type(self.grammar) }}>,
-{%- endif %}
-{%- endif %}
-
-
-{%- endfor %}
-{%- if rule.captures.text %}
-    pub text: String,
-{%- endif %}
-    pub span: Range<{{ self.config.range_type }}>,
+pub struct {{ rule.node_name() }}<'i> {
+    pair: TokenPair<'i, {{ rule_name }}>,
 }
 {%- else if rule.is_union() %}
-pub enum {{ rule.node_name() }} {
+pub enum {{ rule.node_name() }}<'i> {
 {%- for (name, variant) in rule.union_fields() %}
 {%- if variant.is_empty() %}
     {{ name }},
 {%- else if variant.as_single().is_some() %}
-    {{ name }}({{ variant.as_single().unwrap().field_type(self.grammar) }}),
+    {{ name }}({{ variant.as_single().unwrap().field_type(self.grammar) }}<'i>),
 {%- else %}
     {{ name }} {
 {%- for field in variant %}

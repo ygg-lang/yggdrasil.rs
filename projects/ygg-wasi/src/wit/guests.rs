@@ -6,32 +6,12 @@ impl Guest for JsonHost {
     type JsonArray = JsonArray;
 }
 
-impl GuestJsonNumber for JsonNumber {
-    fn get_rule() -> JsonRule {
-        todo!()
-    }
-}
+impl GuestJsonNumber for JsonNumber {}
 
-impl GuestJsonString for JsonString {
-    fn get_rule() -> JsonRule {
-        todo!()
-    }
-}
+impl GuestJsonString for JsonString {}
 
 impl GuestJsonArray for JsonArray {
-    fn get_rule() -> JsonRule {
-        todo!()
-    }
-
-    fn get_item(&self) -> Result<Vec<Json>, ()> {
-        todo!()
-    }
-
-    fn get_text(&self) -> Result<String, ()> {
-        todo!()
-    }
-
-    fn get_span(&self) -> Result<String, ()> {
+    fn item(&self) -> Result<Vec<Json>, ()> {
         todo!()
     }
 }
