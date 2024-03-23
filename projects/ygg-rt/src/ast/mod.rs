@@ -16,10 +16,10 @@ pub trait YggdrasilNode<'i>: Clone + Debug {
         0..0
     }
 
-    fn from_str(input: &'i str) -> Result<Self, YggdrasilError<Self::Rule>> {
+    fn from_str(input: &'i str, offset: usize) -> Result<Self, YggdrasilError<Self::Rule>> {
         Err(YggdrasilError::new_from_span(
             YggdrasilErrorKind::CustomError { message: format!("unimplemented parse from") },
-            TextSpan { input: "", start: 0, end: 0 },
+            TextSpan { input: "", start: offset, end: 0 },
         ))
     }
 

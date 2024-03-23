@@ -54,15 +54,15 @@ mod standard {
 }
 
 mod preview {
-    use yggdrasil_parser::antlr::*;
-
     use super::*;
+    use yggdrasil_parser::antlr::*;
+    use yggdrasil_rt::YggdrasilNode;
 
     #[test]
     fn test_bootstrap() {
         let cst = BootstrapParser::parse_cst(BOOTSTRAP, BootstrapRule::Root).unwrap();
         println!("Short Form:\n{}", cst);
-        let ast = RootNode::from_str(include_str!("bootstrap.ygg")).unwrap();
+        let ast = RootNode::from_str(include_str!("bootstrap.ygg"), 0).unwrap();
         let mut file = File::create("tests/bootstrap.ron").unwrap();
         file.write_all(format!("{:#?}", ast).as_bytes()).unwrap();
         // file.write_all(out.to_string().as_bytes()).unwrap();
@@ -75,7 +75,7 @@ mod preview {
 }"##;
         let cst = BootstrapParser::parse_cst(text, BootstrapRule::ClassStatement).unwrap();
         println!("Short Form:\n{}", cst);
-        let ast = ClassStatementNode::from_str(text).unwrap();
+        let ast = ClassStatementNode::from_str(text, 0).unwrap();
         println!("{ast:#?}")
     }
 
@@ -86,7 +86,7 @@ mod preview {
 }"##;
         let cst = BootstrapParser::parse_cst(text, BootstrapRule::ClassStatement).unwrap();
         println!("Short Form:\n{}", cst);
-        let ast = ClassStatementNode::from_str(text).unwrap();
+        let ast = ClassStatementNode::from_str(text, 0).unwrap();
         println!("{ast:#?}")
     }
     #[test]
@@ -94,7 +94,7 @@ mod preview {
         let text = r##"//"##;
         let cst = BootstrapParser::parse_cst(text, BootstrapRule::Comment).unwrap();
         println!("Short Form:\n{}", cst);
-        let ast = CommentNode::from_str(text).unwrap();
+        let ast = CommentNode::from_str(text, 0).unwrap();
         println!("{ast:#?}")
     }
     #[test]
@@ -113,7 +113,7 @@ mod preview {
     | [|]{2} | 或/"##;
         let cst = BootstrapParser::parse_cst(text, BootstrapRule::RegexEmbed).unwrap();
         println!("Short Form:\n{}", cst);
-        let ast = RegexEmbedNode::from_str(text).unwrap();
+        let ast = RegexEmbedNode::from_str(text, 0).unwrap();
         println!("{ast:#?}")
     }
     #[test]
@@ -124,7 +124,7 @@ mod preview {
         let root = cst.next().unwrap();
         println!("{:?}", root.get_tag());
 
-        let ast = ExpressionNode::from_str(text).unwrap();
+        let ast = ExpressionNode::from_str(text, 0).unwrap();
         println!("{ast:#?}")
     }
 }

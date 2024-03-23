@@ -27,7 +27,7 @@ impl GrammarInfo {
             Ok(o) => o.to_string(),
             Err(e) => Err(YggdrasilError::from(e))?,
         };
-        let root = match RootNode::from_str(&text) {
+        let root = match RootNode::from_str(&text, 0) {
             Ok(o) => o,
             Err(e) => Err(YggdrasilError::from(e).with_file(id))?,
         };

@@ -7,7 +7,7 @@ impl<'i> YggdrasilNode<'i> for RootNode {
         Range { start: self.span.start as usize, end: self.span.end as usize }
     }
 
-    fn from_str(input: &'i str) -> Result<Self, YggdrasilError<Self::Rule>> {
+    fn from_str(input: &'i str, offset: usize) -> Result<Self, YggdrasilError<Self::Rule>> {
         Self::from_cst(BootstrapParser::parse_cst(input, BootstrapRule::Root)?)
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {

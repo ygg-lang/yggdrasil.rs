@@ -1,22 +1,16 @@
 use super::*;
 
 {%- set rules = self.grammar.rules() %}
+{%- set rule_name = self.grammar.rule_name() %}
+{%- set parser_name = self.grammar.parser_name() %}
 
 {%- for rule in rules.clone() %}
 #[automatically_derived]
 impl<'i> YggdrasilNode<'i> for {{ rule.node_name() }}<'i> {
     type Rule = {{ self.grammar.rule_name() }};
 
-    fn get_range(&self) -> Range<usize> {
-{%- if rule.is_class() %}
-        self.pair.get_span().get_range()
-{%- else %}
-        match self {
-{%- for (variant, class) in rule.union_fields() %}
-            Self::{{ variant }}(s) => s.get_range(),
-{%- endfor %}
-        }
-{%- endif %}
+    fn from_str(input: &'i str, offset: usize) -> Result<Self, YggdrasilError<Self::Rule>> {
+        Self::from_cst({{ parser_name }}::parse_cst(input, {{ rule_name }}::{{ rule.name.text|safe_rust_id }})?)
     }
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
 {%- if rule.is_class() %}
@@ -31,16 +25,27 @@ impl<'i> YggdrasilNode<'i> for {{ rule.node_name() }}<'i> {
         Err(YggdrasilError::invalid_node({{ self.grammar.rule_name() }}::{{ rule.name.text|safe_rust_id }}, _span))
 {%- endif %}
     }
+    fn get_range(&self) -> Range<usize> {
+{%- if rule.is_class() %}
+        self.pair.get_span().get_range()
+{%- else %}
+        match self {
+{%- for (variant, class) in rule.union_fields() %}
+            Self::{{ variant }}(s) => s.get_range(),
+{%- endfor %}
+        }
+{%- endif %}
+    }
 }
 {%- if rule.is_class() %}
 impl<'i> {{ rule.node_name() }}<'i> {
 {%- for field in rule.class_fields() %}
 {%- if field.count.is_one() %}
-    pub fn {{ field.field_name() }}(&self) {
-           // pair.take_tagged_one::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}"))?,
+    pub fn {{ field.field_name() }}(&self) -> {{ field.field_type(self.grammar) }}<'i> {
+        self.pair.take_tagged_one(Cow::Borrowed("{{ field.field_name() }}")).unwrap()
 {%- else if field.count.is_optional() %}
-    pub fn {{ field.field_name() }}(&self) {
-         // pair.take_tagged_option::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}")),
+    pub fn {{ field.field_name() }}(&self) -> Option<{{ field.field_type(self.grammar) }}<'i>> {
+        self.pair.take_tagged_option(Cow::Borrowed("{{ field.field_name() }}"))
 {%- else %}
     pub fn {{ field.field_name() }}(&self) -> TokenTreeFilterTag<'i, {{ field.field_type(self.grammar) }}<'i>> {
         self.pair.take_tagged_items(Cow::Borrowed("{{ field.field_name() }}"))
