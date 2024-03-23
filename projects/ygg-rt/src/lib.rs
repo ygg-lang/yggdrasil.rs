@@ -26,7 +26,7 @@ pub use crate::{
         tokens::Tokens,
     },
     language::YggdrasilParser,
-    parser_state::{state, Lookahead, MatchDirection, State},
+    parser_state::{state, Either, Lookahead, MatchDirection, State},
     position::Position,
     span::{merge_spans, Lines, LinesSpan, TextSpan},
     token::Token,
@@ -60,6 +60,11 @@ pub trait YggdrasilRule: Clone + Debug + Eq + Hash + Ord {
     fn is_ignore(&self) -> bool {
         false
     }
+
+    fn is_leaf(&self) -> bool {
+        false
+    }
+
     /// Get the style name from the rule
     fn get_style(&self) -> &'static str {
         ""

@@ -289,7 +289,17 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
     where
         N: YggdrasilNode<'i, Rule = R>,
     {
-        self.take_tagged_items(tag).next()?.ok()
+        for child in self.clone().into_inner() {
+            match child.get_tag() {
+                Some(s) if tag.eq(s) => {}
+                _ => continue,
+            }
+            return match N::from_pair(child) {
+                Ok(o) => Some(o),
+                Err(_) => None,
+            };
+        }
+        return None;
     }
 
     /// Finds the first pair that has its node or branch tagged with the provided

@@ -1,3 +1,4 @@
+#![allow(unused_variables)]
 use super::*;
 
 {%- set rules = self.grammar.rules() %}
@@ -25,6 +26,23 @@ impl<'i> YggdrasilNode<'i> for {{ rule.node_name() }}<'i> {
         Err(YggdrasilError::invalid_node({{ self.grammar.rule_name() }}::{{ rule.name.text|safe_rust_id }}, _span))
 {%- endif %}
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        {{ rule_name }}::{{ rule.name.text|safe_rust_id }}
+    }
+
+    fn get_text(&self) -> &str {
+{%- if rule.is_class() %}
+        self.pair.get_span().as_str()
+{%- else %}
+        match self {
+{%- for (variant, class) in rule.union_fields() %}
+            Self::{{ variant }}(s) => s.get_text(),
+{%- endfor %}
+        }
+{%- endif %}
+    }
+
     fn get_range(&self) -> Range<usize> {
 {%- if rule.is_class() %}
         self.pair.get_span().get_range()

@@ -7,14 +7,6 @@ use core::{fmt::Debug, ops::Range};
 pub trait YggdrasilNode<'i>: Clone + Debug {
     /// Specify the rules of this language
     type Rule: YggdrasilRule;
-    /// get rule
-    fn get_rule<R>(&self) -> Option<Self::Rule> {
-        None
-    }
-    ///
-    fn get_range(&self) -> Range<usize> {
-        0..0
-    }
 
     fn from_str(input: &'i str, offset: usize) -> Result<Self, YggdrasilError<Self::Rule>> {
         Err(YggdrasilError::new_from_span(
@@ -34,10 +26,16 @@ pub trait YggdrasilNode<'i>: Clone + Debug {
         }
     }
     /// from
-    fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
-        Err(YggdrasilError::new_from_span(
-            YggdrasilErrorKind::CustomError { message: format!("unimplemented {:?}", pair) },
-            TextSpan { input: "", start: 0, end: 0 },
-        ))
+    fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>>;
+
+    /// get rule
+    fn get_rule(&self) -> Self::Rule {
+        unimplemented!()
     }
+    fn get_text(&self) -> &str {
+        unimplemented!()
+    }
+
+    ///
+    fn get_range(&self) -> Range<usize>;
 }

@@ -1,3 +1,4 @@
+#![allow(unused_variables)]
 use super::*;
 #[automatically_derived]
 impl<'i> YggdrasilNode<'i> for RootNode<'i> {
@@ -9,6 +10,15 @@ impl<'i> YggdrasilNode<'i> for RootNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Root
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -41,6 +51,20 @@ impl<'i> YggdrasilNode<'i> for StatementNode<'i> {
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::Statement, _span))
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Statement
+    }
+
+    fn get_text(&self) -> &str {
+        match self {
+            Self::GrammarStatement(s) => s.get_text(),
+            Self::ClassStatement(s) => s.get_text(),
+            Self::UnionStatement(s) => s.get_text(),
+            Self::GroupStatement(s) => s.get_text(),
+        }
+    }
+
     fn get_range(&self) -> Range<usize> {
         match self {
             Self::GrammarStatement(s) => s.get_range(),
@@ -60,6 +84,15 @@ impl<'i> YggdrasilNode<'i> for GrammarStatementNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::GrammarStatement
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -82,6 +115,15 @@ impl<'i> YggdrasilNode<'i> for GrammarTerm1Node<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::GrammarTerm1
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -104,6 +146,18 @@ impl<'i> YggdrasilNode<'i> for GrammarTermNode<'i> {
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::GrammarTerm, _span))
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::GrammarTerm
+    }
+
+    fn get_text(&self) -> &str {
+        match self {
+            Self::GrammarPair(s) => s.get_text(),
+            Self::GrammarTerm1(s) => s.get_text(),
+        }
+    }
+
     fn get_range(&self) -> Range<usize> {
         match self {
             Self::GrammarPair(s) => s.get_range(),
@@ -121,6 +175,15 @@ impl<'i> YggdrasilNode<'i> for GrammarPairNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::GrammarPair
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -159,6 +222,21 @@ impl<'i> YggdrasilNode<'i> for GrammarValueNode<'i> {
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::GrammarValue, _span))
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::GrammarValue
+    }
+
+    fn get_text(&self) -> &str {
+        match self {
+            Self::GrammarDict(s) => s.get_text(),
+            Self::GrammarList(s) => s.get_text(),
+            Self::Namepath(s) => s.get_text(),
+            Self::StringRaw(s) => s.get_text(),
+            Self::StringNormal(s) => s.get_text(),
+        }
+    }
+
     fn get_range(&self) -> Range<usize> {
         match self {
             Self::GrammarDict(s) => s.get_range(),
@@ -179,6 +257,15 @@ impl<'i> YggdrasilNode<'i> for GrammarDictNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::GrammarDict
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -198,6 +285,15 @@ impl<'i> YggdrasilNode<'i> for GrammarListNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::GrammarList
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -217,6 +313,15 @@ impl<'i> YggdrasilNode<'i> for GrammarListTermsNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::GrammarListTerms
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -236,6 +341,15 @@ impl<'i> YggdrasilNode<'i> for ClassStatementNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::ClassStatement
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -270,6 +384,15 @@ impl<'i> YggdrasilNode<'i> for ClassBlockNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::ClassBlock
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -289,6 +412,15 @@ impl<'i> YggdrasilNode<'i> for OpRemarkNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::OP_REMARK
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -304,6 +436,15 @@ impl<'i> YggdrasilNode<'i> for UnionStatementNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::UnionStatement
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -335,6 +476,15 @@ impl<'i> YggdrasilNode<'i> for UnionBlockNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::UnionBlock
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -354,6 +504,15 @@ impl<'i> YggdrasilNode<'i> for UnionBranchNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::UnionBranch
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -376,6 +535,15 @@ impl<'i> YggdrasilNode<'i> for BranchTagNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::BranchTag
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -398,6 +566,15 @@ impl<'i> YggdrasilNode<'i> for RightAssociativityNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::RightAssociativity
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -413,6 +590,15 @@ impl<'i> YggdrasilNode<'i> for GroupStatementNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::GroupStatement
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -441,6 +627,15 @@ impl<'i> YggdrasilNode<'i> for GroupBlockNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::GroupBlock
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -460,6 +655,15 @@ impl<'i> YggdrasilNode<'i> for GroupPairNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::GroupPair
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -482,6 +686,15 @@ impl<'i> YggdrasilNode<'i> for DecoratorCallNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::DecoratorCall
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -504,6 +717,15 @@ impl<'i> YggdrasilNode<'i> for DecoratorNameNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::DecoratorName
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -523,6 +745,15 @@ impl<'i> YggdrasilNode<'i> for FunctionCallNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::FunctionCall
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -545,6 +776,15 @@ impl<'i> YggdrasilNode<'i> for FunctionNameNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::FunctionName
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -564,6 +804,15 @@ impl<'i> YggdrasilNode<'i> for CallBodyNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::CallBody
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -583,6 +832,15 @@ impl<'i> YggdrasilNode<'i> for ExpressionNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Expression
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -602,6 +860,15 @@ impl<'i> YggdrasilNode<'i> for ExpressionHardNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::ExpressionHard
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -621,6 +888,15 @@ impl<'i> YggdrasilNode<'i> for ExpressionSoftNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::ExpressionSoft
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -640,6 +916,15 @@ impl<'i> YggdrasilNode<'i> for ExpressionTagNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::ExpressionTag
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -662,6 +947,15 @@ impl<'i> YggdrasilNode<'i> for TermNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Term
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -687,6 +981,15 @@ impl<'i> YggdrasilNode<'i> for NegativeNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Negative
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -702,6 +1005,15 @@ impl<'i> YggdrasilNode<'i> for PositiveNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Positive
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -717,6 +1029,15 @@ impl<'i> YggdrasilNode<'i> for RemarkNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Remark
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -742,6 +1063,19 @@ impl<'i> YggdrasilNode<'i> for PrefixNode<'i> {
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::Prefix, _span))
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Prefix
+    }
+
+    fn get_text(&self) -> &str {
+        match self {
+            Self::Negative(s) => s.get_text(),
+            Self::Positive(s) => s.get_text(),
+            Self::Remark(s) => s.get_text(),
+        }
+    }
+
     fn get_range(&self) -> Range<usize> {
         match self {
             Self::Negative(s) => s.get_range(),
@@ -760,6 +1094,15 @@ impl<'i> YggdrasilNode<'i> for OptionalNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Optional
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -775,6 +1118,15 @@ impl<'i> YggdrasilNode<'i> for ManyNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Many
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -790,6 +1142,15 @@ impl<'i> YggdrasilNode<'i> for Many1Node<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Many1
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -821,6 +1182,21 @@ impl<'i> YggdrasilNode<'i> for SuffixNode<'i> {
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::Suffix, _span))
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Suffix
+    }
+
+    fn get_text(&self) -> &str {
+        match self {
+            Self::Optional(s) => s.get_text(),
+            Self::Many(s) => s.get_text(),
+            Self::Many1(s) => s.get_text(),
+            Self::RangeExact(s) => s.get_text(),
+            Self::Range(s) => s.get_text(),
+        }
+    }
+
     fn get_range(&self) -> Range<usize> {
         match self {
             Self::Optional(s) => s.get_range(),
@@ -875,6 +1251,27 @@ impl<'i> YggdrasilNode<'i> for AtomicNode<'i> {
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::Atomic, _span))
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Atomic
+    }
+
+    fn get_text(&self) -> &str {
+        match self {
+            Self::GroupExpression(s) => s.get_text(),
+            Self::FunctionCall(s) => s.get_text(),
+            Self::Boolean(s) => s.get_text(),
+            Self::Integer(s) => s.get_text(),
+            Self::StringRaw(s) => s.get_text(),
+            Self::StringNormal(s) => s.get_text(),
+            Self::Category(s) => s.get_text(),
+            Self::EscapedUnicode(s) => s.get_text(),
+            Self::RegexEmbed(s) => s.get_text(),
+            Self::RegexRange(s) => s.get_text(),
+            Self::Identifier(s) => s.get_text(),
+        }
+    }
+
     fn get_range(&self) -> Range<usize> {
         match self {
             Self::GroupExpression(s) => s.get_range(),
@@ -901,6 +1298,15 @@ impl<'i> YggdrasilNode<'i> for GroupExpressionNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::GroupExpression
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -920,6 +1326,15 @@ impl<'i> YggdrasilNode<'i> for StringRawNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::StringRaw
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -939,6 +1354,15 @@ impl<'i> YggdrasilNode<'i> for StringRawTextNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::StringRawText
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -954,6 +1378,15 @@ impl<'i> YggdrasilNode<'i> for StringNormalNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::StringNormal
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -983,6 +1416,19 @@ impl<'i> YggdrasilNode<'i> for StringItemNode<'i> {
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::StringItem, _span))
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::StringItem
+    }
+
+    fn get_text(&self) -> &str {
+        match self {
+            Self::EscapedUnicode(s) => s.get_text(),
+            Self::EscapedCharacter(s) => s.get_text(),
+            Self::TextAny(s) => s.get_text(),
+        }
+    }
+
     fn get_range(&self) -> Range<usize> {
         match self {
             Self::EscapedUnicode(s) => s.get_range(),
@@ -1001,6 +1447,15 @@ impl<'i> YggdrasilNode<'i> for EscapedUnicodeNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::EscapedUnicode
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1020,6 +1475,15 @@ impl<'i> YggdrasilNode<'i> for EscapedCharacterNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::EscapedCharacter
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1035,6 +1499,15 @@ impl<'i> YggdrasilNode<'i> for HexNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::HEX
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1050,6 +1523,15 @@ impl<'i> YggdrasilNode<'i> for TextAnyNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::TextAny
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1065,6 +1547,15 @@ impl<'i> YggdrasilNode<'i> for RegexEmbedNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::RegexEmbed
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1091,6 +1582,18 @@ impl<'i> YggdrasilNode<'i> for RegexItemNode<'i> {
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::RegexItem, _span))
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::RegexItem
+    }
+
+    fn get_text(&self) -> &str {
+        match self {
+            Self::EscapedCharacter(s) => s.get_text(),
+            Self::RegexCharacter(s) => s.get_text(),
+        }
+    }
+
     fn get_range(&self) -> Range<usize> {
         match self {
             Self::EscapedCharacter(s) => s.get_range(),
@@ -1108,6 +1611,15 @@ impl<'i> YggdrasilNode<'i> for RegexCharacterNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::RegexCharacter
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1123,6 +1635,15 @@ impl<'i> YggdrasilNode<'i> for RegexRangeNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::RegexRange
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1142,6 +1663,15 @@ impl<'i> YggdrasilNode<'i> for RegexNegativeNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::RegexNegative
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1157,6 +1687,15 @@ impl<'i> YggdrasilNode<'i> for CategoryNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Category
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1179,6 +1718,15 @@ impl<'i> YggdrasilNode<'i> for NamepathFreeNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::NamepathFree
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1198,6 +1746,15 @@ impl<'i> YggdrasilNode<'i> for NamepathNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Namepath
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1217,6 +1774,15 @@ impl<'i> YggdrasilNode<'i> for IdentifierNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Identifier
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1232,6 +1798,15 @@ impl<'i> YggdrasilNode<'i> for TrueNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::True
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1247,6 +1822,15 @@ impl<'i> YggdrasilNode<'i> for FalseNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::False
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1269,6 +1853,18 @@ impl<'i> YggdrasilNode<'i> for BooleanNode<'i> {
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::Boolean, _span))
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Boolean
+    }
+
+    fn get_text(&self) -> &str {
+        match self {
+            Self::True(s) => s.get_text(),
+            Self::False(s) => s.get_text(),
+        }
+    }
+
     fn get_range(&self) -> Range<usize> {
         match self {
             Self::True(s) => s.get_range(),
@@ -1286,6 +1882,15 @@ impl<'i> YggdrasilNode<'i> for IntegerNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Integer
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1301,6 +1906,15 @@ impl<'i> YggdrasilNode<'i> for RangeExactNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::RangeExact
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1320,6 +1934,15 @@ impl<'i> YggdrasilNode<'i> for RangeNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Range
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1342,6 +1965,15 @@ impl<'i> YggdrasilNode<'i> for ModifierCallNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::ModifierCall
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1361,6 +1993,15 @@ impl<'i> YggdrasilNode<'i> for OpCategoryNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::OP_CATEGORY
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1376,6 +2017,15 @@ impl<'i> YggdrasilNode<'i> for ParserNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Parser
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1391,6 +2041,15 @@ impl<'i> YggdrasilNode<'i> for InspectorNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Inspector
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1406,6 +2065,15 @@ impl<'i> YggdrasilNode<'i> for ExternalNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::External
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1431,6 +2099,19 @@ impl<'i> YggdrasilNode<'i> for KwExternalNode<'i> {
         }
         Err(YggdrasilError::invalid_node(BootstrapRule::KW_EXTERNAL, _span))
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::KW_EXTERNAL
+    }
+
+    fn get_text(&self) -> &str {
+        match self {
+            Self::Parser(s) => s.get_text(),
+            Self::Inspector(s) => s.get_text(),
+            Self::External(s) => s.get_text(),
+        }
+    }
+
     fn get_range(&self) -> Range<usize> {
         match self {
             Self::Parser(s) => s.get_range(),
@@ -1449,6 +2130,15 @@ impl<'i> YggdrasilNode<'i> for KwGrammarNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::KW_GRAMMAR
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1464,6 +2154,15 @@ impl<'i> YggdrasilNode<'i> for KwImportNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::KW_IMPORT
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1479,6 +2178,15 @@ impl<'i> YggdrasilNode<'i> for KwClassNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::KW_CLASS
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1494,6 +2202,15 @@ impl<'i> YggdrasilNode<'i> for KwUnionNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::KW_UNION
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1509,6 +2226,15 @@ impl<'i> YggdrasilNode<'i> for KwGroupNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::KW_GROUP
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1524,6 +2250,15 @@ impl<'i> YggdrasilNode<'i> for KwClimbNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::KW_CLIMB
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1539,6 +2274,15 @@ impl<'i> YggdrasilNode<'i> for KwMacroNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::KW_MACRO
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1554,6 +2298,15 @@ impl<'i> YggdrasilNode<'i> for WhiteSpaceNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::WhiteSpace
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
@@ -1569,6 +2322,15 @@ impl<'i> YggdrasilNode<'i> for CommentNode<'i> {
     fn from_pair(pair: TokenPair<'i, Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         Ok(Self { pair })
     }
+
+    fn get_rule(&self) -> Self::Rule {
+        BootstrapRule::Comment
+    }
+
+    fn get_text(&self) -> &str {
+        self.pair.get_span().as_str()
+    }
+
     fn get_range(&self) -> Range<usize> {
         self.pair.get_span().get_range()
     }
