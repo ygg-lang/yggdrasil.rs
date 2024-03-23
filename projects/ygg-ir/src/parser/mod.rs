@@ -1,13 +1,11 @@
 use indexmap::IndexMap;
 use num::{BigInt, Num};
-use std::collections::BTreeMap;
-
-use yggdrasil_error::{Failure, FileCache, FileID, FileSpan, Success, Validation, YggdrasilError};
+use yggdrasil_error::{Failure, FileCache, FileID, Success, Validation, YggdrasilError};
 use yggdrasil_parser::{
     bootstrap::{
         AtomicNode, BooleanNode, ClassStatementNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
         GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, PrefixNode, RootNode, StatementNode, StringItemNode,
-        SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
+        SuffixNode, TermNode, UnionStatementNode,
     },
     TakeAnnotations, YggdrasilNode,
 };
@@ -16,7 +14,7 @@ use crate::{
     data::{YggdrasilRegex, YggdrasilText},
     grammar::GrammarInfo,
     nodes::{UnaryExpression, YggdrasilExpression, YggdrasilOperator},
-    rule::{GrammarAtomic, GrammarBody, GrammarRule, YggdrasilCounter, YggdrasilIdentifier, YggdrasilVariant},
+    rule::{GrammarAtomic, GrammarBody, GrammarRule, YggdrasilCounter, YggdrasilIdentifier},
 };
 
 mod annotations;

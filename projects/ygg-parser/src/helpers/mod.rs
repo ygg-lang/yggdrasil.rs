@@ -1,6 +1,5 @@
 use crate::bootstrap::{
-    BranchTagNode, DecoratorCallNode, EscapedUnicodeNode, IdentifierNode, ModifierCallNode, RegexEmbedNode, RegexItemNode,
-    UnionBranchNode,
+    DecoratorCallNode, EscapedUnicodeNode, ModifierCallNode, RegexEmbedNode, RegexItemNode, UnionBranchNode,
 };
 use std::{
     borrow::Cow,

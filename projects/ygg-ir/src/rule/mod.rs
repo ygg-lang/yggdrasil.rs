@@ -8,7 +8,6 @@ use std::{
 use convert_case::{Case, Casing};
 use indexmap::IndexMap;
 pub use num::BigInt;
-use yggdrasil_parser::bootstrap::IdentifierNode;
 
 use crate::{
     data::RuleReference,

@@ -24,7 +24,7 @@ impl<'i> YggdrasilNode<'i> for {{ rule.node_name() }}<'i> {
 {%- else if rule.is_union() %}
         let _span = pair.get_span();
 {%- for (variant, class) in rule.union_fields() %}
-        if let Ok(s) = pair.take_tagged_one::<{{ class }}>(Cow::Borrowed("{{ variant|snake_case }}")) {
+        if let Ok(s) = pair.take_tagged_one(Cow::Borrowed("{{ variant|snake_case }}")) {
             return Ok(Self::{{ variant }}(s));
         }
 {%- endfor %}
@@ -32,5 +32,22 @@ impl<'i> YggdrasilNode<'i> for {{ rule.node_name() }}<'i> {
 {%- endif %}
     }
 }
-
+{%- if rule.is_class() %}
+impl<'i> {{ rule.node_name() }}<'i> {
+{%- for field in rule.class_fields() %}
+{%- if field.count.is_one() %}
+    pub fn {{ field.field_name() }}(&self) {
+           // pair.take_tagged_one::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}"))?,
+{%- else if field.count.is_optional() %}
+    pub fn {{ field.field_name() }}(&self) {
+         // pair.take_tagged_option::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}")),
+{%- else %}
+    pub fn {{ field.field_name() }}(&self) -> TokenTreeFilterTag<'i, {{ field.field_type(self.grammar) }}<'i>> {
+        self.pair.take_tagged_items(Cow::Borrowed("{{ field.field_name() }}"))
+{%- endif %}
+    }
 {%- endfor %}
+}
+{%- endif %}
+{%- endfor %}
+

@@ -1,7 +1,6 @@
 use super::*;
-use convert_case::{Case, Casing};
 use yggdrasil_error::Validation;
-use yggdrasil_ir::rule::{GrammarBody, YggdrasilIdentifier, YggdrasilVariant};
+use yggdrasil_ir::rule::GrammarBody;
 
 /// Automatically insert or remove tags
 #[derive(Default)]

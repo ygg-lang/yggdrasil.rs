@@ -3,6 +3,7 @@ use alloc::format;
 use core::{fmt::Debug, ops::Range};
 
 /// A typed ast node
+#[allow(unused_variables)]
 pub trait YggdrasilNode<'i>: Clone + Debug {
     /// Specify the rules of this language
     type Rule: YggdrasilRule;
