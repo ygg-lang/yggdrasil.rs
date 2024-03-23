@@ -278,10 +278,18 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
     where
         N: YggdrasilNode<'i, Rule = R>,
     {
-        match self.take_tagged_items(tag.clone()).next() {
-            Some(s) => s,
-            None => Err(YggdrasilError::missing_tag(tag, self.get_span())),
+        for child in self.clone().into_inner() {
+            match child.get_tag() {
+                Some(s) if tag.eq(s) => {}
+                _ => continue,
+            }
+            return N::from_pair(child);
         }
+        return Err(YggdrasilError::missing_tag(tag, self.get_span()));
+        // match self.take_tagged_items(tag.clone()).next() {
+        //     Some(s) => s,
+        //     None => Err(YggdrasilError::missing_tag(tag, self.get_span())),
+        // }
     }
     /// Take option
     #[inline]

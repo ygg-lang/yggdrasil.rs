@@ -5,6 +5,7 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::Root => parse_root(state),
         BootstrapRule::Statement => parse_statement(state),
         BootstrapRule::GrammarStatement => parse_grammar_statement(state),
+        BootstrapRule::GrammarTerm1 => parse_grammar_term_1(state),
         BootstrapRule::GrammarTerm => parse_grammar_term(state),
         BootstrapRule::GrammarPair => parse_grammar_pair(state),
         BootstrapRule::GrammarValue => parse_grammar_value(state),
@@ -32,7 +33,13 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::ExpressionSoft => parse_expression_soft(state),
         BootstrapRule::ExpressionTag => parse_expression_tag(state),
         BootstrapRule::Term => parse_term(state),
+        BootstrapRule::Negative => parse_negative(state),
+        BootstrapRule::Positive => parse_positive(state),
+        BootstrapRule::Remark => parse_remark(state),
         BootstrapRule::Prefix => parse_prefix(state),
+        BootstrapRule::Optional => parse_optional(state),
+        BootstrapRule::Many => parse_many(state),
+        BootstrapRule::Many1 => parse_many_1(state),
         BootstrapRule::Suffix => parse_suffix(state),
         BootstrapRule::Atomic => parse_atomic(state),
         BootstrapRule::GroupExpression => parse_group_expression(state),
@@ -53,12 +60,17 @@ pub(super) fn parse_cst(input: &str, rule: BootstrapRule) -> OutputResult<Bootst
         BootstrapRule::NamepathFree => parse_namepath_free(state),
         BootstrapRule::Namepath => parse_namepath(state),
         BootstrapRule::Identifier => parse_identifier(state),
+        BootstrapRule::True => parse_true(state),
+        BootstrapRule::False => parse_false(state),
         BootstrapRule::Boolean => parse_boolean(state),
         BootstrapRule::Integer => parse_integer(state),
         BootstrapRule::RangeExact => parse_range_exact(state),
         BootstrapRule::Range => parse_range(state),
         BootstrapRule::ModifierCall => parse_modifier_call(state),
         BootstrapRule::OP_CATEGORY => parse_op_category(state),
+        BootstrapRule::Parser => parse_parser(state),
+        BootstrapRule::Inspector => parse_inspector(state),
+        BootstrapRule::External => parse_external(state),
         BootstrapRule::KW_EXTERNAL => parse_kw_external(state),
         BootstrapRule::KW_GRAMMAR => parse_kw_grammar(state),
         BootstrapRule::KW_IMPORT => parse_kw_import(state),
@@ -115,15 +127,20 @@ fn parse_grammar_statement(state: Input) -> Output {
     })
 }
 #[inline]
+fn parse_grammar_term_1(state: Input) -> Output {
+    state.rule(BootstrapRule::GrammarTerm1, |s| {
+        s.match_regex({
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+            REGEX.get_or_init(|| Regex::new("^(?x)([,;])").unwrap())
+        })
+    })
+}
+#[inline]
 fn parse_grammar_term(state: Input) -> Output {
     state.rule(BootstrapRule::GrammarTerm, |s| {
-        Err(s).or_else(|s| parse_grammar_pair(s).and_then(|s| s.tag_node("grammar_pair"))).or_else(|s| {
-            builtin_regex(s, {
-                static REGEX: OnceLock<Regex> = OnceLock::new();
-                REGEX.get_or_init(|| Regex::new("^(?x)([,;])").unwrap())
-            })
-            .and_then(|s| s.tag_node("grammar_term_1"))
-        })
+        Err(s)
+            .or_else(|s| parse_grammar_pair(s).and_then(|s| s.tag_node("grammar_pair")))
+            .or_else(|s| parse_grammar_term_1(s).and_then(|s| s.tag_node("grammar_term_1")))
     })
 }
 #[inline]
@@ -711,21 +728,45 @@ fn parse_term(state: Input) -> Output {
     })
 }
 #[inline]
+fn parse_negative(state: Input) -> Output {
+    state.rule(BootstrapRule::Negative, |s| s.match_string("!", false))
+}
+#[inline]
+fn parse_positive(state: Input) -> Output {
+    state.rule(BootstrapRule::Positive, |s| s.match_string("&", false))
+}
+#[inline]
+fn parse_remark(state: Input) -> Output {
+    state.rule(BootstrapRule::Remark, |s| s.match_string("^", false))
+}
+#[inline]
 fn parse_prefix(state: Input) -> Output {
     state.rule(BootstrapRule::Prefix, |s| {
         Err(s)
-            .or_else(|s| builtin_text(s, "!", false).and_then(|s| s.tag_node("negative")))
-            .or_else(|s| builtin_text(s, "&", false).and_then(|s| s.tag_node("positive")))
-            .or_else(|s| builtin_text(s, "^", false).and_then(|s| s.tag_node("remark")))
+            .or_else(|s| parse_negative(s).and_then(|s| s.tag_node("negative")))
+            .or_else(|s| parse_positive(s).and_then(|s| s.tag_node("positive")))
+            .or_else(|s| parse_remark(s).and_then(|s| s.tag_node("remark")))
     })
+}
+#[inline]
+fn parse_optional(state: Input) -> Output {
+    state.rule(BootstrapRule::Optional, |s| s.match_string("?", false))
+}
+#[inline]
+fn parse_many(state: Input) -> Output {
+    state.rule(BootstrapRule::Many, |s| s.match_string("*", false))
+}
+#[inline]
+fn parse_many_1(state: Input) -> Output {
+    state.rule(BootstrapRule::Many1, |s| s.match_string("+", false))
 }
 #[inline]
 fn parse_suffix(state: Input) -> Output {
     state.rule(BootstrapRule::Suffix, |s| {
         Err(s)
-            .or_else(|s| builtin_text(s, "?", false).and_then(|s| s.tag_node("optional")))
-            .or_else(|s| builtin_text(s, "*", false).and_then(|s| s.tag_node("many")))
-            .or_else(|s| builtin_text(s, "+", false).and_then(|s| s.tag_node("many_1")))
+            .or_else(|s| parse_optional(s).and_then(|s| s.tag_node("optional")))
+            .or_else(|s| parse_many(s).and_then(|s| s.tag_node("many")))
+            .or_else(|s| parse_many_1(s).and_then(|s| s.tag_node("many_1")))
             .or_else(|s| parse_range_exact(s).and_then(|s| s.tag_node("range_exact")))
             .or_else(|s| parse_range(s).and_then(|s| s.tag_node("range")))
     })
@@ -983,11 +1024,19 @@ fn parse_identifier(state: Input) -> Output {
     })
 }
 #[inline]
+fn parse_true(state: Input) -> Output {
+    state.rule(BootstrapRule::True, |s| s.match_string("true", false))
+}
+#[inline]
+fn parse_false(state: Input) -> Output {
+    state.rule(BootstrapRule::False, |s| s.match_string("false", false))
+}
+#[inline]
 fn parse_boolean(state: Input) -> Output {
     state.rule(BootstrapRule::Boolean, |s| {
         Err(s)
-            .or_else(|s| builtin_text(s, "true", false).and_then(|s| s.tag_node("true")))
-            .or_else(|s| builtin_text(s, "false", false).and_then(|s| s.tag_node("false")))
+            .or_else(|s| parse_true(s).and_then(|s| s.tag_node("true")))
+            .or_else(|s| parse_false(s).and_then(|s| s.tag_node("false")))
     })
 }
 #[inline]
@@ -1053,12 +1102,24 @@ fn parse_op_category(state: Input) -> Output {
     state.rule(BootstrapRule::OP_CATEGORY, |s| s.match_string("\\p", false))
 }
 #[inline]
+fn parse_parser(state: Input) -> Output {
+    state.rule(BootstrapRule::Parser, |s| s.match_string("parser", false))
+}
+#[inline]
+fn parse_inspector(state: Input) -> Output {
+    state.rule(BootstrapRule::Inspector, |s| s.match_string("inspector", false))
+}
+#[inline]
+fn parse_external(state: Input) -> Output {
+    state.rule(BootstrapRule::External, |s| s.match_string("external", false))
+}
+#[inline]
 fn parse_kw_external(state: Input) -> Output {
     state.rule(BootstrapRule::KW_EXTERNAL, |s| {
         Err(s)
-            .or_else(|s| builtin_text(s, "parser", false).and_then(|s| s.tag_node("parser")))
-            .or_else(|s| builtin_text(s, "inspector", false).and_then(|s| s.tag_node("inspector")))
-            .or_else(|s| builtin_text(s, "external", false).and_then(|s| s.tag_node("external")))
+            .or_else(|s| parse_parser(s).and_then(|s| s.tag_node("parser")))
+            .or_else(|s| parse_inspector(s).and_then(|s| s.tag_node("inspector")))
+            .or_else(|s| parse_external(s).and_then(|s| s.tag_node("external")))
     })
 }
 #[inline]

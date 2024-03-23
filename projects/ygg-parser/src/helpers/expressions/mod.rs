@@ -3,74 +3,68 @@ use crate::bootstrap::{
     TermNode,
 };
 
-impl ExpressionNode {
-    pub fn as_single(&self) -> Option<&ExpressionHardNode> {
-        match self.expression_hard.as_slice() {
-            [one] => Some(one),
+impl<'i> ExpressionNode<'i> {
+    pub fn to_single(self) -> Option<ExpressionHardNode<'i>> {
+        let mut children = self.expression_hard();
+        if children.len() == 1 { children.pop() } else { None }
+    }
+    pub fn to_atom(self) -> Option<AtomicNode<'i>> {
+        self.to_single()?.to_atom()
+    }
+    pub fn to_boolean(self) -> Option<bool> {
+        match self.to_atom()? {
+            AtomicNode::Boolean(BooleanNode::True(_)) => Some(true),
+            AtomicNode::Boolean(BooleanNode::False(_)) => Some(false),
             _ => None,
         }
     }
-    pub fn as_atom(&self) -> Option<&AtomicNode> {
-        self.as_single()?.as_atom()
-    }
-    pub fn as_boolean(&self) -> Option<bool> {
-        match self.as_atom()? {
-            AtomicNode::Boolean(BooleanNode::True) => Some(true),
-            AtomicNode::Boolean(BooleanNode::False) => Some(false),
-            _ => None,
-        }
-    }
-    pub fn as_identifier(&self) -> Option<&IdentifierNode> {
-        if let AtomicNode::Identifier(v) = self.as_atom()? {
+    pub fn to_identifier(self) -> Option<IdentifierNode<'i>> {
+        if let AtomicNode::Identifier(v) = self.to_atom()? {
             return Some(v);
         }
         return None;
     }
 }
 
-impl ExpressionHardNode {
-    pub fn as_single(&self) -> Option<&ExpressionSoftNode> {
-        match self.expression_soft.as_slice() {
-            [one] => Some(one),
-            _ => None,
-        }
+impl<'i> ExpressionHardNode<'i> {
+    pub fn to_single(self) -> Option<ExpressionSoftNode<'i>> {
+        let mut children = self.expression_soft();
+        if children.len() == 1 { return children.pop() } else { None }
     }
 
-    pub fn as_atom(&self) -> Option<&AtomicNode> {
-        self.as_single()?.as_single()?.as_single()?.as_single()
+    pub fn to_atom(self) -> Option<AtomicNode<'i>> {
+        self.to_single()?.to_single()?.to_single()?.to_single()
     }
-    pub fn as_identifier(&self) -> Option<&IdentifierNode> {
-        self.as_atom()?.as_identifier()
+    pub fn to_identifier(self) -> Option<IdentifierNode<'i>> {
+        self.to_atom()?.to_identifier()
     }
 }
 
-impl ExpressionSoftNode {
-    pub fn as_single(&self) -> Option<&ExpressionTagNode> {
-        match self.expression_tag.as_slice() {
-            [one] => Some(one),
-            _ => None,
-        }
+impl<'i> ExpressionSoftNode<'i> {
+    pub fn to_single(self) -> Option<ExpressionTagNode<'i>> {
+        let mut children = self.expression_tag();
+        if children.len() == 1 { return children.pop() } else { None }
     }
 }
-impl ExpressionTagNode {
-    pub fn as_single(&self) -> Option<&TermNode> {
-        match self.identifier.as_ref() {
+impl<'i> ExpressionTagNode<'i> {
+    pub fn to_single(self) -> Option<TermNode<'i>> {
+        match self.identifier() {
             Some(_) => None,
-            _ => Some(&self.term),
+            _ => Some(self.term()),
         }
     }
 }
 
-impl TermNode {
-    pub fn as_single(&self) -> Option<&AtomicNode> {
-        if self.prefix.is_empty() && self.suffix.is_empty() {
-            return Some(&self.atomic);
+impl<'i> TermNode<'i> {
+    pub fn to_single(self) -> Option<AtomicNode<'i>> {
+        if self.prefix().is_empty() && self.suffix().is_empty() {
+            return Some(self.atomic());
         }
         return None;
     }
 }
-impl AtomicNode {
-    pub fn as_identifier(&self) -> Option<&IdentifierNode> {
+impl<'i> AtomicNode<'i> {
+    pub fn to_identifier(self) -> Option<IdentifierNode<'i>> {
         match self {
             Self::Identifier(s) => Some(s),
             _ => None,

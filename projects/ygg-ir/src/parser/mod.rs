@@ -42,7 +42,7 @@ impl GrammarInfo {
 impl GrammarInfo {
     pub(crate) fn build(root: RootNode, ctx: &mut ParseContext) -> Result<Self> {
         let mut out = GrammarInfo::default();
-        for s in &root.statement {
+        for s in &root.statement() {
             match s {
                 StatementNode::GrammarStatement(v) => out.visit_grammar(v)?,
                 StatementNode::ClassStatement(v) => match GrammarRule::build_class(v) {
@@ -78,17 +78,17 @@ impl GrammarInfo {
 
 impl GrammarInfo {
     fn visit_grammar(&mut self, node: &GrammarStatementNode) -> Result<()> {
-        self.name = YggdrasilIdentifier::build(&node.identifier);
+        self.name = YggdrasilIdentifier::build(&node.identifier());
         Ok(())
     }
 }
 
 impl GrammarRule {
     fn build_class(node: &ClassStatementNode) -> Result<Self> {
-        let name = YggdrasilIdentifier::build(&node.name);
+        let name = YggdrasilIdentifier::build(&node.name());
         let rule = Self {
             name,
-            body: GrammarBody::Class { term: YggdrasilExpression::build_or(&node.class_block.expression)? },
+            body: GrammarBody::Class { term: YggdrasilExpression::build_or(&node.class_block().expression())? },
             range: node.get_range(),
             ..Default::default()
         }
@@ -96,24 +96,24 @@ impl GrammarRule {
         Ok(rule)
     }
     fn build_class_in_group(node: &GroupPairNode) -> Result<Self> {
-        let name = YggdrasilIdentifier::build(&node.identifier);
+        let name = YggdrasilIdentifier::build(&node.identifier());
         let rule = Self {
             name,
-            body: GrammarBody::Class { term: YggdrasilExpression::build_atomic(&node.atomic)? },
+            body: GrammarBody::Class { term: YggdrasilExpression::build_atomic(&node.atomic())? },
             range: node.get_range(),
             ..Default::default()
         };
         Ok(rule)
     }
     fn register_union(node: &UnionStatementNode, rules: &mut GrammarInfo) -> Result<()> {
-        let name = YggdrasilIdentifier::build(&node.name);
+        let name = YggdrasilIdentifier::build(&node.name());
         let mut branches = IndexMap::default();
-        for (index, branch) in node.union_block.union_branch.iter().enumerate() {
-            let key = branch.branch_name(&node.name.text, index);
+        for (index, branch) in node.union_block().union_branch().iter().enumerate() {
+            let key = branch.branch_name(node.name().get_str(), index);
 
             if !branch.is_single() {
                 let name = YggdrasilIdentifier { text: key.0.to_string(), span: FileID::default().with_range(key.1) };
-                let term = YggdrasilExpression::build_hard(&branch.expression_hard)?;
+                let term = YggdrasilExpression::build_hard(&branch.expression_hard())?;
                 let rule = GrammarRule { name, body: GrammarBody::Class { term }, range: node.get_range(), ..Default::default() };
 
                 match rules.rules.insert(rule.name.text.clone(), rule) {
@@ -134,9 +134,9 @@ impl GrammarRule {
         Ok(())
     }
     fn build_group(node: &GroupStatementNode) -> Result<(Option<YggdrasilIdentifier>, Vec<Self>)> {
-        let name = node.identifier.as_ref().map(YggdrasilIdentifier::build);
+        let name = node.identifier().as_ref().map(YggdrasilIdentifier::build);
         let mut out = vec![];
-        for term in &node.group_block.group_pair {
+        for term in &node.group_block().group_pair() {
             match GrammarRule::build_class_in_group(term) {
                 Ok(o) => out.push(o.with_annotation(node.annotations())),
                 Err(_) => {}
@@ -148,7 +148,7 @@ impl GrammarRule {
 
 impl YggdrasilExpression {
     fn build_or(node: &ExpressionNode) -> Result<Self> {
-        match node.expression_hard.as_slice() {
+        match node.expression_hard().as_slice() {
             [head, rest @ ..] => {
                 let mut head = YggdrasilExpression::build_hard(head)?;
                 for term in rest {
@@ -161,7 +161,7 @@ impl YggdrasilExpression {
     }
 
     fn build_hard(node: &ExpressionHardNode) -> Result<Self> {
-        match node.expression_soft.as_slice() {
+        match node.expression_soft().as_slice() {
             [head, rest @ ..] => {
                 let mut head = YggdrasilExpression::build_soft(head)?;
                 for term in rest {
@@ -173,7 +173,7 @@ impl YggdrasilExpression {
         }
     }
     fn build_soft(node: &ExpressionSoftNode) -> Result<Self> {
-        match node.expression_tag.as_slice() {
+        match node.expression_tag().as_slice() {
             [head, rest @ ..] => {
                 let mut head = YggdrasilExpression::build_tag_node(head)?;
                 for term in rest {
@@ -185,31 +185,31 @@ impl YggdrasilExpression {
         }
     }
     fn build_tag_node(node: &ExpressionTagNode) -> Result<Self> {
-        let e = match &node.identifier {
-            Some(first) => YggdrasilExpression::build_term(&node.term)?.with_tag(YggdrasilIdentifier::build(first)),
-            None => YggdrasilExpression::build_term(&node.term)?,
+        let e = match &node.identifier() {
+            Some(first) => YggdrasilExpression::build_term(&node.term())?.with_tag(YggdrasilIdentifier::build(first)),
+            None => YggdrasilExpression::build_term(&node.term())?,
         };
         Ok(e)
     }
     fn build_term(node: &TermNode) -> Result<Self> {
-        let mut base = YggdrasilExpression::build_atomic(&node.atomic)?;
-        let mut unary = Vec::with_capacity(node.prefix.len() + node.suffix.len());
-        for i in &node.suffix {
+        let mut base = YggdrasilExpression::build_atomic(&node.atomic())?;
+        let mut unary = Vec::with_capacity(node.prefix().len() + node.suffix().len());
+        for i in &node.suffix() {
             let suffix = match i {
-                SuffixNode::Optional => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::OPTIONAL),
-                SuffixNode::Many => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY),
-                SuffixNode::Many1 => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY1),
+                SuffixNode::Optional(_) => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::OPTIONAL),
+                SuffixNode::Many(_) => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY),
+                SuffixNode::Many1(_) => YggdrasilOperator::RepeatsBetween(YggdrasilCounter::MANY1),
                 SuffixNode::RangeExact(u) => {
-                    let i = u32::from_str_radix(&u.integer.text, 10).unwrap_or(u32::MAX);
+                    let i = u32::from_str_radix(u.integer().get_str(), 10).unwrap_or(u32::MAX);
                     YggdrasilOperator::RepeatsBetween(YggdrasilCounter::new(i, i))
                 }
                 SuffixNode::Range(v) => {
-                    let min = match &v.min {
-                        Some(v) => u32::from_str_radix(&v.text, 10).unwrap_or(0),
+                    let min = match &v.min() {
+                        Some(v) => u32::from_str_radix(v.get_str(), 10).unwrap_or(0),
                         None => 0,
                     };
-                    let max = match &v.max {
-                        Some(v) => u32::from_str_radix(&v.text, 10).unwrap_or(u32::MAX),
+                    let max = match &v.max() {
+                        Some(v) => u32::from_str_radix(v.get_str(), 10).unwrap_or(u32::MAX),
                         None => u32::MAX,
                     };
                     YggdrasilOperator::RepeatsBetween(YggdrasilCounter::new(min, max))
@@ -217,33 +217,33 @@ impl YggdrasilExpression {
             };
             unary.push(suffix)
         }
-        for i in node.prefix.iter().rev() {
+        for i in node.prefix().iter().rev() {
             match i {
-                PrefixNode::Negative => unary.push(YggdrasilOperator::Negative),
-                PrefixNode::Positive => unary.push(YggdrasilOperator::Positive),
-                PrefixNode::Remark => base.remark = true,
+                PrefixNode::Negative(_) => unary.push(YggdrasilOperator::Negative),
+                PrefixNode::Positive(_) => unary.push(YggdrasilOperator::Positive),
+                PrefixNode::Remark(_) => base.remark = true,
             }
         }
         if unary.is_empty() { Ok(base) } else { Ok(UnaryExpression { base: Box::new(base), operators: unary }.into()) }
     }
     fn build_atomic(node: &AtomicNode) -> Result<Self> {
         let expr = match node {
-            AtomicNode::GroupExpression(e) => YggdrasilExpression::build_or(&e.expression)?,
+            AtomicNode::GroupExpression(e) => YggdrasilExpression::build_or(&e.expression())?,
             AtomicNode::Boolean(v) => match v {
-                BooleanNode::False => YggdrasilExpression::boolean(false),
-                BooleanNode::True => YggdrasilExpression::boolean(true),
+                BooleanNode::False(_) => YggdrasilExpression::boolean(false),
+                BooleanNode::True(_) => YggdrasilExpression::boolean(true),
             },
             AtomicNode::FunctionCall(_) => {
                 todo!()
             }
-            AtomicNode::RegexEmbed(v) => YggdrasilRegex::new(v.to_string().trim(), v.span.clone()).into(),
-            AtomicNode::RegexRange(v) => YggdrasilRegex::new(&v.text, v.get_range()).into(),
-            AtomicNode::StringRaw(s) => YggdrasilText::new(&s.string_raw_text.text, s.get_range()).into(),
+            AtomicNode::RegexEmbed(v) => YggdrasilRegex::new(v.get_str().trim(), v.get_range()).into(),
+            AtomicNode::RegexRange(v) => YggdrasilRegex::new(v.get_str(), v.get_range()).into(),
+            AtomicNode::StringRaw(s) => YggdrasilText::new(s.string_raw_text().get_str(), s.get_range()).into(),
             AtomicNode::StringNormal(s) => {
-                let mut buffer = String::with_capacity(s.string_item.len() * 2);
-                for item in &s.string_item {
+                let mut buffer = String::with_capacity(s.string_item().len() * 2);
+                for item in &s.string_item() {
                     match item {
-                        StringItemNode::EscapedCharacter(item) => match item.text.chars().last() {
+                        StringItemNode::EscapedCharacter(item) => match item.get_chars().last() {
                             Some(c) => match c {
                                 'r' => buffer.push('\r'),
                                 'n' => buffer.push('\n'),
@@ -257,24 +257,24 @@ impl YggdrasilExpression {
                                 println!("parse fail: {:?}", unicode)
                             }
                         },
-                        StringItemNode::TextAny(s) => buffer.push_str(&s.text),
+                        StringItemNode::TextAny(s) => buffer.push_str(s.get_str()),
                     }
                 }
                 YggdrasilText::new(buffer, s.get_range()).into()
             }
             AtomicNode::Category(cat) => {
                 let r = cat.get_range();
-                match &cat.group {
-                    Some(g) => YggdrasilRegex::new(format!("\\p{{{}={}}}", g.text, cat.script.text), r).into(),
-                    None => YggdrasilRegex::new(format!("\\p{{{}}}", cat.script.text), r).into(),
+                match &cat.group() {
+                    Some(g) => YggdrasilRegex::new(format!("\\p{{{}={}}}", g.get_str(), cat.script().get_str()), r).into(),
+                    None => YggdrasilRegex::new(format!("\\p{{{}}}", cat.script().get_str()), r).into(),
                 }
             }
             AtomicNode::EscapedUnicode(unicode) => match unicode.as_char() {
                 Some(c) => YggdrasilText::new(c, unicode.get_range()).into(),
-                None => Err(YggdrasilError::syntax_error(&unicode.hex.text, unicode.get_range()))?,
+                None => Err(YggdrasilError::syntax_error(unicode.hex().get_str(), unicode.get_range()))?,
             },
             AtomicNode::Identifier(v) => YggdrasilIdentifier::build(v).into(),
-            AtomicNode::Integer(v) => BigInt::from_str_radix(&v.text, 10)?.into(),
+            AtomicNode::Integer(v) => BigInt::from_str_radix(v.get_str(), 10)?.into(),
         };
         Ok(expr)
     }
@@ -282,6 +282,6 @@ impl YggdrasilExpression {
 
 impl YggdrasilIdentifier {
     fn build(node: &IdentifierNode) -> Self {
-        Self { text: node.text.clone(), span: unsafe { FileID::new(0) }.with_range(node.get_range()) }
+        Self { text: node.get_str().to_string(), span: unsafe { FileID::new(0) }.with_range(node.get_range()) }
     }
 }

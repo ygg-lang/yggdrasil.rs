@@ -1,6 +1,6 @@
 use crate::{errors::YggdrasilErrorKind, TextSpan, TokenPair, TokenTree, YggdrasilError, YggdrasilRule};
 use alloc::format;
-use core::{fmt::Debug, ops::Range};
+use core::{fmt::Debug, ops::Range, str::Chars};
 
 /// A typed ast node
 #[allow(unused_variables)]
@@ -32,8 +32,12 @@ pub trait YggdrasilNode<'i>: Clone + Debug {
     fn get_rule(&self) -> Self::Rule {
         unimplemented!()
     }
-    fn get_text(&self) -> &str {
+    fn get_str(&self) -> &'i str {
         unimplemented!()
+    }
+
+    fn get_chars(&self) -> Chars<'i> {
+        self.get_str().chars()
     }
 
     ///
