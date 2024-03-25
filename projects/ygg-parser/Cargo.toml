@@ -10,10 +10,21 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
+indexmap = "2.2.3"
 #tracing = "0.1.37"
 
 #[dependencies.antlr-rust]
 #version = "0.3.0-beta"
+
+[dependencies.yggdrasil-error]
+version = "0.1.*"
+path = "../ygg-error"
+features = ["yggdrasil-rt", "num"]
+
+[dependencies.yggdrasil-ir]
+version = "0.1.*"
+path = "../ygg-ir"
+features = []
 
 [dependencies.yggdrasil-rt]
 version = "0.1.*"

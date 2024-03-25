@@ -17,10 +17,6 @@ convert_case = "0.6.0"
 indexmap = { version = "2.2.3" }
 num = { version = "0.4.1" }
 
-[dependencies.yggdrasil-parser]
-version = "0.1.*"
-path = "../ygg-parser"
-
 [dependencies.yggdrasil-error]
 version = "0.1.*"
 path = "../ygg-error"

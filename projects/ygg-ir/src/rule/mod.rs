@@ -145,6 +145,7 @@ pub enum GrammarBody {
         term: YggdrasilExpression,
     },
     Union {
+        /// The union branches
         branches: Vec<YggdrasilVariant>,
         /// The union mapping
         refined: IndexMap<String, String>,
