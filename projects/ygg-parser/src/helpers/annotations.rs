@@ -1,6 +1,3 @@
-use crate::bootstrap::{CallBodyNode, ClassStatementNode, GroupPairNode, GroupStatementNode, UnionStatementNode};
-use yggdrasil_rt::YggdrasilNode;
-
 use super::*;
 
 impl<'i> ClassStatementNode<'i> {
@@ -29,8 +26,8 @@ impl<'i> GroupPairNode<'i> {
     }
 }
 
-impl GrammarRule {
-    pub(super) fn with_annotation(mut self, extra: TakeAnnotations) -> Self {
+impl WithAnnotation for GrammarRule {
+    fn with_annotation(mut self, extra: TakeAnnotations) -> Self {
         match extra.get_atomic() {
             Some(true) => self.atomic = GrammarAtomic::Atomic,
             Some(false) => self.atomic = GrammarAtomic::Combined,

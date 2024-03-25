@@ -6,6 +6,7 @@ pub mod antlr;
 pub mod bootstrap;
 
 mod helpers;
+mod traits;
 
 pub use bootstrap::BootstrapParser;
 
