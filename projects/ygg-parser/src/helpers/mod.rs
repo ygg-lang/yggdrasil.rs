@@ -1,6 +1,7 @@
 mod annotations;
 mod classes;
 mod expressions;
+mod groups;
 mod unions;
 
 use crate::{
@@ -84,36 +85,14 @@ impl<'i> AstBuilder<'i> for GrammarStatementNode<'i> {
     }
 }
 
-impl<'i> AstBuilder<'i> for GroupStatementNode<'i> {
-    type Output = (Option<YggdrasilIdentifier>, Vec<GrammarRule>);
+impl<'i> AstBuilder<'i> for Option<IdentifierNode<'i>> {
+    type Output = YggdrasilIdentifier;
 
     fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
-        let name = match self.identifier() {
-            Some(s) => Some(s.build(ctx, state)?),
-            None => None,
-        };
-        let mut out = vec![];
-        for term in self.group_block().group_pair() {
-            match term.build(ctx, state) {
-                Ok(o) => out.push(o.with_annotations(self.annotations().build(ctx, state)?)),
-                Err(_) => {}
-            }
+        match self {
+            Some(s) => s.build(ctx, state),
+            None => Err(YggdrasilError::runtime_error("todo")),
         }
-        Ok((name, out))
-    }
-}
-impl<'i> AstBuilder<'i> for GroupPairNode<'i> {
-    type Output = GrammarRule;
-
-    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
-        let name = self.identifier().build(ctx, state)?;
-        let rule = GrammarRule {
-            name,
-            body: GrammarBody::Class { term: self.atomic().build(ctx, state)? },
-            range: self.get_range(),
-            ..Default::default()
-        };
-        Ok(rule)
     }
 }
 

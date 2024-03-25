@@ -228,7 +228,7 @@ impl GrammarRule {
     pub fn parser_name(&self) -> String {
         format!("parse_{}", self.name.text).to_case(Case::Snake)
     }
-    pub fn with_annotations(self, annotations: GrammarRuleAttributes) -> Self {
+    pub fn merge_annotations(self, annotations: GrammarRuleAttributes) -> Self {
         Self { attributes: annotations, ..self }
     }
 }

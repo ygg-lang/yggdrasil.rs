@@ -1,16 +1,23 @@
 use super::*;
+use crate::helpers::annotations::TakeAnnotations;
 
 impl<'i> AstBuilder<'i> for UnionStatementNode<'i> {
     type Output = ();
 
     fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
+        let attributes = TakeAnnotations {
+            auto_tag: self.op_remark().is_none(),
+            macros: self.decorator_call(),
+            modifiers: self.modifier_call(),
+        }
+        .build(ctx, state)?;
         let rule = GrammarRule {
+            attributes,
             name: self.name().build(ctx, state)?,
             body: self.union_block().build(ctx, state)?,
             range: self.get_range(),
             ..Default::default()
-        }
-        .with_annotations(self.annotations().build(ctx, state)?);
+        };
         state.register(rule)
     }
 }

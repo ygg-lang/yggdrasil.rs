@@ -7,25 +7,6 @@ pub struct TakeAnnotations<'i> {
     pub modifiers: Vec<ModifierCallNode<'i>>,
 }
 
-impl<'i> UnionStatementNode<'i> {
-    pub fn annotations(&self) -> TakeAnnotations<'i> {
-        // FIXME: AUTO TAG
-        TakeAnnotations { auto_tag: self.op_remark().is_none(), macros: self.decorator_call(), modifiers: self.modifier_call() }
-    }
-}
-
-impl<'i> GroupStatementNode<'i> {
-    pub fn annotations(&self) -> TakeAnnotations<'i> {
-        TakeAnnotations { auto_tag: false, macros: self.decorator_call(), modifiers: self.modifier_call() }
-    }
-}
-
-impl<'i> GroupPairNode<'i> {
-    pub fn annotations(&self) -> TakeAnnotations<'i> {
-        TakeAnnotations { auto_tag: false, macros: vec![], modifiers: vec![] }
-    }
-}
-
 impl<'i> AstBuilder<'i> for TakeAnnotations<'i> {
     type Output = GrammarRuleAttributes;
 
