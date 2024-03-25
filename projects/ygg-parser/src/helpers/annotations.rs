@@ -1,10 +1,10 @@
 use super::*;
+use yggdrasil_ir::rule::GrammarRuleAttributes;
 
-impl<'i> ClassStatementNode<'i> {
-    pub fn annotations(&self) -> TakeAnnotations<'i> {
-        // FIXME: AUTO TAG
-        TakeAnnotations { auto_tag: self.op_remark().is_none(), macros: self.decorator_call(), modifiers: self.modifier_call() }
-    }
+pub struct TakeAnnotations<'i> {
+    pub auto_tag: bool,
+    pub macros: Vec<DecoratorCallNode<'i>>,
+    pub modifiers: Vec<ModifierCallNode<'i>>,
 }
 
 impl<'i> UnionStatementNode<'i> {
@@ -26,24 +26,27 @@ impl<'i> GroupPairNode<'i> {
     }
 }
 
-impl WithAnnotation for GrammarRule {
-    fn with_annotation(mut self, extra: TakeAnnotations) -> Self {
-        match extra.get_atomic() {
-            Some(true) => self.atomic = GrammarAtomic::Atomic,
-            Some(false) => self.atomic = GrammarAtomic::Combined,
+impl<'i> AstBuilder<'i> for TakeAnnotations<'i> {
+    type Output = GrammarRuleAttributes;
+
+    fn build(&self, _: &ParseContext, _: &mut ParseState) -> Result<Self::Output> {
+        let mut out = GrammarRuleAttributes::default();
+        match self.get_atomic() {
+            Some(true) => out.atomic = GrammarAtomic::Atomic,
+            Some(false) => out.atomic = GrammarAtomic::Combined,
             _ => {}
         };
-        if let Some(s) = extra.get_hidden() {
-            self.annotations.viewer.hidden = s
+        if let Some(s) = self.get_hidden() {
+            out.viewer.hidden = s
         };
-        if let Some(s) = extra.get_railway() {
-            self.annotations.viewer.railway = s
+        if let Some(s) = self.get_railway() {
+            out.viewer.railway = s
         };
-        self.annotations.viewer.styles.extend(extra.get_styles());
-        if let Some(s) = extra.get_auto_capture() {
-            self.captures.auto = s
+        out.viewer.styles.extend(self.get_styles());
+        if let Some(s) = self.get_auto_capture() {
+            out.captures = s
         };
-        self
+        Ok(out)
     }
 }
 

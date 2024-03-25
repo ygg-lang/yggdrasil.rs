@@ -7,7 +7,9 @@ use yggdrasil_ir::{grammar::GrammarInfo, traits::CodeOptimizer};
 use yggdrasil_parser::parse_grammar_info;
 
 pub fn parse_grammar_raw(grammar: &str) -> Result<GrammarInfo, YggdrasilError> {
-    todo!()
+    let mut cache = FileCache::default();
+    let id = cache.load_text(grammar, "x");
+    parse_grammar_info(&mut cache, id).result(|_| {})
 }
 
 pub fn parse_grammar(id: FileID, cache: &mut FileCache) -> Validation<GrammarInfo> {

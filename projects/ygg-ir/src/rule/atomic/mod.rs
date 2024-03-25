@@ -1,10 +1,11 @@
 use super::*;
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Default, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum GrammarAtomic {
     Optimized,
     Atomic,
+    #[default]
     Combined,
 }
 

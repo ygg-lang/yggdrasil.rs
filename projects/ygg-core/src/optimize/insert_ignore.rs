@@ -26,12 +26,12 @@ impl CodeOptimizer for InsertIgnore {
         self.grammar = info.clone();
         let mut out = info.clone();
         for rule in out.rules.values_mut() {
-            match rule.atomic {
-                GrammarAtomic::Atomic => rule.atomic.optimize(),
+            match rule.attributes.atomic {
+                GrammarAtomic::Atomic => rule.attributes.atomic.optimize(),
                 GrammarAtomic::Combined => {
                     // println!("Combined: {}", rule.name.text);
                     rule.body.for_each(|e| self.update_node(e));
-                    rule.atomic.optimize()
+                    rule.attributes.atomic.optimize()
                 }
                 GrammarAtomic::Optimized => continue,
             }

@@ -35,7 +35,7 @@ impl CodeGenerator for BuildRailway {
         let grid = VerticalGrid::new(
             info.rules
                 .iter()
-                .filter(|(_, rule)| rule.annotations.viewer.railway)
+                .filter(|(_, rule)| rule.attributes.viewer.railway)
                 .map(|(_, rule)| rule.as_railroad(self))
                 .collect(),
         );

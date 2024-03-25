@@ -11,7 +11,7 @@ impl CodeOptimizer for RemarkTags {
         let mut info = info.clone();
         for rule in info.rules.values_mut() {
             match &mut rule.body {
-                GrammarBody::Class { term } => self.remark(term, rule.captures.auto),
+                GrammarBody::Class { term } => self.remark(term, rule.attributes.captures),
                 GrammarBody::Union { .. } => {}
                 GrammarBody::Climb { .. } => {}
             }

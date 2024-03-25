@@ -57,6 +57,17 @@ pub struct GrammarRule {
     /// def RuleName -> Redirect { }
     /// ```
     pub redirect: Option<YggdrasilIdentifier>,
+
+    pub attributes: GrammarRuleAttributes,
+    ///
+    pub body: GrammarBody,
+    /// position of all parts
+    pub range: Range<usize>,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GrammarRuleAttributes {
     /// Document of this rule
     ///
     /// ## Examples
@@ -73,6 +84,7 @@ pub struct GrammarRule {
     /// class Rule { }
     /// ```
     pub derives: RuleDerive,
+
     /// Ignore this node in ast mode.
     ///
     /// ## Examples
@@ -89,18 +101,6 @@ pub struct GrammarRule {
     /// inline class Rule { }
     /// ```
     pub inline: bool,
-    pub annotations: GrammarRuleAnnotations,
-    ///
-    pub captures: GrammarCaptures,
-    ///
-    pub body: GrammarBody,
-    /// position of all parts
-    pub range: Range<usize>,
-}
-
-#[derive(Default, Debug, Clone, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct GrammarRuleAnnotations {
     /// The entry of the ast mode, the name of the ast_mode to be exported
     ///
     /// ## Examples
@@ -109,6 +109,29 @@ pub struct GrammarRuleAnnotations {
     /// entry class Rule { }
     /// ```
     pub viewer: GrammarViewer,
+    /// Don't capture any objects in rule.
+    ///
+    /// ## Examples
+    /// ```ygg
+    /// #tag(true)
+    /// class Rule { Tagged }
+    /// #tag(false)
+    /// class Rule ^ { Untagged }
+    /// ```
+    pub captures: bool,
+}
+
+impl Default for GrammarRuleAttributes {
+    fn default() -> Self {
+        Self {
+            document: String::new(),
+            derives: RuleDerive::default(),
+            atomic: GrammarAtomic::default(),
+            inline: false,
+            viewer: GrammarViewer::default(),
+            captures: false,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -124,23 +147,6 @@ pub struct GrammarViewer {
     pub hidden: bool,
     pub styles: Vec<String>,
     pub railway: bool,
-}
-
-#[derive(Debug, Clone, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct GrammarCaptures {
-    /// Don't capture any objects in rule.
-    ///
-    /// ## Examples
-    /// ```ygg
-    /// #tag(true)
-    /// class Rule { Tagged }
-    /// #tag(false)
-    /// class Rule ^ { Untagged }
-    /// ```
-    pub auto: bool,
-    /// Range size
-    pub range: String,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -195,30 +201,13 @@ impl PartialOrd for GrammarRule {
 
 impl Default for GrammarRule {
     fn default() -> Self {
-        Self {
-            name: Default::default(),
-            redirect: None,
-            document: String::new(),
-            derives: RuleDerive::default(),
-            atomic: GrammarAtomic::Combined,
-            inline: false,
-            annotations: Default::default(),
-            captures: Default::default(),
-            body: Default::default(),
-            range: Default::default(),
-        }
+        Self { name: Default::default(), redirect: None, attributes: Default::default(), body: Default::default(), range: Default::default() }
     }
 }
 
 impl Default for GrammarViewer {
     fn default() -> Self {
         Self { hidden: false, styles: vec![], railway: true }
-    }
-}
-
-impl Default for GrammarCaptures {
-    fn default() -> Self {
-        Self { range: "usize".to_string(), auto: false }
     }
 }
 
@@ -238,5 +227,8 @@ impl GrammarRule {
     }
     pub fn parser_name(&self) -> String {
         format!("parse_{}", self.name.text).to_case(Case::Snake)
+    }
+    pub fn with_annotations(self, annotations: GrammarRuleAttributes) -> Self {
+        Self { attributes: annotations, ..self }
     }
 }
