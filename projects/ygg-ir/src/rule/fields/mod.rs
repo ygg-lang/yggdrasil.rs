@@ -55,7 +55,7 @@ impl GrammarRule {
     }
     pub fn union_fields(&self) -> &IndexMap<String, String> {
         match &self.body {
-            GrammarBody::Union { branches } => branches,
+            GrammarBody::Union { refined, .. } => refined,
             _ => unreachable!("do you filter with `union`?"),
         }
     }

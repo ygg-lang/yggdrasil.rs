@@ -22,7 +22,7 @@ pub use self::{
     derive::RuleDerive,
     fields::{counter::YggdrasilCounter, YggdrasilField},
     identifier::{YggdrasilIdentifier, YggdrasilNamepath},
-    unions::{YggdrasilEnumerate, YggdrasilVariant},
+    unions::YggdrasilVariant,
 };
 
 mod classes;
@@ -145,8 +145,9 @@ pub enum GrammarBody {
         term: YggdrasilExpression,
     },
     Union {
+        branches: Vec<YggdrasilVariant>,
         /// The union mapping
-        branches: IndexMap<String, String>,
+        refined: IndexMap<String, String>,
     },
     Climb {
         priority: Vec<YggdrasilVariant>,
@@ -160,16 +161,16 @@ impl GrammarBody {
         F: FnMut(&mut YggdrasilExpression),
     {
         match self {
-            GrammarBody::Class { term } => f(term),
-            GrammarBody::Union { .. } => {}
-            GrammarBody::Climb { priority } => priority.iter_mut().for_each(|v| f(&mut v.branch)),
+            Self::Class { term } => f(term),
+            Self::Union { .. } => {}
+            Self::Climb { .. } => {}
         }
     }
 }
 
 impl Default for GrammarBody {
     fn default() -> Self {
-        Self::Union { branches: Default::default() }
+        Self::Union { branches: vec![], refined: Default::default() }
     }
 }
 

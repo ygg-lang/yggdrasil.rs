@@ -128,8 +128,9 @@ impl GrammarRule {
                 None => {}
             }
         }
-        let rule = Self { name, body: GrammarBody::Union { branches }, range: node.get_range(), ..Default::default() }
-            .with_annotation(node.annotations());
+        let rule =
+            Self { name, body: GrammarBody::Union { branches: vec![], refined: branches }, range: node.get_range(), ..Default::default() }
+                .with_annotation(node.annotations());
         rules.rules.insert(rule.name.text.clone(), rule);
         Ok(())
     }

@@ -64,9 +64,9 @@ impl AsRailroad for GrammarRule {
             GrammarBody::Class { term } => {
                 s.push(term.as_railroad(config));
             }
-            GrammarBody::Union { branches } => {
+            GrammarBody::Union { refined, .. } => {
                 let concat = ChoiceExpression {
-                    branches: branches
+                    branches: refined
                         .iter()
                         .map(|(variant, class)| YggdrasilExpression {
                             tag: None,

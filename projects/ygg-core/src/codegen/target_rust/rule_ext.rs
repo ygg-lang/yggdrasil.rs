@@ -23,9 +23,9 @@ impl RuleExt for GrammarRule {
                     w.push_str(&format!("Err(/*{e}*/s)"))
                 }
             }
-            GrammarBody::Union { branches } => {
+            GrammarBody::Union { refined, .. } => {
                 w.push_str("Err(s)");
-                for (variant, class) in branches {
+                for (variant, class) in refined {
                     w.push_str(&format!(
                         ".or_else(|s| parse_{rule}(s).and_then(|s|s.tag_node(\"{rule}\")))",
                         rule = class.to_case(Case::Snake)
