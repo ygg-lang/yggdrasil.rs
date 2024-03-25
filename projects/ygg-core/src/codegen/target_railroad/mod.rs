@@ -33,7 +33,11 @@ impl CodeGenerator for BuildRailway {
 
     fn generate(&mut self, info: &GrammarInfo) -> Validation<Self::Output> {
         let grid = VerticalGrid::new(
-            info.rules.iter().filter(|(_, rule)| rule.viewer.railway).map(|(_, rule)| rule.as_railroad(self)).collect(),
+            info.rules
+                .iter()
+                .filter(|(_, rule)| rule.annotations.viewer.railway)
+                .map(|(_, rule)| rule.as_railroad(self))
+                .collect(),
         );
         let mut diagram = Diagram::new(grid);
         let mut element = Element::new("style").set("type", "text/css");

@@ -34,12 +34,12 @@ impl WithAnnotation for GrammarRule {
             _ => {}
         };
         if let Some(s) = extra.get_hidden() {
-            self.viewer.hidden = s
+            self.annotations.viewer.hidden = s
         };
         if let Some(s) = extra.get_railway() {
-            self.viewer.railway = s
+            self.annotations.viewer.railway = s
         };
-        self.viewer.styles.extend(extra.get_styles());
+        self.annotations.viewer.styles.extend(extra.get_styles());
         if let Some(s) = extra.get_auto_capture() {
             self.captures.auto = s
         };

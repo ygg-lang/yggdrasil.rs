@@ -7,7 +7,7 @@ use std::{
 
 use convert_case::{Case, Casing};
 use indexmap::IndexMap;
-pub use num::BigInt;
+pub use num::{BigInt, Num};
 
 use crate::{
     data::RuleReference,
@@ -89,6 +89,18 @@ pub struct GrammarRule {
     /// inline class Rule { }
     /// ```
     pub inline: bool,
+    pub annotations: GrammarRuleAnnotations,
+    ///
+    pub captures: GrammarCaptures,
+    ///
+    pub body: GrammarBody,
+    /// position of all parts
+    pub range: Range<usize>,
+}
+
+#[derive(Default, Debug, Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GrammarRuleAnnotations {
     /// The entry of the ast mode, the name of the ast_mode to be exported
     ///
     /// ## Examples
@@ -97,12 +109,6 @@ pub struct GrammarRule {
     /// entry class Rule { }
     /// ```
     pub viewer: GrammarViewer,
-    ///
-    pub captures: GrammarCaptures,
-    ///
-    pub body: GrammarBody,
-    /// position of all parts
-    pub range: Range<usize>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -196,7 +202,7 @@ impl Default for GrammarRule {
             derives: RuleDerive::default(),
             atomic: GrammarAtomic::Combined,
             inline: false,
-            viewer: Default::default(),
+            annotations: Default::default(),
             captures: Default::default(),
             body: Default::default(),
             range: Default::default(),

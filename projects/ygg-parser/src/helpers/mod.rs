@@ -1,6 +1,5 @@
 mod annotations;
 mod expressions;
-
 use crate::{
     bootstrap::{
         AtomicNode, BooleanNode, CallBodyNode, ClassStatementNode, DecoratorCallNode, EscapedUnicodeNode, ExpressionHardNode,
@@ -8,13 +7,13 @@ use crate::{
         IdentifierNode, ModifierCallNode, PrefixNode, RegexEmbedNode, RegexItemNode, RootNode, StatementNode, StringItemNode,
         SuffixNode, TermNode, UnionBranchNode, UnionStatementNode,
     },
+    states::{ParseContext, ParseState},
     traits::{AstBuilder, WithAnnotation},
 };
 use indexmap::IndexMap;
 use std::{
     borrow::Cow,
     fmt::{Display, Formatter, Write},
-    mem::take,
     ops::Range,
 };
 use yggdrasil_error::{Failure, FileCache, FileID, Result, Success, Validation, YggdrasilError};
@@ -22,26 +21,9 @@ use yggdrasil_ir::{
     data::{YggdrasilRegex, YggdrasilText},
     grammar::GrammarInfo,
     nodes::{UnaryExpression, YggdrasilExpression, YggdrasilOperator},
-    rule::{BigInt, GrammarAtomic, GrammarBody, GrammarRule, YggdrasilCounter, YggdrasilIdentifier},
+    rule::{BigInt, GrammarAtomic, GrammarBody, GrammarRule, Num, YggdrasilCounter, YggdrasilIdentifier},
 };
 use yggdrasil_rt::YggdrasilNode;
-
-pub(crate) struct ParseContext {
-    pub id: FileID,
-    errors: Vec<YggdrasilError>,
-}
-
-impl ParseContext {
-    pub fn new(id: FileID) -> Self {
-        Self { id, errors: vec![] }
-    }
-    pub fn add_error(&mut self, error: YggdrasilError) {
-        self.errors.push(error);
-    }
-    pub fn get_errors(&mut self) -> Vec<YggdrasilError> {
-        take(&mut self.errors)
-    }
-}
 
 pub fn parse_grammar_info(cache: &mut FileCache, id: FileID) -> Validation<GrammarInfo> {
     let text = match cache.fetch(&id) {
@@ -52,30 +34,30 @@ pub fn parse_grammar_info(cache: &mut FileCache, id: FileID) -> Validation<Gramm
         Ok(o) => o,
         Err(e) => Err(YggdrasilError::from(e).with_file(id))?,
     };
-    let mut ctx = ParseContext::new(id);
-    match GrammarInfo::build(root, &mut ctx) {
-        Ok(value) => Success { value, diagnostics: ctx.get_errors() },
-        Err(fatal) => Failure { fatal, diagnostics: ctx.get_errors() },
+    let mut state = ParseState::default();
+    let ctx = ParseContext { id };
+    match root.build(&ctx, &mut state) {
+        Ok(value) => Success { value, diagnostics: state.get_errors() },
+        Err(fatal) => Failure { fatal, diagnostics: state.get_errors() },
     }
 }
 
 impl<'i> AstBuilder<'i> for RootNode<'i> {
     type Output = GrammarInfo;
-    type Context = ();
 
-    fn build(&self, _: &Self::Context, state: &mut ParseContext) -> Result<GrammarInfo> {
+    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
         let mut out = GrammarInfo::default();
         for s in self.statement() {
             match s {
-                StatementNode::GrammarStatement(v) => out.visit_grammar(v)?,
-                StatementNode::ClassStatement(v) => match GrammarRule::build_class(v) {
+                StatementNode::GrammarStatement(v) => v.build(ctx, state)?,
+                StatementNode::ClassStatement(v) => match v.build(ctx, state) {
                     Ok(o) => {
                         out.rules.insert(o.name.text.clone(), o);
                     }
                     Err(e) => state.add_error(e),
                 },
-                StatementNode::UnionStatement(v) => GrammarRule::register_union(v, &mut out)?,
-                StatementNode::GroupStatement(v) => match GrammarRule::build_group(v) {
+                StatementNode::UnionStatement(v) => v.build(ctx, state)?,
+                StatementNode::GroupStatement(v) => match v.build(ctx, state) {
                     Ok((id, terms)) => match id {
                         Some(id) => {
                             let mut name = vec![];
@@ -99,87 +81,112 @@ impl<'i> AstBuilder<'i> for RootNode<'i> {
     }
 }
 
-fn visit_grammar(grammar: &mut GrammarInfo, node: &GrammarStatementNode) -> Result<()> {
-    grammar.name = YggdrasilIdentifier::build(&node.identifier());
-    Ok(())
-}
+impl<'i> AstBuilder<'i> for GrammarStatementNode<'i> {
+    type Output = ();
 
-fn build_class(node: &ClassStatementNode) -> Result<GrammarRule> {
-    let name = YggdrasilIdentifier::build(&node.name());
-    let rule = GrammarRule {
-        name,
-        body: GrammarBody::Class { term: YggdrasilExpression::build_or(&node.class_block().expression())? },
-        range: node.get_range(),
-        ..Default::default()
+    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
+        state.grammar.name = self.identifier().build(ctx, state)?;
+        Ok(())
     }
-    .with_annotation(node.annotations());
-    Ok(rule)
 }
-fn build_class_in_group(node: &GroupPairNode) -> Result<GrammarRule> {
-    let name = YggdrasilIdentifier::build(&node.identifier());
-    let rule = GrammarRule {
-        name,
-        body: GrammarBody::Class { term: YggdrasilExpression::build_atomic(&node.atomic())? },
-        range: node.get_range(),
-        ..Default::default()
-    };
-    Ok(rule)
+
+impl<'i> AstBuilder<'i> for ClassStatementNode<'i> {
+    type Output = GrammarRule;
+
+    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
+        let name = self.name().build(ctx, state)?;
+        let rule = GrammarRule {
+            name,
+            body: GrammarBody::Class { term: self.class_block().expression().build(ctx, state)? },
+            range: self.get_range(),
+            ..Default::default()
+        }
+        .with_annotation(self.annotations());
+        Ok(rule)
+    }
 }
-fn register_union(node: &UnionStatementNode, rules: &mut GrammarInfo) -> Result<()> {
-    let name = YggdrasilIdentifier::build(&node.name());
-    let mut branches = IndexMap::default();
-    for (index, branch) in node.union_block().union_branch().iter().enumerate() {
-        let key = branch.branch_name(node.name().get_str(), index);
 
-        if !branch.is_single() {
-            let name = YggdrasilIdentifier { text: key.0.to_string(), span: FileID::default().with_range(key.1) };
-            let term = YggdrasilExpression::build_hard(&branch.expression_hard())?;
-            let rule = GrammarRule { name, body: GrammarBody::Class { term }, range: node.get_range(), ..Default::default() };
+impl<'i> AstBuilder<'i> for GroupPairNode<'i> {
+    type Output = GrammarRule;
 
-            match rules.rules.insert(rule.name.text.clone(), rule) {
-                Some(_) => {}
+    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
+        let name = self.identifier().build(ctx, state)?;
+        let rule = GrammarRule {
+            name,
+            body: GrammarBody::Class { term: self.atomic().build(ctx, state)? },
+            range: self.get_range(),
+            ..Default::default()
+        };
+        Ok(rule)
+    }
+}
+impl<'i> AstBuilder<'i> for UnionStatementNode<'i> {
+    type Output = ();
+
+    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
+        let name = self.name().build(ctx, state)?;
+        let mut branches = IndexMap::default();
+        for (index, branch) in self.union_block().union_branch().iter().enumerate() {
+            let key = branch.branch_name(self.name().get_str(), index);
+
+            if !branch.is_single() {
+                let name = YggdrasilIdentifier { text: key.0.to_string(), span: FileID::default().with_range(key.1) };
+                let term = branch.expression_hard().build(ctx, state)?;
+                let rule =
+                    GrammarRule { name, body: GrammarBody::Class { term }, range: self.get_range(), ..Default::default() };
+
+                match state.grammar.rules.insert(rule.name.text.clone(), rule) {
+                    Some(_) => {}
+                    None => {}
+                }
+            };
+            match branches.insert(key.0.to_string(), key.0.to_string()) {
+                Some(old) => {
+                    panic!("{old}")
+                }
                 None => {}
             }
-        };
-        match branches.insert(key.0.to_string(), key.0.to_string()) {
-            Some(old) => {
-                panic!("{old}")
-            }
-            None => {}
         }
+        let rule = GrammarRule {
+            name,
+            body: GrammarBody::Union { branches: vec![], refined: branches },
+            range: self.get_range(),
+            ..Default::default()
+        }
+        .with_annotation(self.annotations());
+        state.grammar.rules.insert(rule.name.text.clone(), rule);
+        Ok(())
     }
-    let rule = GrammarRule {
-        name,
-        body: GrammarBody::Union { branches: vec![], refined: branches },
-        range: node.get_range(),
-        ..Default::default()
-    }
-    .with_annotation(node.annotations());
-    rules.rules.insert(rule.name.text.clone(), rule);
-    Ok(())
 }
-fn build_group(node: &GroupStatementNode) -> Result<(Option<YggdrasilIdentifier>, Vec<GrammarRule>)> {
-    let name = node.identifier().as_ref().map(YggdrasilIdentifier::build);
-    let mut out = vec![];
-    for term in &node.group_block().group_pair() {
-        match GrammarRule::build_class_in_group(term) {
-            Ok(o) => out.push(o.with_annotation(node.annotations())),
-            Err(_) => {}
+
+impl<'i> AstBuilder<'i> for GroupStatementNode<'i> {
+    type Output = (Option<YggdrasilIdentifier>, Vec<GrammarRule>);
+
+    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
+        let name = match self.identifier() {
+            Some(s) => Some(s.build(ctx, state)?),
+            None => None,
+        };
+        let mut out = vec![];
+        for term in self.group_block().group_pair() {
+            match term.build(ctx, state) {
+                Ok(o) => out.push(o.with_annotation(self.annotations())),
+                Err(_) => {}
+            }
         }
+        Ok((name, out))
     }
-    Ok((name, out))
 }
 
 impl<'i> AstBuilder<'i> for ExpressionNode<'i> {
     type Output = YggdrasilExpression;
-    type Context = ();
 
-    fn build(&self, cfg: &Self::Context, state: &mut ParseContext) -> Result<Self::Output> {
+    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
         match self.expression_hard().as_slice() {
             [head, rest @ ..] => {
-                let mut head = YggdrasilExpression::build_hard(head)?;
+                let mut head = head.build(ctx, state)?;
                 for term in rest {
-                    head |= YggdrasilExpression::build_hard(term)?;
+                    head |= term.build(ctx, state)?;
                 }
                 Ok(head)
             }
@@ -190,14 +197,13 @@ impl<'i> AstBuilder<'i> for ExpressionNode<'i> {
 
 impl<'i> AstBuilder<'i> for ExpressionHardNode<'i> {
     type Output = YggdrasilExpression;
-    type Context = ();
 
-    fn build(&self, cfg: &Self::Context, state: &mut ParseContext) -> Result<Self::Output> {
+    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
         match self.expression_soft().as_slice() {
             [head, rest @ ..] => {
-                let mut head = YggdrasilExpression::build_soft(head)?;
+                let mut head = head.build(ctx, state)?;
                 for term in rest {
-                    head += YggdrasilExpression::build_soft(term)?;
+                    head += term.build(ctx, state)?;
                 }
                 Ok(head)
             }
@@ -206,16 +212,15 @@ impl<'i> AstBuilder<'i> for ExpressionHardNode<'i> {
     }
 }
 
-impl<'i> AstBuilder<'i> for ExpressionHardNode<'i> {
+impl<'i> AstBuilder<'i> for ExpressionSoftNode<'i> {
     type Output = YggdrasilExpression;
-    type Context = ();
 
-    fn build(&self, cfg: &Self::Context, state: &mut ParseContext) -> Result<Self::Output> {
+    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
         match self.expression_tag().as_slice() {
             [head, rest @ ..] => {
-                let mut head = YggdrasilExpression::build_tag_node(head)?;
+                let mut head = head.build(ctx, state)?;
                 for term in rest {
-                    head &= YggdrasilExpression::build_tag_node(term)?;
+                    head &= term.build(ctx, state)?;
                 }
                 Ok(head)
             }
@@ -226,22 +231,20 @@ impl<'i> AstBuilder<'i> for ExpressionHardNode<'i> {
 
 impl<'i> AstBuilder<'i> for ExpressionTagNode<'i> {
     type Output = YggdrasilExpression;
-    type Context = ();
 
-    fn build(&self, cfg: &Self::Context, state: &mut ParseContext) -> Result<Self::Output> {
+    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
         let e = match &self.identifier() {
-            Some(first) => YggdrasilExpression::build_term(&self.term())?.with_tag(YggdrasilIdentifier::build(first)),
-            None => YggdrasilExpression::build_term(&self.term())?,
+            Some(first) => self.term().build(ctx, state)?.with_tag(first.build(ctx, state)?),
+            None => self.term().build(ctx, state)?,
         };
         Ok(e)
     }
 }
 impl<'i> AstBuilder<'i> for TermNode<'i> {
     type Output = YggdrasilExpression;
-    type Context = ();
 
-    fn build(&self, cfg: &Self::Context, state: &mut ParseContext) -> Result<Self::Output> {
-        let mut base = self.atomic().build(cfg, state)?;
+    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
+        let mut base = self.atomic().build(ctx, state)?;
         let mut unary = Vec::with_capacity(self.prefix().len() + self.suffix().len());
         for i in self.suffix() {
             let suffix = match i {
@@ -279,11 +282,10 @@ impl<'i> AstBuilder<'i> for TermNode<'i> {
 
 impl<'i> AstBuilder<'i> for AtomicNode<'i> {
     type Output = YggdrasilExpression;
-    type Context = ();
 
-    fn build(&self, cfg: &Self::Context, state: &mut ParseContext) -> Result<Self::Output> {
+    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
         let expr = match self {
-            AtomicNode::GroupExpression(e) => YggdrasilExpression::build_or(&e.expression())?,
+            AtomicNode::GroupExpression(e) => e.expression().build(ctx, state)?,
             AtomicNode::Boolean(v) => match v {
                 BooleanNode::False(_) => YggdrasilExpression::boolean(false),
                 BooleanNode::True(_) => YggdrasilExpression::boolean(true),
@@ -328,7 +330,7 @@ impl<'i> AstBuilder<'i> for AtomicNode<'i> {
                 Some(c) => YggdrasilText::new(c, unicode.get_range()).into(),
                 None => Err(YggdrasilError::syntax_error(unicode.hex().get_str(), unicode.get_range()))?,
             },
-            AtomicNode::Identifier(v) => YggdrasilIdentifier::build(v).into(),
+            AtomicNode::Identifier(v) => v.build(ctx, state)?.into(),
             AtomicNode::Integer(v) => BigInt::from_str_radix(v.get_str(), 10)?.into(),
         };
         Ok(expr)
@@ -337,10 +339,9 @@ impl<'i> AstBuilder<'i> for AtomicNode<'i> {
 
 impl<'i> AstBuilder<'i> for IdentifierNode<'i> {
     type Output = YggdrasilIdentifier;
-    type Context = ();
 
-    fn build(&self, _: &Self::Context, state: &mut ParseContext) -> Result<YggdrasilIdentifier> {
-        Ok(YggdrasilIdentifier { text: self.get_str().to_string(), span: state.id.with_range(self.get_range()) })
+    fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
+        Ok(YggdrasilIdentifier { text: self.get_str().to_string(), span: ctx.id.with_range(self.get_range()) })
     }
 }
 
@@ -368,13 +369,11 @@ impl<'i> UnionBranchNode<'i> {
         Some((Cow::Borrowed(id.get_str()), id.get_range()))
     }
 }
-
 pub struct TakeAnnotations<'i> {
     auto_tag: bool,
     macros: Vec<DecoratorCallNode<'i>>,
     modifiers: Vec<ModifierCallNode<'i>>,
 }
-
 impl<'i> EscapedUnicodeNode<'i> {
     pub fn as_char(&self) -> Option<char> {
         let u = u32::from_str_radix("ABC", 16).ok()?;

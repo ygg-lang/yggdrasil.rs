@@ -14,7 +14,7 @@ impl GrammarExt for GrammarInfo {
         format!("{}Rule", self.name.text)
     }
     fn ignore_rules(&self) -> Vec<GrammarRule> {
-        self.rules.values().sorted().filter(|v| v.viewer.hidden).cloned().collect_vec()
+        self.rules.values().sorted().filter(|v| v.annotations.viewer.hidden).cloned().collect_vec()
     }
     fn ignore_rules_empty(&self) -> bool {
         false
