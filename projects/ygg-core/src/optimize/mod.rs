@@ -10,12 +10,12 @@ use yggdrasil_ir::{
 };
 mod emit_function;
 mod fuse_rule;
+mod inline_rules;
 mod insert_ignore;
+mod refine_rules;
 mod remark_tag;
 
-mod refine;
-
 pub use self::{
-    emit_function::EmitFunction, fuse_rule::FusionRules, insert_ignore::InsertIgnore, refine::RefineRules,
-    remark_tag::RemarkTags,
+    emit_function::EmitFunction, fuse_rule::FusionRules, inline_rules::InlineRules, insert_ignore::InsertIgnore,
+    refine_rules::RefineRules, remark_tag::RemarkTags,
 };

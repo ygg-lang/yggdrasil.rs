@@ -18,23 +18,6 @@ impl CodeOptimizer for RefineRules {
         let mut errors = vec![];
         self.grammar = info.clone();
         let mut out = info.clone();
-        for rule in self.grammar.rules.values() {
-            match &rule.body {
-                GrammarBody::Class { .. } => {}
-                GrammarBody::Union { branches, .. } => {
-                    for (index, branch) in branches.iter().enumerate() {
-                        match branch.as_variant(rule.name.text.as_str(), index) {
-                            YggdrasilVariant::Reference { .. } => {}
-                            YggdrasilVariant::Additional { rule, .. } => match out.register(rule) {
-                                Ok(_) => {}
-                                Err(e) => errors.push(e),
-                            },
-                        }
-                    }
-                }
-                GrammarBody::Climb { .. } => {}
-            }
-        }
         for rule in out.rules.values_mut() {
             match &mut rule.body {
                 GrammarBody::Class { term } => {
@@ -43,14 +26,8 @@ impl CodeOptimizer for RefineRules {
                 GrammarBody::Union { branches, refined } => {
                     let mut mapping = IndexMap::default();
                     for (index, branch) in branches.iter().enumerate() {
-                        match branch.as_variant(rule.name.text.as_str(), index) {
-                            YggdrasilVariant::Reference { variant } => {
-                                mapping.insert(variant.text.clone(), rule.name.text.clone());
-                            }
-                            YggdrasilVariant::Additional { variant, rule } => {
-                                mapping.insert(variant.text.clone(), rule.name.text.clone());
-                            }
-                        }
+                        let variant = branch.as_variant(rule.name.text.as_str(), index);
+                        mapping.insert(variant.variant.text.to_string(), variant.class.text.to_string());
                     }
                     *refined = mapping;
                 }

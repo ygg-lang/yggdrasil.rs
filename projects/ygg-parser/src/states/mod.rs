@@ -7,7 +7,7 @@ use yggdrasil_ir::{
 
 #[derive(Default)]
 pub struct ParseContext {
-    pub id: FileID,
+    pub file: FileID,
 }
 
 #[derive(Default)]

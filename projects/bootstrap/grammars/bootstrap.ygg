@@ -48,7 +48,7 @@ class ClassBlock {
     '{' '|'? Expression '}'
 }
 token {
-    OP_REMARK: '^'
+    OP_REMARK = '^'
 }
 // === union === -----------------------------------------------------------------------------------------------------
 class UnionStatement {
@@ -83,7 +83,7 @@ class DecoratorCall {
 }
 @style(annotation)
 class DecoratorName {
-    [@\#] Identifier
+    [@#] Identifier
 }
 class FunctionCall {
     FunctionName CallBody
@@ -142,7 +142,7 @@ class GroupExpression {
 atomic class StringRaw {
     "'" StringRawText "'"
 }
-text class StringRawText {
+class StringRawText {
     /[^']*/
 }
 atomic class StringNormal {
@@ -155,17 +155,14 @@ union StringItem {
 }
 @style(escape)
 atomic class EscapedUnicode {
-    '\u{' HEX '}'
+    /\\u\{[0-9a-fA-F]*\}/
 }
 @style(escape)
-atomic text class EscapedCharacter {
+atomic class EscapedCharacter {
     '\' ANY
 }
-text class HEX {
-    [0-9a-fA-F]{1, 6}
-}
-text class TextAny {
-    /[^"\\\\]+/
+class TextAny {
+    /[^"\\]+/
 }
 // === regex === -------------------------------------------------------------------------------------------------------
 atomic class RegexEmbed {
@@ -175,10 +172,10 @@ union RegexItem {
     | EscapedCharacter
     | RegexCharacter
 }
-atomic text class RegexCharacter {
+atomic class RegexCharacter {
     !'/' ANY
 }
-atomic text class RegexRange {
+atomic class RegexRange {
     '[' RegexNegative? (!']' ANY)* ']'
 }
 class RegexNegative {
@@ -195,7 +192,7 @@ class NamepathFree -> Namepath {
 class Namepath {
     Identifier ('::' Identifier)*
 }
-text class Identifier {
+class Identifier {
     /[_\p{XID_start}]\p{XID_continue}*/
 }
 union Boolean {
@@ -203,7 +200,7 @@ union Boolean {
     | 'false' #False
 }
 // === number === ----------------------------------------------------------------------------------------------------
-text class Integer {
+class Integer {
     /0|[1-9][0-9]*/
 }
 class RangeExact {
@@ -219,7 +216,7 @@ atomic class ModifierCall ^ {
 @railway(false)
 @style(keyword)
 token {
-    OP_CATEGORY: '\p'
+    OP_CATEGORY = '\p'
 }
 @railway(false)
 @style(keyword)
@@ -231,13 +228,13 @@ union KW_EXTERNAL {
 @railway(false)
 @style(keyword)
 token {
-    KW_GRAMMAR: /grammar/
-    KW_IMPORT: /using|use|import/
-    KW_CLASS: /class|struct/
-    KW_UNION: /union|enum/
-    KW_GROUP: /group|token/
-    KW_CLIMB: /climb/
-    KW_MACRO: /macro|def|function|func|fun|fn/
+    KW_GRAMMAR = /grammar/
+    KW_IMPORT  = /using|use|import/
+    KW_CLASS   = /class|struct/
+    KW_UNION   = /union|enum/
+    KW_GROUP   = /group|token/
+    KW_CLIMB   = /climb/
+    KW_MACRO   = /macro|def|function|func|fun|fn/
 }
 // === ignores === -----------------------------------------------------------------------------------------------------
 @railway(false)
@@ -247,6 +244,6 @@ hide class WhiteSpace {
 @style(comment)
 hide class Comment {
     | /\/\/[^\n\r]*/
-//  | '/*'  '*/'
+    | '/*'  '*/'
 }
 
