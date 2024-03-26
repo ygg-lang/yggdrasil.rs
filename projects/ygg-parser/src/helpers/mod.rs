@@ -3,14 +3,14 @@ mod classes;
 mod expressions;
 mod groups;
 mod unions;
-
 use crate::{
     bootstrap::{
-        AtomicNode, BooleanNode, BranchTagNode, CallBodyNode, ClassStatementNode, DecoratorCallNode, EscapedUnicodeNode,
-        ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode, GrammarStatementNode, GroupPairNode,
-        GroupStatementNode, IdentifierNode, ModifierCallNode, PrefixNode, RegexEmbedNode, RegexItemNode, RootNode,
-        StatementNode, StringItemNode, SuffixNode, TermNode, UnionBlockNode, UnionBranchNode, UnionStatementNode,
+        AtomicNode, BooleanNode, BranchTagNode, CallBodyNode, ClassBlockNode, ClassStatementNode, DecoratorCallNode,
+        EscapedUnicodeNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode, GrammarStatementNode,
+        GroupPairNode, GroupStatementNode, IdentifierNode, ModifierCallNode, PrefixNode, RegexEmbedNode, RegexItemNode,
+        RootNode, StatementNode, StringItemNode, SuffixNode, TermNode, UnionBlockNode, UnionBranchNode, UnionStatementNode,
     },
+    helpers::annotations::TakeAnnotations,
     states::{ParseContext, ParseState},
     traits::AstBuilder,
 };
@@ -20,7 +20,7 @@ use yggdrasil_ir::{
     data::{YggdrasilRegex, YggdrasilText},
     grammar::GrammarInfo,
     nodes::{UnaryExpression, YggdrasilExpression, YggdrasilOperator},
-    rule::{BigInt, GrammarAtomic, GrammarBody, GrammarRule, Num, YggdrasilCounter, YggdrasilIdentifier, YggdrasilVariant},
+    rule::{BigInt, GrammarAtomic, GrammarBody, GrammarRule, Num, YggdrasilBranch, YggdrasilCounter, YggdrasilIdentifier},
 };
 use yggdrasil_rt::YggdrasilNode;
 
@@ -45,33 +45,15 @@ impl<'i> AstBuilder<'i> for RootNode<'i> {
     type Output = GrammarInfo;
 
     fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
-        let mut out = GrammarInfo::default();
         for s in self.statement() {
             match s {
                 StatementNode::GrammarStatement(v) => v.build(ctx, state)?,
                 StatementNode::ClassStatement(v) => v.build(ctx, state)?,
                 StatementNode::UnionStatement(v) => v.build(ctx, state)?,
-                StatementNode::GroupStatement(v) => match v.build(ctx, state) {
-                    Ok((id, terms)) => match id {
-                        Some(id) => {
-                            let mut name = vec![];
-                            for o in terms {
-                                name.push(o.name.clone());
-                                out.rules.insert(o.name.text.clone(), o);
-                            }
-                            out.token_sets.insert(id.text.clone(), name);
-                        }
-                        None => {
-                            for o in terms {
-                                out.rules.insert(o.name.text.clone(), o);
-                            }
-                        }
-                    },
-                    Err(e) => state.add_error(e),
-                },
+                StatementNode::GroupStatement(v) => v.build(ctx, state)?,
             }
         }
-        Ok(out)
+        Ok(state.get_grammar())
     }
 }
 

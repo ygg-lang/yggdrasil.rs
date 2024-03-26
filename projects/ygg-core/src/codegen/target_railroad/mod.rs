@@ -68,20 +68,8 @@ impl AsRailroad for GrammarRule {
             GrammarBody::Class { term } => {
                 s.push(term.as_railroad(config));
             }
-            GrammarBody::Union { refined, .. } => {
-                let concat = ChoiceExpression {
-                    branches: refined
-                        .iter()
-                        .map(|(variant, class)| YggdrasilExpression {
-                            tag: None,
-                            remark: false,
-                            body: ExpressionBody::Rule(RuleReference::new(YggdrasilIdentifier {
-                                text: class.to_string(),
-                                span: Default::default(),
-                            })),
-                        })
-                        .collect(),
-                };
+            GrammarBody::Union { branches, .. } => {
+                let concat = ChoiceExpression { branches: branches.iter().map(|e| e.branch.clone()).collect() };
                 s.push(concat.as_railroad(config));
             }
             GrammarBody::Climb { .. } => {}

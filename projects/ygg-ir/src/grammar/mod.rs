@@ -5,7 +5,7 @@ use crate::{
 
 use indexmap::IndexMap;
 use std::collections::BTreeMap;
-use yggdrasil_error::Url;
+use yggdrasil_error::{Url, YggdrasilError};
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -56,8 +56,11 @@ impl GrammarInfo {
     pub fn ignored_rules(&self) -> Vec<GrammarRule> {
         todo!()
     }
-    pub fn insert(&mut self, rule: GrammarRule) -> Option<GrammarRule> {
+    pub fn register(&mut self, rule: GrammarRule) -> yggdrasil_error::Result<()> {
         let key = rule.name.text.clone();
-        self.rules.insert(key, rule)
+        match self.rules.insert(key, rule) {
+            Some(_) => Err(YggdrasilError::runtime_error("dup")),
+            None => Ok(()),
+        }
     }
 }

@@ -1,5 +1,5 @@
 use std::fs::read_to_string;
-use yggdrasil_shared::codegen::BuildRust;
+use yggdrasil_shared::{codegen::BuildRust, FileCache};
 
 #[test]
 fn ready() {
@@ -9,10 +9,7 @@ fn ready() {
 #[test]
 fn run_json5() {
     let builder = BuildRust::default();
-    builder
-        .generate(
-            &read_to_string(r#"C:\Users\Dell\CLionProjects\dejavu-engine\projects\dejavu-parser\grammars\dejavu.ygg"#).unwrap(),
-            r#"C:\Users\Dell\CLionProjects\dejavu-engine\projects\dejavu-parser\src\dejavu\"#,
-        )
-        .unwrap();
+    let mut cache = FileCache::default();
+    let id = cache.load_local(r#"C:\Users\Dell\CLionProjects\serde-json5\projects\json5-parser\grammars\json5.ygg"#).unwrap();
+    builder.generate(id, &mut cache, r#"C:\Users\Dell\CLionProjects\serde-json5\projects\json5-parser\src\codegen"#).unwrap();
 }

@@ -3,37 +3,42 @@ entry class Terminal {
 }
 
 atomic class Escapes {
-    \r
-    \n
-    \p{L}
-    \p{Letter}
-    \p{Script=Latin}
-    \p{Script_Extensions=Thaana}
+\r
+\n
+\p{L}
+\p{Letter}
+\p{Script=Latin}
+\p{Script_Extensions=Thaana}
 }
 
 atomic class Constants {
-    | ASCII_HEX ~ ASCII_DEC
-    | XID_START ~ XID_CONTINUE
-    | EMOJI
+| ASCII_HEX ~ ASCII_DEC
+| XID_START ~ XID_CONTINUE
+| EMOJI
 }
 atomic union Repeats {
-    | ANY | ANY{1}                       // 1
-    | ANY? | ANY{0, 1}                   // 0 ~ 1
-    | ANY* | ANY{ } | ANY{, } | ANY{0, } // 0 ~ ∞
-    | ANY+ | ANY{1, }                    // 1 ~ ∞
-    | ANY{2}                             // 2
-    | ANY{, 2} | ANY{0, 2}               // 0 ~ 2
-    | ANY{2, }                           // 2 ~ ∞
+| ANY | ANY{1}                       // 1
+| ANY? | ANY{0, 1}                   // 0 ~ 1
+| ANY* | ANY{ } | ANY{, } | ANY{0, } // 0 ~ ∞
+| ANY+ | ANY{1, }                    // 1 ~ ∞
+| ANY{2}                             // 2
+| ANY{, 2} | ANY{0, 2}               // 0 ~ 2
+| ANY{2, }                           // 2 ~ ∞
 }
 
 atomic union Stacks {
-    //    | PEEK(..=2)
-    //    | PEEK(..<2)
-    //    | PEEK(1..=2)
-    //    | PEEK(...)
-    //    | PUSH("  "+ | "\t"+)
-    //    | PULL
-    //    | DROP
+| @PEEK
+| @PEEK
+| @PEEK
+| @PEEK
+| @PUSH("  "+ | "\t"+)
+| @PULL
+| @DROP
+}
+
+
+atomic class Block {
+INDENT DEDENT
 }
 
 //inspector double {
@@ -45,6 +50,6 @@ atomic union Stacks {
 //}
 
 macro paired(item, delimiter) {
-    | '(' ')'
-    | '(' item (delimiter item)* delimiter? ')'
+| '(' ')'
+| '(' item (delimiter item)* delimiter? ')'
 }

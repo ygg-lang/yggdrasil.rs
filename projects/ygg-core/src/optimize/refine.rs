@@ -1,5 +1,5 @@
 use yggdrasil_error::{Validate, Validation};
-use yggdrasil_ir::rule::GrammarBody;
+use yggdrasil_ir::rule::{GrammarBody, YggdrasilIdentifier, YggdrasilVariant};
 
 use super::*;
 
@@ -18,12 +18,42 @@ impl CodeOptimizer for RefineRules {
         let mut errors = vec![];
         self.grammar = info.clone();
         let mut out = info.clone();
+        for rule in self.grammar.rules.values() {
+            match &rule.body {
+                GrammarBody::Class { .. } => {}
+                GrammarBody::Union { branches, .. } => {
+                    for (index, branch) in branches.iter().enumerate() {
+                        match branch.as_variant(rule.name.text.as_str(), index) {
+                            YggdrasilVariant::Reference { .. } => {}
+                            YggdrasilVariant::Additional { rule, .. } => match out.register(rule) {
+                                Ok(_) => {}
+                                Err(e) => errors.push(e),
+                            },
+                        }
+                    }
+                }
+                GrammarBody::Climb { .. } => {}
+            }
+        }
         for rule in out.rules.values_mut() {
             match &mut rule.body {
                 GrammarBody::Class { term } => {
                     self.refine_node(term).recover(&mut errors);
                 }
-                GrammarBody::Union { .. } => {}
+                GrammarBody::Union { branches, refined } => {
+                    let mut mapping = IndexMap::default();
+                    for (index, branch) in branches.iter().enumerate() {
+                        match branch.as_variant(rule.name.text.as_str(), index) {
+                            YggdrasilVariant::Reference { variant } => {
+                                mapping.insert(variant.text.clone(), rule.name.text.clone());
+                            }
+                            YggdrasilVariant::Additional { variant, rule } => {
+                                mapping.insert(variant.text.clone(), rule.name.text.clone());
+                            }
+                        }
+                    }
+                    *refined = mapping;
+                }
                 GrammarBody::Climb { .. } => {}
             }
         }

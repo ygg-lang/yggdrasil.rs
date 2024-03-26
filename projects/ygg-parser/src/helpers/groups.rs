@@ -1,21 +1,37 @@
 use super::*;
-use crate::{bootstrap::GroupBlockNode, helpers::annotations::TakeAnnotations};
 
 impl<'i> AstBuilder<'i> for GroupStatementNode<'i> {
-    type Output = (Option<YggdrasilIdentifier>, Vec<GrammarRule>);
+    type Output = ();
 
     fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
         let anno = TakeAnnotations { auto_tag: false, macros: self.decorator_call(), modifiers: self.modifier_call() }
             .build(ctx, state)?;
-        let name = self.identifier().build(ctx, state).ok();
-        let mut out = vec![];
+        let id = self.identifier().build(ctx, state).ok();
+        let mut terms = vec![];
         for term in self.group_block().group_pair() {
             match term.build(ctx, state) {
-                Ok(o) => out.push(o.merge_annotations(anno.clone())),
+                Ok(o) => terms.push(o.merge_annotations(anno.clone())),
                 Err(_) => {}
             }
         }
-        Ok((name, out))
+        match id {
+            Some(id) => {
+                let mut name = vec![];
+                for o in terms {
+                    name.push(o.name.clone());
+                    state.register(o)?
+                }
+
+                // terms.token_sets.insert(id.text.clone(), name);
+            }
+            None => {
+                for o in terms {
+                    state.register(o)?
+                }
+            }
+        }
+
+        Ok(())
     }
 }
 

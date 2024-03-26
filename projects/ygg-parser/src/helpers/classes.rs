@@ -1,6 +1,4 @@
 use super::*;
-use crate::{bootstrap::ClassBlockNode, helpers::annotations::TakeAnnotations};
-use yggdrasil_ir::rule::GrammarRuleAttributes;
 
 impl<'i> AstBuilder<'i> for ClassStatementNode<'i> {
     type Output = ();

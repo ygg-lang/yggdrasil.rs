@@ -23,6 +23,9 @@ impl ParseState {
     pub fn get_errors(&mut self) -> Vec<YggdrasilError> {
         take(&mut self.errors)
     }
+    pub fn get_grammar(&mut self) -> GrammarInfo {
+        take(&mut self.grammar)
+    }
 
     pub fn rename(&mut self, name: YggdrasilIdentifier) {
         self.grammar.name = name

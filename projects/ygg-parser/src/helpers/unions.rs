@@ -35,13 +35,10 @@ impl<'i> AstBuilder<'i> for UnionBlockNode<'i> {
 }
 
 impl<'i> AstBuilder<'i> for UnionBranchNode<'i> {
-    type Output = YggdrasilVariant;
+    type Output = YggdrasilBranch;
 
     fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
-        Ok(YggdrasilVariant {
-            tag: self.branch_tag().build(ctx, state).ok(),
-            branch: self.expression_hard().build(ctx, state)?,
-        })
+        Ok(YggdrasilBranch { tag: self.branch_tag().build(ctx, state).ok(), branch: self.expression_hard().build(ctx, state)? })
     }
 }
 impl<'i> AstBuilder<'i> for Option<BranchTagNode<'i>> {

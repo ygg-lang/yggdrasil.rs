@@ -2,6 +2,7 @@ use std::{
     cmp::Ordering,
     collections::{BTreeMap, BTreeSet},
     fmt::{Debug, Display, Formatter},
+    hash::{Hash, Hasher},
     ops::{BitAndAssign, BitOrAssign, MulAssign, Range},
 };
 
@@ -22,7 +23,7 @@ pub use self::{
     derive::RuleDerive,
     fields::{counter::YggdrasilCounter, YggdrasilField},
     identifier::{YggdrasilIdentifier, YggdrasilNamepath},
-    unions::YggdrasilVariant,
+    unions::{YggdrasilBranch, YggdrasilVariant},
 };
 
 mod classes;
@@ -38,7 +39,7 @@ mod unions;
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct FunctionRule {}
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GrammarRule {
     /// Determine the name of the parser
@@ -63,6 +64,12 @@ pub struct GrammarRule {
     pub body: GrammarBody,
     /// position of all parts
     pub range: Range<usize>,
+}
+
+impl Hash for GrammarRule {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.name.text.hash(state)
+    }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -121,6 +128,12 @@ pub struct GrammarRuleAttributes {
     pub captures: bool,
 }
 
+impl GrammarRuleAttributes {
+    pub fn with_hidden(self, hide: bool) -> Self {
+        Self { viewer: GrammarViewer { hidden: hide, ..self.viewer }, ..self }
+    }
+}
+
 impl Default for GrammarRuleAttributes {
     fn default() -> Self {
         Self {
@@ -158,12 +171,12 @@ pub enum GrammarBody {
     },
     Union {
         /// The union branches
-        branches: Vec<YggdrasilVariant>,
+        branches: Vec<YggdrasilBranch>,
         /// The union mapping
         refined: IndexMap<String, String>,
     },
     Climb {
-        priority: Vec<YggdrasilVariant>,
+        priority: Vec<YggdrasilBranch>,
     },
     // TokenSet { rules: Vec<YggdrasilIdentifier> },
 }
