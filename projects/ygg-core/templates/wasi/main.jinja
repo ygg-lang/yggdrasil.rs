@@ -6,12 +6,22 @@
 mod parse_cst;
 mod parse_ast;
 
+use crate::exports::yggdrasil::{{ self.language_id() }}::ast::{{ self.token_name() }};
 use core::str::FromStr;
-use std::{borrow::Cow, ops::Range, sync::OnceLock};
-use wasi_yggdrasil::{state, OutputResult, Regex, State, YggdrasilParser, YggdrasilRule};
-use wasi_yggdrasil::exports::peg::core::cst::SyntaxNode;
-
-{%- set rules = self.grammar.rules() %}
+use std::{
+    borrow::Cow,
+    cmp::Ordering,
+    hash::{Hash, Hasher},
+    ops::Range,
+    rc::Rc,
+    sync::OnceLock,
+};
+use wasi_yggdrasil::{
+    exports::peg::core::cst::SyntaxNode,
+    state,
+    syntax_node::{NativeLanguage, NativeSyntaxData},
+    OutputResult, Regex, State, YggdrasilParser, YggdrasilRule,
+};
 
 type Input<'i> = Box<State<'i, {{ self.token_name() }}>>;
 type Output<'i> = Result<Box<State<'i, {{ self.token_name() }}>>, Box<State<'i, {{ self.token_name() }}>>>;
@@ -21,6 +31,24 @@ type Output<'i> = Result<Box<State<'i, {{ self.token_name() }}>>, Box<State<'i, 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct {{ self.host_name() }} {}
+
+impl Hash for {{ self.token_name() }} {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        todo!()
+    }
+}
+
+impl Ord for {{ self.token_name() }} {
+    fn cmp(&self, other: &Self) -> Ordering {
+        todo!()
+    }
+}
+
+impl PartialOrd for {{ self.token_name() }} {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        todo!()
+    }
+}
 
 impl YggdrasilRule for {{ self.token_name() }} {
     fn is_ignore(&self) -> bool {
@@ -33,7 +61,7 @@ impl YggdrasilRule for {{ self.token_name() }} {
 
     fn get_style(&self) -> &'static str {
         match self {
-{%- for rule in rules.iter() %}
+{%- for rule in self.grammar.rules() %}
             Self::{{ rule.name.text|safe_rust_id }} => "",
 {%- endfor %}
             _ => "",
@@ -42,9 +70,8 @@ impl YggdrasilRule for {{ self.token_name() }} {
 }
 
 {%- for rule in self.grammar.classes() %}
-#[derive(Clone, Debug, Hash)]
 pub struct {{ self.node_native(rule) }} {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
 {%- endfor %}
 

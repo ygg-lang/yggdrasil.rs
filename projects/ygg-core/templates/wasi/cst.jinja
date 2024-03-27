@@ -6,7 +6,7 @@ use super::*;
 pub(super) fn parse_cst(input: &str, rule: {{ self.token_name() }}) -> OutputResult<{{ self.token_name() }}> {
     state(input, |state| match rule {
 {%- for rule in rules.iter() %}
-        {{ self.token_name() }}::{{ rule.name.text|safe_rust_id }} => {{ rule.parser_name() }}(state),
+        {{ self.token_variant(rule) }} => {{ rule.parser_name() }}(state),
 {%- endfor %}
         {{ self.token_name() }}::HiddenText => unreachable!(),
     })
@@ -15,7 +15,7 @@ pub(super) fn parse_cst(input: &str, rule: {{ self.token_name() }}) -> OutputRes
 {%- for rule in rules.iter() %}
 #[inline]
 fn {{ rule.parser_name() }}(state: Input) -> Output {
-    state.rule({{ self.token_name() }}::{{ rule.name.text|safe_rust_id }}, |s| {
+    state.rule({{  self.token_variant(rule) }}, |s| {
         {{ rule.parser_expression() }}
     })
 }

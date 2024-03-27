@@ -13,6 +13,7 @@ interface ast {
 {%- for (variant, _) in self.token_type() %}
         %{{ variant }},
 {%- endfor %}
+        %hidden-text,
     }
 
     variant {{ self.language_id() }}-type {

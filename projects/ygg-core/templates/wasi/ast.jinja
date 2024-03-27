@@ -10,23 +10,24 @@ impl Guest for {{ self.host_name() }} {
 }
 
 {%- for rule in self.grammar.classes() %}
-{%- if rule.is_class() %}
 #[automatically_derived]
 impl {{ self.node_trait(rule) }} for {{ self.node_native(rule) }} {
     fn ctor(super_: SyntaxNode) -> Result<{{ self.node_wasi(rule) }}, ParseError> {
         Ok({{ self.node_wasi(rule) }}::new(Self { node: super_ }))
     }
     fn parse_string(text: String, offset: u32) -> Result<{{ self.node_wasi(rule) }}, ParseError> {
-        let input = Rc::from(text);
-        let language = NativeLanguage { name: "json5", glob: &["*.json5"] };
-        let mut tree = crate::wit::parse_cst::parse_cst(&input, Json5Token::Object)?;
-        Ok({{ self.node_wasi(rule) }}::new(Self { node: SyntaxNode::new(NativeSyntaxData::new(input, tree.next().unwrap(), &language))? }))
+        let input: Rc<str> = Rc::from(text);
+        let language = NativeLanguage { name: "{{ self.language_name() }}", glob: &["*.json5"] };
+        let root = match crate::wit::parse_cst::parse_cst(&input, {{ self.token_name() }}::{{ self.rule_variant(rule) }})?.next() {
+            Some(root) => root,
+            None => Err(ParseError::MissingRoot)?,
+        };
+        Ok({{ self.node_wasi(rule) }}::new(Self { node: SyntaxNode::new(NativeSyntaxData::new(input.clone(), root, &language)) }))
     }
     fn get_text(&self) -> String {
         self.node.get_text()
     }
 }
-{%- endif %}
 {%- endfor %}
 
 
