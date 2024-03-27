@@ -1,7 +1,7 @@
 use super::*;
 
 {%- set rules = self.grammar.rules() %}
-{%- set parser_name = self.grammar.parser_name() %}
+
 
 pub(super) fn parse_cst(input: &str, rule: {{ self.token_name() }}) -> OutputResult<{{ self.token_name() }}> {
     state(input, |state| match rule {

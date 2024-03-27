@@ -8,10 +8,10 @@ mod parse_ast;
 
 use core::str::FromStr;
 use std::{borrow::Cow, ops::Range, sync::OnceLock};
-use yggdrasil_rt::*;
+use wasi_yggdrasil::{state, OutputResult, Regex, State, YggdrasilParser, YggdrasilRule};
+use wasi_yggdrasil::exports::peg::core::cst::SyntaxNode;
 
 {%- set rules = self.grammar.rules() %}
-{%- set parser_name = self.grammar.parser_name() %}
 
 type Input<'i> = Box<State<'i, {{ self.token_name() }}>>;
 type Output<'i> = Result<Box<State<'i, {{ self.token_name() }}>>, Box<State<'i, {{ self.token_name() }}>>>;
@@ -20,25 +20,7 @@ type Output<'i> = Result<Box<State<'i, {{ self.token_name() }}>>, Box<State<'i, 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct {{ parser_name }} {}
-
-impl YggdrasilParser for {{ parser_name }} {
-    type Rule = {{ self.token_name() }};
-    fn parse_cst(input: &str, rule: Self::Rule) -> OutputResult<{{ self.token_name() }}> {
-        self::parse_cst::parse_cst(input, rule)
-    }
-}
-
-#[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum {{ self.token_name() }} {
-{%- for rule in rules.iter() %}
-    {{ rule.name.text|safe_rust_id }},
-{%- endfor %}
-    /// Label for unnamed text literal
-    HiddenText,
-}
+pub struct {{ self.host_name() }} {}
 
 impl YggdrasilRule for {{ self.token_name() }} {
     fn is_ignore(&self) -> bool {
@@ -59,15 +41,10 @@ impl YggdrasilRule for {{ self.token_name() }} {
     }
 }
 
-{%- for rule in rules.clone() %}
+{%- for rule in self.grammar.classes() %}
 #[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-{%- if rule.is_class() %}
-pub struct {{ rule.node_name() }}Native {
-    node: crate::peg::core::cst::SyntaxNode,
+pub struct {{ self.node_native(rule) }} {
+    node: SyntaxNode,
 }
-{%- else if rule.is_union() %}
-
-{%- endif %}
 {%- endfor %}
 

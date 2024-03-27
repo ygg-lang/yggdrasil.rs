@@ -131,18 +131,18 @@ impl RustModule {
         else {
             create_dir_all(path)?
         }
-        let mut main = File::create(path.join("mod.rs"))?;
+        let mut main = File::create(path.join("src/wit/mod.rs"))?;
         main.write_all(self.main.as_bytes())?;
-        let mut cst = File::create(path.join("world.wit"))?;
+        let mut cst = File::create(path.join("wit/world.wit"))?;
         cst.write_all(self.lex.as_bytes())?;
-        let mut cst = File::create(path.join("parse_cst.rs"))?;
+        let mut cst = File::create(path.join("src/wit/parse_cst.rs"))?;
         cst.write_all(self.cst.as_bytes())?;
-        let mut ast = File::create(path.join("parse_ast.rs"))?;
+        let mut ast = File::create(path.join("src/wit/parse_ast.rs"))?;
         ast.write_all(self.ast.as_bytes())?;
         if !self.railway.is_empty() {
-            let mut ast = File::create(path.join("railway.svg"))?;
+            let mut ast = File::create(path.join("src/wit/railway.svg"))?;
             ast.write_all(self.railway.as_bytes())?;
-            let mut ast = File::create(path.join("railway.min.svg"))?;
+            let mut ast = File::create(path.join("src/wit/railway.min.svg"))?;
             ast.write_all(self.railway_min.as_bytes())?;
         }
         let mut ast = File::create(path.join("readme.md"))?;

@@ -1,23 +1,27 @@
 ```
-        let _span = pair.get_span();
-        Ok(Self {
 {%- for field in rule.class_fields() %}
-{%- if field.field_type(self.grammar).is_empty() %}
-            // Missing rule {{ field.rhs }}
-{%- else %}
 {%- if field.count.is_one() %}
-            {{ field.field_name()|safe_rust_id }}: pair.take_tagged_one::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}"))?,
 {%- else if field.count.is_optional() %}
-            {{ field.field_name()|safe_rust_id }}: pair.take_tagged_option::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}")),
 {%- else %}
-            {{ field.field_name()|safe_rust_id }}: pair.take_tagged_items::<{{ field.field_type(self.grammar) }}>(Cow::Borrowed("{{ field.field_name() }}")).collect::<Result<Vec<_>, _>>()?,
-{%- endif %}
+    fn {{ field.field_name() }}(&self) -> Vec<JsonNode> {
+        let mut children = Vec::with_capacity(self.node.count_children() as usize);
+        let mut iter = self.node.get_children(false);
+        loop {
+            match iter.next() {
+                Some(s) => match s.get_rule().get_tag() {
+                    "string" => children.push(JsonNode::Str(JsonStringNode::new(JsonStringNative { node: s }))),
+                    #[cfg(debug_assertions)]
+                    s => unreachable!(
+                        "branch tag `{}` is not possible here, check whether the grammar version is correct",
+                        s.get_rule().get_tag()
+                    ),
+                    _ => break,
+                },
+                None => break,
+            }
+        }
+        return children;
+    }
 {%- endif %}
 {%- endfor %}
-{%- if rule.captures.text %}
-            text: pair.get_string(),
-{%- endif %}
-            span: Range { start: _span.start() as {{ self.config.range_type }}, end: _span.end() as {{ self.config.range_type }} },
-        })
-
 ```

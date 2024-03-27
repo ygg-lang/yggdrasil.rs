@@ -1,58 +1,30 @@
+use wasi_yggdrasil::exports::peg::core::cst::SyntaxNode;
 use crate::exports::yggdrasil::{{ self.language_id() }}::ast::*;
 use super::*;
 
-{%- set rules = self.grammar.rules() %}
-{%- set parser_name = self.grammar.parser_name() %}
-
 #[automatically_derived]
-impl Guest for {{ parser_name }}Host {
-{%- for rule in rules.clone() %}
-    type {{ rule.node_name() }}Node = {{ rule.node_name() }}Native;
+impl Guest for {{ self.host_name() }} {
+{%- for rule in self.grammar.classes() %}
+    type {{ self.node_wasi(rule) }} = {{ self.node_native(rule) }};
 {%- endfor %}
 }
 
-{%- for rule in rules.clone() %}
+{%- for rule in self.grammar.classes() %}
 {%- if rule.is_class() %}
 #[automatically_derived]
-impl Guest{{ rule.node_name() }}Node for {{ rule.node_name() }}Native {
-    fn ctor(super_: SyntaxNode) -> Result<{{ rule.node_name() }}Node, ParseError> {
-        Ok({{ rule.node_name() }}Node::new(Self { node: super_ }))
+impl {{ self.node_trait(rule) }} for {{ self.node_native(rule) }} {
+    fn ctor(super_: SyntaxNode) -> Result<{{ self.node_wasi(rule) }}, ParseError> {
+        Ok({{ self.node_wasi(rule) }}::new(Self { node: super_ }))
     }
-
-    fn parse_string(text: String, offset: u32) -> Result<{{ rule.node_name() }}Node, ParseError> {
-        Ok({{ rule.node_name() }}Node::new(Self { node: SyntaxNode::ctor(&text, offset)? }))
+    fn parse_string(text: String, offset: u32) -> Result<{{ self.node_wasi(rule) }}, ParseError> {
+        let input = Rc::from(text);
+        let language = NativeLanguage { name: "json5", glob: &["*.json5"] };
+        let mut tree = crate::wit::parse_cst::parse_cst(&input, Json5Token::Object)?;
+        Ok({{ self.node_wasi(rule) }}::new(Self { node: SyntaxNode::new(NativeSyntaxData::new(input, tree.next().unwrap(), &language))? }))
     }
-
     fn get_text(&self) -> String {
         self.node.get_text()
     }
-
-
-{%- for field in rule.class_fields() %}
-{%- if field.count.is_one() %}
-{%- else if field.count.is_optional() %}
-{%- else %}
-    fn {{ field.field_name() }}(&self) -> Vec<JsonNode> {
-        let mut children = Vec::with_capacity(self.node.count_children() as usize);
-        let mut iter = self.node.get_children(false);
-        loop {
-            match iter.next() {
-                Some(s) => match s.get_rule().get_tag() {
-                    "string" => children.push(JsonNode::Str(JsonStringNode::new(JsonStringNative { node: s }))),
-                    #[cfg(debug_assertions)]
-                    s => unreachable!(
-                        "branch tag `{}` is not possible here, check whether the grammar version is correct",
-                        s.get_rule().get_tag()
-                    ),
-                    _ => break,
-                },
-                None => break,
-            }
-        }
-        return children;
-    }
-{%- endif %}
-{%- endfor %}
 }
 {%- endif %}
 {%- endfor %}

@@ -1,12 +1,11 @@
-package yggdrasil:{{ self.language_id() }};
+package yggdrasil: {{ self.language_id() }};
 
 world host {
-    import peg:core/types;
     export ast;
 }
 
 interface ast {
-    use peg: core/errors.{parse-error};
+    use peg: core/types.{parse-error};
     use peg: core/cst.{syntax-node};
 
     /// Token type of the language
@@ -18,23 +17,23 @@ interface ast {
 
     variant {{ self.language_id() }}-type {
 {%- for (variant, class) in self.token_type() %}
-        %{{ variant }}({{ self.language_id() }}-{{ class }}),
+        %{{ variant }}({{ self.language_id() }}-{{ class }}-node),
 {%- endfor %}
     }
 
 {%- for variant in self.variants() %}
     // AST Types
-    variant {{ self.rule_name(variant) }}-node {
-        number(json-number-node),
-        str(json-string-node),
-        array(json-array-node)
+    variant {{ self.language_id() }}-{{ self.rule_name(variant) }}-node {
+{%- for (item, class) in self.variant_items(variant) %}
+        %{{ item }}({{ self.language_id() }}-{{ class }}-node),
+{%- endfor %}
     }
 {%- endfor %}
 
 {%- for record in self.records() %}
-    resource {{ record.rule_name(record) }}-number-node {
-        ctor: static func(super: syntax-node) -> result<json-array-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json-array-node, parse-error>;
+    resource {{ self.language_id() }}-{{ self.rule_name(record) }}-node {
+        ctor: static func(super: syntax-node) -> result<{{ self.language_id() }}-{{ self.rule_name(record) }}-node, parse-error>;
+        parse-string: static func(text: string, offset: u32) -> result<{{ self.language_id() }}-{{ self.rule_name(record) }}-node, parse-error>;
         get-text: func() -> string;
     }
 {%- endfor %}

@@ -28,7 +28,7 @@ fn debug_v() -> std::io::Result<()> {
 #[ignore]
 fn debug_json5() -> std::io::Result<()> {
     let input = r#"C:\Users\Dell\CLionProjects\serde-json5\projects\json5-parser\grammars\json5.ygg"#;
-    let output = r#"C:\Users\Dell\CLionProjects\serde-json5\projects\json5-parser\src\codegen"#;
+    let output = r#"C:\Users\Dell\CLionProjects\serde-json5\projects\json5-parser"#;
     let builder = BuildWasi { ..Default::default() };
     let mut cache = FileCache::default();
     let file = cache.load_local(input)?;

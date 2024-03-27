@@ -53,6 +53,12 @@ impl GrammarInfo {
     pub fn rules(&self) -> Vec<GrammarRule> {
         self.rules.values().cloned().collect()
     }
+    pub fn classes(&self) -> Vec<GrammarRule> {
+        self.rules.values().filter(|x| x.is_class()).cloned().collect()
+    }
+    pub fn unions(&self) -> Vec<GrammarRule> {
+        self.rules.values().filter(|x| x.is_union()).cloned().collect()
+    }
     pub fn ignored_rules(&self) -> Vec<GrammarRule> {
         todo!()
     }
