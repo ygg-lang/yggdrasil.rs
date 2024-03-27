@@ -1,6 +1,6 @@
 [package]
 name = "yggdrasil-rt"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Aster <192607617@qq.com>"]
 description = "Yggdrasil Shared Structure"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
@@ -16,8 +16,8 @@ default = []
 dynamic = []
 
 [dependencies]
-serde = { version = "1.0.196", optional = true }
-regex-automata = "0.4.5"
+serde = { version = "1.0.197", optional = true }
+regex-automata = "0.4.6"
 # memchr = { version = "2", optional = true }
 # ucd-trie = { version = "0.1.5", optional = true, default-features = false }
 daachorse = "1.0.0"

@@ -1,5 +1,4 @@
 use super::*;
-use crate::bootstrap::{RangeExactNode, RangeNode, StringNormalNode};
 
 impl<'i> AstBuilder<'i> for ExpressionNode<'i> {
     type Output = YggdrasilExpression;
@@ -88,25 +87,19 @@ impl<'i> AstBuilder<'i> for AtomicNode<'i> {
 
     fn build(&self, ctx: &ParseContext, state: &mut ParseState) -> Result<Self::Output> {
         let expr = match self {
-            AtomicNode::GroupExpression(e) => e.expression().build(ctx, state)?,
-            AtomicNode::Boolean(v) => v.build(ctx, state)?,
-            AtomicNode::FunctionCall(_) => {
+            Self::GroupExpression(e) => e.expression().build(ctx, state)?,
+            Self::Boolean(v) => v.build(ctx, state)?,
+            Self::FunctionCall(_) => {
                 todo!()
             }
-            AtomicNode::RegexEmbed(v) => YggdrasilRegex::new(v.get_str().trim(), v.get_range()).into(),
-            AtomicNode::RegexRange(v) => YggdrasilRegex::new(v.get_str(), v.get_range()).into(),
-            AtomicNode::StringRaw(s) => YggdrasilText::new(s.string_raw_text().get_str(), s.get_range()).into(),
-            AtomicNode::StringNormal(s) => s.build(ctx, state)?.into(),
-            AtomicNode::Category(cat) => {
-                let r = cat.get_range();
-                match &cat.group() {
-                    Some(g) => YggdrasilRegex::new(format!("\\p{{{}={}}}", g.get_str(), cat.script().get_str()), r).into(),
-                    None => YggdrasilRegex::new(format!("\\p{{{}}}", cat.script().get_str()), r).into(),
-                }
-            }
-            AtomicNode::EscapedUnicode(unicode) => YggdrasilText::new(unicode.build(ctx, state)?, unicode.get_range()).into(),
-            AtomicNode::Identifier(v) => v.build(ctx, state)?.into(),
-            AtomicNode::Integer(v) => BigInt::from_str_radix(v.get_str(), 10)?.into(),
+            Self::RegexEmbed(regex) => regex.build(ctx, state)?.into(),
+            Self::RegexRange(regex) => regex.build(ctx, state)?.into(),
+            Self::Category(regex) => regex.build(ctx, state)?.into(),
+            Self::StringRaw(string) => YggdrasilText::new(string.string_raw_text().get_str(), string.get_range()).into(),
+            Self::StringNormal(string) => string.build(ctx, state)?.into(),
+            Self::EscapedUnicode(unicode) => YggdrasilText::new(unicode.build(ctx, state)?, unicode.get_range()).into(),
+            Self::Identifier(v) => v.build(ctx, state)?.into(),
+            Self::Integer(v) => BigInt::from_str_radix(v.get_str(), 10)?.into(),
         };
         Ok(expr)
     }

@@ -5,7 +5,7 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-anyhow = "1.0.79"
+anyhow = "1.0.81"
 
 [dependencies.yggdrasil-shared]
 version = "0.2.*"

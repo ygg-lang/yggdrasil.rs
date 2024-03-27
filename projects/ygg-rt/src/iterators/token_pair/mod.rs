@@ -46,7 +46,10 @@ pub unsafe fn new<R: YggdrasilRule>(queue: Rc<Vec<TokenQueue<R>>>, input: &str, 
     TokenPair { queue, input, start }
 }
 
-impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
+impl<'i, R> TokenPair<'i, R>
+where
+    R: YggdrasilRule,
+{
     /// Returns the `Rule` of the `Pair`.
     ///
     /// # Examples
@@ -72,9 +75,9 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
     /// assert_eq!(pair.get_rule(), Rule::a);
     /// ```
     #[inline]
-    pub fn get_rule(&self) -> R {
+    pub fn get_rule(&self) -> &R {
         match &self.queue[self.pair()] {
-            TokenQueue::End { rule, .. } => rule.clone(),
+            TokenQueue::End { rule, .. } => rule,
             _ => unreachable!(),
         }
     }
@@ -226,7 +229,7 @@ impl<'i, R: YggdrasilRule> TokenPair<'i, R> {
     #[inline]
     pub fn find_first_rule(&self, rule: R) -> Option<TokenPair<R>> {
         for pair in self.clone().into_inner() {
-            if self.get_rule() == rule {
+            if self.get_rule().get_enum().eq(&rule.get_enum()) {
                 return Some(pair);
             }
         }

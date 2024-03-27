@@ -65,6 +65,15 @@ pub trait YggdrasilRule: Clone + Debug + Eq + Hash + Ord {
         false
     }
 
+    /// To prevent violation of object safe, used to implement ord and eq.
+    fn get_name(&self) -> &'static str {
+        ""
+    }
+    /// To prevent violation of object safe, used to implement ord and eq.
+    fn get_enum(&self) -> u32 {
+        0
+    }
+
     /// Get the style name from the rule
     fn get_style(&self) -> &'static str {
         ""

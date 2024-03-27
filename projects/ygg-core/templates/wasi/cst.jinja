@@ -1,0 +1,46 @@
+use super::*;
+
+{%- set rules = self.grammar.rules() %}
+{%- set rule_name = self.grammar.rule_name() %}
+{%- set parser_name = self.grammar.parser_name() %}
+
+pub(super) fn parse_cst(input: &str, rule: {{ rule_name }}) -> OutputResult<{{ rule_name}}> {
+    state(input, |state| match rule {
+{%- for rule in rules.iter() %}
+        {{ rule_name }}::{{ rule.name.text|safe_rust_id }} => {{ rule.parser_name() }}(state),
+{%- endfor %}
+        {{ rule_name }}::HiddenText => unreachable!(),
+    })
+}
+
+{%- for rule in rules.iter() %}
+#[inline]
+fn {{ rule.parser_name() }}(state: Input) -> Output {
+    state.rule({{ rule_name }}::{{ rule.name.text|safe_rust_id }}, |s| {
+        {{ rule.parser_expression() }}
+    })
+}
+{%- endfor %}
+
+/// All rules ignored in ast mode, inline is not recommended
+fn builtin_ignore(state: Input) -> Output {
+{%- if self.grammar.ignore_rules_empty() %}
+    Ok(state)
+{%- else %}
+    state.repeat(0..u32::MAX, |s| {
+        {{ self.grammar.ignore_rule_match() }}
+    })
+{% endif %}
+}
+
+fn builtin_any(state: Input) -> Output {
+    state.rule({{ rule_name }}::HiddenText, |s| s.match_char_if(|_| true))
+}
+
+fn builtin_text<'i>(state: Input<'i>, text: &'static str, case: bool) -> Output<'i> {
+    state.rule({{ rule_name }}::HiddenText, |s| s.match_string(text, case))
+}
+
+fn builtin_regex<'i, 'r>(state: Input<'i>, regex: &'r Regex) -> Output<'i> {
+    state.rule({{ rule_name }}::HiddenText, |s| s.match_regex(regex))
+}

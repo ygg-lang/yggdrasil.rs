@@ -1,0 +1,78 @@
+#![allow(dead_code, unused_imports, non_camel_case_types)]
+#![allow(missing_docs, rustdoc::missing_crate_level_docs)]
+#![allow(clippy::unnecessary_cast)]
+#![doc = include_str!("readme.md")]
+
+mod parse_cst;
+mod parse_ast;
+
+use core::str::FromStr;
+use std::{borrow::Cow, ops::Range, sync::OnceLock};
+use yggdrasil_rt::*;
+
+{%- set rules = self.grammar.rules() %}
+{%- set rule_name = self.grammar.rule_name() %}
+{%- set parser_name = self.grammar.parser_name() %}
+
+type Input<'i> = Box<State<'i, {{ rule_name }}>>;
+type Output<'i> = Result<Box<State<'i, {{ rule_name }}>>, Box<State<'i, {{ rule_name }}>>>;
+
+#[doc = include_str!("railway.min.svg")]
+#[repr(C)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct {{ parser_name }} {}
+
+impl YggdrasilParser for {{ parser_name }} {
+    type Rule = {{ rule_name }};
+    fn parse_cst(input: &str, rule: Self::Rule) -> OutputResult<{{ rule_name }}> {
+        self::parse_cst::parse_cst(input, rule)
+    }
+}
+
+#[repr(u32)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub enum {{ rule_name }} {
+{%- for rule in rules.iter() %}
+    {{ rule.name.text|safe_rust_id }},
+{%- endfor %}
+    /// Label for unnamed text literal
+    HiddenText,
+}
+
+impl YggdrasilRule for {{ rule_name }} {
+    fn is_ignore(&self) -> bool {
+{%- if self.grammar.ignore_rules_empty() %}
+        false
+{%- else %}
+        matches!(self, {{ self.grammar.ignore_rule_pattern() }})
+{%- endif %}
+    }
+
+    fn get_style(&self) -> &'static str {
+        match self {
+{%- for rule in rules.iter() %}
+            Self::{{ rule.name.text|safe_rust_id }} => "",
+{%- endfor %}
+            _ => "",
+        }
+    }
+}
+
+{%- for rule in rules.clone() %}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+{%- if rule.is_class() %}
+pub struct {{ rule.node_name() }}<'i> {
+    pair: TokenPair<'i, {{ rule_name }}>,
+}
+{%- else if rule.is_union() %}
+pub enum {{ rule.node_name() }}<'i> {
+{%- for (variant, class) in rule.union_fields() %}
+    {{ variant }}({{ class }}Node<'i>),
+{%- endfor %}
+}
+{%- endif %}
+{%- endfor %}
+

@@ -35,7 +35,7 @@ impl YggdrasilBranch {
                 branch.additional_rule = Some(GrammarRule {
                     name: branch.class.clone(),
                     redirect: None,
-                    attributes: GrammarRuleAttributes::default().with_hidden(true),
+                    attributes: GrammarRuleAttributes::default(),
                     body: GrammarBody::Class { term: self.branch.clone() },
                     range: Default::default(),
                 })

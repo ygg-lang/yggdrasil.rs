@@ -1,11 +1,11 @@
 use itertools::Itertools;
 use std::mem::take;
-use yggdrasil_error::YggdrasilError;
+use yggdrasil_error::{Validate, Validation, YggdrasilError};
 pub use yggdrasil_ir::traits::{CodeGenerator, CodeOptimizer};
 use yggdrasil_ir::{
     grammar::GrammarInfo,
     nodes::{ChoiceExpression, ConcatExpression, ExpressionBody, UnaryExpression, YggdrasilExpression},
-    rule::{FunctionRule, GrammarAtomic, GrammarRule},
+    rule::{FunctionRule, GrammarAtomic, GrammarBody, GrammarRule},
     IndexMap,
 };
 mod emit_function;

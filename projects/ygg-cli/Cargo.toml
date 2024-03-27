@@ -13,12 +13,12 @@ name = "ycc"
 path = "src/main.rs"
 
 [dependencies]
-serde = { version = "1.0.196", features = ["derive"] }
-clap = { version = "4.5.1", features = ["derive"] }
+serde = { version = "1.0.197", features = ["derive"] }
+clap = { version = "4.5.4", features = ["derive"] }
 tracing = "0.1.40"
 wax = "0.6.0"
 json5 = "0.4.1"
-toml = "0.8.10"
+toml = "0.8.12"
 #yaml = "0.3.0"
 
 [dependencies.yggdrasil-shared]

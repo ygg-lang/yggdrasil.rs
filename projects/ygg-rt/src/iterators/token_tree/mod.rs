@@ -35,7 +35,10 @@ where
     }
 }
 
-impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
+impl<'i, R> TokenTree<'i, R>
+where
+    R: YggdrasilRule + Clone,
+{
     /// Captures a slice from the `&str` defined by the starting position of the first token `Pair`
     /// and the ending position of the last token `Pair` of the `Pairs`. This also captures
     /// the input between those two token `Pair`s.

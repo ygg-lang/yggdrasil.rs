@@ -10,18 +10,15 @@ use crate::{
     bootstrap::{
         AtomicNode, BooleanNode, BranchTagNode, CallBodyNode, ClassBlockNode, ClassStatementNode, DecoratorCallNode,
         EscapedCharacterNode, EscapedUnicodeNode, ExpressionHardNode, ExpressionNode, ExpressionSoftNode, ExpressionTagNode,
-        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, ModifierCallNode, PrefixNode, RegexEmbedNode,
-        RegexItemNode, RootNode, StatementNode, StringItemNode, StringNormalNode, SuffixNode, TermNode, UnionBlockNode,
-        UnionBranchNode, UnionStatementNode,
+        GrammarStatementNode, GroupPairNode, GroupStatementNode, IdentifierNode, ModifierCallNode, PrefixNode, RangeExactNode,
+        RangeNode, RegexEmbedNode, RegexItemNode, RootNode, StatementNode, StringItemNode, StringNormalNode, SuffixNode,
+        TermNode, UnionBlockNode, UnionBranchNode, UnionStatementNode,
     },
     helpers::annotations::TakeAnnotations,
     states::{ParseContext, ParseState},
     traits::AstBuilder,
 };
-use std::{
-    borrow::Cow,
-    fmt::{Display, Formatter, Write},
-};
+use std::borrow::Cow;
 use yggdrasil_error::{Failure, FileCache, FileID, Result, Success, Validation, YggdrasilError};
 use yggdrasil_ir::{
     data::{YggdrasilRegex, YggdrasilText},

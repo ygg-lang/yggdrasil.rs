@@ -6,7 +6,7 @@ use yggdrasil_ir::{
     data::RuleReference,
     grammar::GrammarInfo,
     nodes::{ChoiceExpression, ConcatExpression, ExpressionBody, UnaryExpression, YggdrasilExpression, YggdrasilOperator},
-    rule::{GrammarBody, GrammarRule, YggdrasilIdentifier},
+    rule::{GrammarBody, GrammarRule},
     traits::CodeGenerator,
 };
 
