@@ -1,29 +1,26 @@
-use crate::{
-    codegen::BuildRailway,
-    optimize::{InsertIgnore, RefineRules},
-    parse_grammar, FileCache,
-};
+use crate::{codegen::BuildRailway, parse_grammar, FileCache};
 use askama::Template;
+use heck::{ToKebabCase, ToSnakeCase, ToUpperCamelCase};
 use itertools::Itertools;
-
-use crate::optimize::RemarkTags;
 use railroad::{Diagram, Node, VerticalGrid};
 use std::{
     fmt::Write,
-    fs,
     fs::{create_dir_all, File},
     io::{Error, ErrorKind, Write as _},
     path::{Path, PathBuf},
 };
-use yggdrasil_error::{Failure, FileID, Success, Validate, Validation};
+use yggdrasil_error::{FileID, Success, Validate, Validation};
 use yggdrasil_ir::{
     grammar::GrammarInfo,
     rule::GrammarRule,
     traits::{CodeGenerator, CodeOptimizer},
 };
 
+mod build_ast;
+mod build_cst;
 mod build_main;
 mod build_readme;
+mod build_wit;
 mod filters;
 mod grammar_ext;
 mod rule_ext;
@@ -34,54 +31,45 @@ use self::{grammar_ext::GrammarExt, rule_ext::RuleExt};
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BuildWasi {
     pub export: String,
-    pub range_type: String,
-    pub rule_prefix: String,
-    pub node_suffix: String,
     pub railway: BuildRailway,
 }
 
 impl Default for BuildWasi {
     fn default() -> Self {
-        Self {
-            export: "src".to_string(),
-            range_type: "usize".to_string(),
-            rule_prefix: "".to_string(),
-            node_suffix: "Node".to_string(),
-            railway: Default::default(),
-        }
+        Self { export: "src".to_string(), railway: Default::default() }
     }
 }
 
 #[derive(Template)]
-#[template(path = "rust/main.jinja", escape = "none")]
+#[template(path = "wasi/main.jinja", escape = "none")]
 pub struct RustWriteMain<'i> {
     grammar: &'i GrammarInfo,
     config: BuildWasi,
 }
 
 #[derive(Template)]
-#[template(path = "rust/lex.jinja", escape = "none")]
-pub struct RustWriteLex<'i> {
+#[template(path = "wasi/wit.jinja", escape = "none")]
+pub struct WasiWriteWit<'i> {
     grammar: &'i GrammarInfo,
     config: BuildWasi,
 }
 
 #[derive(Template)]
-#[template(path = "rust/cst.jinja", escape = "none")]
+#[template(path = "wasi/cst.jinja", escape = "none")]
 pub struct RustWriteCST<'i> {
     grammar: &'i GrammarInfo,
     config: BuildWasi,
 }
 
 #[derive(Template)]
-#[template(path = "rust/ast.jinja", escape = "none")]
+#[template(path = "wasi/ast.jinja", escape = "none")]
 pub struct RustWriteAST<'i> {
     grammar: &'i GrammarInfo,
     config: BuildWasi,
 }
 
 #[derive(Template)]
-#[template(path = "rust/readme.jinja", escape = "none")]
+#[template(path = "wasi/readme.jinja", escape = "none")]
 pub struct RustWriteReadme<'i> {
     grammar: &'i GrammarInfo,
     config: BuildWasi,
@@ -108,7 +96,7 @@ impl CodeGenerator for BuildWasi {
         let mut errors = vec![];
         out.ron = format!("{:#?}", info);
         out.main = RustWriteMain { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
-        out.lex = RustWriteLex { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
+        out.lex = WasiWriteWit { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
         out.cst = RustWriteCST { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
         out.ast = RustWriteAST { grammar: info, config: self.clone() }.render().recover(&mut errors)?;
         let readme = RustWriteReadme {
@@ -145,7 +133,7 @@ impl RustModule {
         }
         let mut main = File::create(path.join("mod.rs"))?;
         main.write_all(self.main.as_bytes())?;
-        let mut cst = File::create(path.join("lexer.rs"))?;
+        let mut cst = File::create(path.join("world.wit"))?;
         cst.write_all(self.lex.as_bytes())?;
         let mut cst = File::create(path.join("parse_cst.rs"))?;
         cst.write_all(self.cst.as_bytes())?;

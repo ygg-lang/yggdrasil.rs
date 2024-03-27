@@ -10,10 +10,16 @@ use yggdrasil_ir::{
 use super::*;
 
 pub(super) trait RuleExt {
+    fn rule_name(&self) -> String;
+
     fn parser_expression(&self) -> String;
 }
 
 impl RuleExt for GrammarRule {
+    fn rule_name(&self) -> String {
+        self.name.text.to_kebab_case()
+    }
+
     fn parser_expression(&self) -> String {
         let mut w = String::new();
         match &self.body {

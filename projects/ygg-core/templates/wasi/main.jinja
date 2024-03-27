@@ -11,11 +11,10 @@ use std::{borrow::Cow, ops::Range, sync::OnceLock};
 use yggdrasil_rt::*;
 
 {%- set rules = self.grammar.rules() %}
-{%- set rule_name = self.grammar.rule_name() %}
 {%- set parser_name = self.grammar.parser_name() %}
 
-type Input<'i> = Box<State<'i, {{ rule_name }}>>;
-type Output<'i> = Result<Box<State<'i, {{ rule_name }}>>, Box<State<'i, {{ rule_name }}>>>;
+type Input<'i> = Box<State<'i, {{ self.token_name() }}>>;
+type Output<'i> = Result<Box<State<'i, {{ self.token_name() }}>>, Box<State<'i, {{ self.token_name() }}>>>;
 
 #[doc = include_str!("railway.min.svg")]
 #[repr(C)]
@@ -24,8 +23,8 @@ type Output<'i> = Result<Box<State<'i, {{ rule_name }}>>, Box<State<'i, {{ rule_
 pub struct {{ parser_name }} {}
 
 impl YggdrasilParser for {{ parser_name }} {
-    type Rule = {{ rule_name }};
-    fn parse_cst(input: &str, rule: Self::Rule) -> OutputResult<{{ rule_name }}> {
+    type Rule = {{ self.token_name() }};
+    fn parse_cst(input: &str, rule: Self::Rule) -> OutputResult<{{ self.token_name() }}> {
         self::parse_cst::parse_cst(input, rule)
     }
 }
@@ -33,7 +32,7 @@ impl YggdrasilParser for {{ parser_name }} {
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum {{ rule_name }} {
+pub enum {{ self.token_name() }} {
 {%- for rule in rules.iter() %}
     {{ rule.name.text|safe_rust_id }},
 {%- endfor %}
@@ -41,7 +40,7 @@ pub enum {{ rule_name }} {
     HiddenText,
 }
 
-impl YggdrasilRule for {{ rule_name }} {
+impl YggdrasilRule for {{ self.token_name() }} {
     fn is_ignore(&self) -> bool {
 {%- if self.grammar.ignore_rules_empty() %}
         false
@@ -64,15 +63,11 @@ impl YggdrasilRule for {{ rule_name }} {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 {%- if rule.is_class() %}
-pub struct {{ rule.node_name() }}<'i> {
-    pair: TokenPair<'i, {{ rule_name }}>,
+pub struct {{ rule.node_name() }}Native {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 {%- else if rule.is_union() %}
-pub enum {{ rule.node_name() }}<'i> {
-{%- for (variant, class) in rule.union_fields() %}
-    {{ variant }}({{ class }}Node<'i>),
-{%- endfor %}
-}
+
 {%- endif %}
 {%- endfor %}
 

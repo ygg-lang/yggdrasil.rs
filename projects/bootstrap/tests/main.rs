@@ -1,6 +1,9 @@
 use bootstrap::build;
 use std::path::Path;
-use yggdrasil_shared::codegen::BuildRust;
+use yggdrasil_shared::{
+    codegen::{BuildRust, BuildWasi},
+    FileCache,
+};
 
 #[test]
 #[ignore]
@@ -26,8 +29,13 @@ fn debug_v() -> std::io::Result<()> {
 fn debug_json5() -> std::io::Result<()> {
     let input = r#"C:\Users\Dell\CLionProjects\serde-json5\projects\json5-parser\grammars\json5.ygg"#;
     let output = r#"C:\Users\Dell\CLionProjects\serde-json5\projects\json5-parser\src\codegen"#;
-    let builder = BuildRust { range_type: "usize".to_string(), ..Default::default() };
-    build(input, output, builder)
+    let builder = BuildWasi { ..Default::default() };
+    let mut cache = FileCache::default();
+    let file = cache.load_local(input)?;
+    builder.generate(file, &mut cache, output).option(|e| {
+        e.as_report().eprint(&cache).ok();
+    });
+    Ok(())
 }
 
 #[test]

@@ -2,7 +2,7 @@ use super::*;
 use crate::codegen::target_rust::filters::safe_rust_id;
 
 pub trait GrammarExt {
-    fn rule_name(&self) -> String;
+    fn token_name(&self) -> String;
     fn ignore_rules(&self) -> Vec<GrammarRule>;
     fn ignore_rules_empty(&self) -> bool;
     fn ignore_rule_pattern(&self) -> String;
@@ -10,7 +10,7 @@ pub trait GrammarExt {
 }
 
 impl GrammarExt for GrammarInfo {
-    fn rule_name(&self) -> String {
+    fn token_name(&self) -> String {
         format!("{}Rule", self.name.text)
     }
     fn ignore_rules(&self) -> Vec<GrammarRule> {

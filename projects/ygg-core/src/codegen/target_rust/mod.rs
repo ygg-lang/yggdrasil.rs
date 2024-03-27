@@ -24,7 +24,7 @@ use yggdrasil_ir::{
 
 mod build_main;
 mod build_readme;
-mod filters;
+pub mod filters;
 mod grammar_ext;
 mod rule_ext;
 
