@@ -1,3 +1,4 @@
+use wasi_yggdrasil::exports::peg::core::cst::SyntaxNode;
 use crate::exports::yggdrasil::{{ self.language_id() }}::ast::*;
 use super::*;
 
@@ -25,13 +26,13 @@ impl {{ self.wasi_node(variant) }} {
         let node = node.first_child().unwrap();
         let tag = match node.borrow().tag.as_ref() {
             Some(s) => unsafe { transmute::<&str, &str>(s.as_str()) },
-            None => Err()?,
+            None => Err(ParseError::MissingRoot)?,
         };
         Some(match tag {
 {%- for (tag, variant, node) in self.union_variants(variant) %}
             "{{tag}}" => Self::{{ variant }}({{ node }}::from_node(node)?),
 {%- endfor %}
-            _ => Err()?,
+            _ => Err(ParseError::MissingRoot)?,
         })
     }
 }

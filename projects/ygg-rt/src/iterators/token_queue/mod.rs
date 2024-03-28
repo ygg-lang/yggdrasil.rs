@@ -23,9 +23,9 @@ pub enum TokenQueue<R> {
         rule: R,
         ///
         #[cfg(feature = "dynamic")]
-        tag: Option<alloc::string::String>,
+        tag: alloc::string::String,
         ///
         #[cfg(not(feature = "dynamic"))]
-        tag: Option<&'static str>,
+        tag: &'static str,
     },
 }

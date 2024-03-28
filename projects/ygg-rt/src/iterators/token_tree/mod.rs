@@ -222,7 +222,7 @@ where
     /// ```
     #[inline]
     pub fn find_tagged(self, tag: &str) -> Filter<TokenStream<'i, R>, impl FnMut(&TokenPair<'i, R>) -> bool + '_> {
-        self.flatten().filter(move |pair: &TokenPair<'i, R>| matches!(pair.get_tag(), Some(nt) if nt == tag))
+        self.flatten().filter(move |pair: &TokenPair<'i, R>| pair.get_tag().eq(tag))
     }
 
     /// Returns the `Tokens` for the `Pairs`.

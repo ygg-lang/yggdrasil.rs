@@ -39,8 +39,8 @@ where
             let span = term.get_span();
             write!(f, "{:?}({}..{}", term.get_rule(), span.start, span.end)?;
             match term.get_tag() {
-                Some(s) => write!(f, ", {s})")?,
-                None => write!(f, ")")?,
+                "" => write!(f, ")")?,
+                s => write!(f, ", {s})")?,
             }
             writeln!(f, ": \x1b[32m{:?}\x1b[0m", span.as_str())?;
 

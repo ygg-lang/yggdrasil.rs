@@ -189,10 +189,10 @@ where
 
     /// Get current node tag
     #[inline]
-    pub fn get_tag(&self) -> Option<&str> {
+    pub fn get_tag(&self) -> &str {
         match &self.queue[self.pair()] {
-            TokenQueue::End { tag, .. } => tag.as_ref().map(|x| x.borrow()),
-            _ => None,
+            TokenQueue::End { tag, .. } => tag,
+            _ => "",
         }
     }
 
@@ -239,9 +239,8 @@ where
     #[inline]
     pub fn find_first_tag(&self, tag: &str) -> Option<TokenPair<R>> {
         for pair in self.clone().into_inner() {
-            match pair.get_tag() {
-                Some(s) if tag.eq(s) => return Some(pair),
-                _ => {}
+            if pair.get_tag().eq(tag) {
+                return Some(pair);
             }
         }
         None
@@ -277,16 +276,14 @@ where
     /// Finds the first pair that has its node or branch tagged with the provided
     /// label. Searches in the flattened [`TokenTree`] iterator.
     #[inline]
-    pub fn take_tagged_one<N>(&self, tag: Tag) -> Result<N, YggdrasilError<N::Rule>>
+    pub fn take_tagged_one<N>(&self, tag: &str) -> Result<N, YggdrasilError<N::Rule>>
     where
         N: YggdrasilNode<'i, Rule = R>,
     {
         for child in self.clone().into_inner() {
-            match child.get_tag() {
-                Some(s) if tag.eq(s) => {}
-                _ => continue,
+            if child.get_tag().eq(tag) {
+                return N::from_pair(child);
             }
-            return N::from_pair(child);
         }
         return Err(YggdrasilError::missing_tag(tag, self.get_span()));
         // match self.take_tagged_items(tag.clone()).next() {
@@ -296,19 +293,17 @@ where
     }
     /// Take option
     #[inline]
-    pub fn take_tagged_option<N>(&self, tag: Tag) -> Option<N>
+    pub fn take_tagged_option<N>(&self, tag: &str) -> Option<N>
     where
         N: YggdrasilNode<'i, Rule = R>,
     {
         for child in self.clone().into_inner() {
-            match child.get_tag() {
-                Some(s) if tag.eq(s) => {}
-                _ => continue,
+            if child.get_tag().eq(tag) {
+                return match N::from_pair(child) {
+                    Ok(o) => Some(o),
+                    Err(_) => None,
+                };
             }
-            return match N::from_pair(child) {
-                Ok(o) => Some(o),
-                Err(_) => None,
-            };
         }
         return None;
     }
@@ -414,19 +409,16 @@ impl<'i, R: YggdrasilRule> TokenTree<'i, R> {
 }
 
 impl<'i, R: YggdrasilRule> Debug for TokenPair<'i, R> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         let pair = &mut f.debug_struct("Pair");
         pair.field("rule", &self.get_tag());
-        // In order not to break compatibility
-        if let Some(s) = self.get_tag() {
-            pair.field("node_tag", &s);
-        }
+        pair.field("node_tag", &self.get_tag());
         pair.field("span", &self.get_span()).field("inner", &self.clone().into_inner().collect::<Vec<_>>()).finish()
     }
 }
 
 impl<'i, R: YggdrasilRule> Display for TokenPair<'i, R> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         let rule = self.get_rule();
         let start = self.p(self.start);
         let end = self.p(self.pair());

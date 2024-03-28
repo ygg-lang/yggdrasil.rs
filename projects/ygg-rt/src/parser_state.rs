@@ -215,7 +215,7 @@ where
                     new_state.queue.push(TokenQueue::End {
                         start_token_index: index,
                         rule: rule,
-                        tag: None,
+                        tag: "",
                         input_offset: new_pos,
                     });
                 }
@@ -281,8 +281,9 @@ where
     #[inline]
     #[cfg(not(feature = "dynamic"))]
     pub fn tag_node(mut self: Box<Self>, tag: &'static str) -> Either<Box<Self>> {
-        if let Some(TokenQueue::End { tag: old, .. }) = self.queue.last_mut() {
-            *old = Some(tag)
+        match self.queue.last_mut() {
+            Some(TokenQueue::End { tag: old, .. }) => *old = tag,
+            _ => {}
         }
         Ok(self)
     }

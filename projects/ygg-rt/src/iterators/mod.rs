@@ -3,8 +3,6 @@ use crate::{
 };
 use alloc::{borrow::ToOwned, format, rc::Rc, string::String, vec::Vec};
 use core::{
-    borrow::Borrow,
-    fmt,
     fmt::{Debug, Display, Formatter},
     hash::{Hash, Hasher},
     iter::Filter,

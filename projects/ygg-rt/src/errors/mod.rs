@@ -1,9 +1,10 @@
 pub use self::source::YggdrasilErrorSource;
-use crate::{iterators::Tag, span::TextSpan, YggdrasilRule};
+use crate::{span::TextSpan, YggdrasilRule};
 use alloc::{
     borrow::ToOwned,
     format,
     string::{String, ToString},
+    vec,
     vec::Vec,
 };
 use core::{fmt, fmt::Display, ops::Range};
@@ -36,7 +37,7 @@ pub enum YggdrasilErrorKind<R> {
         expect: R,
     },
     InvalidTag {
-        expect: Tag,
+        expect: Vec<String>,
     },
     /// Custom error with a message
     CustomError {
@@ -90,8 +91,8 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
         Self::new_from_span(YggdrasilErrorKind::InvalidNode { expect }, span)
     }
     /// unable to create node
-    pub fn missing_tag(expect: Tag, span: TextSpan) -> YggdrasilError<R> {
-        Self::new_from_span(YggdrasilErrorKind::InvalidTag { expect }, span)
+    pub fn missing_tag(expect: &str, span: TextSpan) -> YggdrasilError<R> {
+        Self::new_from_span(YggdrasilErrorKind::InvalidTag { expect: vec![expect.to_string()] }, span)
     }
     /// missing rule
     pub fn missing_rule(expect: R, span: TextSpan) -> YggdrasilError<R> {
@@ -266,7 +267,7 @@ impl<R: YggdrasilRule> Display for YggdrasilErrorKind<R> {
                 write!(f, "invalid node, except: {:?}", expect)
             }
             YggdrasilErrorKind::InvalidTag { expect } => {
-                write!(f, "invalid tag, except: {}", expect)
+                write!(f, "invalid tag, except: {:?}", expect)
             }
             YggdrasilErrorKind::CustomError { message } => {
                 write!(f, "{}", message)
