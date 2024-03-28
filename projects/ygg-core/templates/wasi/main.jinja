@@ -7,20 +7,22 @@ mod parse_cst;
 mod parse_ast;
 
 use crate::exports::yggdrasil::{{ self.language_id() }}::ast::{{ self.token_name() }};
-use core::str::FromStr;
-use std::{
-    borrow::Cow,
+use core::{
     cmp::Ordering,
     hash::{Hash, Hasher},
+    mem::transmute,
     ops::Range,
-    rc::Rc,
-    sync::OnceLock,
+    str::FromStr,
 };
+use std::{borrow::Cow, rc::Rc, sync::OnceLock};
 use wasi_yggdrasil::{
-    exports::peg::core::cst::SyntaxNode,
+    exports::peg::core::{
+        cst::{GuestSyntaxNode, SyntaxNode},
+        types::InvalidRule,
+    },
     state,
-    syntax_node::{NativeLanguage, NativeSyntaxData},
-    OutputResult, Regex, State, YggdrasilParser, YggdrasilRule,
+    syntax_node::{NativeLanguage, NativeSyntaxData, NativeSyntaxRule},
+    Node, OutputResult, Regex, State, YggdrasilParser, YggdrasilRule,
 };
 
 type Input<'i> = Box<State<'i, {{ self.token_name() }}>>;
@@ -62,7 +64,7 @@ impl YggdrasilRule for {{ self.token_name() }} {
     fn get_style(&self) -> &'static str {
         match self {
 {%- for rule in self.grammar.rules() %}
-            Self::{{ rule.name.text|safe_rust_id }} => "",
+            Self::{{ self.rule_variant(rule) }} => "",
 {%- endfor %}
             _ => "",
         }

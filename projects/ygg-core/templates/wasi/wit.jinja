@@ -6,7 +6,7 @@ world host {
 
 interface ast {
     use peg: core/types.{parse-error};
-    use peg: core/cst.{syntax-node};
+    use peg: core/cst.{syntax-node, syntax-rule, text-range};
 
     /// Token type of the language
     enum {{ self.language_id() }}-token {
@@ -21,8 +21,9 @@ interface ast {
         %{{ variant }}({{ self.language_id() }}-{{ class }}-node),
 {%- endfor %}
     }
+    parse-string: func(text: string, offset: u32, rule: {{ self.language_id() }}-token) -> result<{{ self.language_id() }}-type, parse-error>;
 
-{%- for variant in self.variants() %}
+{%- for variant in self.grammar.unions() %}
     // AST Types
     variant {{ self.language_id() }}-{{ self.rule_name(variant) }}-node {
 {%- for (item, class) in self.variant_items(variant) %}
@@ -31,11 +32,13 @@ interface ast {
     }
 {%- endfor %}
 
-{%- for record in self.records() %}
+{%- for record in self.grammar.classes() %}
     resource {{ self.language_id() }}-{{ self.rule_name(record) }}-node {
         ctor: static func(super: syntax-node) -> result<{{ self.language_id() }}-{{ self.rule_name(record) }}-node, parse-error>;
         parse-string: static func(text: string, offset: u32) -> result<{{ self.language_id() }}-{{ self.rule_name(record) }}-node, parse-error>;
-        get-text: func() -> string;
+        get-rule: func() -> syntax-rule;
+        get-string: func() -> string;
+        get-range: func() -> text-range;
     }
 {%- endfor %}
 }

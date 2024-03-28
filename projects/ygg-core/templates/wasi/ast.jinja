@@ -1,31 +1,85 @@
-use wasi_yggdrasil::exports::peg::core::cst::SyntaxNode;
 use crate::exports::yggdrasil::{{ self.language_id() }}::ast::*;
 use super::*;
 
 #[automatically_derived]
 impl Guest for {{ self.host_name() }} {
-{%- for rule in self.grammar.classes() %}
-    type {{ self.node_wasi(rule) }} = {{ self.node_native(rule) }};
+{%- for record in self.grammar.classes() %}
+    type {{ self.wasi_node(record) }} = {{ self.native_node(record) }};
 {%- endfor %}
+    fn parse_string(_: String, _: u32, _: {{ self.language_name() }}Token) -> Result<{{ self.language_name() }}Type, ParseError> {
+        unimplemented!()
+    }
 }
 
-{%- for rule in self.grammar.classes() %}
+{%- for variant in self.grammar.unions() %}
 #[automatically_derived]
-impl {{ self.node_trait(rule) }} for {{ self.node_native(rule) }} {
-    fn ctor(super_: SyntaxNode) -> Result<{{ self.node_wasi(rule) }}, ParseError> {
-        Ok({{ self.node_wasi(rule) }}::new(Self { node: super_ }))
-    }
-    fn parse_string(text: String, offset: u32) -> Result<{{ self.node_wasi(rule) }}, ParseError> {
-        let input: Rc<str> = Rc::from(text);
-        let language = NativeLanguage { name: "{{ self.language_name() }}", glob: &["*.json5"] };
-        let root = match crate::wit::parse_cst::parse_cst(&input, {{ self.token_name() }}::{{ self.rule_variant(rule) }})?.next() {
-            Some(root) => root,
-            None => Err(ParseError::MissingRoot)?,
+impl {{ self.wasi_node(variant) }} {
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
+        }
+        let node = node.first_child().unwrap();
+        let tag = match node.borrow().tag.as_ref() {
+            Some(s) => unsafe { transmute::<&str, &str>(s.as_str()) },
+            None => Err()?,
         };
-        Ok({{ self.node_wasi(rule) }}::new(Self { node: SyntaxNode::new(NativeSyntaxData::new(input.clone(), root, &language)) }))
+        Some(match tag {
+{%- for (tag, variant, node) in self.union_variants(variant) %}
+            "{{tag}}" => Self::{{ variant }}({{ node }}::from_node(node)?),
+{%- endfor %}
+            _ => Err()?,
+        })
     }
-    fn get_text(&self) -> String {
+}
+{%- endfor %}
+
+{%- for record in self.grammar.classes() %}
+
+#[automatically_derived]
+impl {{ self.guest_trait(record) }} for {{ self.native_node(record) }} {
+    fn ctor(base: SyntaxNode) -> Result<{{ self.wasi_node(record) }}, ParseError> {
+        Ok({{ self.wasi_node(record) }}::new({{ self.native_node(record) }} { node: base.into_inner() }))
+    }
+
+    fn parse_string(text: String, offset: u32) -> Result<{{ self.wasi_node(record) }}, ParseError> {
+        let text = Rc::from(text);
+        let lang = NativeLanguage { name: "", glob: &[] };
+        match parse_cst::parse_cst(&text, {{ self.token_variant(record) }})?.next() {
+            Some(s) => {
+                let node = NativeSyntaxData::new(text.clone(), s, &lang);
+                Ok({{ self.wasi_node(record) }}::new({{ self.native_node(record) }} { node }))
+            }
+            None => Err(ParseError::MissingRoot),
+        }
+    }
+
+    fn get_rule(&self) -> SyntaxRule {
+        self.node.get_rule()
+    }
+
+    fn get_string(&self) -> String {
         self.node.get_text()
+    }
+
+    fn get_range(&self) -> TextRange {
+        self.node.get_range()
+    }
+}
+#[automatically_derived]
+impl {{ self.wasi_node(record) }} {
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
+        }
+        Ok(Self::new({{ self.native_node(record) }} { node }))
     }
 }
 {%- endfor %}

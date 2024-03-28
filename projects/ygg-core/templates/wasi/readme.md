@@ -25,3 +25,23 @@
 {%- endif %}
 {%- endfor %}
 ```
+
+```shell
+impl {{ self.node_trait(rule) }} for {{ self.node_native(rule) }} {
+    fn ctor(super_: SyntaxNode) -> Result<{{ self.node_wasi(rule) }}, ParseError> {
+        Ok({{ self.node_wasi(rule) }}::new(Self { node: super_.into_inner() }))
+    }
+    fn parse_string(text: String, offset: u32) -> Result<{{ self.node_wasi(rule) }}, ParseError> {
+        let input: Rc<str> = Rc::from(text);
+        let language = NativeLanguage { name: "{{ self.language_name() }}", glob: &["*.json5"] };
+        let root = match crate::wit::parse_cst::parse_cst(&input, {{ self.token_name() }}::{{ self.rule_variant(rule) }})?.next() {
+            Some(root) => root,
+            None => Err(ParseError::MissingRoot)?,
+        };
+        Ok({{ self.node_wasi(rule) }}::new(Self { node: NativeSyntaxData::new(input.clone(), root, &language) }))
+    }
+    fn get_text(&self) -> String {
+        self.node.get_text()
+    }
+}
+```
