@@ -1,5 +1,6 @@
 use crate::{
-    span::TextSpan, TokenPair, TokenQueue, TokenStream, TokenTree, Tokens, YggdrasilError, YggdrasilNode, YggdrasilRule,
+    span::TextSpan, InvalidTag, TokenPair, TokenQueue, TokenStream, TokenTree, Tokens, YggdrasilError, YggdrasilNode,
+    YggdrasilRule,
 };
 use alloc::{borrow::ToOwned, format, rc::Rc, string::String, vec::Vec};
 use core::{

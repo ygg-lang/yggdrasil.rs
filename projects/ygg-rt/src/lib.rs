@@ -8,16 +8,10 @@ extern crate alloc;
 
 use core::{fmt::Debug, hash::Hash};
 
-use daachorse::CharwiseDoubleArrayAhoCorasick;
-#[cfg(not(debug_assertions))]
-pub use regex_automata::dfa::regex::Regex;
-#[cfg(debug_assertions)]
-pub use regex_automata::meta::Regex;
-
 pub use crate::{
     ast::YggdrasilNode,
     enhance::{stack::Stack, RegexCompiled},
-    errors::YggdrasilError,
+    errors::{InvalidTag, YggdrasilError},
     iterators::{
         token_pair::{TokenPair, TokenTreeFilterRule, TokenTreeFilterTag},
         token_queue::TokenQueue,
@@ -31,6 +25,11 @@ pub use crate::{
     span::{merge_spans, Lines, LinesSpan, TextSpan},
     token::Token,
 };
+use daachorse::CharwiseDoubleArrayAhoCorasick;
+#[cfg(not(debug_assertions))]
+pub use regex_automata::dfa::regex::Regex;
+#[cfg(debug_assertions)]
+pub use regex_automata::meta::Regex;
 
 pub type AhoCorasick<'i> = CharwiseDoubleArrayAhoCorasick<&'i str>;
 

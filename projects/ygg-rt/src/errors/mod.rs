@@ -7,7 +7,11 @@ use alloc::{
     vec,
     vec::Vec,
 };
-use core::{fmt, fmt::Display, ops::Range};
+use core::{
+    fmt,
+    fmt::{Display, Formatter},
+    ops::Range,
+};
 
 mod source;
 
@@ -36,14 +40,41 @@ pub enum YggdrasilErrorKind<R> {
     InvalidNode {
         expect: R,
     },
-    InvalidTag {
-        expect: Vec<String>,
-    },
+    InvalidTag(InvalidTag),
     /// Custom error with a message
     CustomError {
         /// Short explanation
         message: String,
     },
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct InvalidTag {
+    pub found: Vec<String>,
+    pub expect: Vec<String>,
+}
+
+impl InvalidTag {
+    pub fn new<T>(expect: T) -> Self
+    where
+        T: Into<String>,
+    {
+        Self { found: vec![], expect: vec![expect.into()] }
+    }
+    pub fn push_found<T>(&mut self, found: T)
+    where
+        T: Into<String>,
+    {
+        self.found.push(found.into())
+    }
+    pub fn with_span<R>(self, span: TextSpan<'_>) -> YggdrasilError<R> {
+        let end = span.end_pos();
+        YggdrasilError {
+            variant: YggdrasilErrorKind::InvalidTag(self),
+            location: span.start()..end.offset(),
+            source: YggdrasilErrorSource::Missing,
+        }
+    }
 }
 
 impl<R: YggdrasilRule> YggdrasilError<R> {
@@ -89,10 +120,6 @@ impl<R: YggdrasilRule> YggdrasilError<R> {
     /// unable to create node
     pub fn invalid_node(expect: R, span: TextSpan) -> YggdrasilError<R> {
         Self::new_from_span(YggdrasilErrorKind::InvalidNode { expect }, span)
-    }
-    /// unable to create node
-    pub fn missing_tag(expect: &str, span: TextSpan) -> YggdrasilError<R> {
-        Self::new_from_span(YggdrasilErrorKind::InvalidTag { expect: vec![expect.to_string()] }, span)
     }
     /// missing rule
     pub fn missing_rule(expect: R, span: TextSpan) -> YggdrasilError<R> {
@@ -266,12 +293,20 @@ impl<R: YggdrasilRule> Display for YggdrasilErrorKind<R> {
             YggdrasilErrorKind::InvalidNode { expect } => {
                 write!(f, "invalid node, except: {:?}", expect)
             }
-            YggdrasilErrorKind::InvalidTag { expect } => {
-                write!(f, "invalid tag, except: {:?}", expect)
-            }
+            YggdrasilErrorKind::InvalidTag(error) => Display::fmt(error, f),
             YggdrasilErrorKind::CustomError { message } => {
                 write!(f, "{}", message)
             }
+        }
+    }
+}
+
+impl Display for InvalidTag {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "invalid tag, except {:?}", self.expect)?;
+        match self.found.as_slice() {
+            [] => Ok(()),
+            s => write!(f, ", found {:?}", s),
         }
     }
 }

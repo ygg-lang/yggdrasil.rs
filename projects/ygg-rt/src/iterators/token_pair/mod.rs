@@ -280,16 +280,17 @@ where
     where
         N: YggdrasilNode<'i, Rule = R>,
     {
+        let mut error = InvalidTag::new(tag);
         for child in self.clone().into_inner() {
-            if child.get_tag().eq(tag) {
+            let this = child.get_tag();
+            if cfg!(debug_assertions) {
+                error.push_found(this)
+            }
+            if this.eq(tag) {
                 return N::from_pair(child);
             }
         }
-        return Err(YggdrasilError::missing_tag(tag, self.get_span()));
-        // match self.take_tagged_items(tag.clone()).next() {
-        //     Some(s) => s,
-        //     None => Err(YggdrasilError::missing_tag(tag, self.get_span())),
-        // }
+        Err(error.with_span(self.get_span()))
     }
     /// Take option
     #[inline]
@@ -382,7 +383,6 @@ where
     #[inline]
     pub fn tokens(self) -> Tokens<'i, R> {
         let end = self.pair();
-
         tokens::new(self.queue, self.input, self.start, end + 1)
     }
 
@@ -412,7 +412,9 @@ impl<'i, R: YggdrasilRule> Debug for TokenPair<'i, R> {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         let pair = &mut f.debug_struct("Pair");
         pair.field("rule", &self.get_tag());
-        pair.field("node_tag", &self.get_tag());
+        if !self.get_tag().is_empty() {
+            pair.field("tag", &self.get_tag());
+        }
         pair.field("span", &self.get_span()).field("inner", &self.clone().into_inner().collect::<Vec<_>>()).finish()
     }
 }
